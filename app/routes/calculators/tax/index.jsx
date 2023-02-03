@@ -86,7 +86,7 @@ export default function TaxCalculator() {
 				</div>
 			</div>
 			<div className="w-full flex flex-col items-center mt-[100px]">
-				<div className="calculator_container w-[500px] flex flex-col">
+				<div className="calculator_container w-full sm:w-[500px] flex flex-col px-[10px] sm:px-0">
 					<div className="flow-root">
 						<ul role="list" className="-mb-8">
 							{expenses.map((event, eventIdx) => (
