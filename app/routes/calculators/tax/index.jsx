@@ -56,7 +56,7 @@ export default function TaxCalculator() {
 					</defs>
 				</svg>
 			</div>
-			<div className="px-6 pt-6 lg:px-8">
+			<div className="px-6 pt-6 lg:px-8 mb-[30px]">
 				<nav
 					className="flex items-center justify-between"
 					aria-label="Global"
@@ -94,12 +94,12 @@ export default function TaxCalculator() {
 									<div className="relative pb-8">
 										{eventIdx !== expenses.length - 1 ? (
 											<span
-												className="absolute top-4 left-[58px] -ml-px h-full w-0.5 bg-white mt-[2px]"
+												className="absolute top-4 left-[58px] -ml-px h-full w-0.5 bg-white mt-[2px] hidden sm:block"
 												aria-hidden="true"
 											/>
 										) : null}
 										<div className="relative flex space-x-3">
-											<div className="flex flex-row items-center">
+											<div className=" items-center hidden sm:flex sm:flex-row">
 												<div className="w-[50px] font-bold text-white">
 													{event.year}
 												</div>
