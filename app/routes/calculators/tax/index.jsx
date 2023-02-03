@@ -30,10 +30,10 @@ export default function TaxCalculator() {
 	]);
 
 	return (
-		<div className="isolate bg-gray-900 w-full h-full">
-			<div className="absolute inset-x-0 top-[-10rem] -z-10 transform-gpu overflow-scroll blur-3xl sm:top-[-20rem]">
+		<div className="isolate bg-gray-900 w-full flex flex-col absolute top-0 bottom-0">
+			<div className="absolute inset-x-0 top-[-25rem] -z-10 transform-gpu overflow-scroll blur-3xl sm:top-[-20rem]">
 				<svg
-					className="relative left-[calc(50%-11rem)] -z-10 h-[21.1875rem] max-w-none -translate-x-1/2 rotate-[30deg] sm:left-[calc(50%-30rem)] sm:h-[42.375rem]"
+					className="relative left-[calc(50%-11rem)] -z-10 h-[30.1875rem] max-w-none -translate-x-1/2 rotate-[30deg] sm:left-[calc(50%-30rem)] "
 					viewBox="0 0 1155 678"
 				>
 					<path
@@ -85,7 +85,7 @@ export default function TaxCalculator() {
 					</p>
 				</div>
 			</div>
-			<div className="w-full flex flex-col items-center mt-[100px]">
+			<div className="w-full flex flex-col items-center mt-[50px] bg-gray-900 pb-[20px]">
 				<div className="calculator_container w-full sm:w-[500px] flex flex-col px-[10px] sm:px-0">
 					<div className="flow-root">
 						<ul role="list" className="-mb-8">
