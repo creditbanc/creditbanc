@@ -5,9 +5,9 @@ import { Form, useSubmit, useActionData } from "@remix-run/react";
 import { json, redirect } from "@remix-run/node";
 import { get_user } from "../../utils/auth.server";
 
-// export const loader = async ({ request }) => {
-// 	return (await get_user(request)) ? redirect("/") : null;
-// };
+export const loader = async ({ request }) => {
+	return (await get_user(request)) ? redirect("/") : null;
+};
 
 export const action = async ({ request }) => {
 	console.log("action");
