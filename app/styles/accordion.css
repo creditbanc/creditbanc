@@ -1,0 +1,28 @@
+.accordion__item {
+	max-height: 105px;
+	/* padding: 10px; */
+	overflow: hidden;
+}
+
+.accordion__header {
+	display: flex;
+	flex-direction: column;
+	cursor: pointer;
+}
+
+.accordion__header h4 {
+	transition: 0.2s ease-in-out;
+	font-size: 16px;
+	font-weight: 400;
+	margin-bottom: 10px;
+}
+
+.accordion__header i {
+	transition: 0.2s ease-in-out;
+	transform-origin: center;
+	margin-bottom: 10px;
+}
+
+.accordion__content {
+	/* margin: 5px; */
+}

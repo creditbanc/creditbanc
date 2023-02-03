@@ -1,0 +1,120 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+model Entity {
+  id               String   @id @default(auto()) @map("_id") @db.ObjectId
+  created_at       DateTime @default(now())
+  updated_at       DateTime @updatedAt
+  email            String   @unique
+  password         String
+  roles_ids        String[] @db.ObjectId
+  roles            Roles[]  @relation(fields: [roles_ids], references: [id])
+  root_resource_id String?  @db.ObjectId
+}
+
+// the mental model is:
+// not the actual resource but the data about the resource 
+// (like the roles, the actual resource path, almost like meta data or a config... etc.)
+
+// the mental model is:
+// subscriptions: everything that you're subscribed to (what will show up in your feed)
+// subscribers: everything that is subscribed to you (what will show up in you subscribers 
+// feed that is a subscription of yours)
+
+model Resource {
+  id               String     @id @default(auto()) @map("_id") @db.ObjectId
+  created_at       DateTime   @default(now())
+  updated_at       DateTime   @updatedAt
+  type             String
+  model            String
+  resource_path_id String     @unique @db.ObjectId
+  roles_ids        String[]   @db.ObjectId
+  roles            Roles[]    @relation(fields: [roles_ids], references: [id])
+  subscriptions    Resource[] @relation("resources", fields: [subscription_ids], references: [id])
+  subscription_ids String[]   @db.ObjectId
+  subscribers      Resource[] @relation("resources", fields: [subscriber_ids], references: [id])
+  subscriber_ids   String[]   @db.ObjectId
+  name             String?
+}
+
+model Group {
+  id               String   @id @default(auto()) @map("_id") @db.ObjectId
+  created_at       DateTime @default(now())
+  updated_at       DateTime @updatedAt
+  name             String?
+  resource_id      String?  @db.ObjectId
+  subscriptions    Group[]  @relation("groups", fields: [subscription_ids], references: [id])
+  subscription_ids String[] @db.ObjectId
+  subscribers      Group[]  @relation("groups", fields: [subscriber_ids], references: [id])
+  subscriber_ids   String[] @db.ObjectId
+}
+
+// model Role {
+// 	  id          String    @id @default(auto()) @map("_id") @db.ObjectId
+//   created_at  DateTime  @default(now())
+//   updated_at  DateTime  @updatedAt
+//   resource_id String    @unique @db.ObjectId
+//   resource    Resource? @relation(fields: [resource_id], references: [id])
+//   entity_id String? @db.ObjectId 
+//   entity Entity? @relation(fields: [entity_id], references: [id])
+// }
+
+model Roles {
+  id           String     @id @default(auto()) @map("_id") @db.ObjectId
+  created_at   DateTime   @default(now())
+  updated_at   DateTime   @updatedAt
+  resource_ids String[]   @db.ObjectId
+  resources    Resource[] @relation(fields: [resource_ids], references: [id])
+  entity_ids   String[]   @db.ObjectId
+  entities     Entity[]   @relation(fields: [entity_ids], references: [id])
+  type         String
+  link         Link?
+  permissions  Json?
+}
+
+// every role will have a sharable link which can be used to share a specific resource with 
+// the associated role privilages, this link can be reset to a new random string if it needs
+// to be changed and will make the old link invalid 
+
+// if a resource link doesn't have a specific role attached to it then it will default 
+// to the permissions of the default role
+
+// if the request comes from a link that has an identity attached to it then it will grant the 
+// permissions of that role to that identity, the difference from the anonymous sharable link 
+// being that the identity can be removed by the owners of the resource
+
+model Link {
+  id         String   @id @default(auto()) @map("_id") @db.ObjectId
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+  role_id    String   @unique @db.ObjectId
+  role       Roles    @relation(fields: [role_id], references: [id], onDelete: Cascade)
+  hash       String
+}
+
+// model Settings {
+//   id         String   @id @default(auto()) @map("_id") @db.ObjectId
+//   created_at DateTime @default(now())
+//   updated_at DateTime @updatedAt
+//   role_id    String   @unique @db.ObjectId
+//   role       Roles    @relation(fields: [role_id], references: [id], onDelete: Cascade)
+//   can_view   Boolean?
+// }
+
+model credit_report {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  created_at  DateTime @default(now())
+  updated_at  DateTime @updatedAt
+  ssn         String?
+  resource_id String?  @db.ObjectId
+  name        String
+}
