@@ -1,21 +1,4 @@
-import { useEffect, useRef, useState } from "react";
-import { default as accordion_style } from "~/styles/accordion.css";
-import PersonalCreditTabs from "~/components/PersonalCreditTabs";
-import CreditNav from "~/components/CreditNav";
-import MobileCreditScoreHero from "~/components/MobileCreditScoreHero";
-
-export function links() {
-	return [{ rel: "stylesheet", href: accordion_style }];
-}
-
-export const loader = async ({ request }) => {
-	// let has_permission = await validate_action(request);
-	// console.log("has_permission", has_permission);
-	// return has_permission ? null : redirect("/");
-	return null;
-};
-
-export const HeroGradient = () => {
+export default function HeroGradient() {
 	return (
 		<main>
 			<div className="relative px-6 lg:px-8">
@@ -50,21 +33,5 @@ export const HeroGradient = () => {
 				</div>
 			</div>
 		</main>
-	);
-};
-
-export default function BusinessCreditReport() {
-	return (
-		<div className="flex flex-col w-full">
-			<CreditNav />
-			<HeroGradient />
-
-			<div className="flex flex-col w-full p-[10px] md:p-[20px]">
-				<MobileCreditScoreHero />
-				<PersonalCreditTabs />
-
-				<div className="accordion flex flex-col items-center"></div>
-			</div>
-		</div>
 	);
 }
