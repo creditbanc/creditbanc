@@ -15,7 +15,8 @@ const tabs = [
 	{ name: "Accounts", href: "#", icon: ListBulletIcon, current: false },
 ];
 
-export const TabsTwo = () => {
+export const TabsTwo = ({ selected = "Personal" }) => {
+	console.log("selected", selected);
 	return (
 		<div>
 			<nav
@@ -27,7 +28,7 @@ export const TabsTwo = () => {
 						key={tab.name}
 						href={tab.href}
 						className={classNames(
-							tab.current
+							selected == tab.name
 								? "text-gray-900"
 								: "text-gray-500 hover:text-gray-700",
 							tabIdx === 0 ? "rounded-l-lg" : "",
@@ -40,7 +41,7 @@ export const TabsTwo = () => {
 						<span
 							aria-hidden="true"
 							className={classNames(
-								tab.current
+								selected == tab.name
 									? "bg-indigo-500"
 									: "bg-transparent",
 								"absolute inset-x-0 bottom-0 h-0.5"
@@ -53,7 +54,7 @@ export const TabsTwo = () => {
 	);
 };
 
-export default function PersonalCreditTabs() {
+export default function PersonalCreditTabs({ selected = "Personal" }) {
 	return (
 		<div className="border-b  border-gray-200 ">
 			<nav
@@ -65,16 +66,15 @@ export default function PersonalCreditTabs() {
 						key={tab.name}
 						href={tab.href}
 						className={classNames(
-							tab.current
+							selected == tab.name
 								? "border-indigo-500 text-indigo-600"
 								: "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300",
 							"group inline-flex items-center py-4 px-2 mr-2 border-b-2 font-medium text-sm"
 						)}
-						aria-current={tab.current ? "page" : undefined}
 					>
 						<tab.icon
 							className={classNames(
-								tab.current
+								selected == tab.name
 									? "text-indigo-500"
 									: "text-gray-400 group-hover:text-gray-500",
 								"-ml-0.5 mr-2 h-5 w-5"
