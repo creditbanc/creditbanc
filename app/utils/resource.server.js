@@ -493,3 +493,19 @@ export const delete_all = async () => {
 	const result = await prisma.resource.deleteMany({});
 	console.log("result", result);
 };
+
+export const get_resource_type = async ({ resource_id }) => {
+	console.log("get_resource_type");
+	let resource = await prisma.resource.findFirst({
+		where: {
+			resource_path_id: resource_id,
+		},
+		select: {
+			model: true,
+		},
+	});
+
+	let { model } = resource;
+
+	return model;
+};

@@ -136,6 +136,12 @@ export const get_group_id = (uri) => {
 	)(uri);
 };
 
+export const get_file_id = (uri) => {
+	return pipe(to_resource_path_array, (array) =>
+		pipe(lastIndexOf("f"), (index) => array[index + 1])(array)
+	)(uri);
+};
+
 // export const get_directory_resource_id = (uri) => {
 // 	return pipe(to_pathname, to_resource_path_array, (path) =>
 // 		pipe(lastIndexOf("d"), (index) => path[index + 1])(path)
