@@ -10,10 +10,10 @@ function classNames(...classes) {
 }
 
 const tabs = [
-	{ name: "Account", href: "#", icon: UserIcon, current: false },
-	{ name: "Company", href: "#", icon: BuildingOfficeIcon, current: false },
-	{ name: "Members", href: "#", icon: UsersIcon, current: true },
-	{ name: "Billing", href: "#", icon: CreditCardIcon, current: false },
+	{ name: "Personal", href: "#", icon: BuildingOfficeIcon, current: true },
+	{ name: "Summary", href: "#", icon: UserIcon, current: false },
+	{ name: "Accounts", href: "#", icon: UsersIcon, current: false },
+	// { name: "Billing", href: "#", icon: CreditCardIcon, current: false },
 ];
 
 export default function PersonalCreditTabs() {
