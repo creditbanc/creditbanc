@@ -1,13 +1,8 @@
 import { useEffect, useRef, useState } from "react";
-import { default as accordion_style } from "~/styles/accordion.css";
-import PersonalCreditTabs, { TabsTwo } from "~/components/PersonalCreditTabs";
+import PersonalCreditTabs from "~/components/PersonalCreditTabs";
 import CreditNav from "~/components/CreditNav";
-import MobileCreditScoreHero from "~/components/MobileCreditScoreHero";
+import MobileCreditScoreHero from "~/components/CreditScoreHero";
 import CreditHeroGradient from "~/components/CreditHeroGradient";
-
-export function links() {
-	return [{ rel: "stylesheet", href: accordion_style }];
-}
 
 export const loader = async ({ request }) => {
 	// let has_permission = await validate_action(request);

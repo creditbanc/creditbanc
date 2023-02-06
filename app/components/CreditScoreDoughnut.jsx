@@ -63,7 +63,12 @@ let options = {
 	responsive: true,
 };
 
-export default function CreditScoreDoughnut({ bureau = "" }) {
+export default function CreditScoreDoughnut({
+	bureau = "",
+	classNames = "",
+	scoreClassNames = "",
+	bureauTitleClassNames = "",
+}) {
 	const chartContainerRef = useRef(null);
 	const size = useWindowSize();
 	const [chartStyle, setChartStyle] = useState({});
@@ -81,7 +86,7 @@ export default function CreditScoreDoughnut({ bureau = "" }) {
 
 	return (
 		<div
-			className="outer px-[5px] "
+			className={`outer px-[5px] w-full ${classNames} `}
 			ref={chartContainerRef}
 			style={{ height: chartStyle.height }}
 		>
@@ -91,10 +96,8 @@ export default function CreditScoreDoughnut({ bureau = "" }) {
 				className="absolute flex flex-col items-center justify-end -mt-[15px]"
 				style={chartStyle}
 			>
-				<div className="text-6xl sm:text-2xl md:text-4xl font-bold">
-					500
-				</div>
-				<div className="text-base sm:text-2xl">{bureau}</div>
+				<div className={`font-bold ${scoreClassNames}`}>500</div>
+				<div className={`${bureauTitleClassNames}`}>{bureau}</div>
 			</div>
 		</div>
 	);
