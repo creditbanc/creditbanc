@@ -1,10 +1,8 @@
 import { useEffect, useRef, useState } from "react";
-import { default as accordion_style } from "~/styles/accordion.css";
 import PersonalCreditTabs from "~/components/PersonalCreditTabs";
 import CreditNav from "~/components/CreditNav";
 import CreditScoreHero from "~/components/CreditScoreHero";
 import CreditHeroGradient from "~/components/CreditHeroGradient";
-import CreditScoreDoughnut from "~/components/CreditScoreDoughnut";
 
 export const loader = async ({ request }) => {
 	// let has_permission = await validate_action(request);
@@ -285,100 +283,100 @@ const Account = () => {
 							Payment history
 						</div>
 						<div className="text-sm text-gray-900 flex flex-row justify-between sm:justify-around sm:flex-grow">
-							<div className="w-full flex flex-row justify-between">
-								<div className="flex flex-col border items-center justify-center divide-y p-1 flex-grow">
-									<div className="flex flex-col items-center justify-center">
+							<div className="w-full flex flex-row justify-between text-xs sm:text-sm">
+								<div className="flex flex-col border items-center justify-center flex-grow">
+									<div className="flex flex-col items-center justify-center w-full border-b py-1">
 										J
 									</div>
-									<div className="flex flex-col items-center justify-center">
+									<div className="flex flex-col items-center justify-center py-1">
 										OK
 									</div>
 								</div>
-								<div className="flex flex-col border items-center justify-center divide-y p-1  flex-grow">
-									<div className="flex flex-col items-center justify-center">
+								<div className="flex flex-col border items-center justify-center flex-grow">
+									<div className="flex flex-col items-center justify-center w-full border-b py-1">
 										F
 									</div>
-									<div className="flex flex-col items-center justify-center">
+									<div className="flex flex-col items-center justify-center py-1">
 										OK
 									</div>
 								</div>
-								<div className="flex flex-col border items-center justify-center divide-y p-1  flex-grow">
-									<div className="flex flex-col items-center justify-center">
+								<div className="flex flex-col border items-center justify-center flex-grow">
+									<div className="flex flex-col items-center justify-center w-full border-b py-1">
 										M
 									</div>
-									<div className="flex flex-col items-center justify-center">
+									<div className="flex flex-col items-center justify-center py-1">
 										OK
 									</div>
 								</div>
-								<div className="flex flex-col border items-center justify-center divide-y p-1  flex-grow">
-									<div className="flex flex-col items-center justify-center">
+								<div className="flex flex-col border items-center justify-center flex-grow">
+									<div className="flex flex-col items-center justify-center w-full border-b py-1">
 										A
 									</div>
-									<div className="flex flex-col items-center justify-center">
+									<div className="flex flex-col items-center justify-center py-1">
 										OK
 									</div>
 								</div>
-								<div className="flex flex-col border items-center justify-center divide-y p-1 flex-grow">
-									<div className="flex flex-col items-center justify-center">
+								<div className="flex flex-col border items-center justify-center flex-grow">
+									<div className="flex flex-col items-center justify-center w-full border-b py-1">
 										M
 									</div>
-									<div className="flex flex-col items-center justify-center">
+									<div className="flex flex-col items-center justify-center py-1">
 										OK
 									</div>
 								</div>
-								<div className="flex flex-col border items-center justify-center divide-y p-1 flex-grow">
-									<div className="flex flex-col items-center justify-center">
+								<div className="flex flex-col border items-center justify-center flex-grow">
+									<div className="flex flex-col items-center justify-center w-full border-b py-1">
 										J
 									</div>
-									<div className="flex flex-col items-center justify-center">
+									<div className="flex flex-col items-center justify-center py-1">
 										OK
 									</div>
 								</div>
-								<div className="flex flex-col border items-center justify-center divide-y p-1 flex-grow">
-									<div className="flex flex-col items-center justify-center">
+								<div className="flex flex-col border items-center justify-center flex-grow">
+									<div className="flex flex-col items-center justify-center w-full border-b py-1">
 										J
 									</div>
-									<div className="flex flex-col items-center justify-center">
+									<div className="flex flex-col items-center justify-center py-1">
 										OK
 									</div>
 								</div>
-								<div className="flex flex-col border items-center justify-center divide-y p-1 flex-grow">
-									<div className="flex flex-col items-center justify-center">
+								<div className="flex flex-col border items-center justify-center flex-grow">
+									<div className="flex flex-col items-center justify-center w-full border-b py-1">
 										A
 									</div>
-									<div className="flex flex-col items-center justify-center">
+									<div className="flex flex-col items-center justify-center py-1">
 										OK
 									</div>
 								</div>
-								<div className="flex flex-col border items-center justify-center divide-y p-1 flex-grow">
-									<div className="flex flex-col items-center justify-center">
+								<div className="flex flex-col border items-center justify-center flex-grow">
+									<div className="flex flex-col items-center justify-center w-full border-b py-1">
 										S
 									</div>
-									<div className="flex flex-col items-center justify-center">
+									<div className="flex flex-col items-center justify-center py-1">
 										OK
 									</div>
 								</div>
-								<div className="flex flex-col border items-center justify-center divide-y p-1 flex-grow">
-									<div className="flex flex-col items-center justify-center">
+								<div className="flex flex-col border items-center justify-center flex-grow">
+									<div className="flex flex-col items-center justify-center w-full border-b py-1">
 										O
 									</div>
-									<div className="flex flex-col items-center justify-center">
+									<div className="flex flex-col items-center justify-center py-1">
 										OK
 									</div>
 								</div>
-								<div className="flex flex-col border items-center justify-center divide-y p-1 flex-grow">
-									<div className="flex flex-col items-center justify-center">
+								<div className="flex flex-col border items-center justify-center flex-grow">
+									<div className="flex flex-col items-center justify-center w-full border-b py-1">
 										N
 									</div>
-									<div className="flex flex-col items-center justify-center">
+									<div className="flex flex-col items-center justify-center py-1">
 										OK
 									</div>
 								</div>
-								<div className="flex flex-col border items-center justify-center divide-y p-1 flex-grow">
-									<div className="flex flex-col items-center justify-center">
+								<div className="flex flex-col border items-center justify-center flex-grow">
+									<div className="flex flex-col items-center justify-center w-full border-b py-1">
 										D
 									</div>
-									<div className="flex flex-col items-center justify-center">
+									<div className="flex flex-col items-center justify-center py-1">
 										OK
 									</div>
 								</div>

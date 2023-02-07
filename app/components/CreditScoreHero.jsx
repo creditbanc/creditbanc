@@ -7,7 +7,7 @@ const Single = () => {
 				<CreditScoreDoughnut
 					bureau={"Experian"}
 					scoreClassNames="text-6xl"
-					bureauTitleClassNames="text-4xl"
+					bureauTitleClassNames="text-1xl"
 				/>
 				<div className="flex flex-row w-full justify-around -mt-[30px] z-[1]">
 					<span className="inline-flex items-center rounded-full bg-gray-100 px-4 py-0.5 text-xs font-medium text-gray-800 cursor-pointer">
@@ -39,20 +39,20 @@ const Triple = () => {
 		<div className="hidden sm:flex sm:flex-row sm:justify-around">
 			<CreditScoreDoughnut
 				bureau={"Experian"}
-				scoreClassNames="sm:text-2xl md:text-4xl"
-				bureauTitleClassNames="sm:text-xl md:text-2xl"
+				scoreClassNames="sm:text-3xl md:text-5xl lg:text-6xl"
+				bureauTitleClassNames="sm:text-base sm:text-l"
 			/>
 			<div className="mx-4"></div>
 			<CreditScoreDoughnut
 				bureau={"Equifax"}
-				scoreClassNames="sm:text-2xl md:text-4xl"
-				bureauTitleClassNames="sm:text-xl md:text-2xl"
+				scoreClassNames="sm:text-3xl md:text-5xl lg:text-6xl"
+				bureauTitleClassNames="sm:text-base sm:text-l"
 			/>
 			<div className="mx-4"></div>
 			<CreditScoreDoughnut
 				bureau={"Transunion"}
-				scoreClassNames="sm:text-2xl md:text-4xl"
-				bureauTitleClassNames="sm:text-xl md:text-2xl"
+				scoreClassNames="sm:text-3xl md:text-5xl lg:text-6xl"
+				bureauTitleClassNames="sm:text-base sm:text-l"
 			/>
 		</div>
 	);
