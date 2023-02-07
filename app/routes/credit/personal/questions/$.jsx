@@ -20,13 +20,13 @@ export const loader = async ({ request }) => {
 	let clientKey = url.searchParams.get("clientKey");
 	let appKey = "F5C7226A-4F96-43BF-B748-09278FFE0E36";
 
-	var config = {
-		method: "get",
-		url: `https://array.io/api/authenticate/v2?appKey=${appKey}&clientKey=${clientKey}&provider1=tui&provider2=efx&provider3=exp`,
-		headers: {},
+	const options = {
+		method: "GET",
+		url: `https://sandbox.array.io/api/authenticate/v2?appKey=${appKey}&clientKey=${clientKey}&provider1=tui&provider2=exp&provider3=efx`,
+		headers: { accept: "application/json" },
 	};
 
-	let response = await axios(config);
+	let response = await axios(options);
 	console.log("loader_response");
 	console.log(response.data);
 

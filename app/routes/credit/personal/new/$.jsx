@@ -46,10 +46,10 @@ let test_data_one = {
 
 let test_data_two = {
 	appKey: "F5C7226A-4F96-43BF-B748-09278FFE0E36",
+	ssn: "666285344",
 	firstName: "DONALD",
 	lastName: "BLAIR",
 	dob: "1939-09-20",
-	ssn: "666285344",
 	address: {
 		street: "3627 W POPLAR ST",
 		city: "SAN ANTONIO",
@@ -67,21 +67,19 @@ export const action = async ({ request }) => {
 
 	const payload = JSON.parse(form.get("payload"));
 
-	var data = JSON.stringify(test_data_two);
-
-	var config = {
-		method: "post",
-		url: "https://array.io/api/user/v2",
+	const options = {
+		method: "POST",
+		url: "https://sandbox.array.io/api/user/v2",
 		headers: {
 			accept: "application/json",
 			"content-type": "application/json",
 		},
-		data,
+		data: test_data_two,
 	};
 
-	let response = await axios(config);
-	console.log(response);
+	let response = await axios(options);
 	let { clientKey } = response.data;
+	console.log(response.data);
 
 	return redirect(`/credit/personal/questions?clientKey=${clientKey}`);
 };
