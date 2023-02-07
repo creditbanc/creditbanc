@@ -1842,6 +1842,10 @@ video {
   padding-bottom: 0.5rem;
 }
 
+.pl-2 {
+  padding-left: 0.5rem;
+}
+
 .pt-3 {
   padding-top: 0.75rem;
 }

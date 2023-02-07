@@ -1,110 +1,42 @@
 import CreditNav from "~/components/CreditNav";
 import CreditHeroGradient from "~/components/CreditHeroGradient";
 import { map, addIndex } from "ramda";
+import axios from "axios";
+import { useLoaderData } from "@remix-run/react";
+import { create } from "zustand";
+import { pipe } from "ramda";
+import { mod } from "shades";
 
 let mapIndexed = addIndex(map);
 
-const questions = {
-	authToken: "7327BCCA-6A1A-40DA-B628-1DB57329BD80",
-	provider: "efx",
-	questions: [
-		{
-			id: "1",
-			text: "Your credit file indicates you may have a retail card, opened in or around January 2021. Who is the credit provider for this account?",
-			answers: [
-				{
-					id: "1",
-					text: "BOB'S DISC FURN",
-					correctAnswer: "false",
-				},
-				{
-					id: "2",
-					text: "GECRB/ROOMS TO GO",
-					correctAnswer: "false",
-				},
-				{
-					id: "3",
-					text: "JEWELERY ACCENT",
-					correctAnswer: "false",
-				},
-				{
-					id: "4",
-					text: "LANE GALLERY",
-					correctAnswer: "false",
-				},
-				{
-					id: "5",
-					text: "NONE OF THE ABOVE",
-					correctAnswer: "false",
-				},
-			],
-		},
-		{
-			id: "2",
-			text: "Your credit file indicates you may have an auto loan/lease, opened in or around November 2022. Who is the credit provider for this account?",
-			answers: [
-				{
-					id: "1",
-					text: "CITIZENS INC.",
-					correctAnswer: "false",
-				},
-				{
-					id: "2",
-					text: "PAB BANKSHARES INC",
-					correctAnswer: "false",
-				},
-				{
-					id: "3",
-					text: "RIGGS NATIONAL",
-					correctAnswer: "false",
-				},
-				{
-					id: "4",
-					text: "YORK FEDERAL SAVINGS & LOAN",
-					correctAnswer: "false",
-				},
-				{
-					id: "5",
-					text: "NONE OF THE ABOVE",
-					correctAnswer: "false",
-				},
-			],
-		},
-		{
-			id: "3",
-			text: "What is the total monthly payment for the above-referenced account?",
-			answers: [
-				{
-					id: "1",
-					text: "$1,475 - $1,524",
-					correctAnswer: "false",
-				},
-				{
-					id: "2",
-					text: "$1,525 - $1,574",
-					correctAnswer: "false",
-				},
-				{
-					id: "3",
-					text: "$1,575 - $1,624",
-					correctAnswer: "false",
-				},
-				{
-					id: "4",
-					text: "$1,625 - $1,674",
-					correctAnswer: "false",
-				},
-				{
-					id: "5",
-					text: "NONE OF THE ABOVE",
-					correctAnswer: "false",
-				},
-			],
-		},
-	],
+const useVerificationQuestionsStore = create((set) => ({
+	questions: [],
+	setQuestions: (questions) =>
+		set((state) => pipe(mod("questions")(() => questions))(state)),
+}));
+
+export const loader = async ({ request }) => {
+	const url = new URL(request.url);
+	let clientKey = url.searchParams.get("clientKey");
+	let appKey = "F5C7226A-4F96-43BF-B748-09278FFE0E36";
+
+	var config = {
+		method: "get",
+		url: `https://array.io/api/authenticate/v2?appKey=${appKey}&clientKey=${clientKey}&provider1=tui&provider2=efx&provider3=exp`,
+		headers: {},
+	};
+
+	let response = await axios(config);
+	console.log("loader_response");
+	console.log(response.data);
+
+	return response.data;
 };
 
 const Form = () => {
+	const questions = useVerificationQuestionsStore((state) => state.questions);
+	console.log("questions", questions);
+
 	return (
 		<form className="space-y-8">
 			<div className="flex flex-col">
@@ -148,7 +80,7 @@ const Form = () => {
 							</div>
 						</fieldset>
 					),
-					questions.questions
+					questions
 				)}
 			</div>
 			<div className="flex flex-row w-full justify-end pt-2">
@@ -184,6 +116,13 @@ const Heading = () => {
 };
 
 export default function PersonalCreditReportQuestions() {
+	const { questions } = useLoaderData();
+	const setQuestions = useVerificationQuestionsStore(
+		(state) => state.setQuestions
+	);
+
+	setQuestions(questions || []);
+
 	return (
 		<div className="flex flex-col w-full">
 			<CreditNav />
