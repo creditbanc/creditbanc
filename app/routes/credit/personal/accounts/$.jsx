@@ -286,7 +286,7 @@ const Account = () => {
 						</div>
 						<div className="text-sm text-gray-900 flex flex-row justify-between sm:justify-around sm:flex-grow">
 							<div className="w-full flex flex-row justify-between">
-								<div className="flex flex-col border items-center justify-center divide-y p-1">
+								<div className="flex flex-col border items-center justify-center divide-y p-1 flex-grow">
 									<div className="flex flex-col items-center justify-center">
 										J
 									</div>
@@ -294,7 +294,7 @@ const Account = () => {
 										OK
 									</div>
 								</div>
-								<div className="flex flex-col border items-center justify-center divide-y p-1">
+								<div className="flex flex-col border items-center justify-center divide-y p-1  flex-grow">
 									<div className="flex flex-col items-center justify-center">
 										F
 									</div>
@@ -302,7 +302,7 @@ const Account = () => {
 										OK
 									</div>
 								</div>
-								<div className="flex flex-col border items-center justify-center divide-y p-1">
+								<div className="flex flex-col border items-center justify-center divide-y p-1  flex-grow">
 									<div className="flex flex-col items-center justify-center">
 										M
 									</div>
@@ -310,7 +310,7 @@ const Account = () => {
 										OK
 									</div>
 								</div>
-								<div className="flex flex-col border items-center justify-center divide-y p-1">
+								<div className="flex flex-col border items-center justify-center divide-y p-1  flex-grow">
 									<div className="flex flex-col items-center justify-center">
 										A
 									</div>
@@ -318,7 +318,7 @@ const Account = () => {
 										OK
 									</div>
 								</div>
-								<div className="flex flex-col border items-center justify-center divide-y p-1">
+								<div className="flex flex-col border items-center justify-center divide-y p-1 flex-grow">
 									<div className="flex flex-col items-center justify-center">
 										M
 									</div>
@@ -326,7 +326,7 @@ const Account = () => {
 										OK
 									</div>
 								</div>
-								<div className="flex flex-col border items-center justify-center divide-y p-1">
+								<div className="flex flex-col border items-center justify-center divide-y p-1 flex-grow">
 									<div className="flex flex-col items-center justify-center">
 										J
 									</div>
@@ -334,7 +334,7 @@ const Account = () => {
 										OK
 									</div>
 								</div>
-								<div className="flex flex-col border items-center justify-center divide-y p-1">
+								<div className="flex flex-col border items-center justify-center divide-y p-1 flex-grow">
 									<div className="flex flex-col items-center justify-center">
 										J
 									</div>
@@ -342,7 +342,7 @@ const Account = () => {
 										OK
 									</div>
 								</div>
-								<div className="flex flex-col border items-center justify-center divide-y p-1">
+								<div className="flex flex-col border items-center justify-center divide-y p-1 flex-grow">
 									<div className="flex flex-col items-center justify-center">
 										A
 									</div>
@@ -350,7 +350,7 @@ const Account = () => {
 										OK
 									</div>
 								</div>
-								<div className="flex flex-col border items-center justify-center divide-y p-1">
+								<div className="flex flex-col border items-center justify-center divide-y p-1 flex-grow">
 									<div className="flex flex-col items-center justify-center">
 										S
 									</div>
@@ -358,7 +358,7 @@ const Account = () => {
 										OK
 									</div>
 								</div>
-								<div className="flex flex-col border items-center justify-center divide-y p-1">
+								<div className="flex flex-col border items-center justify-center divide-y p-1 flex-grow">
 									<div className="flex flex-col items-center justify-center">
 										O
 									</div>
@@ -366,7 +366,7 @@ const Account = () => {
 										OK
 									</div>
 								</div>
-								<div className="flex flex-col border items-center justify-center divide-y p-1">
+								<div className="flex flex-col border items-center justify-center divide-y p-1 flex-grow">
 									<div className="flex flex-col items-center justify-center">
 										N
 									</div>
@@ -374,7 +374,7 @@ const Account = () => {
 										OK
 									</div>
 								</div>
-								<div className="flex flex-col border items-center justify-center divide-y p-1">
+								<div className="flex flex-col border items-center justify-center divide-y p-1 flex-grow">
 									<div className="flex flex-col items-center justify-center">
 										D
 									</div>
