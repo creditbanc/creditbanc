@@ -1,7 +1,6 @@
-import { useEffect, useRef, useState } from "react";
 import PersonalCreditTabs from "~/components/PersonalCreditTabs";
 import CreditNav from "~/components/CreditNav";
-import MobileCreditScoreHero from "~/components/CreditScoreHero";
+import CreditScoreHero from "~/components/CreditScoreHero";
 import CreditHeroGradient from "~/components/CreditHeroGradient";
 
 export const loader = async ({ request }) => {
@@ -72,7 +71,7 @@ export default function BusinessCreditReport() {
 			<CreditHeroGradient />
 
 			<div className="flex flex-col w-full p-[10px] max-w-5xl mx-auto">
-				<MobileCreditScoreHero />
+				<CreditScoreHero />
 				<div className="mt-3 mb-1">
 					<PersonalCreditTabs />
 				</div>
