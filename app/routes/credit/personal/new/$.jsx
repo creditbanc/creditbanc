@@ -31,11 +31,11 @@ const useReportStore = create((set) => ({
 }));
 
 let test_data_one = {
-	appKey: "F5C7226A-4F96-43BF-B748-09278FFE0E36",
+	appKey: "3F03D20E-5311-43D8-8A76-E4B5D77793BD",
+	ssn: "053723148",
 	firstName: "MATHEW",
 	lastName: "MEEHAN",
 	dob: "1981-06-17",
-	ssn: "053723148",
 	address: {
 		street: "9315 trinana circle",
 		city: "Winter garden",
@@ -45,7 +45,7 @@ let test_data_one = {
 };
 
 let test_data_two = {
-	appKey: "F5C7226A-4F96-43BF-B748-09278FFE0E36",
+	appKey: "3F03D20E-5311-43D8-8A76-E4B5D77793BD",
 	ssn: "666285344",
 	firstName: "DONALD",
 	lastName: "BLAIR",
@@ -58,13 +58,24 @@ let test_data_two = {
 	},
 };
 
+let test_data_three = {
+	appKey: "3F03D20E-5311-43D8-8A76-E4B5D77793BD",
+	ssn: "594794805",
+	firstName: "ana",
+	lastName: "vazquez",
+	dob: "1963-06-19",
+	address: {
+		street: "12531 NE 18 St",
+		city: "williston",
+		state: "fl",
+		zip: "32696",
+	},
+};
+
 export const action = async ({ request }) => {
 	console.log("new_credit_action");
 
-	var form = await request.formData();
-	let url = new URL(request.url);
-	let pathname = url.pathname;
-
+	const form = await request.formData();
 	const payload = JSON.parse(form.get("payload"));
 
 	const options = {
@@ -78,10 +89,12 @@ export const action = async ({ request }) => {
 	};
 
 	let response = await axios(options);
-	let { clientKey } = response.data;
-	console.log(response.data);
+	let { clientKey, authToken } = response.data;
+	// console.log(response.data);
 
-	return redirect(`/credit/personal/questions?clientKey=${clientKey}`);
+	return redirect(
+		`/credit/personal/verification?clientKey=${clientKey}&authToken=${authToken}`
+	);
 };
 
 const Form = () => {
