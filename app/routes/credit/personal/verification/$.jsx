@@ -2,18 +2,12 @@ import CreditNav from "~/components/CreditNav";
 import CreditHeroGradient from "~/components/CreditHeroGradient";
 import { map, addIndex, isEmpty, includes, values } from "ramda";
 import axios from "axios";
-import {
-	useActionData,
-	useLoaderData,
-	useSubmit,
-	useFetcher,
-} from "@remix-run/react";
+import { useLoaderData, useFetcher } from "@remix-run/react";
 import { create } from "zustand";
 import { pipe } from "ramda";
 import { all, filter, get, mod } from "shades";
 import { useEffect } from "react";
 import { json, redirect } from "@remix-run/node";
-import { inspect } from "~/utils/helpers";
 
 let mapIndexed = addIndex(map);
 
@@ -27,21 +21,6 @@ const useVerificationQuestionsStore = create((set) => ({
 	setQuestions: (questions) =>
 		set((state) => pipe(mod("questions")(() => questions))(state)),
 }));
-
-export const loader = async ({ request }) => {
-	const url = new URL(request.url);
-	let clientKey = url.searchParams.get("clientKey");
-	let appKey = "3F03D20E-5311-43D8-8A76-E4B5D77793BD";
-
-	const options = {
-		method: "GET",
-		url: `https://sandbox.array.io/api/authenticate/v2?appKey=${appKey}&clientKey=${clientKey}&provider1=tui&provider2=exp&provider3=efx`,
-		headers: { accept: "application/json" },
-	};
-
-	let response = await axios(options);
-	return response.data;
-};
 
 export const action = async ({ request }) => {
 	const form = await request.formData();
@@ -65,8 +44,6 @@ export const action = async ({ request }) => {
 	};
 
 	let response = await axios(options);
-	console.log("action_response");
-	console.log(response.data);
 
 	let { userToken = null } = response.data;
 
@@ -75,6 +52,28 @@ export const action = async ({ request }) => {
 	} else {
 		return json({ ...response.data });
 	}
+};
+
+export const loader = async ({ request }) => {
+	const url = new URL(request.url);
+	let clientKey = url.searchParams.get("clientKey");
+	const appKey = "F5C7226A-4F96-43BF-B748-09278FFE0E36";
+
+	// const options = {
+	// 	method: "GET",
+	// 	url: `https://sandbox.array.io/api/authenticate/v2?appKey=${appKey}&clientKey=${clientKey}&provider1=tui&provider2=exp&provider3=efx`,
+	// 	headers: { accept: "application/json" },
+	// };
+
+	var options = {
+		method: "get",
+		maxBodyLength: Infinity,
+		url: `https://array.io/api/authenticate/v2?appKey=${appKey}&clientKey=${clientKey}&provider1=tui&provider2=efx&provider3=exp`,
+		headers: {},
+	};
+
+	let response = await axios(options);
+	return response.data;
 };
 
 const Form = () => {

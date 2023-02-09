@@ -6,7 +6,7 @@ import { mod } from "shades";
 import { create } from "zustand";
 import { useSubmit } from "@remix-run/react";
 import { inspect } from "~/utils/helpers";
-import { redirect } from "@remix-run/node";
+import { json, redirect } from "@remix-run/node";
 
 const useReportStore = create((set) => ({
 	form: {
@@ -30,8 +30,11 @@ const useReportStore = create((set) => ({
 		set((state) => pipe(mod("form", ...path)(() => value))(state)),
 }));
 
+const appKey = "F5C7226A-4F96-43BF-B748-09278FFE0E36";
+// const appKey = "3F03D20E-5311-43D8-8A76-E4B5D77793BD";
+
 let test_data_one = {
-	appKey: "3F03D20E-5311-43D8-8A76-E4B5D77793BD",
+	appKey,
 	ssn: "053723148",
 	firstName: "MATHEW",
 	lastName: "MEEHAN",
@@ -45,7 +48,7 @@ let test_data_one = {
 };
 
 let test_data_two = {
-	appKey: "3F03D20E-5311-43D8-8A76-E4B5D77793BD",
+	appKey,
 	ssn: "666285344",
 	firstName: "DONALD",
 	lastName: "BLAIR",
@@ -59,16 +62,16 @@ let test_data_two = {
 };
 
 let test_data_three = {
-	appKey: "3F03D20E-5311-43D8-8A76-E4B5D77793BD",
+	appKey,
 	ssn: "594794805",
-	firstName: "ana",
-	lastName: "vazquez",
-	dob: "1963-06-19",
+	firstName: "daniel",
+	lastName: "arzuaga",
+	dob: "1989-09-28",
 	address: {
-		street: "12531 NE 18 St",
-		city: "williston",
+		street: "16555 sw 47th pl rd",
+		city: "ocala",
 		state: "fl",
-		zip: "32696",
+		zip: "34481",
 	},
 };
 
@@ -88,13 +91,19 @@ export const action = async ({ request }) => {
 		data: test_data_two,
 	};
 
-	let response = await axios(options);
-	let { clientKey, authToken } = response.data;
-	// console.log(response.data);
-
-	return redirect(
-		`/credit/personal/verification?clientKey=${clientKey}&authToken=${authToken}`
-	);
+	try {
+		let response = await axios(options);
+		let { clientKey, authToken } = response.data;
+		console.log("response");
+		console.log(response.data);
+		return redirect(
+			`/credit/personal/verification?clientKey=${clientKey}&authToken=${authToken}`
+		);
+	} catch (error) {
+		console.log("error");
+		console.log(error.response.data);
+		return json({ error: error.message }, { status: 500 });
+	}
 };
 
 const Form = () => {

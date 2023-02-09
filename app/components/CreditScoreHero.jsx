@@ -37,7 +37,7 @@ const Single = () => {
 const Triple = () => {
 	return (
 		<div className="hidden sm:flex sm:flex-row sm:justify-around">
-			<div className="mx-1"></div>
+			{/* <div className="mx-1"></div> */}
 			<CreditScoreDoughnut
 				bureau={"Experian"}
 				scoreClassNames="sm:text-3xl md:text-5xl lg:text-6xl"
@@ -55,7 +55,7 @@ const Triple = () => {
 				scoreClassNames="sm:text-3xl md:text-5xl lg:text-6xl"
 				bureauTitleClassNames="sm:text-base sm:text-l"
 			/>
-			<div className="mx-1"></div>
+			{/* <div className="mx-1"></div> */}
 		</div>
 	);
 };
