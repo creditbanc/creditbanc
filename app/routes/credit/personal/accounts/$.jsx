@@ -3,22 +3,9 @@ import PersonalCreditTabs from "~/components/PersonalCreditTabs";
 import CreditNav from "~/components/CreditNav";
 import CreditScoreHero from "~/components/CreditScoreHero";
 import CreditHeroGradient from "~/components/CreditHeroGradient";
-import { credmo3bReportScore } from "~/data/array";
 import { pipe } from "ramda";
 import { get } from "shades";
 import { inspect } from "~/utils/helpers";
-
-export const loader = async ({ request }) => {
-	// let has_permission = await validate_action(request);
-
-	let liabilities = pipe(get("CREDIT_RESPONSE", "CREDIT_LIABILITY"))(
-		credmo3bReportScore
-	);
-	console.log("liabilities");
-	inspect(liabilities);
-
-	return null;
-};
 
 const Heading = () => {
 	return (

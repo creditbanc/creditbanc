@@ -1,3 +1,18 @@
+import { get, filter, all, mod } from "shades";
+import {
+	pipe,
+	map,
+	addIndex,
+	splitWhenever,
+	head,
+	pick,
+	tryCatch,
+	always,
+} from "ramda";
+import { inspect } from "~/utils/helpers";
+
+const mapIndexed = addIndex(map);
+
 const credmo3bReportScore = {
 	CREDIT_RESPONSE: {
 		"@MISMOVersionID": "2.4",
@@ -6333,3 +6348,264 @@ const credmo3bReportScore = {
 		},
 	},
 };
+
+export const Liabilities = (liabilities) => {
+	const trade_lines = () =>
+		pipe(
+			mapIndexed((value, index) => ({
+				...value,
+				index,
+				source: get("CREDIT_REPOSITORY", "@_SourceType")(value),
+			})),
+			splitWhenever(
+				(value) => value["@CreditTradeReferenceID"] == "Primary"
+			)
+		)(liabilities);
+
+	return {
+		trade_lines,
+	};
+};
+
+export const TradeLine = (trade_line) => {
+	const accounts = () => trade_line;
+
+	const id = () =>
+		pipe(
+			mod(all)(pick(["@_AccountIdentifier", "source"])),
+			map((value) => ({
+				source: value.source,
+				value: value["@_AccountIdentifier"] || "",
+			}))
+		)(trade_line);
+
+	const account_type = () =>
+		pipe(
+			mod(all)(pick(["@_AccountType", "source"])),
+			map((value) => ({
+				source: value.source,
+				value: value["@_AccountType"] || "",
+			}))
+		)(trade_line);
+
+	const loan_type = () =>
+		pipe(
+			mod(all)(pick(["@CreditLoanType", "source"])),
+			map((value) => ({
+				source: value.source,
+				value: value["@CreditLoanType"] || "",
+			}))
+		)(trade_line);
+
+	const status = () =>
+		pipe(
+			mod(all)(pick(["@_AccountStatusType", "source"])),
+			map((value) => ({
+				source: value.source,
+				value: value["@_AccountStatusType"] || "",
+			}))
+		)(trade_line);
+
+	const payment_amount = () =>
+		pipe(
+			mod(all)(pick(["@_MonthlyPaymentAmount", "source"])),
+			map((value) => ({
+				source: value.source,
+				value: value["@_MonthlyPaymentAmount"] || 0,
+			}))
+		)(trade_line);
+
+	const opened_date = () =>
+		pipe(
+			mod(all)(pick(["@_AccountOpenedDate", "source"])),
+			map((value) => ({
+				source: value.source,
+				value: value["@_AccountOpenedDate"] || "",
+			}))
+		)(trade_line);
+
+	const original_balance = () =>
+		pipe(
+			mod(all)(pick(["@_OriginalBalanceAmount", "source"])),
+			map((value) => ({
+				source: value.source,
+				value: value["@_OriginalBalanceAmount"] || 0,
+			}))
+		)(trade_line);
+
+	const unpaid_balance = () =>
+		pipe(
+			mod(all)(pick(["@_UnpaidBalanceAmount", "source"])),
+			map((value) => ({
+				source: value.source,
+				value: value["@_UnpaidBalanceAmount"] || 0,
+			}))
+		)(trade_line);
+
+	const high_balance = () =>
+		pipe(
+			mod(all)(pick(["@_HighBalanceAmount", "source"])),
+			map((value) => ({
+				source: value.source,
+				value: value["@_HighBalanceAmount"] || 0,
+			}))
+		)(trade_line);
+
+	const terms = () =>
+		pipe(
+			mod(all)(pick(["@_TermsMonthsCount", "source"])),
+			map((value) => ({
+				source: value.source,
+				value: value["@_TermsMonthsCount"] || 0,
+			}))
+		)(trade_line);
+
+	const credit_limit = () =>
+		pipe(
+			mod(all)(pick(["@_CreditLimitAmount", "source"])),
+			map((value) => ({
+				source: value.source,
+				value: value["@_CreditLimitAmount"] || 0,
+			}))
+		)(trade_line);
+
+	const past_due_amount = () =>
+		pipe(
+			mod(all)(pick(["@_PastDueAmount", "source"])),
+			map((value) => ({
+				source: value.source,
+				value: value["@_PastDueAmount"] || 0,
+			}))
+		)(trade_line);
+
+	const current_rating = () =>
+		pipe(
+			mod(all)(pick(["_CURRENT_RATING", "source"])),
+			map((value) => ({
+				source: value.source,
+				current_rating: tryCatch(
+					pipe(get("_CURRENT_RATING", "@_Type")),
+					always("")
+				)(value),
+			}))
+		)(trade_line);
+
+	const account_reported_date = () =>
+		pipe(
+			mod(all)(pick(["@_AccountReportedDate", "source"])),
+			map((value) => ({
+				source: value.source,
+				value: value["@_AccountReportedDate"] || "",
+			}))
+		)(trade_line);
+
+	const comments = () =>
+		pipe(
+			mod(all)(pick(["CREDIT_COMMENT", "source"])),
+			map((value) => ({
+				source: value.source,
+				value: value["CREDIT_COMMENT"] || "",
+			}))
+		)(trade_line);
+
+	const last_activity_date = () =>
+		pipe(
+			mod(all)(pick(["@_LastActivityDate", "source"])),
+			map((value) => ({
+				source: value.source,
+				value: value["@_LastActivityDate"] || "",
+			}))
+		)(trade_line);
+
+	const last_payment_date = () =>
+		pipe(
+			mod(all)(pick(["@LastPaymentDate", "source"])),
+			map((value) => ({
+				source: value.source,
+				value: value["@LastPaymentDate"] || "",
+			}))
+		)(trade_line);
+
+	const payment_pattern = () =>
+		pipe(
+			mod(all)(pick(["_PAYMENT_PATTERN", "source"])),
+			map((value) => ({
+				source: value.source,
+				value: value["_PAYMENT_PATTERN"] || { "@_Data": "" },
+			}))
+		)(trade_line);
+
+	const creditor = () =>
+		pipe(
+			mod(all)(pick(["_CREDITOR", "source"])),
+			map((value) => ({
+				source: value.source,
+				value: value["_CREDITOR"],
+			}))
+		)(trade_line);
+
+	const original_creditor = () =>
+		pipe(
+			mod(all)(pick(["@_OriginalCreditorName", "source"])),
+			map((value) => ({
+				source: value.source,
+				value: value["@_OriginalCreditorName"] || "",
+			}))
+		)(trade_line);
+
+	const values = () => {
+		const payload = {
+			id: id(),
+			account_type: account_type(),
+			loan_type: loan_type(),
+			status: status(),
+			payment_amount: payment_amount(),
+			opened_date: opened_date(),
+			original_balance: original_balance(),
+			unpaid_balance: unpaid_balance(),
+			high_balance: high_balance(),
+			terms: terms(),
+			credit_limit: credit_limit(),
+			past_due_amount: past_due_amount(),
+			current_rating: current_rating(),
+			account_reported_date: account_reported_date(),
+			comments: comments(),
+			last_activity_date: last_activity_date(),
+			last_payment_date: last_payment_date(),
+			payment_pattern: payment_pattern(),
+			creditor: creditor(),
+			original_creditor: original_creditor(),
+		};
+
+		return payload;
+	};
+
+	return {
+		id,
+		accounts,
+		account_type,
+		loan_type,
+		status,
+		payment_amount,
+		opened_date,
+		original_balance,
+		unpaid_balance,
+		high_balance,
+		terms,
+		credit_limit,
+		past_due_amount,
+		current_rating,
+		account_reported_date,
+		comments,
+		last_activity_date,
+		last_payment_date,
+		payment_pattern,
+		creditor,
+		original_creditor,
+		values,
+	};
+};
+
+export const liabilities_data = pipe(
+	get("CREDIT_RESPONSE", "CREDIT_LIABILITY")
+)(credmo3bReportScore);

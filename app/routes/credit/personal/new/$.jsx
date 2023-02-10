@@ -1,12 +1,13 @@
 import CreditNav from "~/components/CreditNav";
 import CreditHeroGradient from "~/components/CreditHeroGradient";
 import axios from "axios";
-import { pipe } from "ramda";
+import { pipe, map, head, last, applySpec, identity } from "ramda";
 import { mod } from "shades";
 import { create } from "zustand";
 import { useSubmit } from "@remix-run/react";
 import { inspect } from "~/utils/helpers";
 import { json, redirect } from "@remix-run/node";
+import { Liabilities, TradeLine, liabilities_data } from "~/data/array";
 
 const useReportStore = create((set) => ({
 	form: {
@@ -410,6 +411,22 @@ const Heading = () => {
 			</div>
 		</div>
 	);
+};
+
+export const loader = async ({ request }) => {
+	console.log("loaderrrrr");
+	let liabilities = Liabilities(liabilities_data);
+
+	let trade_lines = liabilities.trade_lines();
+
+	let trade_line = pipe(
+		map(TradeLine),
+		map((tl) => tl.values())
+	)(trade_lines);
+
+	inspect(trade_lines);
+
+	return null;
 };
 
 export default function NewPersonalCreditReport() {

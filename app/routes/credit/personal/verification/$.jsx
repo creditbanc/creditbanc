@@ -59,12 +59,6 @@ export const loader = async ({ request }) => {
 	let clientKey = url.searchParams.get("clientKey");
 	const appKey = "F5C7226A-4F96-43BF-B748-09278FFE0E36";
 
-	// const options = {
-	// 	method: "GET",
-	// 	url: `https://sandbox.array.io/api/authenticate/v2?appKey=${appKey}&clientKey=${clientKey}&provider1=tui&provider2=exp&provider3=efx`,
-	// 	headers: { accept: "application/json" },
-	// };
-
 	var options = {
 		method: "get",
 		maxBodyLength: Infinity,
@@ -216,7 +210,7 @@ const Heading = () => {
 	);
 };
 
-export default function PersonalCreditReportQuestions() {
+export default function Verification() {
 	const questions = useLoaderData();
 	const setQuestions = useVerificationQuestionsStore(
 		(state) => state.setQuestions
