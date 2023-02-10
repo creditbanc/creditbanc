@@ -500,6 +500,62 @@ const TradeLine = ({ trade_line }) => {
 					</div>
 					<div className="flex flex-col sm:flex-row py-2">
 						<div className="text-sm font-medium text-black flex flex-col justify-center w-[150px] mb-1 sm:mb-0">
+							Past due
+						</div>
+						<div className="text-sm text-gray-900 flex flex-row justify-between sm:justify-around sm:flex-grow">
+							{pipe(get("past_due_amount"), (value) => (
+								<>
+									<div className="w-[100px] sm:w-[120px]">
+										<div className=" text-gray-500 text-xs sm:hidden">
+											Transunion
+										</div>
+										<div>
+											{pipe(
+												filter({
+													source: "TransUnion",
+												}),
+												head,
+												get("value"),
+												currency.format
+											)(value)}
+										</div>
+									</div>
+									<div className="w-[100px] sm:w-[120px]">
+										<div className=" text-gray-500 text-xs sm:hidden">
+											Equifax
+										</div>
+										<div>
+											{pipe(
+												filter({
+													source: "Equifax",
+												}),
+												head,
+												get("value"),
+												currency.format
+											)(value)}
+										</div>
+									</div>
+									<div className="w-[100px] sm:w-[120px]">
+										<div className=" text-gray-500 text-xs sm:hidden">
+											Experian
+										</div>
+										<div>
+											{pipe(
+												filter({
+													source: "Experian",
+												}),
+												head,
+												get("value"),
+												currency.format
+											)(value)}
+										</div>
+									</div>
+								</>
+							))(trade_line)}
+						</div>
+					</div>
+					<div className="flex flex-col sm:flex-row py-2">
+						<div className="text-sm font-medium text-black flex flex-col justify-center w-[150px] mb-1 sm:mb-0">
 							Payment status
 						</div>
 						<div className="text-sm text-gray-900 flex flex-row justify-between sm:justify-around sm:flex-grow">

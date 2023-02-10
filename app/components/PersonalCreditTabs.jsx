@@ -11,8 +11,18 @@ function classNames(...classes) {
 }
 
 const tabs = [
-	{ name: "Personal", href: "#", icon: UserIcon, current: true },
-	{ name: "Accounts", href: "#", icon: ListBulletIcon, current: false },
+	{
+		name: "Personal",
+		href: (pathname) => "/credit/personal/personal",
+		icon: UserIcon,
+		current: true,
+	},
+	{
+		name: "Accounts",
+		href: (pathname) => "/credit/personal/accounts",
+		icon: ListBulletIcon,
+		current: false,
+	},
 ];
 
 export default function PersonalCreditTabs({ selected = "Personal" }) {
@@ -25,7 +35,7 @@ export default function PersonalCreditTabs({ selected = "Personal" }) {
 				{tabs.map((tab) => (
 					<a
 						key={tab.name}
-						href={tab.href}
+						href={tab.href()}
 						className={classNames(
 							selected == tab.name
 								? "border-indigo-500 text-indigo-600"

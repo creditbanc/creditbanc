@@ -8,7 +8,7 @@ function classNames(...classes) {
 
 export default function Nav() {
 	return (
-		<Disclosure as="nav" className="bg-white shadow">
+		<Disclosure as="nav" className="bg-white shadow top-0 sticky z-50">
 			{({ open }) => (
 				<>
 					<div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
@@ -28,20 +28,14 @@ export default function Nav() {
 								</div>
 							</div>
 
-							{/* <div className="flex space-x-8">
-								<a
-									href="#"
-									className="inline-flex items-center border-b-2 border-indigo-500 px-1 pt-1 text-sm font-medium text-gray-900"
+							<div className="flex space-x-8 items-center">
+								<button
+									type="button"
+									class="text-blue-700 hover:text-white border border-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2 text-center dark:border-blue-500 dark:text-blue-500 dark:hover:text-white dark:hover:bg-blue-600 dark:focus:ring-blue-800"
 								>
-									Personal
-								</a>
-								<a
-									href="#"
-									className="inline-flex items-center border-b-2 border-transparent px-1 pt-1 text-sm font-medium text-gray-500 hover:border-gray-300 hover:text-gray-700"
-								>
-									Business
-								</a>
-							</div> */}
+									Share
+								</button>
+							</div>
 
 							<div className="hidden sm:ml-6 sm:flex sm:items-center">
 								<button
