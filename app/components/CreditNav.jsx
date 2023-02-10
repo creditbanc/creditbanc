@@ -1,12 +1,17 @@
 import { Fragment } from "react";
 import { Disclosure, Menu, Transition } from "@headlessui/react";
 import { Bars3Icon, BellIcon, XMarkIcon } from "@heroicons/react/24/outline";
+import { useLocation } from "@remix-run/react";
 
 function classNames(...classes) {
 	return classes.filter(Boolean).join(" ");
 }
 
 export default function Nav() {
+	const location = useLocation();
+	let url = "http://localhost:3000" + location.pathname + location.search;
+	let is_sharable = url.includes("share");
+
 	return (
 		<Disclosure as="nav" className="bg-white shadow top-0 sticky z-50">
 			{({ open }) => (
@@ -28,28 +33,30 @@ export default function Nav() {
 								</div>
 							</div>
 
-							<div className="flex space-x-8 items-center">
-								<button
-									type="button"
-									className="text-blue-700  border border-blue-700  focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2 text-center dark:border-blue-500 dark:text-blue-500 dark:hover:text-white dark:hover:bg-blue-600 dark:focus:ring-blue-800 flex flex-row"
-								>
-									<svg
-										xmlns="http://www.w3.org/2000/svg"
-										fill="none"
-										viewBox="0 0 24 24"
-										strokeWidth={1.5}
-										stroke="currentColor"
-										className="w-5 h-5 mr-2"
+							{is_sharable && (
+								<div className="flex space-x-8 items-center">
+									<button
+										type="button"
+										className="text-blue-700  border border-blue-700  focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-full text-sm px-5 py-2 text-center dark:border-blue-500 dark:text-blue-500 dark:hover:text-white dark:hover:bg-blue-600 dark:focus:ring-blue-800 flex flex-row"
 									>
-										<path
-											strokeLinecap="round"
-											strokeLinejoin="round"
-											d="M13.19 8.688a4.5 4.5 0 011.242 7.244l-4.5 4.5a4.5 4.5 0 01-6.364-6.364l1.757-1.757m13.35-.622l1.757-1.757a4.5 4.5 0 00-6.364-6.364l-4.5 4.5a4.5 4.5 0 001.242 7.244"
-										/>
-									</svg>
-									<div>Share</div>
-								</button>
-							</div>
+										<svg
+											xmlns="http://www.w3.org/2000/svg"
+											fill="none"
+											viewBox="0 0 24 24"
+											strokeWidth={1.5}
+											stroke="currentColor"
+											className="w-5 h-5 mr-2"
+										>
+											<path
+												strokeLinecap="round"
+												strokeLinejoin="round"
+												d="M13.19 8.688a4.5 4.5 0 011.242 7.244l-4.5 4.5a4.5 4.5 0 01-6.364-6.364l1.757-1.757m13.35-.622l1.757-1.757a4.5 4.5 0 00-6.364-6.364l-4.5 4.5a4.5 4.5 0 001.242 7.244"
+											/>
+										</svg>
+										<div>Share</div>
+									</button>
+								</div>
+							)}
 
 							<div className="hidden sm:ml-6 sm:flex sm:items-center">
 								<button

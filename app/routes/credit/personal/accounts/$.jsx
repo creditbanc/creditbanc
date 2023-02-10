@@ -5,21 +5,16 @@ import CreditHeroGradient from "~/components/CreditHeroGradient";
 import {
 	pipe,
 	map,
-	identity,
 	flatten,
-	join,
 	uniq,
 	reject,
 	isEmpty,
 	head,
-	always,
-	reverse,
 	split,
 	take,
 } from "ramda";
-import { all, findBy, get, matching, includes, mod, filter } from "shades";
-
-import { inspect, mapIndexed, currency } from "~/utils/helpers";
+import { all, get, filter } from "shades";
+import { mapIndexed, currency } from "~/utils/helpers";
 import {
 	Liabilities,
 	TradeLine as Tradeline,
@@ -28,7 +23,6 @@ import {
 import { useLoaderData } from "@remix-run/react";
 
 export const loader = async ({ request }) => {
-	console.log("loaderrrrr");
 	let liabilities = Liabilities(liabilities_data);
 
 	let trade_lines = pipe(

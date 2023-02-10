@@ -32,7 +32,7 @@ function classNames(...classes) {
 }
 
 const SelectComponent = ({ roles = [], onSelectRole, selected_role }) => {
-	let location = useLocation();
+	// let location = useLocation();
 	// console.log("SelectComponent");
 	// console.log(roles);
 	// console.log(selected_role);
@@ -143,7 +143,9 @@ export default function NewLink() {
 	const url = new URL(current_url);
 	const origin = url.origin;
 	let [shareLink, setShareLink] = useState(
-		origin + to_resource_pathname(location.pathname)
+		origin +
+			"/credit/personal/personal" +
+			to_resource_pathname(location.pathname)
 	);
 	const roles = pipe(keys)(permissions);
 	const [selectedRole, setSelectedRole] = useState(

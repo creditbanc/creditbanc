@@ -2,11 +2,14 @@ import PersonalCreditTabs from "~/components/PersonalCreditTabs";
 import CreditNav from "~/components/CreditNav";
 import CreditScoreHero from "~/components/CreditScoreHero";
 import CreditHeroGradient from "~/components/CreditHeroGradient";
+import { validate_action } from "~/utils/resource.server";
+import { redirect } from "@remix-run/node";
 
 export const loader = async ({ request }) => {
-	// let has_permission = await validate_action(request);
-	// console.log("has_permission", has_permission);
-	// return has_permission ? null : redirect("/");
+	let has_permission = await validate_action(request);
+	console.log("has_permission", has_permission);
+	return has_permission ? null : redirect("/");
+	// console.log(request);
 	return null;
 };
 

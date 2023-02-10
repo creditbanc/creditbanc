@@ -9,6 +9,12 @@ import { all, filter, get, mod } from "shades";
 import { useEffect } from "react";
 import { json, redirect } from "@remix-run/node";
 
+// const appKey = "F5C7226A-4F96-43BF-B748-09278FFE0E36";
+const appKey = "3F03D20E-5311-43D8-8A76-E4B5D77793BD";
+
+let api_url = "https://sandbox.array.io/api/authenticate/v2";
+// let api_url = 'https://array.io/api/authenticate/v2'
+
 let mapIndexed = addIndex(map);
 
 const useVerificationQuestionsStore = create((set) => ({
@@ -57,12 +63,11 @@ export const action = async ({ request }) => {
 export const loader = async ({ request }) => {
 	const url = new URL(request.url);
 	let clientKey = url.searchParams.get("clientKey");
-	const appKey = "F5C7226A-4F96-43BF-B748-09278FFE0E36";
 
 	var options = {
 		method: "get",
 		maxBodyLength: Infinity,
-		url: `https://array.io/api/authenticate/v2?appKey=${appKey}&clientKey=${clientKey}&provider1=tui&provider2=efx&provider3=exp`,
+		url: `${api_url}?appKey=${appKey}&clientKey=${clientKey}&provider1=tui&provider2=efx&provider3=exp`,
 		headers: {},
 	};
 

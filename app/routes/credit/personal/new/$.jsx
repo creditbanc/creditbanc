@@ -30,8 +30,11 @@ const useReportStore = create((set) => ({
 		set((state) => pipe(mod("form", ...path)(() => value))(state)),
 }));
 
-const appKey = "F5C7226A-4F96-43BF-B748-09278FFE0E36";
-// const appKey = "3F03D20E-5311-43D8-8A76-E4B5D77793BD";
+// const appKey = "F5C7226A-4F96-43BF-B748-09278FFE0E36";
+const appKey = "3F03D20E-5311-43D8-8A76-E4B5D77793BD";
+
+let api_url = "https://sandbox.array.io/api/authenticate/v2";
+// let api_url = 'https://array.io/api/authenticate/v2'
 
 let test_data_one = {
 	appKey,

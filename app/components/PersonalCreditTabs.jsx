@@ -5,6 +5,7 @@ import {
 	UsersIcon,
 	ListBulletIcon,
 } from "@heroicons/react/20/solid";
+import { useLocation } from "@remix-run/react";
 
 function classNames(...classes) {
 	return classes.filter(Boolean).join(" ");
@@ -13,19 +14,24 @@ function classNames(...classes) {
 const tabs = [
 	{
 		name: "Personal",
-		href: (pathname) => "/credit/personal/personal",
+		href: ({ pathname = "", search = "" } = {}) =>
+			"/credit/personal/personal" + search,
 		icon: UserIcon,
 		current: true,
 	},
 	{
 		name: "Accounts",
-		href: (pathname) => "/credit/personal/accounts",
+		href: ({ pathname = "", search = "" } = {}) =>
+			"/credit/personal/accounts" + search,
 		icon: ListBulletIcon,
 		current: false,
 	},
 ];
 
 export default function PersonalCreditTabs({ selected = "Personal" }) {
+	let location = useLocation();
+	let search_params = location.search;
+
 	return (
 		<div className="border-b  border-gray-200 ">
 			<nav
@@ -35,7 +41,7 @@ export default function PersonalCreditTabs({ selected = "Personal" }) {
 				{tabs.map((tab) => (
 					<a
 						key={tab.name}
-						href={tab.href()}
+						href={tab.href({ search: search_params })}
 						className={classNames(
 							selected == tab.name
 								? "border-indigo-500 text-indigo-600"
