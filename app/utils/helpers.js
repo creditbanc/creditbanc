@@ -17,9 +17,20 @@ import {
 	curry,
 	head,
 	tail,
+	addIndex,
+	map,
 } from "ramda";
 const util = require("util");
 import { get } from "shades";
+
+export const mapIndexed = addIndex(map);
+
+export const currency = new Intl.NumberFormat("en-US", {
+	style: "currency",
+	currency: "USD",
+	minimumFractionDigits: 0,
+	maximumFractionDigits: 0,
+});
 
 export const just = curry((filter_array, array) =>
 	pipe(filter((value) => includes(value, filter_array)))(array)

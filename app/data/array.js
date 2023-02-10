@@ -6478,14 +6478,21 @@ export const TradeLine = (trade_line) => {
 			}))
 		)(trade_line);
 
+	let current_rating_map = {
+		CollectionOrChargeOff: "Charge Off",
+	};
+
 	const current_rating = () =>
 		pipe(
 			mod(all)(pick(["_CURRENT_RATING", "source"])),
 			map((value) => ({
 				source: value.source,
-				current_rating: tryCatch(
-					pipe(get("_CURRENT_RATING", "@_Type")),
-					always("")
+				value: pipe(
+					tryCatch(
+						pipe(get("_CURRENT_RATING", "@_Type")),
+						always("")
+					),
+					(value) => current_rating_map[value] || value
 				)(value),
 			}))
 		)(trade_line);
