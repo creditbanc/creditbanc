@@ -110,7 +110,6 @@ export const get_resource_id = (uri) => {
 export const is_root_path_p = (uri) => {
 	let res = pipe(
 		to_resource_path_array,
-		// inspect,
 		just(["e", "g", "d", "f"]),
 		length,
 		equals(1)
