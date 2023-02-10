@@ -4,12 +4,19 @@ import CreditScoreHero from "~/components/CreditScoreHero";
 import CreditHeroGradient from "~/components/CreditHeroGradient";
 import { validate_action } from "~/utils/resource.server";
 import { redirect } from "@remix-run/node";
+import { get_user } from "~/utils/auth.server";
 
 export const loader = async ({ request }) => {
-	let has_permission = await validate_action(request);
-	console.log("has_permission", has_permission);
-	return has_permission ? null : redirect("/");
-	// console.log(request);
+	let user = await get_user(request);
+	console.log("user");
+	console.log(user);
+
+	if (!user) {
+		let has_permission = await validate_action(request);
+		console.log("has_permission", has_permission);
+		return has_permission ? null : redirect("/");
+	}
+
 	return null;
 };
 

@@ -71,6 +71,8 @@ const build_resource_path = ({ resource_id, pathname }) => {
 	// console.log("build_resource_path");
 
 	const is_root_path = pipe(is_root_path_p)(pathname);
+	// console.log("is_root_path", is_root_path);
+	// console.log("pathname", pathname);
 	if (is_root_path) {
 		return build_group_path({ pathname, resource_id });
 	} else {

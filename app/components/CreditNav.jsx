@@ -1,7 +1,8 @@
 import { Fragment } from "react";
 import { Disclosure, Menu, Transition } from "@headlessui/react";
 import { Bars3Icon, BellIcon, XMarkIcon } from "@heroicons/react/24/outline";
-import { useLocation } from "@remix-run/react";
+import { Link, useLocation } from "@remix-run/react";
+import { to_resource_pathname } from "~/utils/helpers";
 
 function classNames(...classes) {
 	return classes.filter(Boolean).join(" ");
@@ -10,7 +11,9 @@ function classNames(...classes) {
 export default function Nav() {
 	const location = useLocation();
 	let url = "http://localhost:3000" + location.pathname + location.search;
+	let resource_pathname = to_resource_pathname(url);
 	let is_sharable = url.includes("share");
+	let share_link = "http://localhost:3000/links/new" + resource_pathname;
 
 	return (
 		<Disclosure as="nav" className="bg-white shadow top-0 sticky z-50">
@@ -53,7 +56,7 @@ export default function Nav() {
 												d="M13.19 8.688a4.5 4.5 0 011.242 7.244l-4.5 4.5a4.5 4.5 0 01-6.364-6.364l1.757-1.757m13.35-.622l1.757-1.757a4.5 4.5 0 00-6.364-6.364l-4.5 4.5a4.5 4.5 0 001.242 7.244"
 											/>
 										</svg>
-										<div>Share</div>
+										<Link to={share_link}>Share</Link>
 									</button>
 								</div>
 							)}
