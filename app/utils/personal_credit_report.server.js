@@ -5,11 +5,11 @@ import { credit_report_data, CreditReport, Liabilities } from "~/data/array";
 export const create = async ({ group_id }) => {
 	if (!group_id) throw new Error("group_id is required");
 
-	let credit_report = CreditReport(credit_report_data).value();
+	let credit_report = CreditReport(credit_report_data);
 	let liabilities = Liabilities(credit_report.liabilities());
 	let trade_lines = liabilities.trade_lines();
 
-	const credit_report_record = await prisma.credit_report.create({
+	const credit_report_record = await prisma.personal_credit_report.create({
 		data: {
 			trade_lines,
 		},
@@ -34,12 +34,20 @@ export const create = async ({ group_id }) => {
 		},
 	});
 
-	await prisma.credit_report.update({
+	await prisma.personal_credit_report.update({
 		where: { id: credit_report_id },
 		data: { resource_id: credit_report_resource.id },
 	});
 
 	return { type: "file", file: credit_report_record, credit_report_resource };
+};
+
+export const get_doc = async ({ resource_id }) => {
+	let credit_report = await prisma.personal_credit_report.findFirst({
+		where: { id: resource_id },
+	});
+
+	return credit_report;
 };
 
 export const delete_all = async () => {

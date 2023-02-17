@@ -291,6 +291,8 @@ export const get_docs = async ({ resource_id }) => {
 		reject(is_group)
 	)(resource);
 
+	console.log("subscription_ids", subscription_ids);
+
 	const get_resources = async (subscription_ids) => {
 		let resources = await Promise.all(
 			subscription_ids.map(async (subscription) => {

@@ -14,23 +14,25 @@ import {
 	take,
 } from "ramda";
 import { all, get, filter } from "shades";
-import { mapIndexed, currency } from "~/utils/helpers";
-import {
-	Liabilities,
-	TradeLine as Tradeline,
-	credit_report_data,
-	CreditReport,
-} from "~/data/array";
+import { mapIndexed, currency, get_file_id } from "~/utils/helpers";
+import { TradeLine as Tradeline } from "~/data/array";
 import { useLoaderData } from "@remix-run/react";
+import { get_doc as get_credit_report } from "~/utils/personal_credit_report.server";
+import { inspect } from "~/utils/helpers";
 
 export const loader = async ({ request }) => {
-	let credit_report = CreditReport(credit_report_data).value();
-	let liabilities = Liabilities(credit_report.liabilities());
+	let url = new URL(request.url);
+	let pathname = url.pathname;
+	let report_id = get_file_id(pathname);
+
+	let credit_report = await get_credit_report({
+		resource_id: report_id,
+	});
 
 	let trade_lines = pipe(
 		map(Tradeline),
 		map((tl) => tl.values())
-	)(liabilities.trade_lines());
+	)(credit_report.trade_lines);
 
 	return trade_lines;
 };

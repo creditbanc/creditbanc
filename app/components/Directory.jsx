@@ -354,7 +354,7 @@ const ResourceFile = ({ resource }) => {
 						{is_directory_or_group ? <FolderIcon /> : <FileIcon />}
 
 						<p className="truncate text-sm text-gray-800">
-							{resource.name}
+							{resource.name || "Daniel Arzuaga"}
 						</p>
 					</Link>
 				</div>

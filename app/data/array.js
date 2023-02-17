@@ -13,6 +13,54 @@ import { inspect } from "~/utils/helpers";
 
 const mapIndexed = addIndex(map);
 
+export const appKey = "3F03D20E-5311-43D8-8A76-E4B5D77793BD";
+// export const appKey = "F5C7226A-4F96-43BF-B748-09278FFE0E36";
+
+export const api_url = "https://sandbox.array.io/api/authenticate/v2";
+// export const api_url = 'https://array.io/api/authenticate/v2'
+
+export const test_identity_one = {
+	appKey,
+	ssn: "053723148",
+	firstName: "MATHEW",
+	lastName: "MEEHAN",
+	dob: "1981-06-17",
+	address: {
+		street: "9315 trinana circle",
+		city: "Winter garden",
+		state: "FL",
+		zip: "34787",
+	},
+};
+
+export const test_identity_two = {
+	appKey,
+	ssn: "666285344",
+	firstName: "DONALD",
+	lastName: "BLAIR",
+	dob: "1939-09-20",
+	address: {
+		street: "3627 W POPLAR ST",
+		city: "SAN ANTONIO",
+		state: "TX",
+		zip: "78228",
+	},
+};
+
+export const test_identity_three = {
+	appKey,
+	ssn: "594794805",
+	firstName: "daniel",
+	lastName: "arzuaga",
+	dob: "1989-09-28",
+	address: {
+		street: "16555 sw 47th pl rd",
+		city: "ocala",
+		state: "fl",
+		zip: "34481",
+	},
+};
+
 export const credit_report_data = {
 	CREDIT_RESPONSE: {
 		"@MISMOVersionID": "2.4",

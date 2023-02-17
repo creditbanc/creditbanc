@@ -5,9 +5,10 @@ import { pipe } from "ramda";
 import { mod } from "shades";
 import { create } from "zustand";
 import { useSubmit } from "@remix-run/react";
-import { inspect } from "~/utils/helpers";
+import { inspect, to_resource_pathname, get_group_id } from "~/utils/helpers";
 import { json, redirect } from "@remix-run/node";
 import { create as create_personal_credit_report } from "~/utils/personal_credit_report.server";
+import { test_identity_two } from "~/data/array";
 
 const useReportStore = create((set) => ({
 	form: {
@@ -31,61 +32,13 @@ const useReportStore = create((set) => ({
 		set((state) => pipe(mod("form", ...path)(() => value))(state)),
 }));
 
-// const appKey = "F5C7226A-4F96-43BF-B748-09278FFE0E36";
-const appKey = "3F03D20E-5311-43D8-8A76-E4B5D77793BD";
-
-let api_url = "https://sandbox.array.io/api/authenticate/v2";
-// let api_url = 'https://array.io/api/authenticate/v2'
-
-let test_data_one = {
-	appKey,
-	ssn: "053723148",
-	firstName: "MATHEW",
-	lastName: "MEEHAN",
-	dob: "1981-06-17",
-	address: {
-		street: "9315 trinana circle",
-		city: "Winter garden",
-		state: "FL",
-		zip: "34787",
-	},
-};
-
-let test_data_two = {
-	appKey,
-	ssn: "666285344",
-	firstName: "DONALD",
-	lastName: "BLAIR",
-	dob: "1939-09-20",
-	address: {
-		street: "3627 W POPLAR ST",
-		city: "SAN ANTONIO",
-		state: "TX",
-		zip: "78228",
-	},
-};
-
-let test_data_three = {
-	appKey,
-	ssn: "594794805",
-	firstName: "daniel",
-	lastName: "arzuaga",
-	dob: "1989-09-28",
-	address: {
-		street: "16555 sw 47th pl rd",
-		city: "ocala",
-		state: "fl",
-		zip: "34481",
-	},
-};
-
 export const action = async ({ request }) => {
 	console.log("new_credit_action");
-	console.log(request.url);
 
+	const group_id = get_group_id(request.url);
 	const form = await request.formData();
 	const payload = JSON.parse(form.get("payload"));
-	let data = test_data_two;
+	let data = test_identity_two;
 
 	const options = {
 		method: "POST",
@@ -94,18 +47,14 @@ export const action = async ({ request }) => {
 			accept: "application/json",
 			"content-type": "application/json",
 		},
-		data: test_data_two,
+		data,
 	};
 
 	try {
-		// let response = await axios(options);
-		// let { clientKey, authToken } = response.data;
-		// console.log("response");
-		// console.log(response.data);
-
-		// let group_id = ''
-
-		// await create_personal_credit_report({})
+		let response = await axios(options);
+		let { clientKey, authToken } = response.data;
+		console.log("response");
+		console.log(response.data);
 
 		return redirect(
 			`/credit/personal/verification?clientKey=${clientKey}&authToken=${authToken}`
@@ -135,6 +84,7 @@ const Form = () => {
 	const onSubmit = (e) => {
 		e.preventDefault();
 		console.log("submitting");
+		let resource_path = to_resource_pathname(window.location.pathname);
 
 		let { dob, ...rest } = form;
 		let dob_string = `${dob.year}-${dob.month}-${dob.day}`;
@@ -144,7 +94,7 @@ const Form = () => {
 			{ payload },
 			{
 				method: "post",
-				action: "/credit/personal/new/1",
+				action: "/credit/personal/new" + resource_path,
 			}
 		);
 	};
