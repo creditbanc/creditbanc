@@ -16,7 +16,7 @@ const tabs = [
 	{
 		name: "Personal",
 		href: ({ pathname = "", search = "" } = {}) =>
-			"/credit/personal/personal" +
+			"/credit/personal/report/personal" +
 			to_resource_pathname(pathname) +
 			search,
 		icon: UserIcon,
@@ -25,7 +25,7 @@ const tabs = [
 	{
 		name: "Accounts",
 		href: ({ pathname = "", search = "" } = {}) =>
-			"/credit/personal/accounts" +
+			"/credit/personal/report/accounts" +
 			to_resource_pathname(pathname) +
 			search,
 		icon: ListBulletIcon,
