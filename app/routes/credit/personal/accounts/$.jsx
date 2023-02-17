@@ -18,12 +18,14 @@ import { mapIndexed, currency } from "~/utils/helpers";
 import {
 	Liabilities,
 	TradeLine as Tradeline,
-	liabilities_data,
+	credit_report_data,
+	CreditReport,
 } from "~/data/array";
 import { useLoaderData } from "@remix-run/react";
 
 export const loader = async ({ request }) => {
-	let liabilities = Liabilities(liabilities_data);
+	let credit_report = CreditReport(credit_report_data).value();
+	let liabilities = Liabilities(credit_report.liabilities());
 
 	let trade_lines = pipe(
 		map(Tradeline),

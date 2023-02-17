@@ -7,6 +7,7 @@ import { create } from "zustand";
 import { useSubmit } from "@remix-run/react";
 import { inspect } from "~/utils/helpers";
 import { json, redirect } from "@remix-run/node";
+import { create as create_personal_credit_report } from "~/utils/personal_credit_report.server";
 
 const useReportStore = create((set) => ({
 	form: {
@@ -80,9 +81,11 @@ let test_data_three = {
 
 export const action = async ({ request }) => {
 	console.log("new_credit_action");
+	console.log(request.url);
 
 	const form = await request.formData();
 	const payload = JSON.parse(form.get("payload"));
+	let data = test_data_two;
 
 	const options = {
 		method: "POST",
@@ -95,10 +98,15 @@ export const action = async ({ request }) => {
 	};
 
 	try {
-		let response = await axios(options);
-		let { clientKey, authToken } = response.data;
-		console.log("response");
-		console.log(response.data);
+		// let response = await axios(options);
+		// let { clientKey, authToken } = response.data;
+		// console.log("response");
+		// console.log(response.data);
+
+		// let group_id = ''
+
+		// await create_personal_credit_report({})
+
 		return redirect(
 			`/credit/personal/verification?clientKey=${clientKey}&authToken=${authToken}`
 		);

@@ -8,8 +8,8 @@ import { get_user } from "~/utils/auth.server";
 
 export const loader = async ({ request }) => {
 	let user = await get_user(request);
-	console.log("user");
-	console.log(user);
+	// console.log("user");
+	// console.log(user);
 
 	if (!user) {
 		let has_permission = await validate_action(request);

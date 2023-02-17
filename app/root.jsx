@@ -21,7 +21,7 @@ import {
 import {
 	create as create_credit_report,
 	delete_all as delete_all_credit_reports,
-} from "~/utils/credit_report.server";
+} from "~/utils/personal_credit_report.server";
 import {
 	delete_docs as delete_roles,
 	delete_all as delete_all_roles,

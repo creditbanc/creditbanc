@@ -1,5 +1,5 @@
 import { all, get, mod } from "shades";
-import { pipe, flatten, uniqBy, prop, pick, map } from "ramda";
+import { pipe, flatten, uniqBy, prop, pick, map, reject } from "ramda";
 import { prisma } from "./prisma.server";
 const util = require("util");
 import {
@@ -281,17 +281,21 @@ export const get_docs = async ({ resource_id }) => {
 	// console.log("resource");
 	// inspect(resource);
 
+	const is_group = (subscription) => subscription.type == "group";
+
 	let subscription_ids = pipe(
 		get(all, "subscriptions"),
 		flatten,
 		uniqBy(prop("id")),
-		mod(all)(pick(["id", "type", "model", "resource_path_id"]))
+		mod(all)(pick(["id", "type", "model", "resource_path_id"])),
+		reject(is_group)
 	)(resource);
 
 	const get_resources = async (subscription_ids) => {
 		let resources = await Promise.all(
 			subscription_ids.map(async (subscription) => {
 				let { model, type, resource_path_id } = subscription;
+
 				let resource = await prisma[model].findFirst({
 					where: { id: resource_path_id },
 				});

@@ -58,16 +58,6 @@ model Group {
   subscriber_ids   String[] @db.ObjectId
 }
 
-// model Role {
-// 	  id          String    @id @default(auto()) @map("_id") @db.ObjectId
-//   created_at  DateTime  @default(now())
-//   updated_at  DateTime  @updatedAt
-//   resource_id String    @unique @db.ObjectId
-//   resource    Resource? @relation(fields: [resource_id], references: [id])
-//   entity_id String? @db.ObjectId 
-//   entity Entity? @relation(fields: [entity_id], references: [id])
-// }
-
 model Roles {
   id           String     @id @default(auto()) @map("_id") @db.ObjectId
   created_at   DateTime   @default(now())
@@ -101,20 +91,18 @@ model Link {
   hash       String
 }
 
-// model Settings {
-//   id         String   @id @default(auto()) @map("_id") @db.ObjectId
-//   created_at DateTime @default(now())
-//   updated_at DateTime @updatedAt
-//   role_id    String   @unique @db.ObjectId
-//   role       Roles    @relation(fields: [role_id], references: [id], onDelete: Cascade)
-//   can_view   Boolean?
-// }
-
-model credit_report {
+model personal_credit_report {
   id          String   @id @default(auto()) @map("_id") @db.ObjectId
   created_at  DateTime @default(now())
   updated_at  DateTime @updatedAt
-  ssn         String?
   resource_id String?  @db.ObjectId
-  name        String
+  first_name  String?
+  last_name   String?
+  ssn         String?
+  dob         String?
+  street      String?
+  city        String?
+  state       String?
+  zip         String?
+  trade_lines Json?
 }

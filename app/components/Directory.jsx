@@ -1,5 +1,15 @@
 import { Link, useLocation } from "@remix-run/react";
-import { equals, join, map, pipe, reject, split, __, includes } from "ramda";
+import {
+	equals,
+	join,
+	map,
+	pipe,
+	reject,
+	split,
+	__,
+	includes,
+	slice,
+} from "ramda";
 import Nav from "~/components/Nav";
 import { Fragment } from "react";
 import { Popover, Transition } from "@headlessui/react";
@@ -55,63 +65,6 @@ const SettingsIcon = () => {
 	);
 };
 
-const build_group_path = ({ pathname, resource_id }) => {
-	return "/group" + to_resource_pathname(pathname) + `/g/${resource_id}`;
-};
-
-const build_file_path = ({ pathname, resource_id }) => {
-	return (
-		"/credit/personal/personal" +
-		to_resource_pathname(pathname) +
-		`/f/${resource_id}`
-	);
-};
-
-const build_resource_path = ({ resource_id, pathname }) => {
-	// console.log("build_resource_path");
-
-	const is_root_path = pipe(is_root_path_p)(pathname);
-	// console.log("is_root_path", is_root_path);
-	// console.log("pathname", pathname);
-	if (is_root_path) {
-		return build_group_path({ pathname, resource_id });
-	} else {
-		return build_file_path({ pathname, resource_id });
-	}
-};
-
-const build_action_path = ({ current_path, resource_action_path }) => {
-	let path = pipe(split("/"), reject(equals("")), join("/"))(current_path);
-	return `/${resource_action_path}/${path}`;
-};
-
-const resource_actions = [
-	{
-		text: "New Group",
-		key: "new_group",
-		href: (pathname) =>
-			build_action_path({
-				current_path: pathname,
-				resource_action_path: "new",
-			}),
-	},
-	{
-		text: "New Credit Report",
-		key: "new_credit_report",
-		href: (pathname) =>
-			"/credit/personal/new" +
-			build_action_path({
-				current_path: pathname,
-				resource_action_path: "",
-			}),
-	},
-	{
-		text: "Share",
-		key: "new_link",
-		href: (pathname) => "/links/new" + to_resource_pathname(pathname),
-	},
-];
-
 const ShareIcon = () => (
 	<svg
 		xmlns="http://www.w3.org/2000/svg"
@@ -152,6 +105,71 @@ const GroupIcon = () => (
 	</svg>
 );
 
+const build_group_path = ({ pathname, resource_id }) => {
+	return "/group" + to_resource_pathname(pathname) + `/g/${resource_id}`;
+};
+
+const build_file_path = ({ pathname, resource_id }) => {
+	return (
+		"/credit/personal/personal" +
+		to_resource_pathname(pathname) +
+		`/f/${resource_id}`
+	);
+};
+
+const build_resource_path = ({ resource_id, pathname }) => {
+	// console.log("build_resource_path");
+
+	const is_root_path = pipe(is_root_path_p)(pathname);
+	// console.log("is_root_path", is_root_path);
+	// console.log("pathname", pathname);
+	if (is_root_path) {
+		return build_group_path({ pathname, resource_id });
+	} else {
+		return build_file_path({ pathname, resource_id });
+	}
+};
+
+const build_action_path = ({ current_path, resource_action_path }) => {
+	let path = pipe(split("/"), reject(equals("")), join("/"))(current_path);
+	return `/${path}`;
+};
+
+const group_actions = [
+	// {
+	// 	text: "New Group",
+	// 	key: "new_group",
+	// 	href: (pathname) =>
+	// 		build_action_path({
+	// 			current_path: pathname,
+	// 			resource_action_path: "new",
+	// 		}),
+	// },
+	{
+		text: "New Credit Report",
+		key: "new_credit_report",
+		href: (pathname) =>
+			"/credit/personal/new" +
+			build_action_path({
+				current_path: pathname,
+				resource_action_path: "",
+			}),
+	},
+	{
+		text: "Share",
+		key: "new_link",
+		href: (pathname) => "/links/new" + to_resource_pathname(pathname),
+	},
+];
+
+const resource_actions = [
+	{
+		text: "Share",
+		key: "new_link",
+		href: (pathname) => "/links/new" + to_resource_pathname(pathname),
+	},
+];
+
 let icons = {
 	new_link: ShareIcon,
 	new_credit_report: ReportIcon,
@@ -162,7 +180,7 @@ function classNames(...classes) {
 	return classes.filter(Boolean).join(" ");
 }
 
-const ResourceActionsMenu = ({ resource }) => {
+const ResourceFileActionsMenu = ({ resource }) => {
 	const location = useLocation();
 	let pathname = location.pathname;
 	// console.log("ResourceActionsMenu");
@@ -238,7 +256,7 @@ const ResourceActionsMenu = ({ resource }) => {
 	);
 };
 
-const ResourceGroupsMenu = ({ resource_id }) => {
+const ResourceGroupActionsMenu = ({ resource_id }) => {
 	const location = useLocation();
 	let pathname = location.pathname;
 
@@ -284,12 +302,9 @@ const ResourceGroupsMenu = ({ resource_id }) => {
 										</h3>
 									</div>
 									<div className="relative grid  bg-white py-2">
-										{resource_actions.map((item, idx) => (
+										{group_actions.map((item, idx) => (
 											<Link
-												to={
-													item.href(pathname) +
-													`/f/${resource_id}`
-												}
+												to={item.href(pathname)}
 												key={idx}
 												className="flex flex-row transition duration-150 ease-in-out hover:bg-gray-50 px-5 py-2 cursor-pointer text-sm"
 											>
@@ -344,7 +359,7 @@ const ResourceFile = ({ resource }) => {
 					</Link>
 				</div>
 				<div className="flex flex-row items-center">
-					<ResourceGroupsMenu resource_id={resource.id} />
+					<ResourceFileActionsMenu resource_id={resource.id} />
 					<Link
 						to={"/roles" + to_resource_pathname(location.pathname)}
 						className="ml-2 flex flex-col cursor-pointer"
@@ -382,7 +397,7 @@ export default function Directory({ data }) {
 								</Link>
 							</div>
 						</div>
-						<ResourceActionsMenu />
+						<ResourceGroupActionsMenu />
 					</div>
 				</div>
 				<ul

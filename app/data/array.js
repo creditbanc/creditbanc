@@ -1,4 +1,4 @@
-import { get, filter, all, mod } from "shades";
+import { get, all, mod } from "shades";
 import {
 	pipe,
 	map,
@@ -13,7 +13,7 @@ import { inspect } from "~/utils/helpers";
 
 const mapIndexed = addIndex(map);
 
-const credmo3bReportScore = {
+export const credit_report_data = {
 	CREDIT_RESPONSE: {
 		"@MISMOVersionID": "2.4",
 		"@CreditResponseID": "CRRep0001",
@@ -6349,6 +6349,18 @@ const credmo3bReportScore = {
 	},
 };
 
+export const CreditReport = (credit_report) => {
+	const value = () => credit_report;
+
+	const liabilities = () =>
+		pipe(get("CREDIT_RESPONSE", "CREDIT_LIABILITY"))(credit_report);
+
+	return {
+		liabilities,
+		value,
+	};
+};
+
 export const Liabilities = (liabilities) => {
 	const trade_lines = () =>
 		pipe(
@@ -6612,7 +6624,3 @@ export const TradeLine = (trade_line) => {
 		values,
 	};
 };
-
-export const liabilities_data = pipe(
-	get("CREDIT_RESPONSE", "CREDIT_LIABILITY")
-)(credmo3bReportScore);
