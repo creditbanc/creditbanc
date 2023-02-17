@@ -1,9 +1,10 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useLayoutEffect } from "react";
 import { Outlet, useLocation, useSearchParams } from "@remix-run/react";
 import CreditNav from "~/components/CreditNav";
 import { useNavStore } from "~/stores/useNavStore";
 import { useLayoutStore } from "~/stores/useLayoutStore";
 import useWindowSize from "~/hooks/useWindowSize";
+import useResizeObserver from "@react-hook/resize-observer";
 
 let ChevronLeftIcon = () => {
 	return (
@@ -46,7 +47,6 @@ let ChevronRightIcon = () => {
 };
 
 const LeftNav = () => {
-	// let collapsed = useNavStore((state) => state.collapsed);
 	let [searchParams, setSearchParams] = useSearchParams();
 	let setCollapsed = useNavStore((state) => state.set_collapsed);
 	let collapesedNavClasses = `w-[80px]`;
@@ -78,32 +78,28 @@ const LeftNav = () => {
 	);
 };
 
+function useSize(target) {
+	const [size, setSize] = useState();
+
+	useLayoutEffect(() => {
+		target && setSize(target.getBoundingClientRect());
+	}, [target]);
+
+	// Where the magic happens
+	useResizeObserver(target, (entry) => setSize(entry.contentRect));
+	return size;
+}
+
 export default function CreditReport() {
-	let contentRef = useRef();
+	const [target, setTarget] = useState();
+	const elmSize = useSize(target);
 	let setContentWidth = useLayoutStore((state) => state.set_content_width);
-	let contentWidth = useLayoutStore((state) => state.content_width);
-	let collapsed = useNavStore((state) => state.collapsed);
-	const size = useWindowSize();
 
-	useEffect(() => {
-		setContentWidth(contentRef.current.offsetWidth);
-	}, [contentWidth]);
-
-	useEffect(() => {
-		setTimeout(() => {
-			setContentWidth(contentRef.current.offsetWidth);
-		}, 200);
-	}, [collapsed]);
-
-	useEffect(() => {
-		let width = size.width;
-
-		if (collapsed) {
-			setContentWidth(width - 80);
-		} else {
-			setContentWidth(width - 200);
+	useLayoutEffect(() => {
+		if (elmSize) {
+			setContentWidth(elmSize.width);
 		}
-	}, [size]);
+	}, [elmSize]);
 
 	return (
 		<div className="flex flex-col w-full h-full">
@@ -112,7 +108,7 @@ export default function CreditReport() {
 				<LeftNav />
 				<div
 					className="flex flex-col flex-1 overflow-scroll"
-					ref={contentRef}
+					ref={setTarget}
 				>
 					<Outlet />
 				</div>

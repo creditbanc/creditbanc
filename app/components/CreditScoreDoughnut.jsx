@@ -75,26 +75,30 @@ export default function CreditScoreDoughnut({
 	const size = useWindowSize();
 	const [chartStyle, setChartStyle] = useState({});
 	const content_width = useLayoutStore((state) => state.content_width);
+	const doughnutRef = useRef(null);
 
 	useEffect(() => {
-		if (chartContainerRef.current) {
-			let dimmensions = chartContainerRef.current.offsetWidth;
+		let dimmensions = chartContainerRef.current.offsetWidth;
 
-			setChartStyle({
-				width: dimmensions,
-				height: dimmensions,
-				paddingBottom: dimmensions * 0.13,
-			});
-		}
-	}, [size, content_width]);
+		setChartStyle({
+			width: dimmensions,
+			height: dimmensions,
+			paddingBottom: dimmensions * 0.13,
+		});
+	}, [content_width, size]);
 
 	return (
 		<div
-			className={`outer px-[5px] w-full ${classNames} relative`}
+			className={`px-[5px] w-full ${classNames} relative flex flex-col items-center `}
 			ref={chartContainerRef}
 			style={{ height: chartStyle.height }}
 		>
-			<Doughnut className="absolute" data={data} options={options} />
+			<Doughnut
+				className="absolute"
+				data={data}
+				options={options}
+				ref={doughnutRef}
+			/>
 			<Doughnut className="absolute" data={data2} options={options} />
 			<div
 				className="absolute flex flex-col items-center justify-end -mt-[15px]"
