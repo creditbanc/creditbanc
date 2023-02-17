@@ -2,6 +2,8 @@ import { useEffect, useRef, useState } from "react";
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
 import { Doughnut } from "react-chartjs-2";
 import useWindowSize from "~/hooks/useWindowSize";
+import { useNavStore } from "~/stores/useNavStore";
+import { useLayoutStore } from "~/stores/useLayoutStore";
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
@@ -72,21 +74,23 @@ export default function CreditScoreDoughnut({
 	const chartContainerRef = useRef(null);
 	const size = useWindowSize();
 	const [chartStyle, setChartStyle] = useState({});
+	const content_width = useLayoutStore((state) => state.content_width);
 
 	useEffect(() => {
 		if (chartContainerRef.current) {
 			let dimmensions = chartContainerRef.current.offsetWidth;
+
 			setChartStyle({
 				width: dimmensions,
 				height: dimmensions,
 				paddingBottom: dimmensions * 0.13,
 			});
 		}
-	}, [size]);
+	}, [size, content_width]);
 
 	return (
 		<div
-			className={`outer px-[5px] w-full ${classNames} `}
+			className={`outer px-[5px] w-full ${classNames} relative`}
 			ref={chartContainerRef}
 			style={{ height: chartStyle.height }}
 		>

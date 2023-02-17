@@ -1,8 +1,11 @@
+import { useEffect, useState } from "react";
 import CreditScoreDoughnut from "~/components/CreditScoreDoughnut";
+import { useLayoutStore } from "~/stores/useLayoutStore";
+import useWindowSize from "~/hooks/useWindowSize";
 
 const Single = () => {
 	return (
-		<div className="flex flex-col items-center -mt-[70px] sm:hidden">
+		<div className="flex flex-col items-center -mt-[70px]">
 			<div className="flex flex-col w-[80%]  my-[10px]">
 				<CreditScoreDoughnut
 					bureau={"Experian"}
@@ -36,31 +39,40 @@ const Single = () => {
 
 const Triple = () => {
 	return (
-		<div className="hidden sm:flex sm:flex-row sm:justify-around">
-			{/* <div className="mx-1"></div> */}
+		<div className="sm:flex sm:flex-row sm:justify-around">
 			<CreditScoreDoughnut
 				bureau={"Experian"}
-				scoreClassNames="sm:text-3xl md:text-5xl lg:text-6xl"
+				scoreClassNames="sm:text-3xl md:text-4xl lg:text-5xl"
 				bureauTitleClassNames="sm:text-base sm:text-l"
 			/>
 			<div className="mx-4"></div>
 			<CreditScoreDoughnut
 				bureau={"Equifax"}
-				scoreClassNames="sm:text-3xl md:text-5xl lg:text-6xl"
+				scoreClassNames="sm:text-3xl md:text-4xl lg:text-5xl"
 				bureauTitleClassNames="sm:text-base sm:text-l"
 			/>
 			<div className="mx-4"></div>
 			<CreditScoreDoughnut
 				bureau={"Transunion"}
-				scoreClassNames="sm:text-3xl md:text-5xl lg:text-6xl"
+				scoreClassNames="sm:text-3xl md:text-4xl lg:text-5xl"
 				bureauTitleClassNames="sm:text-base sm:text-l"
 			/>
-			{/* <div className="mx-1"></div> */}
 		</div>
 	);
 };
 
 export default function CreditScoreHero() {
+	let content_width = useLayoutStore((state) => state.content_width);
+	let [isMobile, setIsMobile] = useState(true);
+
+	useEffect(() => {
+		if (content_width > 640) {
+			setIsMobile(false);
+		} else {
+			setIsMobile(true);
+		}
+	}, [content_width]);
+
 	return (
 		<div>
 			<div className="w-full">
@@ -72,8 +84,7 @@ export default function CreditScoreHero() {
 				</p>
 			</div>
 
-			<Single />
-			<Triple />
+			{isMobile ? <Single /> : <Triple />}
 		</div>
 	);
 }

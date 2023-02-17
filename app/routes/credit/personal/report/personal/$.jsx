@@ -1,5 +1,4 @@
 import PersonalCreditTabs from "~/components/PersonalCreditTabs";
-import CreditNav from "~/components/CreditNav";
 import CreditScoreHero from "~/components/CreditScoreHero";
 import CreditHeroGradient from "~/components/CreditHeroGradient";
 import { validate_action } from "~/utils/resource.server";
@@ -74,10 +73,9 @@ const PersonalInfoCard = () => {
 	);
 };
 
-export default function BusinessCreditReport() {
+export default function Personal() {
 	return (
 		<div className="flex flex-col w-full">
-			<CreditNav />
 			<CreditHeroGradient />
 
 			<div className="flex flex-col w-full p-[10px] max-w-5xl mx-auto">
