@@ -298,7 +298,7 @@ const ResourceGroupActionsMenu = ({ resource_id }) => {
 								<div className="overflow-hidden rounded shadow-lg ring-1 ring-black ring-opacity-5 ">
 									<div className="border-b border-gray-200 bg-white px-5 py-2 ">
 										<h3 className="text-sm font-medium leading-6 text-gray-900">
-											Groups
+											Actions
 										</h3>
 									</div>
 									<div className="relative grid  bg-white py-2">
