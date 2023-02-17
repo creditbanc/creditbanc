@@ -743,7 +743,7 @@ export default function BusinessCreditReport() {
 
 	return (
 		<div className="flex flex-col w-full">
-			<CreditNav />
+			{/* <CreditNav /> */}
 			<CreditHeroGradient />
 
 			<div className="flex flex-col w-full p-[10px] max-w-5xl mx-auto">

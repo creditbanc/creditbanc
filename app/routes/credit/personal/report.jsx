@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { Outlet } from "@remix-run/react";
+import { Outlet, useLocation, useSearchParams } from "@remix-run/react";
 import CreditNav from "~/components/CreditNav";
 import { useNavStore } from "~/stores/useNavStore";
 import { useLayoutStore } from "~/stores/useLayoutStore";
@@ -46,14 +46,22 @@ let ChevronRightIcon = () => {
 };
 
 const LeftNav = () => {
-	let collapsed = useNavStore((state) => state.collapsed);
+	// let collapsed = useNavStore((state) => state.collapsed);
+	let [searchParams, setSearchParams] = useSearchParams();
 	let setCollapsed = useNavStore((state) => state.set_collapsed);
 	let collapesedNavClasses = `w-[80px]`;
 	let expandedNavClasses = `w-[220px]`;
+	let collapsed_param = searchParams.get("collapsed");
+	let collapsed = collapsed_param == "true" ? true : false;
 	let navClasses = collapsed ? collapesedNavClasses : expandedNavClasses;
+
+	useEffect(() => {
+		setCollapsed(collapsed);
+	}, []);
 
 	const onToggleNav = () => {
 		setCollapsed(!collapsed);
+		setSearchParams({ collapsed: !collapsed });
 	};
 
 	return (
@@ -70,7 +78,7 @@ const LeftNav = () => {
 	);
 };
 
-export default function Credit() {
+export default function CreditReport() {
 	let contentRef = useRef();
 	let setContentWidth = useLayoutStore((state) => state.set_content_width);
 	let contentWidth = useLayoutStore((state) => state.content_width);

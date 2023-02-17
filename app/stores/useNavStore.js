@@ -1,6 +1,6 @@
 import { create } from "zustand";
 
 export const useNavStore = create((set) => ({
-	collapsed: false,
-	set_collapsed: () => set((state) => ({ collapsed: !state.collapsed })),
+	collapsed: true,
+	set_collapsed: (collapsed) => set((state) => ({ collapsed })),
 }));
