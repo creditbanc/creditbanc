@@ -71,12 +71,15 @@ const LeftNav = () => {
 };
 
 export default function Credit() {
-	let contentRef = useRef(0);
+	let contentRef = useRef();
 	let setContentWidth = useLayoutStore((state) => state.set_content_width);
 	let contentWidth = useLayoutStore((state) => state.content_width);
-	setContentWidth(contentRef.current.offsetWidth);
 	let collapsed = useNavStore((state) => state.collapsed);
 	const size = useWindowSize();
+
+	useEffect(() => {
+		setContentWidth(contentRef.current.offsetWidth);
+	}, [contentWidth]);
 
 	useEffect(() => {
 		setTimeout(() => {
