@@ -81,7 +81,7 @@ const LeftNav = () => {
 function useSize(target) {
 	const [size, setSize] = useState();
 
-	useLayoutEffect(() => {
+	useEffect(() => {
 		target && setSize(target.getBoundingClientRect());
 	}, [target]);
 
@@ -95,7 +95,7 @@ export default function CreditReport() {
 	const elmSize = useSize(target);
 	let setContentWidth = useLayoutStore((state) => state.set_content_width);
 
-	useLayoutEffect(() => {
+	useEffect(() => {
 		if (elmSize) {
 			setContentWidth(elmSize.width);
 		}
