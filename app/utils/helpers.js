@@ -25,6 +25,10 @@ import { get } from "shades";
 
 export const mapIndexed = addIndex(map);
 
+export const truncate = curry((length, str) => {
+	return str.length > length ? `${str.substr(0, length)}...` : str;
+});
+
 export const currency = new Intl.NumberFormat("en-US", {
 	style: "currency",
 	currency: "USD",
