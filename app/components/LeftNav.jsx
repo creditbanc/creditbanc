@@ -2,7 +2,11 @@ import { useEffect } from "react";
 import { useSearchParams, useLocation, Link } from "@remix-run/react";
 import { useNavStore } from "~/stores/useNavStore";
 import { defaultTo, map, pipe } from "ramda";
-import { truncate, to_group_pathname } from "~/utils/helpers";
+import {
+	truncate,
+	to_group_pathname,
+	to_resource_pathname,
+} from "~/utils/helpers";
 
 let ChevronLeftIcon = () => {
 	return (
@@ -184,14 +188,19 @@ export default function LeftNav({ data = {} } = {}) {
 					{pipe(
 						defaultTo([]),
 						map((report) => (
-							<div
-								className="border-l border-gray-200 cursor-pointer"
+							<Link
+								className="border-l border-gray-200 cursor-pointer flex flex-row"
 								key={report.id}
+								to={
+									"/credit/personal/report/personal" +
+									to_resource_pathname(location.pathname) +
+									location.search
+								}
 							>
 								<div className="text-sm mx-2 pl-2 py-1 hover:bg-slate-100 rounded text-gray-700">
 									{truncate(17, report.id)}
 								</div>
-							</div>
+							</Link>
 						))
 					)(data.personal_credit_reports)}
 				</div>
@@ -225,16 +234,21 @@ export default function LeftNav({ data = {} } = {}) {
 					{pipe(
 						defaultTo([]),
 						map((report) => (
-							<div
-								className="border-l border-gray-200 cursor-pointer"
+							<Link
+								className="border-l border-gray-200 cursor-pointer flex flex-row"
 								key={report.id}
+								to={
+									"/credit/business/report" +
+									to_resource_pathname(location.pathname) +
+									location.search
+								}
 							>
 								<div className="text-sm mx-2 pl-2 py-1 hover:bg-slate-100 rounded text-gray-700">
 									{truncate(17, report.id)}
 								</div>
-							</div>
+							</Link>
 						))
-					)(data?.business_credit_reports)}
+					)(data.business_credit_reports)}
 				</div>
 			)}
 		</div>
