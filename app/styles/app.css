@@ -877,24 +877,16 @@ video {
   margin-right: 5px;
 }
 
+.-mb-6 {
+  margin-bottom: -1.5rem;
+}
+
 .mt-\[5px\] {
   margin-top: 5px;
 }
 
 .mb-1 {
   margin-bottom: 0.25rem;
-}
-
-.-mb-2 {
-  margin-bottom: -0.5rem;
-}
-
-.-mb-4 {
-  margin-bottom: -1rem;
-}
-
-.-mb-6 {
-  margin-bottom: -1.5rem;
 }
 
 .block {
@@ -1905,20 +1897,12 @@ video {
   padding-bottom: 1.5rem;
 }
 
-.pb-0 {
-  padding-bottom: 0px;
-}
-
 .text-left {
   text-align: left;
 }
 
 .text-center {
   text-align: center;
-}
-
-.text-right {
-  text-align: right;
 }
 
 .text-xs {
