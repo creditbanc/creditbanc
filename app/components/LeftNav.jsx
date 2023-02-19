@@ -1,8 +1,8 @@
 import { useEffect } from "react";
-import { useSearchParams, useLocation } from "@remix-run/react";
+import { useSearchParams, useLocation, Link } from "@remix-run/react";
 import { useNavStore } from "~/stores/useNavStore";
 import { defaultTo, map, pipe } from "ramda";
-import { truncate } from "~/utils/helpers";
+import { truncate, to_group_pathname } from "~/utils/helpers";
 
 let ChevronLeftIcon = () => {
 	return (
@@ -134,6 +134,7 @@ export default function LeftNav({ data = {} } = {}) {
 	let collapsed_param = searchParams.get("collapsed");
 	let collapsed = collapsed_param == "true" ? true : false;
 	let navClasses = collapsed ? collapesedNavClasses : expandedNavClasses;
+	let location = useLocation();
 
 	useEffect(() => {
 		setCollapsed(collapsed);
@@ -146,7 +147,7 @@ export default function LeftNav({ data = {} } = {}) {
 
 	return (
 		<div
-			className={`hidden sm:flex sm:flex-col h-full border-r relative ${navClasses} transition-[var(--tran-05)] p-2 pt-1`}
+			className={`hidden sm:flex sm:flex-col h-full border-r relative ${navClasses} transition-[var(--tran-05)] p-2 pt-1 `}
 		>
 			<div
 				className="collapse_toggle absolute -right-[10px] top-[20px] bg-indigo-500 rounded-full p-[3px] text-white cursor-pointer"
@@ -164,8 +165,14 @@ export default function LeftNav({ data = {} } = {}) {
 
 			{!collapsed && (
 				<div className="pl-5 whitespace-nowrap">
-					<div className="border-l border-gray-200 cursor-pointer">
-						<div className="text-sm mx-2 pb-1 text-gray-700 flex flex-col justify-start">
+					<Link
+						className="border-l border-gray-200 cursor-pointer flex flex-row"
+						to={
+							"/credit/personal/new" +
+							to_group_pathname(location.pathname)
+						}
+					>
+						<div className="text-sm mx-2 pb-1 text-gray-700 flex flex-col justify-start w-full">
 							<div className="hover:bg-slate-100 flex flex-row items-center justify-between py-1 pl-2 rounded">
 								<div>Add new</div>
 								<div className="pr-1">
@@ -173,7 +180,7 @@ export default function LeftNav({ data = {} } = {}) {
 								</div>
 							</div>
 						</div>
-					</div>
+					</Link>
 					{pipe(
 						defaultTo([]),
 						map((report) => (
@@ -199,8 +206,14 @@ export default function LeftNav({ data = {} } = {}) {
 
 			{!collapsed && (
 				<div className="pl-5">
-					<div className="border-l border-gray-200 cursor-pointer">
-						<div className="text-sm mx-2 pb-1 text-gray-700 flex flex-col justify-start">
+					<Link
+						className="border-l border-gray-200 cursor-pointer flex flex-row"
+						to={
+							"/credit/business/new" +
+							to_group_pathname(location.pathname)
+						}
+					>
+						<div className="text-sm mx-2 pb-1 text-gray-700 flex flex-col justify-start w-full">
 							<div className="hover:bg-slate-100 flex flex-row items-center justify-between py-1 pl-2 rounded">
 								<div>Add new</div>
 								<div className="pr-1">
@@ -208,7 +221,7 @@ export default function LeftNav({ data = {} } = {}) {
 								</div>
 							</div>
 						</div>
-					</div>
+					</Link>
 					{pipe(
 						defaultTo([]),
 						map((report) => (

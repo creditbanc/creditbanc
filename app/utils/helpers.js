@@ -75,6 +75,18 @@ export const to_resource_pathname = (uri) => {
 	)(pathname);
 };
 
+export const to_group_pathname = (uri) => {
+	let pathname = get_pathname(uri);
+	return pipe(
+		split("resource"),
+		last,
+		split("/f/"),
+		head,
+		remove_trailing_slash,
+		(path) => `/resource` + path
+	)(pathname);
+};
+
 export const to_path_array = pipe(split("/"), reject(equals("")));
 
 export const to_resource_path_array = (uri) => {
