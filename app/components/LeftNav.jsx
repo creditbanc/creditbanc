@@ -165,10 +165,12 @@ export default function LeftNav({ data = {} } = {}) {
 			{!collapsed && (
 				<div className="pl-5 whitespace-nowrap">
 					<div className="border-l border-gray-200 cursor-pointer">
-						<div className="text-sm mx-2 pl-2 py-2 hover:bg-slate-100 rounded text-gray-700 flex flex-row items-center justify-between">
-							<div>Add new</div>
-							<div className="pr-1">
-								<PlusIcon />
+						<div className="text-sm mx-2 pb-1 text-gray-700 flex flex-col justify-start">
+							<div className="hover:bg-slate-100 flex flex-row items-center justify-between py-1 pl-2 rounded">
+								<div>Add new</div>
+								<div className="pr-1">
+									<PlusIcon />
+								</div>
 							</div>
 						</div>
 					</div>
@@ -198,10 +200,12 @@ export default function LeftNav({ data = {} } = {}) {
 			{!collapsed && (
 				<div className="pl-5">
 					<div className="border-l border-gray-200 cursor-pointer">
-						<div className="text-sm mx-2 pl-2 py-1 hover:bg-slate-100 rounded text-gray-700 flex flex-row items-center justify-between">
-							<div>Add new</div>
-							<div className="pr-1">
-								<PlusIcon />
+						<div className="text-sm mx-2 pb-1 text-gray-700 flex flex-col justify-start">
+							<div className="hover:bg-slate-100 flex flex-row items-center justify-between py-1 pl-2 rounded">
+								<div>Add new</div>
+								<div className="pr-1">
+									<PlusIcon />
+								</div>
 							</div>
 						</div>
 					</div>
