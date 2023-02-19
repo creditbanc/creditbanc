@@ -89,7 +89,7 @@ export default function CreditScoreDoughnut({
 
 	return (
 		<div
-			className={`px-[5px] w-full ${classNames} relative flex flex-col items-center`}
+			className={`px-[5px] w-full ${classNames} relative flex flex-col items-center `}
 			ref={chartContainerRef}
 			style={{ height: chartStyle.height }}
 		>

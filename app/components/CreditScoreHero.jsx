@@ -1,23 +1,57 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import CreditScoreDoughnut from "~/components/CreditScoreDoughnut";
 import { useLayoutStore } from "~/stores/useLayoutStore";
 import useWindowSize from "~/hooks/useWindowSize";
+import { Carousel } from "antd";
 
 const Single = () => {
+	const [index, setIndex] = useState(0);
+	const ref = useRef(null);
+
+	useEffect(() => {}, [index]);
+
+	const go_to = (index) => {
+		ref.current.goTo(index);
+		// setIndex(index);
+	};
 	return (
 		<div className="flex flex-col items-center -mt-[70px]">
-			<div className="flex flex-col w-[80%]  my-[10px]">
-				<CreditScoreDoughnut
-					bureau={"Experian"}
-					scoreClassNames="text-6xl"
-					bureauTitleClassNames="text-1xl"
-				/>
+			<div className="flex flex-col w-[80%] my-[10px]">
+				<Carousel ref={ref} dots={false} className="flex flex-col">
+					<div>
+						<CreditScoreDoughnut
+							bureau={"Equifax"}
+							scoreClassNames="text-6xl"
+							bureauTitleClassNames="text-1xl"
+						/>
+					</div>
+					<div>
+						<CreditScoreDoughnut
+							bureau={"Experian"}
+							scoreClassNames="text-6xl"
+							bureauTitleClassNames="text-1xl"
+						/>
+					</div>
+					<div>
+						<CreditScoreDoughnut
+							bureau={"Dun & Bradstreet"}
+							scoreClassNames="text-6xl"
+							bureauTitleClassNames="text-1xl"
+						/>
+					</div>
+				</Carousel>
 				<div className="flex flex-row w-full justify-around -mt-[30px] z-[1]">
-					<span className="inline-flex items-center rounded-full bg-gray-100 px-4 py-0.5 text-xs font-medium text-gray-800 cursor-pointer">
+					<span
+						className="inline-flex items-center rounded-full bg-gray-100 px-4 py-0.5 text-xs font-medium text-gray-800 cursor-pointer"
+						onClick={() => go_to(0)}
+					>
 						Equifax
 					</span>
 
-					<span className="inline-flex items-center rounded-full bg-green-100 px-4 py-0.5 text-xs font-medium text-green-800 cursor-pointer">
+					<span
+						className="inline-flex items-center rounded-full bg-green-100 px-4 py-0.5 text-xs font-medium text-green-800 cursor-pointer"
+						onClick={() => go_to(1)}
+					>
 						<svg
 							className="-ml-0.5 mr-1.5 h-2 w-2 text-green-400"
 							fill="currentColor"
@@ -28,7 +62,10 @@ const Single = () => {
 						Experian
 					</span>
 
-					<span className="inline-flex items-center rounded-full bg-gray-100 px-4 py-0.5 text-xs font-medium text-gray-800 cursor-pointer">
+					<span
+						className="inline-flex items-center rounded-full bg-gray-100 px-4 py-0.5 text-xs font-medium text-gray-800 cursor-pointer"
+						onClick={() => go_to(2)}
+					>
 						D&B
 					</span>
 				</div>
