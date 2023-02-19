@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { useSearchParams, useLocation } from "@remix-run/react";
 import { useNavStore } from "~/stores/useNavStore";
-import { map } from "ramda";
+import { defaultTo, map, pipe } from "ramda";
 import { truncate } from "~/utils/helpers";
 
 let ChevronLeftIcon = () => {
@@ -82,6 +82,25 @@ let BusinessIcon = () => {
 	);
 };
 
+let PlusIcon = () => {
+	return (
+		<svg
+			xmlns="http://www.w3.org/2000/svg"
+			fill="none"
+			viewBox="0 0 24 24"
+			strokeWidth={1.5}
+			stroke="currentColor"
+			className="w-4 h-4"
+		>
+			<path
+				strokeLinecap="round"
+				strokeLinejoin="round"
+				d="M12 4.5v15m7.5-7.5h-15"
+			/>
+		</svg>
+	);
+};
+
 const NavCategory = ({ title, onToggleNav, icon: Icon, collapsed }) => {
 	return (
 		<div className="text-gray-700 font-medium mb-1 text-sm flex flex-row items-center whitespace-nowrap mt-1">
@@ -107,7 +126,7 @@ const NavCategory = ({ title, onToggleNav, icon: Icon, collapsed }) => {
 	);
 };
 
-export default function LeftNav({ data = {} }) {
+export default function LeftNav({ data = {} } = {}) {
 	let [searchParams, setSearchParams] = useSearchParams();
 	let setCollapsed = useNavStore((state) => state.set_collapsed);
 	let collapesedNavClasses = `w-[60px]`;
@@ -144,9 +163,18 @@ export default function LeftNav({ data = {} }) {
 			/>
 
 			{!collapsed && (
-				<div className="pl-5">
-					{map(
-						(report) => (
+				<div className="pl-5 whitespace-nowrap">
+					<div className="border-l border-gray-200 cursor-pointer">
+						<div className="text-sm mx-2 pl-2 py-2 hover:bg-slate-100 rounded text-gray-700 flex flex-row items-center justify-between">
+							<div>Add new</div>
+							<div className="pr-1">
+								<PlusIcon />
+							</div>
+						</div>
+					</div>
+					{pipe(
+						defaultTo([]),
+						map((report) => (
 							<div
 								className="border-l border-gray-200 cursor-pointer"
 								key={report.id}
@@ -155,9 +183,8 @@ export default function LeftNav({ data = {} }) {
 									{truncate(17, report.id)}
 								</div>
 							</div>
-						),
-						data.personal_credit_reports
-					)}
+						))
+					)(data.personal_credit_reports)}
 				</div>
 			)}
 
@@ -167,6 +194,32 @@ export default function LeftNav({ data = {} }) {
 				onToggleNav={onToggleNav}
 				collapsed={collapsed}
 			/>
+
+			{!collapsed && (
+				<div className="pl-5">
+					<div className="border-l border-gray-200 cursor-pointer">
+						<div className="text-sm mx-2 pl-2 py-1 hover:bg-slate-100 rounded text-gray-700 flex flex-row items-center justify-between">
+							<div>Add new</div>
+							<div className="pr-1">
+								<PlusIcon />
+							</div>
+						</div>
+					</div>
+					{pipe(
+						defaultTo([]),
+						map((report) => (
+							<div
+								className="border-l border-gray-200 cursor-pointer"
+								key={report.id}
+							>
+								<div className="text-sm mx-2 pl-2 py-1 hover:bg-slate-100 rounded text-gray-700">
+									{truncate(17, report.id)}
+								</div>
+							</div>
+						))
+					)(data?.business_credit_reports)}
+				</div>
+			)}
 		</div>
 	);
 }

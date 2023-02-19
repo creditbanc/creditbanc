@@ -6,7 +6,7 @@ import LeftNav from "~/components/LeftNav";
 import { useElmSize } from "~/hooks/useElmSize";
 import { get_group_id } from "~/utils/helpers";
 import { get_docs as get_group_docs } from "~/utils/group.server";
-import { defaultTo, groupBy, pick, pipe, prop } from "ramda";
+import { defaultTo, pick, pipe } from "ramda";
 import { mod, all, filter } from "shades";
 
 export const loader = async ({ request }) => {
