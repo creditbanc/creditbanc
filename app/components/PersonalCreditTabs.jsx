@@ -1,10 +1,4 @@
-import {
-	BuildingOfficeIcon,
-	CreditCardIcon,
-	UserIcon,
-	UsersIcon,
-	ListBulletIcon,
-} from "@heroicons/react/20/solid";
+import { UserIcon, ListBulletIcon } from "@heroicons/react/20/solid";
 import { useLocation } from "@remix-run/react";
 import { to_resource_pathname, get_route_endpoint } from "~/utils/helpers";
 
