@@ -197,7 +197,7 @@ export default function LeftNav({ data = {} } = {}) {
 									location.search
 								}
 							>
-								<div className="text-sm mx-2 pl-2 py-1 hover:bg-slate-100 rounded text-gray-700">
+								<div className="text-sm mx-2 px-2 py-1 hover:bg-slate-100 rounded text-gray-700">
 									{truncate(17, report.id)}
 								</div>
 							</Link>
@@ -243,7 +243,7 @@ export default function LeftNav({ data = {} } = {}) {
 									location.search
 								}
 							>
-								<div className="text-sm mx-2 pl-2 py-1 hover:bg-slate-100 rounded text-gray-700">
+								<div className="text-sm mx-2 px-2 py-1 hover:bg-slate-100 rounded text-gray-700">
 									{truncate(17, report.id)}
 								</div>
 							</Link>
