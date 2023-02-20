@@ -733,7 +733,7 @@ const TradeLine = ({ trade_line }) => {
 	);
 };
 
-export default function BusinessCreditReport() {
+export default function Accounts() {
 	let trade_lines = useLoaderData();
 
 	return (
