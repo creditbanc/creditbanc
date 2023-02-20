@@ -139,6 +139,8 @@ export default function LeftNav({ data = {} } = {}) {
 	let collapsed = collapsed_param == "true" ? true : false;
 	let navClasses = collapsed ? collapesedNavClasses : expandedNavClasses;
 	let location = useLocation();
+	const urlParams = new URLSearchParams(location.search.substring(1));
+	const params = Object.fromEntries(urlParams);
 
 	useEffect(() => {
 		setCollapsed(collapsed);
@@ -146,7 +148,7 @@ export default function LeftNav({ data = {} } = {}) {
 
 	const onToggleNav = () => {
 		setCollapsed(!collapsed);
-		setSearchParams({ collapsed: !collapsed });
+		setSearchParams({ ...params, collapsed: !collapsed });
 	};
 
 	return (

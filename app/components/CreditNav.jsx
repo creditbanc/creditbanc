@@ -38,6 +38,29 @@ export default function Nav() {
 
 							{is_sharable && (
 								<div className="flex space-x-8 items-center">
+									<div className="flex -space-x-2 overflow-hidden">
+										<div className="relative inline-flex items-center justify-center w-9 h-9 overflow-hidden bg-white rounded-full dark:bg-gray-600 border text-xs">
+											<span className="font-medium text-gray-600 dark:text-gray-300">
+												JL
+											</span>
+										</div>
+										<div className="relative inline-flex items-center justify-center w-9 h-9 overflow-hidden bg-white rounded-full dark:bg-gray-600 border text-xs">
+											<span className="font-medium text-gray-600 dark:text-gray-300">
+												JL
+											</span>
+										</div>
+										<div className="relative inline-flex items-center justify-center w-9 h-9 overflow-hidden bg-white rounded-full dark:bg-gray-600 border text-xs">
+											<span className="font-medium text-gray-600 dark:text-gray-300">
+												JL
+											</span>
+										</div>
+										<div
+											className="relative inline-flex items-center justify-center w-9 h-9 overflow-hidden bg-gray-600 rounded-full border text-white text-xs"
+											href="#"
+										>
+											+99
+										</div>
+									</div>
 									<button
 										type="button"
 										className="text-blue-700  border border-blue-700  focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-full text-sm px-5 py-2 text-center dark:border-blue-500 dark:text-blue-500 dark:hover:text-white dark:hover:bg-blue-600 dark:focus:ring-blue-800 flex flex-row"
