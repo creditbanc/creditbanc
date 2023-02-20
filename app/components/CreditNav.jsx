@@ -39,23 +39,23 @@ export default function Nav() {
 							{is_sharable && (
 								<div className="flex space-x-8 items-center">
 									<div className="flex -space-x-2 overflow-hidden">
-										<div className="relative inline-flex items-center justify-center w-9 h-9 overflow-hidden bg-white rounded-full dark:bg-gray-600 border text-xs">
+										<div className="relative inline-flex items-center justify-center w-9 h-9 overflow-hidden bg-white rounded-full border border-gray-200 text-xs ">
 											<span className="font-medium text-gray-600 dark:text-gray-300">
 												JL
 											</span>
 										</div>
-										<div className="relative inline-flex items-center justify-center w-9 h-9 overflow-hidden bg-white rounded-full dark:bg-gray-600 border text-xs">
+										<div className="relative inline-flex items-center justify-center w-9 h-9 overflow-hidden bg-white rounded-full border border-gray-200 text-xs">
 											<span className="font-medium text-gray-600 dark:text-gray-300">
 												JL
 											</span>
 										</div>
-										<div className="relative inline-flex items-center justify-center w-9 h-9 overflow-hidden bg-white rounded-full dark:bg-gray-600 border text-xs">
+										<div className="relative inline-flex items-center justify-center w-9 h-9 overflow-hidden bg-white rounded-full border border-gray-200 text-xs">
 											<span className="font-medium text-gray-600 dark:text-gray-300">
 												JL
 											</span>
 										</div>
 										<div
-											className="relative inline-flex items-center justify-center w-9 h-9 overflow-hidden bg-gray-600 rounded-full border text-white text-xs"
+											className="relative inline-flex items-center justify-center w-9 h-9 overflow-hidden rounded-full border text-gray-600 border-gray-200 bg-white text-xs"
 											href="#"
 										>
 											+99
