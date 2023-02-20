@@ -41,6 +41,7 @@ const Single = () => {
 						/>
 					</div>
 				</Carousel>
+
 				<div className="flex flex-row w-full justify-around -mt-[30px] z-[1]">
 					<span
 						className={`inline-flex items-center rounded-full px-4 py-0.5 text-xs font-medium cursor-pointer ${
