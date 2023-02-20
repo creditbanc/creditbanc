@@ -223,7 +223,7 @@ export const get_role_persmissions = async (request) => {
 		always([])
 	)(resource);
 
-	// inspect(entity_roles, "entity_roles");
+	inspect(entity_roles, "entity_roles");
 
 	const with_role_ids = mapObjIndexed((permissions, role_id) => ({
 		...permissions,
@@ -325,7 +325,6 @@ export const validate_action = async (request) => {
 	let resource_path_id = "63c93877b4a41136dd3789d4";
 	let user_id = "63c3f24c0692ede4c82199f7";
 	let action = "view";
-	// let role_name = 'test'
 
 	// console.log("validate_user");
 	const is_signed_in = await is_signed_in_p(request);
