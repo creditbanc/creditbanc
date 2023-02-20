@@ -3,17 +3,18 @@ import { Disclosure, Menu, Transition } from "@headlessui/react";
 import { Bars3Icon, BellIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import { Link, useLocation } from "@remix-run/react";
 import { to_resource_pathname } from "~/utils/helpers";
+import { get_user } from "~/utils/auth.server";
 
 function classNames(...classes) {
 	return classes.filter(Boolean).join(" ");
 }
 
-export default function Nav() {
+export default function Nav({ origin, is_logged_in = false }) {
 	const location = useLocation();
-	let url = "http://localhost:3000" + location.pathname + location.search;
+	let url = origin + location.pathname + location.search;
 	let resource_pathname = to_resource_pathname(url);
-	let is_sharable = url.includes("share");
-	let share_link = "http://localhost:3000/links/new" + resource_pathname;
+	// let is_sharable = url.includes("share");
+	let share_link = origin + "/links/new" + resource_pathname;
 
 	return (
 		<Disclosure as="nav" className="bg-white shadow top-0 sticky z-50">
@@ -36,7 +37,7 @@ export default function Nav() {
 								</div>
 							</div>
 
-							{is_sharable && (
+							{is_logged_in && (
 								<div className="flex space-x-8 items-center">
 									<div className="flex -space-x-2 overflow-hidden">
 										<div className="relative inline-flex items-center justify-center w-9 h-9 overflow-hidden bg-white rounded-full border border-gray-200 text-xs ">
@@ -54,16 +55,14 @@ export default function Nav() {
 												JL
 											</span>
 										</div>
-										<div
-											className="relative inline-flex items-center justify-center w-9 h-9 overflow-hidden rounded-full border text-gray-600 border-gray-200 bg-white text-xs"
-											href="#"
-										>
+										<div className="relative inline-flex items-center justify-center w-9 h-9 overflow-hidden rounded-full border text-gray-600 border-gray-200 bg-white text-xs">
 											+99
 										</div>
 									</div>
-									<button
+									<Link
 										type="button"
 										className="text-blue-700  border border-blue-700  focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-full text-sm px-5 py-2 text-center dark:border-blue-500 dark:text-blue-500 dark:hover:text-white dark:hover:bg-blue-600 dark:focus:ring-blue-800 flex flex-row"
+										to={share_link}
 									>
 										<svg
 											xmlns="http://www.w3.org/2000/svg"
@@ -79,8 +78,8 @@ export default function Nav() {
 												d="M13.19 8.688a4.5 4.5 0 011.242 7.244l-4.5 4.5a4.5 4.5 0 01-6.364-6.364l1.757-1.757m13.35-.622l1.757-1.757a4.5 4.5 0 00-6.364-6.364l-4.5 4.5a4.5 4.5 0 001.242 7.244"
 											/>
 										</svg>
-										<Link to={share_link}>Share</Link>
-									</button>
+										<div>Share</div>
+									</Link>
 								</div>
 							)}
 

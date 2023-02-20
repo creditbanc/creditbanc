@@ -11,9 +11,12 @@ import { mod, all, filter } from "shades";
 import PersonalCreditTabs from "~/components/PersonalCreditTabs";
 import CreditScoreHero from "~/components/CreditScoreHero";
 import CreditHeroGradient from "~/components/CreditHeroGradient";
+import { get_user_id } from "~/utils/auth.server";
 
 export const loader = async ({ request }) => {
+	let user_id = await get_user_id(request);
 	let url = new URL(request.url);
+
 	let group_id = get_group_id(url.pathname);
 	let group_docs = await get_group_docs({ resource_id: group_id });
 
@@ -31,10 +34,11 @@ export const loader = async ({ request }) => {
 		})
 	)(group_docs);
 
-	return { reports };
+	return { reports, origin: url.origin, user_id };
 };
 
 export default function CreditReport() {
+	const { origin, user_id } = useLoaderData();
 	const [target, setTarget] = useState();
 	const elmSize = useElmSize(target);
 	let setContentWidth = useLayoutStore((state) => state.set_content_width);
@@ -49,7 +53,7 @@ export default function CreditReport() {
 
 	return (
 		<div className="flex flex-col w-full h-full">
-			<CreditNav />
+			<CreditNav origin={origin} is_logged_in={user_id} />
 			<div className="flex flex-row h-full overflow-hidden">
 				<LeftNav data={reports} />
 				<div className="flex flex-col flex-1 overflow-scroll">
