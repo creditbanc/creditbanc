@@ -19,6 +19,7 @@ const Single = () => {
 					<div>
 						<CreditScoreDoughnut
 							bureau={"Equifax"}
+							classNames={index == 0 ? "visible" : "hidden"}
 							scoreClassNames="text-6xl"
 							bureauTitleClassNames="text-1xl"
 						/>
@@ -26,6 +27,7 @@ const Single = () => {
 					<div>
 						<CreditScoreDoughnut
 							bureau={"Experian"}
+							classNames={index == 1 ? "visible" : "hidden"}
 							scoreClassNames="text-6xl"
 							bureauTitleClassNames="text-1xl"
 						/>
@@ -33,6 +35,7 @@ const Single = () => {
 					<div>
 						<CreditScoreDoughnut
 							bureau={"Dun & Bradstreet"}
+							classNames={index == 2 ? "visible" : "hidden"}
 							scoreClassNames="text-6xl"
 							bureauTitleClassNames="text-1xl"
 						/>
