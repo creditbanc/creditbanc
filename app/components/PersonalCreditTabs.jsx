@@ -6,7 +6,7 @@ import {
 	ListBulletIcon,
 } from "@heroicons/react/20/solid";
 import { useLocation } from "@remix-run/react";
-import { to_resource_pathname } from "~/utils/helpers";
+import { to_resource_pathname, get_route_endpoint } from "~/utils/helpers";
 
 function classNames(...classes) {
 	return classes.filter(Boolean).join(" ");
@@ -38,7 +38,7 @@ export default function PersonalCreditTabs({ selected = "Personal" }) {
 	let search_params = location.search;
 
 	return (
-		<div className="border-b  border-gray-200 ">
+		<div className="border-b border-gray-200 ">
 			<nav
 				className="-mb-px flex flex-row justify-start"
 				aria-label="Tabs"

@@ -1,6 +1,3 @@
-import PersonalCreditTabs from "~/components/PersonalCreditTabs";
-import CreditScoreHero from "~/components/CreditScoreHero";
-import CreditHeroGradient from "~/components/CreditHeroGradient";
 import { validate_action } from "~/utils/resource.server";
 import { redirect } from "@remix-run/node";
 import { get_user } from "~/utils/auth.server";

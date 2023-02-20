@@ -107,7 +107,7 @@ export default function CreditScoreHero() {
 	}, [content_width]);
 
 	return (
-		<div>
+		<div className="overflow-hidden">
 			<div className="w-full">
 				<h1 className="text-5xl font-bold tracking-tight text-center">
 					Your personal credit report

@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
-import { Outlet, useLoaderData } from "@remix-run/react";
+import { Outlet, useLoaderData, useLocation } from "@remix-run/react";
 import CreditNav from "~/components/CreditNav";
 import { useLayoutStore } from "~/stores/useLayoutStore";
 import LeftNav from "~/components/LeftNav";
 import { useElmSize } from "~/hooks/useElmSize";
-import { get_group_id } from "~/utils/helpers";
+import { get_group_id, get_route_endpoint, capitalize } from "~/utils/helpers";
 import { get_docs as get_group_docs } from "~/utils/group.server";
 import { defaultTo, pick, pipe } from "ramda";
 import { mod, all, filter } from "shades";
@@ -39,6 +39,7 @@ export default function CreditReport() {
 	const elmSize = useElmSize(target);
 	let setContentWidth = useLayoutStore((state) => state.set_content_width);
 	let { reports } = useLoaderData();
+	let location = useLocation();
 
 	useEffect(() => {
 		if (elmSize) {
@@ -61,7 +62,11 @@ export default function CreditReport() {
 						>
 							<CreditScoreHero />
 							<div className="mt-3 mb-1">
-								<PersonalCreditTabs />
+								<PersonalCreditTabs
+									selected={capitalize(
+										get_route_endpoint(location.pathname)
+									)}
+								/>
 							</div>
 							<div className="py-3">
 								<Outlet />

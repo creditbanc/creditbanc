@@ -29,6 +29,10 @@ export const truncate = curry((length, str) => {
 	return str.length > length ? `${str.substr(0, length)}...` : str;
 });
 
+export const capitalize = (string) => {
+	return string[0].toUpperCase() + string.slice(1);
+};
+
 export const currency = new Intl.NumberFormat("en-US", {
 	style: "currency",
 	currency: "USD",
@@ -73,6 +77,15 @@ export const to_resource_pathname = (uri) => {
 		remove_trailing_slash,
 		(path) => `/resource` + path
 	)(pathname);
+};
+
+export const to_route_pathname = (uri) => {
+	let pathname = get_pathname(uri);
+	return pipe(split("resource"), head, remove_trailing_slash)(pathname);
+};
+
+export const get_route_endpoint = (uri) => {
+	return pipe(to_route_pathname, split("/"), last)(uri);
 };
 
 export const to_group_pathname = (uri) => {
