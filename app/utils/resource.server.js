@@ -29,6 +29,7 @@ import {
 	isNil,
 	mapObjIndexed,
 	indexBy,
+	groupBy,
 } from "ramda";
 import { get, matching, all, mod, filter } from "shades";
 import { prisma } from "./prisma.server";
@@ -190,16 +191,139 @@ export const get_entity_id = async (request) => {
 	return session.get("entity_id");
 };
 
+const get_entity_roles = async ({
+	resource_path_id,
+	entity_id,
+	resource_id,
+}) => {
+	let entity_roles = tryCatch(
+		pipe(
+			defaultTo([]),
+			get(all, "permissions"),
+			flatten,
+			uniq,
+			reject(isNil)
+		),
+		always([])
+	);
+
+	const get_entity_roles_docs = async (entity_id, resource_id) => {
+		let entity_roles_response = await prisma.roles.findMany({
+			where: {
+				entity_ids: {
+					has: entity_id,
+				},
+				type: {
+					equals: "entity",
+				},
+				resource_ids: {
+					has: resource_id,
+				},
+			},
+		});
+		return entity_roles_response;
+	};
+
+	if (resource_id) {
+		let entity_roles_response = await get_entity_roles_docs(
+			entity_id,
+			resource_id
+		);
+		return entity_roles(entity_roles_response);
+	}
+
+	if (resource_path_id) {
+		const resource = await prisma.resource.findFirst({
+			where: { resource_path_id },
+		});
+
+		let entity_roles_response = await get_entity_roles_docs(
+			entity_id,
+			resource.id
+		);
+		return entity_roles(entity_roles_response);
+	}
+};
+
+const get_resource_roles = async ({ resource_id, resource_path_id }) => {
+	const with_role_ids = mapObjIndexed((permissions, role_id) => ({
+		...permissions,
+		role_id,
+	}));
+
+	let permissions = tryCatch(
+		pipe(
+			(resource) =>
+				get(
+					"roles",
+					all,
+					"permissions",
+					resource.resource_path_id
+				)(resource),
+			head
+		),
+		always({})
+	);
+
+	let resource_roles = async (resource_id) => {
+		let response = await prisma.resource.findFirst({
+			where: {
+				id: {
+					equals: resource_id,
+				},
+			},
+			include: {
+				roles: {
+					where: {
+						type: {
+							equals: "resource",
+						},
+					},
+				},
+			},
+		});
+		return response;
+	};
+
+	if (resource_id) {
+		let resource_roles_response = await resource_roles(resource_id);
+		return pipe(permissions)(resource_roles_response);
+	}
+
+	if (resource_path_id) {
+		let resource = await prisma.resource.findFirst({
+			where: { resource_path_id },
+		});
+		let resource_roles_response = await resource_roles(resource.id);
+		return permissions(resource_roles_response);
+	}
+};
+
+const get_permissions = ({ entity_roles, resource_permissions }) => {
+	let permissions = pipe(
+		map((role_id) => get(role_id)(resource_permissions)),
+		reject(isNil),
+		map(mapObjIndexed((value, key) => ({ name: key, value }))),
+		map(values),
+		flatten,
+		groupBy(prop("name")),
+		mod(all, all)(get("value")),
+		mod(all)(includes(true))
+	)(entity_roles);
+	return permissions;
+};
+
+const get_permission = ({ permission, entity_roles, resource_permissions }) => {
+	let permissions = get_permissions({ entity_roles, resource_permissions });
+	return pipe(get(permission))(permissions);
+};
+
 export const get_role_persmissions = async (request) => {
 	console.log("get_role_persmissions");
 
 	const entity_id = await get_entity_id(request);
 	const resource_path_id = get_resource_id(request.url);
 	const group_id = get_group_id(request.url);
-
-	// console.log("entity_id", entity_id);
-	// console.log("resource_path_id", resource_path_id);
-	// console.log("group_id", group_id);
 
 	const resource = await prisma.resource.findFirst({
 		where: { resource_path_id: group_id },
@@ -208,39 +332,14 @@ export const get_role_persmissions = async (request) => {
 		},
 	});
 
-	// inspect(resource);
+	let entity_roles = await get_entity_roles({
+		entity_id,
+		resource_id: resource.id,
+	});
 
-	let entity_roles = tryCatch(
-		pipe(
-			get("roles", all, "entities", all, "roles"),
-			flatten,
-			filter((role) => role.type == "entity"),
-			get(all, "permissions"),
-			flatten,
-			uniq,
-			reject(isNil)
-		),
-		always([])
-	)(resource);
-
-	inspect(entity_roles, "entity_roles");
-
-	const with_role_ids = mapObjIndexed((permissions, role_id) => ({
-		...permissions,
-		role_id,
-	}));
-
-	let resource_roles_permissions = tryCatch(
-		pipe(
-			get("roles", all, "permissions", group_id),
-			map(with_role_ids),
-			map(values),
-			flatten,
-			indexBy(prop("role_id")),
-			map(omit(["role_id"]))
-		),
-		always({})
-	)(resource);
+	let resource_permissions = await get_resource_roles({
+		resource_id: resource.id,
+	});
 
 	if (isEmpty(entity_roles)) {
 		// this usually means that they are accessing a resource that has a role
@@ -309,10 +408,10 @@ export const get_role_persmissions = async (request) => {
 	}
 
 	if (!isEmpty(entity_roles)) {
-		let permissions = pipe(
-			map((role_id) => get(role_id)(resource_roles_permissions)),
-			reduceRight(mergeDeepRight, {})
-		)(entity_roles);
+		let permissions = get_permissions({
+			entity_roles,
+			resource_permissions,
+		});
 
 		return permissions;
 	}

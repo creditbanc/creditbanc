@@ -12,8 +12,10 @@ import PersonalCreditTabs from "~/components/PersonalCreditTabs";
 import CreditScoreHero from "~/components/CreditScoreHero";
 import CreditHeroGradient from "~/components/CreditHeroGradient";
 import { get_user_id } from "~/utils/auth.server";
+import { validate_action } from "~/utils/resource.server";
 
 export const loader = async ({ request }) => {
+	validate_action(request);
 	let user_id = await get_user_id(request);
 	let url = new URL(request.url);
 
