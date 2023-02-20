@@ -12,7 +12,7 @@ export default function Nav({ origin, is_logged_in = false }) {
 	const location = useLocation();
 	let url = origin + location.pathname + location.search;
 	let resource_pathname = to_resource_pathname(url);
-	let share_link = origin + "/links/new" + resource_pathname;
+	let share_link = "/links/new" + resource_pathname;
 	// let is_sharable = url.includes("share");
 
 	useEffect(() => {
