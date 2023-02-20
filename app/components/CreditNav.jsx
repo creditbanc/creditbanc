@@ -16,9 +16,10 @@ export default function Nav({ origin, is_logged_in = false }) {
 	// let is_sharable = url.includes("share");
 
 	useEffect(() => {
+		console.log("test");
 		console.log(location);
 		console.log(origin);
-	}, [location]);
+	}, []);
 
 	return (
 		<Disclosure as="nav" className="bg-white shadow top-0 sticky z-50">
