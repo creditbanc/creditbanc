@@ -13,13 +13,6 @@ export default function Nav({ origin, is_logged_in = false }) {
 	let url = origin + location.pathname + location.search;
 	let resource_pathname = to_resource_pathname(url);
 	let share_link = "/links/new" + resource_pathname;
-	// let is_sharable = url.includes("share");
-
-	useEffect(() => {
-		console.log("test");
-		console.log(location);
-		console.log(origin);
-	}, []);
 
 	return (
 		<Disclosure as="nav" className="bg-white shadow top-0 sticky z-50">
