@@ -15,11 +15,16 @@ import { get_user_id } from "~/utils/auth.server";
 import { validate_action } from "~/utils/resource.server";
 
 export const loader = async ({ request }) => {
-	validate_action(request);
-	let user_id = await get_user_id(request);
 	let url = new URL(request.url);
-
+	let user_id = await get_user_id(request);
 	let group_id = get_group_id(url.pathname);
+
+	validate_action({
+		entity_id: user_id,
+		resource_path_id: group_id,
+		request,
+	});
+
 	let group_docs = await get_group_docs({ resource_id: group_id });
 
 	let reports = pipe(

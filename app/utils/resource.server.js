@@ -58,7 +58,7 @@ export const create = async (data = {}) => {
 };
 
 const actions_map = {
-	view: "can_view",
+	can_view: "can_view",
 };
 
 const db_actions = {
@@ -224,6 +224,10 @@ const get_entity_roles = async ({
 		return entity_roles_response;
 	};
 
+	if (!entity_id) {
+		return ["@default"];
+	}
+
 	if (resource_id) {
 		let entity_roles_response = await get_entity_roles_docs(
 			entity_id,
@@ -318,19 +322,30 @@ const get_permission = ({ permission, entity_roles, resource_permissions }) => {
 	return pipe(get(permission))(permissions);
 };
 
-export const get_role_persmissions = async (request) => {
-	console.log("get_role_persmissions");
+const get_resource = async ({ resource_id, resource_path_id }) => {
+	if (resource_id) {
+		const resource = await prisma.resource.findFirst({
+			where: { id: resource_id },
+		});
+		return resource;
+	}
 
-	const entity_id = await get_entity_id(request);
-	const resource_path_id = get_resource_id(request.url);
-	const group_id = get_group_id(request.url);
+	if (resource_path_id) {
+		const resource = await prisma.resource.findFirst({
+			where: { resource_path_id },
+		});
+		return resource;
+	}
+};
 
-	const resource = await prisma.resource.findFirst({
-		where: { resource_path_id: group_id },
-		include: {
-			roles: { include: { entities: { include: { roles: true } } } },
-		},
-	});
+export const get_resource_persmissions = async ({
+	resource_id,
+	resource_path_id,
+	entity_id,
+}) => {
+	console.log("get_resource_persmissions");
+
+	let resource = await get_resource({ resource_path_id });
 
 	let entity_roles = await get_entity_roles({
 		entity_id,
@@ -417,13 +432,23 @@ export const get_role_persmissions = async (request) => {
 	}
 };
 
-export const validate_action = async (request) => {
+const has_action_permission = (action, permissions) => {
+	let action_resolver_name = actions_map[action];
+	let has_permission = db_actions[action_resolver_name](permissions);
+	return has_permission;
+};
+
+export const validate_action = async ({
+	resource_id,
+	resource_path_id,
+	entity_id = false,
+	action = false,
+	request,
+}) => {
 	console.log("validate_action");
-	// let user_email = "test@gmail.com";
-	let resource_id = "63c93877b4a41136dd3789d5";
-	let resource_path_id = "63c93877b4a41136dd3789d4";
-	let user_id = "63c3f24c0692ede4c82199f7";
-	let action = "view";
+
+	// const resource_path_id = get_group_id(request.url);
+	// let action = "can_view";
 
 	// console.log("validate_user");
 	const is_signed_in = await is_signed_in_p(request);
@@ -515,17 +540,23 @@ export const validate_action = async (request) => {
 
 		if (!is_link_with_role) {
 			console.log("is_not_link_with_role");
-			// return false;
-			let permissions = await get_role_persmissions(request);
-			// console.log("permissions", permissions);
 
-			if (permissions) {
-				let action_resolver_name = actions_map[action];
-				let has_permission =
-					db_actions[action_resolver_name](permissions);
-				// console.log("has_permission", has_permission);
+			let permissions = await get_resource_persmissions({
+				entity_id,
+				resource_path_id,
+			});
 
+			if (permissions && action) {
+				let has_permission = has_action_permission(action, permissions);
 				return has_permission;
+			}
+
+			if (permissions && !action) {
+				return permissions;
+			}
+
+			if (!permissions && !action) {
+				return false;
 			}
 		}
 	}
