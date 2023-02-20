@@ -1,4 +1,4 @@
-import { Fragment } from "react";
+import { Fragment, useEffect } from "react";
 import { Disclosure, Menu, Transition } from "@headlessui/react";
 import { Bars3Icon, BellIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import { Link, useLocation } from "@remix-run/react";
@@ -14,8 +14,11 @@ export default function Nav({ origin, is_logged_in = false }) {
 	let resource_pathname = to_resource_pathname(url);
 	let share_link = origin + "/links/new" + resource_pathname;
 	// let is_sharable = url.includes("share");
-	console.log(location);
-	console.log(origin);
+
+	useEffect(() => {
+		console.log(location);
+		console.log(origin);
+	}, [location]);
 
 	return (
 		<Disclosure as="nav" className="bg-white shadow top-0 sticky z-50">
