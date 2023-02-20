@@ -5,18 +5,14 @@ import useWindowSize from "~/hooks/useWindowSize";
 import { Carousel } from "antd";
 
 const Single = () => {
-	const [index, setIndex] = useState(0);
 	const ref = useRef(null);
-
-	useEffect(() => {}, [index]);
 
 	const go_to = (index) => {
 		ref.current.goTo(index);
-		// setIndex(index);
 	};
 	return (
 		<div className="flex flex-col items-center -mt-[70px]">
-			<div className="flex flex-col w-[80%] my-[10px]">
+			<div className="flex flex-col w-full my-[10px]">
 				<Carousel ref={ref} dots={false} className="flex flex-col">
 					<div>
 						<CreditScoreDoughnut

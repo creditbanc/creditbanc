@@ -8,6 +8,9 @@ import { get_group_id } from "~/utils/helpers";
 import { get_docs as get_group_docs } from "~/utils/group.server";
 import { defaultTo, pick, pipe } from "ramda";
 import { mod, all, filter } from "shades";
+import PersonalCreditTabs from "~/components/PersonalCreditTabs";
+import CreditScoreHero from "~/components/CreditScoreHero";
+import CreditHeroGradient from "~/components/CreditHeroGradient";
 
 export const loader = async ({ request }) => {
 	let url = new URL(request.url);
@@ -48,11 +51,23 @@ export default function CreditReport() {
 			<CreditNav />
 			<div className="flex flex-row h-full overflow-hidden">
 				<LeftNav data={reports} />
-				<div
-					className="flex flex-col flex-1 overflow-scroll"
-					ref={setTarget}
-				>
-					<Outlet />
+				<div className="flex flex-col flex-1 overflow-scroll">
+					<div className="flex flex-col w-full">
+						<CreditHeroGradient />
+
+						<div
+							className="flex flex-col w-full p-[10px] max-w-5xl mx-auto"
+							ref={setTarget}
+						>
+							<CreditScoreHero />
+							<div className="mt-3 mb-1">
+								<PersonalCreditTabs />
+							</div>
+							<div className="py-3">
+								<Outlet />
+							</div>
+						</div>
+					</div>
 				</div>
 			</div>
 		</div>

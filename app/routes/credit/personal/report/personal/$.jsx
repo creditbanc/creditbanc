@@ -76,17 +76,7 @@ const PersonalInfoCard = () => {
 export default function Personal() {
 	return (
 		<div className="flex flex-col w-full">
-			<CreditHeroGradient />
-
-			<div className="flex flex-col w-full p-[10px] max-w-5xl mx-auto">
-				<CreditScoreHero />
-				<div className="mt-3 mb-1">
-					<PersonalCreditTabs />
-				</div>
-				<div className="py-3">
-					<PersonalInfoCard />
-				</div>
-			</div>
+			<PersonalInfoCard />
 		</div>
 	);
 }

@@ -1,7 +1,3 @@
-import PersonalCreditTabs from "~/components/PersonalCreditTabs";
-import CreditNav from "~/components/CreditNav";
-import CreditScoreHero from "~/components/CreditScoreHero";
-import CreditHeroGradient from "~/components/CreditHeroGradient";
 import {
 	pipe,
 	map,
@@ -18,7 +14,6 @@ import { mapIndexed, currency, get_file_id } from "~/utils/helpers";
 import { TradeLine as Tradeline } from "~/data/array";
 import { useLoaderData } from "@remix-run/react";
 import { get_doc as get_credit_report } from "~/utils/personal_credit_report.server";
-import { inspect } from "~/utils/helpers";
 
 export const loader = async ({ request }) => {
 	let url = new URL(request.url);
@@ -743,27 +738,17 @@ export default function BusinessCreditReport() {
 
 	return (
 		<div className="flex flex-col w-full">
-			{/* <CreditNav /> */}
-			<CreditHeroGradient />
-
-			<div className="flex flex-col w-full p-[10px] max-w-5xl mx-auto">
-				<CreditScoreHero />
-
-				<div className="mt-3 mb-1">
-					<PersonalCreditTabs selected="Accounts" />
-				</div>
-				<div className="pt-5 pb-2 px-2">
-					<Heading />
-				</div>
-				{mapIndexed(
-					(trade_line, tl_index) => (
-						<div className="my-2" key={tl_index}>
-							<TradeLine trade_line={trade_line} />
-						</div>
-					),
-					trade_lines
-				)}
+			<div className="p-2">
+				<Heading />
 			</div>
+			{mapIndexed(
+				(trade_line, tl_index) => (
+					<div className="my-2" key={tl_index}>
+						<TradeLine trade_line={trade_line} />
+					</div>
+				),
+				trade_lines
+			)}
 		</div>
 	);
 }

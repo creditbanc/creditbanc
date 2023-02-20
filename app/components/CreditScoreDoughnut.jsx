@@ -78,18 +78,25 @@ export default function CreditScoreDoughnut({
 	const doughnutRef = useRef(null);
 
 	useEffect(() => {
-		let dimmensions = chartContainerRef.current.offsetWidth;
-
-		setChartStyle({
-			width: dimmensions,
-			height: dimmensions,
-			paddingBottom: dimmensions * 0.13,
-		});
+		if (content_width < 640) {
+			setChartStyle({
+				width: content_width,
+				height: content_width * 0.7,
+				paddingBottom: content_width * 0.13,
+			});
+		} else {
+			setChartStyle({
+				width: content_width / 3.1,
+				height: content_width / 3.4,
+				paddingBottom: content_width * 0.13,
+				marginTop: 70,
+			});
+		}
 	}, [content_width, size]);
 
 	return (
 		<div
-			className={`px-[5px] w-full ${classNames} relative flex flex-col items-center `}
+			className={`px-[5px] w-full relative flex flex-col items-center ${classNames}`}
 			ref={chartContainerRef}
 			style={{ height: chartStyle.height }}
 		>
@@ -101,7 +108,7 @@ export default function CreditScoreDoughnut({
 			/>
 			<Doughnut className="absolute" data={data2} options={options} />
 			<div
-				className="absolute flex flex-col items-center justify-end -mt-[15px]"
+				className="absolute flex flex-col items-center justify-end"
 				style={chartStyle}
 			>
 				<div className={`font-bold ${scoreClassNames}`}>500</div>
