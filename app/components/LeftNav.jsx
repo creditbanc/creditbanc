@@ -154,7 +154,7 @@ const NavCategory = ({ title, onToggleNav, icon: Icon, collapsed }) => {
 	);
 };
 
-export default function LeftNav({ data = {} } = {}) {
+export default function LeftNav({ data = {}, can_manage_roles } = {}) {
 	let [searchParams, setSearchParams] = useSearchParams();
 	let setCollapsed = useNavStore((state) => state.set_collapsed);
 	let collapesedNavClasses = `w-[60px]`;
@@ -186,20 +186,22 @@ export default function LeftNav({ data = {} } = {}) {
 				{collapsed ? <ChevronRightIcon /> : <ChevronLeftIcon />}
 			</div>
 
-			<Link
-				className={`flex flex-col absolute bottom-0 cursor-pointer ${
-					collapsed ? "w-[45px]" : "w-[200px]"
-				}`}
-				to={"/roles" + to_resource_pathname(location.pathname)}
-			>
-				<div className="flex flex-col border-t" />
-				<NavCategory
-					title="Settings"
-					icon={SettingsIcon}
-					onToggleNav={onToggleNav}
-					collapsed={collapsed}
-				/>
-			</Link>
+			{can_manage_roles && (
+				<Link
+					className={`flex flex-col absolute bottom-0 cursor-pointer ${
+						collapsed ? "w-[45px]" : "w-[200px]"
+					}`}
+					to={"/roles" + to_resource_pathname(location.pathname)}
+				>
+					<div className="flex flex-col border-t" />
+					<NavCategory
+						title="Settings"
+						icon={SettingsIcon}
+						onToggleNav={onToggleNav}
+						collapsed={collapsed}
+					/>
+				</Link>
+			)}
 
 			<NavCategory
 				title="Personal reports"

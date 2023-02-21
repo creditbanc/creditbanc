@@ -46,6 +46,9 @@ export const loader = async ({ request }) => {
 		})
 	)(group_docs);
 
+	console.log("permissions");
+	console.log(permissions);
+
 	return { reports, origin: url.origin, user_id, permissions };
 };
 
@@ -67,7 +70,10 @@ export default function CreditReport() {
 		<div className="flex flex-col w-full h-full">
 			<CreditNav origin={origin} can_share={permissions?.can_share} />
 			<div className="flex flex-row h-full overflow-hidden">
-				<LeftNav data={reports} />
+				<LeftNav
+					data={reports}
+					can_manage_roles={permissions?.can_manage_roles}
+				/>
 				<div className="flex flex-col flex-1 overflow-scroll">
 					<div className="flex flex-col w-full">
 						<CreditHeroGradient />
