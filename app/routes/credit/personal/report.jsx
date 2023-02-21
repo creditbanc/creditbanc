@@ -27,6 +27,9 @@ export const loader = async ({ request }) => {
 		request,
 	});
 
+	console.log("permissions");
+	console.log(permissions);
+
 	let { can_view = false } = permissions;
 
 	if (!can_view) return redirect("/");
