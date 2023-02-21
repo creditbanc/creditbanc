@@ -1,6 +1,5 @@
 import { useLocation } from "@remix-run/react";
 import { Link } from "@remix-run/react";
-import { head, join, pipe, split } from "ramda";
 import { to_resource_pathname } from "~/utils/helpers";
 
 function classNames(...classes) {
@@ -11,15 +10,6 @@ const tabs = [
 	{ name: "Share", href: "#", current: true },
 	{ name: "Links", href: "#", current: false },
 ];
-
-const build_group_path = (pathname) => {
-	return pipe(
-		to_resource_pathname,
-		split("/f"),
-		head,
-		(url) => "/group" + url
-	)(pathname);
-};
 
 export default function Tabs() {
 	const location = useLocation();

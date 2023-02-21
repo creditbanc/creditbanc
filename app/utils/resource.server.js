@@ -82,6 +82,12 @@ export const is_link_with_role_p = async (request) => {
 	return role ? true : false;
 };
 
+export const get_link_role = async (request) => {
+	const url = new URL(request.url);
+	const role = url.searchParams.get("role");
+	return role;
+};
+
 export const get_link_hash = async (request) => {
 	const url = new URL(request.url);
 	const hash = url.searchParams.get("role");
@@ -213,6 +219,7 @@ const get_entity_roles = async ({
 			entity_id,
 			resource.id
 		);
+
 		return entity_roles(entity_roles_response);
 	}
 };
@@ -310,94 +317,27 @@ export const get_resource_permissions = async ({
 	resource_id,
 	resource_path_id,
 	entity_id,
+	link_role = "",
 }) => {
-	// console.log("get_resource_permissions");
+	let resource = await get_resource({ resource_path_id, resource_id });
 
-	let resource = await get_resource({ resource_path_id });
-
-	let entity_roles = await get_entity_roles({
+	let entity_roles_response = await get_entity_roles({
 		entity_id,
 		resource_id: resource.id,
 	});
+
+	let entity_roles = uniq([...entity_roles_response, link_role]);
 
 	let resource_permissions = await get_resource_roles({
 		resource_id: resource.id,
 	});
 
-	if (isEmpty(entity_roles)) {
-		// this usually means that they are accessing a resource that has a role
-		// associated at the root branch scope
-		// check first if the signed in user has a role set at the root of the branch
-		// of the resource they are trying to access
+	let permissions = get_permissions({
+		entity_roles,
+		resource_permissions,
+	});
 
-		// this checks if they are a member of that specific resource
-		// for example if they got an invite link to it, in which case
-		// they would have an entity role
-
-		const entity_roles = await prisma.role.findMany({
-			where: {
-				type: "entity",
-				entity_ids: { hasEvery: [entity_id] },
-				resource_ids: { hasEvery: [group_resource_id] },
-			},
-			include: {
-				settings: true,
-			},
-		});
-
-		// console.log("entity_roles", entity_roles);
-
-		const entity_resource_roles = await prisma.role.findMany({
-			where: {
-				type: "resource",
-				name: { in: pipe(get(all, "name"))(entity_roles) },
-				resource_ids: { hasEvery: [group_resource_id] },
-			},
-			include: {
-				settings: true,
-			},
-		});
-
-		// console.log("entity_resource_roles", entity_resource_roles);
-
-		const group_default_roles = await prisma.role.findMany({
-			where: {
-				type: "resource",
-				name: "@default",
-				resource_ids: { hasEvery: [group_resource_id] },
-			},
-			include: {
-				settings: true,
-			},
-		});
-
-		// console.log("group_default_roles", group_default_roles);
-
-		let role_permissions = get_roles_permissions([
-			entity_roles,
-			group_default_roles,
-			entity_resource_roles,
-		]);
-
-		// console.log("role_permissions", role_permissions);
-
-		let permission_keys = get_permission_keys(role_permissions);
-
-		let permissions = get_permissions(permission_keys, role_permissions);
-		// console.log("permissions", permissions);
-		return permissions;
-
-		// return head(group_default_roles);
-	}
-
-	if (!isEmpty(entity_roles)) {
-		let permissions = get_permissions({
-			entity_roles,
-			resource_permissions,
-		});
-
-		return permissions;
-	}
+	return permissions;
 };
 
 const has_action_permission = (action, permissions) => {
@@ -441,20 +381,26 @@ export const validate_action = async ({
 		let is_link_with_role = await is_link_with_role_p(request);
 
 		if (is_link_with_role) {
-			let link_hash = await get_link_hash(request);
-			// console.log("link_hash", link_hash);
-			let link = await is_valid_link_p(link_hash);
-			// console.log("is_valid_link", link);
+			let link_role = await get_link_role(request);
+			// let link_hash = await get_link_hash(request);
+			// // console.log("link_hash", link_hash);
+			// let link = await is_valid_link_p(link_hash);
+			// // console.log("is_valid_link", link);
 
-			let permissions = await get_group_role_permissions(request);
+			let permissions = await get_resource_permissions({
+				resource_path_id,
+				link_role,
+			});
 
-			if (permissions) {
-				let action_resolver_name = actions_map[action];
-				let has_permission =
-					db_actions[action_resolver_name](permissions);
+			return _return(permissions);
 
-				return has_permission;
-			}
+			// if (permissions) {
+			// 	let action_resolver_name = actions_map[action];
+			// 	let has_permission =
+			// 		db_actions[action_resolver_name](permissions);
+
+			// 	return has_permission;
+			// }
 
 			// if (link) {
 			// 	let role = await get_role({

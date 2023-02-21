@@ -1,11 +1,11 @@
 import { Fragment, useState } from "react";
-import { useLocation, useLoaderData, useHref, Link } from "@remix-run/react";
+import { useLocation, useLoaderData } from "@remix-run/react";
 import ResourceSettingsTabs from "~/components/ResourceSettingsTabs";
 import { get_resource_permissions } from "~/utils/role.server";
 import { get_group_id, to_resource_pathname } from "~/utils/helpers";
 import { keys, head, pipe, defaultTo, map } from "ramda";
-import { Listbox, Transition, Switch } from "@headlessui/react";
-import { ChevronUpDownIcon, EnvelopeIcon } from "@heroicons/react/20/solid";
+import { Listbox, Transition } from "@headlessui/react";
+import { ChevronUpDownIcon } from "@heroicons/react/20/solid";
 import copy from "copy-to-clipboard";
 
 const LinkIcon = () => {
@@ -144,7 +144,7 @@ export default function NewLink() {
 	const origin = url.origin;
 	let [shareLink, setShareLink] = useState(
 		origin +
-			"/credit/personal/personal" +
+			"/credit/personal/report/personal" +
 			to_resource_pathname(location.pathname)
 	);
 	const roles = pipe(keys)(permissions);

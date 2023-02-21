@@ -26,7 +26,7 @@ export const loader = async ({ request }) => {
 		request,
 	});
 
-	let { can_view } = permissions;
+	let { can_view = false } = permissions;
 
 	if (!can_view) return redirect("/");
 
@@ -65,7 +65,7 @@ export default function CreditReport() {
 
 	return (
 		<div className="flex flex-col w-full h-full">
-			<CreditNav origin={origin} can_share={permissions.can_share} />
+			<CreditNav origin={origin} can_share={permissions?.can_share} />
 			<div className="flex flex-row h-full overflow-hidden">
 				<LeftNav data={reports} />
 				<div className="flex flex-col flex-1 overflow-scroll">
