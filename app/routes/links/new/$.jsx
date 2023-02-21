@@ -32,10 +32,6 @@ function classNames(...classes) {
 }
 
 const SelectComponent = ({ roles = [], onSelectRole, selected_role }) => {
-	// let location = useLocation();
-	// console.log("SelectComponent");
-	// console.log(roles);
-	// console.log(selected_role);
 	return (
 		<div className="flex flex-row justify-between">
 			<Listbox
