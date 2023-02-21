@@ -25,7 +25,10 @@ export default function Tabs() {
 			<div className="border-b border-gray-200 flex flex-row">
 				<Link
 					className="flex flex-col border border-gray-300 rounded cursor-pointer p-[3px] fixed top-[15px] right-[10px]"
-					to={"/group" + to_resource_pathname(pathname)}
+					to={
+						"/credit/personal/report/personal" +
+						to_resource_pathname(pathname)
+					}
 				>
 					<svg
 						xmlns="http://www.w3.org/2000/svg"

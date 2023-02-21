@@ -89,7 +89,6 @@ export const CanView = ({
 						Makes the files in the group public to members with this
 						role.
 					</div>
-					<div>(excluding private files).</div>
 				</span>
 				<span className="ml-4 flex-shrink-0">
 					<Toggle
@@ -124,7 +123,43 @@ export const CanShare = ({
 					<div className="mb-1">
 						Allows this role to invite and share with others.
 					</div>
-					<div>(excluding private files).</div>
+				</span>
+				<span className="ml-4 flex-shrink-0">
+					<Toggle
+						onToggleCallback={onToggleCallback}
+						enabled={permission_value}
+					/>
+				</span>
+			</dd>
+		</div>
+	);
+};
+
+export const CanManageRoles = ({
+	permission_key,
+	permission_value,
+	role_id,
+	onPermissionChange,
+}) => {
+	const onToggleCallback = () => {
+		onPermissionChange({
+			permission_key,
+			permission_value: !permission_value,
+			role_id,
+		});
+	};
+
+	return (
+		<div className="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:py-5">
+			<dt className="text-sm font-bold text-gray-900">Manage Roles</dt>
+			<dd className="mt-1 flex text-sm text-gray-500 sm:col-span-2 sm:mt-0">
+				<span className="flex-grow">
+					<div className="mb-1">
+						Allows members to create new roles and edit or delete
+						roles lower than their highest role. Also allows members
+						to change permissions of individual channels that they
+						have access to.
+					</div>
 				</span>
 				<span className="ml-4 flex-shrink-0">
 					<Toggle
@@ -140,11 +175,13 @@ export const CanShare = ({
 export const permissions_defaults = {
 	can_view: false,
 	can_share: false,
+	can_manage_roles: false,
 };
 
 export const permissions_components = {
 	can_view: CanView,
 	can_share: CanShare,
+	can_manage_roles: CanManageRoles,
 };
 
 const PermissionComponent = ({
