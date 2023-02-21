@@ -16,7 +16,6 @@ import { validate_action } from "~/utils/resource.server";
 import { redirect } from "@remix-run/node";
 
 export const loader = async ({ request }) => {
-	console.log("loader");
 	let url = new URL(request.url);
 	let user_id = await get_user_id(request);
 	let group_id = get_group_id(url.pathname);
@@ -26,9 +25,6 @@ export const loader = async ({ request }) => {
 		resource_path_id: group_id,
 		request,
 	});
-
-	console.log("permissions");
-	console.log(permissions);
 
 	let { can_view = false } = permissions;
 
@@ -55,8 +51,6 @@ export const loader = async ({ request }) => {
 
 export default function CreditReport() {
 	const { origin, permissions } = useLoaderData();
-	console.log("permissions");
-	console.log(permissions);
 	const [target, setTarget] = useState();
 	const elmSize = useElmSize(target);
 	let setContentWidth = useLayoutStore((state) => state.set_content_width);
