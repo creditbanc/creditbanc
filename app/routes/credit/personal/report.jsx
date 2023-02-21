@@ -16,6 +16,7 @@ import { validate_action } from "~/utils/resource.server";
 import { redirect } from "@remix-run/node";
 
 export const loader = async ({ request }) => {
+	console.log("loader");
 	let url = new URL(request.url);
 	let user_id = await get_user_id(request);
 	let group_id = get_group_id(url.pathname);
