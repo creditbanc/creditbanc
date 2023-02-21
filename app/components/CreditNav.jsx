@@ -8,7 +8,7 @@ function classNames(...classes) {
 	return classes.filter(Boolean).join(" ");
 }
 
-export default function Nav({ origin, is_logged_in = false }) {
+export default function Nav({ origin, can_share = false }) {
 	const location = useLocation();
 	let url = origin + location.pathname + location.search;
 	let resource_pathname = to_resource_pathname(url);
@@ -35,7 +35,7 @@ export default function Nav({ origin, is_logged_in = false }) {
 								</div>
 							</div>
 
-							{is_logged_in && (
+							{can_share && (
 								<div className="flex space-x-8 items-center">
 									<div className="flex -space-x-2 overflow-hidden">
 										<div className="relative inline-flex items-center justify-center w-9 h-9 overflow-hidden bg-white rounded-full border border-gray-200 text-xs ">

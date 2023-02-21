@@ -19,7 +19,7 @@ export const loader = async ({ request }) => {
 	let user_id = await get_user_id(request);
 	let group_id = get_group_id(url.pathname);
 
-	validate_action({
+	let permissions = await validate_action({
 		entity_id: user_id,
 		resource_path_id: group_id,
 		request,
@@ -41,11 +41,11 @@ export const loader = async ({ request }) => {
 		})
 	)(group_docs);
 
-	return { reports, origin: url.origin, user_id };
+	return { reports, origin: url.origin, user_id, permissions };
 };
 
 export default function CreditReport() {
-	const { origin, user_id } = useLoaderData();
+	const { origin, user_id, permissions } = useLoaderData();
 	const [target, setTarget] = useState();
 	const elmSize = useElmSize(target);
 	let setContentWidth = useLayoutStore((state) => state.set_content_width);
@@ -60,7 +60,7 @@ export default function CreditReport() {
 
 	return (
 		<div className="flex flex-col w-full h-full">
-			<CreditNav origin={origin} is_logged_in={user_id} />
+			<CreditNav origin={origin} can_share={permissions.can_share} />
 			<div className="flex flex-row h-full overflow-hidden">
 				<LeftNav data={reports} />
 				<div className="flex flex-col flex-1 overflow-scroll">
