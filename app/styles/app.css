@@ -2239,10 +2239,6 @@ video {
   padding-top: calc(23 / 318 * 100%);
 }
 
-.pb-10 {
-  padding-bottom: 2.5rem;
-}
-
 .text-left {
   text-align: left;
 }

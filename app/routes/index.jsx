@@ -1659,12 +1659,8 @@ function FAQ() {
 						Frequently asked questions
 					</h2>
 					<dl className="mt-10 space-y-6 divide-y divide-gray-900/10">
-						{faqs.map((faq) => (
-							<Disclosure
-								as="div"
-								key={faq.question}
-								className="pt-6"
-							>
+						{faqs.map((faq, id) => (
+							<Disclosure as="div" key={id} className="pt-6">
 								{({ open }) => (
 									<>
 										<dt>
