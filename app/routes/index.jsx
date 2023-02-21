@@ -1,5 +1,3 @@
-import { require_user_session } from "~/utils/auth.server";
-import { Hero as HeroSection } from "~/components/Hero";
 import { useState } from "react";
 import { Dialog } from "@headlessui/react";
 import {
@@ -1230,7 +1228,7 @@ const tiers = [
 
 function Pricing() {
 	return (
-		<div className="bg-white py-24 sm:py-32">
+		<div className="bg-white py-10">
 			<div className="mx-auto px-6 lg:px-8 max-w-7xl">
 				<div className="mx-auto max-w-4xl text-center">
 					<h2 className="text-lg font-semibold leading-8 tracking-tight text-indigo-600">
@@ -1332,6 +1330,7 @@ const frequencies = [
 	{ value: "monthly", label: "Monthly", priceSuffix: "/month" },
 	{ value: "annually", label: "Annually", priceSuffix: "/year" },
 ];
+
 const tiers_two = [
 	{
 		name: "Freelancer",

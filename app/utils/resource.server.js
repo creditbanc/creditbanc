@@ -70,6 +70,7 @@ const db_actions = {
 };
 
 export const is_signed_in_p = async (request) => {
+	// console.log("is_signed_in_p");
 	const session = await get_user_session(request);
 	let entity_id = session.get("entity_id");
 	return entity_id ? true : false;
@@ -105,44 +106,11 @@ export const get_role = async (query) => {
 // 	return last(url.pathname.split("/")) ?? "";
 // };
 
-let get_group_default_permissions = async (request) => {
-	const entity_id = await get_entity_id(request);
-	const resource_path_id = get_resource_id(request.url);
-	const group_id = get_group_id(request.url);
-
-	let resource = await prisma.resource.findFirst({
-		where: { resource_path_id: group_id },
-		include: {
-			roles: true,
-		},
-	});
-
-	const with_role_ids = mapObjIndexed((permissions, role_id) => ({
-		...permissions,
-		role_id,
-	}));
-
-	let resource_roles_permissions = tryCatch(
-		pipe(
-			get("roles", all, "permissions", group_id),
-			map(with_role_ids),
-			map(values),
-			flatten,
-			indexBy(prop("role_id")),
-			map(omit(["role_id"]))
-		),
-		always({})
-	)(resource);
-
-	// console.log("resource_roles_permissions", resource_roles_permissions);
-
-	let permissions = pipe(
-		map((role_id) => get(role_id)(resource_roles_permissions)),
-		reduceRight(mergeDeepRight, {})
-	)(["@default"]);
-
-	// console.log("permissions", permissions);
-	return permissions;
+const get_group_default_permissions = async ({ resource_path_id }) => {
+	// console.log("get_group_default_permissions");
+	let roles = await get_resource_roles({ resource_path_id });
+	let default_role = get("@default")(roles);
+	return default_role;
 };
 
 let get_group_role_permissions = async (request) => {
@@ -343,7 +311,7 @@ export const get_resource_permissions = async ({
 	resource_path_id,
 	entity_id,
 }) => {
-	console.log("get_resource_permissions");
+	// console.log("get_resource_permissions");
 
 	let resource = await get_resource({ resource_path_id });
 
@@ -453,10 +421,24 @@ export const validate_action = async ({
 	// console.log("validate_user");
 	const is_signed_in = await is_signed_in_p(request);
 
+	let _return = (permissions) => {
+		if (permissions && action) {
+			let has_permission = has_action_permission(action, permissions);
+			return has_permission;
+		}
+
+		if (permissions && !action) {
+			return permissions;
+		}
+
+		if (!permissions && !action) {
+			return false;
+		}
+	};
+
 	if (!is_signed_in) {
 		console.log("!is_signed_in");
 		let is_link_with_role = await is_link_with_role_p(request);
-		console.log("is_link_with_role", is_link_with_role);
 
 		if (is_link_with_role) {
 			let link_hash = await get_link_hash(request);
@@ -496,15 +478,11 @@ export const validate_action = async ({
 			// person is not signed in and is trying to access a resource
 			// without a valid link hash
 
-			let permissions = await get_group_default_permissions(request);
+			let permissions = await get_group_default_permissions({
+				resource_path_id,
+			});
 
-			if (permissions) {
-				let action_resolver_name = actions_map[action];
-				let has_permission =
-					db_actions[action_resolver_name](permissions);
-
-				return has_permission;
-			}
+			return _return(permissions);
 		}
 	}
 
@@ -546,18 +524,7 @@ export const validate_action = async ({
 				resource_path_id,
 			});
 
-			if (permissions && action) {
-				let has_permission = has_action_permission(action, permissions);
-				return has_permission;
-			}
-
-			if (permissions && !action) {
-				return permissions;
-			}
-
-			if (!permissions && !action) {
-				return false;
-			}
+			return _return(permissions);
 		}
 	}
 };

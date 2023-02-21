@@ -13,6 +13,7 @@ import CreditScoreHero from "~/components/CreditScoreHero";
 import CreditHeroGradient from "~/components/CreditHeroGradient";
 import { get_user_id } from "~/utils/auth.server";
 import { validate_action } from "~/utils/resource.server";
+import { redirect } from "@remix-run/node";
 
 export const loader = async ({ request }) => {
 	let url = new URL(request.url);
@@ -24,6 +25,10 @@ export const loader = async ({ request }) => {
 		resource_path_id: group_id,
 		request,
 	});
+
+	let { can_view } = permissions;
+
+	if (!can_view) return redirect("/");
 
 	let group_docs = await get_group_docs({ resource_id: group_id });
 
@@ -45,7 +50,7 @@ export const loader = async ({ request }) => {
 };
 
 export default function CreditReport() {
-	const { origin, user_id, permissions } = useLoaderData();
+	const { origin, permissions } = useLoaderData();
 	const [target, setTarget] = useState();
 	const elmSize = useElmSize(target);
 	let setContentWidth = useLayoutStore((state) => state.set_content_width);

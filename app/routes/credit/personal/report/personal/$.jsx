@@ -1,21 +1,3 @@
-import { validate_action } from "~/utils/resource.server";
-import { redirect } from "@remix-run/node";
-import { get_user } from "~/utils/auth.server";
-
-export const loader = async ({ request }) => {
-	let user = await get_user(request);
-	// console.log("user");
-	// console.log(user);
-
-	if (!user) {
-		let has_permission = await validate_action(request);
-		console.log("has_permission", has_permission);
-		return has_permission ? null : redirect("/");
-	}
-
-	return null;
-};
-
 const PersonalInfoCard = () => {
 	return (
 		<div className="overflow-hidden bg-white rounded-lg border">
