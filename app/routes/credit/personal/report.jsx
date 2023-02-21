@@ -52,6 +52,8 @@ export const loader = async ({ request }) => {
 
 export default function CreditReport() {
 	const { origin, permissions } = useLoaderData();
+	console.log("permissions");
+	console.log(permissions);
 	const [target, setTarget] = useState();
 	const elmSize = useElmSize(target);
 	let setContentWidth = useLayoutStore((state) => state.set_content_width);

@@ -364,7 +364,7 @@ export const validate_action = async ({
 	let _return = (permissions) => {
 		if (permissions && action) {
 			let has_permission = has_action_permission(action, permissions);
-			return has_permission;
+			return { [action]: has_permission };
 		}
 
 		if (permissions && !action) {
@@ -372,7 +372,7 @@ export const validate_action = async ({
 		}
 
 		if (!permissions && !action) {
-			return false;
+			return {};
 		}
 	};
 
