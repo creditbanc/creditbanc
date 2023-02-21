@@ -11,8 +11,10 @@ import {
 	LockClosedIcon,
 	ServerIcon,
 	CheckIcon,
+	MinusSmallIcon,
+	PlusSmallIcon,
 } from "@heroicons/react/24/outline";
-import { RadioGroup } from "@headlessui/react";
+import { Disclosure, RadioGroup } from "@headlessui/react";
 
 function classNames(...classes) {
 	return classes.filter(Boolean).join(" ");
@@ -1229,7 +1231,7 @@ const tiers = [
 function Pricing() {
 	return (
 		<div className="bg-white py-24 sm:py-32">
-			<div className="mx-auto max-w-7xl px-6 lg:px-8">
+			<div className="mx-auto px-6 lg:px-8 max-w-7xl">
 				<div className="mx-auto max-w-4xl text-center">
 					<h2 className="text-lg font-semibold leading-8 tracking-tight text-indigo-600">
 						Pricing
@@ -1243,7 +1245,7 @@ function Pricing() {
 					Saepe et quasi iusto modi velit ut non voluptas in.
 					Explicabo id ut laborum.
 				</p>
-				<div className="isolate mx-auto mt-16 grid max-w-md grid-cols-1 gap-y-8 sm:mt-20 lg:mx-0 lg:max-w-none lg:grid-cols-3">
+				<div className="isolate mx-auto mt-16 grid grid-cols-1 gap-y-8 sm:mt-20 lg:mx-0 lg:max-w-none lg:grid-cols-3">
 					{tiers.map((tier, tierIdx) => (
 						<div
 							key={tier.id}
@@ -1618,6 +1620,93 @@ function Footer() {
 	);
 }
 
+const faqs = [
+	{
+		question: "What's the best thing about Switzerland?",
+		answer: "I don't know, but the flag is a big plus. Lorem ipsum dolor sit amet consectetur adipisicing elit. Quas cupiditate laboriosam fugiat.",
+	},
+	{
+		question: "What's the best thing about Switzerland?",
+		answer: "I don't know, but the flag is a big plus. Lorem ipsum dolor sit amet consectetur adipisicing elit. Quas cupiditate laboriosam fugiat.",
+	},
+	{
+		question: "What's the best thing about Switzerland?",
+		answer: "I don't know, but the flag is a big plus. Lorem ipsum dolor sit amet consectetur adipisicing elit. Quas cupiditate laboriosam fugiat.",
+	},
+	{
+		question: "What's the best thing about Switzerland?",
+		answer: "I don't know, but the flag is a big plus. Lorem ipsum dolor sit amet consectetur adipisicing elit. Quas cupiditate laboriosam fugiat.",
+	},
+	{
+		question: "What's the best thing about Switzerland?",
+		answer: "I don't know, but the flag is a big plus. Lorem ipsum dolor sit amet consectetur adipisicing elit. Quas cupiditate laboriosam fugiat.",
+	},
+	{
+		question: "What's the best thing about Switzerland?",
+		answer: "I don't know, but the flag is a big plus. Lorem ipsum dolor sit amet consectetur adipisicing elit. Quas cupiditate laboriosam fugiat.",
+	},
+	{
+		question: "What's the best thing about Switzerland?",
+		answer: "I don't know, but the flag is a big plus. Lorem ipsum dolor sit amet consectetur adipisicing elit. Quas cupiditate laboriosam fugiat.",
+	},
+];
+
+function FAQ() {
+	return (
+		<div className="bg-white">
+			<div className="mx-auto px-6 py-10 lg:px-8">
+				<div className="mx-auto max-w-7xl divide-y divide-gray-900/10">
+					<h2 className="text-2xl font-bold leading-10 tracking-tight text-gray-900">
+						Frequently asked questions
+					</h2>
+					<dl className="mt-10 space-y-6 divide-y divide-gray-900/10">
+						{faqs.map((faq) => (
+							<Disclosure
+								as="div"
+								key={faq.question}
+								className="pt-6"
+							>
+								{({ open }) => (
+									<>
+										<dt>
+											<Disclosure.Button className="flex w-full items-start justify-between text-left text-gray-900">
+												<span className="text-base font-semibold leading-7">
+													{faq.question}
+												</span>
+												<span className="ml-6 flex h-7 items-center">
+													{open ? (
+														<PlusSmallIcon
+															className="h-6 w-6"
+															aria-hidden="true"
+														/>
+													) : (
+														<MinusSmallIcon
+															className="h-6 w-6"
+															aria-hidden="true"
+														/>
+													)}
+												</span>
+											</Disclosure.Button>
+										</dt>
+										<Disclosure.Panel
+											as="dd"
+											className="mt-2 pr-12"
+										>
+											<p className="text-base leading-7 text-gray-600">
+												{faq.answer}
+											</p>
+										</Disclosure.Panel>
+									</>
+								)}
+							</Disclosure>
+						))}
+					</dl>
+				</div>
+			</div>
+		</div>
+	);
+}
+
 export default function Index() {
 	return (
 		<div className="h-full w-full">
@@ -1631,6 +1720,7 @@ export default function Index() {
 				<Stats />
 				<Pricing />
 				{/* <PricingTwo /> */}
+				<FAQ />
 				<Footer />
 			</main>
 		</div>
