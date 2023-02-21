@@ -249,7 +249,7 @@ const get_entity_roles = async ({
 	}
 };
 
-const get_resource_roles = async ({ resource_id, resource_path_id }) => {
+export const get_resource_roles = async ({ resource_id, resource_path_id }) => {
 	const with_role_ids = mapObjIndexed((permissions, role_id) => ({
 		...permissions,
 		role_id,
@@ -338,12 +338,12 @@ const get_resource = async ({ resource_id, resource_path_id }) => {
 	}
 };
 
-export const get_resource_persmissions = async ({
+export const get_resource_permissions = async ({
 	resource_id,
 	resource_path_id,
 	entity_id,
 }) => {
-	console.log("get_resource_persmissions");
+	console.log("get_resource_permissions");
 
 	let resource = await get_resource({ resource_path_id });
 
@@ -541,7 +541,7 @@ export const validate_action = async ({
 		if (!is_link_with_role) {
 			console.log("is_not_link_with_role");
 
-			let permissions = await get_resource_persmissions({
+			let permissions = await get_resource_permissions({
 				entity_id,
 				resource_path_id,
 			});
