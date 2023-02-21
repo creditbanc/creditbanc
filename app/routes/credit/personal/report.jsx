@@ -46,9 +46,6 @@ export const loader = async ({ request }) => {
 		})
 	)(group_docs);
 
-	console.log("permissions");
-	console.log(permissions);
-
 	return { reports, origin: url.origin, user_id, permissions };
 };
 
