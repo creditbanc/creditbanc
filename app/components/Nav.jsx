@@ -1,6 +1,7 @@
 import { Fragment } from "react";
 import { Disclosure, Menu, Transition } from "@headlessui/react";
 import { Bars3Icon, BellIcon, XMarkIcon } from "@heroicons/react/24/outline";
+import { Link } from "@remix-run/react";
 
 function classNames(...classes) {
 	return classes.filter(Boolean).join(" ");
@@ -123,8 +124,8 @@ export default function Nav() {
 											</Menu.Item>
 											<Menu.Item>
 												{({ active }) => (
-													<a
-														href="#"
+													<Link
+														to={"/signout"}
 														className={classNames(
 															active
 																? "bg-gray-100"
@@ -133,7 +134,7 @@ export default function Nav() {
 														)}
 													>
 														Sign out
-													</a>
+													</Link>
 												)}
 											</Menu.Item>
 										</Menu.Items>
@@ -238,13 +239,12 @@ export default function Nav() {
 								>
 									Settings
 								</Disclosure.Button>
-								<Disclosure.Button
-									as="a"
-									href="#"
+								<Link
+									to="/signout"
 									className="block px-4 py-2 text-base font-medium text-gray-500 hover:bg-gray-100 hover:text-gray-800"
 								>
 									Sign out
-								</Disclosure.Button>
+								</Link>
 							</div>
 						</div>
 					</Disclosure.Panel>

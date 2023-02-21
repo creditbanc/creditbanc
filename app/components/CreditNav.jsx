@@ -151,8 +151,8 @@ export default function Nav({ origin, can_share = false }) {
 											</Menu.Item>
 											<Menu.Item>
 												{({ active }) => (
-													<a
-														href="#"
+													<Link
+														to={"/signout"}
 														className={classNames(
 															active
 																? "bg-gray-100"
@@ -161,7 +161,7 @@ export default function Nav({ origin, can_share = false }) {
 														)}
 													>
 														Sign out
-													</a>
+													</Link>
 												)}
 											</Menu.Item>
 										</Menu.Items>
