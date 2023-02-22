@@ -1,11 +1,9 @@
-import { Fragment, useEffect, useState } from "react";
+import { Fragment, useState } from "react";
 import { Disclosure, Menu, Transition, Dialog } from "@headlessui/react";
-import { Bars3Icon, BellIcon, XMarkIcon } from "@heroicons/react/24/outline";
+import { BellIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import { Link, useLocation } from "@remix-run/react";
-import { to_resource_pathname } from "~/utils/helpers";
-// import { Fragment, useState } from "react";
-// import { Dialog, Transition } from "@headlessui/react";
-// import { XMarkIcon } from "@heroicons/react/24/outline";
+import { mapIndexed, to_resource_pathname } from "~/utils/helpers";
+import { map, pipe } from "ramda";
 
 function classNames(...classes) {
 	return classes.filter(Boolean).join(" ");
@@ -30,7 +28,70 @@ const BurgerIcon = () => {
 	);
 };
 
-function Panel({ is_open, setPanel }) {
+const PersonIcon = () => {
+	return (
+		<svg
+			xmlns="http://www.w3.org/2000/svg"
+			fill="none"
+			viewBox="0 0 24 24"
+			strokeWidth="1.5"
+			stroke="currentColor"
+			className="w-6 h-6"
+		>
+			<path
+				strokeLinecap="round"
+				strokeLinejoin="round"
+				d="M17.982 18.725A7.488 7.488 0 0012 15.75a7.488 7.488 0 00-5.982 2.975m11.963 0a9 9 0 10-11.963 0m11.963 0A8.966 8.966 0 0112 21a8.966 8.966 0 01-5.982-2.275M15 9.75a3 3 0 11-6 0 3 3 0 016 0z"
+			/>
+		</svg>
+	);
+};
+
+const BusinessIcon = () => {
+	return (
+		<svg
+			xmlns="http://www.w3.org/2000/svg"
+			fill="none"
+			viewBox="0 0 24 24"
+			strokeWidth="1.5"
+			stroke="currentColor"
+			className="w-6 h-6"
+		>
+			<path
+				strokeLinecap="round"
+				strokeLinejoin="round"
+				d="M20.25 14.15v4.25c0 1.094-.787 2.036-1.872 2.18-2.087.277-4.216.42-6.378.42s-4.291-.143-6.378-.42c-1.085-.144-1.872-1.086-1.872-2.18v-4.25m16.5 0a2.18 2.18 0 00.75-1.661V8.706c0-1.081-.768-2.015-1.837-2.175a48.114 48.114 0 00-3.413-.387m4.5 8.006c-.194.165-.42.295-.673.38A23.978 23.978 0 0112 15.75c-2.648 0-5.195-.429-7.577-1.22a2.016 2.016 0 01-.673-.38m0 0A2.18 2.18 0 013 12.489V8.706c0-1.081.768-2.015 1.837-2.175a48.111 48.111 0 013.413-.387m7.5 0V5.25A2.25 2.25 0 0013.5 3h-3a2.25 2.25 0 00-2.25 2.25v.894m7.5 0a48.667 48.667 0 00-7.5 0M12 12.75h.008v.008H12v-.008z"
+			/>
+		</svg>
+	);
+};
+
+const SettingsIcon = () => {
+	return (
+		<svg
+			xmlns="http://www.w3.org/2000/svg"
+			fill="none"
+			viewBox="0 0 24 24"
+			strokeWidth="1.5"
+			stroke="currentColor"
+			className="w-6 h-6"
+		>
+			<path
+				strokeLinecap="round"
+				strokeLinejoin="round"
+				d="M10.343 3.94c.09-.542.56-.94 1.11-.94h1.093c.55 0 1.02.398 1.11.94l.149.894c.07.424.384.764.78.93.398.164.855.142 1.205-.108l.737-.527a1.125 1.125 0 011.45.12l.773.774c.39.389.44 1.002.12 1.45l-.527.737c-.25.35-.272.806-.107 1.204.165.397.505.71.93.78l.893.15c.543.09.94.56.94 1.109v1.094c0 .55-.397 1.02-.94 1.11l-.893.149c-.425.07-.765.383-.93.78-.165.398-.143.854.107 1.204l.527.738c.32.447.269 1.06-.12 1.45l-.774.773a1.125 1.125 0 01-1.449.12l-.738-.527c-.35-.25-.806-.272-1.203-.107-.397.165-.71.505-.781.929l-.149.894c-.09.542-.56.94-1.11.94h-1.094c-.55 0-1.019-.398-1.11-.94l-.148-.894c-.071-.424-.384-.764-.781-.93-.398-.164-.854-.142-1.204.108l-.738.527c-.447.32-1.06.269-1.45-.12l-.773-.774a1.125 1.125 0 01-.12-1.45l.527-.737c.25-.35.273-.806.108-1.204-.165-.397-.505-.71-.93-.78l-.894-.15c-.542-.09-.94-.56-.94-1.109v-1.094c0-.55.398-1.02.94-1.11l.894-.149c.424-.07.765-.383.93-.78.165-.398.143-.854-.107-1.204l-.527-.738a1.125 1.125 0 01.12-1.45l.773-.773a1.125 1.125 0 011.45-.12l.737.527c.35.25.807.272 1.204.107.397-.165.71-.505.78-.929l.15-.894z"
+			/>
+			<path
+				strokeLinecap="round"
+				strokeLinejoin="round"
+				d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+			/>
+		</svg>
+	);
+};
+
+function Panel({ is_open, setPanel, reports = {} }) {
+	let location = useLocation();
 	return (
 		<Transition.Root show={is_open} as={Fragment}>
 			<Dialog as="div" className="relative z-50" onClose={setPanel}>
@@ -48,12 +109,12 @@ function Panel({ is_open, setPanel }) {
 								leaveFrom="translate-x-0"
 								leaveTo="-translate-x-full"
 							>
-								<Dialog.Panel className="pointer-events-auto w-screen max-w-md">
+								<Dialog.Panel className="pointer-events-auto w-screen max-w-full">
 									<div className="flex h-full flex-col overflow-y-scroll bg-white py-6 shadow-xl">
-										<div className="px-4 sm:px-6">
+										<div className="px-4 sm:px-6 border-b">
 											<div className="flex items-start justify-between">
-												<Dialog.Title className="text-lg font-medium text-gray-900">
-													Panel title
+												<Dialog.Title className="text-lg font-medium text-gray-900 w-full pb-2">
+													Reports
 												</Dialog.Title>
 												<div className="ml-3 flex h-7 items-center">
 													<button
@@ -76,10 +137,113 @@ function Panel({ is_open, setPanel }) {
 										</div>
 										<div className="relative mt-6 flex-1 px-4 sm:px-6">
 											<div className="absolute inset-0 px-4 sm:px-6">
-												{/* <div
-													className="h-full border-2 border-dashed border-gray-200"
+												<div
+													className="w-full h-full "
 													aria-hidden="true"
-												/> */}
+												>
+													<fieldset>
+														<div className="">
+															<div className="flex flex-row">
+																<div className="mr-2">
+																	<PersonIcon />
+																</div>
+																<div>
+																	Personal
+																	reports
+																</div>
+															</div>
+
+															<div className="py-5">
+																{pipe(
+																	mapIndexed(
+																		(
+																			report,
+																			idx
+																		) => (
+																			<Link
+																				className="relative flex items-start ml-2"
+																				to={
+																					"/credit/personal/report/personal" +
+																					to_resource_pathname(
+																						location.pathname
+																					) +
+																					location.search
+																				}
+																				key={
+																					idx
+																				}
+																			>
+																				<div className="text-sm border-l pl-2 py-2">
+																					<div className="font-medium text-gray-500 cursor-pointer">
+																						{
+																							report.id
+																						}
+																					</div>
+																				</div>
+																			</Link>
+																		)
+																	)
+																)(
+																	reports.personal_credit_reports
+																)}
+															</div>
+
+															<div className="flex flex-row">
+																<div className="mr-2">
+																	<BusinessIcon />
+																</div>
+																<div>
+																	Business
+																	reports
+																</div>
+															</div>
+
+															<div className="py-5">
+																{pipe(
+																	mapIndexed(
+																		(
+																			report,
+																			idx
+																		) => (
+																			<div
+																				className="relative flex items-start ml-2"
+																				key={
+																					idx
+																				}
+																			>
+																				<div className="text-sm border-l pl-2">
+																					<div className="font-medium text-gray-500 cursor-pointer">
+																						{
+																							report.id
+																						}
+																					</div>
+																				</div>
+																			</div>
+																		)
+																	)
+																)(
+																	reports.business_credit_reports
+																)}
+															</div>
+														</div>
+													</fieldset>
+												</div>
+											</div>
+											<div className="absolute bottom-0 left-[15px] right-[15px] flex flex-col border-t pt-3">
+												<Link
+													className="flex flex-row cursor-pointer w-[100px]"
+													to={
+														"/roles" +
+														to_resource_pathname(
+															location.pathname
+														)
+													}
+												>
+													<div className="mr-3">
+														<SettingsIcon />
+													</div>
+													<div>Settings</div>
+												</Link>
 											</div>
 										</div>
 									</div>
@@ -93,7 +257,7 @@ function Panel({ is_open, setPanel }) {
 	);
 }
 
-export default function Nav({ origin, can_share = false }) {
+export default function Nav({ origin, can_share = false, reports = {} }) {
 	const location = useLocation();
 	let url = origin + location.pathname + location.search;
 	let resource_pathname = to_resource_pathname(url);
@@ -108,7 +272,11 @@ export default function Nav({ origin, can_share = false }) {
 		<Disclosure as="nav" className="bg-white shadow top-0 sticky z-50">
 			{({ open }) => (
 				<>
-					<Panel is_open={panel} setPanel={setPanel} />
+					<Panel
+						is_open={panel}
+						setPanel={setPanel}
+						reports={reports}
+					/>
 					<div className="mx-auto px-4 sm:px-6 lg:px-8">
 						<div className="flex h-16 justify-between">
 							<div className="flex flex-row">

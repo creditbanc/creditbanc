@@ -65,7 +65,11 @@ export default function CreditReport() {
 
 	return (
 		<div className="flex flex-col w-full h-full">
-			<CreditNav origin={origin} can_share={permissions?.can_share} />
+			<CreditNav
+				origin={origin}
+				can_share={permissions?.can_share}
+				reports={reports}
+			/>
 			<div className="flex flex-row h-full overflow-hidden">
 				<LeftNav
 					data={reports}
