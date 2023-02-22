@@ -1,11 +1,96 @@
-import { Fragment, useEffect } from "react";
-import { Disclosure, Menu, Transition } from "@headlessui/react";
+import { Fragment, useEffect, useState } from "react";
+import { Disclosure, Menu, Transition, Dialog } from "@headlessui/react";
 import { Bars3Icon, BellIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import { Link, useLocation } from "@remix-run/react";
 import { to_resource_pathname } from "~/utils/helpers";
+// import { Fragment, useState } from "react";
+// import { Dialog, Transition } from "@headlessui/react";
+// import { XMarkIcon } from "@heroicons/react/24/outline";
 
 function classNames(...classes) {
 	return classes.filter(Boolean).join(" ");
+}
+
+const BurgerIcon = () => {
+	return (
+		<svg
+			xmlns="http://www.w3.org/2000/svg"
+			fill="none"
+			viewBox="0 0 24 24"
+			strokeWidth={1.5}
+			stroke="currentColor"
+			className="w-6 h-6 text-gray-400"
+		>
+			<path
+				strokeLinecap="round"
+				strokeLinejoin="round"
+				d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"
+			/>
+		</svg>
+	);
+};
+
+function Panel({ is_open, setPanel }) {
+	return (
+		<Transition.Root show={is_open} as={Fragment}>
+			<Dialog as="div" className="relative z-50" onClose={setPanel}>
+				<div className="fixed inset-0" />
+
+				<div className="fixed inset-0 overflow-hidden">
+					<div className="absolute inset-0 overflow-hidden">
+						<div className="pointer-events-none fixed inset-y-0 left-0 flex max-w-full">
+							<Transition.Child
+								as={Fragment}
+								enter="transform transition ease-in-out duration-900"
+								enterFrom="-translate-x-full"
+								enterTo="translate-x-0"
+								leave="transform transition ease-in-out duration-900"
+								leaveFrom="translate-x-0"
+								leaveTo="-translate-x-full"
+							>
+								<Dialog.Panel className="pointer-events-auto w-screen max-w-md">
+									<div className="flex h-full flex-col overflow-y-scroll bg-white py-6 shadow-xl">
+										<div className="px-4 sm:px-6">
+											<div className="flex items-start justify-between">
+												<Dialog.Title className="text-lg font-medium text-gray-900">
+													Panel title
+												</Dialog.Title>
+												<div className="ml-3 flex h-7 items-center">
+													<button
+														type="button"
+														className="rounded-md bg-white text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+														onClick={() =>
+															setPanel(false)
+														}
+													>
+														<span className="sr-only">
+															Close panel
+														</span>
+														<XMarkIcon
+															className="h-6 w-6"
+															aria-hidden="true"
+														/>
+													</button>
+												</div>
+											</div>
+										</div>
+										<div className="relative mt-6 flex-1 px-4 sm:px-6">
+											<div className="absolute inset-0 px-4 sm:px-6">
+												{/* <div
+													className="h-full border-2 border-dashed border-gray-200"
+													aria-hidden="true"
+												/> */}
+											</div>
+										</div>
+									</div>
+								</Dialog.Panel>
+							</Transition.Child>
+						</div>
+					</div>
+				</div>
+			</Dialog>
+		</Transition.Root>
+	);
 }
 
 export default function Nav({ origin, can_share = false }) {
@@ -13,14 +98,28 @@ export default function Nav({ origin, can_share = false }) {
 	let url = origin + location.pathname + location.search;
 	let resource_pathname = to_resource_pathname(url);
 	let share_link = "/links/new" + resource_pathname;
+	const [panel, setPanel] = useState(false);
+
+	const onPanelToggle = () => {
+		setPanel(!panel);
+	};
 
 	return (
 		<Disclosure as="nav" className="bg-white shadow top-0 sticky z-50">
 			{({ open }) => (
 				<>
+					<Panel is_open={panel} setPanel={setPanel} />
 					<div className="mx-auto px-4 sm:px-6 lg:px-8">
 						<div className="flex h-16 justify-between">
-							<div className="flex">
+							<div className="flex flex-row">
+								<div className="sm:hidden flex flex-col items-center justify-center mr-5">
+									<div
+										className="cursor-pointer"
+										onClick={onPanelToggle}
+									>
+										<BurgerIcon />
+									</div>
+								</div>
 								<div className="flex flex-shrink-0 items-center">
 									<img
 										className="block h-8 w-auto lg:hidden"
@@ -37,7 +136,7 @@ export default function Nav({ origin, can_share = false }) {
 
 							{can_share && (
 								<div className="flex space-x-8 items-center">
-									<div className="flex -space-x-2 overflow-hidden">
+									<div className="hidden sm:flex -space-x-2 overflow-hidden">
 										<div className="relative inline-flex items-center justify-center w-9 h-9 overflow-hidden bg-white rounded-full border border-gray-200 text-xs ">
 											<span className="font-medium text-gray-600 dark:text-gray-300">
 												JL
@@ -81,27 +180,10 @@ export default function Nav({ origin, can_share = false }) {
 								</div>
 							)}
 
-							<div className="hidden sm:ml-6 sm:flex sm:items-center">
-								<button
-									type="button"
-									className="rounded-full bg-white p-1 text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
-								>
-									<span className="sr-only">
-										View notifications
-									</span>
-									<BellIcon
-										className="h-6 w-6"
-										aria-hidden="true"
-									/>
-								</button>
-
-								{/* Profile dropdown */}
+							<div className="ml-6 flex items-center">
 								<Menu as="div" className="relative ml-3">
 									<div>
 										<Menu.Button className="flex rounded-full bg-white text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
-											<span className="sr-only">
-												Open user menu
-											</span>
 											<img
 												className="h-8 w-8 rounded-full"
 												src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
@@ -168,8 +250,8 @@ export default function Nav({ origin, can_share = false }) {
 									</Transition>
 								</Menu>
 							</div>
-							<div className="-mr-2 flex items-center sm:hidden">
-								{/* Mobile menu button */}
+
+							{/* <div className="-mr-2 flex items-center sm:hidden">
 								<Disclosure.Button className="inline-flex items-center justify-center rounded-md p-2 text-gray-400 hover:bg-gray-100 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-indigo-500">
 									<span className="sr-only">
 										Open main menu
@@ -186,7 +268,7 @@ export default function Nav({ origin, can_share = false }) {
 										/>
 									)}
 								</Disclosure.Button>
-							</div>
+							</div> */}
 						</div>
 					</div>
 
