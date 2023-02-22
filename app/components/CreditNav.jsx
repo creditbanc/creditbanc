@@ -3,7 +3,7 @@ import { Disclosure, Menu, Transition, Dialog } from "@headlessui/react";
 import { BellIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import { Link, useLocation } from "@remix-run/react";
 import { mapIndexed, to_resource_pathname } from "~/utils/helpers";
-import { map, pipe } from "ramda";
+import { isEmpty, map, pipe } from "ramda";
 
 function classNames(...classes) {
 	return classes.filter(Boolean).join(" ");
@@ -92,6 +92,11 @@ const SettingsIcon = () => {
 
 function Panel({ is_open, setPanel, reports = {} }) {
 	let location = useLocation();
+
+	if (isEmpty(reports)) {
+		return <div></div>;
+	}
+
 	return (
 		<Transition.Root show={is_open} as={Fragment}>
 			<Dialog as="div" className="relative z-50" onClose={setPanel}>
