@@ -97,6 +97,10 @@ const SettingsIcon = () => {
 function Panel({ is_open, setPanel, reports = {} }) {
 	let location = useLocation();
 
+	const onLinkClick = (url) => {
+		window.location.href = url;
+	};
+
 	if (isEmpty(reports)) {
 		return <div></div>;
 	}
@@ -169,16 +173,26 @@ function Panel({ is_open, setPanel, reports = {} }) {
 																			report,
 																			idx
 																		) => (
-																			<Link
+																			<div
 																				className="relative flex items-start ml-2"
-																				to={
-																					"/credit/personal/report/personal" +
-																					to_group_pathname(
-																						location.pathname
-																					) +
-																					`/f/${report.id}` +
-																					location.search
+																				onClick={() =>
+																					onLinkClick(
+																						"/credit/personal/report/personal" +
+																							to_group_pathname(
+																								location.pathname
+																							) +
+																							`/f/${report.id}` +
+																							location.search
+																					)
 																				}
+																				// to={
+																				// 	"/credit/personal/report/personal" +
+																				// 	to_group_pathname(
+																				// 		location.pathname
+																				// 	) +
+																				// 	`/f/${report.id}` +
+																				// 	location.search
+																				// }
 																				key={
 																					idx
 																				}
@@ -190,7 +204,7 @@ function Panel({ is_open, setPanel, reports = {} }) {
 																						}
 																					</div>
 																				</div>
-																			</Link>
+																			</div>
 																		)
 																	)
 																)(
