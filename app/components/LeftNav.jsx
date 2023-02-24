@@ -236,7 +236,8 @@ export default function LeftNav({ data = {}, can_manage_roles } = {}) {
 								key={report.id}
 								to={
 									"/credit/personal/report/personal" +
-									to_resource_pathname(location.pathname) +
+									to_group_pathname(location.pathname) +
+									`/f/${report.id}` +
 									location.search
 								}
 							>

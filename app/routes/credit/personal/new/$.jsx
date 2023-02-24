@@ -57,7 +57,7 @@ export const action = async ({ request }) => {
 		console.log(response.data);
 
 		return redirect(
-			`/credit/personal/verification?clientKey=${clientKey}&authToken=${authToken}`
+			`/credit/personal/verification?clientKey=${clientKey}&authToken=${authToken}&group_id=${group_id}`
 		);
 	} catch (error) {
 		console.log("error");

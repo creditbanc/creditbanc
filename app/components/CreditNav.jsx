@@ -2,7 +2,11 @@ import { Fragment, useState } from "react";
 import { Disclosure, Menu, Transition, Dialog } from "@headlessui/react";
 import { BellIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import { Link, useLocation } from "@remix-run/react";
-import { mapIndexed, to_resource_pathname } from "~/utils/helpers";
+import {
+	mapIndexed,
+	to_group_pathname,
+	to_resource_pathname,
+} from "~/utils/helpers";
 import { isEmpty, map, pipe } from "ramda";
 
 function classNames(...classes) {
@@ -169,9 +173,10 @@ function Panel({ is_open, setPanel, reports = {} }) {
 																				className="relative flex items-start ml-2"
 																				to={
 																					"/credit/personal/report/personal" +
-																					to_resource_pathname(
+																					to_group_pathname(
 																						location.pathname
 																					) +
+																					`/f/${report.id}` +
 																					location.search
 																				}
 																				key={

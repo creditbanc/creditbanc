@@ -127,6 +127,12 @@ export const get_resource_id = (uri) => {
 	)(uri);
 };
 
+export const get_entity_id = (uri) => {
+	return pipe(to_resource_path_array, (path) =>
+		pipe(indexOf("e"), (index) => path[index + 1])(path)
+	)(uri);
+};
+
 // export const is_object_id = (id) => {
 // 	if (!id) return false;
 // 	if (id.match(/^[0-9a-fA-F]{24}$/)) {
@@ -171,8 +177,12 @@ export const is_resource_p = (uri) => {
 
 export const get_group_id = (uri) => {
 	// console.log("get_group_id");
-	return pipe(to_resource_path_array, (array) =>
-		pipe(indexOf("g"), (index) => array[index + 1])(array)
+	return pipe(to_resource_path_array, inspect, (array) =>
+		pipe(indexOf("g"), (index) => {
+			console.log("index");
+			console.log(index);
+			return array[index + 1];
+		})(array)
 	)(uri);
 };
 

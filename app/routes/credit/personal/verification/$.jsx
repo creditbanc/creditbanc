@@ -2,12 +2,13 @@ import CreditNav from "~/components/CreditNav";
 import CreditHeroGradient from "~/components/CreditHeroGradient";
 import { map, addIndex, isEmpty, includes, values } from "ramda";
 import axios from "axios";
-import { useLoaderData, useFetcher } from "@remix-run/react";
+import { useLoaderData, useFetcher, useLocation } from "@remix-run/react";
 import { create } from "zustand";
 import { pipe } from "ramda";
 import { all, filter, get, mod } from "shades";
 import { useEffect } from "react";
 import { json, redirect } from "@remix-run/node";
+import { get_group_id } from "~/utils/helpers";
 
 // const appKey = "F5C7226A-4F96-43BF-B748-09278FFE0E36";
 const appKey = "3F03D20E-5311-43D8-8A76-E4B5D77793BD";
@@ -33,6 +34,10 @@ export const action = async ({ request }) => {
 	const payload = JSON.parse(form.get("payload"));
 	let { clientKey, authToken, answers } = payload;
 	let appKey = "3F03D20E-5311-43D8-8A76-E4B5D77793BD";
+	let url = new URL(request.url);
+	let search = new URLSearchParams(url.search);
+	let group_id = search.get("group_id");
+	console.log(group_id);
 
 	const options = {
 		method: "POST",
@@ -74,29 +79,13 @@ export const action = async ({ request }) => {
 		let { displayToken = null, reportKey = null } = response.data;
 
 		if (displayToken && reportKey) {
-			console.log("displayToken");
-			console.log(displayToken);
-			console.log("reportKey");
-			console.log(reportKey);
+			// console.log("displayToken");
+			// console.log(displayToken);
+			// console.log("reportKey");
+			// console.log(reportKey);
 
-			// var report_options = {
-			// 	method: "get",
-			// 	maxBodyLength: Infinity,
-			// 	url: `https://sandbox.array.io/api/report/v2?reportKey=${reportKey}&displayToken=${displayToken}`,
-			// 	headers: {
-			// 		"Content-Type": "application/json",
-			// 	},
-			// };
-
-			// setTimeout(async () => {
-			// 	let response = await axios(report_options);
-			// 	console.log("response.data");
-			// 	console.log(response.data);
-			// }, 5000);
-
-			// return json({ displayToken });
 			return redirect(
-				`/credit/personal/create?displayToken=${displayToken}&reportKey=${reportKey}`
+				`/credit/personal/create?displayToken=${displayToken}&reportKey=${reportKey}&group_id=${group_id}`
 			);
 		}
 	} else {
@@ -107,6 +96,7 @@ export const action = async ({ request }) => {
 export const loader = async ({ request }) => {
 	const url = new URL(request.url);
 	let clientKey = url.searchParams.get("clientKey");
+	// let search = new URLSearchParams(url);
 
 	var options = {
 		method: "get",
@@ -260,6 +250,8 @@ const Heading = () => {
 };
 
 export default function Verification() {
+	let location = useLocation();
+
 	const questions = useLoaderData();
 	const setQuestions = useVerificationQuestionsStore(
 		(state) => state.setQuestions

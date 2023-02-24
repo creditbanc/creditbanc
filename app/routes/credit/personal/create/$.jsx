@@ -4,14 +4,21 @@ import { create } from "~/utils/personal_credit_report.server";
 import axios from "axios";
 import { isEmpty } from "ramda";
 import { redirect } from "react-router";
+import { get_user_id } from "~/utils/auth.server";
 
 export const loader = async ({ request }) => {
 	console.log("create_personal_credit_report");
-	// console.log(request);
+	let entity_id = await get_user_id(request);
 	let { url } = request;
-	// console.log(url);
 	let url_object = new URL(url);
 	let search = new URLSearchParams(url_object.search);
+	let group_id = search.get("group_id");
+
+	console.log("group_id");
+	console.log(group_id);
+
+	console.log("entity_id");
+	console.log(entity_id);
 
 	let displayToken = search.get("displayToken");
 	let reportKey = search.get("reportKey");
@@ -21,6 +28,8 @@ export const loader = async ({ request }) => {
 
 	// console.log("reportKey");
 	// console.log(reportKey);
+
+	// return null;
 
 	let get_credit_report = async (reportKey, displayToken) => {
 		console.log("get_credit_report");
@@ -58,15 +67,15 @@ export const loader = async ({ request }) => {
 		}
 	};
 
-	let report = await get_credit_report(reportKey, displayToken);
+	// let report = await get_credit_report(reportKey, displayToken);
+
+	let report = await create({ group_id });
+
+	let { file } = report;
+	console.log("report");
+	console.log(report);
 
 	return redirect(
-		`/credit/personal/report/personal/resource/e/63d36a3df3bf7bbe44677ac8/g/63d36a5cf3bf7bbe44677acd/f/63ef03683b0eab22e6c20a3b`
+		`/credit/personal/report/personal/resource/e/${entity_id}/g/${group_id}/f/${file.id}`
 	);
-
-	return new Response(JSON.stringify({ any: "thing" }), {
-		headers: {
-			"Content-Type": "application/json; charset=utf-8",
-		},
-	});
 };

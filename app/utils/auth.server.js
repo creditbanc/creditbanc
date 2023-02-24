@@ -67,19 +67,6 @@ export const signup = async (form) => {
 		entity_ids: { set: entity.id },
 		type: "resource",
 		permissions,
-		// name: "@default",
-		// link: {
-		// 	create: {
-		// 		hash: Buffer.from(`${resource.id}${Date.now()}`).toString(
-		// 			"base64"
-		// 		),
-		// 	},
-		// },
-		// settings: {
-		// 	create: {
-		// 		can_view: false,
-		// 	},
-		// },
 	});
 
 	// let creator_resource_role = await create_role({

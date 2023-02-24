@@ -41,9 +41,16 @@ export const create_root = async (data = {}) => {
 	return { type: "group", group, resource };
 };
 
-export const create_group = async (data = {}) => {
+export const create_group = async ({ name, entity_id } = {}) => {
 	console.log("create_group");
-	let { root_resource_id, name, entity_id } = data;
+
+	let entity = await prisma.entity.findFirst({
+		where: {
+			id: entity_id,
+		},
+	});
+
+	let { root_resource_id } = entity;
 
 	let group = await prisma.group.create({
 		data: {
@@ -73,64 +80,24 @@ export const create_group = async (data = {}) => {
 		},
 	};
 
-	let default_resource_role = await create_role({
+	let resource_role = await create_role({
 		resource_ids: { set: resource.id },
 		entity_ids: { set: entity_id },
-		type: "group",
-		// name: "@default",
-		link: {
-			create: {
-				hash: Buffer.from(`${resource.id}${Date.now()}`).toString(
-					"base64"
-				),
-			},
-		},
+		type: "resource",
 		permissions,
-		// settings: {
-		// 	create: {
-		// 		can_view: false,
-		// 	},
-		// },
 	});
-
-	// let creator_resource_role = await create_role({
-	// 	resource_id: resource.id,
-	// 	entity_ids: { set: entity_id },
-	// 	type: "resource",
-	// 	name: "@alpha",
-	// 	link: {
-	// 		create: {
-	// 			hash: Buffer.from(`${resource.id}${Date.now()}`).toString(
-	// 				"base64"
-	// 			),
-	// 		},
-	// 	},
-	// 	settings: {
-	// 		create: {
-	// 			can_view: true,
-	// 		},
-	// 	},
-	// });
 
 	let entity_permissions = ["@alpha", "@default"];
 
-	let creator_user_role = await create_role({
+	let entity_role = await create_role({
 		resource_ids: { set: resource.id },
 		entity_ids: { set: entity_id },
 		type: "entity",
 		permissions: entity_permissions,
-		// name: "@alpha",
 	});
 
-	// let default_user_role = await create_role({
-	// 	resource_id: resource.id,
-	// 	entity_ids: { set: entity_id },
-	// 	type: "entity",
-	// 	name: "@default",
-	// });
-
 	await prisma.resource.update({
-		where: { resource_path_id: root_resource_id },
+		where: { id: root_resource_id },
 		data: {
 			subscription_ids: {
 				push: [resource.id],
@@ -142,7 +109,7 @@ export const create_group = async (data = {}) => {
 		where: { id: resource.id },
 		data: {
 			roles_ids: {
-				push: [default_resource_role.id],
+				push: [resource_role.id],
 			},
 			subscription_ids: {
 				push: [resource.id],
@@ -161,7 +128,7 @@ export const create_group = async (data = {}) => {
 	await prisma.entity.update({
 		where: { id: entity_id },
 		data: {
-			roles_ids: { push: [creator_user_role.id] },
+			roles_ids: { push: [entity_role.id] },
 		},
 	});
 

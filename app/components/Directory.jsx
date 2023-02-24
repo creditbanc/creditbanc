@@ -1,15 +1,5 @@
 import { Link, useLocation } from "@remix-run/react";
-import {
-	equals,
-	join,
-	map,
-	pipe,
-	reject,
-	split,
-	__,
-	includes,
-	slice,
-} from "ramda";
+import { equals, join, map, pipe, reject, split, __, includes } from "ramda";
 import Nav from "~/components/Nav";
 import { Fragment } from "react";
 import { Popover, Transition } from "@headlessui/react";
@@ -136,24 +126,16 @@ const build_action_path = ({ current_path, resource_action_path }) => {
 };
 
 const group_actions = [
-	// {
-	// 	text: "New Group",
-	// 	key: "new_group",
-	// 	href: (pathname) =>
-	// 		build_action_path({
-	// 			current_path: pathname,
-	// 			resource_action_path: "new",
-	// 		}),
-	// },
+	{
+		text: "New Group",
+		key: "new_group",
+		href: (pathname) => `/group/new` + to_resource_pathname(pathname),
+	},
 	{
 		text: "New Credit Report",
 		key: "new_credit_report",
 		href: (pathname) =>
-			"/credit/personal/new" +
-			build_action_path({
-				current_path: pathname,
-				resource_action_path: "",
-			}),
+			"/credit/personal/new" + to_resource_pathname(pathname),
 	},
 	{
 		text: "Share",
@@ -301,7 +283,7 @@ const ResourceGroupActionsMenu = ({ resource_id }) => {
 											Actions
 										</h3>
 									</div>
-									<div className="relative grid  bg-white py-2">
+									<div className="relative grid bg-white py-2">
 										{group_actions.map((item, idx) => (
 											<Link
 												to={item.href(pathname)}
