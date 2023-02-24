@@ -54,7 +54,51 @@ export const action = async ({ request }) => {
 	let { userToken = null } = response.data;
 
 	if (userToken) {
-		return redirect(`/credit/personal/personal?userToken=${userToken}`);
+		var data = JSON.stringify({
+			clientKey,
+			productCode: "credmo3bReportScore",
+		});
+
+		var display_token_options = {
+			method: "post",
+			maxBodyLength: Infinity,
+			url: "https://sandbox.array.io/api/report/v2",
+			headers: {
+				"x-credmo-user-token": userToken,
+				"Content-Type": "application/json",
+			},
+			data,
+		};
+
+		let response = await axios(display_token_options);
+		let { displayToken = null, reportKey = null } = response.data;
+
+		if (displayToken && reportKey) {
+			console.log("displayToken");
+			console.log(displayToken);
+			console.log("reportKey");
+			console.log(reportKey);
+
+			// var report_options = {
+			// 	method: "get",
+			// 	maxBodyLength: Infinity,
+			// 	url: `https://sandbox.array.io/api/report/v2?reportKey=${reportKey}&displayToken=${displayToken}`,
+			// 	headers: {
+			// 		"Content-Type": "application/json",
+			// 	},
+			// };
+
+			// setTimeout(async () => {
+			// 	let response = await axios(report_options);
+			// 	console.log("response.data");
+			// 	console.log(response.data);
+			// }, 5000);
+
+			// return json({ displayToken });
+			return redirect(
+				`/credit/personal/create?displayToken=${displayToken}&reportKey=${reportKey}`
+			);
+		}
 	} else {
 		return json({ ...response.data });
 	}
