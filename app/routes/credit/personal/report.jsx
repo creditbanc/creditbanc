@@ -24,8 +24,8 @@ export const loader = async ({ request }) => {
 	console.log("report_loader");
 	let url = new URL(request.url);
 
-	// if (!has_valid_route_p("credit/personal/report", request.url))
-	// 	return redirect("/");
+	if (!has_valid_route_p("credit/personal/report", request.url))
+		return redirect("/");
 
 	let user_id = await get_user_id(request);
 	let group_id = get_group_id(url.pathname);
