@@ -1,12 +1,10 @@
 import { pipe, reject } from "ramda";
-import { useLoaderData, useSubmit } from "@remix-run/react";
-import { json } from "@remix-run/node";
+import { useLoaderData } from "@remix-run/react";
+import { json, redirect } from "@remix-run/node";
 import Directory from "~/components/Directory";
 import { get_root_docs } from "~/utils/group.server";
 import { get_user_id } from "~/utils/auth.server";
-import { Link, useLocation } from "@remix-run/react";
-import { Fragment } from "react";
-import { Popover, Transition } from "@headlessui/react";
+import { has_resource_url_p } from "~/utils/helpers";
 
 const is_root_resource = (resource) => resource.name === "root";
 
@@ -18,7 +16,10 @@ export const load_root = async ({ entity_id }) => {
 };
 
 export const loader = async ({ request }) => {
-	const entity_id = await get_user_id(request);
+	let entity_id = await get_user_id(request);
+	let has_resource = has_resource_url_p(request.url);
+	if (!entity_id) return redirect(`/`);
+	if (!has_resource) return redirect(`/root/resource/e/${entity_id}`);
 	const resources = await load_root({ entity_id });
 	return json({ data: resources, entity_id });
 };

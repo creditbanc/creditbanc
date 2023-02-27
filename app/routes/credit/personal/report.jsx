@@ -4,7 +4,12 @@ import CreditNav from "~/components/CreditNav";
 import { useLayoutStore } from "~/stores/useLayoutStore";
 import LeftNav from "~/components/LeftNav";
 import { useElmSize } from "~/hooks/useElmSize";
-import { get_group_id, get_route_endpoint, capitalize } from "~/utils/helpers";
+import {
+	get_group_id,
+	get_route_endpoint,
+	capitalize,
+	has_valid_route_p,
+} from "~/utils/helpers";
 import { get_docs as get_group_docs } from "~/utils/group.server";
 import { defaultTo, pick, pipe } from "ramda";
 import { mod, all, filter } from "shades";
@@ -16,7 +21,12 @@ import { validate_action } from "~/utils/resource.server";
 import { redirect } from "@remix-run/node";
 
 export const loader = async ({ request }) => {
+	console.log("report_loader");
 	let url = new URL(request.url);
+
+	// if (!has_valid_route_p("credit/personal/report", request.url))
+	// 	return redirect("/");
+
 	let user_id = await get_user_id(request);
 	let group_id = get_group_id(url.pathname);
 
@@ -26,9 +36,13 @@ export const loader = async ({ request }) => {
 		request,
 	});
 
-	let { can_view = false } = permissions;
+	let { can_view = false } = permissions ?? {};
+
+	// console.log("can_view", can_view);
+	// console.log(user_id);
 
 	if (!can_view) return redirect("/");
+	// console.log("canviewcanview");
 
 	let group_docs = await get_group_docs({ resource_id: group_id });
 
@@ -50,7 +64,7 @@ export const loader = async ({ request }) => {
 };
 
 export default function CreditReport() {
-	const { origin, permissions } = useLoaderData();
+	var { origin = "", permissions = {} } = useLoaderData() ?? {};
 	const [target, setTarget] = useState();
 	const elmSize = useElmSize(target);
 	let setContentWidth = useLayoutStore((state) => state.set_content_width);

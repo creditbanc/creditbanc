@@ -185,14 +185,6 @@ function Panel({ is_open, setPanel, reports = {} }) {
 																							location.search
 																					)
 																				}
-																				// to={
-																				// 	"/credit/personal/report/personal" +
-																				// 	to_group_pathname(
-																				// 		location.pathname
-																				// 	) +
-																				// 	`/f/${report.id}` +
-																				// 	location.search
-																				// }
 																				key={
 																					idx
 																				}

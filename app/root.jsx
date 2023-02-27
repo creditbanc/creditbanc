@@ -60,6 +60,11 @@ export const meta = () => ({
 	viewport: "width=device-width,initial-scale=1",
 });
 
+// export const loader = async () => {
+// 	console.log("hisss");
+// 	return null;
+// };
+
 export default function App() {
 	return (
 		<html lang="en">

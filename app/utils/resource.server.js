@@ -31,7 +31,7 @@ import {
 	indexBy,
 	groupBy,
 } from "ramda";
-import { get, matching, all, mod, filter } from "shades";
+import { get, matching, all, mod, filter, cons } from "shades";
 import { prisma } from "./prisma.server";
 import { get_user_session } from "./auth.server";
 const util = require("util");
@@ -287,6 +287,7 @@ const get_permissions = ({ entity_roles, resource_permissions }) => {
 		flatten,
 		groupBy(prop("name")),
 		mod(all, all)(get("value")),
+		// inspect,
 		mod(all)(includes(true))
 	)(entity_roles);
 	return permissions;
@@ -319,6 +320,7 @@ export const get_resource_permissions = async ({
 	entity_id,
 	link_role = "",
 }) => {
+	console.log("get_resource_permissions");
 	let resource = await get_resource({ resource_path_id, resource_id });
 
 	let entity_roles_response = await get_entity_roles({
@@ -326,11 +328,19 @@ export const get_resource_permissions = async ({
 		resource_id: resource.id,
 	});
 
-	let entity_roles = uniq([...entity_roles_response, link_role]);
+	let entity_roles = reject(isEmpty)(
+		uniq([...entity_roles_response, link_role, "@default"])
+	);
 
 	let resource_permissions = await get_resource_roles({
 		resource_id: resource.id,
 	});
+
+	// console.log("entity_roles");
+	// console.log(entity_roles);
+
+	// console.log("resource_permissions");
+	// console.log(resource_permissions);
 
 	let permissions = get_permissions({
 		entity_roles,
@@ -354,11 +364,6 @@ export const validate_action = async ({
 	request,
 }) => {
 	console.log("validate_action");
-
-	// const resource_path_id = get_group_id(request.url);
-	// let action = "can_view";
-
-	// console.log("validate_user");
 	const is_signed_in = await is_signed_in_p(request);
 
 	let _return = (permissions) => {
@@ -381,11 +386,8 @@ export const validate_action = async ({
 		let is_link_with_role = await is_link_with_role_p(request);
 
 		if (is_link_with_role) {
+			console.log("is_link_with_role");
 			let link_role = await get_link_role(request);
-			// let link_hash = await get_link_hash(request);
-			// // console.log("link_hash", link_hash);
-			// let link = await is_valid_link_p(link_hash);
-			// // console.log("is_valid_link", link);
 
 			let permissions = await get_resource_permissions({
 				resource_path_id,
@@ -393,30 +395,6 @@ export const validate_action = async ({
 			});
 
 			return _return(permissions);
-
-			// if (permissions) {
-			// 	let action_resolver_name = actions_map[action];
-			// 	let has_permission =
-			// 		db_actions[action_resolver_name](permissions);
-
-			// 	return has_permission;
-			// }
-
-			// if (link) {
-			// 	let role = await get_role({
-			// 		where: { id: link.role_id },
-			// 		include: { settings: true },
-			// 	});
-
-			// 	console.log("role", role);
-			// 	let { settings } = role;
-
-			// 	let action_resolver_name = actions_map[action];
-			// 	let has_permission = db_actions[action_resolver_name](settings);
-			// 	console.log("has_permission", has_permission);
-
-			// 	return has_permission;
-			// }
 		}
 
 		if (!is_link_with_role) {
@@ -435,31 +413,19 @@ export const validate_action = async ({
 	if (is_signed_in) {
 		console.log("is_signed_in");
 		let is_link_with_role = await is_link_with_role_p(request);
-		// console.log("is_link_with_role", is_link_with_role);
 		const entity_id = await get_entity_id(request);
-		// console.log("entity_id", entity_id);
 
 		if (is_link_with_role) {
-			let link_hash = await get_link_hash(request);
-			console.log("link_hash", link_hash);
-			let link = await is_valid_link_p(link_hash);
-			console.log("is_valid_link", link);
+			console.log("is_link_with_role");
+			let link_role = await get_link_role(request);
 
-			if (link) {
-				let role = await get_role({
-					where: { id: link.role_id },
-					include: { settings: true },
-				});
+			let permissions = await get_resource_permissions({
+				entity_id,
+				resource_path_id,
+				link_role,
+			});
 
-				console.log("role", role);
-				let { settings } = role;
-
-				let action_resolver_name = actions_map[action];
-				let has_permission = db_actions[action_resolver_name](settings);
-				console.log("has_permission", has_permission);
-
-				return has_permission;
-			}
+			return _return(permissions);
 		}
 
 		if (!is_link_with_role) {

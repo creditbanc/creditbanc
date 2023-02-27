@@ -37,7 +37,7 @@ export const action = async ({ request }) => {
 	let url = new URL(request.url);
 	let search = new URLSearchParams(url.search);
 	let group_id = search.get("group_id");
-	console.log(group_id);
+	// console.log(group_id);
 
 	const options = {
 		method: "POST",

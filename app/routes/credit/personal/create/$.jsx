@@ -72,8 +72,8 @@ export const loader = async ({ request }) => {
 	let report = await create({ group_id });
 
 	let { file } = report;
-	console.log("report");
-	console.log(report);
+	// console.log("report");
+	// console.log(report);
 
 	return redirect(
 		`/credit/personal/report/personal/resource/e/${entity_id}/g/${group_id}/f/${file.id}`

@@ -11,7 +11,6 @@ import {
 	last,
 	ifElse,
 	identity,
-	always,
 	indexOf,
 	includes,
 	curry,
@@ -19,6 +18,8 @@ import {
 	tail,
 	addIndex,
 	map,
+	isEmpty,
+	either,
 } from "ramda";
 const util = require("util");
 import { get } from "shades";
@@ -70,13 +71,17 @@ const get_pathname = (uri) => {
 
 export const to_resource_pathname = (uri) => {
 	let pathname = get_pathname(uri);
-	return pipe(
-		split("resource"),
-		tail,
-		join("/"),
-		remove_trailing_slash,
-		(path) => `/resource` + path
-	)(pathname);
+	let resource_url = pipe(split("resource"), tail)(pathname);
+
+	if (isEmpty(resource_url)) {
+		return "";
+	} else {
+		return pipe(
+			join("/"),
+			remove_trailing_slash,
+			(path) => `/resource` + path
+		)(resource_url);
+	}
 };
 
 export const to_route_pathname = (uri) => {
@@ -176,13 +181,8 @@ export const is_resource_p = (uri) => {
 };
 
 export const get_group_id = (uri) => {
-	// console.log("get_group_id");
-	return pipe(to_resource_path_array, inspect, (array) =>
-		pipe(indexOf("g"), (index) => {
-			console.log("index");
-			console.log(index);
-			return array[index + 1];
-		})(array)
+	return pipe(to_resource_path_array, (array) =>
+		pipe(indexOf("g"), (index) => array[index + 1])(array)
 	)(uri);
 };
 
@@ -190,6 +190,16 @@ export const get_file_id = (uri) => {
 	return pipe(to_resource_path_array, (array) =>
 		pipe(lastIndexOf("f"), (index) => array[index + 1])(array)
 	)(uri);
+};
+
+export const has_valid_route_p = (route, uri) => {
+	let route_path = to_route_pathname(uri);
+	return includes(route, route_path) ? true : false;
+};
+
+export const has_resource_url_p = (uri) => {
+	let has_resource = to_resource_pathname(uri);
+	return pipe(equals(""))(has_resource) ? false : true;
 };
 
 // export const get_directory_resource_id = (uri) => {
