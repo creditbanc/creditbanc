@@ -9,9 +9,11 @@ import {
 	get_route_endpoint,
 	capitalize,
 	has_valid_route_p,
+	get_file_id,
+	inspect,
 } from "~/utils/helpers";
 import { get_docs as get_group_docs } from "~/utils/group.server";
-import { defaultTo, pick, pipe } from "ramda";
+import { defaultTo, isEmpty, pick, pipe } from "ramda";
 import { mod, all, filter } from "shades";
 import PersonalCreditTabs from "~/components/PersonalCreditTabs";
 import CreditScoreHero from "~/components/CreditScoreHero";
@@ -19,35 +21,60 @@ import CreditHeroGradient from "~/components/CreditHeroGradient";
 import { get_user_id } from "~/utils/auth.server";
 import { validate_action } from "~/utils/resource.server";
 import { redirect } from "@remix-run/node";
+import { prisma } from "~/utils/prisma.server";
+
+const is_resource_owner_p = async ({ entity_id, file_id }) => {
+	let file = await prisma.resource.findMany({
+		where: {
+			resource_path_id: file_id,
+			subscriber_ids: {
+				has: entity_id,
+			},
+		},
+	});
+
+	return isEmpty(file) ? true : false;
+};
 
 export const loader = async ({ request }) => {
 	console.log("report_loader");
 	let url = new URL(request.url);
-
 	if (!has_valid_route_p("credit/personal/report", request.url))
 		return redirect("/");
 
 	let user_id = await get_user_id(request);
 	let group_id = get_group_id(url.pathname);
+	let file_id = get_file_id(url.pathname);
+
+	let is_resource_owner = await is_resource_owner_p({
+		entity_id: user_id,
+		file_id,
+	});
+
+	console.log("is_resource_owner", is_resource_owner);
 
 	let permissions = await validate_action({
 		entity_id: user_id,
-		resource_path_id: group_id,
+		group_resource_path_id: group_id,
+		resource_path_id: file_id,
+		is_owner: is_resource_owner,
 		request,
 	});
 
+	// console.log("permissions");
+	// inspect(permissions);
+
 	let { can_view = false } = permissions ?? {};
 
-	// console.log("can_view", can_view);
-	// console.log(user_id);
+	// if (!can_view) return redirect("/");
 
-	if (!can_view) return redirect("/");
-	// console.log("canviewcanview");
-
-	let group_docs = await get_group_docs({ resource_id: group_id });
+	let group_docs = await get_group_docs({
+		resource_id: group_id,
+		entity_id: user_id,
+	});
 
 	let reports = pipe(
-		mod(all)(pick(["id", "resource_id", "model"])),
+		// mod(all)(pick(["id", "resource_id", "model"])),
 		(resources) => ({
 			personal_credit_reports: pipe(
 				filter({ model: "personal_credit_report" }),
@@ -59,6 +86,8 @@ export const loader = async ({ request }) => {
 			)(resources),
 		})
 	)(group_docs);
+
+	// console.log("reports", reports);
 
 	return { reports, origin: url.origin, user_id, permissions };
 };

@@ -22,7 +22,7 @@ export const loader = async ({ request }) => {
 		resource_path_id: group_id,
 	});
 
-	return permissions;
+	return pipe(map(mergeDeepRight(permissions_defaults)))(permissions);
 };
 
 export default function Roles() {
@@ -38,8 +38,7 @@ export default function Roles() {
 
 	const selectedRolePermissions = pipe(
 		get(selectedRole),
-		defaultTo({}),
-		mergeDeepRight(permissions_defaults)
+		defaultTo({})
 	)(permissions);
 
 	const onSelectRole = (role_id) => {
@@ -60,8 +59,6 @@ export default function Roles() {
 			permission_value,
 			redirect_url,
 		};
-
-		// console.log("payload", payload);
 
 		fetcher.submit(payload, {
 			method: "post",

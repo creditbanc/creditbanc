@@ -35,7 +35,7 @@ import { get, matching, all, mod, filter, cons } from "shades";
 import { prisma } from "./prisma.server";
 import { get_user_session } from "./auth.server";
 const util = require("util");
-import { get_resource_id, inspect, get_group_id } from "./helpers";
+import { get_resource_id, inspect, get_group_id, trim } from "./helpers";
 
 let test = {
 	// type: "group",
@@ -82,7 +82,7 @@ export const is_link_with_role_p = async (request) => {
 	return role ? true : false;
 };
 
-export const get_link_role = async (request) => {
+export const get_link_role = (request) => {
 	const url = new URL(request.url);
 	const role = url.searchParams.get("role");
 	return role;
@@ -165,14 +165,18 @@ export const get_entity_id = async (request) => {
 	return session.get("entity_id");
 };
 
-const get_entity_roles = async ({
+export const get_entity_roles = async ({
 	resource_path_id,
 	entity_id,
-	resource_id,
+	resource_ids,
+	link_role = "",
+	is_owner,
 }) => {
+	console.log("get_entity_roles");
 	let entity_roles = tryCatch(
 		pipe(
 			defaultTo([]),
+			// inspect,
 			get(all, "permissions"),
 			flatten,
 			uniq,
@@ -181,33 +185,69 @@ const get_entity_roles = async ({
 		always([])
 	);
 
-	const get_entity_roles_docs = async (entity_id, resource_id) => {
+	const get_entity_roles_docs = async ({ entity_id, resource_ids }) => {
+		// console.log("resource_ids", resource_ids);
+
 		let entity_roles_response = await prisma.roles.findMany({
 			where: {
 				entity_ids: {
 					has: entity_id,
 				},
-				type: {
-					equals: "entity",
-				},
 				resource_ids: {
-					has: resource_id,
+					hasEvery: resource_ids,
 				},
+				type: "entity",
 			},
 		});
+
+		// console.log("entity_roles_response");
+		// inspect(entity_roles_response);
+
 		return entity_roles_response;
 	};
 
-	if (!entity_id) {
-		return ["@default"];
+	if (is_owner) {
+		const resource = await prisma.resource.findMany({
+			where: { resource_path_id: { in: resource_ids }, type: "group" },
+			include: {
+				roles: {
+					where: {
+						type: "resource",
+					},
+				},
+			},
+		});
+
+		// console.log("owner_resource");
+		// console.log(resource);
+
+		let roles = pipe(
+			head,
+			get("roles", all, "permissions"),
+			map(values),
+			flatten,
+			map(keys),
+			flatten
+		)(resource);
+
+		return roles;
 	}
 
-	if (resource_id) {
-		let entity_roles_response = await get_entity_roles_docs(
+	if (!entity_id) {
+		return uniq(trim([link_role, "@default"]));
+	}
+
+	if (resource_ids) {
+		let entity_roles_response = await get_entity_roles_docs({
 			entity_id,
-			resource_id
-		);
-		return entity_roles(entity_roles_response);
+			resource_ids,
+		});
+
+		return pipe(
+			entity_roles,
+			(roles) => trim([...roles, link_role, "@default"]),
+			uniq
+		)(entity_roles_response);
 	}
 
 	if (resource_path_id) {
@@ -220,18 +260,41 @@ const get_entity_roles = async ({
 			resource.id
 		);
 
-		return entity_roles(entity_roles_response);
+		return pipe(
+			entity_roles,
+			(roles) => trim([...roles, link_role, "@default"]),
+			uniq
+		)(entity_roles_response);
 	}
 };
 
-export const get_resource_roles = async ({ resource_id, resource_path_id }) => {
-	const with_role_ids = mapObjIndexed((permissions, role_id) => ({
-		...permissions,
-		role_id,
-	}));
+export const get_resource_roles = async ({
+	resource_ids,
+	resource_path_id,
+	is_owner = false,
+}) => {
+	console.log("get_resource_roles");
+
+	let get_resource_id = async ({ resource_ids, is_owner }) => {
+		if (is_owner) {
+			return head(resource_ids);
+		} else {
+			let resource = await prisma.resource.findFirst({
+				where: {
+					type: "group",
+					subscriber_ids: {
+						hasEvery: resource_ids,
+					},
+				},
+			});
+
+			return resource.id;
+		}
+	};
 
 	let permissions = tryCatch(
 		pipe(
+			// inspect,
 			(resource) =>
 				get(
 					"roles",
@@ -264,7 +327,8 @@ export const get_resource_roles = async ({ resource_id, resource_path_id }) => {
 		return response;
 	};
 
-	if (resource_id) {
+	if (resource_ids) {
+		let resource_id = await get_resource_id({ resource_ids, is_owner });
 		let resource_roles_response = await resource_roles(resource_id);
 		return pipe(permissions)(resource_roles_response);
 	}
@@ -287,7 +351,6 @@ const get_permissions = ({ entity_roles, resource_permissions }) => {
 		flatten,
 		groupBy(prop("name")),
 		mod(all, all)(get("value")),
-		// inspect,
 		mod(all)(includes(true))
 	)(entity_roles);
 	return permissions;
@@ -298,7 +361,7 @@ const get_permission = ({ permission, entity_roles, resource_permissions }) => {
 	return pipe(get(permission))(permissions);
 };
 
-const get_resource = async ({ resource_id, resource_path_id }) => {
+export const get_resource = async ({ resource_id, resource_path_id }) => {
 	if (resource_id) {
 		const resource = await prisma.resource.findFirst({
 			where: { id: resource_id },
@@ -319,33 +382,43 @@ export const get_resource_permissions = async ({
 	resource_path_id,
 	entity_id,
 	link_role = "",
+	is_owner,
+	group_resource_path_id,
 }) => {
 	console.log("get_resource_permissions");
-	let resource = await get_resource({ resource_path_id, resource_id });
+	console.log("resource_path_id", resource_path_id);
+	console.log("group_resource_path_id", group_resource_path_id);
 
-	let entity_roles_response = await get_entity_roles({
+	let resource_ids = trim([group_resource_path_id, resource_path_id]);
+
+	console.log("resource_ids");
+	inspect(resource_ids);
+
+	console.log("is_owner");
+	console.log(is_owner);
+
+	let entity_roles = await get_entity_roles({
 		entity_id,
-		resource_id: resource.id,
+		resource_ids,
+		link_role,
+		is_owner,
 	});
 
-	let entity_roles = reject(isEmpty)(
-		uniq([...entity_roles_response, link_role, "@default"])
-	);
+	console.log("entity_roles");
+	inspect(entity_roles);
 
 	let resource_permissions = await get_resource_roles({
-		resource_id: resource.id,
+		resource_ids: [group_resource_path_id, resource_path_id],
+		is_owner,
 	});
-
-	// console.log("entity_roles");
-	// console.log(entity_roles);
-
-	// console.log("resource_permissions");
-	// console.log(resource_permissions);
 
 	let permissions = get_permissions({
 		entity_roles,
 		resource_permissions,
 	});
+
+	// console.log("permissions");
+	// inspect(permissions);
 
 	return permissions;
 };
@@ -358,10 +431,13 @@ const has_action_permission = (action, permissions) => {
 
 export const validate_action = async ({
 	resource_id,
+	group_resource_path_id,
 	resource_path_id,
 	entity_id = false,
 	action = false,
 	request,
+	link_role = "",
+	is_owner = false,
 }) => {
 	console.log("validate_action");
 	const is_signed_in = await is_signed_in_p(request);
@@ -387,7 +463,7 @@ export const validate_action = async ({
 
 		if (is_link_with_role) {
 			console.log("is_link_with_role");
-			let link_role = await get_link_role(request);
+			let link_role = get_link_role(request);
 
 			let permissions = await get_resource_permissions({
 				resource_path_id,
@@ -399,8 +475,6 @@ export const validate_action = async ({
 
 		if (!is_link_with_role) {
 			console.log("!is_link_with_role");
-			// person is not signed in and is trying to access a resource
-			// without a valid link hash
 
 			let permissions = await get_group_default_permissions({
 				resource_path_id,
@@ -413,6 +487,9 @@ export const validate_action = async ({
 	if (is_signed_in) {
 		console.log("is_signed_in");
 		let is_link_with_role = await is_link_with_role_p(request);
+
+		console.log("is_link_with_role", is_link_with_role);
+
 		const entity_id = await get_entity_id(request);
 
 		if (is_link_with_role) {
@@ -433,7 +510,10 @@ export const validate_action = async ({
 
 			let permissions = await get_resource_permissions({
 				entity_id,
+				group_resource_path_id,
 				resource_path_id,
+				link_role,
+				is_owner,
 			});
 
 			return _return(permissions);

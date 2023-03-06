@@ -1,5 +1,15 @@
-import { all, get, mod } from "shades";
-import { pipe, flatten, uniqBy, prop, pick, map, reject } from "ramda";
+import { all, filter, get, mod } from "shades";
+import {
+	pipe,
+	flatten,
+	uniqBy,
+	prop,
+	pick,
+	map,
+	reject,
+	head,
+	equals,
+} from "ramda";
 import { prisma } from "./prisma.server";
 const util = require("util");
 import {
@@ -235,8 +245,8 @@ export const get_root_docs = async ({ entity_id }) => {
 	return resources;
 };
 
-export const get_docs = async ({ resource_id }) => {
-	let resource = await prisma.resource.findMany({
+export const get_docs = async ({ resource_id, entity_id }) => {
+	let entity_resources_response = await prisma.resource.findMany({
 		where: {
 			resource_path_id: resource_id,
 		},
@@ -245,35 +255,93 @@ export const get_docs = async ({ resource_id }) => {
 		},
 	});
 
+	let shared_resources_response = await prisma.resource.findMany({
+		where: {
+			subscriber_ids: {
+				has: entity_id,
+			},
+		},
+	});
+
+	// console.log("shared_resources");
+	// inspect(shared_resources_response);
+
+	// let shared_resource = pipe(
+	// 	filter({ resource_path_id: "63ef03683b0eab22e6c20a3b" }),
+	// 	head
+	// )(shared_resources);
+
+	// console.log("shared_resources");
+	// console.log(entity_id);
+	// inspect(shared_resource);
+
+	// let roles = await prisma.roles.findMany({
+	// 	where: {
+	// 		resource_ids: {
+	// 			hasEvery: [shared_resource.id],
+	// 		},
+	// 		entity_ids: {
+	// 			has: entity_id,
+	// 		},
+	// 	},
+	// });
+
+	// let role = head(roles);
+	// let role_group_id = pipe(
+	// 	get("resource_ids"),
+	// 	reject(equals(shared_resource.id)),
+	// 	head
+	// )(role);
+
 	// console.log("resource");
-	// inspect(resource);
+	// inspect(role_group_id);
 
 	const is_group = (subscription) => subscription.type == "group";
 
-	let subscription_ids = pipe(
+	let get_subscriptions = pipe(
 		get(all, "subscriptions"),
 		flatten,
 		uniqBy(prop("id")),
-		mod(all)(pick(["id", "type", "model", "resource_path_id"])),
-		reject(is_group)
-	)(resource);
+		reject(is_group),
+		mod(all)((resource) => ({ ...resource, type: "document" }))
+	);
 
-	const get_resources = async (subscription_ids) => {
+	let resources_data = pipe(
+		mod(all)(pick(["id", "type", "model", "resource_path_id"]))
+	);
+
+	let entity_resources = pipe(get_subscriptions)(entity_resources_response);
+	let shared_resources = pipe(
+		mod(all)((resource) => ({ ...resource, shared: true }))
+	)(shared_resources_response);
+
+	// console.log("entity_resources");
+	// inspect(entity_resources);
+
+	// let shared_resources = subscription_ids(shared_resources_response);
+
+	const get_resources = async (subscriptions) => {
 		let resources = await Promise.all(
-			subscription_ids.map(async (subscription) => {
-				let { model, type, resource_path_id } = subscription;
+			subscriptions.map(async (subscription) => {
+				let { model, type, resource_path_id, shared } = subscription;
 
 				let resource = await prisma[model].findFirst({
 					where: { id: resource_path_id },
 				});
-				return { ...resource, type, model };
+
+				let { id, resource_id } = resource;
+
+				return { id, resource_id, type, model, shared };
 			})
 		);
 
 		return resources;
 	};
 
-	let resources = await get_resources(subscription_ids);
+	let resources = await get_resources(resources_data([...entity_resources]));
+
+	// console.log("resources");
+	// inspect(resources);
 
 	return resources;
 };

@@ -231,10 +231,10 @@ export default function LeftNav({ data = {}, can_manage_roles } = {}) {
 					{pipe(
 						defaultTo([]),
 						map((report) => (
-							<Link
+							<a
 								className="border-l border-gray-200 cursor-pointer flex flex-row"
 								key={report.id}
-								to={
+								href={
 									"/credit/personal/report/personal" +
 									to_group_pathname(location.pathname) +
 									`/f/${report.id}` +
@@ -244,7 +244,7 @@ export default function LeftNav({ data = {}, can_manage_roles } = {}) {
 								<div className="text-sm mx-2 px-2 py-1 hover:bg-slate-100 rounded text-gray-700">
 									{truncate(17, report.id)}
 								</div>
-							</Link>
+							</a>
 						))
 					)(data.personal_credit_reports)}
 				</div>

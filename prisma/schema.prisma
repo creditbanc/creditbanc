@@ -11,14 +11,16 @@ datasource db {
 }
 
 model Entity {
-  id               String   @id @default(auto()) @map("_id") @db.ObjectId
-  created_at       DateTime @default(now())
-  updated_at       DateTime @updatedAt
-  email            String   @unique
+  id               String     @id @default(auto()) @map("_id") @db.ObjectId
+  created_at       DateTime   @default(now())
+  updated_at       DateTime   @updatedAt
+  email            String     @unique
   password         String
-  roles_ids        String[] @db.ObjectId
-  roles            Roles[]  @relation(fields: [roles_ids], references: [id])
-  root_resource_id String?  @db.ObjectId
+  roles_ids        String[]   @db.ObjectId
+  roles            Roles[]    @relation(fields: [roles_ids], references: [id])
+  resource_ids     String[]   @db.ObjectId
+  resources        Resource[] @relation(fields: [resource_ids], references: [id])
+  root_resource_id String?    @db.ObjectId
 }
 
 // the mental model is:
@@ -43,6 +45,8 @@ model Resource {
   subscription_ids String[]   @db.ObjectId
   subscribers      Resource[] @relation("resources", fields: [subscriber_ids], references: [id])
   subscriber_ids   String[]   @db.ObjectId
+  entity_ids       String[]   @db.ObjectId
+  entities         Entity[]   @relation(fields: [entity_ids], references: [id])
   name             String?
 }
 
@@ -59,16 +63,17 @@ model Group {
 }
 
 model Roles {
-  id           String     @id @default(auto()) @map("_id") @db.ObjectId
-  created_at   DateTime   @default(now())
-  updated_at   DateTime   @updatedAt
-  resource_ids String[]   @db.ObjectId
-  resources    Resource[] @relation(fields: [resource_ids], references: [id])
-  entity_ids   String[]   @db.ObjectId
-  entities     Entity[]   @relation(fields: [entity_ids], references: [id])
-  type         String
-  link         Link?
-  permissions  Json?
+  id             String     @id @default(auto()) @map("_id") @db.ObjectId
+  created_at     DateTime   @default(now())
+  updated_at     DateTime   @updatedAt
+  resource_ids   String[]   @db.ObjectId
+  resources      Resource[] @relation(fields: [resource_ids], references: [id])
+  subscriber_ids String[]   @db.ObjectId
+  entity_ids     String[]   @db.ObjectId
+  entities       Entity[]   @relation(fields: [entity_ids], references: [id])
+  type           String
+  link           Link?
+  permissions    Json?
 }
 
 // every role will have a sharable link which can be used to share a specific resource with 
