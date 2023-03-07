@@ -51,6 +51,7 @@ export const loader = async ({ request }) => {
 		file_id,
 	});
 
+	console.log("user_id", user_id);
 	console.log("is_resource_owner", is_resource_owner);
 
 	let permissions = await validate_action({
@@ -66,7 +67,7 @@ export const loader = async ({ request }) => {
 
 	let { can_view = false } = permissions ?? {};
 
-	// if (!can_view) return redirect("/");
+	if (!can_view) return redirect("/");
 
 	let group_docs = await get_group_docs({
 		resource_id: group_id,
@@ -93,12 +94,13 @@ export const loader = async ({ request }) => {
 };
 
 export default function CreditReport() {
-	var { origin = "", permissions = {} } = useLoaderData() ?? {};
+	var { origin = "", permissions = {}, user_id } = useLoaderData() ?? {};
 	const [target, setTarget] = useState();
 	const elmSize = useElmSize(target);
 	let setContentWidth = useLayoutStore((state) => state.set_content_width);
 	let { reports } = useLoaderData();
 	let location = useLocation();
+	// console.log(user_id);
 
 	useEffect(() => {
 		if (elmSize) {
@@ -109,15 +111,18 @@ export default function CreditReport() {
 	return (
 		<div className="flex flex-col w-full h-full">
 			<CreditNav
+				user_id={user_id}
 				origin={origin}
 				can_share={permissions?.can_share}
 				reports={reports}
 			/>
 			<div className="flex flex-row h-full overflow-hidden">
-				<LeftNav
-					data={reports}
-					can_manage_roles={permissions?.can_manage_roles}
-				/>
+				{user_id && (
+					<LeftNav
+						data={reports}
+						can_manage_roles={permissions?.can_manage_roles}
+					/>
+				)}
 				<div className="flex flex-col flex-1 overflow-scroll">
 					<div className="flex flex-col w-full">
 						<CreditHeroGradient />

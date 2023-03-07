@@ -354,10 +354,14 @@ export const get_resource_roles = async ({
 	}
 
 	if (resource_path_id) {
+		console.log("resource_path_id");
+		// console.log(get_resource_roles);
 		let resource = await prisma.resource.findFirst({
 			where: { resource_path_id },
 		});
 		let resource_roles_response = await resource_roles(resource.id);
+
+		// console.log(resource_roles_response);
 		return permissions(resource_roles_response);
 	}
 };
@@ -500,8 +504,11 @@ export const validate_action = async ({
 			console.log("!is_link_with_role");
 
 			let permissions = await get_group_default_permissions({
-				resource_path_id,
+				resource_path_id: group_resource_path_id,
 			});
+
+			// console.log("permissions");
+			// inspect(permissions);
 
 			return _return(permissions);
 		}
