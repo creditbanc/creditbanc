@@ -140,7 +140,7 @@ export default function NewLink() {
 	const origin = url.origin;
 	let [shareLink, setShareLink] = useState(
 		origin +
-			"/credit/personal/report/personal" +
+			"/links/credit/personal/report/personal" +
 			to_resource_pathname(location.pathname)
 	);
 	const roles = pipe(keys)(permissions);

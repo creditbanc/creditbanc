@@ -149,14 +149,10 @@ const get_entity_group = async ({ entity_id }) => {
 		},
 	});
 
-	console.log("root_group", root_group);
-
 	return head(root_group);
 };
 
 export const loader = async ({ request }) => {
-	// if user is not logged in, redirect to view the resource without adding their resource to their group
-
 	let url = new URL(request.url);
 	let entity_id = await get_user_id(request);
 	let resource_url = url.pathname.replace("/links/", "/");
