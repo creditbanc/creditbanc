@@ -147,6 +147,10 @@ export const loader = async ({ request }) => {
 
 	let url = new URL(request.url);
 	let entity_id = await get_user_id(request);
+	let resource_url = url.pathname.replace("/links/", "/");
+
+	if (!entity_id) return redirect(resource_url);
+
 	let group_resource_path_id = get_group_id(url.pathname);
 	let resource_path_id = get_file_id(url.pathname);
 	let link_role = get_link_role(request);
