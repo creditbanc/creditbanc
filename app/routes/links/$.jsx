@@ -3,8 +3,18 @@ import { get_user_id } from "~/utils/auth.server";
 import { get_entity_roles, get_link_role } from "~/utils/resource.server";
 import { redirect } from "@remix-run/node";
 import { prisma } from "~/utils/prisma.server";
-import { uniq, map, isEmpty, flatten, tryCatch, always, head } from "ramda";
+import {
+	uniq,
+	map,
+	isEmpty,
+	flatten,
+	tryCatch,
+	always,
+	head,
+	pipe,
+} from "ramda";
 import { all, get, includes, filter as sfilter } from "shades";
+import { to_route_pathname } from "~/utils/helpers";
 
 const get_resource = async ({ resource_path_id }) => {
 	let resource = await prisma.resource.findFirst({
@@ -139,6 +149,8 @@ const get_entity_group = async ({ entity_id }) => {
 		},
 	});
 
+	console.log("root_group", root_group);
+
 	return head(root_group);
 };
 
@@ -154,8 +166,11 @@ export const loader = async ({ request }) => {
 	let group_resource_path_id = get_group_id(url.pathname);
 	let resource_path_id = get_file_id(url.pathname);
 	let link_role = get_link_role(request);
-
 	let entity_root_group = await get_entity_group({ entity_id });
+
+	// console.log("route_pathname");
+	// console.log(entity_id);
+	// console.log(entity_root_group);
 
 	let entity_roles = await get_entity_roles({
 		entity_id,
@@ -184,5 +199,13 @@ export const loader = async ({ request }) => {
 		resource_path_id,
 	});
 
-	return null;
+	let resource_route = `resource/e/${entity_id}/g/${entity_root_group.resource_path_id}/f/${resource_path_id}`;
+
+	let redirect_path = pipe(
+		to_route_pathname,
+		(path) => path.replace("/links/", "/"),
+		(path) => `${path}/${resource_route}`
+	)(url.pathname);
+
+	return redirect(redirect_path);
 };

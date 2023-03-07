@@ -199,8 +199,8 @@ export const get_file_id = (uri) => {
 
 export const has_valid_route_p = (route, uri) => {
 	let route_path = to_route_pathname(uri);
-	console.log(route_path);
-	console.log(includes(route, route_path));
+	// console.log(route_path);
+	// console.log(includes(route, route_path));
 	return includes(route, route_path) ? true : false;
 };
 
