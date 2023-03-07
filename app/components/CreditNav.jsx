@@ -274,6 +274,7 @@ function Panel({ is_open, setPanel, reports = {} }) {
 }
 
 export default function Nav({ origin, can_share = false, reports = {} }) {
+	console.log("NavNav");
 	const location = useLocation();
 	let url = origin + location.pathname + location.search;
 	let resource_pathname = to_resource_pathname(url);

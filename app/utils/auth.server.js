@@ -209,10 +209,10 @@ export const get_user = async (request) => {
 	}
 };
 
-export const logout = async (request) => {
+export const logout = async (redirect_to, request) => {
 	const session = await get_user_session(request);
 
-	return redirect("/signin", {
+	return redirect(redirect_to, {
 		headers: { "Set-Cookie": await storage.destroySession(session) },
 	});
 };
