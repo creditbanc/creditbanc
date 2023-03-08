@@ -1182,8 +1182,8 @@ function Stats() {
 const tiers = [
 	{
 		name: "Personal Credit Report",
-		id: "tier-freelancer",
-		href: "#",
+		id: "personal",
+		href: "/credit/personal/new",
 		priceMonthly: "$40",
 		description: "The essentials to provide your best work for clients.",
 		features: [
@@ -1196,7 +1196,7 @@ const tiers = [
 	},
 	{
 		name: "Business & Personal Credit Report",
-		id: "tier-startup",
+		id: "personal_business",
 		href: "#",
 		priceMonthly: "$50",
 		description: "A plan that scales with your rapidly growing business.",
@@ -1211,8 +1211,8 @@ const tiers = [
 	},
 	{
 		name: "Business Credit Report",
-		id: "tier-enterprise",
-		href: "#",
+		id: "business",
+		href: "/credit/business/new",
 		priceMonthly: "$40",
 		description: "Dedicated support and infrastructure for your company.",
 		features: [
@@ -1768,7 +1768,7 @@ const footerNavigation = [
 
 function FooterTwo() {
 	return (
-		<footer className="bg-white border-t-[1px] mt-6">
+		<footer className="bg-white border-t-[1px] mt-20">
 			<div className="mx-auto max-w-7xl py-6 md:flex md:items-center md:justify-between px-6">
 				<div className="flex justify-center space-x-6 md:order-2">
 					{footerNavigation.map((item) => (

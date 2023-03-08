@@ -53,15 +53,15 @@ export const action = async ({ request }) => {
 	try {
 		let response = await axios(options);
 		let { clientKey, authToken } = response.data;
-		console.log("response");
-		console.log(response.data);
+		// console.log("response");
+		// console.log(response.data);
 
 		return redirect(
 			`/credit/personal/verification?clientKey=${clientKey}&authToken=${authToken}&group_id=${group_id}`
 		);
 	} catch (error) {
-		console.log("error");
-		console.log(error.response.data);
+		// console.log("error");
+		// console.log(error.response.data);
 		return json({ error: error.message }, { status: 500 });
 	}
 };
@@ -83,7 +83,7 @@ const Form = () => {
 
 	const onSubmit = (e) => {
 		e.preventDefault();
-		console.log("submitting");
+		// console.log("submitting");
 		let resource_path = to_resource_pathname(window.location.pathname);
 
 		let { dob, ...rest } = form;
@@ -365,7 +365,7 @@ const Heading = () => {
 						New
 					</h2>
 					<p className="mt-1 text-4xl font-bold tracking-tight text-gray-900 sm:text-5xl lg:text-6xl">
-						Personal credit report
+						Personal Credit Report
 					</p>
 				</div>
 			</div>
