@@ -13,6 +13,7 @@ import {
 	PlusSmallIcon,
 } from "@heroicons/react/24/outline";
 import { Disclosure, RadioGroup } from "@headlessui/react";
+import { Link } from "@remix-run/react";
 
 function classNames(...classes) {
 	return classes.filter(Boolean).join(" ");
@@ -1834,12 +1835,12 @@ export default function LandingPage() {
 						))}
 					</div>
 					<div className="hidden lg:flex lg:flex-1 lg:justify-end">
-						<a
-							href="#"
+						<Link
+							to={"/signin"}
 							className="text-sm font-semibold leading-6 text-gray-900"
 						>
-							Log in <span aria-hidden="true">&rarr;</span>
-						</a>
+							Sign In <span aria-hidden="true">&rarr;</span>
+						</Link>
 					</div>
 				</nav>
 				<Dialog
@@ -1885,12 +1886,12 @@ export default function LandingPage() {
 									))}
 								</div>
 								<div className="py-6">
-									<a
-										href="#"
+									<Link
+										to="/signin"
 										className="-mx-3 block rounded-lg py-2.5 px-3 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50"
 									>
-										Log in
-									</a>
+										Sign In
+									</Link>
 								</div>
 							</div>
 						</div>
