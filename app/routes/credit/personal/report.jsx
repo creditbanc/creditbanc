@@ -51,8 +51,8 @@ export const loader = async ({ request }) => {
 		file_id,
 	});
 
-	console.log("user_id", user_id);
-	console.log("is_resource_owner", is_resource_owner);
+	// console.log("user_id", user_id);
+	// console.log("is_resource_owner", is_resource_owner);
 
 	let permissions = await validate_action({
 		entity_id: user_id,

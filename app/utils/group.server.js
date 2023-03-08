@@ -329,6 +329,9 @@ export const get_docs = async ({ resource_id, entity_id }) => {
 					where: { id: resource_path_id },
 				});
 
+				// console.log("resource");
+				// console.log(resource);
+
 				let { id, resource_id } = resource;
 
 				return { id, resource_id, type, model, shared };

@@ -166,6 +166,9 @@ export default function LeftNav({ data = {}, can_manage_roles } = {}) {
 	const urlParams = new URLSearchParams(location.search.substring(1));
 	const params = Object.fromEntries(urlParams);
 
+	// console.log("data");
+	// console.log(data);
+
 	useEffect(() => {
 		setCollapsed(collapsed);
 	}, []);
@@ -211,16 +214,16 @@ export default function LeftNav({ data = {}, can_manage_roles } = {}) {
 			/>
 
 			{!collapsed && (
-				<div className="pl-5 whitespace-nowrap">
+				<div className="pl-2 whitespace-nowrap">
 					<Link
-						className="border-l border-gray-200 cursor-pointer flex flex-row"
+						className="border-gray-200 cursor-pointer flex flex-row border rounded-md hover:border-indigo-400"
 						to={
 							"/credit/personal/new" +
 							to_group_pathname(location.pathname)
 						}
 					>
-						<div className="text-sm mx-2 pb-1 text-gray-700 flex flex-col justify-start w-full">
-							<div className="hover:bg-slate-100 flex flex-row items-center justify-between py-1 pl-2 rounded">
+						<div className="text-sm mx-2 text-gray-700 justify-start w-full ">
+							<div className="flex flex-row items-center justify-between py-1 rounded">
 								<div>Add new</div>
 								<div className="pr-1">
 									<PlusIcon />
@@ -232,7 +235,6 @@ export default function LeftNav({ data = {}, can_manage_roles } = {}) {
 						defaultTo([]),
 						map((report) => (
 							<a
-								className="border-l border-gray-200 cursor-pointer flex flex-row"
 								key={report.id}
 								href={
 									"/credit/personal/report/personal" +
@@ -240,10 +242,24 @@ export default function LeftNav({ data = {}, can_manage_roles } = {}) {
 									`/f/${report.id}` +
 									location.search
 								}
+								className="border rounded-md text-sm py-1 px-2 cursor-pointer hover:border-indigo-400 flex flex-row justify-between my-2 text-gray-700"
 							>
-								<div className="text-sm mx-2 px-2 py-1 hover:bg-slate-100 rounded text-gray-700">
-									{truncate(17, report.id)}
-								</div>
+								<div>Margot F</div>
+								<div>FL</div>
+								{/* <a
+									className="border-l border-gray-200 cursor-pointer flex flex-row"
+									key={report.id}
+									href={
+										"/credit/personal/report/personal" +
+										to_group_pathname(location.pathname) +
+										`/f/${report.id}` +
+										location.search
+									}
+								>
+									<div className="text-sm mx-2 px-2 py-1 hover:bg-slate-100 rounded text-gray-700">
+										{truncate(17, report.id)}
+									</div>
+								</a> */}
 							</a>
 						))
 					)(data.personal_credit_reports)}
@@ -258,16 +274,16 @@ export default function LeftNav({ data = {}, can_manage_roles } = {}) {
 			/>
 
 			{!collapsed && (
-				<div className="pl-5">
+				<div className="pl-2">
 					<Link
-						className="border-l border-gray-200 cursor-pointer flex flex-row"
+						className="border-gray-200 cursor-pointer flex flex-row border rounded-md hover:border-indigo-400"
 						to={
 							"/credit/business/new" +
 							to_group_pathname(location.pathname)
 						}
 					>
-						<div className="text-sm mx-2 pb-1 text-gray-700 flex flex-col justify-start w-full">
-							<div className="hover:bg-slate-100 flex flex-row items-center justify-between py-1 pl-2 rounded">
+						<div className="text-sm mx-2 text-gray-700 justify-start w-full ">
+							<div className="flex flex-row items-center justify-between py-1 rounded">
 								<div>Add new</div>
 								<div className="pr-1">
 									<PlusIcon />
@@ -278,19 +294,31 @@ export default function LeftNav({ data = {}, can_manage_roles } = {}) {
 					{pipe(
 						defaultTo([]),
 						map((report) => (
-							<Link
-								className="border-l border-gray-200 cursor-pointer flex flex-row"
+							<a
 								key={report.id}
-								to={
+								href={
 									"/credit/business/report" +
 									to_resource_pathname(location.pathname) +
 									location.search
 								}
+								className="border rounded-md text-sm py-1 px-2 cursor-pointer hover:border-indigo-400 flex flex-row justify-between my-2 text-gray-700"
 							>
-								<div className="text-sm mx-2 px-2 py-1 hover:bg-slate-100 rounded text-gray-700">
-									{truncate(17, report.id)}
-								</div>
-							</Link>
+								<div>Margot F</div>
+								<div>FL</div>
+							</a>
+							// <Link
+							// 	className="border-l border-gray-200 cursor-pointer flex flex-row"
+							// 	key={report.id}
+							// 	to={
+							// 		"/credit/business/report" +
+							// 		to_resource_pathname(location.pathname) +
+							// 		location.search
+							// 	}
+							// >
+							// 	<div className="text-sm mx-2 px-2 py-1 hover:bg-slate-100 rounded text-gray-700">
+							// 		{truncate(17, report.id)}
+							// 	</div>
+							// </Link>
 						))
 					)(data.business_credit_reports)}
 				</div>
