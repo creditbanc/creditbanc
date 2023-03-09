@@ -221,7 +221,6 @@ export default function LeftNav({ data = {}, can_manage_roles } = {}) {
 							"/credit/personal/new" +
 							to_group_pathname(location.pathname)
 						}
-						replace={true}
 					>
 						<div className="text-sm mx-2 text-gray-700 justify-start w-full ">
 							<div className="flex flex-row items-center justify-between py-1 rounded">
