@@ -341,7 +341,9 @@ export const get_docs = async ({ resource_id, entity_id }) => {
 		return resources;
 	};
 
-	let resources = await get_resources(resources_data([...entity_resources]));
+	let resources = await get_resources(
+		resources_data([...entity_resources, ...shared_resources])
+	);
 
 	// console.log("resources");
 	// inspect(resources);

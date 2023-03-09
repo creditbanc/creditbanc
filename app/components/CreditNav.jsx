@@ -8,6 +8,7 @@ import {
 	to_resource_pathname,
 } from "~/utils/helpers";
 import { isEmpty, map, pipe } from "ramda";
+import { useModalStore } from "~/hooks/useModal";
 
 function classNames(...classes) {
 	return classes.filter(Boolean).join(" ");
@@ -284,9 +285,15 @@ export default function Nav({
 	let resource_pathname = to_resource_pathname(url);
 	let share_link = "/links/new" + resource_pathname;
 	const [panel, setPanel] = useState(false);
+	const set_open = useModalStore((state) => state.set_open);
+	const is_open = useModalStore((state) => state.is_open);
 
 	const onPanelToggle = () => {
 		setPanel(!panel);
+	};
+
+	const onModalToggle = () => {
+		set_open(!is_open);
 	};
 
 	return (
@@ -348,10 +355,10 @@ export default function Nav({
 											+99
 										</div>
 									</div>
-									<Link
+									<div
 										type="button"
-										className="text-blue-700 border border-blue-700 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-full text-sm px-5 py-2 dark:border-blue-500 dark:text-blue-500 dark:hover:text-white dark:hover:bg-blue-600 dark:focus:ring-blue-800 flex flex-row items-center justify-center"
-										to={share_link}
+										className="text-blue-700 border border-blue-700 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-full text-sm px-5 py-2 dark:border-blue-500 dark:text-blue-500 dark:hover:text-white dark:hover:bg-blue-600 dark:focus:ring-blue-800 flex flex-row items-center justify-center cursor-pointer"
+										onClick={onModalToggle}
 									>
 										<svg
 											xmlns="http://www.w3.org/2000/svg"
@@ -368,7 +375,7 @@ export default function Nav({
 											/>
 										</svg>
 										<div>Share</div>
-									</Link>
+									</div>
 								</div>
 							)}
 

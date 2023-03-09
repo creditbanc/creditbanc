@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, Fragment } from "react";
 import { Outlet, useLoaderData, useLocation } from "@remix-run/react";
 import CreditNav from "~/components/CreditNav";
 import { useLayoutStore } from "~/stores/useLayoutStore";
@@ -22,6 +22,9 @@ import { get_user_id } from "~/utils/auth.server";
 import { validate_action } from "~/utils/resource.server";
 import { redirect } from "@remix-run/node";
 import { prisma } from "~/utils/prisma.server";
+import { Dialog, Transition } from "@headlessui/react";
+import Share from "~/routes/invites/new/$.jsx";
+import { useModalStore } from "~/hooks/useModal";
 
 const is_resource_owner_p = async ({ entity_id, file_id }) => {
 	let file = await prisma.resource.findMany({
@@ -37,8 +40,8 @@ const is_resource_owner_p = async ({ entity_id, file_id }) => {
 };
 
 export const loader = async ({ request }) => {
-	console.log("report_loader");
 	let url = new URL(request.url);
+
 	if (!has_valid_route_p("credit/personal/report", request.url))
 		return redirect("/");
 
@@ -51,9 +54,6 @@ export const loader = async ({ request }) => {
 		file_id,
 	});
 
-	// console.log("user_id", user_id);
-	// console.log("is_resource_owner", is_resource_owner);
-
 	let permissions = await validate_action({
 		entity_id: user_id,
 		group_resource_path_id: group_id,
@@ -61,9 +61,6 @@ export const loader = async ({ request }) => {
 		is_owner: is_resource_owner,
 		request,
 	});
-
-	// console.log("permissions");
-	// inspect(permissions);
 
 	let { can_view = false } = permissions ?? {};
 
@@ -74,24 +71,60 @@ export const loader = async ({ request }) => {
 		entity_id: user_id,
 	});
 
-	let reports = pipe(
-		// mod(all)(pick(["id", "resource_id", "model"])),
-		(resources) => ({
-			personal_credit_reports: pipe(
-				filter({ model: "personal_credit_report" }),
-				defaultTo([])
-			)(resources),
-			business_credit_reports: pipe(
-				filter({ model: "business_credit_report" }),
-				defaultTo([])
-			)(resources),
-		})
-	)(group_docs);
-
-	// console.log("reports", reports);
+	let reports = pipe((resources) => ({
+		personal_credit_reports: pipe(
+			filter({ model: "personal_credit_report" }),
+			defaultTo([])
+		)(resources),
+		business_credit_reports: pipe(
+			filter({ model: "business_credit_report" }),
+			defaultTo([])
+		)(resources),
+	}))(group_docs);
 
 	return { reports, origin: url.origin, user_id, permissions };
 };
+
+function Modal({ children }) {
+	const is_open = useModalStore((state) => state.is_open);
+	const set_open = useModalStore((state) => state.set_open);
+
+	return (
+		<Transition.Root show={is_open} as={Fragment}>
+			<Dialog as="div" className="relative z-10" onClose={set_open}>
+				<Transition.Child
+					as={Fragment}
+					enter="ease-out duration-300"
+					enterFrom="opacity-0"
+					enterTo="opacity-100"
+					leave="ease-in duration-200"
+					leaveFrom="opacity-100"
+					leaveTo="opacity-0"
+				>
+					<div className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" />
+				</Transition.Child>
+
+				<div className="fixed inset-0 z-10 overflow-y-auto">
+					<div className="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
+						<Transition.Child
+							as={Fragment}
+							enter="ease-out duration-300"
+							enterFrom="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+							enterTo="opacity-100 translate-y-0 sm:scale-100"
+							leave="ease-in duration-200"
+							leaveFrom="opacity-100 translate-y-0 sm:scale-100"
+							leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+						>
+							<Dialog.Panel className="relative transform overflow-hidden rounded-lg bg-white px-4 pt-5 pb-4 text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-sm sm:p-6">
+								{children}
+							</Dialog.Panel>
+						</Transition.Child>
+					</div>
+				</div>
+			</Dialog>
+		</Transition.Root>
+	);
+}
 
 export default function CreditReport() {
 	var { origin = "", permissions = {}, user_id } = useLoaderData() ?? {};
@@ -100,7 +133,6 @@ export default function CreditReport() {
 	let setContentWidth = useLayoutStore((state) => state.set_content_width);
 	let { reports } = useLoaderData();
 	let location = useLocation();
-	// console.log(user_id);
 
 	useEffect(() => {
 		if (elmSize) {
@@ -110,6 +142,9 @@ export default function CreditReport() {
 
 	return (
 		<div className="flex flex-col w-full h-full">
+			<Modal>
+				<Share />
+			</Modal>
 			<CreditNav
 				user_id={user_id}
 				origin={origin}

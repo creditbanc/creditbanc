@@ -1,5 +1,10 @@
-import { Fragment, useState } from "react";
-import { useLocation, useLoaderData } from "@remix-run/react";
+import { Fragment, useEffect, useState } from "react";
+import {
+	useLocation,
+	useLoaderData,
+	useFetcher,
+	useActionData,
+} from "@remix-run/react";
 import ResourceSettingsTabs from "~/components/ResourceSettingsTabs";
 import { get_resource_permissions } from "~/utils/role.server";
 import { get_group_id, to_resource_pathname } from "~/utils/helpers";
@@ -7,6 +12,8 @@ import { keys, head, pipe, defaultTo, map } from "ramda";
 import { Listbox, Transition } from "@headlessui/react";
 import { ChevronUpDownIcon } from "@heroicons/react/20/solid";
 import copy from "copy-to-clipboard";
+import { json } from "@remix-run/node";
+import { useModalStore } from "~/hooks/useModal";
 
 const LinkIcon = () => {
 	return (
@@ -126,27 +133,26 @@ const SelectComponent = ({ roles = [], onSelectRole, selected_role }) => {
 	);
 };
 
-export const loader = async ({ request }) => {
-	let group_id = get_group_id(request.url);
-	let permissions = await get_resource_permissions({ group_id });
-	let url = new URL(request.url);
-	return { url, permissions };
+export const action = async ({ request }) => {
+	const form = await request.formData();
+	const group_id = form.get("group_id");
+	const permissions = await get_resource_permissions({ group_id });
+	const roles = keys(permissions);
+	return json({ roles });
 };
 
-export default function NewLink() {
+export default function Invite() {
+	const fetcher = useFetcher();
 	const location = useLocation();
-	const { url: current_url, permissions } = useLoaderData();
-	const url = new URL(current_url);
-	const origin = url.origin;
-	let [shareLink, setShareLink] = useState(
+	const [roles, setRoles] = useState([]);
+	const [selectedRole, setSelectedRole] = useState("");
+	const set_open = useModalStore((state) => state.set_open);
+	const [member_email, set_member_email] = useState("");
+
+	const shareLink =
 		origin +
-			"/links/credit/personal/report/personal" +
-			to_resource_pathname(location.pathname)
-	);
-	const roles = pipe(keys)(permissions);
-	const [selectedRole, setSelectedRole] = useState(
-		pipe(head, defaultTo(""))(roles)
-	);
+		"/links/credit/personal/report/personal" +
+		to_resource_pathname(location.pathname);
 
 	const onSelectRole = (role_id) => {
 		setSelectedRole(role_id);
@@ -156,9 +162,43 @@ export default function NewLink() {
 		copy(shareLink + "?role=" + selectedRole);
 	};
 
+	useEffect(() => {
+		setSelectedRole(head(roles));
+	}, [roles]);
+
+	useEffect(() => {
+		console.log("fetcherfetcherfetcher");
+		let roles = fetcher?.data?.roles;
+		if (roles) {
+			setRoles(roles);
+		}
+	}, [fetcher]);
+
+	useEffect(() => {
+		let group_id = get_group_id(location.pathname);
+		fetcher.submit(
+			{ group_id },
+			{ method: "post", action: "/invites/new" }
+		);
+	}, []);
+
+	const onInvite = async () => {
+		console.log("onInvite");
+
+		fetcher.submit(
+			{
+				share_link: shareLink + "?role=" + selectedRole,
+				member_email,
+			},
+			{ method: "post", action: "/invites/send" }
+		);
+
+		set_open(false);
+	};
+
 	return (
 		<div className="flex flex-col">
-			<ResourceSettingsTabs />
+			{/* <ResourceSettingsTabs /> */}
 
 			<div className="w-full p-[20px] max-w-lg mx-auto">
 				<div className="text-center mb-[20px]">
@@ -171,6 +211,30 @@ export default function NewLink() {
 					<p className="mt-1 text-sm text-gray-500">
 						Use links to share and invite people.
 					</p>
+				</div>
+
+				<div className="mt-[10px] mb-[15px] flex flex-col relative">
+					<div className="text-gray-400 text-sm mb-[10px]">
+						Invite email
+					</div>
+					<div className="flex flex-col">
+						<div
+							className="flex flex-col justify-center h-[45px] w-full rounded-md border pl-[10px] border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+							placeholder="Role name"
+						>
+							<div className="overflow-scroll w-[calc(100%-35px)] scrollbar-none text-gray-400 text-sm flex flex-col justify-center">
+								<input
+									type="text"
+									className="outline-none"
+									placeholder="partner@email.com"
+									value={member_email}
+									onChange={(e) =>
+										set_member_email(e.target.value)
+									}
+								/>
+							</div>
+						</div>
+					</div>
 				</div>
 
 				<div className="flex flex-col max-w-lg relative">
@@ -217,7 +281,7 @@ export default function NewLink() {
 						</button>
 					</div>
 				</div>
-				<div className="mt-[25px]">
+				<div className="mt-[25px] flex flex-row justify-between">
 					<button
 						type="button"
 						className="inline-flex items-center rounded border border-gray-300 bg-white px-2.5 py-1.5 text-xs font-medium text-blue-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
@@ -238,6 +302,14 @@ export default function NewLink() {
 							/>
 						</svg>
 						Copy link
+					</button>
+
+					<button
+						type="button"
+						className="rounded bg-indigo-600 py-1 px-2.5 text-xs font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+						onClick={onInvite}
+					>
+						Send invite
 					</button>
 				</div>
 			</div>

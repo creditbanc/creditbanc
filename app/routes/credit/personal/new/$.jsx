@@ -9,6 +9,40 @@ import { inspect, to_resource_pathname, get_group_id } from "~/utils/helpers";
 import { json, redirect } from "@remix-run/node";
 import { create as create_personal_credit_report } from "~/utils/personal_credit_report.server";
 import { test_identity_two } from "~/data/array";
+import { get_user_id } from "~/utils/auth.server";
+
+// export const loader = async () => {
+// 	const msg = {
+// 		to: "1infiniteloop.end@proton.me",
+// 		from: "1infiniteloop.end@gmail.com",
+// 		subject: "Daniel has shared a credit report with you",
+// 		text: "and easy to do anywhere, even with Node.js",
+// 		html: `
+// 			<div style="width:100%; display:flex; flex-direction:column; align-items:center; ">
+// 				<div style="width: 580px; border:1px solid #eee; display:flex; flex-direction:column; border-radius:5px; padding:20px;">
+// 					<div style="margin:5px; 0px">Daniel has shared a document with you.</div>
+// 					<div style="display:flex; flex-direction:column; background:#2563eb; align-items:center; padding: 10px 10px; border-radius: 5px; width: 200px; align-self:center; color:#fff; margin:20px 0px; cursor:pointer;">
+// 						View report
+// 					</div>
+// 					<div>Thank you!</div>
+// 					<div>The Creditbanc Team</div>
+// 				</div>
+// 			</div>
+// 		`,
+// 	};
+
+// 	try {
+// 		await sendgrid.send(msg);
+// 	} catch (error) {
+// 		console.error(error);
+
+// 		if (error.response) {
+// 			console.error(error.response.body);
+// 		}
+// 	}
+
+// 	return null;
+// };
 
 const useReportStore = create((set) => ({
 	form: {
@@ -34,7 +68,7 @@ const useReportStore = create((set) => ({
 
 export const action = async ({ request }) => {
 	console.log("new_credit_action");
-
+	let entity_id = await get_user_id(request);
 	const group_id = get_group_id(request.url);
 	const form = await request.formData();
 	const payload = JSON.parse(form.get("payload"));
@@ -50,18 +84,22 @@ export const action = async ({ request }) => {
 		data,
 	};
 
+	// return redirect(
+	// 	`/credit/personal/report/personal/resource/e/${entity_id}/g/${group_id}/f/63f87c736314c77377680f33`
+	// );
+
 	try {
 		let response = await axios(options);
 		let { clientKey, authToken } = response.data;
-		// console.log("response");
-		// console.log(response.data);
+		console.log("response");
+		console.log(response.data);
 
 		return redirect(
 			`/credit/personal/verification?clientKey=${clientKey}&authToken=${authToken}&group_id=${group_id}`
 		);
 	} catch (error) {
-		// console.log("error");
-		// console.log(error.response.data);
+		console.log("error");
+		console.log(error.response.data);
 		return json({ error: error.message }, { status: 500 });
 	}
 };
@@ -83,7 +121,7 @@ const Form = () => {
 
 	const onSubmit = (e) => {
 		e.preventDefault();
-		// console.log("submitting");
+		console.log("submitting");
 		let resource_path = to_resource_pathname(window.location.pathname);
 
 		let { dob, ...rest } = form;

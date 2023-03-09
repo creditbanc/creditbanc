@@ -215,12 +215,13 @@ export default function LeftNav({ data = {}, can_manage_roles } = {}) {
 
 			{!collapsed && (
 				<div className="pl-2 whitespace-nowrap">
-					<Link
+					<a
 						className="border-gray-200 cursor-pointer flex flex-row border rounded-md hover:border-indigo-400"
-						to={
+						href={
 							"/credit/personal/new" +
 							to_group_pathname(location.pathname)
 						}
+						replace={true}
 					>
 						<div className="text-sm mx-2 text-gray-700 justify-start w-full ">
 							<div className="flex flex-row items-center justify-between py-1 rounded">
@@ -230,7 +231,7 @@ export default function LeftNav({ data = {}, can_manage_roles } = {}) {
 								</div>
 							</div>
 						</div>
-					</Link>
+					</a>
 					{pipe(
 						defaultTo([]),
 						map((report) => (
