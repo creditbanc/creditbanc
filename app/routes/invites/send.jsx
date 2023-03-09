@@ -1,9 +1,7 @@
 import { json } from "@remix-run/node";
 import sendgrid from "@sendgrid/mail";
 
-sendgrid.setApiKey(
-	"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"
-);
+sendgrid.setApiKey(process.env.SENDGRID);
 
 export const action = async ({ request }) => {
 	console.log("teszzzz");
