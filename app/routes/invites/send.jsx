@@ -15,7 +15,7 @@ export const action = async ({ request }) => {
 	console.log("share_link", share_link);
 
 	const msg = {
-		from: "1infiniteloop.end@gmail.com",
+		from: "daniel@creditbanc.io",
 		to: `${member_email}`,
 		subject: "Daniel has shared a credit report with you",
 		text: "and easy to do anywhere, even with Node.js",
@@ -24,6 +24,7 @@ export const action = async ({ request }) => {
 				<div style=" width: 580px; border:1px solid #eee; display:flex-root; flex-direction:column; border-radius:5px; padding:20px; ">
 					<div style="margin:5px; 0px">Daniel has shared a document with you.</div>
 					<a href=${share_link} style="text-align:center; display:flex; flex-direction:column; background:#2563eb; align-items:center; justify-content:center; padding: 10px 10px; border-radius: 5px; width: 200px; align-self:center; color:#fff; margin:20px 0px; cursor:pointer; margin:20px auto;">
+						<div>${share_link}</div>
 						<div style="width: 100%; text-align:center;">
 							View report
 						</div>
