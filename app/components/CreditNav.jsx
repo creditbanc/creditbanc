@@ -319,7 +319,10 @@ export default function Nav({
 										</div>
 									</div>
 								)}
-								<div className="flex flex-shrink-0 items-center">
+								<a
+									className="flex flex-shrink-0 items-center"
+									href="/"
+								>
 									<img
 										className="block h-8 w-auto lg:hidden"
 										src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=600"
@@ -330,7 +333,7 @@ export default function Nav({
 										src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=600"
 										alt="Your Company"
 									/>
-								</div>
+								</a>
 							</div>
 
 							{can_share && (
