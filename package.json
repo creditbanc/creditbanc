@@ -36,6 +36,7 @@
 		"react-spring": "^9.6.1",
 		"shades": "^2.2.0",
 		"tailwind-scrollbar": "^2.1.0",
+		"uuid": "^9.0.0",
 		"zustand": "^4.3.2"
 	},
 	"devDependencies": {

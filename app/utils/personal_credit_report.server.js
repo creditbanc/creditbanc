@@ -2,7 +2,15 @@ import { prisma } from "./prisma.server";
 import { create as create_resource } from "./resource.server";
 import { credit_report_data, CreditReport, Liabilities } from "~/data/array";
 
-export const create = async ({ group_id }) => {
+export const create = async (payload) => {
+	let {
+		group_id,
+		firstName = "",
+		lastName = "",
+		address = {},
+		ssn = "",
+		dob = "",
+	} = payload;
 	if (!group_id) throw new Error("group_id is required");
 
 	let credit_report = CreditReport(credit_report_data);
@@ -11,6 +19,9 @@ export const create = async ({ group_id }) => {
 
 	const credit_report_record = await prisma.personal_credit_report.create({
 		data: {
+			first_name: firstName,
+			last_name: lastName,
+			city: address.city,
 			trade_lines,
 		},
 	});

@@ -332,9 +332,17 @@ export const get_docs = async ({ resource_id, entity_id }) => {
 				// console.log("resource");
 				// console.log(resource);
 
-				let { id, resource_id } = resource;
+				let { id, resource_id, first_name, city } = resource;
 
-				return { id, resource_id, type, model, shared };
+				return {
+					id,
+					resource_id,
+					type,
+					model,
+					shared,
+					first_name,
+					city,
+				};
 			})
 		);
 

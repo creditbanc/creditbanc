@@ -1144,6 +1144,14 @@ video {
   min-height: 100%;
 }
 
+.min-h-\[29px\] {
+  min-height: 29px;
+}
+
+.min-h-\[30px\] {
+  min-height: 30px;
+}
+
 .w-0 {
   width: 0px;
 }

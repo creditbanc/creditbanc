@@ -242,10 +242,10 @@ export default function LeftNav({ data = {}, can_manage_roles } = {}) {
 									`/f/${report.id}` +
 									location.search
 								}
-								className="border rounded-md text-sm py-1 px-2 cursor-pointer hover:border-indigo-400 flex flex-row justify-between my-2 text-gray-700"
+								className="border rounded-md text-sm py-1 px-2 cursor-pointer hover:border-indigo-400 flex flex-row justify-between my-2 text-gray-700 min-h-[30px]"
 							>
-								<div>Margot F</div>
-								<div>FL</div>
+								<div>{report.first_name}</div>
+								<div>{report.state}</div>
 								{/* <a
 									className="border-l border-gray-200 cursor-pointer flex flex-row"
 									key={report.id}

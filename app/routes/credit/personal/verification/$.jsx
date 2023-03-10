@@ -96,7 +96,6 @@ export const action = async ({ request }) => {
 export const loader = async ({ request }) => {
 	const url = new URL(request.url);
 	let clientKey = url.searchParams.get("clientKey");
-	// let search = new URLSearchParams(url);
 
 	var options = {
 		method: "get",

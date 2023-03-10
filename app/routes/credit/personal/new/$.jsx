@@ -10,39 +10,10 @@ import { json, redirect } from "@remix-run/node";
 import { create as create_personal_credit_report } from "~/utils/personal_credit_report.server";
 import { test_identity_two } from "~/data/array";
 import { get_user_id } from "~/utils/auth.server";
-
-// export const loader = async () => {
-// 	const msg = {
-// 		to: "1infiniteloop.end@proton.me",
-// 		from: "1infiniteloop.end@gmail.com",
-// 		subject: "Daniel has shared a credit report with you",
-// 		text: "and easy to do anywhere, even with Node.js",
-// 		html: `
-// 			<div style="width:100%; display:flex; flex-direction:column; align-items:center; ">
-// 				<div style="width: 580px; border:1px solid #eee; display:flex; flex-direction:column; border-radius:5px; padding:20px;">
-// 					<div style="margin:5px; 0px">Daniel has shared a document with you.</div>
-// 					<div style="display:flex; flex-direction:column; background:#2563eb; align-items:center; padding: 10px 10px; border-radius: 5px; width: 200px; align-self:center; color:#fff; margin:20px 0px; cursor:pointer;">
-// 						View report
-// 					</div>
-// 					<div>Thank you!</div>
-// 					<div>The Creditbanc Team</div>
-// 				</div>
-// 			</div>
-// 		`,
-// 	};
-
-// 	try {
-// 		await sendgrid.send(msg);
-// 	} catch (error) {
-// 		console.error(error);
-
-// 		if (error.response) {
-// 			console.error(error.response.body);
-// 		}
-// 	}
-
-// 	return null;
-// };
+import {
+	getSession,
+	commitSession,
+} from "~/sessions/personal_credit_report_session";
 
 const useReportStore = create((set) => ({
 	form: {
@@ -84,9 +55,8 @@ export const action = async ({ request }) => {
 		data,
 	};
 
-	// return redirect(
-	// 	`/credit/personal/report/personal/resource/e/${entity_id}/g/${group_id}/f/63f87c736314c77377680f33`
-	// );
+	let session = await getSession(request.headers.get("Cookie"));
+	session.set("personal_credit_report", JSON.stringify(payload));
 
 	try {
 		let response = await axios(options);
@@ -95,7 +65,12 @@ export const action = async ({ request }) => {
 		console.log(response.data);
 
 		return redirect(
-			`/credit/personal/verification?clientKey=${clientKey}&authToken=${authToken}&group_id=${group_id}`
+			`/credit/personal/verification?clientKey=${clientKey}&authToken=${authToken}&group_id=${group_id}`,
+			{
+				headers: {
+					"Set-Cookie": await commitSession(session),
+				},
+			}
 		);
 	} catch (error) {
 		console.log("error");
@@ -122,14 +97,17 @@ const Form = () => {
 	const onSubmit = (e) => {
 		e.preventDefault();
 		console.log("submitting");
+		// let form_id = uuidv4();
 		let resource_path = to_resource_pathname(window.location.pathname);
 
 		let { dob, ...rest } = form;
 		let dob_string = `${dob.year}-${dob.month}-${dob.day}`;
-		let payload = JSON.stringify({ ...rest, dob: dob_string });
+		let payload = { ...rest, dob: dob_string };
+
+		sessionStorage.setItem("personal_credit_report", payload);
 
 		submit(
-			{ payload },
+			{ payload: JSON.stringify(payload) },
 			{
 				method: "post",
 				action: "/credit/personal/new" + resource_path,

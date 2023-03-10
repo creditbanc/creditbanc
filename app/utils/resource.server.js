@@ -49,7 +49,6 @@ let test = {
 export const create = async (data = {}) => {
 	const result = await prisma.resource.create({
 		data: {
-			...test,
 			...data,
 		},
 	});

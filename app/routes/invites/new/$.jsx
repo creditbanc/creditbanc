@@ -206,7 +206,7 @@ export default function Invite() {
 						<LinkIcon />
 					</div>
 					<h2 className="mt-2 mb-2 text-lg font-medium text-gray-900">
-						Create shareable link
+						Create an invite link
 					</h2>
 					<p className="mt-1 text-sm text-gray-500">
 						Use links to share and invite people.

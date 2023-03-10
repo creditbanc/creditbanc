@@ -5,6 +5,7 @@ import axios from "axios";
 import { isEmpty } from "ramda";
 import { redirect } from "react-router";
 import { get_user_id } from "~/utils/auth.server";
+import { getSession } from "~/sessions/personal_credit_report_session";
 
 export const loader = async ({ request }) => {
 	console.log("create_personal_credit_report");
@@ -13,12 +14,19 @@ export const loader = async ({ request }) => {
 	let url_object = new URL(url);
 	let search = new URLSearchParams(url_object.search);
 	let group_id = search.get("group_id");
+	let session = await getSession(request.headers.get("Cookie"));
+	let credit_report_payload = JSON.parse(
+		session.get("personal_credit_report")
+	);
 
-	console.log("group_id");
-	console.log(group_id);
+	// console.log("session");
+	// console.log(credit_report_payload);
 
-	console.log("entity_id");
-	console.log(entity_id);
+	// console.log("group_id");
+	// console.log(group_id);
+
+	// console.log("entity_id");
+	// console.log(entity_id);
 
 	let displayToken = search.get("displayToken");
 	let reportKey = search.get("reportKey");
@@ -69,7 +77,9 @@ export const loader = async ({ request }) => {
 
 	// let report = await get_credit_report(reportKey, displayToken);
 
-	let report = await create({ group_id });
+	// return null;
+
+	let report = await create({ group_id, ...credit_report_payload });
 
 	let { file } = report;
 	// console.log("report");
