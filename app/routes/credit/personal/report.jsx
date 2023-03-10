@@ -62,6 +62,12 @@ export const loader = async ({ request }) => {
 		request,
 	});
 
+	// console.log("permissions");
+	// console.log(permissions);
+
+	// console.log("is_resource_owner");
+	// console.log(is_resource_owner);
+
 	let { can_view = false } = permissions ?? {};
 
 	if (!can_view) return redirect("/");

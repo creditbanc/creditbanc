@@ -4,6 +4,7 @@ import bcrypt from "bcryptjs";
 import { create as create_user } from "./entity.server";
 import { create as create_roles } from "./role.server";
 import { create_root } from "./group.server";
+import { take } from "ramda";
 
 let secret = process.env.SESSION_SECRET;
 
@@ -135,9 +136,36 @@ export const signup = async (form) => {
 export const signin = async (form) => {
 	let { email, password } = form;
 
-	const user = await prisma.entity.findUnique({
+	const user = await prisma.entity.findFirst({
 		where: { email },
 	});
+
+	let root_group = await prisma.resource.findFirst({
+		where: {
+			resource_path_id: user.root_group_resource_path_id,
+		},
+		include: {
+			subscriptions: {
+				where: {
+					type: "file",
+				},
+				take: 1,
+			},
+		},
+	});
+
+	let file = root_group.subscriptions[0];
+
+	let file_map = {
+		personal_credit_report: "personal",
+		business_credit_report: "business",
+	};
+
+	let redirect_url = `/credit/${
+		file_map[file.model]
+	}/report/personal/resource/e/${user.id}/g/${
+		root_group.resource_path_id
+	}/f/${file.resource_path_id}`;
 
 	if (!user || !(await bcrypt.compare(password, user.password))) {
 		return json(
@@ -148,7 +176,7 @@ export const signin = async (form) => {
 		);
 	}
 
-	return create_user_session(user.id, "/");
+	return create_user_session(user.id, redirect_url);
 };
 
 const create_user_session = async (entity_id, redirect_to) => {

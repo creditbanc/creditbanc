@@ -209,7 +209,7 @@ export const get_entity_roles = async ({
 	if (is_owner) {
 		console.log("get_entity_roles_is_owner");
 		const resource = await prisma.resource.findMany({
-			where: { resource_path_id: { in: resource_ids }, type: "group" },
+			where: { resource_path_id: { in: resource_ids }, model: "group" },
 			include: {
 				roles: {
 					where: {
@@ -284,23 +284,30 @@ export const get_resource_roles = async ({
 		if (is_owner) {
 			let resource = await prisma.resource.findFirst({
 				where: {
-					type: "group",
+					model: "group",
 					resource_path_id: {
 						equals: head(resource_ids),
 					},
 				},
 			});
 
+			// console.log("resource");
+			// console.log(resource);
+
 			return resource.id;
 		} else {
 			let resource = await prisma.resource.findFirst({
 				where: {
-					type: "group",
+					model: "group",
 					subscriber_ids: {
 						hasEvery: resource_ids,
 					},
 				},
 			});
+
+			// console.log("resource");
+			// console.log(resource_ids);
+			// console.log(resource);
 
 			return resource.id;
 		}
@@ -530,6 +537,8 @@ export const validate_action = async ({
 				entity_id,
 				resource_path_id,
 				link_role,
+				group_resource_path_id,
+				is_owner,
 			});
 
 			return _return(permissions);

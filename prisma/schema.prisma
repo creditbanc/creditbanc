@@ -11,16 +11,18 @@ datasource db {
 }
 
 model Entity {
-  id               String     @id @default(auto()) @map("_id") @db.ObjectId
-  created_at       DateTime   @default(now())
-  updated_at       DateTime   @updatedAt
-  email            String     @unique
-  password         String
-  roles_ids        String[]   @db.ObjectId
-  roles            Roles[]    @relation(fields: [roles_ids], references: [id])
-  resource_ids     String[]   @db.ObjectId
-  resources        Resource[] @relation(fields: [resource_ids], references: [id])
-  root_resource_id String?    @db.ObjectId
+  id                              String     @id @default(auto()) @map("_id") @db.ObjectId
+  created_at                      DateTime   @default(now())
+  updated_at                      DateTime   @updatedAt
+  email                           String     @unique
+  password                        String
+  roles_ids                       String[]   @db.ObjectId
+  roles                           Roles[]    @relation(fields: [roles_ids], references: [id])
+  resource_ids                    String[]   @db.ObjectId
+  resources                       Resource[] @relation(fields: [resource_ids], references: [id])
+  root_resource_id                String?    @db.ObjectId
+  root_partition_resource_path_id String?    @db.ObjectId
+  root_group_resource_path_id     String?    @db.ObjectId
 }
 
 // the mental model is:
