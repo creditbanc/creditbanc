@@ -1,6 +1,6 @@
 import CreditNav from "~/components/CreditNav";
 import CreditHeroGradient from "~/components/CreditHeroGradient";
-import { map, addIndex, isEmpty, includes, values } from "ramda";
+import { map, addIndex, isEmpty, includes, values, join } from "ramda";
 import axios from "axios";
 import { useLoaderData, useFetcher, useLocation } from "@remix-run/react";
 import { create } from "zustand";
@@ -8,19 +8,22 @@ import { pipe } from "ramda";
 import { all, filter, get, mod } from "shades";
 import { useEffect } from "react";
 import { json, redirect } from "@remix-run/node";
-import { get_group_id } from "~/utils/helpers";
+import { get_group_id, inspect } from "~/utils/helpers";
+import { get_user_id } from "~/utils/auth.server";
+import { appKey } from "~/data/array";
 
-// const appKey = "F5C7226A-4F96-43BF-B748-09278FFE0E36";
-const appKey = "3F03D20E-5311-43D8-8A76-E4B5D77793BD";
+let auth_url = "https://sandbox.array.io/api/authenticate/v2";
+// let auth_url = 'https://array.io/api/authenticate/v2'
 
-let api_url = "https://sandbox.array.io/api/authenticate/v2";
-// let api_url = 'https://array.io/api/authenticate/v2'
+let report_url = "https://sandbox.array.io/api/report/v2";
+// let report_url = 'https://array.io/api/report/v2'
 
 let mapIndexed = addIndex(map);
 
 const useVerificationQuestionsStore = create((set) => ({
 	answers: {},
 	questions: [],
+	clearAnswers: () => set((state) => pipe(mod("answers")(() => ({})))(state)),
 	setAnswer: (question_id, answer_id) =>
 		set((state) =>
 			pipe(mod("answers", question_id)(() => answer_id))(state)
@@ -30,18 +33,21 @@ const useVerificationQuestionsStore = create((set) => ({
 }));
 
 export const action = async ({ request }) => {
+	let entity_id = await get_user_id(request);
 	const form = await request.formData();
 	const payload = JSON.parse(form.get("payload"));
 	let { clientKey, authToken, answers } = payload;
-	let appKey = "3F03D20E-5311-43D8-8A76-E4B5D77793BD";
 	let url = new URL(request.url);
 	let search = new URLSearchParams(url.search);
 	let group_id = search.get("group_id");
 	// console.log(group_id);
 
+	// console.log("answers");
+	// console.log(answers);
+
 	const options = {
 		method: "POST",
-		url: "https://sandbox.array.io/api/authenticate/v2",
+		url: auth_url,
 		headers: {
 			accept: "application/json",
 			"content-type": "application/json",
@@ -53,6 +59,8 @@ export const action = async ({ request }) => {
 			answers,
 		},
 	};
+
+	return redirect(`/signup?displayToken=1`);
 
 	let response = await axios(options);
 
@@ -67,7 +75,7 @@ export const action = async ({ request }) => {
 		var display_token_options = {
 			method: "post",
 			maxBodyLength: Infinity,
-			url: "https://sandbox.array.io/api/report/v2",
+			url: report_url,
 			headers: {
 				"x-credmo-user-token": userToken,
 				"Content-Type": "application/json",
@@ -79,14 +87,25 @@ export const action = async ({ request }) => {
 		let { displayToken = null, reportKey = null } = response.data;
 
 		if (displayToken && reportKey) {
+			console.log("yayayayayayy");
 			// console.log("displayToken");
 			// console.log(displayToken);
 			// console.log("reportKey");
 			// console.log(reportKey);
 
-			return redirect(
-				`/credit/personal/create?displayToken=${displayToken}&reportKey=${reportKey}&group_id=${group_id}`
-			);
+			// return redirect(
+			// 	`/credit/personal/create?displayToken=${displayToken}&reportKey=${reportKey}&group_id=${group_id}`
+			// );
+
+			if (!entity_id) {
+				return redirect(
+					`/signup?displayToken=${displayToken}&reportKey=${reportKey}`
+				);
+			} else {
+				return redirect(
+					`/credit/personal/create?displayToken=${displayToken}&reportKey=${reportKey}&group_id=${group_id}`
+				);
+			}
 		}
 	} else {
 		return json({ ...response.data });
@@ -97,14 +116,24 @@ export const loader = async ({ request }) => {
 	const url = new URL(request.url);
 	let clientKey = url.searchParams.get("clientKey");
 
+	let providers = ["efx"];
+
+	let providers_string = pipe(
+		mapIndexed((provider, index) => `provider${index + 1}=${provider}`),
+		join("&")
+	)(providers);
+	console.log(providers_string);
+
 	var options = {
 		method: "get",
 		maxBodyLength: Infinity,
-		url: `${api_url}?appKey=${appKey}&clientKey=${clientKey}&provider1=tui&provider2=efx&provider3=exp`,
+		url: `${auth_url}?appKey=${appKey}&clientKey=${clientKey}&${providers_string}`,
 		headers: {},
 	};
 
 	let response = await axios(options);
+	console.log("response.data");
+	inspect(response.data);
 	return response.data;
 };
 
@@ -113,9 +142,16 @@ const Form = () => {
 	const questions = useVerificationQuestionsStore((state) => state.questions);
 	const answers = useVerificationQuestionsStore((state) => state.answers);
 	const setAnswer = useVerificationQuestionsStore((state) => state.setAnswer);
+	const clearAnswers = useVerificationQuestionsStore(
+		(state) => state.clearAnswers
+	);
 	const setQuestions = useVerificationQuestionsStore(
 		(state) => state.setQuestions
 	);
+
+	useEffect(() => {
+		clearAnswers();
+	}, [questions]);
 
 	useEffect(() => {
 		if (fetcher.type === "done" && fetcher.data.questions) {
@@ -146,10 +182,12 @@ const Form = () => {
 		let clientKey = url.searchParams.get("clientKey");
 		let authToken = url.searchParams.get("authToken");
 
+		// answers = pipe(map((answer) => answer.slice(-1)))(answers);
+
 		let payload = JSON.stringify({
 			clientKey,
 			authToken,
-			answers,
+			answers: pipe(map((answer) => answer.slice(-1)))(answers),
 		});
 
 		fetcher.submit({ payload }, { method: "POST" });
@@ -190,13 +228,13 @@ const Form = () => {
 												type="radio"
 												className="h-4 w-4 border-gray-300 text-indigo-600 focus:ring-indigo-500 cursor-pointer"
 												checked={includes(
-													answer.id,
+													`${questionIndex}-${answer.id}`,
 													values(answers)
 												)}
 												onChange={() =>
 													setAnswer(
 														question.id,
-														answer.id
+														`${questionIndex}-${answer.id}`
 													)
 												}
 											/>
@@ -240,7 +278,7 @@ const Heading = () => {
 			<div className="mx-auto max-w-7xl py-4 pb-6 px-2">
 				<div className="text-center">
 					<p className="mt-1 text-4xl font-bold tracking-tight text-gray-900 sm:text-5xl lg:text-6xl">
-						Verification questions
+						Verification Questions
 					</p>
 				</div>
 			</div>

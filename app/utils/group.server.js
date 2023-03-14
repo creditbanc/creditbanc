@@ -51,16 +51,27 @@ export const create_root = async (data = {}) => {
 	return { type: "group", group, resource };
 };
 
-export const create_group = async ({ name, entity_id } = {}) => {
+export const create_group = async ({
+	name,
+	entity_id,
+	type = "group",
+	root_partition_resource_path_id,
+} = {}) => {
 	console.log("create_group");
 
-	let entity = await prisma.entity.findFirst({
-		where: {
-			id: entity_id,
-		},
-	});
+	if (!root_partition_resource_path_id) {
+		let entity = await prisma.entity.findFirst({
+			where: {
+				id: entity_id,
+			},
+		});
 
-	let { root_resource_id } = entity;
+		root_partition_resource_path_id =
+			entity.root_partition_resource_path_id;
+	}
+
+	console.log("root_partition_resource_path_id");
+	console.log(root_partition_resource_path_id);
 
 	let group = await prisma.group.create({
 		data: {
@@ -71,7 +82,7 @@ export const create_group = async ({ name, entity_id } = {}) => {
 	let { id: group_id } = group;
 
 	let resource = await create_resource({
-		type: "group",
+		type,
 		model: "group",
 		resource_path_id: group_id,
 	});
@@ -107,7 +118,7 @@ export const create_group = async ({ name, entity_id } = {}) => {
 	});
 
 	await prisma.resource.update({
-		where: { id: root_resource_id },
+		where: { id: root_partition_resource_path_id },
 		data: {
 			subscription_ids: {
 				push: [resource.id],
@@ -125,7 +136,7 @@ export const create_group = async ({ name, entity_id } = {}) => {
 				push: [resource.id],
 			},
 			subscriber_ids: {
-				push: [root_resource_id, resource.id],
+				push: [root_partition_resource_path_id, resource.id],
 			},
 		},
 	});
@@ -147,7 +158,7 @@ export const create_group = async ({ name, entity_id } = {}) => {
 
 export const create_directory = async (data = {}) => {
 	console.log("create_directory");
-	let { root_resource_id, name } = data;
+	let { root_partition_resource_path_id, name } = data;
 	console.log("data", data);
 
 	let group = await prisma.group.create({
@@ -166,7 +177,7 @@ export const create_directory = async (data = {}) => {
 
 	await prisma.resource.update({
 		where: {
-			resource_path_id: root_resource_id,
+			resource_path_id: root_partition_resource_path_id,
 		},
 		data: {
 			subscription_ids: {
@@ -179,7 +190,7 @@ export const create_directory = async (data = {}) => {
 		where: { id: resource.id },
 		data: {
 			subscriber_ids: {
-				push: [root_resource_id],
+				push: [root_partition_resource_path_id],
 			},
 		},
 	});
@@ -192,10 +203,25 @@ export const create_directory = async (data = {}) => {
 	return { type: "group", group, resource };
 };
 
+export const get_root_group_resource_path_id = async ({ entity_id }) => {
+	let entity = await prisma.entity.findFirst({
+		where: { id: entity_id },
+	});
+
+	let root_group_resource = await prisma.resource.findFirst({
+		where: { resource_path_id: entity.root_group_resource_path_id },
+	});
+
+	return root_group_resource.resource_path_id;
+};
+
 export const get_root_docs = async ({ entity_id }) => {
 	let entity = await prisma.entity.findFirst({
 		where: { id: entity_id },
 	});
+
+	console.log("entity");
+	console.log(entity);
 
 	// let partition = await prisma.entity.findFirst({
 	// 	where: { id: entity_id },
@@ -224,8 +250,11 @@ export const get_root_docs = async ({ entity_id }) => {
 	// inspect(partition);
 
 	let root_resource = await prisma.resource.findFirst({
-		where: { id: entity.root_resource_id },
+		where: { resource_path_id: entity.root_group_resource_path_id },
 	});
+
+	console.log("root_resource");
+	console.log(root_resource);
 
 	const get_resources = async (subscription_ids) => {
 		let resources = await Promise.all(
@@ -332,7 +361,7 @@ export const get_docs = async ({ resource_id, entity_id }) => {
 				// console.log("resource");
 				// console.log(resource);
 
-				let { id, resource_id, first_name, city } = resource;
+				let { id, resource_id, first_name, city, state } = resource;
 
 				return {
 					id,
@@ -342,6 +371,7 @@ export const get_docs = async ({ resource_id, entity_id }) => {
 					shared,
 					first_name,
 					city,
+					state,
 				};
 			})
 		);

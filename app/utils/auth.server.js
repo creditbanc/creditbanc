@@ -3,7 +3,7 @@ import { prisma } from "./prisma.server";
 import bcrypt from "bcryptjs";
 import { create as create_user } from "./entity.server";
 import { create as create_roles } from "./role.server";
-import { create_root } from "./group.server";
+import { create_root, create_group } from "./group.server";
 import { take } from "ramda";
 
 let secret = process.env.SESSION_SECRET;
@@ -24,8 +24,8 @@ const storage = createCookieSessionStorage({
 	},
 });
 
-export const signup = async (form) => {
-	const exists = await prisma.entity.count({ where: { email: form.email } });
+export const signup = async ({ email, password, redirect_to = "/" }) => {
+	const exists = await prisma.entity.count({ where: { email } });
 
 	if (exists) {
 		return json(
@@ -36,13 +36,13 @@ export const signup = async (form) => {
 		);
 	}
 
-	const entity = await create_user(form);
+	const entity = await create_user({ email, password });
 
 	if (!entity) {
 		return json(
 			{
 				error: `Something wen't wrong when creating the new account.`,
-				fields: { email: form.email, password: form.password },
+				fields: { email: email, password: password },
 			},
 			{ status: 400 }
 		);
@@ -53,7 +53,18 @@ export const signup = async (form) => {
 		name: "root",
 	});
 
-	console.log("resource", resource);
+	console.log("root_partition_group");
+	console.log(group);
+
+	let { group: root_group, resource: root_group_resource } =
+		await create_group({
+			name: "root",
+			entity_id: entity.id,
+			type: "root",
+			root_partition_resource_path_id: resource.id,
+		});
+
+	// console.log("resource", resource);
 
 	let permissions = {
 		[resource.resource_path_id]: {
@@ -126,11 +137,12 @@ export const signup = async (form) => {
 		where: { id: entity.id },
 		data: {
 			roles_ids: { push: [creator_user_role.id] },
-			root_resource_id: resource.id,
+			root_partition_resource_path_id: resource.id,
+			root_group_resource_path_id: root_group_resource.id,
 		},
 	});
 
-	return create_user_session(entity.id, "/");
+	return create_user_session(entity.id, redirect_to);
 };
 
 export const signin = async (form) => {

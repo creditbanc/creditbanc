@@ -34,17 +34,8 @@ import {
 import { get, matching, all, mod, filter, cons } from "shades";
 import { prisma } from "./prisma.server";
 import { get_user_session } from "./auth.server";
-const util = require("util");
+
 import { get_resource_id, inspect, get_group_id, trim } from "./helpers";
-
-let test = {
-	// type: "group",
-};
-
-// const inspect = (obj) => {
-// 	console.log(util.inspect(obj, false, null, true));
-// 	return obj;
-// };
 
 export const create = async (data = {}) => {
 	const result = await prisma.resource.create({

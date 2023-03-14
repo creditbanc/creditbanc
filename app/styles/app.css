@@ -828,6 +828,10 @@ video {
   margin-right: -0.5rem;
 }
 
+.-mt-10 {
+  margin-top: -2.5rem;
+}
+
 .-mt-4 {
   margin-top: -1rem;
 }
@@ -1136,20 +1140,16 @@ video {
   max-height: 15rem;
 }
 
+.min-h-\[30px\] {
+  min-height: 30px;
+}
+
 .min-h-\[40px\] {
   min-height: 40px;
 }
 
 .min-h-full {
   min-height: 100%;
-}
-
-.min-h-\[29px\] {
-  min-height: 29px;
-}
-
-.min-h-\[30px\] {
-  min-height: 30px;
 }
 
 .w-0 {
@@ -2023,10 +2023,6 @@ video {
 
 .p-\[10px\] {
   padding: 10px;
-}
-
-.p-\[15px\] {
-  padding: 15px;
 }
 
 .p-\[20px\] {

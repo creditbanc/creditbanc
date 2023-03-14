@@ -7,9 +7,7 @@ import { create } from "zustand";
 import { useSubmit } from "@remix-run/react";
 import { inspect, to_resource_pathname, get_group_id } from "~/utils/helpers";
 import { json, redirect } from "@remix-run/node";
-import { create as create_personal_credit_report } from "~/utils/personal_credit_report.server";
-import { test_identity_two } from "~/data/array";
-import { get_user_id } from "~/utils/auth.server";
+import { test_identity_two, test_identity_four } from "~/data/array";
 import {
 	getSession,
 	commitSession,
@@ -37,17 +35,23 @@ const useReportStore = create((set) => ({
 		set((state) => pipe(mod("form", ...path)(() => value))(state)),
 }));
 
+let api_url = "https://sandbox.array.io/api/user/v2";
+// let api_url = 'https://array.io/api/user/v2'
+
 export const action = async ({ request }) => {
 	console.log("new_credit_action");
-	let entity_id = await get_user_id(request);
+
 	const group_id = get_group_id(request.url);
 	const form = await request.formData();
 	const payload = JSON.parse(form.get("payload"));
 	let data = test_identity_two;
 
+	// console.log("payloaddddd");
+	// console.log(data);
+
 	const options = {
 		method: "POST",
-		url: "https://sandbox.array.io/api/user/v2",
+		url: api_url,
 		headers: {
 			accept: "application/json",
 			"content-type": "application/json",
@@ -78,6 +82,16 @@ export const action = async ({ request }) => {
 		return json({ error: error.message }, { status: 500 });
 	}
 };
+
+// export const loader = async ({ request }) => {
+// 	let entity_id = await get_user_id(request);
+// 	console.log("entity_id");
+// 	console.log(entity_id);
+
+// 	if (!entity_id) return redirect("/signup");
+
+// 	return null;
+// };
 
 const Form = () => {
 	const form = useReportStore((state) => state.form);

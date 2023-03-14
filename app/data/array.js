@@ -16,7 +16,7 @@ const mapIndexed = addIndex(map);
 export const appKey = "3F03D20E-5311-43D8-8A76-E4B5D77793BD";
 // export const appKey = "F5C7226A-4F96-43BF-B748-09278FFE0E36";
 
-export const api_url = "https://sandbox.array.io/api/authenticate/v2";
+// export const api_url = "https://sandbox.array.io/api/authenticate/v2";
 // export const api_url = 'https://array.io/api/authenticate/v2'
 
 export const test_identity_one = {
@@ -30,6 +30,20 @@ export const test_identity_one = {
 		city: "Winter garden",
 		state: "FL",
 		zip: "34787",
+	},
+};
+
+export const test_identity_four = {
+	appKey,
+	firstName: "THOMAS",
+	lastName: "DEVOS",
+	dob: "1957-09-06",
+	ssn: "666023511",
+	address: {
+		street: "1206 BEAR CREEK RD APT 110",
+		city: "TUSCALOOSA",
+		state: "AL",
+		zip: "35405",
 	},
 };
 
