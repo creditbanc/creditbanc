@@ -173,11 +173,7 @@ export const signin = async (form) => {
 		business_credit_report: "business",
 	};
 
-	let redirect_url = `/credit/${
-		file_map[file.model]
-	}/report/personal/resource/e/${user.id}/g/${
-		root_group.resource_path_id
-	}/f/${file.resource_path_id}`;
+	let redirect_url = `/root`;
 
 	if (!user || !(await bcrypt.compare(password, user.password))) {
 		return json(

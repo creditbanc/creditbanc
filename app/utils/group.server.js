@@ -220,8 +220,8 @@ export const get_root_docs = async ({ entity_id }) => {
 		where: { id: entity_id },
 	});
 
-	console.log("entity");
-	console.log(entity);
+	// console.log("entity");
+	// console.log(entity);
 
 	// let partition = await prisma.entity.findFirst({
 	// 	where: { id: entity_id },
@@ -253,8 +253,8 @@ export const get_root_docs = async ({ entity_id }) => {
 		where: { resource_path_id: entity.root_group_resource_path_id },
 	});
 
-	console.log("root_resource");
-	console.log(root_resource);
+	// console.log("root_resource");
+	// console.log(root_resource);
 
 	const get_resources = async (subscription_ids) => {
 		let resources = await Promise.all(

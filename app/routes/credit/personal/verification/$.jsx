@@ -60,7 +60,7 @@ export const action = async ({ request }) => {
 		},
 	};
 
-	return redirect(`/signup?displayToken=1`);
+	// return redirect(`/signup?displayToken=1`);
 
 	let response = await axios(options);
 
@@ -87,16 +87,6 @@ export const action = async ({ request }) => {
 		let { displayToken = null, reportKey = null } = response.data;
 
 		if (displayToken && reportKey) {
-			console.log("yayayayayayy");
-			// console.log("displayToken");
-			// console.log(displayToken);
-			// console.log("reportKey");
-			// console.log(reportKey);
-
-			// return redirect(
-			// 	`/credit/personal/create?displayToken=${displayToken}&reportKey=${reportKey}&group_id=${group_id}`
-			// );
-
 			if (!entity_id) {
 				return redirect(
 					`/signup?displayToken=${displayToken}&reportKey=${reportKey}`
@@ -116,13 +106,15 @@ export const loader = async ({ request }) => {
 	const url = new URL(request.url);
 	let clientKey = url.searchParams.get("clientKey");
 
-	let providers = ["efx"];
+	let providers = ["tui", "efx", "exp"];
 
 	let providers_string = pipe(
 		mapIndexed((provider, index) => `provider${index + 1}=${provider}`),
 		join("&")
 	)(providers);
-	console.log(providers_string);
+
+	// console.log("providers_string");
+	// console.log(providers_string);
 
 	var options = {
 		method: "get",
@@ -132,8 +124,8 @@ export const loader = async ({ request }) => {
 	};
 
 	let response = await axios(options);
-	console.log("response.data");
-	inspect(response.data);
+	// console.log("response.data");
+	// inspect(response.data);
 	return response.data;
 };
 
