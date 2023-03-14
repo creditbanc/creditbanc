@@ -19,32 +19,32 @@ const useForm = create((set) => ({
 
 export async function action({ request }) {
 	var form = await request.formData();
-	console.log("actionaction");
-	console.log(request.url);
+	// console.log("actionaction");
+	// console.log(request.url);
 	const url = new URL(request.url);
 	let search = Object.fromEntries(url.searchParams);
 	let { displayToken } = search;
 
-	console.log("displayToken");
-	console.log(displayToken);
-	console.log(url.searchParams.toString());
+	// console.log("displayToken");
+	// console.log(displayToken);
+	// console.log(url.searchParams.toString());
 
 	const email = form.get("email");
 	const password = form.get("password");
 
-	console.log("formform");
-	console.log(email);
-	console.log(password);
+	// console.log("formform");
+	// console.log(email);
+	// console.log(password);
 
 	if (typeof email !== "string" || typeof password !== "string") {
 		return json({ error: "Invalid form data" }, { status: 400 });
 	}
 
 	if (!displayToken) {
-		console.log("yesDisplayToken");
+		// console.log("yesDisplayToken");
 		return await signup({ email, password });
 	} else {
-		console.log("noDisplayToken");
+		// console.log("noDisplayToken");
 		let redirect_to = `/credit/personal/create?${url.searchParams.toString()}`;
 		return await signup({ email, password, redirect_to });
 	}
@@ -177,7 +177,7 @@ const Heading = () => {
 			<div className="mx-auto max-w-7xl py-4 pb-6 px-2">
 				<div className="text-center">
 					<h2 className="text-lg font-semibold text-indigo-600">
-						Create New
+						Create A New
 					</h2>
 					<p className="mt-1 text-4xl font-bold tracking-tight text-gray-900 sm:text-5xl lg:text-6xl">
 						Account
