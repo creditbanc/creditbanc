@@ -436,7 +436,7 @@ function DarkHero() {
 
 function Logos() {
 	return (
-		<div className="bg-white py-12">
+		<div className="bg-white ">
 			<div className="mx-auto max-w-7xl px-6 lg:px-8">
 				<div className="mx-auto grid max-w-lg grid-cols-4 items-center gap-x-8 gap-y-12 sm:max-w-xl sm:grid-cols-6 sm:gap-x-10 sm:gap-y-14 lg:mx-0 lg:max-w-none lg:grid-cols-5">
 					<img
@@ -481,14 +481,14 @@ function Logos() {
 							Over 2500 companies use our tools to better their
 							business.
 						</span>
-						<a href="#" className="font-semibold text-indigo-600">
+						{/* <a href="#" className="font-semibold text-indigo-600">
 							<span
 								className="absolute inset-0"
 								aria-hidden="true"
 							/>{" "}
 							Read our customer stories{" "}
 							<span aria-hidden="true">&rarr;</span>
-						</a>
+						</a> */}
 					</p>
 				</div>
 			</div>
@@ -1769,7 +1769,7 @@ const footerNavigation = [
 
 function FooterTwo() {
 	return (
-		<footer className="bg-white border-t-[1px] mt-20">
+		<footer className="bg-white border-t-[1px]">
 			<div className="mx-auto max-w-7xl py-6 md:flex md:items-center md:justify-between px-6">
 				<div className="flex justify-center space-x-6 md:order-2">
 					{footerNavigation.map((item) => (
@@ -2048,7 +2048,12 @@ export default function LandingPage() {
 						))}
 					</div>
 				</div>
-				<FooterTwo />
+				<div className="py-14">
+					<Logos />
+				</div>
+				<div className="">
+					<FooterTwo />
+				</div>
 			</main>
 		</div>
 	);
