@@ -385,8 +385,8 @@ export const get_docs = async ({ resource_id, entity_id }) => {
 		resources_data([...shared_resources, ...entity_resources])
 	);
 
-	console.log("resources");
-	inspect(resources);
+	// console.log("resources");
+	// inspect(resources);
 
 	return resources;
 };
