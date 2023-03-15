@@ -2766,15 +2766,6 @@ video {
   display: none;
 }
 
-.scrollbar-hide {
-  -ms-overflow-style: none;
-  scrollbar-width: none;
-}
-
-.scrollbar-hide::-webkit-scrollbar {
-  display: none;
-}
-
 .\[mask-image\:linear-gradient\(to_bottom\2c white_20\%\2c transparent_75\%\)\] {
   -webkit-mask-image: linear-gradient(to bottom,white 20%,transparent 75%);
           mask-image: linear-gradient(to bottom,white 20%,transparent 75%);
