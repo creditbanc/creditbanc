@@ -237,14 +237,14 @@ export default function Invite() {
 					</div>
 				</div>
 
-				<div className="flex flex-col max-w-lg relative">
+				{/* <div className="flex flex-col max-w-lg relative">
 					<div className="text-gray-400 text-sm mb-[10px]">Roles</div>
 					<SelectComponent
 						roles={roles}
 						onSelectRole={onSelectRole}
 						selected_role={selectedRole}
 					/>
-				</div>
+				</div> */}
 				<div className="mt-[20px] flex flex-col relative">
 					<div className="text-gray-400 text-sm mb-[10px]">
 						Document Link
