@@ -5,7 +5,12 @@ import { pipe } from "ramda";
 import { mod } from "shades";
 import { create } from "zustand";
 import { useSubmit } from "@remix-run/react";
-import { inspect, to_resource_pathname, get_group_id } from "~/utils/helpers";
+import {
+	inspect,
+	to_resource_pathname,
+	get_group_id,
+	sample,
+} from "~/utils/helpers";
 import { json, redirect } from "@remix-run/node";
 import { test_identity_two, test_identity_four } from "~/data/array";
 import {
@@ -62,11 +67,13 @@ export const action = async ({ request }) => {
 	let session = await getSession(request.headers.get("Cookie"));
 	session.set("personal_credit_report", JSON.stringify(payload));
 
+	// return null;
+
 	try {
 		let response = await axios(options);
 		let { clientKey, authToken } = response.data;
-		console.log("response");
-		console.log(response.data);
+		// console.log("response");
+		// console.log(response.data);
 
 		return redirect(
 			`/credit/personal/verification?clientKey=${clientKey}&authToken=${authToken}&group_id=${group_id}`,

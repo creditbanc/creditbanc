@@ -361,7 +361,8 @@ export const get_docs = async ({ resource_id, entity_id }) => {
 				// console.log("resource");
 				// console.log(resource);
 
-				let { id, resource_id, first_name, city, state } = resource;
+				let { id, resource_id, first_name, last_name, city, state } =
+					resource;
 
 				return {
 					id,
@@ -370,6 +371,7 @@ export const get_docs = async ({ resource_id, entity_id }) => {
 					model,
 					shared,
 					first_name,
+					last_name,
 					city,
 					state,
 				};
@@ -379,9 +381,7 @@ export const get_docs = async ({ resource_id, entity_id }) => {
 		return resources;
 	};
 
-	let resources = await get_resources(
-		resources_data([...entity_resources, ...shared_resources])
-	);
+	let resources = await get_resources(resources_data([...entity_resources]));
 
 	// console.log("resources");
 	// inspect(resources);

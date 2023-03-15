@@ -33,6 +33,7 @@ const useVerificationQuestionsStore = create((set) => ({
 }));
 
 export const action = async ({ request }) => {
+	console.log(":verification:");
 	let entity_id = await get_user_id(request);
 	const form = await request.formData();
 	const payload = JSON.parse(form.get("payload"));
@@ -40,10 +41,11 @@ export const action = async ({ request }) => {
 	let url = new URL(request.url);
 	let search = new URLSearchParams(url.search);
 	let group_id = search.get("group_id");
-	// console.log(group_id);
+	console.log("group_id");
+	console.log(group_id);
 
-	// console.log("answers");
-	// console.log(answers);
+	console.log("answers");
+	console.log(answers);
 
 	const options = {
 		method: "POST",
@@ -67,6 +69,7 @@ export const action = async ({ request }) => {
 	let { userToken = null } = response.data;
 
 	if (userToken) {
+		console.log("here1");
 		var data = JSON.stringify({
 			clientKey,
 			productCode: "credmo3bReportScore",
@@ -87,6 +90,7 @@ export const action = async ({ request }) => {
 		let { displayToken = null, reportKey = null } = response.data;
 
 		if (displayToken && reportKey) {
+			console.log("here2");
 			if (!entity_id) {
 				return redirect(
 					`/signup?displayToken=${displayToken}&reportKey=${reportKey}`
@@ -132,6 +136,8 @@ export const loader = async ({ request }) => {
 const Form = () => {
 	const fetcher = useFetcher();
 	const questions = useVerificationQuestionsStore((state) => state.questions);
+	console.log("questions");
+	console.log(questions);
 	const answers = useVerificationQuestionsStore((state) => state.answers);
 	const setAnswer = useVerificationQuestionsStore((state) => state.setAnswer);
 	const clearAnswers = useVerificationQuestionsStore(
@@ -169,17 +175,16 @@ const Form = () => {
 	}, [fetcher]);
 
 	const onSubmit = (e) => {
+		console.log("onSubmit");
 		e.preventDefault();
 		let url = new URL(window.location);
 		let clientKey = url.searchParams.get("clientKey");
 		let authToken = url.searchParams.get("authToken");
 
-		// answers = pipe(map((answer) => answer.slice(-1)))(answers);
-
 		let payload = JSON.stringify({
 			clientKey,
 			authToken,
-			answers: pipe(map((answer) => answer.slice(-1)))(answers),
+			answers,
 		});
 
 		fetcher.submit({ payload }, { method: "POST" });
@@ -220,13 +225,13 @@ const Form = () => {
 												type="radio"
 												className="h-4 w-4 border-gray-300 text-indigo-600 focus:ring-indigo-500 cursor-pointer"
 												checked={includes(
-													`${questionIndex}-${answer.id}`,
+													answer.id,
 													values(answers)
 												)}
 												onChange={() =>
 													setAnswer(
 														question.id,
-														`${questionIndex}-${answer.id}`
+														answer.id
 													)
 												}
 											/>

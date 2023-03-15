@@ -225,3 +225,5 @@ export const has_resource_url_p = (uri) => {
 // 		)(path)
 // 	)(uri);
 // };
+export const sample = (array) =>
+	array[Math.floor(Math.random() * array.length)];

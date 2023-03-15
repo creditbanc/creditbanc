@@ -1,11 +1,17 @@
-import { useEffect } from "react";
-import { useSearchParams, useLocation, Link } from "@remix-run/react";
+import { useEffect, useState } from "react";
+import {
+	useSearchParams,
+	useLocation,
+	Link,
+	useFetcher,
+} from "@remix-run/react";
 import { useNavStore } from "~/stores/useNavStore";
 import { defaultTo, map, pipe } from "ramda";
 import {
-	truncate,
 	to_group_pathname,
 	to_resource_pathname,
+	get_entity_id,
+	get_group_id,
 } from "~/utils/helpers";
 
 let ChevronLeftIcon = () => {
@@ -129,6 +135,45 @@ let SettingsIcon = () => {
 	);
 };
 
+let DeleteIcon = () => {
+	let [color, setColor] = useState("currentColor");
+	return (
+		<svg
+			xmlns="http://www.w3.org/2000/svg"
+			fill="none"
+			viewBox="0 0 24 24"
+			strokeWidth={1.5}
+			stroke={color}
+			className="w-3 h-3"
+			onMouseEnter={(e) => setColor("red")}
+			onMouseLeave={(e) => setColor("currentColor")}
+		>
+			<path
+				strokeLinecap="round"
+				strokeLinejoin="round"
+				d="M15 12H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z"
+			/>
+		</svg>
+
+		// <svg
+		// 	xmlns="http://www.w3.org/2000/svg"
+		// 	fill="none"
+		// 	viewBox="0 0 24 24"
+		// 	strokeWidth={1.5}
+		// 	stroke={color}
+		// 	className="w-3 h-3"
+		// 	onMouseEnter={(e) => setColor("red")}
+		// 	onMouseLeave={(e) => setColor("currentColor")}
+		// >
+		// 	<path
+		// 		strokeLinecap="round"
+		// 		strokeLinejoin="round"
+		// 		d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"
+		// 	/>
+		// </svg>
+	);
+};
+
 const NavCategory = ({ title, onToggleNav, icon: Icon, collapsed }) => {
 	return (
 		<div className="text-gray-700 font-medium mb-1 text-sm flex flex-row items-center whitespace-nowrap mt-1">
@@ -165,6 +210,7 @@ export default function LeftNav({ data = {}, can_manage_roles } = {}) {
 	let location = useLocation();
 	const urlParams = new URLSearchParams(location.search.substring(1));
 	const params = Object.fromEntries(urlParams);
+	let fetcher = useFetcher();
 
 	// console.log("data");
 	// console.log(data);
@@ -178,6 +224,41 @@ export default function LeftNav({ data = {}, can_manage_roles } = {}) {
 		setSearchParams({ ...params, collapsed: !collapsed });
 	};
 
+	const onDelete = async (file_id, e) => {
+		console.log("onDeleteReport");
+		e.preventDefault();
+		let entity_id = get_entity_id(location.pathname);
+		let group_id = get_group_id(location.pathname);
+		console.log("entity_id");
+		console.log(entity_id);
+		console.log("file_id");
+		console.log(file_id);
+		// let is_owner = await is_resource_owner_p({
+		// 	entity_id,
+		// 	file_id,
+		// });
+
+		let delete_resource_url =
+			"/credit/personal/delete" +
+			to_group_pathname(location.pathname) +
+			"/" +
+			file_id;
+
+		fetcher.submit(
+			{ file_id, group_id },
+			{
+				method: "post",
+				action: delete_resource_url,
+			}
+		);
+
+		console.log("delete_resource_url");
+		console.log(delete_resource_url);
+
+		console.log("is_owner");
+		console.log(is_owner);
+	};
+
 	return (
 		<div
 			className={`hidden sm:flex sm:flex-col h-full border-r relative ${navClasses} transition-[var(--tran-05)] p-2 pt-1 `}
@@ -189,7 +270,7 @@ export default function LeftNav({ data = {}, can_manage_roles } = {}) {
 				{collapsed ? <ChevronRightIcon /> : <ChevronLeftIcon />}
 			</div>
 
-			{can_manage_roles && (
+			{/* {can_manage_roles && (
 				<Link
 					className={`flex flex-col absolute bottom-0 cursor-pointer ${
 						collapsed ? "w-[45px]" : "w-[200px]"
@@ -204,52 +285,71 @@ export default function LeftNav({ data = {}, can_manage_roles } = {}) {
 						collapsed={collapsed}
 					/>
 				</Link>
-			)}
+			)} */}
 
-			<NavCategory
-				title="Personal reports"
-				icon={PersonalIcon}
-				onToggleNav={onToggleNav}
-				collapsed={collapsed}
-			/>
+			<div className="overflow-y-scroll mb-[20px] scrollbar-hide">
+				<NavCategory
+					title="Personal reports"
+					icon={PersonalIcon}
+					onToggleNav={onToggleNav}
+					collapsed={collapsed}
+				/>
 
-			{!collapsed && (
-				<div className="pl-2 whitespace-nowrap">
-					<a
-						className="border-gray-200 cursor-pointer flex flex-row border rounded-md hover:border-indigo-400"
-						href={
-							"/credit/personal/new" +
-							to_group_pathname(location.pathname)
-						}
-					>
-						<div className="text-sm mx-2 text-gray-700 justify-start w-full ">
-							<div className="flex flex-row items-center justify-between py-1 rounded">
-								<div>Add new</div>
-								<div className="pr-1">
-									<PlusIcon />
+				{!collapsed && (
+					<div className="pl-2 whitespace-nowrap">
+						<a
+							className="border-gray-200 cursor-pointer flex flex-row border rounded-md hover:border-indigo-400"
+							href={
+								"/credit/personal/new" +
+								to_group_pathname(location.pathname)
+							}
+						>
+							<div className="text-sm mx-2 text-gray-700 justify-start w-full ">
+								<div className="flex flex-row items-center justify-between py-1 rounded">
+									<div>Add new</div>
+									<div>
+										<PlusIcon />
+									</div>
 								</div>
 							</div>
-						</div>
-					</a>
-					{pipe(
-						defaultTo([]),
-						map((report) => (
-							<a
-								key={report.id}
-								href={
-									"/credit/personal/report/personal" +
-									to_group_pathname(location.pathname) +
-									`/f/${report.id}` +
-									location.search
-								}
-								className="border rounded-md text-sm py-1 px-2 cursor-pointer hover:border-indigo-400 flex flex-row justify-between my-2 text-gray-700 min-h-[30px]"
-							>
-								{/* <div>{report.first_name}</div>
-								<div>{report.state}</div> */}
+						</a>
+						{pipe(
+							defaultTo([]),
+							map((report) => (
+								<a
+									key={report.id}
+									href={
+										"/credit/personal/report/personal" +
+										to_group_pathname(location.pathname) +
+										`/f/${report.id}` +
+										location.search
+									}
+									className="border rounded-md text-sm py-1 px-2 cursor-pointer hover:border-indigo-400 flex flex-row justify-between my-2 text-gray-700 min-h-[30px]"
+								>
+									<div className="flex flex-col w-full">
+										<div className="flex flex-row font-semibold my-1 justify-between items-center">
+											<div className="flex flex-row">
+												<div>{report.last_name}</div>
+												<div className="mr-1">,</div>
+												<div>{report.first_name}</div>
+											</div>
+											<div
+												onClick={(e) =>
+													onDelete(report.id, e)
+												}
+											>
+												<DeleteIcon />
+											</div>
+										</div>
+										<div className="flex flex-row justify-between text-xs text-gray-500">
+											<div>{report.city}</div>
+											<div>{report.state}</div>
+										</div>
+									</div>
 
-								<div>Margot Foster</div>
-								<div>FL</div>
-								{/* <a
+									{/* <div>Margot Foster</div> */}
+									{/* <div>FL</div> */}
+									{/* <a
 									className="border-l border-gray-200 cursor-pointer flex flex-row"
 									key={report.id}
 									href={
@@ -263,69 +363,72 @@ export default function LeftNav({ data = {}, can_manage_roles } = {}) {
 										{truncate(17, report.id)}
 									</div>
 								</a> */}
-							</a>
-						))
-					)(data.personal_credit_reports)}
-				</div>
-			)}
+								</a>
+							))
+						)(data.personal_credit_reports)}
+					</div>
+				)}
 
-			<NavCategory
-				title="Business reports"
-				icon={BusinessIcon}
-				onToggleNav={onToggleNav}
-				collapsed={collapsed}
-			/>
+				<NavCategory
+					title="Business reports"
+					icon={BusinessIcon}
+					onToggleNav={onToggleNav}
+					collapsed={collapsed}
+				/>
 
-			{!collapsed && (
-				<div className="pl-2">
-					<Link
-						className="border-gray-200 cursor-pointer flex flex-row border rounded-md hover:border-indigo-400"
-						to={
-							"/credit/business/new" +
-							to_group_pathname(location.pathname)
-						}
-					>
-						<div className="text-sm mx-2 text-gray-700 justify-start w-full ">
-							<div className="flex flex-row items-center justify-between py-1 rounded">
-								<div>Add new</div>
-								<div className="pr-1">
-									<PlusIcon />
+				{!collapsed && (
+					<div className="pl-2">
+						<Link
+							className="border-gray-200 cursor-pointer flex flex-row border rounded-md hover:border-indigo-400"
+							to={
+								"/credit/business/new" +
+								to_group_pathname(location.pathname)
+							}
+						>
+							<div className="text-sm mx-2 text-gray-700 justify-start w-full ">
+								<div className="flex flex-row items-center justify-between py-1 rounded">
+									<div>Add new</div>
+									<div className="pr-1">
+										<PlusIcon />
+									</div>
 								</div>
 							</div>
-						</div>
-					</Link>
-					{pipe(
-						defaultTo([]),
-						map((report) => (
-							<a
-								key={report.id}
-								href={
-									"/credit/business/report" +
-									to_resource_pathname(location.pathname) +
-									location.search
-								}
-								className="border rounded-md text-sm py-1 px-2 cursor-pointer hover:border-indigo-400 flex flex-row justify-between my-2 text-gray-700"
-							>
-								<div>Margot F</div>
-								<div>FL</div>
-							</a>
-							// <Link
-							// 	className="border-l border-gray-200 cursor-pointer flex flex-row"
-							// 	key={report.id}
-							// 	to={
-							// 		"/credit/business/report" +
-							// 		to_resource_pathname(location.pathname) +
-							// 		location.search
-							// 	}
-							// >
-							// 	<div className="text-sm mx-2 px-2 py-1 hover:bg-slate-100 rounded text-gray-700">
-							// 		{truncate(17, report.id)}
-							// 	</div>
-							// </Link>
-						))
-					)(data.business_credit_reports)}
-				</div>
-			)}
+						</Link>
+						{pipe(
+							defaultTo([]),
+							map((report) => (
+								<a
+									key={report.id}
+									href={
+										"/credit/business/report" +
+										to_resource_pathname(
+											location.pathname
+										) +
+										location.search
+									}
+									className="border rounded-md text-sm py-1 px-2 cursor-pointer hover:border-indigo-400 flex flex-row justify-between my-2 text-gray-700"
+								>
+									<div>Margot F</div>
+									<div>FL</div>
+								</a>
+								// <Link
+								// 	className="border-l border-gray-200 cursor-pointer flex flex-row"
+								// 	key={report.id}
+								// 	to={
+								// 		"/credit/business/report" +
+								// 		to_resource_pathname(location.pathname) +
+								// 		location.search
+								// 	}
+								// >
+								// 	<div className="text-sm mx-2 px-2 py-1 hover:bg-slate-100 rounded text-gray-700">
+								// 		{truncate(17, report.id)}
+								// 	</div>
+								// </Link>
+							))
+						)(data.business_credit_reports)}
+					</div>
+				)}
+			</div>
 		</div>
 	);
 }

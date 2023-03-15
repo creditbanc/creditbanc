@@ -626,3 +626,70 @@ export const get_resource_type = async ({ resource_id }) => {
 
 	return model;
 };
+
+export const is_resource_owner_p = async ({ entity_id, file_id }) => {
+	let file = await prisma.resource.findMany({
+		where: {
+			resource_path_id: file_id,
+			subscriber_ids: {
+				has: entity_id,
+			},
+		},
+	});
+
+	return isEmpty(file) ? true : false;
+};
+
+export const unsubscribe_entity_from_shared_resource = async ({
+	entity_id,
+	file_id,
+}) => {
+	let resource = await prisma.resource.findFirst({
+		where: {
+			resource_path_id: file_id,
+		},
+	});
+
+	let { subscriber_ids } = resource;
+
+	let update = await prisma.resource.update({
+		where: {
+			resource_path_id: file_id,
+		},
+		data: {
+			subscriber_ids: without([entity_id], subscriber_ids),
+		},
+	});
+
+	return { entity_id, file_id };
+};
+
+export const unsubscribe_entity_from_resource = async ({
+	file_id,
+	group_id,
+}) => {
+	let resource = await prisma.resource.findUnique({
+		where: {
+			resource_path_id: file_id,
+		},
+	});
+
+	let group = await prisma.resource.findUnique({
+		where: {
+			resource_path_id: group_id,
+		},
+	});
+
+	let { subscription_ids } = group;
+
+	group_update = await prisma.resource.update({
+		where: {
+			resource_path_id: group_id,
+		},
+		data: {
+			subscription_ids: without([resource.id], subscription_ids),
+		},
+	});
+
+	return { file_id, group_id };
+};

@@ -5,11 +5,14 @@ import { credit_report_data, CreditReport, Liabilities } from "~/data/array";
 export const create = async (payload) => {
 	let {
 		group_id,
-		firstName = "",
-		lastName = "",
-		address = {},
+		first_name = "",
+		last_name = "",
 		ssn = "",
 		dob = "",
+		street = "",
+		city = "",
+		state = "",
+		zip = "",
 	} = payload;
 	if (!group_id) throw new Error("group_id is required");
 
@@ -19,9 +22,14 @@ export const create = async (payload) => {
 
 	const credit_report_record = await prisma.personal_credit_report.create({
 		data: {
-			first_name: firstName,
-			last_name: lastName,
-			city: address.city,
+			first_name,
+			last_name,
+			ssn,
+			dob,
+			street,
+			city,
+			state,
+			zip,
 			trade_lines,
 		},
 	});

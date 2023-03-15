@@ -19,25 +19,25 @@ import PersonalCreditTabs from "~/components/PersonalCreditTabs";
 import CreditScoreHero from "~/components/CreditScoreHero";
 import CreditHeroGradient from "~/components/CreditHeroGradient";
 import { get_user_id } from "~/utils/auth.server";
-import { validate_action } from "~/utils/resource.server";
+import { validate_action, is_resource_owner_p } from "~/utils/resource.server";
 import { redirect } from "@remix-run/node";
 import { prisma } from "~/utils/prisma.server";
 import { Dialog, Transition } from "@headlessui/react";
 import Share from "~/routes/invites/new/$.jsx";
 import { useModalStore } from "~/hooks/useModal";
 
-const is_resource_owner_p = async ({ entity_id, file_id }) => {
-	let file = await prisma.resource.findMany({
-		where: {
-			resource_path_id: file_id,
-			subscriber_ids: {
-				has: entity_id,
-			},
-		},
-	});
+// const is_resource_owner_p = async ({ entity_id, file_id }) => {
+// 	let file = await prisma.resource.findMany({
+// 		where: {
+// 			resource_path_id: file_id,
+// 			subscriber_ids: {
+// 				has: entity_id,
+// 			},
+// 		},
+// 	});
 
-	return isEmpty(file) ? true : false;
-};
+// 	return isEmpty(file) ? true : false;
+// };
 
 export const loader = async ({ request }) => {
 	let url = new URL(request.url);
