@@ -2051,7 +2051,7 @@ export default function LandingPage() {
 				<div className="py-14">
 					<Logos />
 				</div>
-				<div className="">
+				<div>
 					<FooterTwo />
 				</div>
 			</main>
