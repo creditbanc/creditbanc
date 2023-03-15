@@ -190,7 +190,7 @@ const NavCategory = ({ title, onToggleNav, icon: Icon, collapsed }) => {
 					<div className="mr-1 p-2 flex flex-col items-center justify-center">
 						<Icon />
 					</div>
-					<div className="">
+					<div>
 						<div>{title}</div>
 					</div>
 				</>

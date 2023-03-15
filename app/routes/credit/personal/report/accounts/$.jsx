@@ -34,7 +34,7 @@ export const loader = async ({ request }) => {
 
 const Heading = () => {
 	return (
-		<div className="">
+		<div>
 			<h3 className="text-lg font-medium leading-6 text-gray-900">
 				Accounts
 			</h3>

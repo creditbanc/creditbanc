@@ -156,7 +156,7 @@ function Panel({ is_open, setPanel, reports = {} }) {
 													aria-hidden="true"
 												>
 													<fieldset>
-														<div className="">
+														<div>
 															<div className="flex flex-row">
 																<div className="mr-2">
 																	<PersonIcon />
