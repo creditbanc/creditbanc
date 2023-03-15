@@ -287,7 +287,7 @@ export const get_docs = async ({ resource_id, entity_id }) => {
 	let shared_resources_response = await prisma.resource.findMany({
 		where: {
 			subscriber_ids: {
-				has: entity_id,
+				has: resource_id,
 			},
 		},
 	});
@@ -382,7 +382,7 @@ export const get_docs = async ({ resource_id, entity_id }) => {
 	};
 
 	let resources = await get_resources(
-		resources_data([...entity_resources, ...shared_resources])
+		resources_data([...shared_resources, ...entity_resources])
 	);
 
 	// console.log("resources");

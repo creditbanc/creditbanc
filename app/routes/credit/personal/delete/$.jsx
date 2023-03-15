@@ -13,22 +13,26 @@ export const action = async ({ request }) => {
 	const group_id = form.get("group_id");
 
 	const is_resource_owner = await is_resource_owner_p({
+		group_id,
 		entity_id,
 		file_id,
 	});
 
 	if (!is_resource_owner) {
+		console.log("!is_resource_owner");
 		await unsubscribe_entity_from_shared_resource({
 			entity_id,
 			file_id,
+			group_id,
 		});
 	}
 
 	if (is_resource_owner) {
-		await unsubscribe_entity_from_resource({
-			group_id,
-			file_id,
-		});
+		console.log("is_resource_owner");
+		// await unsubscribe_entity_from_resource({
+		// 	group_id,
+		// 	file_id,
+		// });
 	}
 
 	return null;

@@ -51,6 +51,7 @@ export const loader = async ({ request }) => {
 
 	let is_resource_owner = await is_resource_owner_p({
 		entity_id: user_id,
+		group_id,
 		file_id,
 	});
 

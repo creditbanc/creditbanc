@@ -174,7 +174,11 @@ export const loader = async ({ request }) => {
 		link_role,
 	});
 
-	// console.log("entity_rolesssss", entity_roles);
+	// console.log("entity_rolesssss");
+	// console.log(entity_roles);
+
+	// console.log("entity_root_group");
+	// console.log(entity_root_group);
 
 	await add_subscriber_to_resource({
 		resource_path_id,
