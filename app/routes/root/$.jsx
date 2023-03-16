@@ -19,13 +19,14 @@ export const load_root = async ({ entity_id }) => {
 };
 
 export const loader = async ({ request }) => {
+	console.log("root_loader");
 	let entity_id = await get_user_id(request);
 	let has_resource = has_resource_url_p(request.url);
 	if (!entity_id) return redirect(`/`);
 	let root_gruop_resource_path_id = await get_root_group_resource_path_id({
 		entity_id,
 	});
-	// console.log("root_gruop_id");
+	console.log("root_gruop_id");
 	// console.log(root_gruop_id);
 	if (!has_resource)
 		return redirect(

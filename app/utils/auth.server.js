@@ -61,7 +61,8 @@ export const signup = async ({ email, password, redirect_to = "/" }) => {
 			name: "root",
 			entity_id: entity.id,
 			type: "root",
-			root_partition_resource_path_id: resource.id,
+			// root_partition_resource_path_id: resource.id,
+			root_partition_resource_path_id: resource.resource_path_id,
 		});
 
 	// console.log("resource", resource);
@@ -137,8 +138,8 @@ export const signup = async ({ email, password, redirect_to = "/" }) => {
 		where: { id: entity.id },
 		data: {
 			roles_ids: { push: [creator_user_role.id] },
-			root_partition_resource_path_id: resource.id,
-			root_group_resource_path_id: root_group_resource.id,
+			root_partition_resource_path_id: resource.resource_path_id,
+			root_group_resource_path_id: root_group_resource.resource_path_id,
 		},
 	});
 

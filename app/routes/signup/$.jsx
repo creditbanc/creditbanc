@@ -1,7 +1,7 @@
 import { useState } from "react";
 import CreditNav from "~/components/CreditNav";
 import InputField from "~/components/InputField";
-import { useSubmit } from "@remix-run/react";
+import { useLoaderData, useLocation, useSubmit } from "@remix-run/react";
 import { get_user_id, signup } from "../../utils/auth.server";
 import { create } from "zustand";
 import CreditHeroGradient from "~/components/CreditHeroGradient";
@@ -22,9 +22,9 @@ export async function action({ request }) {
 	var form = await request.formData();
 	// console.log("actionaction");
 	// console.log(request.url);
-	const url = new URL(request.url);
-	let search = Object.fromEntries(url.searchParams);
-	let { displayToken } = search;
+	// const url = new URL(request.url);
+	// let search = Object.fromEntries(url.searchParams);
+	// let { displayToken } = search;
 
 	// console.log("displayToken");
 	// console.log(displayToken);
@@ -32,101 +32,73 @@ export async function action({ request }) {
 
 	const email = form.get("email");
 	const password = form.get("password");
+	const redirect_url = form.get("redirect_url");
 
-	// console.log("formform");
+	// console.log("formform2");
 	// console.log(email);
 	// console.log(password);
+	// console.log(redirect_url);
 
 	if (typeof email !== "string" || typeof password !== "string") {
 		return json({ error: "Invalid form data" }, { status: 400 });
 	}
 
-	if (!displayToken) {
+	// return null;
+
+	if (redirect_url) {
 		// console.log("yesDisplayToken");
-		return await signup({ email, password });
+		return await signup({ email, password, redirect_to: redirect_url });
 	} else {
 		// console.log("noDisplayToken");
-		let redirect_to = `/credit/personal/create?${url.searchParams.toString()}`;
-		return await signup({ email, password, redirect_to });
+		// let redirect_to = `/credit/personal/create?${url.searchParams.toString()}`;
+		return await signup({ email, password, redirect_to: "/root" });
 	}
 }
 
 export const loader = async ({ request }) => {
-	let entity_id = await get_user_id(request);
-	// console.log("entity_id");
-	// console.log(entity_id);
+	let url = new URL(request.url);
+	let email = url.searchParams.get("email");
+	let redirect_url = url.pathname.replace("/signup", "");
 
-	// if (entity_id) return redirect("/root");
-	return null;
+	// console.log("loader");
+	// console.log(email);
+	// console.log(redirect_url);
+
+	return { email, redirect_url };
 };
 
 const Form = () => {
+	const { email, redirect_url } = useLoaderData();
 	const form = useForm((state) => state.form);
 	const setForm = useForm((state) => state.setForm);
-	const email = useForm((state) => state.form.firstName);
-	const password = useForm((state) => state.form.lastName);
+	const password = useForm((state) => state.form.password);
 	const submit = useSubmit();
+	const location = useLocation();
 
 	const onSubmit = (e) => {
-		console.log("submittingssssss");
 		e.preventDefault();
-		// let form_id = uuidv4();
-		// let resource_path = to_resource_pathname(window.location.pathname);
 
-		// let { dob, ...rest } = form;
-		// let dob_string = `${dob.year}-${dob.month}-${dob.day}`;
-		// let payload = { ...rest, dob: dob_string };
+		let payload = {
+			...form,
+			email,
+			redirect_url,
+		};
 
-		// event.preventDefault();
-		// let form = event.currentTarget;
-		// console.log(window.location.search);
+		// console.log("submitform");
+		// console.log(payload);
+		// console.log(redirect_url);
 
-		console.log("submitform");
-		console.log(form);
+		// console.log(location);
 
-		submit(form, {
+		submit(payload, {
 			method: "post",
-			action: "/signup" + window.location.search,
+			action: "/signup" + redirect_url + location.search,
 		});
-
-		// submit(
-		// 	{ payload: JSON.stringify(payload) },
-		// 	{
-		// 		method: "post",
-		// 		action: "/credit/personal/new" + resource_path,
-		// 	}
-		// );
 	};
 
 	return (
 		<form className="space-y-8" onSubmit={onSubmit}>
 			<div className="mt-6 grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-6">
-				{/* <div className="border-b border-gray-300 sm:col-span-6">
-					<h3 className="text-lg font-medium leading-6 text-gray-900 pb-2">
-						Create An Account
-					</h3>
-				</div> */}
-
-				<div className="sm:col-span-6">
-					<label
-						htmlFor="email"
-						className="block text-sm font-medium text-gray-700"
-					>
-						Email
-					</label>
-					<div className="mt-1">
-						<input
-							type="email"
-							name="email"
-							id="email"
-							autoComplete="email"
-							className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm border h-[38px] pl-2"
-							value={email}
-							onChange={(e) => setForm(["email"], e.target.value)}
-						/>
-					</div>
-				</div>
-
 				<div className="sm:col-span-6">
 					<label
 						htmlFor="password"
@@ -163,8 +135,6 @@ const Form = () => {
 							id="confirm-password"
 							autoComplete="password"
 							className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm border h-[38px] pl-2"
-							// value={password}
-							// onChange={(e) => setForm(["email"], e.target.value)}
 						/>
 					</div>
 				</div>

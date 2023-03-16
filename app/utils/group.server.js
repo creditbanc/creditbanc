@@ -118,7 +118,7 @@ export const create_group = async ({
 	});
 
 	await prisma.resource.update({
-		where: { id: root_partition_resource_path_id },
+		where: { resource_path_id: root_partition_resource_path_id },
 		data: {
 			subscription_ids: {
 				push: [resource.id],
@@ -204,15 +204,24 @@ export const create_directory = async (data = {}) => {
 };
 
 export const get_root_group_resource_path_id = async ({ entity_id }) => {
+	console.log("get_root_group_resource_path_id");
 	let entity = await prisma.entity.findFirst({
 		where: { id: entity_id },
 	});
 
-	let root_group_resource = await prisma.resource.findFirst({
-		where: { resource_path_id: entity.root_group_resource_path_id },
-	});
+	console.log("entity");
+	console.log(entity);
 
-	return root_group_resource.resource_path_id;
+	return entity.root_group_resource_path_id;
+
+	// let root_group_resource = await prisma.resource.findFirst({
+	// 	where: { resource_path_id: entity.root_group_resource_path_id },
+	// });
+
+	// console.log("root_group_resource");
+	// console.log(root_group_resource);
+
+	// return root_group_resource.resource_path_id;
 };
 
 export const get_root_docs = async ({ entity_id }) => {

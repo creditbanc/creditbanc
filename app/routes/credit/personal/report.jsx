@@ -11,6 +11,7 @@ import {
 	has_valid_route_p,
 	get_file_id,
 	inspect,
+	to_resource_pathname,
 } from "~/utils/helpers";
 import { get_docs as get_group_docs } from "~/utils/group.server";
 import { defaultTo, isEmpty, pick, pipe } from "ramda";
@@ -25,19 +26,6 @@ import { prisma } from "~/utils/prisma.server";
 import { Dialog, Transition } from "@headlessui/react";
 import Share from "~/routes/invites/new/$.jsx";
 import { useModalStore } from "~/hooks/useModal";
-
-// const is_resource_owner_p = async ({ entity_id, file_id }) => {
-// 	let file = await prisma.resource.findMany({
-// 		where: {
-// 			resource_path_id: file_id,
-// 			subscriber_ids: {
-// 				has: entity_id,
-// 			},
-// 		},
-// 	});
-
-// 	return isEmpty(file) ? true : false;
-// };
 
 export const loader = async ({ request }) => {
 	let url = new URL(request.url);
@@ -77,6 +65,9 @@ export const loader = async ({ request }) => {
 		resource_id: group_id,
 		entity_id: user_id,
 	});
+
+	console.log("group_docs");
+	console.log(group_docs);
 
 	let reports = pipe((resources) => ({
 		personal_credit_reports: pipe(
