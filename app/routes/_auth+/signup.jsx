@@ -2,11 +2,12 @@ import { useState } from "react";
 import CreditNav from "~/components/CreditNav";
 import InputField from "~/components/InputField";
 import { useSubmit } from "@remix-run/react";
-import { signup } from "../../utils/auth.server";
+import { get_user_id, signup } from "../../utils/auth.server";
 import { create } from "zustand";
 import CreditHeroGradient from "~/components/CreditHeroGradient";
 import { pipe } from "ramda";
 import { mod } from "shades";
+import { redirect } from "@remix-run/node";
 
 const useForm = create((set) => ({
 	form: {
@@ -49,6 +50,15 @@ export async function action({ request }) {
 		return await signup({ email, password, redirect_to });
 	}
 }
+
+export const loader = async ({ request }) => {
+	let entity_id = await get_user_id(request);
+	// console.log("entity_id");
+	// console.log(entity_id);
+
+	if (entity_id) return redirect("/root");
+	return null;
+};
 
 const Form = () => {
 	const form = useForm((state) => state.form);
