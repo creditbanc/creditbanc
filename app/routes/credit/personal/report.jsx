@@ -66,8 +66,8 @@ export const loader = async ({ request }) => {
 		entity_id: user_id,
 	});
 
-	console.log("group_docs");
-	console.log(group_docs);
+	// console.log("group_docs");
+	// console.log(group_docs);
 
 	let reports = pipe((resources) => ({
 		personal_credit_reports: pipe(

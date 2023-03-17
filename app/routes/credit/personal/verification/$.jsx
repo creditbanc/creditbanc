@@ -33,7 +33,7 @@ const useVerificationQuestionsStore = create((set) => ({
 }));
 
 export const action = async ({ request }) => {
-	console.log(":verification:");
+	// console.log(":verification:");
 	let entity_id = await get_user_id(request);
 	const form = await request.formData();
 	const payload = JSON.parse(form.get("payload"));
@@ -41,11 +41,11 @@ export const action = async ({ request }) => {
 	let url = new URL(request.url);
 	let search = new URLSearchParams(url.search);
 	let group_id = search.get("group_id");
-	console.log("group_id");
-	console.log(group_id);
+	// console.log("group_id");
+	// console.log(group_id);
 
-	console.log("answers");
-	console.log(answers);
+	// console.log("answers");
+	// console.log(answers);
 
 	const options = {
 		method: "POST",
@@ -69,7 +69,7 @@ export const action = async ({ request }) => {
 	let { userToken = null } = response.data;
 
 	if (userToken) {
-		console.log("here1");
+		// console.log("here1");
 		var data = JSON.stringify({
 			clientKey,
 			productCode: "credmo3bReportScore",
@@ -90,7 +90,7 @@ export const action = async ({ request }) => {
 		let { displayToken = null, reportKey = null } = response.data;
 
 		if (displayToken && reportKey) {
-			console.log("here2");
+			// console.log("here2");
 			if (!entity_id) {
 				return redirect(
 					`/signup?displayToken=${displayToken}&reportKey=${reportKey}`
@@ -136,8 +136,8 @@ export const loader = async ({ request }) => {
 const Form = () => {
 	const fetcher = useFetcher();
 	const questions = useVerificationQuestionsStore((state) => state.questions);
-	console.log("questions");
-	console.log(questions);
+	// console.log("questions");
+	// console.log(questions);
 	const answers = useVerificationQuestionsStore((state) => state.answers);
 	const setAnswer = useVerificationQuestionsStore((state) => state.setAnswer);
 	const clearAnswers = useVerificationQuestionsStore(
@@ -175,7 +175,7 @@ const Form = () => {
 	}, [fetcher]);
 
 	const onSubmit = (e) => {
-		console.log("onSubmit");
+		// console.log("onSubmit");
 		e.preventDefault();
 		let url = new URL(window.location);
 		let clientKey = url.searchParams.get("clientKey");

@@ -38,13 +38,13 @@ export const loader = async ({ request }) => {
 	let randomSSN = new RandomSSN();
 	let ssn = randomSSN.value().toString();
 
-	console.log("cities");
+	// console.log("cities");
 	let city = pipe(
 		get(all, "name"),
 		sample
 	)(cities.filter((city) => city.country === "US"));
-	console.log("city");
-	console.log(city);
+	// console.log("city");
+	// console.log(city);
 
 	let credit_report_payload = {
 		first_name,
@@ -56,8 +56,8 @@ export const loader = async ({ request }) => {
 		ssn,
 	};
 
-	console.log("session");
-	console.log(credit_report_payload);
+	// console.log("session");
+	// console.log(credit_report_payload);
 
 	// return null;
 

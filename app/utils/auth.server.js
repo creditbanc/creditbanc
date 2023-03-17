@@ -24,7 +24,12 @@ const storage = createCookieSessionStorage({
 	},
 });
 
-export const signup = async ({ email, password, redirect_to = "/" }) => {
+export const signup = async ({
+	email,
+	password,
+	redirect_to = "/root",
+	new_entity = false,
+}) => {
 	const exists = await prisma.entity.count({ where: { email } });
 
 	if (exists) {
@@ -53,8 +58,8 @@ export const signup = async ({ email, password, redirect_to = "/" }) => {
 		name: "root",
 	});
 
-	console.log("root_partition_group");
-	console.log(group);
+	// console.log("root_partition_group");
+	// console.log(group);
 
 	let { group: root_group, resource: root_group_resource } =
 		await create_group({
@@ -142,6 +147,10 @@ export const signup = async ({ email, password, redirect_to = "/" }) => {
 			root_group_resource_path_id: root_group_resource.resource_path_id,
 		},
 	});
+
+	redirect_to = new_entity
+		? redirect_to + `&group_id=${root_group_resource.resource_path_id}`
+		: redirect_to;
 
 	return create_user_session(entity.id, redirect_to);
 };

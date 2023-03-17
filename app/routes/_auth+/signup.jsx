@@ -47,18 +47,9 @@ export async function action({ request }) {
 	} else {
 		// console.log("noDisplayToken");
 		let redirect_to = `/credit/personal/create?${url.searchParams.toString()}`;
-		return await signup({ email, password, redirect_to });
+		return await signup({ email, password, redirect_to, new_entity: true });
 	}
 }
-
-export const loader = async ({ request }) => {
-	let entity_id = await get_user_id(request);
-	// console.log("entity_id");
-	// console.log(entity_id);
-
-	// if (entity_id) return redirect("/root");
-	return null;
-};
 
 const Form = () => {
 	const form = useForm((state) => state.form);
@@ -81,8 +72,8 @@ const Form = () => {
 		// let form = event.currentTarget;
 		// console.log(window.location.search);
 
-		console.log("submitform");
-		console.log(form);
+		// console.log("submitform");
+		// console.log(form);
 
 		submit(form, {
 			method: "post",

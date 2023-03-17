@@ -10,10 +10,10 @@ import { get } from "shades";
 const is_group = (resource) => resource.model === "group";
 
 export const load_group = async ({ resource_id, entity_id }) => {
-	console.log("load_group");
+	// console.log("load_group");
 	const resources = await get_group_docs({ resource_id, entity_id });
-	console.log("resources");
-	console.log(resources);
+	// console.log("resources");
+	// console.log(resources);
 	return pipe(reject(is_group))(resources);
 };
 
@@ -26,10 +26,10 @@ export const loader = async ({ request }) => {
 		tryCatch(get("id"), always(null))
 	)(resources);
 
-	console.log("group_id");
-	console.log(group_id);
-	console.log("head_resource_id");
-	console.log(head_resource_id);
+	// console.log("group_id");
+	// console.log(group_id);
+	// console.log("head_resource_id");
+	// console.log(head_resource_id);
 
 	return redirect(
 		`/credit/personal/report/personal/resource/e/${entity_id}/g/${group_id}/f/${head_resource_id}`
