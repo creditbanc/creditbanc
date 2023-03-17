@@ -33,8 +33,8 @@ const add_subscriber_to_resource = async ({
 	let resource = await get_resource({ resource_path_id });
 	let { subscriber_ids } = resource;
 
-	console.log("resource");
-	console.log(resource);
+	// console.log("resource");
+	// console.log(resource);
 
 	return await prisma.resource.update({
 		where: { id: resource.id },
@@ -142,32 +142,11 @@ const create_entity_roles = async ({
 };
 
 const get_entity_group = async ({ entity_id }) => {
-	console.log("get_entity_group");
-	console.log(entity_id);
+	// console.log("get_entity_group");
+	// console.log(entity_id);
 	const entity = await prisma.entity.findFirst({ where: { id: entity_id } });
 
 	return entity.root_group_resource_path_id;
-
-	console.log("entity");
-	console.log(entity);
-
-	let root_group = await prisma.resource.findFirst({
-		where: {
-			resource_path_id: entity.root_group_resource_path_id,
-			// model: "group",
-			// type: "root",
-			// entity_ids: {
-			// 	has: entity_id,
-			// },
-		},
-	});
-
-	console.log("root_group");
-	console.log(root_group);
-
-	return root_group;
-
-	// return head(root_group);
 };
 
 export const loader = async ({ request }) => {
@@ -175,8 +154,8 @@ export const loader = async ({ request }) => {
 	let url = new URL(request.url);
 	let entity_id = await get_user_id(request);
 	let resource_url = url.pathname.replace("/links/", "/");
-	console.log("entity_id");
-	console.log(entity_id);
+	// console.log("entity_id");
+	// console.log(entity_id);
 	// let email = url.searchParams.get("email")
 	let redirect_url = url.pathname + decodeURIComponent(url.search);
 	if (!entity_id) return redirect("/signup" + redirect_url);
@@ -207,8 +186,8 @@ export const loader = async ({ request }) => {
 	// console.log(entity_roles);
 	// // return null;
 
-	console.log("entity_root_group");
-	console.log(entity_root_group_resource_path_id);
+	// console.log("entity_root_group");
+	// console.log(entity_root_group_resource_path_id);
 	// return null;
 
 	await add_subscriber_to_resource({

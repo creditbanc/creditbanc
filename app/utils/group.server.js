@@ -70,8 +70,8 @@ export const create_group = async ({
 			entity.root_partition_resource_path_id;
 	}
 
-	console.log("root_partition_resource_path_id");
-	console.log(root_partition_resource_path_id);
+	// console.log("root_partition_resource_path_id");
+	// console.log(root_partition_resource_path_id);
 
 	let group = await prisma.group.create({
 		data: {
@@ -209,8 +209,8 @@ export const get_root_group_resource_path_id = async ({ entity_id }) => {
 		where: { id: entity_id },
 	});
 
-	console.log("entity");
-	console.log(entity);
+	// console.log("entity");
+	// console.log(entity);
 
 	return entity.root_group_resource_path_id;
 

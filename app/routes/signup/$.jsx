@@ -46,12 +46,15 @@ export async function action({ request }) {
 	// return null;
 
 	if (redirect_url) {
-		// console.log("yesDisplayToken");
+		// console.log("here1");
+		// console.log("redirect_url");
+		// console.log(redirect_url);
 		return await signup({ email, password, redirect_to: redirect_url });
 	} else {
+		// console.log("here2");
 		// console.log("noDisplayToken");
 		// let redirect_to = `/credit/personal/create?${url.searchParams.toString()}`;
-		return await signup({ email, password, redirect_to: "/root" });
+		return await signup({ email, password });
 	}
 }
 

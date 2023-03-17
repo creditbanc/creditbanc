@@ -30,7 +30,11 @@ export const signup = async ({
 	redirect_to = "/root",
 	new_entity = false,
 }) => {
+	// console.log("signup");
+	// console.log("email", email);
 	const exists = await prisma.entity.count({ where: { email } });
+
+	console.log("exists", exists);
 
 	if (exists) {
 		return json(
@@ -151,6 +155,8 @@ export const signup = async ({
 	redirect_to = new_entity
 		? redirect_to + `&group_id=${root_group_resource.resource_path_id}`
 		: redirect_to;
+
+	console.log("create_session");
 
 	return create_user_session(entity.id, redirect_to);
 };
