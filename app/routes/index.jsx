@@ -20,10 +20,10 @@ function classNames(...classes) {
 }
 
 const navigation = [
-	{ name: "Small Business Lending", href: "#" },
-	{ name: "Tax Credit", href: "#" },
-	{ name: "Business Valuations", href: "#" },
-	{ name: "CB University", href: "#" },
+	{ name: "Small Business Lending", href: "/comingsoon" },
+	{ name: "Tax Credit", href: "/comingsoon" },
+	{ name: "Business Valuations", href: "/comingsoon" },
+	{ name: "CB University", href: "/comingsoon" },
 ];
 
 function Hero() {

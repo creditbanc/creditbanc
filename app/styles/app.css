@@ -1977,6 +1977,11 @@ video {
      object-position: right;
 }
 
+.object-top {
+  -o-object-position: top;
+     object-position: top;
+}
+
 .p-1 {
   padding: 0.25rem;
 }
@@ -2183,6 +2188,11 @@ video {
 .py-\[calc\(theme\(spacing\.2\)-1px\)\] {
   padding-top: calc(0.5rem - 1px);
   padding-bottom: calc(0.5rem - 1px);
+}
+
+.py-32 {
+  padding-top: 8rem;
+  padding-bottom: 8rem;
 }
 
 .pb-12 {
@@ -2530,6 +2540,10 @@ video {
 .text-white {
   --tw-text-opacity: 1;
   color: rgb(255 255 255 / var(--tw-text-opacity));
+}
+
+.text-white\/70 {
+  color: rgb(255 255 255 / 0.7);
 }
 
 .placeholder-gray-400::-moz-placeholder {
@@ -3153,6 +3167,10 @@ body {
     margin-top: 6rem;
   }
 
+  .sm\:mt-6 {
+    margin-top: 1.5rem;
+  }
+
   .sm\:block {
     display: block;
   }
@@ -3332,6 +3350,11 @@ body {
   .sm\:py-5 {
     padding-top: 1.25rem;
     padding-bottom: 1.25rem;
+  }
+
+  .sm\:py-40 {
+    padding-top: 10rem;
+    padding-bottom: 10rem;
   }
 
   .sm\:pt-40 {
