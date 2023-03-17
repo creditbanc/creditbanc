@@ -14,7 +14,7 @@ import {
 } from "@heroicons/react/24/outline";
 import { Disclosure, RadioGroup } from "@headlessui/react";
 import { Link } from "@remix-run/react";
-
+console.log("");
 function classNames(...classes) {
 	return classes.filter(Boolean).join(" ");
 }
