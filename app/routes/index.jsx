@@ -441,14 +441,14 @@ function Logos() {
 				<div className="mx-auto grid max-w-lg grid-cols-4 items-center gap-x-8 gap-y-12 sm:max-w-xl sm:grid-cols-6 sm:gap-x-10 sm:gap-y-14 lg:mx-0 lg:max-w-none lg:grid-cols-5">
 					<img
 						className="col-span-2 max-h-12 w-full object-contain lg:col-span-1"
-						src="https://tailwindui.com/img/logos/158x48/transistor-logo-gray-900.svg"
+						src="https://kajabi-storefronts-production.kajabi-cdn.com/kajabi-storefronts-production/themes/2091878/settings_images/rX8FAlscRrm61tdsJduT_Shield_Media_2.png"
 						alt="Transistor"
-						width={158}
-						height={48}
+						// width={158}
+						// height={48}
 					/>
 					<img
 						className="col-span-2 max-h-12 w-full object-contain lg:col-span-1"
-						src="https://tailwindui.com/img/logos/158x48/reform-logo-gray-900.svg"
+						src="https://kajabi-storefronts-production.kajabi-cdn.com/kajabi-storefronts-production/themes/2091878/settings_images/qGNYdurCReZ43zU70HVy_Shield_Advisory_Group_1.png"
 						alt="Reform"
 						width={158}
 						height={48}
