@@ -2058,23 +2058,3 @@ export default function LandingPage() {
 		</div>
 	);
 }
-
-function Index() {
-	return (
-		<div className="h-full w-full">
-			<main>
-				<DarkHero />
-				<LogosThree />
-				<FeatuersThree />
-				<FeaturesTwo />
-				<FeaturesFour />
-				<Testimonials />
-				<Stats />
-				<Pricing />
-				{/* <PricingTwo /> */}
-				<FAQ />
-				<Footer />
-			</main>
-		</div>
-	);
-}
