@@ -1944,7 +1944,7 @@ export default function LandingPage() {
 								</div>
 							</div>
 
-							<p className="text-lg text-[#202536]">
+							<p className="text-lg text-[#202536] font-semibold">
 								Credit Banc (pronounced like Bank, just spelled
 								fancy) is the simple, one-stop-shop where you
 								can access, monitor, and share real-time data
@@ -1955,7 +1955,7 @@ export default function LandingPage() {
 								sooner.
 							</p>
 
-							<p className="text-lg text-[#202536] font-bold mt-[15px]">
+							<p className="text-lg text-[#202536] font-semibold">
 								Pick your plan, and we’ll do the rest.
 							</p>
 						</div>

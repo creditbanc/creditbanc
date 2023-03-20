@@ -1009,10 +1009,6 @@ video {
   margin-top: 5px;
 }
 
-.mb-\[40px\] {
-  margin-bottom: 40px;
-}
-
 .block {
   display: block;
 }
@@ -3436,11 +3432,6 @@ body {
   .sm\:text-sm {
     font-size: 0.875rem;
     line-height: 1.25rem;
-  }
-
-  .sm\:text-xl {
-    font-size: 1.25rem;
-    line-height: 1.75rem;
   }
 
   .sm\:shadow-lg {
