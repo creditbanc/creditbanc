@@ -51,16 +51,22 @@ export default function SignIn() {
 							src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=600"
 							alt="Your Company"
 						/>
-						<h2 className="mt-6 text-3xl font-bold tracking-tight text-gray-900">
-							Sign in to your account
+						<h2 className="my-2 mt-6 text-xl font-bold text-[#55CF9E]">
+							AREN’T YOU A SIGHT FOR SORE EYES
 						</h2>
-						<p className="mt-2 text-sm text-gray-600">
-							Or{" "}
+						<h2 className="my-3 text-3xl font-bold text-[#202536]">
+							Sign in below to access your account
+						</h2>
+						<p className="mt-2 text-sm text-gray-600 underline">
 							<a
-								href="#"
+								href="/signup"
 								className="font-medium text-indigo-600 hover:text-indigo-500"
 							>
-								start your 14-day free trial
+								<p>
+									Or If you’re new here, nice to meet ya!
+									Click
+								</p>
+								here to start your 14-day free trial
 							</a>
 						</p>
 					</div>
@@ -135,9 +141,9 @@ export default function SignIn() {
 									<div className="text-sm">
 										<a
 											href="#"
-											className="font-medium text-indigo-600 hover:text-indigo-500"
+											className="font-medium text-indigo-600 hover:text-indigo-500 underline"
 										>
-											Forgot your password?
+											Help! I can’t remember my password!
 										</a>
 									</div>
 								</div>
@@ -145,7 +151,7 @@ export default function SignIn() {
 								<div>
 									<button
 										type="submit"
-										className="flex w-full justify-center rounded-md border border-transparent bg-indigo-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+										className="flex w-full justify-center rounded-md border border-transparent bg-[#55CF9E] py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-[#55CF9E] focus:outline-none focus:ring-2 focus:ring-[#55CF9E] focus:ring-offset-2"
 									>
 										Sign in
 									</button>

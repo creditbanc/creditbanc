@@ -149,10 +149,10 @@ const Heading = () => {
 		<div className="bg-transparent">
 			<div className="mx-auto max-w-7xl py-4 pb-6 px-2">
 				<div className="text-center">
-					<p className="text-3xl font-semibold my-2 text-[#55CF9E]">
+					<p className="text-3xl font-bold my-2 text-[#55CF9E]">
 						WELL, HEY THERE
 					</p>
-					<p className="text-5xl font-semibold my-2 text-[#202536]">
+					<p className="text-5xl font-bold my-2 text-[#202536]">
 						First time here?
 					</p>
 					<p className="text-lg mt-4 font-semibold">
