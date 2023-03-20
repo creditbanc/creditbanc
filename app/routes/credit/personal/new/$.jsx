@@ -85,7 +85,7 @@ export const action = async ({ request }) => {
 		);
 	} catch (error) {
 		console.log("error");
-		console.log(error.response.data);
+		// console.log(error.response.data);
 		return json({ error: error.message }, { status: 500 });
 	}
 };
@@ -137,7 +137,7 @@ const Form = () => {
 	};
 
 	return (
-		<form className="space-y-8" onSubmit={onSubmit}>
+		<form className="space-y-8 mb-[30px]" onSubmit={onSubmit}>
 			<div className="mt-6 grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-6">
 				<div className="border-b border-gray-300 sm:col-span-6">
 					<h3 className="text-lg font-medium leading-6 text-gray-900 pb-2">
@@ -384,7 +384,7 @@ const Form = () => {
 				</button>
 				<button
 					type="submit"
-					className="ml-3 inline-flex justify-center rounded-md border border-transparent bg-indigo-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+					className="ml-3 inline-flex justify-center rounded-md border border-transparent bg-[#55CF9E] py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-[#55CF9E] focus:outline-none focus:ring-2 focus:ring-[#55CF9E] focus:ring-offset-2"
 				>
 					Next
 				</button>
@@ -398,11 +398,13 @@ const Heading = () => {
 		<div className="bg-transparent">
 			<div className="mx-auto max-w-7xl py-4 pb-6 px-2">
 				<div className="text-center">
-					<h2 className="text-lg font-semibold text-indigo-600">
-						New
-					</h2>
-					<p className="mt-1 text-4xl font-bold tracking-tight text-gray-900 sm:text-5xl lg:text-6xl">
-						Personal Credit Report
+					<p className="mt-1 text-3xl font-bold tracking-tight text-[#55CF9E]">
+						TELL US A LITTLE BIT ABOUT YOURSELF
+					</p>
+					<p className="text-lg font-semibold text-[#202536] mt-6">
+						We don’t need your firstborn, a blood sample, or a DNA
+						swab, but we need to know what to call you and how to
+						reach you
 					</p>
 				</div>
 			</div>
