@@ -132,6 +132,39 @@ const Form = () => {
 					</div>
 				</div>
 			</div>
+
+			<div>
+				<div className="relative flex items-start">
+					<div className="flex h-6 items-center">
+						<input
+							id="comments"
+							aria-describedby="comments-description"
+							name="comments"
+							type="checkbox"
+							className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600 cursor-pointer"
+						/>
+					</div>
+					<a
+						className="ml-3 text-sm leading-6"
+						href="/"
+						target="_blank"
+					>
+						<label
+							htmlFor="comments"
+							className="font-medium text-gray-900"
+						>
+							Yes,
+						</label>{" "}
+						<span
+							id="comments-description"
+							className="text-gray-500"
+						>
+							I accept the terms and conditions.
+						</span>
+					</a>
+				</div>
+			</div>
+
 			<div className="flex flex-row w-full justify-center pt-3">
 				<button
 					type="submit"
