@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { Dialog } from "@headlessui/react";
 import {
 	Bars3Icon,
@@ -14,6 +14,8 @@ import {
 } from "@heroicons/react/24/outline";
 import { Disclosure, RadioGroup } from "@headlessui/react";
 import { Link } from "@remix-run/react";
+import { Carousel } from "antd";
+import CreditScoreDoughnut from "~/components/CreditScoreDoughnut";
 
 function classNames(...classes) {
 	return classes.filter(Boolean).join(" ");
@@ -1825,11 +1827,11 @@ const incentives = [
 	// },
 ];
 
-function Incentives() {
+function LogoCloud() {
 	return (
 		<div className="bg-white">
-			<div className="mx-auto max-w-2xl  px-4 sm:px-6 lg:max-w-7xl lg:px-8">
-				<div className="flex flex-row gap-y-12 sm:grid-cols-2 sm:gap-x-6 lg:gap-x-8 mx-10">
+			<div className="mx-auto max-w-2xl px-4 sm:px-6 lg:max-w-7xl lg:px-8">
+				<div className="flex flex-col sm:flex-row gap-y-12 sm:grid-cols-2 sm:gap-x-6 lg:gap-x-8 mx-10">
 					{incentives.map((incentive) => (
 						<div key={incentive.name}>
 							<div className="flex flex-col">
@@ -1853,6 +1855,20 @@ function Incentives() {
 	);
 }
 
+const Single = () => {
+	return (
+		<div className="flex flex-col items-center">
+			<CreditScoreDoughnut
+				bureau={"Equifax"}
+				scoreClassNames="text-6xl"
+				bureauTitleClassNames="text-1xl"
+			>
+				<div className="mt-[170px] font-bold text-5xl">750</div>
+			</CreditScoreDoughnut>
+		</div>
+	);
+};
+
 export default function LandingPage() {
 	const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
@@ -1865,7 +1881,7 @@ export default function LandingPage() {
 				>
 					<div className="flex lg:flex-1">
 						<a href="#" className="-m-1.5 p-1.5">
-							<span className="sr-only">Your Company</span>
+							<span className="sr-only">Credit Banc</span>
 							<img
 								className="h-8 w-auto"
 								src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=600"
@@ -1958,6 +1974,7 @@ export default function LandingPage() {
 					</Dialog.Panel>
 				</Dialog>
 			</header>
+
 			<main className="isolate">
 				<div className="relative pt-24">
 					<div className="absolute inset-x-0 -top-40 -z-10 transform-gpu overflow-hidden blur-3xl sm:-top-80">
@@ -1985,6 +2002,18 @@ export default function LandingPage() {
 							</defs>
 						</svg>
 					</div>
+					{/* <div className="mx-auto max-w-7xl px-6 lg:px-8">
+						<div className="mx-auto max-w-5xl text-center">
+							<div className="font-semibold text-[#202536] text-lg">
+								<div className="py-4">Say hello to</div>
+							</div>
+						</div>
+					</div> */}
+					<div className="flex flex-col w-full items-center -mt-[50px] mb-[50px]">
+						<div className="flex flex-col w-[300px] h-[200px]">
+							<Single />
+						</div>
+					</div>
 					<div className="mx-auto max-w-7xl px-6 lg:px-8">
 						<div className="mx-auto max-w-5xl text-center">
 							{/* <div className="font-bold text-2xl text-[#55CF9E]">
@@ -1998,15 +2027,10 @@ export default function LandingPage() {
 								your business credit report. And sometimes you
 								need access to both.
 							</p> */}
-							<div className="font-semibold text-[#202536] text-lg">
-								<div className="py-2">Say hello to</div>
-							</div>
-
 							<div className="font-bold text-[#55CF9E] text-6xl mb-3 -mt-3">
 								<div className="py-2">Credit Banc</div>
 							</div>
-
-							<p className="text-lg text-[#202536] max-w-4xl m-auto">
+							<p className="text-lg text-[#202536] max-w-4xl m-auto py-5 leading-8">
 								Credit Banc (pronounced like Bank, just spelled
 								fancy) is the simple, one-stop-shop where you
 								can access, monitor, and share real-time data
@@ -2016,12 +2040,12 @@ export default function LandingPage() {
 								we’re kind of surprised nobody thought of it
 								sooner.
 							</p>
-
-							<p className="text-lg text-[#202536] ">
+							<p className="text-lg text-[#202536] font-bold">
 								Pick your plan, and we’ll do the rest.
 							</p>
 						</div>
 					</div>
+
 					<div className="absolute inset-x-0 top-[calc(100%-13rem)] -z-10 transform-gpu overflow-hidden blur-3xl sm:top-[calc(100%-30rem)]">
 						<svg
 							className="relative left-[calc(50%+3rem)] h-[21.1875rem] max-w-none -translate-x-1/2 sm:left-[calc(50%+36rem)] sm:h-[42.375rem]"
@@ -2049,7 +2073,7 @@ export default function LandingPage() {
 					</div>
 				</div>
 
-				<div className="mx-auto max-w-7xl px-6 lg:px-8">
+				<div className="mx-auto max-w-7xl px-6 lg:px-8 -mt-[40px]">
 					<div className="isolate mx-auto mt-16 grid max-w-xl grid-cols-1 gap-y-8 lg:mx-0 lg:max-w-none lg:grid-cols-3">
 						{tiers.map((tier, tierIdx) => (
 							<div
@@ -2132,7 +2156,7 @@ export default function LandingPage() {
 					</div>
 				</div>
 				<div className="py-14">
-					<Incentives />
+					<LogoCloud />
 				</div>
 				<div>
 					<FooterTwo />

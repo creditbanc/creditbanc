@@ -70,6 +70,7 @@ export default function CreditScoreDoughnut({
 	classNames = "",
 	scoreClassNames = "",
 	bureauTitleClassNames = "",
+	children,
 }) {
 	const chartContainerRef = useRef(null);
 	const size = useWindowSize();
@@ -107,13 +108,16 @@ export default function CreditScoreDoughnut({
 				ref={doughnutRef}
 			/>
 			<Doughnut className="absolute" data={data2} options={options} />
-			<div
-				className="absolute flex flex-col items-center justify-end"
-				style={chartStyle}
-			>
-				<div className={`font-bold ${scoreClassNames}`}>500</div>
-				<div className={`${bureauTitleClassNames}`}>{bureau}</div>
-			</div>
+			{children && children}
+			{!children && (
+				<div
+					className="absolute flex flex-col items-center justify-end"
+					style={chartStyle}
+				>
+					<div className={`font-bold ${scoreClassNames}`}>500</div>
+					<div className={`${bureauTitleClassNames}`}>{bureau}</div>
+				</div>
+			)}
 		</div>
 	);
 }

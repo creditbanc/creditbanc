@@ -71,8 +71,8 @@ export const loader = async ({ request }) => {
 		head
 	)(group_docs);
 
-	console.log("group_docs");
-	console.log(report);
+	// console.log("group_docs");
+	// console.log(report);
 
 	let reports = pipe((resources) => ({
 		personal_credit_reports: pipe(

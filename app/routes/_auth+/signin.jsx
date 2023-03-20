@@ -6,7 +6,7 @@ import { json, redirect } from "@remix-run/node";
 import { get_user } from "../../utils/auth.server";
 
 export const loader = async ({ request }) => {
-	return (await get_user(request)) ? redirect("/") : null;
+	return (await get_user(request)) ? redirect("/root") : null;
 };
 
 export const action = async ({ request }) => {
