@@ -11,6 +11,7 @@ import { redirect } from "@remix-run/node";
 
 const useForm = create((set) => ({
 	form: {
+		name: "",
 		email: "",
 		password: "",
 	},
@@ -102,6 +103,26 @@ const Form = () => {
 	return (
 		<form className="space-y-8" onSubmit={onSubmit}>
 			<div className="mt-6 grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-6">
+				<div className="sm:col-span-6">
+					<label
+						htmlFor="email"
+						className="block text-sm font-medium text-gray-700"
+					>
+						Name
+					</label>
+					<div className="mt-1">
+						<input
+							type="name"
+							name="name"
+							id="name"
+							autoComplete="name"
+							className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm border h-[38px] pl-2"
+							value={email}
+							onChange={(e) => setForm(["name"], e.target.value)}
+						/>
+					</div>
+				</div>
+
 				<div className="sm:col-span-6">
 					<label
 						htmlFor="password"

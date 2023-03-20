@@ -20,8 +20,9 @@ function classNames(...classes) {
 }
 
 const navigation = [
+	{ name: "Pro", href: "/comingsoon" },
 	{ name: "Small Business Lending", href: "/comingsoon" },
-	{ name: "Tax Credit", href: "/comingsoon" },
+	{ name: "Tax Credits", href: "/comingsoon" },
 	{ name: "Business Valuations", href: "/comingsoon" },
 	{ name: "CB University", href: "/comingsoon" },
 ];
@@ -1793,6 +1794,65 @@ function FooterTwo() {
 	);
 }
 
+const incentives = [
+	{
+		name: "Shield Advisory Group",
+		description:
+			"It's not actually free we just price it into the products. Someone's paying for it, and it's not us.",
+		imageSrc:
+			"https://tailwindui.com/img/ecommerce/icons/icon-delivery-light.svg",
+	},
+	{
+		name: "Liquid Lunch",
+		description:
+			"Our AI chat widget is powered by a naive series of if/else statements. Guaranteed to irritate.",
+		imageSrc:
+			"https://tailwindui.com/img/ecommerce/icons/icon-chat-light.svg",
+	},
+	{
+		name: "MRM Capital",
+		description:
+			"Look how fast that cart is going. What does this mean for the actual experience? I don't know.",
+		imageSrc:
+			"https://tailwindui.com/img/ecommerce/icons/icon-fast-checkout-light.svg",
+	},
+	// {
+	// 	name: "Gift Cards",
+	// 	description:
+	// 		"Buy them for your friends, especially if they don't like our store. Free money for us, it's great.",
+	// 	imageSrc:
+	// 		"https://tailwindui.com/img/ecommerce/icons/icon-gift-card-light.svg",
+	// },
+];
+
+function Incentives() {
+	return (
+		<div className="bg-white">
+			<div className="mx-auto max-w-2xl  px-4 sm:px-6 lg:max-w-7xl lg:px-8">
+				<div className="flex flex-row gap-y-12 sm:grid-cols-2 sm:gap-x-6 lg:gap-x-8 mx-10">
+					{incentives.map((incentive) => (
+						<div key={incentive.name}>
+							<div className="flex flex-col">
+								<img
+									src={incentive.imageSrc}
+									alt=""
+									className="h-24 w-auto"
+								/>
+							</div>
+							<h3 className="mt-6 text-sm font-medium text-gray-900">
+								{incentive.name}
+							</h3>
+							<p className="mt-2 text-sm text-gray-500">
+								{incentive.description}
+							</p>
+						</div>
+					))}
+				</div>
+			</div>
+		</div>
+	);
+}
+
 export default function LandingPage() {
 	const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
@@ -1938,13 +1998,15 @@ export default function LandingPage() {
 								your business credit report. And sometimes you
 								need access to both.
 							</p> */}
-							<div className="font-bold text-[#55CF9E] text-6xl mb-6">
-								<div className="py-2">
-									Say hello to Credit Banc
-								</div>
+							<div className="font-semibold text-[#202536] text-lg">
+								<div className="py-2">Say hello to</div>
 							</div>
 
-							<p className="text-lg text-[#202536] font-semibold">
+							<div className="font-bold text-[#55CF9E] text-6xl mb-3 -mt-3">
+								<div className="py-2">Credit Banc</div>
+							</div>
+
+							<p className="text-lg text-[#202536] max-w-4xl m-auto">
 								Credit Banc (pronounced like Bank, just spelled
 								fancy) is the simple, one-stop-shop where you
 								can access, monitor, and share real-time data
@@ -1955,7 +2017,7 @@ export default function LandingPage() {
 								sooner.
 							</p>
 
-							<p className="text-lg text-[#202536] font-semibold">
+							<p className="text-lg text-[#202536] ">
 								Pick your plan, and we’ll do the rest.
 							</p>
 						</div>
@@ -2070,7 +2132,7 @@ export default function LandingPage() {
 					</div>
 				</div>
 				<div className="py-14">
-					<Logos />
+					<Incentives />
 				</div>
 				<div>
 					<FooterTwo />

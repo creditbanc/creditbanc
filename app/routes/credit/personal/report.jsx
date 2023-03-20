@@ -14,7 +14,7 @@ import {
 	to_resource_pathname,
 } from "~/utils/helpers";
 import { get_docs as get_group_docs } from "~/utils/group.server";
-import { defaultTo, isEmpty, pick, pipe } from "ramda";
+import { defaultTo, head, isEmpty, pick, pipe } from "ramda";
 import { mod, all, filter } from "shades";
 import PersonalCreditTabs from "~/components/PersonalCreditTabs";
 import CreditScoreHero from "~/components/CreditScoreHero";
@@ -66,8 +66,13 @@ export const loader = async ({ request }) => {
 		entity_id: user_id,
 	});
 
-	// console.log("group_docs");
-	// console.log(group_docs);
+	let report = pipe(
+		filter((report) => report.id == file_id),
+		head
+	)(group_docs);
+
+	console.log("group_docs");
+	console.log(report);
 
 	let reports = pipe((resources) => ({
 		personal_credit_reports: pipe(
@@ -80,7 +85,7 @@ export const loader = async ({ request }) => {
 		)(resources),
 	}))(group_docs);
 
-	return { reports, origin: url.origin, user_id, permissions };
+	return { reports, origin: url.origin, user_id, permissions, report };
 };
 
 function Modal({ children }) {
@@ -125,7 +130,12 @@ function Modal({ children }) {
 }
 
 export default function CreditReport() {
-	var { origin = "", permissions = {}, user_id } = useLoaderData() ?? {};
+	var {
+		origin = "",
+		permissions = {},
+		user_id,
+		report,
+	} = useLoaderData() ?? {};
 	const [target, setTarget] = useState();
 	const elmSize = useElmSize(target);
 	let setContentWidth = useLayoutStore((state) => state.set_content_width);
@@ -164,7 +174,7 @@ export default function CreditReport() {
 							className="flex flex-col w-full p-[10px] max-w-5xl mx-auto"
 							ref={setTarget}
 						>
-							<CreditScoreHero />
+							<CreditScoreHero report={report} />
 							<div className="mt-3 mb-1">
 								<PersonalCreditTabs
 									selected={capitalize(

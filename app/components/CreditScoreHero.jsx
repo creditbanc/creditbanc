@@ -132,7 +132,7 @@ const Triple = () => {
 	);
 };
 
-export default function CreditScoreHero() {
+export default function CreditScoreHero({ report }) {
 	let content_width = useLayoutStore((state) => state.content_width);
 	let [isMobile, setIsMobile] = useState(true);
 
@@ -148,7 +148,7 @@ export default function CreditScoreHero() {
 		<div className="overflow-hidden">
 			<div className="w-full">
 				<h1 className="text-5xl font-bold tracking-tight text-center">
-					Your personal credit report
+					{report.first_name}'s personal credit report
 				</h1>
 				<p className="mt-6 text-lg leading-6 text-gray-600 text-center">
 					View all three personal credit bureaus
