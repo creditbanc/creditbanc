@@ -288,7 +288,7 @@ const Form = () => {
 	};
 
 	return (
-		<form className="space-y-8" onSubmit={onSubmit}>
+		<form className="space-y-8 mb-[30px]" onSubmit={onSubmit}>
 			<div className="mt-6 grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-6">
 				<div className="border-b border-gray-300 sm:col-span-6">
 					<h3 className="text-lg font-medium leading-6 text-gray-900 pb-2">
