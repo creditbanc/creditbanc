@@ -147,7 +147,7 @@ const Form = () => {
 					type="submit"
 					className="w-full inline-flex justify-center rounded-md border border-transparent bg-[#55CF9E] py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-[#55CF9E] focus:outline-none focus:ring-2 focus:ring-[#55CF9E] focus:ring-offset-2"
 				>
-					Sign me ups
+					Sign me up
 				</button>
 			</div>
 		</form>
