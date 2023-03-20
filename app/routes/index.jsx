@@ -1926,16 +1926,37 @@ export default function LandingPage() {
 						</svg>
 					</div>
 					<div className="mx-auto max-w-7xl px-6 lg:px-8">
-						<div className="mx-auto max-w-2xl text-center">
-							<div className="text-4xl font-bold tracking-tight text-gray-900 sm:text-6xl">
-								<div className="py-2">Business & Personal</div>
-								<div>Credit Reports</div>
+						<div className="mx-auto max-w-5xl text-center">
+							{/* <div className="font-bold text-2xl text-[#55CF9E]">
+								<div className="py-2">
+									Let’s cut to the chase
+								</div>
 							</div>
-							<p className="mt-6 text-lg leading-8 text-gray-600">
-								Anim aute id magna aliqua ad ad non deserunt
-								sunt. Qui irure qui lorem cupidatat commodo.
-								Elit sunt amet fugiat veniam occaecat fugiat
-								aliqua.
+							<p className="text-lg leading-8 text-[#202536]">
+								Sometimes, you need access to your personal
+								credit report. Sometimes, you need access to
+								your business credit report. And sometimes you
+								need access to both.
+							</p> */}
+							<div className="font-bold text-[#55CF9E] text-6xl mb-6">
+								<div className="py-2">
+									Say hello to Credit Banc
+								</div>
+							</div>
+
+							<p className="text-lg text-[#202536]">
+								Credit Banc (pronounced like Bank, just spelled
+								fancy) is the simple, one-stop-shop where you
+								can access, monitor, and share real-time data
+								from your personal and business credit reports
+								with, well…anyone you want to! (Think loan
+								officers, accountants, etc.) It’s so genius
+								we’re kind of surprised nobody thought of it
+								sooner.
+							</p>
+
+							<p className="text-lg text-[#202536] font-bold mt-[15px]">
+								Pick your plan, and we’ll do the rest.
 							</p>
 						</div>
 					</div>
@@ -1988,7 +2009,7 @@ export default function LandingPage() {
 											id={tier.id}
 											className={classNames(
 												tier.mostPopular
-													? "text-indigo-600"
+													? "text-[#55CF9E]"
 													: "text-gray-900",
 												"text-lg font-semibold"
 											)}
@@ -1997,7 +2018,7 @@ export default function LandingPage() {
 										</h3>
 										{tier.mostPopular ? (
 											<div className="w-[175px]">
-												<div className="rounded-full bg-indigo-600/10 text-xs font-semibold text-indigo-600 flex flex-row items-center justify-center mt-2 py-1">
+												<div className="rounded-full bg-indigo-300/10 text-xs font-semibold text-[#55CF9E] flex flex-row items-center justify-center mt-2 py-1">
 													Most popular
 												</div>
 											</div>
@@ -2024,7 +2045,7 @@ export default function LandingPage() {
 												className="flex gap-x-3"
 											>
 												<CheckIcon
-													className="h-6 w-5 flex-none text-indigo-600"
+													className="h-6 w-5 flex-none text-[#55CF9E]"
 													aria-hidden="true"
 												/>
 												{feature}
@@ -2037,8 +2058,8 @@ export default function LandingPage() {
 									aria-describedby={tier.id}
 									className={classNames(
 										tier.mostPopular
-											? "bg-indigo-600 text-white shadow-sm hover:bg-indigo-500"
-											: "text-indigo-600 ring-1 ring-inset ring-indigo-200 hover:ring-indigo-300",
+											? "bg-[#55CF9E] text-white shadow-sm hover:bg-[#55CF9E]"
+											: "text-[#55CF9E] ring-1 ring-inset ring-[#55CF9E] hover:ring-[#55CF9E]",
 										"mt-8 block rounded-md py-2 px-3 text-center text-sm font-semibold leading-6 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
 									)}
 								>
