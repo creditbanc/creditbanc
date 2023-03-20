@@ -145,9 +145,9 @@ const Form = () => {
 			<div className="flex flex-row w-full justify-center pt-3">
 				<button
 					type="submit"
-					className="w-full inline-flex justify-center rounded-md border border-transparent bg-indigo-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+					className="w-full inline-flex justify-center rounded-md border border-transparent bg-[#55CF9E] py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-[#55CF9E] focus:outline-none focus:ring-2 focus:ring-[#55CF9E] focus:ring-offset-2"
 				>
-					Sign Up
+					Sign me up
 				</button>
 			</div>
 		</form>
@@ -159,11 +159,15 @@ const Heading = () => {
 		<div className="bg-transparent">
 			<div className="mx-auto max-w-7xl py-4 pb-6 px-2">
 				<div className="text-center">
-					<h2 className="text-lg font-semibold text-indigo-600">
-						Create A New
-					</h2>
-					<p className="mt-1 text-4xl font-bold tracking-tight text-gray-900 sm:text-5xl lg:text-6xl">
-						Account
+					<p className="text-3xl font-semibold my-2 text-[#55CF9E]">
+						WELL, HEY THERE
+					</p>
+					<p className="text-5xl font-semibold my-2 text-[#202536]">
+						First time here?
+					</p>
+					<p className="text-lg mt-4 font-semibold">
+						Let’s get you set up with a new account. It’ll be
+						painless, we swear.
 					</p>
 				</div>
 			</div>

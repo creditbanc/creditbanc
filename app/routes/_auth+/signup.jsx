@@ -59,45 +59,17 @@ const Form = () => {
 	const submit = useSubmit();
 
 	const onSubmit = (e) => {
-		console.log("submittingssssss");
 		e.preventDefault();
-		// let form_id = uuidv4();
-		// let resource_path = to_resource_pathname(window.location.pathname);
-
-		// let { dob, ...rest } = form;
-		// let dob_string = `${dob.year}-${dob.month}-${dob.day}`;
-		// let payload = { ...rest, dob: dob_string };
-
-		// event.preventDefault();
-		// let form = event.currentTarget;
-		// console.log(window.location.search);
-
-		// console.log("submitform");
-		// console.log(form);
 
 		submit(form, {
 			method: "post",
 			action: "/signup" + window.location.search,
 		});
-
-		// submit(
-		// 	{ payload: JSON.stringify(payload) },
-		// 	{
-		// 		method: "post",
-		// 		action: "/credit/personal/new" + resource_path,
-		// 	}
-		// );
 	};
 
 	return (
 		<form className="space-y-8" onSubmit={onSubmit}>
 			<div className="mt-6 grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-6">
-				{/* <div className="border-b border-gray-300 sm:col-span-6">
-					<h3 className="text-lg font-medium leading-6 text-gray-900 pb-2">
-						Create An Account
-					</h3>
-				</div> */}
-
 				<div className="sm:col-span-6">
 					<label
 						htmlFor="email"
@@ -163,9 +135,9 @@ const Form = () => {
 			<div className="flex flex-row w-full justify-center pt-3">
 				<button
 					type="submit"
-					className="w-full inline-flex justify-center rounded-md border border-transparent bg-indigo-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+					className="w-full inline-flex justify-center rounded-md border border-transparent bg-[#55CF9E] py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-[#55CF9E] focus:outline-none focus:ring-2 focus:ring-[#55CF9E] focus:ring-offset-2"
 				>
-					Sign Up
+					Sign me up
 				</button>
 			</div>
 		</form>
@@ -177,11 +149,15 @@ const Heading = () => {
 		<div className="bg-transparent">
 			<div className="mx-auto max-w-7xl py-4 pb-6 px-2">
 				<div className="text-center">
-					<h2 className="text-lg font-semibold text-indigo-600">
-						Create A New
-					</h2>
-					<p className="mt-1 text-4xl font-bold tracking-tight text-gray-900 sm:text-5xl lg:text-6xl">
-						Account
+					<p className="text-3xl font-semibold my-2 text-[#55CF9E]">
+						WELL, HEY THERE
+					</p>
+					<p className="text-5xl font-semibold my-2 text-[#202536]">
+						First time here?
+					</p>
+					<p className="text-lg mt-4 font-semibold">
+						Let’s get you set up with a new account. It’ll be
+						painless, we swear.
 					</p>
 				</div>
 			</div>

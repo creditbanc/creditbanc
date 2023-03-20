@@ -1933,6 +1933,11 @@ video {
   background-color: rgb(255 255 255 / 0.05);
 }
 
+.bg-\[\#55CF9E\] {
+  --tw-bg-opacity: 1;
+  background-color: rgb(85 207 158 / var(--tw-bg-opacity));
+}
+
 .bg-opacity-75 {
   --tw-bg-opacity: 0.75;
 }
@@ -2542,6 +2547,21 @@ video {
   color: rgb(255 255 255 / var(--tw-text-opacity));
 }
 
+.text-\[\#55CF9E\] {
+  --tw-text-opacity: 1;
+  color: rgb(85 207 158 / var(--tw-text-opacity));
+}
+
+.text-\[\#202536\] {
+  --tw-text-opacity: 1;
+  color: rgb(32 37 54 / var(--tw-text-opacity));
+}
+
+.text-red-200 {
+  --tw-text-opacity: 1;
+  color: rgb(254 202 202 / var(--tw-text-opacity));
+}
+
 .placeholder-gray-400::-moz-placeholder {
   --tw-placeholder-opacity: 1;
   color: rgb(156 163 175 / var(--tw-placeholder-opacity));
@@ -2867,6 +2887,11 @@ body {
   --tw-ring-color: rgb(239 68 68 / var(--tw-ring-opacity));
 }
 
+.focus\:ring-\[\#55CF9E\]:focus {
+  --tw-ring-opacity: 1;
+  --tw-ring-color: rgb(85 207 158 / var(--tw-ring-opacity));
+}
+
 .focus\:ring-offset-2:focus {
   --tw-ring-offset-width: 2px;
 }
@@ -2970,6 +2995,11 @@ body {
 
 .hover\:bg-white\/90:hover {
   background-color: rgb(255 255 255 / 0.9);
+}
+
+.hover\:bg-\[\#55CF9E\]:hover {
+  --tw-bg-opacity: 1;
+  background-color: rgb(85 207 158 / var(--tw-bg-opacity));
 }
 
 .hover\:text-gray-500:hover {
