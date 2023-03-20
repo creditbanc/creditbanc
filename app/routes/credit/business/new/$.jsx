@@ -667,7 +667,7 @@ const Form = () => {
 				</button>
 				<button
 					type="submit"
-					className="ml-3 inline-flex justify-center rounded-md border border-transparent bg-indigo-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+					className="ml-3 inline-flex justify-center rounded-md border border-transparent bg-[#55CF9E] py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-[#55CF9E] focus:outline-none focus:ring-2 focus:ring-[#55CF9E] focus:ring-offset-2"
 				>
 					Next
 				</button>
@@ -681,11 +681,13 @@ const Heading = () => {
 		<div className="bg-transparent">
 			<div className="mx-auto max-w-7xl py-4 pb-6 px-2">
 				<div className="text-center">
-					<h2 className="text-lg font-semibold text-indigo-600">
-						New
-					</h2>
-					<p className="mt-1 text-4xl font-bold tracking-tight text-gray-900 sm:text-5xl lg:text-6xl">
-						Business Credit Report
+					<p className="mt-1 text-2xl font-bold tracking-tight text-[#55CF9E]">
+						TELL US A LITTLE BIT ABOUT YOUR BUSINESS
+					</p>
+					<p className="text-lg font-semibold text-[#202536] mt-6">
+						We don’t need your firstborn, a blood sample, or a DNA
+						swab, but we need to know what to call you and how to
+						reach you
 					</p>
 				</div>
 			</div>
