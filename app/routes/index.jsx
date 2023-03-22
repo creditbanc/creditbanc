@@ -16,6 +16,9 @@ import { Disclosure, RadioGroup } from "@headlessui/react";
 import { Link } from "@remix-run/react";
 import { Carousel } from "antd";
 import CreditScoreDoughnut from "~/components/CreditScoreDoughnut";
+const shield_advisory_logo = "/images/logos/shield_advisory_group_logo.png";
+const liquid_lunch_logo = "/images/logos/liquid_lunch_logo.jpg";
+const the_weekly_logo = "/images/logos/the_weekly_logo.png";
 
 function classNames(...classes) {
 	return classes.filter(Boolean).join(" ");
@@ -1800,31 +1803,21 @@ const incentives = [
 	{
 		name: "Shield Advisory Group",
 		description:
-			"It's not actually free we just price it into the products. Someone's paying for it, and it's not us.",
-		imageSrc:
-			"https://tailwindui.com/img/ecommerce/icons/icon-delivery-light.svg",
+			"It's not actually free we just price it into the products. Someone's paying for it, and it's not uss.",
+		imageSrc: shield_advisory_logo,
 	},
 	{
 		name: "Liquid Lunch",
 		description:
 			"Our AI chat widget is powered by a naive series of if/else statements. Guaranteed to irritate.",
-		imageSrc:
-			"https://tailwindui.com/img/ecommerce/icons/icon-chat-light.svg",
+		imageSrc: liquid_lunch_logo,
 	},
 	{
-		name: "MRM Capital",
+		name: "The Weekly",
 		description:
 			"Look how fast that cart is going. What does this mean for the actual experience? I don't know.",
-		imageSrc:
-			"https://tailwindui.com/img/ecommerce/icons/icon-fast-checkout-light.svg",
+		imageSrc: the_weekly_logo,
 	},
-	// {
-	// 	name: "Gift Cards",
-	// 	description:
-	// 		"Buy them for your friends, especially if they don't like our store. Free money for us, it's great.",
-	// 	imageSrc:
-	// 		"https://tailwindui.com/img/ecommerce/icons/icon-gift-card-light.svg",
-	// },
 ];
 
 function LogoCloud() {
@@ -1834,11 +1827,11 @@ function LogoCloud() {
 				<div className="flex flex-col sm:flex-row gap-y-12 sm:grid-cols-2 sm:gap-x-6 lg:gap-x-8 mx-10">
 					{incentives.map((incentive) => (
 						<div key={incentive.name}>
-							<div className="flex flex-col">
+							<div className="flex flex-col h-[200px] justify-center items-center">
 								<img
 									src={incentive.imageSrc}
 									alt=""
-									className="h-24 w-auto"
+									className="w-fit h-auto"
 								/>
 							</div>
 							<h3 className="mt-6 text-sm font-medium text-gray-900">
