@@ -1,5 +1,10 @@
 import { useEffect, useState, Fragment } from "react";
-import { Outlet, useLoaderData, useLocation } from "@remix-run/react";
+import {
+	Outlet,
+	useLoaderData,
+	useLocation,
+	useTransition,
+} from "@remix-run/react";
 import CreditNav from "~/components/CreditNav";
 import { useLayoutStore } from "~/stores/useLayoutStore";
 import LeftNav from "~/components/LeftNav";
@@ -26,6 +31,7 @@ import { prisma } from "~/utils/prisma.server";
 import { Dialog, Transition } from "@headlessui/react";
 import Share from "~/routes/invites/new/$.jsx";
 import { useModalStore } from "~/hooks/useModal";
+// import { useSpinner } from "~/root";
 
 export const loader = async ({ request }) => {
 	let url = new URL(request.url);
@@ -129,7 +135,13 @@ function Modal({ children }) {
 	);
 }
 
+// const Spinner = () => {
+// 	return <div>spinner</div>;
+// };
+
 export default function CreditReport() {
+	// const transition = useTransition();
+	// const show_spinner = transition.state !== "idle";
 	var {
 		origin = "",
 		permissions = {},
@@ -142,11 +154,20 @@ export default function CreditReport() {
 	let { reports } = useLoaderData();
 	let location = useLocation();
 
+	// const show_spinner = useSpinner((state) => state.show_spinner);
+
+	// console.log("show_spinner");
+	// console.log(show_spinner);
+
 	useEffect(() => {
 		if (elmSize) {
 			setContentWidth(elmSize.width);
 		}
 	}, [elmSize]);
+
+	// if (show_spinner) {
+	// 	return <Spinner />;
+	// }
 
 	return (
 		<div className="flex flex-col w-full h-full">

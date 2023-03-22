@@ -13,7 +13,7 @@ import {
 	PlusSmallIcon,
 } from "@heroicons/react/24/outline";
 import { Disclosure, RadioGroup } from "@headlessui/react";
-import { Link } from "@remix-run/react";
+import { Link, useTransition } from "@remix-run/react";
 import { Carousel } from "antd";
 import CreditScoreDoughnut from "~/components/CreditScoreDoughnut";
 const shield_advisory_logo = "/images/logos/shield_advisory_group_logo.png";
@@ -1826,7 +1826,7 @@ function LogoCloud() {
 	return (
 		<div className="bg-white">
 			<div className="mx-auto max-w-2xl px-4 sm:px-6 lg:max-w-7xl lg:px-8">
-				<div className="flex flex-col sm:flex-row gap-y-12 sm:grid-cols-2 sm:gap-x-6 lg:gap-x-8 mx-10">
+				<div className="flex flex-col sm:flex-row  mx-10 justify-center">
 					{incentives.map((incentive) => (
 						<div key={incentive.name}>
 							<div className="flex flex-col w-[200px] h-[200px] justify-center items-center m-auto">
@@ -1877,7 +1877,11 @@ export default function LandingPage() {
 					<div className="flex lg:flex-1">
 						<a href="#" className="-m-1.5 p-1.5">
 							<span className="sr-only">Credit Banc</span>
-							<img className="h-8 w-auto" src={cb_logo} alt="" />
+							<img
+								className="h-5 w-auto"
+								src={cb_logo_3}
+								alt=""
+							/>
 						</a>
 					</div>
 					<div className="flex lg:hidden">
@@ -2006,7 +2010,7 @@ export default function LandingPage() {
 						</div>
 					</div>
 					<div className="mx-auto max-w-7xl px-6 lg:px-8">
-						<div className="mx-auto max-w-5xl text-center">
+						<div className="mx-auto max-w-5xl text-center ">
 							{/* <div className="font-bold text-2xl text-[#55CF9E]">
 								<div className="py-2">
 									Let’s cut to the chase
@@ -2025,7 +2029,7 @@ export default function LandingPage() {
 									className="my-10 mt-20 mb-0"
 								/>
 							</div>
-							<p className="text-lg text-[#202536] max-w-4xl m-auto py-5 leading-8">
+							<p className="text-xs sm:text-lg text-[#202536] max-w-4xl m-auto py-5 leading-6 sm:leading-8">
 								Credit Banc (pronounced like Bank, just spelled
 								fancy) is the simple, one-stop-shop where you
 								can access, monitor, and share real-time data
@@ -2035,7 +2039,7 @@ export default function LandingPage() {
 								we’re kind of surprised nobody thought of it
 								sooner.
 							</p>
-							<p className="text-lg text-[#202536] font-bold">
+							<p className="sm:text-lg text-[#202536] font-bold">
 								Pick your plan, and we’ll do the rest.
 							</p>
 						</div>

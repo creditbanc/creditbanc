@@ -9,6 +9,7 @@ import {
 } from "~/utils/helpers";
 import { isEmpty, map, pipe } from "ramda";
 import { useModalStore } from "~/hooks/useModal";
+const cb_logo = "/images/logos/cb_logo_3.png";
 
 function classNames(...classes) {
 	return classes.filter(Boolean).join(" ");
@@ -324,13 +325,13 @@ export default function Nav({
 									href="/"
 								>
 									<img
-										className="block h-8 w-auto lg:hidden"
-										src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=600"
+										className="block h-5 w-auto lg:hidden"
+										src={cb_logo}
 										alt="Your Company"
 									/>
 									<img
-										className="hidden h-8 w-auto lg:block"
-										src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=600"
+										className="hidden h-5 w-auto lg:block"
+										src={cb_logo}
 										alt="Your Company"
 									/>
 								</a>
