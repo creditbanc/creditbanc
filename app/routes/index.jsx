@@ -1827,7 +1827,7 @@ function LogoCloud() {
 				<div className="flex flex-col sm:flex-row gap-y-12 sm:grid-cols-2 sm:gap-x-6 lg:gap-x-8 mx-10">
 					{incentives.map((incentive) => (
 						<div key={incentive.name}>
-							<div className="flex flex-col h-[200px] justify-center items-center">
+							<div className="flex flex-col w-[200px] h-[200px] justify-center items-center m-auto">
 								<img
 									src={incentive.imageSrc}
 									alt=""
