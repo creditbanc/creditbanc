@@ -19,6 +19,8 @@ import CreditScoreDoughnut from "~/components/CreditScoreDoughnut";
 const shield_advisory_logo = "/images/logos/shield_advisory_group_logo.png";
 const liquid_lunch_logo = "/images/logos/liquid_lunch_logo.jpg";
 const the_weekly_logo = "/images/logos/the_weekly_logo.png";
+const cb_logo = "/images/logos/cb_logo_1.png";
+const cb_logo_3 = "/images/logos/cb_logo_3.png";
 
 function classNames(...classes) {
 	return classes.filter(Boolean).join(" ");
@@ -1875,11 +1877,7 @@ export default function LandingPage() {
 					<div className="flex lg:flex-1">
 						<a href="#" className="-m-1.5 p-1.5">
 							<span className="sr-only">Credit Banc</span>
-							<img
-								className="h-8 w-auto"
-								src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=600"
-								alt=""
-							/>
+							<img className="h-8 w-auto" src={cb_logo} alt="" />
 						</a>
 					</div>
 					<div className="flex lg:hidden">
@@ -2020,8 +2018,12 @@ export default function LandingPage() {
 								your business credit report. And sometimes you
 								need access to both.
 							</p> */}
-							<div className="font-bold text-[#55CF9E] text-6xl mb-3 -mt-3">
-								<div className="py-2">Credit Banc</div>
+							<div className="font-bold text-[#55CF9E] text-6xl mb-3 -mt-3 w-[80%] mx-auto">
+								{/* <div className="py-2">Credit Banc</div> */}
+								<img
+									src={cb_logo_3}
+									className="my-10 mt-20 mb-0"
+								/>
 							</div>
 							<p className="text-lg text-[#202536] max-w-4xl m-auto py-5 leading-8">
 								Credit Banc (pronounced like Bank, just spelled
