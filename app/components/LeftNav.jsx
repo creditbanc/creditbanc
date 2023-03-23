@@ -214,6 +214,7 @@ export default function LeftNav({ data = {}, can_manage_roles } = {}) {
 	const urlParams = new URLSearchParams(location.search.substring(1));
 	const params = Object.fromEntries(urlParams);
 	let fetcher = useFetcher();
+	const navigate = useNavigate();
 
 	// console.log("data");
 	// console.log(data);
@@ -224,7 +225,7 @@ export default function LeftNav({ data = {}, can_manage_roles } = {}) {
 
 	const onToggleNav = () => {
 		setCollapsed(!collapsed);
-		setSearchParams({ ...params, collapsed: !collapsed });
+		// setSearchParams({ ...params, collapsed: !collapsed });
 	};
 
 	const onDelete = async (file_id, e) => {
@@ -260,6 +261,19 @@ export default function LeftNav({ data = {}, can_manage_roles } = {}) {
 
 		// console.log("is_owner");
 		// console.log(is_owner);
+	};
+
+	const onSelectReport = (e, report_id) => {
+		e.preventDefault();
+		console.log("onSelectReport");
+		navigate(
+			"/credit/report/personal/personal" +
+				to_group_pathname(location.pathname) +
+				`/f/${report_id}` +
+				`?rand=${Math.random()}`,
+
+			{ replace: true }
+		);
 	};
 
 	return (
@@ -319,13 +333,10 @@ export default function LeftNav({ data = {}, can_manage_roles } = {}) {
 						{pipe(
 							defaultTo([]),
 							mapIndexed((report, idx) => (
-								<a
+								<div
 									key={idx}
-									href={
-										"/credit/personal/report/personal" +
-										to_group_pathname(location.pathname) +
-										`/f/${report.id}` +
-										location.search
+									onClick={(e) =>
+										onSelectReport(e, report.id)
 									}
 									className="border rounded-md text-sm py-1 px-2 cursor-pointer hover:border-indigo-400 flex flex-row justify-between my-2 text-gray-700 min-h-[30px]"
 								>
@@ -349,7 +360,7 @@ export default function LeftNav({ data = {}, can_manage_roles } = {}) {
 											<div>{report.state}</div>
 										</div>
 									</div>
-								</a>
+								</div>
 							))
 						)(data.personal_credit_reports)}
 					</div>

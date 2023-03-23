@@ -1,6 +1,6 @@
 import { UserIcon, ListBulletIcon } from "@heroicons/react/20/solid";
-import { useLocation } from "@remix-run/react";
-import { to_resource_pathname, get_route_endpoint } from "~/utils/helpers";
+import { Link, useLocation } from "@remix-run/react";
+import { to_resource_pathname } from "~/utils/helpers";
 
 function classNames(...classes) {
 	return classes.filter(Boolean).join(" ");
@@ -10,7 +10,7 @@ const tabs = [
 	{
 		name: "Personal",
 		href: ({ pathname = "", search = "" } = {}) =>
-			"/credit/personal/report/personal" +
+			"/credit/report/personal/personal" +
 			to_resource_pathname(pathname) +
 			search,
 		icon: UserIcon,
@@ -19,7 +19,7 @@ const tabs = [
 	{
 		name: "Accounts",
 		href: ({ pathname = "", search = "" } = {}) =>
-			"/credit/personal/report/accounts" +
+			"/credit/report/personal/accounts" +
 			to_resource_pathname(pathname) +
 			search,
 		icon: ListBulletIcon,
@@ -38,9 +38,9 @@ export default function PersonalCreditTabs({ selected = "Personal" }) {
 				aria-label="Tabs"
 			>
 				{tabs.map((tab) => (
-					<a
+					<Link
 						key={tab.name}
-						href={tab.href({
+						to={tab.href({
 							search: search_params,
 							pathname: location.pathname,
 						})}
@@ -61,7 +61,7 @@ export default function PersonalCreditTabs({ selected = "Personal" }) {
 							aria-hidden="true"
 						/>
 						<span>{tab.name}</span>
-					</a>
+					</Link>
 				))}
 			</nav>
 		</div>

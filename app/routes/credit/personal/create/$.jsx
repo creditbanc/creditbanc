@@ -125,6 +125,6 @@ export const loader = async ({ request }) => {
 	// console.log(report);
 
 	return redirect(
-		`/credit/personal/report/personal/resource/e/${entity_id}/g/${group_id}/f/${file.id}`
+		`/credit/report/personal/personal/resource/e/${entity_id}/g/${group_id}/f/${file.id}`
 	);
 };

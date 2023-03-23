@@ -21,7 +21,7 @@ export default function Tabs() {
 				<Link
 					className="flex flex-col border border-gray-300 rounded cursor-pointer p-[3px] fixed top-[15px] right-[10px]"
 					to={
-						"/credit/personal/report/personal" +
+						"/credit/report/personal/personal" +
 						to_resource_pathname(pathname)
 					}
 				>

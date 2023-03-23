@@ -179,7 +179,7 @@ function Panel({ is_open, setPanel, reports = {} }) {
 																				className="relative flex items-start ml-2"
 																				onClick={() =>
 																					onLinkClick(
-																						"/credit/personal/report/personal" +
+																						"/credit/report/personal/personal" +
 																							to_group_pathname(
 																								location.pathname
 																							) +
@@ -247,7 +247,7 @@ function Panel({ is_open, setPanel, reports = {} }) {
 													</fieldset>
 												</div>
 											</div>
-											<div className="absolute bottom-0 left-[15px] right-[15px] flex flex-col border-t pt-3">
+											{/* <div className="absolute bottom-0 left-[15px] right-[15px] flex flex-col border-t pt-3">
 												<Link
 													className="flex flex-row cursor-pointer w-[100px]"
 													to={
@@ -262,7 +262,7 @@ function Panel({ is_open, setPanel, reports = {} }) {
 													</div>
 													<div>Settings</div>
 												</Link>
-											</div>
+											</div> */}
 										</div>
 									</div>
 								</Dialog.Panel>
@@ -325,7 +325,7 @@ export default function Nav({
 									href="/"
 								>
 									<img
-										className="block h-5 w-auto lg:hidden"
+										className="hidden sm:block h-5 w-auto lg:hidden"
 										src={cb_logo}
 										alt="Your Company"
 									/>
@@ -420,7 +420,7 @@ export default function Nav({
 														</a>
 													)}
 												</Menu.Item>
-												<Menu.Item>
+												{/* <Menu.Item>
 													{({ active }) => (
 														<a
 															href="#"
@@ -434,7 +434,7 @@ export default function Nav({
 															Settings
 														</a>
 													)}
-												</Menu.Item>
+												</Menu.Item> */}
 												<Menu.Item>
 													{({ active }) => (
 														<Link

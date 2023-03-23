@@ -151,7 +151,7 @@ export default function Invite() {
 
 	const shareLink =
 		origin +
-		"/links/credit/personal/report/personal" +
+		"/links/report/credit/personal/personal" +
 		to_resource_pathname(location.pathname);
 
 	const onSelectRole = (role_id) => {

@@ -101,7 +101,7 @@ const build_group_path = ({ pathname, resource_id }) => {
 
 const build_file_path = ({ pathname, resource_id }) => {
 	return (
-		"/credit/personal/report/personal" +
+		"/credit/report/personal/personal" +
 		to_resource_pathname(pathname) +
 		`/f/${resource_id}`
 	);
