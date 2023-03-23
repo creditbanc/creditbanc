@@ -1,3 +1,5 @@
+const cb_logo = "/images/logos/cb_logo_5.png";
+
 export default function ComingSoon() {
 	return (
 		<>
@@ -7,13 +9,11 @@ export default function ComingSoon() {
 					alt=""
 					className="absolute inset-0 -z-10 h-full w-full object-cover object-top"
 				/>
-				<div className="mx-auto max-w-7xl px-6 py-32 text-center sm:py-40 lg:px-8">
-					<p className="text-base font-semibold leading-8 text-white">
-						Credit Banc
-					</p>
-					<h1 className="mt-4 text-3xl font-bold tracking-tight text-white sm:text-5xl">
+				<div className="mx-auto max-w-7xl px-6 py-32 flex flex-col items-center sm:py-40 lg:px-8">
+					<h3 className="mb-5 sm:mb-10  mt-4 text-3xl font-bold tracking-tight text-white sm:text-3xl">
 						Coming Soon
-					</h1>
+					</h3>
+					<img src={cb_logo} className="sm:w-[80%]" />
 
 					<div className="mt-10 flex justify-center">
 						<a
