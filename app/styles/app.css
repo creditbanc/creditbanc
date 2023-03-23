@@ -542,6 +542,10 @@ video {
   visibility: visible;
 }
 
+.invisible {
+  visibility: hidden;
+}
+
 .fixed {
   position: fixed;
 }
@@ -809,6 +813,11 @@ video {
   margin-bottom: 1rem;
 }
 
+.my-5 {
+  margin-top: 1.25rem;
+  margin-bottom: 1.25rem;
+}
+
 .my-\[10px\] {
   margin-top: 10px;
   margin-bottom: 10px;
@@ -817,11 +826,6 @@ video {
 .my-\[5px\] {
   margin-top: 5px;
   margin-bottom: 5px;
-}
-
-.my-5 {
-  margin-top: 1.25rem;
-  margin-bottom: 1.25rem;
 }
 
 .-mb-6 {
@@ -1186,26 +1190,6 @@ video {
 
 .h-full {
   height: 100%;
-}
-
-.h-\[80\%\] {
-  height: 80%;
-}
-
-.h-\[50\%\] {
-  height: 50%;
-}
-
-.h-\[10\%\] {
-  height: 10%;
-}
-
-.h-\[20\%\] {
-  height: 20%;
-}
-
-.h-\[15\%\] {
-  height: 15%;
 }
 
 .max-h-12 {
@@ -3221,6 +3205,14 @@ body {
 }
 
 @media (min-width: 640px) {
+  .sm\:visible {
+    visibility: visible;
+  }
+
+  .sm\:invisible {
+    visibility: hidden;
+  }
+
   .sm\:-bottom-64 {
     bottom: -16rem;
   }
@@ -3414,11 +3406,6 @@ body {
          column-gap: 2.5rem;
   }
 
-  .sm\:gap-x-6 {
-    -moz-column-gap: 1.5rem;
-         column-gap: 1.5rem;
-  }
-
   .sm\:gap-y-14 {
     row-gap: 3.5rem;
   }
@@ -3523,14 +3510,14 @@ body {
     line-height: 1.5rem;
   }
 
-  .sm\:text-sm {
-    font-size: 0.875rem;
-    line-height: 1.25rem;
-  }
-
   .sm\:text-lg {
     font-size: 1.125rem;
     line-height: 1.75rem;
+  }
+
+  .sm\:text-sm {
+    font-size: 0.875rem;
+    line-height: 1.25rem;
   }
 
   .sm\:leading-8 {

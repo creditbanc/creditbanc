@@ -3,7 +3,9 @@ import {
 	useSearchParams,
 	useLocation,
 	Link,
+	useHref,
 	useFetcher,
+	useNavigate,
 } from "@remix-run/react";
 import { useNavStore } from "~/stores/useNavStore";
 import { defaultTo, map, pipe } from "ramda";
@@ -12,6 +14,7 @@ import {
 	to_resource_pathname,
 	get_entity_id,
 	get_group_id,
+	mapIndexed,
 } from "~/utils/helpers";
 
 let ChevronLeftIcon = () => {
@@ -229,10 +232,10 @@ export default function LeftNav({ data = {}, can_manage_roles } = {}) {
 		e.preventDefault();
 		let entity_id = get_entity_id(location.pathname);
 		let group_id = get_group_id(location.pathname);
-		console.log("entity_id");
-		console.log(entity_id);
-		console.log("file_id");
-		console.log(file_id);
+		// console.log("entity_id");
+		// console.log(entity_id);
+		// console.log("file_id");
+		// console.log(file_id);
 		// let is_owner = await is_resource_owner_p({
 		// 	entity_id,
 		// 	file_id,
@@ -252,11 +255,11 @@ export default function LeftNav({ data = {}, can_manage_roles } = {}) {
 			}
 		);
 
-		console.log("delete_resource_url");
-		console.log(delete_resource_url);
+		// console.log("delete_resource_url");
+		// console.log(delete_resource_url);
 
-		console.log("is_owner");
-		console.log(is_owner);
+		// console.log("is_owner");
+		// console.log(is_owner);
 	};
 
 	return (
@@ -315,9 +318,9 @@ export default function LeftNav({ data = {}, can_manage_roles } = {}) {
 						</a>
 						{pipe(
 							defaultTo([]),
-							map((report) => (
+							mapIndexed((report, idx) => (
 								<a
-									key={report.id}
+									key={idx}
 									href={
 										"/credit/personal/report/personal" +
 										to_group_pathname(location.pathname) +
@@ -346,23 +349,6 @@ export default function LeftNav({ data = {}, can_manage_roles } = {}) {
 											<div>{report.state}</div>
 										</div>
 									</div>
-
-									{/* <div>Margot Foster</div> */}
-									{/* <div>FL</div> */}
-									{/* <a
-									className="border-l border-gray-200 cursor-pointer flex flex-row"
-									key={report.id}
-									href={
-										"/credit/personal/report/personal" +
-										to_group_pathname(location.pathname) +
-										`/f/${report.id}` +
-										location.search
-									}
-								>
-									<div className="text-sm mx-2 px-2 py-1 hover:bg-slate-100 rounded text-gray-700">
-										{truncate(17, report.id)}
-									</div>
-								</a> */}
 								</a>
 							))
 						)(data.personal_credit_reports)}

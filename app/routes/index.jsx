@@ -21,6 +21,7 @@ const liquid_lunch_logo = "/images/logos/liquid_lunch_logo.jpg";
 const the_weekly_logo = "/images/logos/the_weekly_logo.png";
 const cb_logo = "/images/logos/cb_logo_1.png";
 const cb_logo_3 = "/images/logos/cb_logo_3.png";
+const cb_logo_4 = "/images/logos/cb_logo_4.png";
 
 function classNames(...classes) {
 	return classes.filter(Boolean).join(" ");
@@ -1923,17 +1924,20 @@ export default function LandingPage() {
 					<div className="fixed inset-0 z-50" />
 					<Dialog.Panel className="fixed inset-y-0 right-0 z-50 w-full overflow-y-auto bg-white px-6 py-6 sm:max-w-sm sm:ring-1 sm:ring-gray-900/10">
 						<div className="flex items-center justify-between">
-							<a href="#" className="-m-1.5 p-1.5">
+							<a
+								href="#"
+								className="visible sm:invisible -m-1.5 p-1.5"
+							>
 								<span className="sr-only">Your Company</span>
 								<img
 									className="h-8 w-auto"
-									src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=600"
+									src={cb_logo_3}
 									alt=""
 								/>
 							</a>
 							<button
 								type="button"
-								className="-m-2.5 rounded-md p-2.5 text-gray-700"
+								className="-m-2.5 rounded-md p-2.5 text-gray-700 items-end"
 								onClick={() => setMobileMenuOpen(false)}
 							>
 								<span className="sr-only">Close menu</span>
