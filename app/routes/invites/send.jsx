@@ -4,21 +4,30 @@ import sendgrid from "@sendgrid/mail";
 sendgrid.setApiKey(process.env.SENDGRID);
 
 export const action = async ({ request }) => {
-	// console.log("teszzzz");
-	// console.log("onInvite");
-
 	const form = await request.formData();
 	const share_link = form.get("share_link");
 	const member_email = form.get("member_email");
-	console.log("member_email", member_email);
 
 	let invite_link = share_link + "&email=" + member_email;
 
 	const msg = {
-		from: "daniel@creditbanc.io",
+		from: "report@creditbanc.io",
 		to: `${member_email}`,
 		subject: "Someone just shared their credit report with you!",
-		text: "and easy to do anywhere, even with Node.js",
+		text: `
+			Someone has shared a credit report with you
+
+			${invite_link}
+
+			Here at Credit Banc, we’ve simplified the process so that our users can pull and monitor both their personal AND business credit - and share it with anyone who needs to have it. And that includes you. You now have real-time access to their information with just a few clicks. Pretty neat, huh? 
+
+			And if you’re thinking, “I wish it were always this easy to get my hands on a client’s credit history,” we tend to agree. That’s why we’ve set it up so you can monitor multiple reports all in one place. Simply log into your Credit Banc account for quick access to any client who shared their information with you.
+
+			But why stop here? Do yourself a favor and make your life (and the lives of your other clients) a bit simpler and direct them to Credit Banc the next time you need access to their credit reports. It takes less than 3 minutes, and everyone can get on with their day. You’re happy. They’re happy. Wham, bam, thank you, ma’am. (Or, sir.)
+
+			Work smarter, not harder, with Credit Banc. 
+			The Creditbanc Team
+		`,
 		html: `
 			<div style="width:100%; display:flex; flex-direction:column; align-items:center; ">
 				<div style=" width: 580px; border:1px solid #eee; display:flex-root; flex-direction:column; border-radius:5px; padding:20px;">
