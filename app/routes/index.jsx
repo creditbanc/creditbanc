@@ -1808,18 +1808,21 @@ const incentives = [
 		description:
 			"It's not actually free we just price it into the products. Someone's paying for it, and it's not uss.",
 		imageSrc: shield_advisory_logo,
+		href: "https://www.shieldadvisorygroup.com/",
 	},
 	{
 		name: "Liquid Lunch",
 		description:
 			"Our AI chat widget is powered by a naive series of if/else statements. Guaranteed to irritate.",
 		imageSrc: liquid_lunch_logo,
+		href: "https://www.theliquidlunchproject.com/",
 	},
 	{
 		name: "The Weekly",
 		description:
 			"Look how fast that cart is going. What does this mean for the actual experience? I don't know.",
 		imageSrc: the_weekly_logo,
+		href: "https://theweeklyfromshieldadvisory.substack.com/",
 	},
 ];
 
@@ -1831,15 +1834,19 @@ function LogoCloud() {
 					{incentives.map((incentive) => (
 						<div key={incentive.name}>
 							<div className="flex flex-col w-[200px] h-[200px] justify-center items-center m-auto">
-								<img
-									src={incentive.imageSrc}
-									alt=""
-									className="w-fit h-auto"
-								/>
+								<a href={incentive.href} target="_blank">
+									<img
+										src={incentive.imageSrc}
+										alt=""
+										className="w-fit h-auto"
+									/>
+								</a>
 							</div>
-							<h3 className="mt-6 text-sm font-medium text-gray-900">
-								{incentive.name}
-							</h3>
+							<a href={incentive.href} target="_blank">
+								<h3 className="mt-6 text-sm font-medium text-gray-900">
+									{incentive.name}
+								</h3>
+							</a>
 							<p className="mt-2 text-sm text-gray-500">
 								{incentive.description}
 							</p>
