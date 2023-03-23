@@ -1,20 +1,11 @@
-import { get_group_id, get_file_id, inspect } from "~/utils/helpers";
-import { get_user, get_user_id } from "~/utils/auth.server";
+import { get_group_id, get_file_id } from "~/utils/helpers";
+import { get_user_id } from "~/utils/auth.server";
 import { get_entity_roles, get_link_role } from "~/utils/resource.server";
 import { redirect } from "@remix-run/node";
 import { prisma } from "~/utils/prisma.server";
-import {
-	uniq,
-	map,
-	isEmpty,
-	flatten,
-	tryCatch,
-	always,
-	head,
-	pipe,
-} from "ramda";
-import { all, get, includes, filter as sfilter } from "shades";
-import { to_route_pathname, to_resource_pathname } from "~/utils/helpers";
+import { uniq, map, isEmpty, flatten, tryCatch, always, pipe } from "ramda";
+import { includes, filter as sfilter } from "shades";
+import { to_route_pathname } from "~/utils/helpers";
 
 const get_resource = async ({ resource_path_id }) => {
 	let resource = await prisma.resource.findFirst({
@@ -32,9 +23,6 @@ const add_subscriber_to_resource = async ({
 }) => {
 	let resource = await get_resource({ resource_path_id });
 	let { subscriber_ids } = resource;
-
-	// console.log("resource");
-	// console.log(resource);
 
 	return await prisma.resource.update({
 		where: { id: resource.id },
@@ -142,10 +130,7 @@ const create_entity_roles = async ({
 };
 
 const get_entity_group = async ({ entity_id }) => {
-	// console.log("get_entity_group");
-	// console.log(entity_id);
 	const entity = await prisma.entity.findFirst({ where: { id: entity_id } });
-
 	return entity.root_group_resource_path_id;
 };
 

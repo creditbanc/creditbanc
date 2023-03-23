@@ -167,7 +167,6 @@ export default function Invite() {
 	}, [roles]);
 
 	useEffect(() => {
-		// console.log("fetcherfetcherfetcher");
 		let roles = fetcher?.data?.roles;
 		if (roles) {
 			setRoles(roles);

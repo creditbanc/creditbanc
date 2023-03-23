@@ -3,19 +3,17 @@ import {
 	useSearchParams,
 	useLocation,
 	Link,
-	useHref,
 	useFetcher,
-	useNavigate,
 } from "@remix-run/react";
 import { useNavStore } from "~/stores/useNavStore";
 import { defaultTo, map, pipe } from "ramda";
 import {
 	to_group_pathname,
-	to_resource_pathname,
 	get_entity_id,
 	get_group_id,
 	mapIndexed,
 } from "~/utils/helpers";
+import Cookies from "js-cookie";
 
 let ChevronLeftIcon = () => {
 	return (
@@ -203,21 +201,13 @@ const NavCategory = ({ title, onToggleNav, icon: Icon, collapsed }) => {
 };
 
 export default function LeftNav({ data = {}, can_manage_roles } = {}) {
-	let [searchParams, setSearchParams] = useSearchParams();
-	let setCollapsed = useNavStore((state) => state.set_collapsed);
 	let collapesedNavClasses = `w-[60px]`;
 	let expandedNavClasses = `w-[220px]`;
-	let collapsed_param = searchParams.get("collapsed");
-	let collapsed = collapsed_param == "true" ? true : false;
+	let collapsed = useNavStore((state) => state.collapsed);
+	let setCollapsed = useNavStore((state) => state.set_collapsed);
 	let navClasses = collapsed ? collapesedNavClasses : expandedNavClasses;
 	let location = useLocation();
-	const urlParams = new URLSearchParams(location.search.substring(1));
-	const params = Object.fromEntries(urlParams);
 	let fetcher = useFetcher();
-	const navigate = useNavigate();
-
-	// console.log("data");
-	// console.log(data);
 
 	useEffect(() => {
 		setCollapsed(collapsed);
@@ -225,7 +215,6 @@ export default function LeftNav({ data = {}, can_manage_roles } = {}) {
 
 	const onToggleNav = () => {
 		setCollapsed(!collapsed);
-		// setSearchParams({ ...params, collapsed: !collapsed });
 	};
 
 	const onDelete = async (file_id, e) => {
@@ -261,19 +250,6 @@ export default function LeftNav({ data = {}, can_manage_roles } = {}) {
 
 		// console.log("is_owner");
 		// console.log(is_owner);
-	};
-
-	const onSelectReport = (e, report_id) => {
-		e.preventDefault();
-		console.log("onSelectReport");
-		navigate(
-			"/credit/report/personal/personal" +
-				to_group_pathname(location.pathname) +
-				`/f/${report_id}` +
-				`?rand=${Math.random()}`,
-
-			{ replace: true }
-		);
 	};
 
 	return (
@@ -314,9 +290,9 @@ export default function LeftNav({ data = {}, can_manage_roles } = {}) {
 
 				{!collapsed && (
 					<div className="pl-2 whitespace-nowrap">
-						<a
+						<Link
 							className="border-gray-200 cursor-pointer flex flex-row border rounded-md hover:border-indigo-400"
-							href={
+							to={
 								"/credit/personal/new" +
 								to_group_pathname(location.pathname)
 							}
@@ -329,14 +305,17 @@ export default function LeftNav({ data = {}, can_manage_roles } = {}) {
 									</div>
 								</div>
 							</div>
-						</a>
+						</Link>
 						{pipe(
 							defaultTo([]),
 							mapIndexed((report, idx) => (
-								<div
+								<Link
 									key={idx}
-									onClick={(e) =>
-										onSelectReport(e, report.id)
+									to={
+										"/credit/report/personal/personal" +
+										to_group_pathname(location.pathname) +
+										`/f/${report.id}` +
+										`?rand=${Math.random()}`
 									}
 									className="border rounded-md text-sm py-1 px-2 cursor-pointer hover:border-indigo-400 flex flex-row justify-between my-2 text-gray-700 min-h-[30px]"
 								>
@@ -360,7 +339,7 @@ export default function LeftNav({ data = {}, can_manage_roles } = {}) {
 											<div>{report.state}</div>
 										</div>
 									</div>
-								</div>
+								</Link>
 							))
 						)(data.personal_credit_reports)}
 					</div>
@@ -394,33 +373,19 @@ export default function LeftNav({ data = {}, can_manage_roles } = {}) {
 						{pipe(
 							defaultTo([]),
 							map((report) => (
-								<a
+								<Link
 									key={report.id}
-									href={
-										"/credit/business/report" +
-										to_resource_pathname(
-											location.pathname
-										) +
-										location.search
+									to={
+										"/credit/report/business/personal" +
+										to_group_pathname(location.pathname) +
+										`/f/${report.id}` +
+										`?rand=${Math.random()}`
 									}
 									className="border rounded-md text-sm py-1 px-2 cursor-pointer hover:border-indigo-400 flex flex-row justify-between my-2 text-gray-700"
 								>
 									<div>Margot F</div>
 									<div>FL</div>
-								</a>
-								// <Link
-								// 	className="border-l border-gray-200 cursor-pointer flex flex-row"
-								// 	key={report.id}
-								// 	to={
-								// 		"/credit/business/report" +
-								// 		to_resource_pathname(location.pathname) +
-								// 		location.search
-								// 	}
-								// >
-								// 	<div className="text-sm mx-2 px-2 py-1 hover:bg-slate-100 rounded text-gray-700">
-								// 		{truncate(17, report.id)}
-								// 	</div>
-								// </Link>
+								</Link>
 							))
 						)(data.business_credit_reports)}
 					</div>
