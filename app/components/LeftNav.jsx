@@ -1,10 +1,5 @@
 import { useEffect, useState } from "react";
-import {
-	useSearchParams,
-	useLocation,
-	Link,
-	useFetcher,
-} from "@remix-run/react";
+import { useLocation, Link, useFetcher } from "@remix-run/react";
 import { useNavStore } from "~/stores/useNavStore";
 import { defaultTo, map, pipe } from "ramda";
 import {
@@ -13,7 +8,6 @@ import {
 	get_group_id,
 	mapIndexed,
 } from "~/utils/helpers";
-import Cookies from "js-cookie";
 
 let ChevronLeftIcon = () => {
 	return (
