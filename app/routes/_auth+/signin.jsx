@@ -4,6 +4,7 @@ import { signin } from "../../utils/auth.server";
 import { Form, useSubmit, useActionData } from "@remix-run/react";
 import { json, redirect } from "@remix-run/node";
 import { get_user } from "../../utils/auth.server";
+const cb_logo = "/images/logos/cb_logo_3.png";
 
 export const loader = async ({ request }) => {
 	return (await get_user(request)) ? redirect("/root") : null;
@@ -48,7 +49,7 @@ export default function SignIn() {
 					<div>
 						<img
 							className="h-12 w-auto"
-							src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=600"
+							src={cb_logo}
 							alt="Your Company"
 						/>
 						<h2 className="my-2 mt-6 text-xl font-bold text-[#55CF9E]">
