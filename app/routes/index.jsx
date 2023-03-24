@@ -19,9 +19,7 @@ import CreditScoreDoughnut from "~/components/CreditScoreDoughnut";
 const shield_advisory_logo = "/images/logos/shield_advisory_group_logo.png";
 const liquid_lunch_logo = "/images/logos/liquid_lunch_logo.jpg";
 const the_weekly_logo = "/images/logos/the_weekly_logo.png";
-const cb_logo = "/images/logos/cb_logo_1.png";
 const cb_logo_3 = "/images/logos/cb_logo_3.png";
-const cb_logo_4 = "/images/logos/cb_logo_4.png";
 
 function classNames(...classes) {
 	return classes.filter(Boolean).join(" ");
