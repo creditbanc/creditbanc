@@ -1830,9 +1830,9 @@ function LogoCloud() {
 	return (
 		<div className="bg-white">
 			<div className="mx-auto max-w-2xl px-4 sm:px-6 lg:max-w-7xl lg:px-8">
-				<div className="flex flex-col sm:flex-row  mx-10 justify-center">
+				<div className="flex flex-col sm:flex-row justify-center">
 					{incentives.map((incentive) => (
-						<div key={incentive.name}>
+						<div key={incentive.name} className="mx-2">
 							<div className="flex flex-col w-[200px] h-[200px] justify-center items-center m-auto">
 								<a href={incentive.href} target="_blank">
 									<img
