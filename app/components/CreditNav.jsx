@@ -97,8 +97,8 @@ const SettingsIcon = () => {
 };
 
 const Reports = ({ reports }) => {
-	console.log("reports");
-	console.log(reports);
+	// console.log("reports");
+	// console.log(reports);
 
 	let location = useLocation();
 
@@ -107,7 +107,7 @@ const Reports = ({ reports }) => {
 			{pipe(
 				mapIndexed((report, idx) => (
 					<Link
-						className="relative flex flex-col items-start border rounded hover:border-indigo-500"
+						className="relative flex flex-col items-start border rounded hover:border-indigo-500 my-2"
 						to={
 							"/credit/report/personal/personal" +
 							to_group_pathname(location.pathname) +
@@ -211,7 +211,7 @@ function Panel({ is_open, setPanel, reports = {} }) {
 																</div>
 															</div>
 
-															<div className="py-5">
+															<div className="py-3">
 																<Reports
 																	reports={
 																		reports.personal_credit_reports
