@@ -7,7 +7,7 @@ import {
 	to_group_pathname,
 	to_resource_pathname,
 } from "~/utils/helpers";
-import { isEmpty, map, pipe } from "ramda";
+import { isEmpty, pipe } from "ramda";
 import { useModalStore } from "~/hooks/useModal";
 const cb_logo = "/images/logos/cb_logo_3.png";
 
@@ -96,12 +96,55 @@ const SettingsIcon = () => {
 	);
 };
 
-function Panel({ is_open, setPanel, reports = {} }) {
+const Reports = ({ reports }) => {
+	console.log("reports");
+	console.log(reports);
+
 	let location = useLocation();
 
-	const onLinkClick = (url) => {
-		window.location.href = url;
-	};
+	return (
+		<div>
+			{pipe(
+				mapIndexed((report, idx) => (
+					<Link
+						className="relative flex flex-col items-start border rounded hover:border-indigo-500"
+						to={
+							"/credit/report/personal/personal" +
+							to_group_pathname(location.pathname) +
+							`/f/${report.id}` +
+							location.search
+						}
+						key={idx}
+					>
+						<div className="text-sm p-2 py-2 font-medium text-gray-500 flex flex-col w-full">
+							<div className="flex flex-row w-full justify-between mb-1">
+								<div className="flex flex-row text-[#374151]">
+									<div>{report.last_name}</div>
+									<div>,</div>
+									<div className="ml-1">
+										{report.first_name}
+									</div>
+								</div>
+								<div className="delete"></div>
+							</div>
+							<div className="flex flex-row justify-between text-xs">
+								<div>{report.city}</div>
+								<div>{report.state}</div>
+							</div>
+						</div>
+					</Link>
+				))
+			)(reports)}
+		</div>
+	);
+};
+
+function Panel({ is_open, setPanel, reports = {} }) {
+	// let location = useLocation();
+
+	// const onLinkClick = (url) => {
+	// 	window.location.href = url;
+	// };
 
 	if (isEmpty(reports)) {
 		return <div></div>;
@@ -169,41 +212,11 @@ function Panel({ is_open, setPanel, reports = {} }) {
 															</div>
 
 															<div className="py-5">
-																{pipe(
-																	mapIndexed(
-																		(
-																			report,
-																			idx
-																		) => (
-																			<div
-																				className="relative flex items-start ml-2"
-																				onClick={() =>
-																					onLinkClick(
-																						"/credit/report/personal/personal" +
-																							to_group_pathname(
-																								location.pathname
-																							) +
-																							`/f/${report.id}` +
-																							location.search
-																					)
-																				}
-																				key={
-																					idx
-																				}
-																			>
-																				<div className="text-sm border-l pl-2 py-2">
-																					<div className="font-medium text-gray-500 cursor-pointer">
-																						{
-																							report.id
-																						}
-																					</div>
-																				</div>
-																			</div>
-																		)
-																	)
-																)(
-																	reports.personal_credit_reports
-																)}
+																<Reports
+																	reports={
+																		reports.personal_credit_reports
+																	}
+																/>
 															</div>
 
 															<div className="flex flex-row">
