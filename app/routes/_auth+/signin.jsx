@@ -5,6 +5,7 @@ import { Form, useSubmit, useActionData } from "@remix-run/react";
 import { json, redirect } from "@remix-run/node";
 import { get_user } from "../../utils/auth.server";
 const cb_logo = "/images/logos/cb_logo_3.png";
+const bg = "/images/credit_banc_auth_bg.png";
 
 export const loader = async ({ request }) => {
 	return (await get_user(request)) ? redirect("/root") : null;
@@ -165,8 +166,7 @@ export default function SignIn() {
 			<div className="relative hidden w-0 flex-1 lg:block">
 				<img
 					className="absolute inset-0 h-full w-full object-cover"
-					src="https://images.unsplash.com/photo-1505904267569-f02eaeb45a4c?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1908&q=80"
-					alt=""
+					src={bg}
 				/>
 			</div>
 		</div>
