@@ -404,7 +404,7 @@ const Heading = () => {
 					<p className="text-lg font-semibold text-[#202536] mt-6">
 						We don’t need your firstborn, a blood sample, or a DNA
 						swab, but we need to know what to call you and how to
-						reach you
+						reach you.
 					</p>
 				</div>
 			</div>

@@ -275,7 +275,8 @@ const Heading = () => {
 			<div className="mx-auto max-w-7xl py-4 pb-6 px-2">
 				<div className="text-center">
 					<p className="mt-1 text-3xl font-bold tracking-tight text-[#55CF9E]">
-						We just need to make sure you’re a real person
+						Almost there; We just need to make sure you’re a real
+						person.
 					</p>
 					<p className="text-lg font-semibold text-[#202536] mt-3">
 						No hard feelings?
