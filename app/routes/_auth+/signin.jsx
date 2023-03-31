@@ -59,17 +59,15 @@ export default function SignIn() {
 						<h2 className="my-3 text-3xl font-bold text-[#202536]">
 							Sign in below to access your account
 						</h2>
-						<p className="mt-2 text-sm text-gray-600 underline">
+						<p className="mt-2 text-sm text-gray-600 ">
+							First time here? Click{" "}
 							<a
 								href="/signup"
-								className="font-medium text-indigo-600 hover:text-indigo-500"
+								className="font-medium text-indigo-600 hover:text-indigo-500 underline"
 							>
-								<p>
-									Or If you’re new here, nice to meet ya!
-									Click
-								</p>
-								here to start your 14-day free trial
-							</a>
+								this link
+							</a>{" "}
+							to start your 14-day free trial!
 						</p>
 					</div>
 
