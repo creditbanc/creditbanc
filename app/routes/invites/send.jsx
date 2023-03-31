@@ -1,9 +1,14 @@
 import { json } from "@remix-run/node";
 import sendgrid from "@sendgrid/mail";
+import { get_user } from "~/utils/auth.server";
 
 sendgrid.setApiKey(process.env.SENDGRID);
 
 export const action = async ({ request }) => {
+	const entity = await get_user(request);
+	console.log("send_invite");
+	console.log(entity);
+	return null;
 	const form = await request.formData();
 	const share_link = form.get("share_link");
 	const member_email = form.get("member_email");

@@ -2,7 +2,7 @@ import { useState } from "react";
 import CreditNav from "~/components/CreditNav";
 import InputField from "~/components/InputField";
 import { useSubmit } from "@remix-run/react";
-import { get_user_id, signup } from "../../utils/auth.server";
+import { signup } from "../../utils/auth.server";
 import { create } from "zustand";
 import CreditHeroGradient from "~/components/CreditHeroGradient";
 import { pipe } from "ramda";
@@ -11,10 +11,13 @@ import { redirect } from "@remix-run/node";
 
 const useForm = create((set) => ({
 	form: {
-		name: "",
+		first_name: "",
+		last_name: "",
 		email: "",
 		password: "",
 	},
+	has_accepted_tc: false,
+	setTc: (value) => set({ has_accepted_tc: value }),
 	setForm: (path, value) =>
 		set((state) => pipe(mod("form", ...path)(() => value))(state)),
 }));
@@ -33,6 +36,8 @@ export async function action({ request }) {
 
 	const email = form.get("email");
 	const password = form.get("password");
+	const first_name = form.get("first_name");
+	const last_name = form.get("last_name");
 
 	// console.log("formform");
 	// console.log(email);
@@ -44,11 +49,18 @@ export async function action({ request }) {
 
 	if (!displayToken) {
 		// console.log("yesDisplayToken");
-		return await signup({ email, password });
+		return await signup({ email, password, first_name, last_name });
 	} else {
 		// console.log("noDisplayToken");
 		let redirect_to = `/credit/personal/create?${url.searchParams.toString()}`;
-		return await signup({ email, password, redirect_to, new_entity: true });
+		return await signup({
+			email,
+			password,
+			first_name,
+			last_name,
+			redirect_to,
+			new_entity: true,
+		});
 	}
 }
 
@@ -57,6 +69,8 @@ const Form = () => {
 	const setForm = useForm((state) => state.setForm);
 	const email = useForm((state) => state.form.firstName);
 	const password = useForm((state) => state.form.lastName);
+	const has_accepted_tc = useForm((state) => state.has_accepted_tc);
+	const setTc = useForm((state) => state.setTc);
 	const submit = useSubmit();
 
 	const onSubmit = (e) => {
@@ -76,7 +90,7 @@ const Form = () => {
 						htmlFor="email"
 						className="block text-sm font-medium text-gray-700"
 					>
-						Name
+						First Name
 					</label>
 					<div className="mt-1">
 						<input
@@ -86,7 +100,31 @@ const Form = () => {
 							autoComplete="name"
 							className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm border h-[38px] pl-2"
 							value={email}
-							onChange={(e) => setForm(["name"], e.target.value)}
+							onChange={(e) =>
+								setForm(["first_name"], e.target.value)
+							}
+						/>
+					</div>
+				</div>
+
+				<div className="sm:col-span-6">
+					<label
+						htmlFor="email"
+						className="block text-sm font-medium text-gray-700"
+					>
+						Last Name
+					</label>
+					<div className="mt-1">
+						<input
+							type="name"
+							name="name"
+							id="name"
+							autoComplete="name"
+							className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm border h-[38px] pl-2"
+							value={email}
+							onChange={(e) =>
+								setForm(["last_name"], e.target.value)
+							}
 						/>
 					</div>
 				</div>
@@ -163,6 +201,8 @@ const Form = () => {
 							name="comments"
 							type="checkbox"
 							className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600 cursor-pointer"
+							checked={has_accepted_tc}
+							onChange={(e) => setTc(e.target.checked)}
 						/>
 					</div>
 					<a
@@ -180,7 +220,11 @@ const Form = () => {
 							id="comments-description"
 							className="text-gray-500"
 						>
-							I accept the terms and conditions.
+							I accept the{" "}
+							<a href="/tc" className="text-blue-700 underline">
+								terms and conditions
+							</a>
+							.
 						</span>
 					</a>
 				</div>
@@ -188,8 +232,16 @@ const Form = () => {
 
 			<div className="flex flex-row w-full justify-center pt-3">
 				<button
+					disabled={!has_accepted_tc}
 					type="submit"
-					className="w-full inline-flex justify-center rounded-md border border-transparent bg-[#55CF9E] py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-[#55CF9E] focus:outline-none focus:ring-2 focus:ring-[#55CF9E] focus:ring-offset-2"
+					className={`w-full inline-flex justify-center rounded-md border border-transparent  py-2 px-4 text-sm font-medium text-white shadow-sm ${
+						has_accepted_tc &&
+						"bg-[#55CF9E] hover:bg-[#55CF9E] focus:ring-[#55CF9E]"
+					} ${
+						!has_accepted_tc &&
+						"bg-gray-300 hover:bg-gray-300 focus:ring-gray-300"
+					}
+					focus:outline-none focus:ring-2  focus:ring-offset-2`}
 				>
 					Sign me up
 				</button>

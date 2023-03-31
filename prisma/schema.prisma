@@ -23,6 +23,8 @@ model Entity {
   root_resource_id                String?    @db.ObjectId
   root_partition_resource_path_id String?    @db.ObjectId
   root_group_resource_path_id     String?    @db.ObjectId
+  first_name                      String?
+  last_name                       String?
 }
 
 // the mental model is:

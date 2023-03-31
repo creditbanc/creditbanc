@@ -29,6 +29,8 @@ export const signup = async ({
 	password,
 	redirect_to = "/root",
 	new_entity = false,
+	first_name,
+	last_name,
 }) => {
 	// console.log("signup");
 	// console.log("email", email);
@@ -45,7 +47,12 @@ export const signup = async ({
 		);
 	}
 
-	const entity = await create_user({ email, password });
+	const entity = await create_user({
+		email,
+		password,
+		first_name,
+		last_name,
+	});
 
 	if (!entity) {
 		return json(
@@ -253,7 +260,7 @@ export const get_user = async (request) => {
 	try {
 		const user = await prisma.entity.findUnique({
 			where: { id: user_id },
-			select: { id: true, email: true },
+			// select: { id: true, email: true, name: true },
 		});
 		return user;
 	} catch {
