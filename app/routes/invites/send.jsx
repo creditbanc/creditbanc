@@ -6,19 +6,22 @@ sendgrid.setApiKey(process.env.SENDGRID);
 
 export const action = async ({ request }) => {
 	const entity = await get_user(request);
-	console.log("send_invite");
-	console.log(entity);
-	return null;
+	// console.log("send_invite");
+	// console.log(entity);
+	// return null;
 	const form = await request.formData();
 	const share_link = form.get("share_link");
 	const member_email = form.get("member_email");
+	const first_name = entity.first_name;
 
 	let invite_link = share_link + "&email=" + member_email;
 
 	const msg = {
 		from: "report@creditbanc.io",
 		to: `${member_email}`,
-		subject: "Someone just shared their credit report with you!",
+		subject: first_name
+			? `${first_name} just shared their credit report with you!`
+			: "Someone just shared their credit report with you!",
 		text: `
 			Someone has shared a credit report with you
 
