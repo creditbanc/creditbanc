@@ -1800,25 +1800,25 @@ function FooterTwo() {
 	);
 }
 
-const incentives = [
+const logo_cloud = [
 	{
 		name: "Shield Advisory Group",
 		description:
-			"It's not actually free we just price it into the products. Someone's paying for it, and it's not uss.",
+			"Always informative. Always entertaining. Join The Weekly mailing list and stay up to date on all things small-biz, finance, tech, and more. (This goes underneath The Weekly)",
 		imageSrc: shield_advisory_logo,
 		href: "https://www.shieldadvisorygroup.com/",
 	},
 	{
 		name: "Liquid Lunch",
 		description:
-			"Our AI chat widget is powered by a naive series of if/else statements. Guaranteed to irritate.",
+			"Empowering small business owners with the tools, resources, and solutions they need to grow and scale. (This goes underneath Shield Advisory Group)",
 		imageSrc: liquid_lunch_logo,
 		href: "https://www.theliquidlunchproject.com/",
 	},
 	{
 		name: "The Weekly",
 		description:
-			"Look how fast that cart is going. What does this mean for the actual experience? I don't know.",
+			"A masterclass in entrepreneurship for those who want to get shit done. Subscribe to The Liquid Lunch Project Podcast for your number one resource on building and funding successful businesses for today’s economy. (This goes underneath the Liquid Lunch)",
 		imageSrc: the_weekly_logo,
 		href: "https://theweeklyfromshieldadvisory.substack.com/",
 	},
@@ -1829,8 +1829,8 @@ function LogoCloud() {
 		<div className="bg-white">
 			<div className="mx-auto max-w-2xl px-4 sm:px-6 lg:max-w-7xl lg:px-8">
 				<div className="flex flex-col sm:flex-row justify-center">
-					{incentives.map((incentive) => (
-						<div key={incentive.name} className="mx-2">
+					{logo_cloud.map((incentive) => (
+						<div key={incentive.name} className="mx-2 w-1/3">
 							<div className="flex flex-col w-[200px] h-[200px] justify-center items-center m-auto">
 								<a href={incentive.href} target="_blank">
 									<img
@@ -1841,7 +1841,7 @@ function LogoCloud() {
 								</a>
 							</div>
 							<a href={incentive.href} target="_blank">
-								<h3 className="mt-6 text-sm font-medium text-gray-900">
+								<h3 className="text-sm font-medium text-gray-900">
 									{incentive.name}
 								</h3>
 							</a>
@@ -2163,7 +2163,7 @@ export default function LandingPage() {
 						))}
 					</div>
 				</div>
-				<div className="py-14">
+				<div className="pb-14">
 					<LogoCloud />
 				</div>
 				<div>
