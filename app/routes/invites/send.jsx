@@ -1,6 +1,7 @@
 import { json } from "@remix-run/node";
 import sendgrid from "@sendgrid/mail";
 import { get_user } from "~/utils/auth.server";
+const cb_logo = "/images/logos/cb_logo_3.png";
 
 sendgrid.setApiKey(process.env.SENDGRID);
 
@@ -68,6 +69,10 @@ export const action = async ({ request }) => {
 
 					<div style="margin: 5px 10px;">
 						The Creditbanc Team
+					</div>
+
+					<div>
+						<img src="http://creditbanc.io/images/logos/cb_logo_3.png" style="width: 100px;  margin: 10px 10px; display: block;" />
 					</div>
 				</div>
 			</div>
