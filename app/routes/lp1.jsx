@@ -33,53 +33,6 @@ const navigation = [
 	{ name: "CB University", href: "/comingsoon" },
 ];
 
-const tiers = [
-	{
-		name: "Personal Credit Report",
-		id: "personal",
-		href: "/credit/personal/new",
-		priceMonthly: "$40",
-		description: "The essentials to provide your best work for clients.",
-		features: [
-			"5 products",
-			"Up to 1,000 subscribers",
-			"Basic analytics",
-			"48-hour support response time",
-		],
-		mostPopular: false,
-	},
-	{
-		name: "Business & Personal Credit Report",
-		id: "personal_business",
-		href: "#",
-		priceMonthly: "$50",
-		description: "A plan that scales with your rapidly growing business.",
-		features: [
-			"25 products",
-			"Up to 10,000 subscribers",
-			"Advanced analytics",
-			"24-hour support response time",
-			"Marketing automations",
-		],
-		mostPopular: true,
-	},
-	{
-		name: "Business Credit Report",
-		id: "business",
-		href: "/credit/business/new",
-		priceMonthly: "$40",
-		description: "Dedicated support and infrastructure for your company.",
-		features: [
-			"Unlimited products",
-			"Unlimited subscribers",
-			"Advanced analytics",
-			"1-hour, dedicated support response time",
-			"Marketing automations",
-		],
-		mostPopular: false,
-	},
-];
-
 const footerNavigation = [
 	{
 		name: "Facebook",
@@ -167,62 +120,6 @@ function FooterTwo() {
 				</div>
 			</div>
 		</footer>
-	);
-}
-
-const logo_cloud = [
-	{
-		name: "Shield Advisory Group",
-		description:
-			"Always informative. Always entertaining. Join The Weekly mailing list and stay up to date on all things small-biz, finance, tech, and more. (This goes underneath The Weekly)",
-		imageSrc: shield_advisory_logo,
-		href: "https://www.shieldadvisorygroup.com/",
-	},
-	{
-		name: "Liquid Lunch",
-		description:
-			"Empowering small business owners with the tools, resources, and solutions they need to grow and scale. (This goes underneath Shield Advisory Group)",
-		imageSrc: liquid_lunch_logo,
-		href: "https://www.theliquidlunchproject.com/",
-	},
-	{
-		name: "The Weekly",
-		description:
-			"A masterclass in entrepreneurship for those who want to get shit done. Subscribe to The Liquid Lunch Project Podcast for your number one resource on building and funding successful businesses for today’s economy. (This goes underneath the Liquid Lunch)",
-		imageSrc: the_weekly_logo,
-		href: "https://theweeklyfromshieldadvisory.substack.com/",
-	},
-];
-
-function LogoCloud() {
-	return (
-		<div className="bg-white">
-			<div className="mx-auto max-w-2xl px-4 sm:px-6 lg:max-w-7xl lg:px-8">
-				<div className="flex flex-col sm:flex-row justify-center">
-					{logo_cloud.map((incentive) => (
-						<div key={incentive.name} className="mx-2 w-1/3">
-							<div className="flex flex-col w-[200px] h-[200px] justify-center items-center m-auto">
-								<a href={incentive.href} target="_blank">
-									<img
-										src={incentive.imageSrc}
-										alt=""
-										className="w-fit h-auto"
-									/>
-								</a>
-							</div>
-							<a href={incentive.href} target="_blank">
-								<h3 className="text-sm font-medium text-gray-900">
-									{incentive.name}
-								</h3>
-							</a>
-							<p className="mt-2 text-sm text-gray-500">
-								{incentive.description}
-							</p>
-						</div>
-					))}
-				</div>
-			</div>
-		</div>
 	);
 }
 
@@ -356,27 +253,12 @@ export default function LandingPage() {
 							<Single />
 						</div>
 					</div>
-					<div className="mx-auto max-w-7xl px-6 lg:px-8">
+					<div className="mx-auto max-w-7xl px-6 lg:px-8 py-5">
 						<div className="mx-auto max-w-5xl text-center ">
-							{/* <div className="font-bold text-2xl text-[#55CF9E]">
-								<div className="py-2">
-									Let’s cut to the chase
-								</div>
-							</div>
-							<p className="text-lg leading-8 text-[#202536]">
-								Sometimes, you need access to your personal
-								credit report. Sometimes, you need access to
-								your business credit report. And sometimes you
-								need access to both.
-							</p> */}
 							<div className="font-bold text-[#55CF9E] text-6xl mb-3 -mt-3 w-[80%] mx-auto">
-								{/* <div className="py-2">Credit Banc</div> */}
-								<img
-									src={cb_logo_3}
-									className="my-10 mt-20 mb-0"
-								/>
+								<img src={cb_logo_3} className="mb-0" />
 							</div>
-							<p className="text-xs sm:text-lg text-[#202536] max-w-4xl m-auto py-5 leading-6 sm:leading-8">
+							{/* <p className="text-xs sm:text-lg text-[#202536] max-w-4xl m-auto py-5 leading-6 sm:leading-8">
 								Credit Banc (pronounced like Bank, just spelled
 								fancy) is the simple, one-stop-shop where you
 								can access, monitor, and share real-time data
@@ -385,99 +267,58 @@ export default function LandingPage() {
 								officers, accountants, etc.) It’s so genius
 								we’re kind of surprised nobody thought of it
 								sooner.
-							</p>
-							<p className="sm:text-lg text-[#202536] font-bold">
+							</p> */}
+							{/* <p className="sm:text-lg text-[#202536] font-bold">
 								Pick your plan, and we’ll do the rest.
-							</p>
+							</p> */}
+						</div>
+					</div>
+					<div className="flex flex-col items-center my-10">
+						<div className="flex flex-row max-w-7xl w-full">
+							<div className="flex flex-col w-3/5 space-y-10">
+								<div className="text-5xl text-gray-700 font-semibold">
+									Your Experian Credit Report and FICO® Score*
+									are completely free.
+								</div>
+
+								<div className="text-2xl text-gray-700">
+									No credit card required. Your free report
+									and score are updated every 30 days on sign
+									in.
+								</div>
+
+								<div className="cta_lp1_top bg-[#55CF9E] px-5 py-5 flex flex-col items-center rounded-lg cursor-pointer">
+									<div className="text-white text-2xl">
+										Get your Free Credit Report and FICO
+										score
+									</div>
+								</div>
+
+								<div>
+									*Credit score calculated based on FICO®
+									Score 8 model. Your lender or insurer may
+									use a different FICO® Score than FICO® Score
+									8, or another type of credit score
+									altogether.
+								</div>
+							</div>
+							<div className="flex flex-col w-2/5">
+								<div className="relative h-[610px] ml-[30%]">
+									<img
+										className="z-10 absolute top-[80px] left-[35px]"
+										alt=""
+										src="https://assets.experiancs.com/fcr/images/graphic-phone-fcr-summary.png"
+									/>
+									<img
+										className="absolute top-0 left-0"
+										src="https://assets.experiancs.com/fcr/images/com-phone.png?hs=48a6600747394091f28b3e74af0d3f1c"
+									/>
+								</div>
+							</div>
 						</div>
 					</div>
 				</div>
 
-				<div className="mx-auto max-w-7xl px-6 lg:px-8 -mt-[40px]">
-					<div className="isolate mx-auto mt-16 grid max-w-xl grid-cols-1 gap-y-8 lg:mx-0 lg:max-w-none lg:grid-cols-3">
-						{tiers.map((tier, tierIdx) => (
-							<div
-								key={tier.id}
-								className={classNames(
-									tier.mostPopular
-										? "lg:z-10 lg:rounded-b-none"
-										: "lg:mt-8",
-									tierIdx === 0 ? "lg:rounded-r-none" : "",
-									tierIdx === tiers.length - 1
-										? "lg:rounded-l-none"
-										: "",
-									"flex flex-col justify-between rounded-3xl bg-white p-8 ring-1 ring-gray-200 xl:p-10"
-								)}
-							>
-								<div>
-									<div className="flex justify-between gap-x-4">
-										<h3
-											id={tier.id}
-											className={classNames(
-												tier.mostPopular
-													? "text-[#55CF9E]"
-													: "text-gray-900",
-												"text-lg font-semibold"
-											)}
-										>
-											{tier.name}
-										</h3>
-										{tier.mostPopular ? (
-											<div className="w-[175px]">
-												<div className="rounded-full bg-indigo-300/10 text-xs font-semibold text-[#55CF9E] flex flex-row items-center justify-center mt-2 py-1">
-													Most popular
-												</div>
-											</div>
-										) : null}
-									</div>
-									<p className="mt-4 text-sm leading-6 text-gray-600">
-										{tier.description}
-									</p>
-									<p className="mt-6 flex items-baseline gap-x-1">
-										<span className="text-4xl font-bold tracking-tight text-gray-900">
-											{tier.priceMonthly}
-										</span>
-										<span className="text-sm font-semibold leading-6 text-gray-600">
-											/month
-										</span>
-									</p>
-									<ul
-										role="list"
-										className="mt-8 space-y-3 text-sm leading-6 text-gray-600"
-									>
-										{tier.features.map((feature) => (
-											<li
-												key={feature}
-												className="flex gap-x-3"
-											>
-												<CheckIcon
-													className="h-6 w-5 flex-none text-[#55CF9E]"
-													aria-hidden="true"
-												/>
-												{feature}
-											</li>
-										))}
-									</ul>
-								</div>
-								<a
-									href={tier.href}
-									aria-describedby={tier.id}
-									className={classNames(
-										tier.mostPopular
-											? "bg-[#55CF9E] text-white shadow-sm hover:bg-[#55CF9E]"
-											: "text-[#55CF9E] ring-1 ring-inset ring-[#55CF9E] hover:ring-[#55CF9E]",
-										"mt-8 block rounded-md py-2 px-3 text-center text-sm font-semibold leading-6 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-									)}
-								>
-									Pull Report
-								</a>
-							</div>
-						))}
-					</div>
-				</div>
-				<div className="pb-14">
-					<LogoCloud />
-				</div>
 				<div>
 					<FooterTwo />
 				</div>
