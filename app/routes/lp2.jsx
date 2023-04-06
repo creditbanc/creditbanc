@@ -155,6 +155,33 @@ const features = [
 	},
 ];
 
+const features_two = [
+	{
+		name: "Push to deploy",
+		description: "No Credit Card Required",
+		href: "#",
+		icon: CloudArrowUpIcon,
+	},
+	{
+		name: "SSL certificates",
+		description: "Free Experian Credit Report and FICO® Score",
+		href: "#",
+		icon: LockClosedIcon,
+	},
+	{
+		name: "Simple queues",
+		description: "Updates Every 30 Days on Sign In",
+		href: "#",
+		icon: ArrowPathIcon,
+	},
+	{
+		name: "Simple queues",
+		description: "Dispute online for free",
+		href: "#",
+		icon: ArrowPathIcon,
+	},
+];
+
 function Features() {
 	return (
 		<div className="bg-white py-10">
@@ -206,7 +233,7 @@ const faqs = [
 
 function FAQ() {
 	return (
-		<div className="bg-white my-12">
+		<div className="bg-white my-20">
 			<div className="mx-auto max-w-7xl px-6 lg:px-8 ">
 				<div className="mx-auto w-full divide-y divide-gray-900/10">
 					<h2 className="text-2xl font-bold leading-10 tracking-tight text-gray-900 text-center">
@@ -262,69 +289,122 @@ function FAQ() {
 
 function BoxyFeatureSection() {
 	return (
-		<div className="bg-white">
-			<main>
-				<div className="relative isolate">
-					<div className="overflow-hidden">
-						<div className="mx-auto max-w-7xl px-6 lg:px-8">
-							<div className="mx-auto max-w-2xl gap-x-14 lg:mx-0 lg:flex lg:max-w-none lg:items-center">
-								<div className="mt-14 flex justify-end gap-8 sm:-mt-44 sm:justify-start sm:pl-20 lg:mt-0 lg:pl-0">
-									<div className="ml-auto w-44 flex-none space-y-8 pt-32 sm:ml-0 sm:pt-80 lg:order-last lg:pt-36 xl:order-none xl:pt-0">
-										<div className="relative">
-											<img
-												src="https://images.unsplash.com/photo-1557804506-669a67965ba0?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&h=528&q=80"
-												alt=""
-												className="aspect-[2/3] w-full rounded-xl bg-gray-900/5 object-cover shadow-lg"
-											/>
-											<div className="pointer-events-none absolute inset-0 rounded-xl ring-1 ring-inset ring-gray-900/10" />
-										</div>
-									</div>
-									<div className="mr-auto w-44 flex-none space-y-8 sm:mr-0 sm:pt-52 lg:pt-16">
-										<div className="relative">
-											<img
-												src="https://images.unsplash.com/photo-1485217988980-11786ced9454?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&h=528&q=80"
-												alt=""
-												className="aspect-[2/3] w-full rounded-xl bg-gray-900/5 object-cover shadow-lg"
-											/>
-											<div className="pointer-events-none absolute inset-0 rounded-xl ring-1 ring-inset ring-gray-900/10" />
-										</div>
-										<div className="relative">
-											<img
-												src="https://images.unsplash.com/photo-1559136555-9303baea8ebd?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&crop=focalpoint&fp-x=.4&w=396&h=528&q=80"
-												alt=""
-												className="aspect-[2/3] w-full rounded-xl bg-gray-900/5 object-cover shadow-lg"
-											/>
-											<div className="pointer-events-none absolute inset-0 rounded-xl ring-1 ring-inset ring-gray-900/10" />
-										</div>
-									</div>
-									<div className="w-44 flex-none space-y-8 pt-32 sm:pt-32">
-										<div className="relative">
-											<img
-												src="https://images.unsplash.com/photo-1670272504528-790c24957dda?ixlib=rb-4.0.3&ixid=MnwxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&crop=left&w=400&h=528&q=80"
-												alt=""
-												className="aspect-[2/3] w-full rounded-xl bg-gray-900/5 object-cover shadow-lg"
-											/>
-											<div className="pointer-events-none absolute inset-0 rounded-xl ring-1 ring-inset ring-gray-900/10" />
-										</div>
-										<div className="relative">
-											<img
-												src="https://images.unsplash.com/photo-1670272505284-8faba1c31f7d?ixlib=rb-4.0.3&ixid=MnwxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&h=528&q=80"
-												alt=""
-												className="aspect-[2/3] w-full rounded-xl bg-gray-900/5 object-cover shadow-lg"
-											/>
-											<div className="pointer-events-none absolute inset-0 rounded-xl ring-1 ring-inset ring-gray-900/10" />
-										</div>
-									</div>
+		<div className="bg-white my-20">
+			<div className="overflow-hidden">
+				<div className="mx-auto max-w-7xl px-6 lg:px-8">
+					<div className="mx-auto max-w-2xl gap-x-14 lg:mx-0 lg:flex lg:max-w-none lg:items-center">
+						<div className="mt-14 flex justify-end gap-8 sm:-mt-44 sm:justify-start sm:pl-20 lg:mt-0 lg:pl-0">
+							<div className="ml-auto w-44 flex-none space-y-8 pt-32 sm:ml-0 sm:pt-80 lg:order-last lg:pt-36 xl:order-none xl:pt-0">
+								<div className="relative">
+									<img
+										src="https://images.unsplash.com/photo-1557804506-669a67965ba0?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&h=528&q=80"
+										alt=""
+										className="aspect-[2/3] w-full rounded-xl bg-gray-900/5 object-cover shadow-lg"
+									/>
+									<div className="pointer-events-none absolute inset-0 rounded-xl ring-1 ring-inset ring-gray-900/10" />
 								</div>
+							</div>
+							<div className="mr-auto w-44 flex-none space-y-8 sm:mr-0 sm:pt-52 lg:pt-16">
+								<div className="relative">
+									<img
+										src="https://images.unsplash.com/photo-1485217988980-11786ced9454?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&h=528&q=80"
+										alt=""
+										className="aspect-[2/3] w-full rounded-xl bg-gray-900/5 object-cover shadow-lg"
+									/>
+									<div className="pointer-events-none absolute inset-0 rounded-xl ring-1 ring-inset ring-gray-900/10" />
+								</div>
+								<div className="relative">
+									<img
+										src="https://images.unsplash.com/photo-1559136555-9303baea8ebd?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&crop=focalpoint&fp-x=.4&w=396&h=528&q=80"
+										alt=""
+										className="aspect-[2/3] w-full rounded-xl bg-gray-900/5 object-cover shadow-lg"
+									/>
+									<div className="pointer-events-none absolute inset-0 rounded-xl ring-1 ring-inset ring-gray-900/10" />
+								</div>
+							</div>
+							<div className="w-44 flex-none space-y-8 pt-32 sm:pt-32">
+								<div className="relative">
+									<img
+										src="https://images.unsplash.com/photo-1670272504528-790c24957dda?ixlib=rb-4.0.3&ixid=MnwxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&crop=left&w=400&h=528&q=80"
+										alt=""
+										className="aspect-[2/3] w-full rounded-xl bg-gray-900/5 object-cover shadow-lg"
+									/>
+									<div className="pointer-events-none absolute inset-0 rounded-xl ring-1 ring-inset ring-gray-900/10" />
+								</div>
+								<div className="relative">
+									<img
+										src="https://images.unsplash.com/photo-1670272505284-8faba1c31f7d?ixlib=rb-4.0.3&ixid=MnwxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&h=528&q=80"
+										alt=""
+										className="aspect-[2/3] w-full rounded-xl bg-gray-900/5 object-cover shadow-lg"
+									/>
+									<div className="pointer-events-none absolute inset-0 rounded-xl ring-1 ring-inset ring-gray-900/10" />
+								</div>
+							</div>
+						</div>
 
-								<div className="w-full max-w-xl lg:shrink-0 xl:max-w-2xl">
-									<Features />
+						<div className="w-full max-w-xl lg:shrink-0 xl:max-w-2xl">
+							<Features />
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	);
+}
+
+function DiagonalFeatureSection() {
+	return (
+		<div className="bg-white">
+			<div className="relative isolate overflow-hidden bg-gradient-to-b from-indigo-100/20 pt-14">
+				<div
+					className="absolute inset-y-0 left-1/2 -z-10 -mr-96 w-[200%] origin-top-left skew-x-[-30deg] bg-white shadow-xl shadow-indigo-600/10 ring-1 ring-indigo-50 sm:-mr-80 lg:-mr-96"
+					aria-hidden="true"
+				/>
+				<div className="mx-auto max-w-7xl px-6 lg:px-8">
+					<div className="w-full lg:mx-0 lg:max-w-none flex flex-row">
+						<div className="flex flex-col w-1/3">
+							<img
+								src="https://images.unsplash.com/photo-1567532900872-f4e906cbf06a?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1280&q=80"
+								alt=""
+								className="mt-10 aspect-[6/5] w-full max-w-lg rounded-2xl object-cover "
+							/>
+						</div>
+						<div className="flex flex-col px-10 w-2/3">
+							<h1 className="max-w-2xl text-4xl font-bold tracking-tight text-gray-900 sm:text-6xl lg:col-span-2 xl:col-auto">
+								Quick and Easy Sign Up
+							</h1>
+							<h4 className="max-w-2xl text-2xl tracking-tight text-gray-900 lg:col-span-2 xl:col-auto my-4">
+								No credit card needed, just sign up to get
+								instant online access to your free Experian
+								credit report and FICO® Score.
+							</h4>
+							<div className="w-full my-4">
+								<div className="flex flex-row justify-between w-full">
+									{features_two.map((feature) => (
+										<div
+											key={feature.name}
+											className="flex flex-col mx-4"
+										>
+											<div className="flex flex-col items-center gap-x-3 text-base font-semibold leading-7 text-white">
+												<feature.icon
+													className="h-8 w-8 flex-none text-gray-400"
+													aria-hidden="true"
+												/>
+											</div>
+											<div className="mt-4 flex flex-col items-center text-base leading-7 text-gray-600 text-center">
+												<p className="flex-auto">
+													{feature.description}
+												</p>
+											</div>
+										</div>
+									))}
 								</div>
 							</div>
 						</div>
 					</div>
 				</div>
-			</main>
+				<div className="absolute inset-x-0 bottom-0 -z-10 h-24 bg-gradient-to-t from-white sm:h-32" />
+			</div>
 		</div>
 	);
 }
@@ -495,10 +575,15 @@ export default function LandingPage() {
 								</div>
 							</div>
 						</div>
-						<div>
-							<BoxyFeatureSection />
-						</div>
 					</div>
+				</div>
+
+				<div>
+					<BoxyFeatureSection />
+				</div>
+
+				<div className="border-t ">
+					<DiagonalFeatureSection />
 				</div>
 
 				<div>
