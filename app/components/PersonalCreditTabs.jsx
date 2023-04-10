@@ -1,6 +1,5 @@
 import {
 	UserIcon,
-	ListBulletIcon,
 	ClockIcon,
 	BeakerIcon,
 	BookOpenIcon,
@@ -39,7 +38,7 @@ const tabs = [
 	{
 		name: "History",
 		href: ({ pathname = "", search = "" } = {}) =>
-			"/credit/report/personal/accounts" +
+			"/credit/report/personal/history" +
 			to_resource_pathname(pathname) +
 			search,
 		icon: BookOpenIcon,
@@ -48,7 +47,7 @@ const tabs = [
 	{
 		name: "Debt Usage",
 		href: ({ pathname = "", search = "" } = {}) =>
-			"/credit/report/personal/accounts" +
+			"/credit/report/personal/usage" +
 			to_resource_pathname(pathname) +
 			search,
 		icon: BeakerIcon,
@@ -57,7 +56,7 @@ const tabs = [
 	{
 		name: "Credit Age",
 		href: ({ pathname = "", search = "" } = {}) =>
-			"/credit/report/personal/accounts" +
+			"/credit/report/personal/age" +
 			to_resource_pathname(pathname) +
 			search,
 		icon: ClockIcon,
@@ -66,7 +65,7 @@ const tabs = [
 	{
 		name: "Account Mix",
 		href: ({ pathname = "", search = "" } = {}) =>
-			"/credit/report/personal/accounts" +
+			"/credit/report/personal/mix" +
 			to_resource_pathname(pathname) +
 			search,
 		icon: ChartPieIcon,
@@ -75,7 +74,7 @@ const tabs = [
 	{
 		name: "Inquiries",
 		href: ({ pathname = "", search = "" } = {}) =>
-			"/credit/report/personal/accounts" +
+			"/credit/report/personal/inquiries" +
 			to_resource_pathname(pathname) +
 			search,
 		icon: ClipboardIcon,
@@ -84,7 +83,7 @@ const tabs = [
 	{
 		name: "Debt vs Income",
 		href: ({ pathname = "", search = "" } = {}) =>
-			"/credit/report/personal/accounts" +
+			"/credit/report/personal/debtvsincome" +
 			to_resource_pathname(pathname) +
 			search,
 		icon: ScaleIcon,
@@ -93,7 +92,7 @@ const tabs = [
 	{
 		name: "Score Factors",
 		href: ({ pathname = "", search = "" } = {}) =>
-			"/credit/report/personal/accounts" +
+			"/credit/report/personal/factors" +
 			to_resource_pathname(pathname) +
 			search,
 		icon: TrophyIcon,
@@ -163,7 +162,7 @@ export const PersonalCreditTabsVertical = ({ selected = "Personal" }) => {
 							selected == tab.name
 								? "border-indigo-500 text-indigo-600"
 								: " text-gray-500 hover:text-gray-700 hover:border-gray-300",
-							"group inline-flex items-center py-4 px-2 border-b font-medium text-sm last-of-type:border-none"
+							"group inline-flex items-center py-4 px-2 border-b font-medium text-sm last-of-type:border-none pl-4"
 						)}
 					>
 						<tab.icon
