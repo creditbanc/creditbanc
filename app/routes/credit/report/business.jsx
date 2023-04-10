@@ -34,7 +34,7 @@ export default function BusinessReport() {
 	return (
 		<div className="flex flex-col flex-1 overflow-scroll">
 			<div className="flex flex-col w-full">
-				<CreditHeroGradient />
+				{/* <CreditHeroGradient /> */}
 				<div
 					className="flex flex-col w-full p-[10px] max-w-5xl mx-auto"
 					ref={setTarget}
