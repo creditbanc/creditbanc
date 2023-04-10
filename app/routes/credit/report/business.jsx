@@ -11,7 +11,7 @@ import {
 import { get_docs as get_group_docs } from "~/utils/group.server";
 import { head, pipe } from "ramda";
 import { filter } from "shades";
-import PersonalCreditTabs from "~/components/PersonalCreditTabs";
+// import PersonalCreditTabs from "~/components/PersonalCreditTabs";
 import CreditScoreHero from "~/components/CreditScoreHero";
 import CreditHeroGradient from "~/components/CreditHeroGradient";
 import { get_user_id } from "~/utils/auth.server";
@@ -40,11 +40,11 @@ export default function BusinessReport() {
 					ref={setTarget}
 				>
 					<div className="mt-3 mb-1">
-						<PersonalCreditTabs
+						{/* <PersonalCreditTabs
 							selected={capitalize(
 								get_route_endpoint(location.pathname)
 							)}
-						/>
+						/> */}
 					</div>
 					<div className="py-3">
 						<Outlet />

@@ -11,7 +11,7 @@ import {
 import { get_docs as get_group_docs } from "~/utils/group.server";
 import { head, pipe } from "ramda";
 import { filter } from "shades";
-import PersonalCreditTabs from "~/components/PersonalCreditTabs";
+import { PersonalCreditTabsVertical } from "~/components/PersonalCreditTabs";
 import CreditScoreHero from "~/components/CreditScoreHero";
 import CreditHeroGradient from "~/components/CreditHeroGradient";
 import { get_user_id } from "~/utils/auth.server";
@@ -79,15 +79,24 @@ export default function CreditReport() {
 					ref={setTarget}
 				>
 					<CreditScoreHero report={report} />
-					<div className="mt-3 mb-1">
+					{/* <div className="mt-3 mb-1">
 						<PersonalCreditTabs
 							selected={capitalize(
 								get_route_endpoint(location.pathname)
 							)}
 						/>
-					</div>
-					<div className="py-3">
-						<Outlet />
+					</div> */}
+					<div className="py-3 mb-10 flex flex-row">
+						<div className="flex flex-col w-1/5 mr-2 border rounded-lg h-fit">
+							<PersonalCreditTabsVertical
+								selected={capitalize(
+									get_route_endpoint(location.pathname)
+								)}
+							/>
+						</div>
+						<div className="flex flex-col flex-1">
+							<Outlet />
+						</div>
 					</div>
 				</div>
 			</div>

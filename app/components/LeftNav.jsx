@@ -251,7 +251,7 @@ export default function LeftNav({ data = {}, can_manage_roles } = {}) {
 			className={`hidden sm:flex sm:flex-col h-full border-r relative ${navClasses} transition-[var(--tran-05)] p-2 pt-1 `}
 		>
 			<div
-				className="collapse_toggle absolute -right-[10px] top-[20px] bg-indigo-500 rounded-full p-[3px] text-white cursor-pointer"
+				className="collapse_toggle absolute -right-[10px] top-[20px] bg-[#55CF9E] rounded-full p-[3px] text-white cursor-pointer"
 				onClick={onToggleNav}
 			>
 				{collapsed ? <ChevronRightIcon /> : <ChevronLeftIcon />}
