@@ -1,7 +1,35 @@
 import { ClockIcon } from "@heroicons/react/24/outline";
 import { FactorBar } from "~/components/FactorBar";
+import { Accounts } from "~/components/TradeLines";
+import { useLoaderData } from "@remix-run/react";
+import { pipe, map, filter, includes } from "ramda";
+import { get_file_id, inspect } from "~/utils/helpers";
+import { TradeLine as Tradeline } from "~/data/array";
+import { get_doc as get_credit_report } from "~/utils/personal_credit_report.server";
+import { all, get } from "shades";
 
-const PersonalInfoCard = () => {
+export const loader = async ({ request }) => {
+	let url = new URL(request.url);
+	let pathname = url.pathname;
+	let report_id = get_file_id(pathname);
+
+	let credit_report = await get_credit_report({
+		resource_id: report_id,
+	});
+
+	let trade_lines = pipe(
+		map(Tradeline),
+		map((tl) => tl.values()),
+		filter((tl) => pipe(get(all, "value"), includes("Closed"))(tl.status))
+	)(credit_report.trade_lines);
+
+	// console.log("trade_lines");
+	// inspect(trade_lines);
+
+	return trade_lines;
+};
+
+const SummaryCard = () => {
 	return (
 		<div className="overflow-hidden bg-white rounded-lg border">
 			<div className="px-4 py-5 sm:px-6 flex flex-row items-center">
@@ -57,9 +85,12 @@ const PersonalInfoCard = () => {
 };
 
 export default function Personal() {
+	let trade_lines = useLoaderData();
+
 	return (
 		<div className="flex flex-col w-full">
-			<PersonalInfoCard />
+			<SummaryCard />
+			<Accounts trade_lines={trade_lines} />
 		</div>
 	);
 }
