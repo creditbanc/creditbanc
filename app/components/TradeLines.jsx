@@ -1,6 +1,7 @@
 import { pipe, flatten, uniq, reject, isEmpty, head, split, take } from "ramda";
 import { all, get, filter } from "shades";
 import { mapIndexed, currency } from "~/utils/helpers";
+import { ArrowDownIcon, ArrowUpIcon } from "@heroicons/react/20/solid";
 
 let month_mapping = {
 	1: "Jan",
@@ -17,38 +18,120 @@ let month_mapping = {
 	12: "Dec",
 };
 
-const TradeLine = ({ trade_line }) => {
+const stats = [
+	{
+		name: "% of account limit used",
+		stat: "$2,490",
+		previousStat: "$5,000",
+		change: "12%",
+		changeType: "decrease",
+	},
+	{
+		name: "Avg. Open Rate",
+		stat: "58.16%",
+		previousStat: "56.14%",
+		change: "2.02%",
+		changeType: "increase",
+	},
+	{
+		name: "Avg. Click Rate",
+		stat: "24.57%",
+		previousStat: "28.62%",
+		change: "4.05%",
+		changeType: "decrease",
+	},
+];
+
+function classNames(...classes) {
+	return classes.filter(Boolean).join(" ");
+}
+
+const Stat = () => {
+	let item = stats[0];
+	return (
+		<div key={item.name} className="text-sm">
+			<dt className="font-normal text-gray-900">{item.name}</dt>
+			<dd className="mt-1 flex items-baseline justify-between md:block lg:flex">
+				<div className="flex items-baseline  font-semibold text-[#55CF9E] mr-2">
+					{item.stat}
+					<span className="ml-1 font-medium text-gray-500">
+						of {item.previousStat}
+					</span>
+				</div>
+
+				<div
+					className={classNames(
+						item.changeType === "increase"
+							? "bg-green-100 text-green-800"
+							: "bg-red-100 text-red-800",
+						"inline-flex items-baseline rounded-full px-2.5 py-0.5 font-medium md:mt-2 lg:mt-0 text-xs"
+					)}
+				>
+					{item.changeType === "increase" ? (
+						<ArrowUpIcon
+							className="-ml-1 mr-0.5 h-3 w-3 flex-shrink-0 self-center text-green-500"
+							aria-hidden="true"
+						/>
+					) : (
+						<ArrowDownIcon
+							className="-ml-1 mr-0.5 h-3 w-3 flex-shrink-0 self-center text-red-500"
+							aria-hidden="true"
+						/>
+					)}
+
+					<span className="sr-only">
+						{" "}
+						{item.changeType === "increase"
+							? "Increased"
+							: "Decreased"}{" "}
+						by{" "}
+					</span>
+					{item.change}
+				</div>
+			</dd>
+		</div>
+	);
+};
+
+const TradeLine = ({ trade_line, type = "basic" }) => {
 	return (
 		<div className="overflow-hidden bg-white border rounded-lg">
-			<div className="px-4 py-5">
-				<h3 className="text-lg font-medium leading-6 text-gray-900">
-					{pipe(
-						flatten,
-						reject(isEmpty),
-						uniq,
-						head
-					)([
-						pipe(get("original_creditor", all, "value"))(
-							trade_line
-						),
-						pipe(get("creditor", all, "value", "@_Name"))(
-							trade_line
-						),
-					])}
-				</h3>
-				<p className="mt-1 max-w-2xl text-sm text-gray-500">
-					#
-					{pipe(
-						get("id"),
-						filter(
-							(id) =>
-								id.source == "Equifax" ||
-								id.source == "TransUnion"
-						),
-						get(all, "value"),
-						head
-					)(trade_line)}
-				</p>
+			<div className="px-4 py-5 flex flex-row justify-between">
+				<div className="flex flex-col">
+					<h3 className="text-lg font-medium leading-6 text-gray-900">
+						{pipe(
+							flatten,
+							reject(isEmpty),
+							uniq,
+							head
+						)([
+							pipe(get("original_creditor", all, "value"))(
+								trade_line
+							),
+							pipe(get("creditor", all, "value", "@_Name"))(
+								trade_line
+							),
+						])}
+					</h3>
+					<p className="mt-1 max-w-2xl text-sm text-gray-500">
+						#
+						{pipe(
+							get("id"),
+							filter(
+								(id) =>
+									id.source == "Equifax" ||
+									id.source == "TransUnion"
+							),
+							get(all, "value"),
+							head
+						)(trade_line)}
+					</p>
+				</div>
+				{type == "usage" && (
+					<div className="flex flex-col">
+						<Stat />
+					</div>
+				)}
 			</div>
 			<div className="border-t border-gray-200 px-4 py-3">
 				<div className="hidden sm:flex sm:flex-row sm:py-2">
@@ -688,13 +771,13 @@ const TradeLine = ({ trade_line }) => {
 	);
 };
 
-export const Accounts = ({ trade_lines }) => {
+export const Accounts = ({ trade_lines, type = "basic" }) => {
 	return (
-		<div>
+		<div className="flex flex-col">
 			{mapIndexed(
 				(trade_line, tl_index) => (
 					<div className="my-2" key={tl_index}>
-						<TradeLine trade_line={trade_line} />
+						<TradeLine trade_line={trade_line} type={type} />
 					</div>
 				),
 				trade_lines

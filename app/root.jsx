@@ -83,7 +83,7 @@ export default function App() {
 				<Meta />
 				<Links />
 			</head>
-			<body className="flex flex-col">
+			<body className="flex flex-col overflow-hidden">
 				{show_spinner && <Spinner />}
 				{!show_spinner && <Outlet />}
 				<ScrollRestoration />
