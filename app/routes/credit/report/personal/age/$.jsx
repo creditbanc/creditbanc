@@ -9,13 +9,13 @@ const PersonalInfoCard = () => {
 					<ClockIcon />
 				</div>
 				<div className="flex flex-col">
-					<h3 className="text-lg font-medium leading-6 text-gray-900">
+					<h3 className="text-xl font-medium leading-6 text-gray-900">
 						How Important is Your Credit Age?
 					</h3>
 				</div>
 			</div>
 			<div className="border-t border-gray-200 px-6 py-2">
-				<div className="flex flex-col text-xl py-2 text-gray-700 font-semibold">
+				<div className="flex flex-col text-lg py-2 text-gray-700 font-semibold">
 					<p>15% of your credit score is based on your Credit Age</p>
 				</div>
 
