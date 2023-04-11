@@ -49,9 +49,9 @@ function classNames(...classes) {
 const Stat = () => {
 	let item = stats[0];
 	return (
-		<div key={item.name} className="text-sm">
-			<dt className="font-normal text-gray-900">{item.name}</dt>
-			<dd className="mt-1 flex items-baseline justify-between md:block lg:flex">
+		<div key={item.name} className="text-sm flex flex-col">
+			<div className="font-normal text-gray-900">{item.name}</div>
+			<div className="mt-1 flex flex-row justify-between">
 				<div className="flex items-baseline  font-semibold text-[#55CF9E] mr-2">
 					{item.stat}
 					<span className="ml-1 font-medium text-gray-500">
@@ -64,31 +64,17 @@ const Stat = () => {
 						item.changeType === "increase"
 							? "bg-green-100 text-green-800"
 							: "bg-red-100 text-red-800",
-						"inline-flex items-baseline rounded-full px-2.5 py-0.5 font-medium md:mt-2 lg:mt-0 text-xs"
+						"flex flex-row rounded-full px-2.5 py-0.5 font-medium md:mt-2 lg:mt-0 text-xs"
 					)}
 				>
-					{item.changeType === "increase" ? (
-						<ArrowUpIcon
-							className="-ml-1 mr-0.5 h-3 w-3 flex-shrink-0 self-center text-green-500"
-							aria-hidden="true"
-						/>
-					) : (
-						<ArrowDownIcon
-							className="-ml-1 mr-0.5 h-3 w-3 flex-shrink-0 self-center text-red-500"
-							aria-hidden="true"
-						/>
-					)}
+					<ArrowDownIcon
+						className="-ml-1 mr-0.5 h-3 w-3 flex-shrink-0 self-center text-red-500"
+						aria-hidden="true"
+					/>
 
-					<span className="sr-only">
-						{" "}
-						{item.changeType === "increase"
-							? "Increased"
-							: "Decreased"}{" "}
-						by{" "}
-					</span>
 					{item.change}
 				</div>
-			</dd>
+			</div>
 		</div>
 	);
 };
