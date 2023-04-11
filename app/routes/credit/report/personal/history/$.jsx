@@ -1,4 +1,5 @@
 import { BookOpenIcon } from "@heroicons/react/24/outline";
+import { FactorBar } from "~/components/FactorBar";
 
 const PersonalInfoCard = () => {
 	return (
@@ -18,7 +19,9 @@ const PersonalInfoCard = () => {
 					<p>35% of your credit score is based on Payment History</p>
 				</div>
 
-				<div className="flex flex-col py-2 text-gray-700">
+				<FactorBar />
+
+				<div className="flex flex-col py-2 text-gray-700 text-sm">
 					<p>
 						Your payment history is one of the two most important
 						factors in determining your credit score, accounting for
@@ -29,7 +32,7 @@ const PersonalInfoCard = () => {
 					</p>
 				</div>
 
-				<div className="flex flex-col py-2 text-gray-700">
+				<div className="flex flex-col py-2 text-gray-700 text-sm">
 					<p>
 						Because this is the most important credit score category
 						you also have the most to lose. If any serious negative
@@ -41,7 +44,7 @@ const PersonalInfoCard = () => {
 					</p>
 				</div>
 
-				<div className="flex flex-col py-2 text-gray-700">
+				<div className="flex flex-col py-2 text-gray-700 text-sm">
 					<p>
 						The good news is that the older the negative
 						information, the less it hurts your score. Payment
@@ -52,11 +55,11 @@ const PersonalInfoCard = () => {
 					</p>
 				</div>
 
-				<div className="flex flex-col py-2 text-gray-700">
+				<div className="flex flex-col py-2 text-gray-700 text-sm">
 					<p>
-						On your Nav report, any late payments are shown under
-						the Payment History box on the left of each individual
-						credit account.
+						On your Credit Banc report, any late payments are shown
+						under the Payment History box on the left of each
+						individual credit account.
 					</p>
 				</div>
 			</div>

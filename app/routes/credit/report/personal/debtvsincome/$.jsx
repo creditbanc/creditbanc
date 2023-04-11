@@ -14,13 +14,7 @@ const PersonalInfoCard = () => {
 				</div>
 			</div>
 			<div className="border-t border-gray-200 px-6 py-2">
-				{/* <div className="flex flex-col text-xl py-2 text-gray-700 font-semibold">
-					<p>
-						10% of your credit score is based on number of Inquiries
-					</p>
-				</div> */}
-
-				<div className="flex flex-col py-2 text-gray-700">
+				<div className="flex flex-col py-2 text-gray-700 text-sm">
 					<p>
 						A primary indicator of your financial well-being is your
 						debt-to-income ratio. It’s exactly what it sounds like:

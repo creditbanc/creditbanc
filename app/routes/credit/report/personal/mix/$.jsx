@@ -1,4 +1,5 @@
 import { ChartPieIcon } from "@heroicons/react/24/outline";
+import { FactorBar } from "~/components/FactorBar";
 
 const PersonalInfoCard = () => {
 	return (
@@ -18,7 +19,9 @@ const PersonalInfoCard = () => {
 					<p>10% of your credit score is based on your Account Mix</p>
 				</div>
 
-				<div className="flex flex-col py-2 text-gray-700">
+				<FactorBar index={3} />
+
+				<div className="flex flex-col py-2 text-gray-700 text-sm">
 					<p>
 						Account mix or credit diversity accounts for 10% of your
 						overall credit score. Creditors like to see that you've

@@ -1,15 +1,5 @@
-import {
-	UserIcon,
-	ListBulletIcon,
-	ClockIcon,
-	BeakerIcon,
-	BookOpenIcon,
-	ChartPieIcon,
-	ClipboardIcon,
-	ScaleIcon,
-	TrophyIcon,
-	Bars3Icon,
-} from "@heroicons/react/24/outline";
+import { ClockIcon } from "@heroicons/react/24/outline";
+import { FactorBar } from "~/components/FactorBar";
 
 const PersonalInfoCard = () => {
 	return (
@@ -29,7 +19,9 @@ const PersonalInfoCard = () => {
 					<p>15% of your credit score is based on your Credit Age</p>
 				</div>
 
-				<div className="flex flex-col py-2 text-gray-700">
+				<FactorBar index={2} />
+
+				<div className="flex flex-col py-2 text-gray-700 text-sm">
 					<p>
 						Credit age accounts for 15% of your overall credit
 						score. There are two important factors considered in the
@@ -46,7 +38,7 @@ const PersonalInfoCard = () => {
 					</p>
 				</div>
 
-				<div className="flex flex-col py-2 text-gray-700">
+				<div className="flex flex-col py-2 text-gray-700 text-sm">
 					<p>
 						A new account will lower the average age of all
 						accounts. Also, it's a big mistake to close an old

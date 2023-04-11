@@ -1,4 +1,5 @@
 import { BeakerIcon } from "@heroicons/react/24/outline";
+import { FactorBar } from "~/components/FactorBar";
 
 const PersonalInfoCard = () => {
 	return (
@@ -18,7 +19,9 @@ const PersonalInfoCard = () => {
 					<p>30% of your credit score is based on your Debt Usage</p>
 				</div>
 
-				<div className="flex flex-col py-2 text-gray-700">
+				<FactorBar index={1} />
+
+				<div className="flex flex-col py-2 text-gray-700 text-sm">
 					<p>
 						Debt usage, or your revolving balance-to-limit ratio is
 						the second most important factor in determining your
@@ -30,7 +33,7 @@ const PersonalInfoCard = () => {
 					</p>
 				</div>
 
-				<div className="flex flex-col py-2 text-gray-700">
+				<div className="flex flex-col py-2 text-gray-700 text-sm">
 					<p>
 						It is a common myth that you only need to keep your
 						limit-to-balance ratio at 50% but that is incorrect. 50%
@@ -46,7 +49,7 @@ const PersonalInfoCard = () => {
 					</p>
 				</div>
 
-				<div className="flex flex-col py-2 text-gray-700">
+				<div className="flex flex-col py-2 text-gray-700 text-sm">
 					<p>
 						Let’s say you have two cards. One has a balance of
 						$5,000 and a limit of $10,000, and the other has a
@@ -60,7 +63,7 @@ const PersonalInfoCard = () => {
 					</p>
 				</div>
 
-				<div className="flex flex-col py-2 text-gray-700">
+				<div className="flex flex-col py-2 text-gray-700 text-sm">
 					<p>
 						Closing these accounts will cause your limit-to-balance
 						ratio to increase because available credit that was once
@@ -73,7 +76,7 @@ const PersonalInfoCard = () => {
 					</p>
 				</div>
 
-				<div className="flex flex-col py-2 text-gray-700">
+				<div className="flex flex-col py-2 text-gray-700 text-sm">
 					<p>
 						Of course, the safest way to keep your limit-to-balance
 						ratio low is to keep balances on your current accounts

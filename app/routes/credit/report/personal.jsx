@@ -89,9 +89,7 @@ export default function CreditReport() {
 					<div className="py-3 mb-10 flex flex-row">
 						<div className="flex flex-col w-1/5 mr-2 border rounded-lg h-fit">
 							<PersonalCreditTabsVertical
-								selected={capitalize(
-									get_route_endpoint(location.pathname)
-								)}
+								selected={get_route_endpoint(location.pathname)}
 							/>
 						</div>
 						<div className="flex flex-col flex-1">

@@ -14,7 +14,7 @@ const PersonalInfoCard = () => {
 				</div>
 			</div>
 			<div className="border-t border-gray-200 px-6 py-2">
-				<div className="flex flex-col py-2 text-gray-700">
+				<div className="flex flex-col py-2 text-gray-700 text-sm">
 					<p>
 						Score factors or "Reason Codes" are as many as 5
 						statements that are on your credit report explaining why
@@ -29,7 +29,7 @@ const PersonalInfoCard = () => {
 					</p>
 				</div>
 
-				<div className="flex flex-col py-2 text-gray-700">
+				<div className="flex flex-col py-2 text-gray-700 text-sm">
 					<p>
 						Even if you have excellent credit scores your credit
 						report will still list 4 to 5 score factors. This is
@@ -43,7 +43,7 @@ const PersonalInfoCard = () => {
 					</p>
 				</div>
 
-				<div className="flex flex-col py-2 text-gray-700">
+				<div className="flex flex-col py-2 text-gray-700 text-sm">
 					<p>
 						Reason codes or score factors are very helpful as a
 						roadmap to score improvement. They paint a very clear

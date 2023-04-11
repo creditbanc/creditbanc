@@ -25,6 +25,7 @@ const tabs = [
 			search,
 		icon: Bars3Icon,
 		current: true,
+		id: "overview",
 	},
 	{
 		name: "Personal",
@@ -34,6 +35,7 @@ const tabs = [
 			search,
 		icon: UserIcon,
 		current: true,
+		id: "personal",
 	},
 	{
 		name: "History",
@@ -43,6 +45,7 @@ const tabs = [
 			search,
 		icon: BookOpenIcon,
 		current: false,
+		id: "history",
 	},
 	{
 		name: "Debt Usage",
@@ -52,6 +55,7 @@ const tabs = [
 			search,
 		icon: BeakerIcon,
 		current: false,
+		id: "usage",
 	},
 	{
 		name: "Credit Age",
@@ -61,6 +65,7 @@ const tabs = [
 			search,
 		icon: ClockIcon,
 		current: false,
+		id: "age",
 	},
 	{
 		name: "Account Mix",
@@ -70,6 +75,7 @@ const tabs = [
 			search,
 		icon: ChartPieIcon,
 		current: false,
+		id: "mix",
 	},
 	{
 		name: "Inquiries",
@@ -79,6 +85,7 @@ const tabs = [
 			search,
 		icon: ClipboardIcon,
 		current: false,
+		id: "inquiries",
 	},
 	{
 		name: "Debt vs Income",
@@ -88,6 +95,7 @@ const tabs = [
 			search,
 		icon: ScaleIcon,
 		current: false,
+		id: "debtvsincome",
 	},
 	{
 		name: "Score Factors",
@@ -97,6 +105,7 @@ const tabs = [
 			search,
 		icon: TrophyIcon,
 		current: false,
+		id: "factors",
 	},
 ];
 
@@ -146,7 +155,7 @@ export const PersonalCreditTabsVertical = ({ selected = "Personal" }) => {
 	let search_params = location.search;
 
 	return (
-		<div className="">
+		<div>
 			<nav
 				className="-mb-px flex flex-col justify-start"
 				aria-label="Tabs"
@@ -159,7 +168,7 @@ export const PersonalCreditTabsVertical = ({ selected = "Personal" }) => {
 							pathname: location.pathname,
 						})}
 						className={classNames(
-							selected == tab.name
+							selected == tab.id
 								? "border-indigo-500 text-indigo-600"
 								: " text-gray-500 hover:text-gray-700 hover:border-gray-300",
 							"group inline-flex items-center py-4 px-2 border-b font-medium text-sm last-of-type:border-none pl-4"
@@ -167,7 +176,7 @@ export const PersonalCreditTabsVertical = ({ selected = "Personal" }) => {
 					>
 						<tab.icon
 							className={classNames(
-								selected == tab.name
+								selected == tab.id
 									? "text-indigo-500"
 									: "text-gray-500 group-hover:text-gray-500",
 								"-ml-0.5 mr-3 h-5 w-5"

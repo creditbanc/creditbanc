@@ -1,15 +1,5 @@
-import {
-	UserIcon,
-	ListBulletIcon,
-	ClockIcon,
-	BeakerIcon,
-	BookOpenIcon,
-	ChartPieIcon,
-	ClipboardIcon,
-	ScaleIcon,
-	TrophyIcon,
-	Bars3Icon,
-} from "@heroicons/react/24/outline";
+import { ClipboardIcon } from "@heroicons/react/24/outline";
+import { FactorBar } from "~/components/FactorBar";
 
 const PersonalInfoCard = () => {
 	return (
@@ -31,7 +21,9 @@ const PersonalInfoCard = () => {
 					</p>
 				</div>
 
-				<div className="flex flex-col py-2 text-gray-700">
+				<FactorBar index={4} />
+
+				<div className="flex flex-col py-2 text-gray-700 text-sm">
 					<p>
 						Inquiries account for 10% of your overall credit score.
 						Generally, inquiries are listed on your credit report
@@ -40,12 +32,12 @@ const PersonalInfoCard = () => {
 					</p>
 				</div>
 
-				<div className="flex flex-col py-2 text-gray-700">
+				<div className="flex flex-col py-2 text-gray-700 text-sm">
 					<p>
 						There are two types of inquiries - soft inquiries and
 						hard inquiries. Soft inquiries are a result of you
 						checking your own credit through credit monitoring
-						services such as Nav as well as “account review”
+						services such as Credit Banc as well as “account review”
 						inquiries by any of your current creditors. These
 						inquiries do not impact your score. Hard inquiries are
 						inquiries associated with a firm offer of credit. Any
