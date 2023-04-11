@@ -200,7 +200,7 @@ export default function SignUp() {
 	return (
 		<div className="flex flex-col w-full h-full">
 			<CreditNav />
-			<CreditHeroGradient />
+			{/* <CreditHeroGradient /> */}
 			<div className="flex flex-col w-full p-[20px] max-w-2xl mx-auto h-full">
 				<div className="flex flex-col justify-center h-full -mt-10">
 					<Heading />

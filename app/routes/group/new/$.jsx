@@ -110,7 +110,7 @@ export default function NewGroup() {
 	return (
 		<div className="flex flex-col w-full">
 			<CreditNav />
-			<CreditHeroGradient />
+			{/* <CreditHeroGradient /> */}
 			<div className="flex flex-col w-full p-[20px] max-w-2xl mx-auto">
 				<Heading />
 				<Form />
