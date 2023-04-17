@@ -1,28 +1,14 @@
-import { useEffect, useState, Fragment } from "react";
 import CreditNav from "~/components/CreditNav";
-import {
-	get_group_id,
-	get_route_endpoint,
-	capitalize,
-	has_valid_route_p,
-	get_file_id,
-	inspect,
-	to_resource_pathname,
-} from "~/utils/helpers";
+import { get_group_id, to_resource_pathname } from "~/utils/helpers";
 import { get_user_id } from "~/utils/auth.server";
 import { get_docs as get_group_docs } from "~/utils/group.server";
-import { defaultTo, head, isEmpty, pick, pipe } from "ramda";
-import { mod, all, filter } from "shades";
-import {
-	Outlet,
-	useLoaderData,
-	useLocation,
-	useTransition,
-} from "@remix-run/react";
+import { defaultTo, pipe } from "ramda";
+import { filter } from "shades";
+import { Outlet, useLoaderData, useLocation } from "@remix-run/react";
 import LeftNav from "~/components/LeftNav";
 import Share from "~/routes/invites/new/$.jsx";
-import { useModalStore } from "~/hooks/useModal";
-import { Dialog, Transition } from "@headlessui/react";
+import Modal from "~/components/Modal";
+import { DocumentIcon, FolderIcon } from "@heroicons/react/24/outline";
 
 export const loader = async ({ request }) => {
 	let url = new URL(request.url);
@@ -85,48 +71,82 @@ export const loader = async ({ request }) => {
 	return { reports, origin: url.origin, user_id };
 };
 
-function Modal({ children }) {
-	const is_open = useModalStore((state) => state.is_open);
-	const set_open = useModalStore((state) => state.set_open);
+function classNames(...classes) {
+	return classes.filter(Boolean).join(" ");
+}
 
+const tabs = [
+	{
+		name: "Report",
+		href: (pathname) =>
+			`/credit/report/personal/personal${to_resource_pathname(pathname)}`,
+		icon: DocumentIcon,
+		current: true,
+	},
+	{
+		name: "Documents",
+		href: (pathname) =>
+			`/credit/documents${to_resource_pathname(pathname)}`,
+		icon: FolderIcon,
+		current: false,
+	},
+];
+
+function Tabs() {
+	let location = useLocation();
 	return (
-		<Transition.Root show={is_open} as={Fragment}>
-			<Dialog as="div" className="relative z-10" onClose={set_open}>
-				<Transition.Child
-					as={Fragment}
-					enter="ease-out duration-300"
-					enterFrom="opacity-0"
-					enterTo="opacity-100"
-					leave="ease-in duration-200"
-					leaveFrom="opacity-100"
-					leaveTo="opacity-0"
-				>
-					<div className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" />
-				</Transition.Child>
+		<div>
+			<div className="sm:hidden">
+				<label htmlFor="tabs" className="sr-only">
+					Select a tab
+				</label>
 
-				<div className="fixed inset-0 z-10 overflow-y-auto">
-					<div className="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
-						<Transition.Child
-							as={Fragment}
-							enter="ease-out duration-300"
-							enterFrom="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-							enterTo="opacity-100 translate-y-0 sm:scale-100"
-							leave="ease-in duration-200"
-							leaveFrom="opacity-100 translate-y-0 sm:scale-100"
-							leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-						>
-							<Dialog.Panel className="relative transform overflow-hidden rounded-lg bg-white px-4 pt-5 pb-4 text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-sm sm:p-6">
-								{children}
-							</Dialog.Panel>
-						</Transition.Child>
-					</div>
+				<select
+					id="tabs"
+					name="tabs"
+					className="block w-full rounded-md border-gray-300 focus:border-indigo-500 focus:ring-indigo-500"
+					defaultValue={tabs.find((tab) => tab.current).name}
+				>
+					{tabs.map((tab) => (
+						<option key={tab.name}>{tab.name}</option>
+					))}
+				</select>
+			</div>
+			<div className="hidden sm:block ml-5">
+				<div className="border-b border-gray-200">
+					<nav className="-mb-px flex space-x-8" aria-label="Tabs">
+						{tabs.map((tab) => (
+							<a
+								key={tab.name}
+								href={tab.href(location.pathname)}
+								className={classNames(
+									tab.current
+										? "border-indigo-500 text-indigo-600"
+										: "border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700",
+									"group inline-flex items-center border-b-2 pt-4 pb-2 px-1 text-sm font-medium"
+								)}
+								aria-current={tab.current ? "page" : undefined}
+							>
+								<tab.icon
+									className={classNames(
+										tab.current
+											? "text-indigo-500"
+											: "text-gray-400 group-hover:text-gray-500",
+										"-ml-0.5 mr-2 h-5 w-5"
+									)}
+									aria-hidden="true"
+								/>
+								<span>{tab.name}</span>
+							</a>
+						))}
+					</nav>
 				</div>
-			</Dialog>
-		</Transition.Root>
+			</div>
+		</div>
 	);
 }
 
-export default function Credit() {
+export default function Report() {
 	var { origin, user_id, reports } = useLoaderData();
 
 	return (
@@ -143,6 +163,7 @@ export default function Credit() {
 			<div className="flex flex-row h-full overflow-hidden">
 				{user_id && <LeftNav data={reports} can_manage_roles={false} />}
 				<div className="flex flex-col flex-1 overflow-scroll">
+					<Tabs />
 					<Outlet />
 				</div>
 			</div>

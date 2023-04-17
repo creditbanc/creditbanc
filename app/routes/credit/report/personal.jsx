@@ -66,7 +66,7 @@ export default function CreditReport() {
 
 	return (
 		<div className="flex flex-col flex-1 overflow-scroll">
-			<div className="flex flex-col w-full">
+			<div className="flex flex-col w-full pt-5">
 				<div
 					className="flex flex-col w-full p-[10px] max-w-5xl mx-auto"
 					ref={setTarget}

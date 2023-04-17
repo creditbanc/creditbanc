@@ -24,7 +24,7 @@ export const loader = async ({ request }) => {
 	)(credit_report.trade_lines);
 
 	// console.log("trade_lines");
-	// inspect(trade_lines);
+	// inspect(credit_report);
 
 	return trade_lines;
 };
