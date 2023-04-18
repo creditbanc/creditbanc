@@ -1,6 +1,6 @@
 import { ArrowUpOnSquareIcon } from "@heroicons/react/24/outline";
 import { pipe, reject } from "ramda";
-import { useLoaderData } from "@remix-run/react";
+import { useLoaderData, useLocation } from "@remix-run/react";
 import { json, redirect } from "@remix-run/node";
 import Directory from "~/components/Directory";
 import { get_root_docs } from "~/utils/group.server";
@@ -12,7 +12,10 @@ import {
 	uploadBytesResumable,
 	getStorage,
 	uploadBytes,
+	listAll,
 } from "firebase/storage";
+import { get_file_id } from "~/utils/helpers";
+import { useEffect } from "react";
 
 export const action = async ({ request }) => {};
 
@@ -33,6 +36,10 @@ export const loader = async ({ request }) => {
 
 export default function Documents() {
 	const { data = [], entity_id = "" } = useLoaderData();
+	const location = useLocation();
+	const file_id = get_file_id(location.pathname);
+	// console.log("file_id");
+	// console.log(file_id);
 
 	const onUpload = async (e) => {
 		console.log("onUpload");
@@ -41,7 +48,7 @@ export default function Documents() {
 		const file = e.target[0]?.files[0];
 		if (!file) return;
 
-		const storageRef = ref(storage, `files/${file.name}`);
+		const storageRef = ref(storage, `files/${file_id}/${file.name}`);
 		const uploadTask = uploadBytesResumable(storageRef, file);
 
 		const next = (snapshot) => {
@@ -68,6 +75,33 @@ export default function Documents() {
 
 		uploadTask.on("state_changed", next, error, complete);
 	};
+
+	useEffect(() => {
+		// on initial render, list all documents
+		const listRef = ref(storage, `files/${file_id}`);
+		const storage_url = `https://firebasestorage.googleapis.com/v0/b/creditbanc-b9822.appspot.com/o/files`;
+
+		const get_file_url = (itemRef) =>
+			`${storage_url}${encodeURIComponent(
+				`/${file_id}/${itemRef.name}`
+			)}?alt=media`;
+
+		listAll(listRef)
+			.then((res) => {
+				// console.log("res");
+				// console.log(res);
+
+				res.items.forEach((itemRef) => {
+					let file_url = get_file_url(itemRef);
+
+					console.log(file_url);
+					console.log(itemRef.name);
+				});
+			})
+			.catch((error) => {
+				// Uh-oh, an error occurred!
+			});
+	}, []);
 
 	return (
 		<div className="flex flex-col p-5">
