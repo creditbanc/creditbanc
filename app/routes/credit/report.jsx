@@ -9,6 +9,7 @@ import LeftNav from "~/components/LeftNav";
 import Share from "~/routes/invites/new/$.jsx";
 import Modal from "~/components/Modal";
 import { DocumentIcon, FolderIcon } from "@heroicons/react/24/outline";
+import ReportTabs from "~/components/ReportTabs";
 
 export const loader = async ({ request }) => {
 	let url = new URL(request.url);
@@ -71,81 +72,6 @@ export const loader = async ({ request }) => {
 	return { reports, origin: url.origin, user_id };
 };
 
-function classNames(...classes) {
-	return classes.filter(Boolean).join(" ");
-}
-
-const tabs = [
-	{
-		name: "Report",
-		href: (pathname) =>
-			`/credit/report/personal/personal${to_resource_pathname(pathname)}`,
-		icon: DocumentIcon,
-		current: true,
-	},
-	{
-		name: "Documents",
-		href: (pathname) =>
-			`/credit/documents${to_resource_pathname(pathname)}`,
-		icon: FolderIcon,
-		current: false,
-	},
-];
-
-function Tabs() {
-	let location = useLocation();
-	return (
-		<div>
-			<div className="sm:hidden">
-				<label htmlFor="tabs" className="sr-only">
-					Select a tab
-				</label>
-
-				<select
-					id="tabs"
-					name="tabs"
-					className="block w-full rounded-md border-gray-300 focus:border-indigo-500 focus:ring-indigo-500"
-					defaultValue={tabs.find((tab) => tab.current).name}
-				>
-					{tabs.map((tab) => (
-						<option key={tab.name}>{tab.name}</option>
-					))}
-				</select>
-			</div>
-			<div className="hidden sm:block ml-5">
-				<div className="border-b border-gray-200">
-					<nav className="-mb-px flex space-x-8" aria-label="Tabs">
-						{tabs.map((tab) => (
-							<a
-								key={tab.name}
-								href={tab.href(location.pathname)}
-								className={classNames(
-									tab.current
-										? "border-indigo-500 text-indigo-600"
-										: "border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700",
-									"group inline-flex items-center border-b-2 pt-4 pb-2 px-1 text-sm font-medium"
-								)}
-								aria-current={tab.current ? "page" : undefined}
-							>
-								<tab.icon
-									className={classNames(
-										tab.current
-											? "text-indigo-500"
-											: "text-gray-400 group-hover:text-gray-500",
-										"-ml-0.5 mr-2 h-5 w-5"
-									)}
-									aria-hidden="true"
-								/>
-								<span>{tab.name}</span>
-							</a>
-						))}
-					</nav>
-				</div>
-			</div>
-		</div>
-	);
-}
-
 export default function Report() {
 	var { origin, user_id, reports } = useLoaderData();
 
@@ -163,7 +89,7 @@ export default function Report() {
 			<div className="flex flex-row h-full overflow-hidden">
 				{user_id && <LeftNav data={reports} can_manage_roles={false} />}
 				<div className="flex flex-col flex-1 overflow-scroll">
-					<Tabs />
+					<ReportTabs />
 					<Outlet />
 				</div>
 			</div>

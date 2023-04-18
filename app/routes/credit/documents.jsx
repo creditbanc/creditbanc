@@ -8,6 +8,7 @@ import { Outlet, useLoaderData } from "@remix-run/react";
 import LeftNav from "~/components/LeftNav";
 import Share from "~/routes/invites/new/$.jsx";
 import Modal from "~/components/Modal";
+import ReportTabs from "~/components/ReportTabs";
 
 export const loader = async ({ request }) => {
 	let url = new URL(request.url);
@@ -50,6 +51,7 @@ export default function Documents() {
 			<div className="flex flex-row h-full overflow-hidden">
 				{user_id && <LeftNav data={reports} can_manage_roles={false} />}
 				<div className="flex flex-col flex-1 overflow-scroll">
+					<ReportTabs />
 					<Outlet />
 				</div>
 			</div>

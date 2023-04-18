@@ -1,6 +1,5 @@
 import { Link, useLocation } from "@remix-run/react";
-import { equals, join, map, pipe, reject, split, __, includes } from "ramda";
-import Nav from "~/components/Nav";
+import { map, pipe, __, includes } from "ramda";
 import { Fragment } from "react";
 import { Popover, Transition } from "@headlessui/react";
 import { is_root_path_p, to_resource_pathname } from "~/utils/helpers";
@@ -55,46 +54,6 @@ const SettingsIcon = () => {
 	);
 };
 
-const ShareIcon = () => (
-	<svg
-		xmlns="http://www.w3.org/2000/svg"
-		viewBox="0 0 20 20"
-		fill="currentColor"
-		className="w-5 h-5"
-	>
-		<path d="M12.232 4.232a2.5 2.5 0 013.536 3.536l-1.225 1.224a.75.75 0 001.061 1.06l1.224-1.224a4 4 0 00-5.656-5.656l-3 3a4 4 0 00.225 5.865.75.75 0 00.977-1.138 2.5 2.5 0 01-.142-3.667l3-3z" />
-		<path d="M11.603 7.963a.75.75 0 00-.977 1.138 2.5 2.5 0 01.142 3.667l-3 3a2.5 2.5 0 01-3.536-3.536l1.225-1.224a.75.75 0 00-1.061-1.06l-1.224 1.224a4 4 0 105.656 5.656l3-3a4 4 0 00-.225-5.865z" />
-	</svg>
-);
-
-const ReportIcon = () => (
-	<svg
-		xmlns="http://www.w3.org/2000/svg"
-		fill="none"
-		viewBox="0 0 24 24"
-		strokeWidth={1.5}
-		stroke="currentColor"
-		className="w-5 h-5"
-	>
-		<path
-			strokeLinecap="round"
-			strokeLinejoin="round"
-			d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z"
-		/>
-	</svg>
-);
-
-const GroupIcon = () => (
-	<svg
-		xmlns="http://www.w3.org/2000/svg"
-		viewBox="0 0 20 20"
-		fill="currentColor"
-		className="w-5 h-5"
-	>
-		<path d="M10 9a3 3 0 100-6 3 3 0 000 6zM6 8a2 2 0 11-4 0 2 2 0 014 0zM1.49 15.326a.78.78 0 01-.358-.442 3 3 0 014.308-3.516 6.484 6.484 0 00-1.905 3.959c-.023.222-.014.442.025.654a4.97 4.97 0 01-2.07-.655zM16.44 15.98a4.97 4.97 0 002.07-.654.78.78 0 00.357-.442 3 3 0 00-4.308-3.517 6.484 6.484 0 011.907 3.96 2.32 2.32 0 01-.026.654zM18 8a2 2 0 11-4 0 2 2 0 014 0zM5.304 16.19a.844.844 0 01-.277-.71 5 5 0 019.947 0 .843.843 0 01-.277.71A6.975 6.975 0 0110 18a6.974 6.974 0 01-4.696-1.81z" />
-	</svg>
-);
-
 const build_group_path = ({ pathname, resource_id }) => {
 	return "/group" + to_resource_pathname(pathname) + `/g/${resource_id}`;
 };
@@ -108,41 +67,14 @@ const build_file_path = ({ pathname, resource_id }) => {
 };
 
 const build_resource_path = ({ resource_id, pathname }) => {
-	// console.log("build_resource_path");
-
 	const is_root_path = pipe(is_root_path_p)(pathname);
-	// console.log("is_root_path", is_root_path);
-	// console.log("pathname", pathname);
+
 	if (is_root_path) {
 		return build_group_path({ pathname, resource_id });
 	} else {
 		return build_file_path({ pathname, resource_id });
 	}
 };
-
-const build_action_path = ({ current_path, resource_action_path }) => {
-	let path = pipe(split("/"), reject(equals("")), join("/"))(current_path);
-	return `/${path}`;
-};
-
-const group_actions = [
-	{
-		text: "New Group",
-		key: "new_group",
-		href: (pathname) => `/group/new` + to_resource_pathname(pathname),
-	},
-	{
-		text: "New Credit Report",
-		key: "new_credit_report",
-		href: (pathname) =>
-			"/credit/personal/new" + to_resource_pathname(pathname),
-	},
-	{
-		text: "Share",
-		key: "new_link",
-		href: (pathname) => "/links/new" + to_resource_pathname(pathname),
-	},
-];
 
 const resource_actions = [
 	{
@@ -151,12 +83,6 @@ const resource_actions = [
 		href: (pathname) => "/links/new" + to_resource_pathname(pathname),
 	},
 ];
-
-let icons = {
-	new_link: ShareIcon,
-	new_credit_report: ReportIcon,
-	new_group: GroupIcon,
-};
 
 function classNames(...classes) {
 	return classes.filter(Boolean).join(" ");
@@ -238,79 +164,6 @@ const ResourceFileActionsMenu = ({ resource }) => {
 	);
 };
 
-const ResourceGroupActionsMenu = ({ resource_id }) => {
-	const location = useLocation();
-	let pathname = location.pathname;
-
-	const Icon = ({ component: IconComponent }) => {
-		return <IconComponent />;
-	};
-
-	return (
-		<div className="flex flex-col">
-			<Popover className="relative flex flex-col">
-				{({ open }) => (
-					<>
-						<Popover.Button
-							className={classNames(
-								open ? "text-gray-900" : "text-gray-500",
-								"group inline-flex items-center rounded-md bg-white text-base font-medium hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
-							)}
-						>
-							<svg
-								xmlns="http://www.w3.org/2000/svg"
-								viewBox="0 0 20 20"
-								fill="currentColor"
-								className="w-5 h-5"
-							>
-								<path d="M3 10a1.5 1.5 0 113 0 1.5 1.5 0 01-3 0zM8.5 10a1.5 1.5 0 113 0 1.5 1.5 0 01-3 0zM15.5 8.5a1.5 1.5 0 100 3 1.5 1.5 0 000-3z" />
-							</svg>
-						</Popover.Button>
-
-						<Transition
-							as={Fragment}
-							enter="transition ease-out duration-200"
-							enterFrom="opacity-0 translate-y-1"
-							enterTo="opacity-100 translate-y-0"
-							leave="transition ease-in duration-150"
-							leaveFrom="opacity-100 translate-y-0"
-							leaveTo="opacity-0 translate-y-1"
-						>
-							<Popover.Panel className="absolute z-10 mt-8 w-screen max-w-[200px] transform right-0">
-								<div className="overflow-hidden rounded shadow-lg ring-1 ring-black ring-opacity-5 ">
-									<div className="border-b border-gray-200 bg-white px-5 py-2 ">
-										<h3 className="text-sm font-medium leading-6 text-gray-900">
-											Actions
-										</h3>
-									</div>
-									<div className="relative grid bg-white py-2">
-										{group_actions.map((item, idx) => (
-											<Link
-												to={item.href(pathname)}
-												key={idx}
-												className="flex flex-row transition duration-150 ease-in-out hover:bg-gray-50 px-5 py-2 cursor-pointer text-sm"
-											>
-												<div className="mr-[10px]">
-													<Icon
-														component={
-															icons[item.key]
-														}
-													/>
-												</div>
-												<div>{item.text}</div>
-											</Link>
-										))}
-									</div>
-								</div>
-							</Popover.Panel>
-						</Transition>
-					</>
-				)}
-			</Popover>
-		</div>
-	);
-};
-
 let directory_type_enums = ["partition", "group", "directory"];
 
 let is_directory_type = pipe(includes(__, directory_type_enums));
@@ -356,47 +209,17 @@ const ResourceFile = ({ resource }) => {
 
 export default function Directory({ data }) {
 	const location = useLocation();
-	let pathname = location.pathname;
 
 	return (
-		<div>
-			<Nav />
-			<div className="bg-white p-[10px] max-w-7xl mx-auto">
-				<div className="py-2 flex flex-col">
-					<div className="flex flex-row justify-between px-[5px]">
-						<div className="flex flex-row items-center">
-							<div className="flex flex-col mr-[10px]">
-								Documents
-							</div>
-							<div className="flex flex-col">
-								<Link
-									to={
-										"/roles" +
-										to_resource_pathname(pathname)
-									}
-								>
-									<SettingsIcon />
-								</Link>
-							</div>
-						</div>
-						<ResourceGroupActionsMenu />
-					</div>
-				</div>
-				<ul
-					role="list"
-					className="divide-y divide-gray-200 border rounded"
-				>
-					{map(
-						(resource) => (
-							<ResourceFile
-								key={resource.id}
-								resource={resource}
-							/>
-						),
-						data
-					)}
-				</ul>
-			</div>
+		<div className="bg-white max-w-7xl mx-auto">
+			<ul role="list" className="divide-y divide-gray-200 border rounded">
+				{map(
+					(resource) => (
+						<ResourceFile key={resource.id} resource={resource} />
+					),
+					data
+				)}
+			</ul>
 		</div>
 	);
 }

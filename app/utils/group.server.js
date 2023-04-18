@@ -158,16 +158,16 @@ export const create_group = async ({
 
 export const create_directory = async (data = {}) => {
 	console.log("create_directory");
-	let { root_partition_resource_path_id, name } = data;
+	let { name } = data;
 	console.log("data", data);
 
-	let group = await prisma.group.create({
+	let directory = await prisma.group.create({
 		data: {
 			name,
 		},
 	});
 
-	let { id: group_id } = group;
+	let { id: group_id } = directory;
 
 	let resource = await create_resource({
 		type: "directory",

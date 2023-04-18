@@ -28,10 +28,10 @@ export const loader = async ({ request }) => {
 	});
 	console.log("root_gruop_id");
 	// console.log(root_gruop_id);
-	if (!has_resource)
-		return redirect(
-			`/group/resource/e/${entity_id}/g/${root_gruop_resource_path_id}`
-		);
+	// if (!has_resource)
+	// 	return redirect(
+	// 		`/group/resource/e/${entity_id}/g/${root_gruop_resource_path_id}`
+	// 	);
 	const resources = await load_root({ entity_id });
 	return json({ data: resources, entity_id });
 };
