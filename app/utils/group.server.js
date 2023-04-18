@@ -158,7 +158,7 @@ export const create_group = async ({
 
 export const create_directory = async (data = {}) => {
 	console.log("create_directory");
-	let { name } = data;
+	let { name, group_id } = data;
 	console.log("data", data);
 
 	let directory = await prisma.group.create({
@@ -167,17 +167,17 @@ export const create_directory = async (data = {}) => {
 		},
 	});
 
-	let { id: group_id } = directory;
+	let { id: directory_id } = directory;
 
 	let resource = await create_resource({
 		type: "directory",
 		model: "group",
-		resource_path_id: group_id,
+		resource_path_id: directory_id,
 	});
 
 	await prisma.resource.update({
 		where: {
-			resource_path_id: root_partition_resource_path_id,
+			resource_path_id: group_id,
 		},
 		data: {
 			subscription_ids: {
@@ -190,17 +190,17 @@ export const create_directory = async (data = {}) => {
 		where: { id: resource.id },
 		data: {
 			subscriber_ids: {
-				push: [root_partition_resource_path_id],
+				push: [group_id],
 			},
 		},
 	});
 
 	await prisma.group.update({
-		where: { id: group_id },
+		where: { id: directory_id },
 		data: { resource_id: resource.id },
 	});
 
-	return { type: "group", group, resource };
+	return { type: "directory", directory, resource };
 };
 
 export const get_root_group_resource_path_id = async ({ entity_id }) => {

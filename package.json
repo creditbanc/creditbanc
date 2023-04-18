@@ -25,6 +25,7 @@
 		"clsx": "^1.2.1",
 		"copy-to-clipboard": "^3.3.3",
 		"daisyui": "^2.46.1",
+		"firebase": "^9.19.1",
 		"form-data": "^4.0.0",
 		"framer-motion": "^8.5.5",
 		"immer": "^9.0.19",
