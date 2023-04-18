@@ -2,12 +2,13 @@ import { Fragment } from "react";
 import { useModalStore } from "~/hooks/useModal";
 import { Dialog, Transition } from "@headlessui/react";
 
-export default function Modal({ children }) {
+export default function Modal({ children, id }) {
 	const is_open = useModalStore((state) => state.is_open);
 	const set_open = useModalStore((state) => state.set_open);
+	const modal_id = useModalStore((state) => state.id);
 
 	return (
-		<Transition.Root show={is_open} as={Fragment}>
+		<Transition.Root show={is_open && modal_id == id} as={Fragment}>
 			<Dialog as="div" className="relative z-10" onClose={set_open}>
 				<Transition.Child
 					as={Fragment}

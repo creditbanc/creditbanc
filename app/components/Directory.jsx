@@ -2,7 +2,11 @@ import { Link, useLocation } from "@remix-run/react";
 import { map, pipe, __, includes } from "ramda";
 import { Fragment } from "react";
 import { Popover, Transition } from "@headlessui/react";
-import { is_root_path_p, to_resource_pathname } from "~/utils/helpers";
+import {
+	is_root_path_p,
+	mapIndexed,
+	to_resource_pathname,
+} from "~/utils/helpers";
 
 const FolderIcon = () => {
 	return (
@@ -200,18 +204,19 @@ const ResourceFile = ({ resource }) => {
 };
 
 export default function Directory({ data }) {
-	const location = useLocation();
-
 	return (
 		<div className="bg-white mx-auto">
-			<ul role="list" className="divide-y divide-gray-200 border rounded">
-				{map(
-					(resource) => (
-						<ResourceFile key={resource.id} resource={resource} />
+			<div
+				role="list"
+				className="divide-y divide-gray-200 border rounded"
+			>
+				{mapIndexed(
+					(resource, idx) => (
+						<ResourceFile key={idx} resource={resource} />
 					),
 					data
 				)}
-			</ul>
+			</div>
 		</div>
 	);
 }
