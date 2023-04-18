@@ -140,7 +140,7 @@ export default function Documents() {
 			<Modal id="upload_file_modal">
 				<UploadForm />
 			</Modal>
-			<div className="flex flex-row">
+			<div className="flex flex-row my-1">
 				<div
 					className="flex flex-row bg-[#55CF9E] py-1.5 px-2 rounded text-sm text-white cursor-pointer w-fit"
 					onClick={onSetUploadModal}
@@ -156,7 +156,7 @@ export default function Documents() {
 					</button>
 				</div>
 			</div>
-			<div className="my-5">
+			<div className="my-3">
 				<Directory data={data} entity_id={entity_id} />
 			</div>
 		</div>
