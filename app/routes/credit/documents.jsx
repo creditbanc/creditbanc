@@ -44,7 +44,7 @@ export default function Documents() {
 
 	return (
 		<div className="flex flex-col h-full w-full">
-			<Modal>
+			<Modal id="share_modal">
 				<Share />
 			</Modal>
 			<CreditNav

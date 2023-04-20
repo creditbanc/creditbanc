@@ -15,9 +15,10 @@ import {
 	uploadBytes,
 	listAll,
 } from "firebase/storage";
-import { get_file_id } from "~/utils/helpers";
+import { get_file_id, mapIndexed } from "~/utils/helpers";
 import Modal from "~/components/Modal";
 import { useModalStore } from "~/hooks/useModal";
+import { useFilesStore } from "~/hooks/useFiles";
 
 export const action = async ({ request }) => {};
 
@@ -106,6 +107,8 @@ export default function Documents() {
 	const file_id = get_file_id(location.pathname);
 	const set_modal = useModalStore((state) => state.set_modal);
 	const is_open = useModalStore((state) => state.is_open);
+	const files = useFilesStore((state) => state.files);
+	const set_files = useFilesStore((state) => state.set_files);
 
 	useEffect(() => {
 		// on initial render, list all documents
@@ -119,12 +122,14 @@ export default function Documents() {
 
 		listAll(listRef)
 			.then((res) => {
-				res.items.forEach((itemRef) => {
-					let file_url = get_file_url(itemRef);
-
-					console.log(file_url);
-					console.log(itemRef.name);
-				});
+				pipe(
+					mapIndexed((file, idx) => ({
+						id: idx,
+						name: file.name,
+						url: get_file_url(file),
+					})),
+					(files) => set_files({ files })
+				)(res.items);
 			})
 			.catch((error) => {
 				// Uh-oh, an error occurred!
@@ -157,7 +162,7 @@ export default function Documents() {
 				</div>
 			</div>
 			<div className="my-3">
-				<Directory data={data} entity_id={entity_id} />
+				<Directory data={files} entity_id={entity_id} />
 			</div>
 		</div>
 	);
