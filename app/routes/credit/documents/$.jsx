@@ -45,12 +45,14 @@ const UploadForm = () => {
 	const location = useLocation();
 	const file_id = get_file_id(location.pathname);
 	const [file_name, set_file_name] = useState("");
-	const [progress, set_progress] = useState(0);
+	const [progress, set_progress] = useState("");
 	const set_modal = useModalStore((state) => state.set_modal);
+	const files = useFilesStore((state) => state.files);
+	const set_files = useFilesStore((state) => state.set_files);
 
 	useEffect(() => {
 		if (file_name === "") {
-			set_progress(0);
+			// set_progress(0);
 		}
 	}, [file_name]);
 
@@ -89,6 +91,12 @@ const UploadForm = () => {
 			getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
 				// console.log("downloadURL");
 				// console.log(downloadURL);
+				set_files({
+					files: [
+						...files,
+						{ name: file.name, url: downloadURL, id: files.length },
+					],
+				});
 			});
 		};
 
@@ -102,6 +110,9 @@ const UploadForm = () => {
 		let file_name = e.target.files[0]?.name;
 		set_file_name(file_name);
 	};
+
+	console.log("progress");
+	console.log(progress);
 
 	return (
 		<form className="flex flex-col" onSubmit={onUpload}>
@@ -150,7 +161,7 @@ const UploadForm = () => {
 						<div className="w-full bg-gray-200 rounded-full h-2.5 dark:bg-gray-700">
 							<div
 								className={`bg-blue-600 h-2.5 rounded-full w-[${progress}%]`}
-							/>
+							></div>
 						</div>
 					</div>
 				</div>
