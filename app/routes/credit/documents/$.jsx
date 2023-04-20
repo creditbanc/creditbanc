@@ -1,5 +1,9 @@
-import { useEffect } from "react";
-import { ArrowUpOnSquareIcon } from "@heroicons/react/24/outline";
+import { useEffect, useState } from "react";
+import {
+	ArrowUpOnSquareIcon,
+	XMarkIcon,
+	DocumentIcon,
+} from "@heroicons/react/24/outline";
 import { pipe, reject } from "ramda";
 import { useLoaderData, useLocation } from "@remix-run/react";
 import { json, redirect } from "@remix-run/node";
@@ -40,6 +44,7 @@ export const loader = async ({ request }) => {
 const UploadForm = () => {
 	const location = useLocation();
 	const file_id = get_file_id(location.pathname);
+	const [file_name, set_file_name] = useState("");
 
 	const onUpload = async (e) => {
 		console.log("onUpload");
@@ -75,25 +80,65 @@ const UploadForm = () => {
 		uploadTask.on("state_changed", next, error, complete);
 	};
 
+	const onSelectFile = (e) => {
+		console.log("onSelectFile");
+		// console.log(e.target.files[0]?.name);
+
+		let file_name = e.target.files[0]?.name;
+		set_file_name(file_name);
+	};
+
 	return (
-		<form className="flex flex-row" onSubmit={onUpload}>
-			<label
-				htmlFor="file-upload"
-				className="text-sm flex flex-col justify-center px-4 cursor-pointer"
-			>
-				Choose File
-			</label>
+		<form className="flex flex-col" onSubmit={onUpload}>
+			{file_name === "" && (
+				<div className="flex flec-cold items-center justify-center w-full h-[200px] border border-dashed rounded border-gray-300 text-gray-300 mb-1">
+					<label
+						htmlFor="file-upload"
+						className="flex flex-col items-center cursor-pointer"
+					>
+						<div className="w-[50px] my-2">
+							<ArrowUpOnSquareIcon />
+						</div>
+						<div>Click to select file</div>
+					</label>
+				</div>
+			)}
+
 			<input
 				id="file-upload"
 				type="file"
 				className="hidden"
-				onChange={(e) => console.log(e.target.files[0]?.name)}
+				onChange={onSelectFile}
 			/>
-			<div className="flex flex-row bg-[#55CF9E] py-1 px-2 rounded text-sm text-white cursor-pointer">
-				<div className="w-4 mr-2 flex flex-col justify-center">
+			{file_name !== "" && (
+				<div className="bg-gray-50 flex flex-row h-[50px] items-center rounded my-2">
+					<div className="flex flex-col w-[50px] items-center">
+						<div className="w-[30px] h-[30px] bg-[#fff] flex flex-col items-center justify-center border border-gray-300 rounded">
+							<div className="w-[17px] flex flex-col items-center justify-center text-gray-400">
+								<DocumentIcon />
+							</div>
+						</div>
+					</div>
+					<div className="flex flex-col grow">
+						<p className="text-xs">{file_name}</p>
+					</div>
+					<div
+						className="flex flex-col w-[15px] self-start mr-1.5 mt-1.5 cursor-pointer text-gray-400"
+						onClick={() => set_file_name("")}
+					>
+						<XMarkIcon />
+					</div>
+				</div>
+			)}
+
+			<div className="flex flex-row bg-[#55CF9E] py-1 px-2 rounded text-white cursor-pointer justify-center mt-1">
+				<div className="w-[20px] mr-2 flex flex-col justify-center">
 					<ArrowUpOnSquareIcon />
 				</div>
-				<button className="flex flex-col justify-center" type="submit">
+				<button
+					className="flex flex-col justify-center h-[30px]"
+					type="submit"
+				>
 					Upload
 				</button>
 			</div>
@@ -143,6 +188,11 @@ export default function Documents() {
 	return (
 		<div className="flex flex-col p-5">
 			<Modal id="upload_file_modal">
+				<div className="border-b border-gray-200 bg-white mb-3">
+					<h3 className="text-base font-semibold leading-6 text-gray-900 mb-2">
+						Upload
+					</h3>
+				</div>
 				<UploadForm />
 			</Modal>
 			<div className="flex flex-row my-1">
