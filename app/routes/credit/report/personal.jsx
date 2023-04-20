@@ -55,7 +55,6 @@ export default function CreditReport() {
 	const [target, setTarget] = useState();
 	const elmSize = useElmSize(target);
 	let setContentWidth = useLayoutStore((state) => state.set_content_width);
-
 	let location = useLocation();
 
 	useEffect(() => {

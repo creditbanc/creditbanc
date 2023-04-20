@@ -1,10 +1,14 @@
 import CreditNav from "~/components/CreditNav";
-import { get_group_id } from "~/utils/helpers";
+import {
+	get_group_id,
+	get_route_endpoint,
+	get_report_endpoint,
+} from "~/utils/helpers";
 import { get_user_id } from "~/utils/auth.server";
 import { get_docs as get_group_docs } from "~/utils/group.server";
 import { defaultTo, pipe } from "ramda";
 import { filter } from "shades";
-import { Outlet, useLoaderData } from "@remix-run/react";
+import { Outlet, useLoaderData, useLocation } from "@remix-run/react";
 import LeftNav from "~/components/LeftNav";
 import Share from "~/routes/invites/new/$.jsx";
 import Modal from "~/components/Modal";
@@ -36,6 +40,7 @@ export const loader = async ({ request }) => {
 
 export default function Documents() {
 	var { origin, user_id, reports } = useLoaderData();
+	let location = useLocation();
 
 	return (
 		<div className="flex flex-col h-full w-full">
@@ -51,7 +56,9 @@ export default function Documents() {
 			<div className="flex flex-row h-full overflow-hidden">
 				{user_id && <LeftNav data={reports} can_manage_roles={false} />}
 				<div className="flex flex-col flex-1 overflow-scroll">
-					<ReportTabs />
+					<ReportTabs
+						selected={get_report_endpoint(location.pathname)}
+					/>
 					<Outlet />
 				</div>
 			</div>

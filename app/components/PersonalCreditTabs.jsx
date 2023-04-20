@@ -34,7 +34,7 @@ const tabs = [
 			to_resource_pathname(pathname) +
 			search,
 		icon: UserIcon,
-		current: true,
+		current: false,
 		id: "personal",
 	},
 	{

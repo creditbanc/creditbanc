@@ -13,6 +13,7 @@ const tabs = [
 			`/credit/report/personal/personal${to_resource_pathname(pathname)}`,
 		icon: DocumentIcon,
 		current: true,
+		id: "report",
 	},
 	{
 		name: "Documents",
@@ -20,11 +21,13 @@ const tabs = [
 			`/credit/documents${to_resource_pathname(pathname)}`,
 		icon: FolderIcon,
 		current: false,
+		id: "documents",
 	},
 ];
 
-export default function Tabs() {
+export default function Tabs({ selected = "report" }) {
 	let location = useLocation();
+
 	return (
 		<div>
 			<div className="sm:hidden">
@@ -51,16 +54,15 @@ export default function Tabs() {
 								key={tab.name}
 								href={tab.href(location.pathname)}
 								className={classNames(
-									tab.current
+									selected == tab.id
 										? "border-blue-500 text-blue-600"
 										: "border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700",
 									"group inline-flex items-center border-b-2 pt-4 pb-2 px-1 text-sm font-medium"
 								)}
-								aria-current={tab.current ? "page" : undefined}
 							>
 								<tab.icon
 									className={classNames(
-										tab.current
+										selected == tab.id
 											? "text-blue-500"
 											: "text-gray-400 group-hover:text-gray-500",
 										"-ml-0.5 mr-2 h-5 w-5"

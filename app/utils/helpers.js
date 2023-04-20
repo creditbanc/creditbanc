@@ -21,6 +21,8 @@ import {
 	isEmpty,
 	either,
 	isNil,
+	take,
+	nth,
 } from "ramda";
 const util = require("util");
 import { get } from "shades";
@@ -96,6 +98,10 @@ export const to_route_pathname = (uri) => {
 
 export const get_route_endpoint = (uri) => {
 	return pipe(to_route_pathname, split("/"), last)(uri);
+};
+
+export const get_report_endpoint = (uri) => {
+	return pipe(to_route_pathname, split("/"), trim, nth(1))(uri);
 };
 
 export const to_group_pathname = (uri) => {

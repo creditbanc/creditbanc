@@ -1,5 +1,9 @@
 import CreditNav from "~/components/CreditNav";
-import { get_group_id, to_resource_pathname } from "~/utils/helpers";
+import {
+	get_group_id,
+	get_route_endpoint,
+	get_report_endpoint,
+} from "~/utils/helpers";
 import { get_user_id } from "~/utils/auth.server";
 import { get_docs as get_group_docs } from "~/utils/group.server";
 import { defaultTo, pipe } from "ramda";
@@ -74,6 +78,7 @@ export const loader = async ({ request }) => {
 
 export default function Report() {
 	var { origin, user_id, reports } = useLoaderData();
+	let location = useLocation();
 
 	return (
 		<div className="flex flex-col h-full w-full">
@@ -89,7 +94,9 @@ export default function Report() {
 			<div className="flex flex-row h-full overflow-hidden">
 				{user_id && <LeftNav data={reports} can_manage_roles={false} />}
 				<div className="flex flex-col flex-1 overflow-scroll">
-					<ReportTabs />
+					<ReportTabs
+						selected={get_report_endpoint(location.pathname)}
+					/>
 					<Outlet />
 				</div>
 			</div>
