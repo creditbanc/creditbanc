@@ -29,7 +29,7 @@ export const loader = async ({ request }) => {
 	return trade_lines;
 };
 
-const SummaryCard = () => {
+const InfoCard = () => {
 	return (
 		<div className="overflow-hidden bg-white rounded-lg border">
 			<div className="px-4 py-5 sm:px-6 flex flex-row items-center">
@@ -38,7 +38,7 @@ const SummaryCard = () => {
 				</div>
 				<div className="flex flex-col">
 					<h3 className="text-xl font-medium leading-6 text-gray-900">
-						How Important is Your Credit Age?
+						Your Credit Age is more than just a number.
 					</h3>
 				</div>
 			</div>
@@ -51,32 +51,44 @@ const SummaryCard = () => {
 
 				<div className="flex flex-col py-2 text-gray-700 text-sm">
 					<p>
-						Credit age accounts for 15% of your overall credit
-						score. There are two important factors considered in the
-						analysis of your credit age: 1) your average credit
-						account age and 2) your credit birthday or the date you
-						opened your first credit account. In your case, your
-						credit birthday is 10/01/1999. Your average age of your
-						accounts is 9 years and 1 months. This is determined by
-						taking the age of each account on your credit report and
-						averaging them together. As time goes by, both of these
-						factors will get better because your existing accounts
-						will get older. However, you should be careful about
-						opening new accounts.
+						Your credit age refers to the length of time you have
+						had accounts open, such as credit cards, loans, or
+						mortgages. Two important factors are considered: 1) your
+						average credit age and 2) your credit birthday/the date
+						you opened your first credit account.
 					</p>
 				</div>
 
 				<div className="flex flex-col py-2 text-gray-700 text-sm">
 					<p>
-						A new account will lower the average age of all
-						accounts. Also, it's a big mistake to close an old
-						credit account that you are no longer using - doing so
-						can lower your credit score because your average account
-						age may drop. Removing old accounts in good standing
-						from your credit report makes your credit history look
-						younger than it really is. Don't worry; old negative
-						accounts will automatically be removed from your credit
-						report when their statute of limitations has expired.
+						In your case, your credit birthday is _____, and the
+						average age of your accounts is ________. And just like
+						you (aging like fine wine), these factors will improve
+						over time as your existing accounts grow older.
+					</p>
+				</div>
+
+				<div className="flex flex-col py-2 text-gray-700 text-sm">
+					<p>
+						This is why you should be careful about opening new
+						accounts and closing old accounts; both will affect your
+						credit age. A new account will lower the average age of
+						all your accounts. Likewise, pulling the plug on an old
+						credit account will make your credit history look
+						younger than it really is.
+					</p>
+				</div>
+
+				<div className="flex flex-col py-2 text-gray-700 text-sm">
+					<p>
+						Remember, when it comes to credit age, the older, the
+						better! A long track record of timely payments and
+						responsible borrowing is what lenders love to see, and
+						can score you better interest rates and higher credit
+						limits. And if you’re worried about old negative
+						accounts cramping your style - don’t worry: They’ll be
+						automatically removed from your credit report when their
+						statute of limitations has expired.
 					</p>
 				</div>
 			</div>
@@ -84,12 +96,12 @@ const SummaryCard = () => {
 	);
 };
 
-export default function Personal() {
+export default function Age() {
 	let trade_lines = useLoaderData();
 
 	return (
 		<div className="flex flex-col w-full">
-			<SummaryCard />
+			<InfoCard />
 			<Accounts trade_lines={trade_lines} />
 		</div>
 	);

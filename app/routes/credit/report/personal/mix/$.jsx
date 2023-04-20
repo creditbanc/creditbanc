@@ -29,7 +29,7 @@ export const loader = async ({ request }) => {
 	return trade_lines;
 };
 
-const SummaryCard = () => {
+const InfoCard = () => {
 	return (
 		<div className="overflow-hidden bg-white rounded-lg border">
 			<div className="px-4 py-5 sm:px-6 flex flex-row items-center">
@@ -38,7 +38,7 @@ const SummaryCard = () => {
 				</div>
 				<div className="flex flex-col">
 					<h3 className="text-xl font-medium leading-6 text-gray-900">
-						How Important is Your Account Mix?
+						How Important is My Account Mix?
 					</h3>
 				</div>
 			</div>
@@ -51,14 +51,13 @@ const SummaryCard = () => {
 
 				<div className="flex flex-col py-2 text-gray-700 text-sm">
 					<p>
-						Account mix or credit diversity accounts for 10% of your
-						overall credit score. Creditors like to see that you've
+						Just like you should diversify your investments, you
+						should diversify your debt; creditors like to see you’ve
 						had experience with different types of credit accounts.
-						This category is simply measuring whether or not that's
-						the case. To do well in this category you need to have a
-						several different types of accounts, such as a credit
-						card, department store card, and an installment loan
-						(car loan, student loan, etc.).
+						To ace this category, you should have a mix of revolving
+						credit (credit cards, installment loans, store cards,
+						etc.) and installment loans (car loans, student loans,
+						mortgages, etc.).
 					</p>
 				</div>
 			</div>
@@ -66,12 +65,12 @@ const SummaryCard = () => {
 	);
 };
 
-export default function Personal() {
+export default function Mix() {
 	let trade_lines = useLoaderData();
 
 	return (
 		<div className="flex flex-col w-full">
-			<SummaryCard />
+			<InfoCard />
 			<Accounts trade_lines={trade_lines} />
 		</div>
 	);

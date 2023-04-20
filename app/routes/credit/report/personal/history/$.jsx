@@ -26,7 +26,7 @@ export const loader = async ({ request }) => {
 	return trade_lines;
 };
 
-const PersonalInfoCard = () => {
+const InfoCard = () => {
 	return (
 		<div className="overflow-hidden bg-white rounded-lg border">
 			<div className="px-4 py-5 sm:px-6 flex flex-row items-center">
@@ -35,7 +35,7 @@ const PersonalInfoCard = () => {
 				</div>
 				<div className="flex flex-col">
 					<p className="text-xl font-medium leading-6 text-gray-900">
-						How Important is Your Payment History?
+						Payment History: What’s the big deal?
 					</p>
 				</div>
 			</div>
@@ -48,43 +48,65 @@ const PersonalInfoCard = () => {
 
 				<div className="flex flex-col py-2 text-gray-700 text-sm">
 					<p>
-						Your payment history is one of the two most important
-						factors in determining your credit score, accounting for
-						35% of your overall credit score. To make sure you earn
-						all the credit score points possible, make sure to pay
-						all your accounts on time and avoid collections, public
-						records or other derogatory information.
+						It’s kind of a big deal, actually. We’re talking 35% of
+						your overall credit score.
 					</p>
 				</div>
 
 				<div className="flex flex-col py-2 text-gray-700 text-sm">
 					<p>
-						Because this is the most important credit score category
-						you also have the most to lose. If any serious negative
-						information is reported on your credit report you can
-						expect your score to drop significantly. Most negative
-						information can remain on your credit report for up to
-						seven years so once you have negative information, it is
-						a long road before you'll have good credit again.
+						Payment history (your track record for paying bills and
+						debts on time) is one of the two most important factors
+						in determining your credit score. It's like a financial
+						report card that lenders and creditors use to assess
+						your creditworthiness. If you’re consistently making
+						on-time payments, good job! Gold stars all around.
+					</p>
+				</div>
+
+				<div className="flex flex-col py-2 text-gray-700 text-sm">
+					<p>
+						But if your report comes back with a history of late
+						payments, missed payments, or accounts sent to
+						collections, you’ll see your credit score drop faster
+						than a skydiver without a parachute. This is going to
+						make it harder to get approved for lines of credit and
+						may also result in higher interest rates.
+					</p>
+				</div>
+
+				<div className="flex flex-col py-2 text-gray-700 text-sm">
+					<p>
+						(And not to add salt to the wound, but most negative
+						information on your payment history can stay on your
+						credit report for up to seven years.)
 					</p>
 				</div>
 
 				<div className="flex flex-col py-2 text-gray-700 text-sm">
 					<p>
 						The good news is that the older the negative
-						information, the less it hurts your score. Payment
-						history is typically reported on your credit report for
-						the last 24 months. This means late payments that
-						occurred prior to the 24 month history may not show up
-						on your credit report with any specificity.
+						information, the less it hurts your score. (Time heals
+						all wounds, right?) Generally speaking, late payments
+						that occurred 2+ years ago may not even show up on your
+						credit report with any specificity.
 					</p>
 				</div>
 
 				<div className="flex flex-col py-2 text-gray-700 text-sm">
 					<p>
-						On your Credit Banc report, any late payments are shown
-						under the Payment History box on the left of each
-						individual credit account.
+						Regardless, it’s crucial to prioritize your payment
+						history and always strive to pay bills on time. Set up
+						automatic payments, create reminders, and budget wisely
+						to ensure you're on top of your payment game.
+					</p>
+				</div>
+
+				<div className="flex flex-col py-2 text-gray-700 text-sm">
+					<p>
+						Your Credit Banc report shows any late payments under
+						the Payment History box on the left of each credit
+						account.
 					</p>
 				</div>
 			</div>
@@ -92,11 +114,11 @@ const PersonalInfoCard = () => {
 	);
 };
 
-export default function Personal() {
+export default function History() {
 	let trade_lines = useLoaderData();
 	return (
 		<div className="flex flex-col w-full">
-			<PersonalInfoCard />
+			<InfoCard />
 			<Accounts trade_lines={trade_lines} />
 		</div>
 	);

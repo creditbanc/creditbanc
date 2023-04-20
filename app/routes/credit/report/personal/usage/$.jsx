@@ -29,7 +29,7 @@ export const loader = async ({ request }) => {
 	return trade_lines;
 };
 
-const SummaryCard = () => {
+const InfoCard = () => {
 	return (
 		<div className="overflow-hidden bg-white rounded-lg border">
 			<div className="px-4 py-5 sm:px-6 flex flex-row items-center">
@@ -38,7 +38,7 @@ const SummaryCard = () => {
 				</div>
 				<div className="flex flex-col">
 					<h3 className="text-xl font-medium leading-6 text-gray-900">
-						How Important is Your Debt Usage?
+						What is Debt Usage, and why should I care?
 					</h3>
 				</div>
 			</div>
@@ -51,66 +51,56 @@ const SummaryCard = () => {
 
 				<div className="flex flex-col py-2 text-gray-700 text-sm">
 					<p>
-						Debt usage, or your revolving balance-to-limit ratio is
-						the second most important factor in determining your
-						credit score, accounting for 30% of your overall credit
-						score. The higher your balance-to-limit ratio is, the
-						lower your credit score will be. By keeping your
-						limit-to-balance ratio at or below 10 percent, you will
-						earn all the available points in this category.
+						Debt usage, also known as credit utilization, refers to
+						the percentage of your available credit that you're
+						currently using and is the second most important factor
+						in determining your credit score. You want to keep that
+						limit-to-balance ratio at or below 10% to earn maximum
+						points in this category.
 					</p>
 				</div>
 
 				<div className="flex flex-col py-2 text-gray-700 text-sm">
 					<p>
-						It is a common myth that you only need to keep your
-						limit-to-balance ratio at 50% but that is incorrect. 50%
-						is better than 90% but not as good as 40%. Your
-						limit-to-balance ratio is calculated using both an
-						individual account analysis as well as an aggregate
-						account analysis. Additionally, accounts that are not
-						being used or are old but still in good standing are
-						included in this analysis. As such, it is not in a
-						consumer's best interest to close such accounts or
-						request that the accounts be removed from their credit
-						report.
+						For example, if you have a credit card with a $10,000
+						limit, aim to keep your balance below $1,000. Anything
+						more is a red flag to lenders that you're relying too
+						heavily on credit and may be at risk of overextending
+						yourself financially. (And you know a lender’s least
+						favorite vocabulary word is “risk.”)
 					</p>
 				</div>
 
 				<div className="flex flex-col py-2 text-gray-700 text-sm">
 					<p>
-						Let’s say you have two cards. One has a balance of
-						$5,000 and a limit of $10,000, and the other has a
-						balance of $2,000 and a limit of $8,000. That means you
-						have total credit debt of $7,000 and a total credit
-						limit of $18,000, which works out to a ratio of 38
-						percent. Now let’s say you manage to cut your balances
-						in half, so you now have just $3,500 in debt and the
-						same credit limit of $18,000; your ratio will fall to 19
-						percent.
+						When calculating debt usage, the Credit Fairies (or
+						whatever they are) analyze ALL your open accounts - even
+						ones you aren’t actively using. That’s why keeping those
+						accounts open is in your best interest.
 					</p>
 				</div>
 
 				<div className="flex flex-col py-2 text-gray-700 text-sm">
 					<p>
-						Closing these accounts will cause your limit-to-balance
-						ratio to increase because available credit that was once
-						used in the analysis is no longer available. So even
-						though your actual debt may not increase, your
-						limit-to-balance ratio will causing your score to drop.
-						To maintain a low limit-to-balance ratio: keep card
-						balances low, request regular credit limit increases
-						(every 6-9 months) or open new credit card accounts.
+						Let’s say you have three credit cards. Each card has a
+						$10,000 limit and carries a balance of $5,000. Total
+						credit limit = $30,000. Total debt = $15,000. Total
+						usage = 50%. Now, let’s say you pay off two of those
+						cards (yay!). You’ll still have the $30,000 credit
+						limit, but by decreasing your debt to $5,000, your ratio
+						will fall from 50% to 17%. However, if you decide to
+						close those two accounts, you’re really just shooting
+						yourself in the foot. Your available credit will plummet
+						from $30,000 to $10,000, your debt will still be $5,000,
+						and you’re right back to having a 50% of your credit
+						limit… and doing additional damage to your credit score.
 					</p>
 				</div>
 
 				<div className="flex flex-col py-2 text-gray-700 text-sm">
 					<p>
-						Of course, the safest way to keep your limit-to-balance
-						ratio low is to keep balances on your current accounts
-						low. Opening new accounts and/or requesting credit limit
-						increases will result in additional inquiries that may
-						have a negative impact on your score.
+						Pro tip: Keep your balances low and request regular
+						credit limit increases every 6-9 months.
 					</p>
 				</div>
 			</div>
@@ -118,12 +108,12 @@ const SummaryCard = () => {
 	);
 };
 
-export default function Personal() {
+export default function Usage() {
 	let trade_lines = useLoaderData();
 
 	return (
 		<div className="flex flex-col w-full">
-			<SummaryCard />
+			<InfoCard />
 			<Accounts trade_lines={trade_lines} type={"usage"} />
 		</div>
 	);

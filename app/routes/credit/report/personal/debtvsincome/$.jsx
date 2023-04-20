@@ -1,6 +1,6 @@
 import { ScaleIcon } from "@heroicons/react/24/outline";
 
-const PersonalInfoCard = () => {
+const InfoCard = () => {
 	return (
 		<div className="overflow-hidden bg-white rounded-lg border">
 			<div className="px-4 py-5 sm:px-6 flex flex-row items-center">
@@ -9,23 +9,21 @@ const PersonalInfoCard = () => {
 				</div>
 				<div className="flex flex-col">
 					<h3 className="text-lg font-medium leading-6 text-gray-900">
-						How Important is Your Debt to Income Ratio?
+						Is My Debt to Income Ratio That Important?
 					</h3>
 				</div>
 			</div>
 			<div className="border-t border-gray-200 px-6 py-2">
 				<div className="flex flex-col py-2 text-gray-700 text-sm">
 					<p>
-						A primary indicator of your financial well-being is your
-						debt-to-income ratio. It’s exactly what it sounds like:
-						the amount of debt you have compared to your income. In
-						addition to your credit report and credit score, it’s
-						one of the primary factors that lenders take into
-						account when looking at your creditworthiness.
-						Debt-to-income is NOT a factor in determining your
-						credit score because your income is not reported to
-						credit bureaus and is therefore not included in any
-						credit score analysis.
+						In a word, yes. Your debt-to-income ratio is an
+						indicator of your overall financial well-being.
+						Basically, it represents how much of your income goes
+						towards paying off debts. The higher that ratio, the
+						more it appears you’ve overextended yourself
+						financially. In addition to your credit report and
+						credit score, this ratio is one of the primary factors
+						lenders consider when determining your creditworthiness.
 					</p>
 				</div>
 			</div>
@@ -33,10 +31,10 @@ const PersonalInfoCard = () => {
 	);
 };
 
-export default function Personal() {
+export default function DebtVsIncome() {
 	return (
 		<div className="flex flex-col w-full">
-			<PersonalInfoCard />
+			<InfoCard />
 		</div>
 	);
 }

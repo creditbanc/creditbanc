@@ -1,7 +1,7 @@
 import { ClipboardIcon } from "@heroicons/react/24/outline";
 import { FactorBar } from "~/components/FactorBar";
 
-const PersonalInfoCard = () => {
+const InfoCard = () => {
 	return (
 		<div className="overflow-hidden bg-white rounded-lg border">
 			<div className="px-4 py-5 sm:px-6 flex flex-row items-center">
@@ -10,7 +10,7 @@ const PersonalInfoCard = () => {
 				</div>
 				<div className="flex flex-col">
 					<h3 className="text-xl font-medium leading-6 text-gray-900">
-						Why are Inquiries Important?
+						How Do Inquiries Affect My Credit Score?
 					</h3>
 				</div>
 			</div>
@@ -25,25 +25,35 @@ const PersonalInfoCard = () => {
 
 				<div className="flex flex-col py-2 text-gray-700 text-sm">
 					<p>
-						Inquiries account for 10% of your overall credit score.
-						Generally, inquiries are listed on your credit report
-						for 2 years. However, they only directly impact your
-						credit score for 1 year.
+						Inquiries refer to the number of times lenders or
+						creditors have accessed your report to evaluate your
+						creditworthiness. Too many of these on your credit
+						report in a short period of time, and lenders might see
+						you as a high-risk borrower; this could mean lower
+						limits, higher interest rates, or flat-out denials.
 					</p>
 				</div>
 
 				<div className="flex flex-col py-2 text-gray-700 text-sm">
 					<p>
-						There are two types of inquiries - soft inquiries and
-						hard inquiries. Soft inquiries are a result of you
-						checking your own credit through credit monitoring
-						services such as Credit Banc as well as “account review”
-						inquiries by any of your current creditors. These
-						inquiries do not impact your score. Hard inquiries are
-						inquiries associated with a firm offer of credit. Any
-						time you apply for a loan the creditor will inquire into
-						your credit and cause a hard inquiry. Too many hard
-						inquiries can negatively impact your credit score.
+						It’s important to note that not all inquiries are
+						created equal. Any time you apply for a new line of
+						credit or loan, the creditor will make a hard inquiry -
+						and those are the ones that can negatively impact your
+						credit score. Soft inquiries (checking your credit
+						through monitoring services like Credit Banc or an
+						“account review” by current creditors) do not affect
+						your score. It’s the hard inquiries you want to keep an
+						eye on.
+					</p>
+				</div>
+
+				<div className="flex flex-col py-2 text-gray-700 text-sm">
+					<p>
+						Before you go: While inquiries remain on your credit
+						report for two years, they only directly impact your
+						credit score for one. Have a little patience, and
+						they’ll be out of your hair (and score) in no time.
 					</p>
 				</div>
 			</div>
@@ -51,10 +61,10 @@ const PersonalInfoCard = () => {
 	);
 };
 
-export default function Personal() {
+export default function Inquiries() {
 	return (
 		<div className="flex flex-col w-full">
-			<PersonalInfoCard />
+			<InfoCard />
 		</div>
 	);
 }
