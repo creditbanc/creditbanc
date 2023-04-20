@@ -45,14 +45,14 @@ const UploadForm = () => {
 	const location = useLocation();
 	const file_id = get_file_id(location.pathname);
 	const [file_name, set_file_name] = useState("");
-	const [progress, set_progress] = useState("");
+	const [progress, set_progress] = useState(0);
 	const set_modal = useModalStore((state) => state.set_modal);
 	const files = useFilesStore((state) => state.files);
 	const set_files = useFilesStore((state) => state.set_files);
 
 	useEffect(() => {
 		if (file_name === "") {
-			// set_progress(0);
+			set_progress(0);
 		}
 	}, [file_name]);
 
@@ -63,7 +63,6 @@ const UploadForm = () => {
 	}, [progress]);
 
 	const onUpload = async (e) => {
-		// console.log("onUpload");
 		e.preventDefault();
 
 		const file = e.target[0]?.files[0];
@@ -77,8 +76,6 @@ const UploadForm = () => {
 				(snapshot.bytesTransferred / snapshot.totalBytes) * 100
 			);
 
-			// console.log("current_progress");
-			// console.log(current_progress);
 			set_progress(current_progress);
 		};
 
@@ -89,8 +86,6 @@ const UploadForm = () => {
 
 		const complete = () => {
 			getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
-				// console.log("downloadURL");
-				// console.log(downloadURL);
 				set_files({
 					files: [
 						...files,
@@ -110,9 +105,6 @@ const UploadForm = () => {
 		let file_name = e.target.files[0]?.name;
 		set_file_name(file_name);
 	};
-
-	console.log("progress");
-	console.log(progress);
 
 	return (
 		<form className="flex flex-col" onSubmit={onUpload}>
@@ -160,7 +152,9 @@ const UploadForm = () => {
 					<div className="flex flex-col w-full px-2">
 						<div className="w-full bg-gray-200 rounded-full h-2.5 dark:bg-gray-700">
 							<div
-								className={`bg-blue-600 h-2.5 rounded-full w-[${progress}%]`}
+								className={`bg-blue-600 h-2.5 rounded-full ${
+									progress > 0 ? `w-[${progress}%]` : "w-0"
+								}`}
 							></div>
 						</div>
 					</div>
