@@ -45,9 +45,23 @@ const UploadForm = () => {
 	const location = useLocation();
 	const file_id = get_file_id(location.pathname);
 	const [file_name, set_file_name] = useState("");
+	const [progress, set_progress] = useState(0);
+	const set_modal = useModalStore((state) => state.set_modal);
+
+	useEffect(() => {
+		if (file_name === "") {
+			set_progress(0);
+		}
+	}, [file_name]);
+
+	useEffect(() => {
+		if (progress === 100) {
+			set_modal({ id: "upload_file_modal", is_open: false });
+		}
+	}, [progress]);
 
 	const onUpload = async (e) => {
-		console.log("onUpload");
+		// console.log("onUpload");
 		e.preventDefault();
 
 		const file = e.target[0]?.files[0];
@@ -57,12 +71,13 @@ const UploadForm = () => {
 		const uploadTask = uploadBytesResumable(storageRef, file);
 
 		const next = (snapshot) => {
-			const progress = Math.round(
+			const current_progress = Math.round(
 				(snapshot.bytesTransferred / snapshot.totalBytes) * 100
 			);
 
-			console.log("progress");
-			console.log(progress);
+			// console.log("current_progress");
+			// console.log(current_progress);
+			set_progress(current_progress);
 		};
 
 		const error = (error) => {
@@ -72,8 +87,8 @@ const UploadForm = () => {
 
 		const complete = () => {
 			getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
-				console.log("downloadURL");
-				console.log(downloadURL);
+				// console.log("downloadURL");
+				// console.log(downloadURL);
 			});
 		};
 
@@ -110,38 +125,53 @@ const UploadForm = () => {
 				className="hidden"
 				onChange={onSelectFile}
 			/>
+
 			{file_name !== "" && (
-				<div className="bg-gray-50 flex flex-row h-[50px] items-center rounded my-2">
-					<div className="flex flex-col w-[50px] items-center">
-						<div className="w-[30px] h-[30px] bg-[#fff] flex flex-col items-center justify-center border border-gray-300 rounded">
-							<div className="w-[17px] flex flex-col items-center justify-center text-gray-400">
-								<DocumentIcon />
+				<div className="bg-gray-50 flex flex-col items-center rounded my-2 pb-3 pt-2">
+					<div className="flex flex-row w-full mb-3">
+						<div className="flex flex-col w-[50px] items-center">
+							<div className="w-[30px] h-[30px] bg-[#fff] flex flex-col items-center justify-center border border-gray-300 rounded">
+								<div className="w-[17px] flex flex-col items-center justify-center text-gray-400">
+									<DocumentIcon />
+								</div>
 							</div>
 						</div>
+						<div className="flex flex-col grow justify-center">
+							<p className="text-xs">{file_name}</p>
+						</div>
+						<div
+							className="flex flex-col w-[15px] self-start mr-1.5 cursor-pointer text-gray-400"
+							onClick={() => set_file_name("")}
+						>
+							<XMarkIcon />
+						</div>
 					</div>
-					<div className="flex flex-col grow">
-						<p className="text-xs">{file_name}</p>
-					</div>
-					<div
-						className="flex flex-col w-[15px] self-start mr-1.5 mt-1.5 cursor-pointer text-gray-400"
-						onClick={() => set_file_name("")}
-					>
-						<XMarkIcon />
+					<div className="flex flex-col w-full px-2">
+						<div className="w-full bg-gray-200 rounded-full h-2.5 dark:bg-gray-700">
+							<div
+								className={`bg-blue-600 h-2.5 rounded-full w-[${progress}%]`}
+							/>
+						</div>
 					</div>
 				</div>
 			)}
 
-			<div className="flex flex-row bg-[#55CF9E] py-1 px-2 rounded text-white cursor-pointer justify-center mt-1">
-				<div className="w-[20px] mr-2 flex flex-col justify-center">
+			<button
+				className={`flex flex-row py-1 px-2 rounded justify-center items-center mt-1 ${
+					file_name == ""
+						? "cursor-not-allowed bg-gray-100 text-gray-400"
+						: "text-white cursor-pointer bg-[#55CF9E]"
+				}`}
+				type="submit"
+				disabled={file_name == ""}
+			>
+				<div className="w-[20px] mr-2 flex flex-col justify-center items-center h-full">
 					<ArrowUpOnSquareIcon />
 				</div>
-				<button
-					className="flex flex-col justify-center h-[30px]"
-					type="submit"
-				>
+				<div className="flex flex-col justify-center h-[30px]">
 					Upload
-				</button>
-			</div>
+				</div>
+			</button>
 		</form>
 	);
 };
