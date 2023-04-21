@@ -1,8 +1,4 @@
-import {
-	EnvelopeIcon,
-	PhoneIcon,
-	ChevronRightIcon,
-} from "@heroicons/react/20/solid";
+import { ChevronRightIcon, PlayIcon } from "@heroicons/react/20/solid";
 
 const profile = {
 	name: "Ricardo Cooper",
@@ -58,6 +54,56 @@ function Banner() {
 		</div>
 	);
 }
+
+function Heading() {
+	return (
+		<div className="border-b border-gray-200 pb-3">
+			<div className="sm:flex sm:items-baseline sm:justify-between">
+				<div className="sm:w-0 sm:flex-1">
+					<h1
+						id="message-heading"
+						className="text-base font-semibold leading-6 text-gray-900"
+					>
+						Credit Banc University
+					</h1>
+					<p className="mt-1 truncate text-sm text-gray-500">
+						Checkout and Payments Team
+					</p>
+				</div>
+
+				<div className="mt-4 flex items-center justify-between sm:ml-6 sm:mt-0 sm:flex-shrink-0 sm:justify-start">
+					<span className="inline-flex items-center rounded-full bg-green-50 px-2 py-1 text-xs font-medium text-green-700 ring-1 ring-inset ring-green-600/20">
+						18 Videos
+					</span>
+				</div>
+			</div>
+		</div>
+	);
+}
+
+const VideoCard = () => {
+	return (
+		<div className="border my-4 rounded flex flex-row">
+			<div className="flex flex-col w-[150px] border-r h-auto">
+				<div className="flex flex-col w-full h-full items-center justify-center">
+					<div className="w-[30px] text-[#55CF9E]">
+						<PlayIcon />
+					</div>
+				</div>
+			</div>
+			<div className="flex flex-col p-4 w-full h-full leading-6">
+				<div className="flex flex-col font-semibold">Video Title</div>
+				<div className="flex flex-col mt-1">
+					Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+					Etiam cursus enim sed rutrum dignissim. Proin vel tincidunt
+					libero, sed pharetra neque. Proin molestie tincidunt neque
+					sed hendrerit. Phasellus nec vulputate erat. Aliquam vitae
+					nunc consectetur, varius ex sed, finibus ante.
+				</div>
+			</div>
+		</div>
+	);
+};
 
 export default function Home() {
 	return (
@@ -168,6 +214,14 @@ export default function Home() {
 								</div>
 							</div>
 						</div>
+					</div>
+				</div>
+				<div className="flex flex-col w-[64rem] h-full px-2 mt-8">
+					<Heading />
+					<div className="my-1">
+						<VideoCard />
+						<VideoCard />
+						<VideoCard />
 					</div>
 				</div>
 			</div>

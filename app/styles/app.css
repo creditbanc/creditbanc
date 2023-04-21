@@ -712,6 +712,10 @@ video {
   margin: auto;
 }
 
+.m-2 {
+  margin: 0.5rem;
+}
+
 .-mx-3 {
   margin-left: -0.75rem;
   margin-right: -0.75rem;
@@ -795,6 +799,11 @@ video {
 .my-\[5px\] {
   margin-top: 5px;
   margin-bottom: 5px;
+}
+
+.-my-2 {
+  margin-top: -0.5rem;
+  margin-bottom: -0.5rem;
 }
 
 .-mb-6 {
@@ -1242,6 +1251,10 @@ video {
   height: 100%;
 }
 
+.h-\[100px\] {
+  height: 100px;
+}
+
 .max-h-60 {
   max-height: 15rem;
 }
@@ -1256,6 +1269,10 @@ video {
 
 .min-h-full {
   min-height: 100%;
+}
+
+.min-h-\[100px\] {
+  min-height: 100px;
 }
 
 .w-0 {
@@ -1477,6 +1494,10 @@ video {
 
 .w-screen {
   width: 100vw;
+}
+
+.w-56 {
+  width: 14rem;
 }
 
 .min-w-0 {
@@ -2150,6 +2171,11 @@ video {
   background-color: rgb(255 255 255 / var(--tw-bg-opacity));
 }
 
+.bg-green-50 {
+  --tw-bg-opacity: 1;
+  background-color: rgb(240 253 244 / var(--tw-bg-opacity));
+}
+
 .bg-opacity-75 {
   --tw-bg-opacity: 0.75;
 }
@@ -2517,6 +2543,10 @@ video {
   padding-top: calc(23 / 318 * 100%);
 }
 
+.pb-5 {
+  padding-bottom: 1.25rem;
+}
+
 .text-left {
   text-align: left;
 }
@@ -2758,6 +2788,16 @@ video {
   color: rgb(255 255 255 / var(--tw-text-opacity));
 }
 
+.text-green-700 {
+  --tw-text-opacity: 1;
+  color: rgb(21 128 61 / var(--tw-text-opacity));
+}
+
+.text-blue-100 {
+  --tw-text-opacity: 1;
+  color: rgb(219 234 254 / var(--tw-text-opacity));
+}
+
 .underline {
   text-decoration-line: underline;
 }
@@ -2893,6 +2933,10 @@ video {
 .ring-white {
   --tw-ring-opacity: 1;
   --tw-ring-color: rgb(255 255 255 / var(--tw-ring-opacity));
+}
+
+.ring-green-600\/20 {
+  --tw-ring-color: rgb(22 163 74 / 0.2);
 }
 
 .ring-opacity-5 {
@@ -3251,6 +3295,11 @@ body {
   color: rgb(79 70 229 / var(--tw-text-opacity));
 }
 
+.hover\:text-gray-600:hover {
+  --tw-text-opacity: 1;
+  color: rgb(75 85 99 / var(--tw-text-opacity));
+}
+
 .hover\:ring-\[\#55CF9E\]:hover {
   --tw-ring-opacity: 1;
   --tw-ring-color: rgb(85 207 158 / var(--tw-ring-opacity));
@@ -3465,6 +3514,10 @@ body {
     width: 100%;
   }
 
+  .sm\:w-0 {
+    width: 0px;
+  }
+
   .sm\:min-w-0 {
     min-width: 0px;
   }
@@ -3475,6 +3528,10 @@ body {
 
   .sm\:flex-1 {
     flex: 1 1 0%;
+  }
+
+  .sm\:flex-shrink-0 {
+    flex-shrink: 0;
   }
 
   .sm\:flex-grow {
@@ -3527,12 +3584,20 @@ body {
     align-items: center;
   }
 
+  .sm\:items-baseline {
+    align-items: baseline;
+  }
+
   .sm\:justify-start {
     justify-content: flex-start;
   }
 
   .sm\:justify-end {
     justify-content: flex-end;
+  }
+
+  .sm\:justify-between {
+    justify-content: space-between;
   }
 
   .sm\:justify-around {
