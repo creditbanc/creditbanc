@@ -12,7 +12,6 @@ import { Outlet, useLoaderData, useLocation } from "@remix-run/react";
 import LeftNav from "~/components/LeftNav";
 import Share from "~/routes/invites/new/$.jsx";
 import Modal from "~/components/Modal";
-import { DocumentIcon, FolderIcon } from "@heroicons/react/24/outline";
 import ReportTabs from "~/components/ReportTabs";
 
 export const loader = async ({ request }) => {
