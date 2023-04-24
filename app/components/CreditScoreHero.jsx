@@ -1,7 +1,6 @@
 import { useEffect, useState, useRef } from "react";
 import CreditScoreDoughnut from "~/components/CreditScoreDoughnut";
 import { useLayoutStore } from "~/stores/useLayoutStore";
-import useWindowSize from "~/hooks/useWindowSize";
 import { Carousel } from "antd";
 
 const Single = () => {
