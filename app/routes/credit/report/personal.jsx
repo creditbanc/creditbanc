@@ -13,6 +13,7 @@ import { validate_action, is_resource_owner_p } from "~/utils/resource.server";
 import { redirect } from "@remix-run/node";
 import { Listbox, Transition } from "@headlessui/react";
 import { CheckIcon, ChevronUpDownIcon } from "@heroicons/react/20/solid";
+import { tabs } from "~/data/personal_tabs";
 
 export const loader = async ({ request }) => {
 	let url = new URL(request.url);
@@ -52,28 +53,24 @@ export const loader = async ({ request }) => {
 	return { report };
 };
 
-const people = [
-	{ id: 1, name: "Wade Cooper" },
-	{ id: 2, name: "Arlene Mccoy" },
-	{ id: 3, name: "Devon Webb" },
-	{ id: 4, name: "Tom Cook" },
-	{ id: 5, name: "Tanya Fox" },
-	{ id: 6, name: "Hellen Schmidt" },
-	{ id: 7, name: "Caroline Schultz" },
-	{ id: 8, name: "Mason Heaney" },
-	{ id: 9, name: "Claudie Smitham" },
-	{ id: 10, name: "Emil Schaefer" },
-];
-
 function classNames(...classes) {
 	return classes.filter(Boolean).join(" ");
 }
 
-function CreditTabsSelect() {
-	const [selected, setSelected] = useState(people[3]);
+function CreditTabsSelect({ selected = "Personal" }) {
+	selected = pipe(filter({ id: selected }), head)(tabs);
+	let location = useLocation();
+	let search_params = location.search;
+
+	const onSelectTab = (tab) => {
+		window.location = tab.href({
+			search: search_params,
+			pathname: location.pathname,
+		});
+	};
 
 	return (
-		<Listbox value={selected} onChange={setSelected}>
+		<Listbox value={selected} onChange={onSelectTab}>
 			{({ open }) => (
 				<>
 					<div className="relative mt-2">
@@ -97,9 +94,9 @@ function CreditTabsSelect() {
 							leaveTo="opacity-0"
 						>
 							<Listbox.Options className="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
-								{people.map((person) => (
+								{tabs.map((tab) => (
 									<Listbox.Option
-										key={person.id}
+										key={tab.id}
 										className={({ active }) =>
 											classNames(
 												active
@@ -108,7 +105,7 @@ function CreditTabsSelect() {
 												"relative cursor-default select-none py-2 pl-3 pr-9"
 											)
 										}
-										value={person}
+										value={tab}
 									>
 										{({ selected, active }) => (
 											<>
@@ -120,7 +117,7 @@ function CreditTabsSelect() {
 														"block truncate"
 													)}
 												>
-													{person.name}
+													{tab.name}
 												</span>
 
 												{selected ? (
@@ -174,8 +171,10 @@ export default function CreditReport() {
 					<CreditScoreHero report={report} />
 
 					<div className="py-3 mb-10 flex flex-col sm:flex-row">
-						<div className="flex flex-col sm:hidden my-4">
-							<CreditTabsSelect />
+						<div className=" sm:hidden flex flex-col my-4">
+							<CreditTabsSelect
+								selected={get_route_endpoint(location.pathname)}
+							/>
 						</div>
 						<div className="hidden sm:flex flex-col w-1/5 mr-2 border rounded-lg h-fit">
 							<PersonalCreditTabsVertical
