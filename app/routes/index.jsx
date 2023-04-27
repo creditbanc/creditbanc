@@ -1,20 +1,7 @@
-import { useState, useRef } from "react";
+import { useState } from "react";
 import { Dialog } from "@headlessui/react";
-import {
-	Bars3Icon,
-	XMarkIcon,
-	ArrowPathIcon,
-	CloudArrowUpIcon,
-	FingerPrintIcon,
-	LockClosedIcon,
-	ServerIcon,
-	CheckIcon,
-	MinusSmallIcon,
-	PlusSmallIcon,
-} from "@heroicons/react/24/outline";
-import { Disclosure, RadioGroup } from "@headlessui/react";
-import { Link, useTransition } from "@remix-run/react";
-import { Carousel } from "antd";
+import { Bars3Icon, XMarkIcon, CheckIcon } from "@heroicons/react/24/outline";
+import { Link } from "@remix-run/react";
 import CreditScoreDoughnut from "~/components/CreditScoreDoughnut";
 const shield_advisory_logo = "/images/logos/shield_advisory_group_logo.png";
 const liquid_lunch_logo = "/images/logos/liquid_lunch_logo.jpg";
@@ -35,7 +22,7 @@ const navigation = [
 
 const tiers = [
 	{
-		name: "Personal Credit Report",
+		name: "Banc Essentials",
 		id: "personal",
 		href: "/credit/personal/new",
 		priceMonthly: "$0",
@@ -68,7 +55,7 @@ const tiers = [
 		mostPopular: false,
 	},
 	{
-		name: "Business & Personal Credit Report",
+		name: "Banc Builder",
 		id: "personal_business",
 		href: "#",
 		priceMonthly: "$35",
@@ -101,7 +88,7 @@ const tiers = [
 		mostPopular: true,
 	},
 	{
-		name: "Business Credit Report",
+		name: "Banc Pro",
 		id: "business",
 		href: "/credit/business/new",
 		priceMonthly: "$85",
