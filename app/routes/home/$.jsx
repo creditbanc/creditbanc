@@ -2,6 +2,7 @@ import { ChevronRightIcon, PlayIcon } from "@heroicons/react/20/solid";
 
 const profile = {
 	name: "Ricardo Cooper",
+	business_name: "Apple Inc.",
 	email: "ricardo.cooper@example.com",
 	avatar: "https://images.unsplash.com/photo-1463453091185-61582044d556?ixlib=rb-=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=8&w=1024&h=1024&q=80",
 	backgroundImage:
@@ -29,26 +30,26 @@ function Banner() {
 				/>
 			</div>
 			<div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
-				<div className="-mt-12 sm:-mt-16 sm:flex sm:items-end sm:space-x-5">
-					<div className="flex">
+				<div className="-mt-12 sm:-mt-16 flex flex-row sm:items-end sm:space-x-5">
+					<div className="flex flex-col">
 						<img
 							className="h-24 w-24 rounded-full ring-4 ring-white sm:h-32 sm:w-32"
 							src={profile.avatar}
 							alt=""
 						/>
 					</div>
-					<div className="mt-6 sm:flex sm:min-w-0 sm:flex-1 sm:items-center sm:justify-end sm:space-x-6 sm:pb-1">
-						<div className="mt-6 min-w-0 flex-1 sm:hidden md:block">
-							<h1 className="truncate text-2xl font-bold text-gray-900">
-								{profile.name}
-							</h1>
-						</div>
+					<div className="mt-14 ml-5 flex flex-col">
+						<h1 className="truncate text-2xl font-bold text-gray-900">
+							{profile.name}s
+						</h1>
+						<div>{profile.business_name}</div>
 					</div>
-				</div>
-				<div className="mt-6 hidden min-w-0 flex-1 sm:block md:hidden">
-					<h1 className="truncate text-2xl font-bold text-gray-900">
-						{profile.name}
-					</h1>
+					{/* <div className="mt-6 hidden min-w-0 sm:flex sm:flex-col">
+						<h1 className="truncate text-2xl font-bold text-gray-900">
+							{profile.name}f
+						</h1>
+						<div>{profile.business_name}</div>
+					</div> */}
 				</div>
 			</div>
 		</div>
