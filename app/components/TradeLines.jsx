@@ -49,14 +49,15 @@ function classNames(...classes) {
 const Stat = () => {
 	let item = stats[0];
 	return (
-		<div key={item.name} className="text-sm flex flex-col">
+		<div key={item.name} className="text-xs sm:text-sm flex flex-col">
 			<div className="font-normal text-gray-900">{item.name}</div>
-			<div className="mt-1 flex flex-row justify-between">
-				<div className="flex items-baseline  font-semibold text-[#55CF9E] mr-2">
+			<div className="flex flex-col sm:flex-row justify-between items-end">
+				<div className="flex flex-row font-semibold text-[#55CF9E] sm:mr-2 my-2 sm:my-0">
 					{item.stat}
-					<span className="ml-1 font-medium text-gray-500">
-						of {item.previousStat}
-					</span>
+					<p className="ml-1 font-medium text-gray-500">of</p>
+					<p className="ml-1 font-medium text-gray-500">
+						{item.previousStat}
+					</p>
 				</div>
 
 				<div
@@ -64,7 +65,7 @@ const Stat = () => {
 						item.changeType === "increase"
 							? "bg-green-100 text-green-800"
 							: "bg-red-100 text-red-800",
-						"flex flex-row rounded-full px-2.5 py-0.5 font-medium md:mt-2 lg:mt-0 text-xs"
+						"flex flex-row rounded-full px-2.5 py-0.5 font-medium md:mt-2 lg:mt-0 "
 					)}
 				>
 					<ArrowDownIcon
@@ -84,7 +85,7 @@ const TradeLine = ({ trade_line, type = "basic" }) => {
 		<div className="overflow-hidden bg-white border rounded-lg">
 			<div className="px-4 py-5 flex flex-row justify-between">
 				<div className="flex flex-col">
-					<h3 className="text-lg font-medium leading-6 text-gray-900">
+					<p className="text-base sm:text-xl font-medium leading-6 text-gray-900">
 						{pipe(
 							flatten,
 							reject(isEmpty),
@@ -98,7 +99,7 @@ const TradeLine = ({ trade_line, type = "basic" }) => {
 								trade_line
 							),
 						])}
-					</h3>
+					</p>
 					<p className="mt-1 max-w-2xl text-sm text-gray-500">
 						#
 						{pipe(

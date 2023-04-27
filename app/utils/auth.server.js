@@ -159,11 +159,14 @@ export const signup = async ({
 		},
 	});
 
-	redirect_to = new_entity
-		? redirect_to + `&group_id=${root_group_resource.resource_path_id}`
-		: redirect_to;
+	// redirect_to = new_entity
+	// 	? redirect_to + `&group_id=${root_group_resource.resource_path_id}`
+	// 	: redirect_to;
 
-	console.log("create_session");
+	redirect_to = new_entity
+		? redirect_to +
+		  `/resource/e/${entity.id}/g/${root_group_resource.resource_path_id}`
+		: redirect_to;
 
 	return create_user_session(entity.id, redirect_to);
 };

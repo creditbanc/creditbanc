@@ -47,21 +47,27 @@ export async function action({ request }) {
 		return json({ error: "Invalid form data" }, { status: 400 });
 	}
 
-	if (!displayToken) {
-		// console.log("yesDisplayToken");
-		return await signup({ email, password, first_name, last_name });
-	} else {
-		// console.log("noDisplayToken");
-		let redirect_to = `/credit/personal/create?${url.searchParams.toString()}`;
-		return await signup({
-			email,
-			password,
-			first_name,
-			last_name,
-			redirect_to,
-			new_entity: true,
-		});
-	}
+	console.log("displayToken");
+	console.log(displayToken);
+
+	// return null;
+
+	// if (!displayToken) {
+	// 	// console.log("yesDisplayToken");
+	// 	return await signup({ email, password, first_name, last_name });
+	// } else {
+	// 	// console.log("noDisplayToken");
+	// let redirect_to = `/credit/personal/create?${url.searchParams.toString()}`;
+	let redirect_to = `/credit/personal/new${url.searchParams.toString()}`;
+	return await signup({
+		email,
+		password,
+		first_name,
+		last_name,
+		redirect_to,
+		new_entity: true,
+	});
+	// }
 }
 
 const Form = () => {
