@@ -106,118 +106,125 @@ const VideoCard = () => {
 	);
 };
 
+const BusinessCredit = () => {
+	return (
+		<div className="flex flex-col border mx-2 shadow-sm rounded px-4">
+			<div className="border-b border-gray-200">
+				<h3 className="text-base font-semibold leading-6 text-gray-900 py-3">
+					Business Credit
+				</h3>
+			</div>
+
+			<div className="flex flex-col w-full py-3 border-b border-gray-200">
+				<div className="flex flex-row w-full">
+					<div className="flex flex-col w-2/3">
+						<div className="font-semibold">Dun & Bradstreet ®</div>
+						<div className="text-gray-400 text-sm">
+							PAYDEX Score
+						</div>
+					</div>
+					<div className="flex flex-col w-1/3 font-semibold text-blue-700 text-sm cursor-pointer items-end mr-2 justify-center">
+						Upgrade Account
+					</div>
+				</div>
+			</div>
+
+			<div className="flex flex-col w-full py-3">
+				<div className="flex flex-row w-full">
+					<div className="flex flex-col w-2/3">
+						<div className="font-semibold">Experian ®</div>
+						<div className="text-gray-400 text-sm">
+							Intelliscore
+						</div>
+					</div>
+					<div className="flex flex-col w-1/3 font-semibold text-blue-700 text-sm cursor-pointer items-end mr-2 justify-center">
+						Upgrade Account
+					</div>
+				</div>
+			</div>
+		</div>
+	);
+};
+
+const PersonalCredit = () => {
+	return (
+		<div className="flex flex-col border mx-2 shadow-sm rounded px-4">
+			<div className="border-b border-gray-200">
+				<h3 className="text-base font-semibold leading-6 text-gray-900 py-3">
+					Personal Credit
+				</h3>
+			</div>
+
+			<div className="flex flex-col w-full py-3 border-b border-gray-200">
+				<div className="flex flex-row w-full">
+					<div className="flex flex-col w-2/3">
+						<div className="font-semibold">Experian Personal ®</div>
+						<div className="text-gray-400 text-sm">
+							VantageScore® 3.0
+						</div>
+					</div>
+
+					<div className="flex flex-col w-1/3 text-2xl font-bold justify-center">
+						<div className="flex flex-row w-full items-center justify-between">
+							<div className="flex flex-col">800</div>
+							<div className="flex flex-col w-[30px] cursor-pointer">
+								<ChevronRightIcon />
+							</div>
+						</div>
+					</div>
+
+					{/* <div className="flex flex-col w-1/3 font-semibold text-blue-700 text-sm cursor-pointer">
+					Upgrade Account
+				</div> */}
+				</div>
+			</div>
+
+			<div className="flex flex-col w-full py-3 border-b border-gray-200">
+				<div className="flex flex-row w-full">
+					<div className="flex flex-col w-2/3">
+						<div className="font-semibold">TransUnion ®</div>
+						<div className="text-gray-400 text-sm">
+							VantageScore® 3.0
+						</div>
+					</div>
+					<div className="flex flex-col w-1/3 font-semibold text-blue-700 text-sm cursor-pointer items-end mr-2 justify-center">
+						Upgrade Account
+					</div>
+				</div>
+			</div>
+
+			<div className="flex flex-col w-full py-3">
+				<div className="flex flex-row w-full">
+					<div className="flex flex-col w-2/3">
+						<div className="font-semibold">Equifax ®</div>
+						<div className="text-gray-400 text-sm">
+							VantageScore® 3.0
+						</div>
+					</div>
+					<div className="flex flex-col w-1/3 font-semibold text-blue-700 text-sm cursor-pointer items-end mr-2 justify-center">
+						Upgrade Account
+					</div>
+				</div>
+			</div>
+		</div>
+	);
+};
+
 export default function Home() {
 	return (
 		<div className="w-full h-full flex flex-col items-center mb-3">
 			<Banner />
-			<div className="flex flex-col w-[64rem] h-full">
-				<div className="flex flex-row w-full">
-					<div className="flex flex-col w-1/2 border mx-2 shadow-sm rounded px-4">
-						<div className="border-b border-gray-200">
-							<h3 className="text-base font-semibold leading-6 text-gray-900 py-3">
-								Business Credit
-							</h3>
-						</div>
-
-						<div className="flex flex-col w-full py-3 border-b border-gray-200">
-							<div className="flex flex-row w-full">
-								<div className="flex flex-col w-2/3">
-									<div className="font-semibold">
-										Dun & Bradstreet ®
-									</div>
-									<div className="text-gray-400 text-sm">
-										PAYDEX Score
-									</div>
-								</div>
-								<div className="flex flex-col w-1/3 font-semibold text-blue-700 text-sm cursor-pointer items-end mr-2 justify-center">
-									Upgrade Account
-								</div>
-							</div>
-						</div>
-
-						<div className="flex flex-col w-full py-3">
-							<div className="flex flex-row w-full">
-								<div className="flex flex-col w-2/3">
-									<div className="font-semibold">
-										Experian ®
-									</div>
-									<div className="text-gray-400 text-sm">
-										Intelliscore
-									</div>
-								</div>
-								<div className="flex flex-col w-1/3 font-semibold text-blue-700 text-sm cursor-pointer items-end mr-2 justify-center">
-									Upgrade Account
-								</div>
-							</div>
-						</div>
+			<div className="flex flex-col h-full max-w-7xl">
+				<div className="flex flex-col md:flex-row space-y-3 md:space-y-0">
+					<div className="flex flex-col w-full">
+						<BusinessCredit />
 					</div>
-					<div className="flex flex-col w-1/2 border mx-2 shadow-sm rounded px-4">
-						<div className="border-b border-gray-200">
-							<h3 className="text-base font-semibold leading-6 text-gray-900 py-3">
-								Personal Credit
-							</h3>
-						</div>
-
-						<div className="flex flex-col w-full py-3 border-b border-gray-200">
-							<div className="flex flex-row w-full">
-								<div className="flex flex-col w-2/3">
-									<div className="font-semibold">
-										Experian Personal ®
-									</div>
-									<div className="text-gray-400 text-sm">
-										VantageScore® 3.0
-									</div>
-								</div>
-
-								<div className="flex flex-col w-1/3 text-2xl font-bold justify-center">
-									<div className="flex flex-row w-full items-center justify-between">
-										<div className="flex flex-col">800</div>
-										<div className="flex flex-col w-[30px] cursor-pointer">
-											<ChevronRightIcon />
-										</div>
-									</div>
-								</div>
-
-								{/* <div className="flex flex-col w-1/3 font-semibold text-blue-700 text-sm cursor-pointer">
-									Upgrade Account
-								</div> */}
-							</div>
-						</div>
-
-						<div className="flex flex-col w-full py-3 border-b border-gray-200">
-							<div className="flex flex-row w-full">
-								<div className="flex flex-col w-2/3">
-									<div className="font-semibold">
-										TransUnion ®
-									</div>
-									<div className="text-gray-400 text-sm">
-										VantageScore® 3.0
-									</div>
-								</div>
-								<div className="flex flex-col w-1/3 font-semibold text-blue-700 text-sm cursor-pointer items-end mr-2 justify-center">
-									Upgrade Account
-								</div>
-							</div>
-						</div>
-
-						<div className="flex flex-col w-full py-3">
-							<div className="flex flex-row w-full">
-								<div className="flex flex-col w-2/3">
-									<div className="font-semibold">
-										Equifax ®
-									</div>
-									<div className="text-gray-400 text-sm">
-										VantageScore® 3.0
-									</div>
-								</div>
-								<div className="flex flex-col w-1/3 font-semibold text-blue-700 text-sm cursor-pointer items-end mr-2 justify-center">
-									Upgrade Account
-								</div>
-							</div>
-						</div>
+					<div className="flex flex-col w-full">
+						<PersonalCredit />
 					</div>
 				</div>
-				<div className="flex flex-col w-[64rem] h-full px-2 mt-8">
+
+				<div className="flex flex-col  h-full px-2 mt-8">
 					<Heading />
 					<div className="my-1">
 						<VideoCard />
