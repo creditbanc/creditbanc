@@ -325,14 +325,14 @@ export default function LandingPage() {
 					aria-label="Global"
 				>
 					<div className="flex lg:flex-1">
-						<a href="#" className="-m-1.5 p-1.5">
+						<Link href="/" className="-m-1.5 p-1.5">
 							<span className="sr-only">Credit Banc</span>
 							<img
 								className="h-5 w-auto"
 								src={cb_logo_3}
 								alt=""
 							/>
-						</a>
+						</Link>
 					</div>
 					<div className="flex lg:hidden">
 						<button

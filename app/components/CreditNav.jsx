@@ -322,7 +322,7 @@ export default function Nav({
 
 					<div className="mx-auto px-4 sm:px-6 lg:px-8">
 						<div className="flex h-16 justify-between">
-							<div className="flex flex-row">
+							<div className="flex flex-col justify-center space-y-1">
 								{user_id && (
 									<div className="sm:hidden flex flex-col items-center justify-center mr-5">
 										<div
@@ -338,16 +338,16 @@ export default function Nav({
 									href="/"
 								>
 									<img
-										className="hidden sm:block h-5 w-auto lg:hidden"
-										src={cb_logo}
-										alt="Your Company"
-									/>
-									<img
-										className="hidden h-5 w-auto lg:block"
+										className="hidden sm:block h-5 w-auto"
 										src={cb_logo}
 										alt="Your Company"
 									/>
 								</a>
+								<div className="text-xs hidden sm:flex flex-row space-x-1">
+									<div>Fueling Growth</div>
+									<div>&#8226;</div>
+									<div>Helping Small Businesses</div>
+								</div>
 							</div>
 
 							{can_share && (
