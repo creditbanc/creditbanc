@@ -322,7 +322,7 @@ export default function Nav({
 
 					<div className="mx-auto px-4 sm:px-6 lg:px-8">
 						<div className="flex h-16 justify-between">
-							<div className="flex flex-col justify-center space-y-1">
+							<div className="flex flex-col justify-center space-y-1.5">
 								{user_id && (
 									<div className="sm:hidden flex flex-col items-center justify-center mr-5">
 										<div

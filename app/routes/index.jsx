@@ -434,6 +434,11 @@ export default function LandingPage() {
 						<div className="font-bold text-[#55CF9E] text-6xl mb-3 -mt-3 w-[80%] mx-auto">
 							<img src={cb_logo_3} className="my-10 mt-20 mb-0" />
 						</div>
+						<div className="text-xl flex flex-row space-x-1 w-full items-center justify-center text-[#202536] pt-3">
+							<div>Fueling Growth</div>
+							<div>&#8226;</div>
+							<div>Helping Small Businesses</div>
+						</div>
 						<div className="mx-auto max-w-3xl text-center pt-5 ">
 							<p className="sm:text-lg text-[#202536] m-auto leading-6 sm:leading-8">
 								Credit Banc (pronounced like Bank, just spelled
