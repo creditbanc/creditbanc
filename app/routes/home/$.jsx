@@ -215,7 +215,7 @@ export default function Home() {
 		<div className="w-full h-full flex flex-col items-center mb-3">
 			<Banner />
 			<div className="flex flex-col h-full max-w-7xl">
-				<div className="flex flex-col md:flex-row space-y-3 md:space-y-0">
+				<div className="flex flex-col lg:flex-row space-y-3 lg:space-y-0">
 					<div className="flex flex-col w-full">
 						<BusinessCredit />
 					</div>
