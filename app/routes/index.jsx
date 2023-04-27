@@ -38,13 +38,32 @@ const tiers = [
 		name: "Personal Credit Report",
 		id: "personal",
 		href: "/credit/personal/new",
-		priceMonthly: "$40",
+		priceMonthly: "$0",
 		description: "The essentials to provide your best work for clients.",
 		features: [
-			"5 products",
-			"Up to 1,000 subscribers",
-			"Basic analytics",
-			"48-hour support response time",
+			{ included: true, text: "Business & Personal Scores" },
+			{
+				included: true,
+				text: "1-on-1s with credit & lending specialists",
+			},
+			{ included: true, text: "Cash flow insights & Education" },
+			{ included: false, text: "Identity Restoration Services" },
+			{ included: false, text: "$1M Identity theft protection" },
+			{ included: false, text: "Full Business Credit Reports" },
+			{ included: false, text: "Dun & Bradstreet" },
+			{
+				included: false,
+				text: "Experian Intelliscore",
+			},
+			{ included: false, text: "3 Bureau Full Credit Reports" },
+			{ included: false, text: "Credit Alerts & Simulations" },
+			{ included: false, text: "UCC Filing Reports" },
+			{ included: false, text: "Lien Reports" },
+			{ included: false, text: "Judgement Reports" },
+			{
+				included: false,
+				text: "Tradeline reporting for business credit support",
+			},
 		],
 		mostPopular: false,
 	},
@@ -52,14 +71,32 @@ const tiers = [
 		name: "Business & Personal Credit Report",
 		id: "personal_business",
 		href: "#",
-		priceMonthly: "$50",
+		priceMonthly: "$35",
 		description: "A plan that scales with your rapidly growing business.",
 		features: [
-			"25 products",
-			"Up to 10,000 subscribers",
-			"Advanced analytics",
-			"24-hour support response time",
-			"Marketing automations",
+			{ included: true, text: "Business & Personal Scores" },
+			{
+				included: true,
+				text: "1-on-1s with credit & lending specialists",
+			},
+			{ included: true, text: "Cash flow insights & Education" },
+			{ included: true, text: "Identity Restoration Services" },
+			{ included: true, text: "$1M Identity theft protection" },
+			{ included: true, text: "Full Business Credit Reports" },
+			{ included: true, text: "Dun & Bradstreet" },
+			{
+				included: true,
+				text: "Experian Intelliscore",
+			},
+			{ included: true, text: "3 Bureau Full Credit Reports" },
+			{ included: false, text: "Credit Alerts & Simulations" },
+			{ included: false, text: "UCC Filing Reports" },
+			{ included: false, text: "Lien Reports" },
+			{ included: false, text: "Judgement Reports" },
+			{
+				included: false,
+				text: "Tradeline reporting for business credit support",
+			},
 		],
 		mostPopular: true,
 	},
@@ -67,14 +104,32 @@ const tiers = [
 		name: "Business Credit Report",
 		id: "business",
 		href: "/credit/business/new",
-		priceMonthly: "$40",
+		priceMonthly: "$85",
 		description: "Dedicated support and infrastructure for your company.",
 		features: [
-			"Unlimited products",
-			"Unlimited subscribers",
-			"Advanced analytics",
-			"1-hour, dedicated support response time",
-			"Marketing automations",
+			{ included: true, text: "Business & Personal Scores" },
+			{
+				included: true,
+				text: "1-on-1s with credit & lending specialists",
+			},
+			{ included: true, text: "Cash flow insights & Education" },
+			{ included: true, text: "Identity Restoration Services" },
+			{ included: true, text: "$1M Identity theft protection" },
+			{ included: true, text: "Full Business Credit Reports" },
+			{ included: true, text: "Dun & Bradstreet" },
+			{
+				included: true,
+				text: "Experian Intelliscore",
+			},
+			{ included: true, text: "3 Bureau Full Credit Reports" },
+			{ included: true, text: "Credit Alerts & Simulations" },
+			{ included: true, text: "UCC Filing Reports" },
+			{ included: true, text: "Lien Reports" },
+			{ included: true, text: "Judgement Reports" },
+			{
+				included: true,
+				text: "Tradeline reporting for business credit support",
+			},
 		],
 		mostPopular: false,
 	},
@@ -357,26 +412,11 @@ export default function LandingPage() {
 						</div>
 					</div>
 					<div className="mx-auto max-w-7xl px-6 lg:px-8">
-						<div className="mx-auto max-w-5xl text-center ">
-							{/* <div className="font-bold text-2xl text-[#55CF9E]">
-								<div className="py-2">
-									Let’s cut to the chase
-								</div>
-							</div>
-							<p className="text-lg leading-8 text-[#202536]">
-								Sometimes, you need access to your personal
-								credit report. Sometimes, you need access to
-								your business credit report. And sometimes you
-								need access to both.
-							</p> */}
-							<div className="font-bold text-[#55CF9E] text-6xl mb-3 -mt-3 w-[80%] mx-auto">
-								{/* <div className="py-2">Credit Banc</div> */}
-								<img
-									src={cb_logo_3}
-									className="my-10 mt-20 mb-0"
-								/>
-							</div>
-							<p className="text-xs sm:text-lg text-[#202536] max-w-4xl m-auto py-5 leading-6 sm:leading-8">
+						<div className="font-bold text-[#55CF9E] text-6xl mb-3 -mt-3 w-[80%] mx-auto">
+							<img src={cb_logo_3} className="my-10 mt-20 mb-0" />
+						</div>
+						<div className="mx-auto max-w-3xl text-center pt-5 ">
+							<p className="sm:text-lg text-[#202536] m-auto leading-6 sm:leading-8">
 								Credit Banc (pronounced like Bank, just spelled
 								fancy) is the simple, one-stop-shop where you
 								can access, monitor, and share real-time data
@@ -386,9 +426,10 @@ export default function LandingPage() {
 								we’re kind of surprised nobody thought of it
 								sooner.
 							</p>
-							<p className="sm:text-lg text-[#202536] font-bold">
-								Pick your plan, and we’ll do the rest.
-							</p>
+						</div>
+						<div className="flex flex-col w-full items-center py-3 sm:py-5 text-center text-4xl sm:text-5xl text-[#202536] font-bold">
+							<p className="py-2">Pick Your Plan</p>
+							<p>And We’ll Do The Rest.</p>
 						</div>
 					</div>
 				</div>
@@ -450,11 +491,20 @@ export default function LandingPage() {
 												key={feature}
 												className="flex gap-x-3"
 											>
-												<CheckIcon
-													className="h-6 w-5 flex-none text-[#55CF9E]"
-													aria-hidden="true"
-												/>
-												{feature}
+												{feature.included && (
+													<CheckIcon
+														className="h-6 w-5 flex-none text-[#55CF9E]"
+														aria-hidden="true"
+													/>
+												)}
+
+												{!feature.included && (
+													<XMarkIcon
+														className="h-6 w-5 flex-none text-red-500"
+														aria-hidden="true"
+													/>
+												)}
+												{feature.text}
 											</li>
 										))}
 									</ul>

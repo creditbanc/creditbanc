@@ -2526,6 +2526,14 @@ video {
   padding-top: calc(23 / 318 * 100%);
 }
 
+.pb-5 {
+  padding-bottom: 1.25rem;
+}
+
+.pt-10 {
+  padding-top: 2.5rem;
+}
+
 .text-left {
   text-align: left;
 }
@@ -3409,14 +3417,14 @@ body {
     margin-right: 0px;
   }
 
-  .sm\:my-8 {
-    margin-top: 2rem;
-    margin-bottom: 2rem;
-  }
-
   .sm\:my-0 {
     margin-top: 0px;
     margin-bottom: 0px;
+  }
+
+  .sm\:my-8 {
+    margin-top: 2rem;
+    margin-bottom: 2rem;
   }
 
   .sm\:-mr-80 {
@@ -3451,16 +3459,16 @@ body {
     margin-right: 0px;
   }
 
+  .sm\:mr-2 {
+    margin-right: 0.5rem;
+  }
+
   .sm\:mt-0 {
     margin-top: 0px;
   }
 
   .sm\:mt-20 {
     margin-top: 5rem;
-  }
-
-  .sm\:mr-2 {
-    margin-right: 0.5rem;
   }
 
   .sm\:block {
@@ -3657,6 +3665,11 @@ body {
     padding-bottom: 1.25rem;
   }
 
+  .sm\:py-10 {
+    padding-top: 2.5rem;
+    padding-bottom: 2.5rem;
+  }
+
   .sm\:pb-1 {
     padding-bottom: 0.25rem;
   }
@@ -3675,6 +3688,10 @@ body {
 
   .sm\:pt-80 {
     padding-top: 20rem;
+  }
+
+  .sm\:pt-10 {
+    padding-top: 2.5rem;
   }
 
   .sm\:text-3xl {
@@ -3710,6 +3727,11 @@ body {
   .sm\:text-xl {
     font-size: 1.25rem;
     line-height: 1.75rem;
+  }
+
+  .sm\:text-5xl {
+    font-size: 3rem;
+    line-height: 1;
   }
 
   .sm\:leading-6 {
