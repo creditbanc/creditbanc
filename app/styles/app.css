@@ -692,6 +692,14 @@ video {
   z-index: 1;
 }
 
+.col-span-2 {
+  grid-column: span 2 / span 2;
+}
+
+.col-start-2 {
+  grid-column-start: 2;
+}
+
 .-m-1 {
   margin: -0.25rem;
 }
@@ -1246,6 +1254,10 @@ video {
   max-height: 15rem;
 }
 
+.max-h-12 {
+  max-height: 3rem;
+}
+
 .min-h-\[30px\] {
   min-height: 30px;
 }
@@ -1683,6 +1695,10 @@ video {
   grid-template-columns: repeat(1, minmax(0, 1fr));
 }
 
+.grid-cols-4 {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
 .flex-row {
   flex-direction: row;
 }
@@ -1783,6 +1799,15 @@ video {
 
 .gap-y-8 {
   row-gap: 2rem;
+}
+
+.gap-x-8 {
+  -moz-column-gap: 2rem;
+       column-gap: 2rem;
+}
+
+.gap-y-10 {
+  row-gap: 2.5rem;
 }
 
 .-space-x-2 > :not([hidden]) ~ :not([hidden]) {
@@ -2203,6 +2228,11 @@ video {
   stroke: #1f2937;
 }
 
+.object-contain {
+  -o-object-fit: contain;
+     object-fit: contain;
+}
+
 .object-cover {
   -o-object-fit: cover;
      object-fit: cover;
@@ -2406,6 +2436,11 @@ video {
   padding-bottom: calc(0.5rem - 1px);
 }
 
+.py-24 {
+  padding-top: 6rem;
+  padding-bottom: 6rem;
+}
+
 .pb-14 {
   padding-bottom: 3.5rem;
 }
@@ -2524,14 +2559,6 @@ video {
 
 .pt-\[calc\(23\/318\*100\%\)\] {
   padding-top: calc(23 / 318 * 100%);
-}
-
-.pb-5 {
-  padding-bottom: 1.25rem;
-}
-
-.pt-10 {
-  padding-top: 2.5rem;
 }
 
 .text-left {
@@ -3412,6 +3439,14 @@ body {
     grid-column: span 6 / span 6;
   }
 
+  .sm\:col-start-2 {
+    grid-column-start: 2;
+  }
+
+  .sm\:col-start-auto {
+    grid-column-start: auto;
+  }
+
   .sm\:mx-0 {
     margin-left: 0px;
     margin-right: 0px;
@@ -3527,6 +3562,10 @@ body {
     max-width: 24rem;
   }
 
+  .sm\:max-w-xl {
+    max-width: 36rem;
+  }
+
   .sm\:flex-1 {
     flex: 1 1 0%;
   }
@@ -3609,6 +3648,11 @@ body {
     gap: 1rem;
   }
 
+  .sm\:gap-x-10 {
+    -moz-column-gap: 2.5rem;
+         column-gap: 2.5rem;
+  }
+
   .sm\:space-x-5 > :not([hidden]) ~ :not([hidden]) {
     --tw-space-x-reverse: 0;
     margin-right: calc(1.25rem * var(--tw-space-x-reverse));
@@ -3665,11 +3709,6 @@ body {
     padding-bottom: 1.25rem;
   }
 
-  .sm\:py-10 {
-    padding-top: 2.5rem;
-    padding-bottom: 2.5rem;
-  }
-
   .sm\:pb-1 {
     padding-bottom: 0.25rem;
   }
@@ -3690,10 +3729,6 @@ body {
     padding-top: 20rem;
   }
 
-  .sm\:pt-10 {
-    padding-top: 2.5rem;
-  }
-
   .sm\:text-3xl {
     font-size: 1.875rem;
     line-height: 2.25rem;
@@ -3702,6 +3737,11 @@ body {
   .sm\:text-4xl {
     font-size: 2.25rem;
     line-height: 2.5rem;
+  }
+
+  .sm\:text-5xl {
+    font-size: 3rem;
+    line-height: 1;
   }
 
   .sm\:text-6xl {
@@ -3727,11 +3767,6 @@ body {
   .sm\:text-xl {
     font-size: 1.25rem;
     line-height: 1.75rem;
-  }
-
-  .sm\:text-5xl {
-    font-size: 3rem;
-    line-height: 1;
   }
 
   .sm\:leading-6 {
@@ -3838,6 +3873,10 @@ body {
     grid-column: span 7 / span 7;
   }
 
+  .lg\:col-span-1 {
+    grid-column: span 1 / span 1;
+  }
+
   .lg\:row-span-2 {
     grid-row: span 2 / span 2;
   }
@@ -3921,6 +3960,10 @@ body {
 
   .lg\:grid-cols-3 {
     grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .lg\:grid-cols-5 {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
   }
 
   .lg\:items-center {
