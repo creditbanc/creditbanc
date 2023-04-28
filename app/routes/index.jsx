@@ -279,16 +279,16 @@ const bureau_logos = [
 
 function PoweredBy() {
 	return (
-		<div className="bg-white py-24">
+		<div className="bg-white pt-14">
 			<div className="mx-auto max-w-7xl px-6 lg:px-8">
 				<h2 className="text-center text-lg font-semibold leading-8 text-gray-900">
 					Powered By
 				</h2>
-				<div className="mx-auto mt-10 grid max-w-lg grid-cols-3 items-center gap-x-8 gap-y-10 sm:max-w-xl sm:grid-cols-6 sm:gap-x-10 lg:mx-0 lg:max-w-none">
+				<div className="mx-auto mt-10 w-full flex flex-col items-center justify-between space-y-10 md:flex-row flex-wrap">
 					{bureau_logos.map((logo_src, idx) => (
 						<img
 							key={idx}
-							className="col-span-2 max-h-12 w-full object-contain lg:col-span-1"
+							className="col-span-2 max-h-12 w-4/6 md:w-1/2 lg:w-1/3 object-contain lg:col-span-1"
 							src={logo_src}
 							width={158}
 							height={48}
@@ -434,10 +434,8 @@ export default function LandingPage() {
 						<div className="font-bold text-[#55CF9E] text-6xl mb-3 -mt-3 w-[80%] mx-auto">
 							<img src={cb_logo_3} className="my-10 mt-20 mb-0" />
 						</div>
-						<div className="text-xl flex flex-row space-x-1 w-full items-center justify-center text-[#202536] pt-3">
-							<div>Fueling Growth</div>
-							<div>&#8226;</div>
-							<div>Helping Small Businesses</div>
+						<div className="text-base md:text-xl flex flex-row space-x-1 w-full items-center justify-center text-[#202536] pt-3">
+							Fueling Growth &#8226; Helping Small Businesses
 						</div>
 						<div className="mx-auto max-w-3xl text-center pt-5 ">
 							<p className="sm:text-lg text-[#202536] m-auto leading-6 sm:leading-8">
