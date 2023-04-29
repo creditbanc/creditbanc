@@ -343,11 +343,11 @@ export default function Nav({
 										alt="Your Company"
 									/>
 								</a>
-								<div className="text-xs hidden sm:flex flex-row space-x-1">
+								{/* <div className="text-xs hidden sm:flex flex-row space-x-1">
 									<div>Fueling Growth</div>
 									<div>&#8226;</div>
 									<div>Helping Small Businesses</div>
-								</div>
+								</div> */}
 							</div>
 
 							{can_share && (
