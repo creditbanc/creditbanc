@@ -1,8 +1,10 @@
 import { useState } from "react";
+import { Link } from "@remix-run/react";
+import { get_user_id } from "~/utils/auth.server";
 import { Dialog } from "@headlessui/react";
 import { Bars3Icon, XMarkIcon, CheckIcon } from "@heroicons/react/24/outline";
-import { Link } from "@remix-run/react";
 import CreditScoreDoughnut from "~/components/CreditScoreDoughnut";
+import { redirect } from "@remix-run/node";
 const shield_advisory_logo = "/images/logos/shield_advisory_group_logo.png";
 const liquid_lunch_logo = "/images/logos/liquid_lunch_logo.jpg";
 const the_weekly_logo = "/images/logos/the_weekly_logo.png";
@@ -312,6 +314,12 @@ const Single = () => {
 			</CreditScoreDoughnut>
 		</div>
 	);
+};
+
+export const loader = async ({ request }) => {
+	let entity_id = await get_user_id(request);
+	if (entity_id) return redirect("/home");
+	return null;
 };
 
 export default function LandingPage() {
