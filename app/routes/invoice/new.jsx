@@ -15,6 +15,7 @@ import {
 	sum,
 	length,
 	reject,
+	dissoc,
 } from "ramda";
 import { filter, get, mod, all } from "shades";
 import { accounts as default_accounts } from "~/data/coa";
@@ -43,8 +44,8 @@ const useInvoice = create((set) => ({
 	name: "",
 	description: "",
 	total: 0,
-	open_balance: 0,
-	paid_balance: 0,
+	paid: 0,
+	balance: 0,
 	invoice_date: "",
 	due_date: "",
 	terms: "",
@@ -273,21 +274,19 @@ function Form() {
 	const invoice_items = useInvoice((state) => state.items);
 	const set_invoice = useInvoice((state) => state.set_invoice);
 	const invoice_total = useInvoice((state) => state.total);
+	const invoice = useInvoice((state) => pipe(dissoc("set_invoice"))(state));
 
 	const onCreateInvoice = async (e) => {
-		console.log("onCreateInvoice");
 		e.preventDefault();
 
-		// let { id: revenue_account_id } = revenue_account;
-		// let id = pipe(toLower, replace(/\s/g, ""), sha256)(asset.name);
+		let balance = invoice.total;
 
-		// let payload = {
-		// 	...asset,
-		// 	id,
-		// 	revenue_account_id,
-		// };
+		let payload = {
+			...invoice,
+			balance,
+		};
 
-		// const docRef = await setDoc(doc(firestore, "assets", id), payload);
+		await setDoc(doc(firestore, "invoices", invoice.id), payload);
 	};
 
 	const onAddProductServiceItem = () => {
