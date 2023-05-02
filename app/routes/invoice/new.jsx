@@ -279,15 +279,11 @@ function Form() {
 	};
 
 	const onAddProductServiceItem = () => {
-		console.log("onAddProductServiceItem");
 		set_invoice(["items"], [...invoice_items, new_invoice_item()]);
 	};
 
 	useEffect(() => {
 		let total = pipe(get(all, "total"), sum)(invoice_items);
-		console.log("total");
-		console.log(invoice_items);
-		console.log(total);
 		set_invoice(["total"], total);
 	}, [invoice_items]);
 
