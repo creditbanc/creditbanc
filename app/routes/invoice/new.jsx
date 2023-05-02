@@ -27,11 +27,18 @@ const new_invoice_item = () => ({
 });
 
 const useInvoice = create((set) => ({
+	id: uuidv4(),
+	type: "invoice",
+	customer_id: "",
 	name: "",
 	description: "",
-	price_rate: "",
-	type: "inventory",
 	total: 0,
+	open_balance: 0,
+	paid_balance: 0,
+	invoice_date: "",
+	due_date: "",
+	terms: "",
+	created_at: "",
 	items: [new_invoice_item()],
 	set_invoice: (path, value) =>
 		set((state) => pipe(mod(...path)(() => value))(state)),
