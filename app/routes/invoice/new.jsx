@@ -5,8 +5,8 @@ import { PlusCircleIcon } from "@heroicons/react/24/outline";
 import { firestore } from "~/utils/firebase";
 import { collection, getDocs, setDoc, doc, getDoc } from "firebase/firestore";
 import { create } from "zustand";
-import { isEmpty, pipe, toLower, replace, head, findIndex } from "ramda";
-import { filter, mod } from "shades";
+import { isEmpty, pipe, toLower, replace, head, findIndex, sum } from "ramda";
+import { filter, get, mod, all } from "shades";
 import { accounts as default_accounts } from "~/data/coa";
 import { useLoaderData } from "@remix-run/react";
 import { sha256 } from "js-sha256";
@@ -31,6 +31,7 @@ const useInvoice = create((set) => ({
 	description: "",
 	price_rate: "",
 	type: "inventory",
+	total: 0,
 	items: [new_invoice_item()],
 	set_invoice: (path, value) =>
 		set((state) => pipe(mod(...path)(() => value))(state)),
@@ -201,6 +202,10 @@ const InvoiceItem = ({ id, item_index }) => {
 	};
 
 	useEffect(() => {
+		set_invoice(["items", item_index, "total"], invoice_item_total);
+	}, [invoice_item_total]);
+
+	useEffect(() => {
 		update_item_rate();
 	}, [asset_id]);
 
@@ -211,35 +216,35 @@ const InvoiceItem = ({ id, item_index }) => {
 			</div>
 			<div className="flex flex-col rounded-md shadow-sm ring-1 ring-inset ring-gray-300 h-[35px]">
 				<input
-					type="text"
+					type="number"
 					className="flex flex-col w-full border-0 bg-transparent py-1.5 px-3 text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:text-sm sm:leading-6 outline-none"
 					placeholder="quantity"
 					value={invoice_item.quantity}
 					onChange={(e) =>
 						set_invoice(
 							["items", item_index, "quantity"],
-							e.target.value
+							Number(e.target.value)
 						)
 					}
 				/>
 			</div>
 			<div className="flex flex-col rounded-md shadow-sm ring-1 ring-inset ring-gray-300 h-[35px]">
 				<input
-					type="text"
+					type="number"
 					className="flex flex-col w-full border-0 bg-transparent py-1.5 px-3 text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:text-sm sm:leading-6 outline-none"
 					placeholder="rate"
 					value={invoice_item.rate}
 					onChange={(e) =>
 						set_invoice(
 							["items", item_index, "rate"],
-							e.target.value
+							Number(e.target.value)
 						)
 					}
 				/>
 			</div>
 			<div className="flex flex-col rounded-md shadow-sm ring-1 ring-inset ring-gray-300 h-[35px]">
 				<input
-					type="text"
+					type="number"
 					className="flex flex-col w-full border-0 bg-transparent py-1.5 px-3 text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:text-sm sm:leading-6 outline-none"
 					placeholder="Product name"
 					value={invoice_item_total}
@@ -253,21 +258,22 @@ const InvoiceItem = ({ id, item_index }) => {
 function Form() {
 	const asset = useAsset((state) => state.form);
 	const setAsset = useAsset((state) => state.set_asset);
-	const revenue_account = useRevenueAccount((state) => state.account);
 	const invoice_items = useInvoice((state) => state.items);
 	const set_invoice = useInvoice((state) => state.set_invoice);
+	const invoice_total = useInvoice((state) => state.total);
 
-	const onCreateAccount = async (e) => {
+	const onCreateInvoice = async (e) => {
+		console.log("onCreateInvoice");
 		e.preventDefault();
 
-		let { id: revenue_account_id } = revenue_account;
-		let id = pipe(toLower, replace(/\s/g, ""), sha256)(asset.name);
+		// let { id: revenue_account_id } = revenue_account;
+		// let id = pipe(toLower, replace(/\s/g, ""), sha256)(asset.name);
 
-		let payload = {
-			...asset,
-			id,
-			revenue_account_id,
-		};
+		// let payload = {
+		// 	...asset,
+		// 	id,
+		// 	revenue_account_id,
+		// };
 
 		// const docRef = await setDoc(doc(firestore, "assets", id), payload);
 	};
@@ -277,8 +283,16 @@ function Form() {
 		set_invoice(["items"], [...invoice_items, new_invoice_item()]);
 	};
 
+	useEffect(() => {
+		let total = pipe(get(all, "total"), sum)(invoice_items);
+		console.log("total");
+		console.log(invoice_items);
+		console.log(total);
+		set_invoice(["total"], total);
+	}, [invoice_items]);
+
 	return (
-		<form className="flex flex-col w-full" onSubmit={onCreateAccount}>
+		<form className="flex flex-col w-full" onSubmit={onCreateInvoice}>
 			<div className="space-y-6">
 				<div className="border-b border-gray-900/10 pb-6">
 					<h2 className="text-base font-semibold leading-7 text-gray-900">
@@ -355,36 +369,17 @@ function Form() {
 					</div>
 				</div>
 
-				<div className="border-b border-gray-900/10 pb-6">
-					<div className="flex flex-col w-full space-y-6">
-						<div className="flex flex-row w-full space-x-5">
-							<div className="flex flex-col w-1/2">
-								<label className="block text-sm font-medium leading-6 text-gray-900">
-									Sales price/rate
-								</label>
-								<div className="mt-2">
-									<div className="flex rounded-md shadow-sm ring-1 ring-inset ring-gray-300">
-										<input
-											type="number"
-											className="flex flex-col w-full border-0 bg-transparent py-1.5 px-3 text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:text-sm sm:leading-6 outline-none"
-											value={asset.price_rate || ""}
-											onChange={(e) =>
-												setAsset(
-													["price_rate"],
-													Number(e.target.value)
-												)
-											}
-										/>
-									</div>
-								</div>
-							</div>
-							<div className="flex flex-col w-1/2">
-								<label className="block text-sm font-medium leading-6 text-gray-900">
-									Revenue account
-								</label>
-
-								{/* <ProductsAndServicesSelect /> */}
-							</div>
+				<div className="border-b border-gray-900/10 pb-6 flex flex-row">
+					<div className="w-1/2"></div>
+					<div className="w-1/2 flex flex-col items-end text-sm">
+						<div className="flex flex-row justify-between w-full">
+							<div>Subtotal</div>
+							<div>{invoice_total}</div>
+						</div>
+						<div className="border-t w-full flex flex-col h-[1px] my-3"></div>
+						<div className="flex flex-row justify-between w-full font-semibold">
+							<div>Invoice total</div>
+							<div>{invoice_total}</div>
 						</div>
 					</div>
 				</div>
@@ -424,7 +419,7 @@ export default function NewInvoice() {
 	}, [products_and_services]);
 
 	return (
-		<div className="flex flex-col items-center w-full pt-10">
+		<div className="flex flex-col items-center w-full py-10">
 			<div className="flex flex-col w-[500px] border rounded p-5">
 				<Form />
 			</div>
