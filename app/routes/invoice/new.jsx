@@ -1,11 +1,21 @@
 import { Fragment, useEffect, useState } from "react";
 import { Listbox, Transition } from "@headlessui/react";
 import { CheckIcon, ChevronUpDownIcon } from "@heroicons/react/20/solid";
-import { PlusCircleIcon } from "@heroicons/react/24/outline";
+import { PlusCircleIcon, TrashIcon } from "@heroicons/react/24/outline";
 import { firestore } from "~/utils/firebase";
 import { collection, getDocs, setDoc, doc, getDoc } from "firebase/firestore";
 import { create } from "zustand";
-import { isEmpty, pipe, toLower, replace, head, findIndex, sum } from "ramda";
+import {
+	isEmpty,
+	pipe,
+	toLower,
+	replace,
+	head,
+	findIndex,
+	sum,
+	length,
+	reject,
+} from "ramda";
 import { filter, get, mod, all } from "shades";
 import { accounts as default_accounts } from "~/data/coa";
 import { useLoaderData } from "@remix-run/react";
@@ -53,11 +63,6 @@ const useAsset = create((set) => ({
 	},
 	set_asset: (path, value) =>
 		set((state) => pipe(mod("form", ...path)(() => value))(state)),
-}));
-
-const useRevenueAccount = create((set) => ({
-	account: { name: "" },
-	set_account: (account) => set((state) => ({ account })),
 }));
 
 const useAccounts = create((set) => ({
@@ -289,6 +294,13 @@ function Form() {
 		set_invoice(["items"], [...invoice_items, new_invoice_item()]);
 	};
 
+	const onDeleteInvoiceItem = (id) => {
+		set_invoice(
+			["items"],
+			pipe(reject((item) => item.id == id))(invoice_items)
+		);
+	};
+
 	useEffect(() => {
 		let total = pipe(get(all, "total"), sum)(invoice_items);
 		set_invoice(["total"], total);
@@ -331,11 +343,44 @@ function Form() {
 							</label>
 							<div className="mt-2 space-y-2">
 								{invoice_items.map((item, item_index) => (
-									<InvoiceItem
-										id={item.id}
+									<div
+										onMouseOver={() =>
+											set_invoice(
+												["items", item_index, "hover"],
+												true
+											)
+										}
+										onMouseLeave={() =>
+											set_invoice(
+												["items", item_index, "hover"],
+												false
+											)
+										}
 										key={item.id}
-										item_index={item_index}
-									/>
+										className="w-[calc(100%+50px)] flex flex-row justify-between h-[45px]"
+									>
+										<div className="w-[calc(100%-50px)]">
+											<InvoiceItem
+												id={item.id}
+												item_index={item_index}
+											/>
+										</div>
+										{item.hover &&
+											length(invoice_items) !== 1 && (
+												<div
+													className="flex flex-col items-center h-full justify-center w-[30px] cursor-pointer pl-1"
+													onClick={() =>
+														onDeleteInvoiceItem(
+															item.id
+														)
+													}
+												>
+													<div className="flex flex-col w-[20px]">
+														<TrashIcon />
+													</div>
+												</div>
+											)}
+									</div>
 								))}
 							</div>
 							<div
@@ -349,7 +394,7 @@ function Form() {
 							</div>
 						</div>
 
-						<div className="flex flex-col w-full">
+						{/* <div className="flex flex-col w-full">
 							<label
 								htmlFor="about"
 								className="block text-sm font-medium leading-6 text-gray-900"
@@ -368,7 +413,7 @@ function Form() {
 							<p className="mt-3 text-xs leading-6 text-gray-600">
 								Write a few sentences about the product.
 							</p>
-						</div>
+						</div> */}
 					</div>
 				</div>
 
