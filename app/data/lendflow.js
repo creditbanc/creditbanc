@@ -1312,7 +1312,7 @@ export const credit_report_data = {
 	},
 };
 
-export const fb_data = {
+export const fb_credit_report = {
 	data: {
 		uuid: "375792fa-0016-4245-bdfc-e62ca3b5b7d8",
 		business_legal_name: "Facebook Inc",

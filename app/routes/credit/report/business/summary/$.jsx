@@ -1,9 +1,9 @@
-import { fb_data } from "~/data/lendflow";
+import { fb_credit_report } from "~/data/lendflow";
 import { identity, pipe, splitEvery, values, mapObjIndexed } from "ramda";
 import { get, map } from "shades";
 import { capitalize, mapIndexed, currency } from "~/utils/helpers";
 
-const data = fb_data;
+const data = fb_credit_report;
 
 let summary_data = [
 	{

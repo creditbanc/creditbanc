@@ -17,13 +17,25 @@ import CreditHeroGradient from "~/components/CreditHeroGradient";
 import { get_user_id } from "~/utils/auth.server";
 import { validate_action, is_resource_owner_p } from "~/utils/resource.server";
 import { redirect } from "@remix-run/node";
+import { fb_credit_report } from "~/data/lendflow";
+import { VerticalNav } from "~/components/BusinessCreditNav";
 
 export default function BusinessReport() {
+	let report = fb_credit_report;
+	let location = useLocation();
 	const [target, setTarget] = useState();
 	const elmSize = useElmSize(target);
 	let setContentWidth = useLayoutStore((state) => state.set_content_width);
+	let content_width = useLayoutStore((state) => state.content_width);
+	let [isMobile, setIsMobile] = useState(true);
 
-	let location = useLocation();
+	useEffect(() => {
+		if (content_width > 640) {
+			setIsMobile(false);
+		} else {
+			setIsMobile(true);
+		}
+	}, [content_width]);
 
 	useEffect(() => {
 		if (elmSize) {
@@ -34,20 +46,27 @@ export default function BusinessReport() {
 	return (
 		<div className="flex flex-col flex-1 overflow-scroll">
 			<div className="flex flex-col w-full">
-				{/* <CreditHeroGradient /> */}
 				<div
 					className="flex flex-col w-full p-[10px] max-w-5xl mx-auto"
 					ref={setTarget}
 				>
-					<div className="mt-3 mb-1">
-						{/* <PersonalCreditTabs
-							selected={capitalize(
-								get_route_endpoint(location.pathname)
-							)}
-						/> */}
-					</div>
-					<div className="py-3">
-						<Outlet />
+					<div
+						className={`py-3 mb-10 flex ${
+							isMobile ? "flex-col" : "flex-row"
+						}`}
+					>
+						{!isMobile && (
+							<div className="sm:flex flex-col w-1/5 mr-2 border rounded-lg h-fit">
+								<VerticalNav
+									selected={get_route_endpoint(
+										location.pathname
+									)}
+								/>
+							</div>
+						)}
+						<div className="flex flex-col flex-1">
+							<Outlet />
+						</div>
 					</div>
 				</div>
 			</div>

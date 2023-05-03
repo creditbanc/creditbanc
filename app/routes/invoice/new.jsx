@@ -18,9 +18,7 @@ import {
 	dissoc,
 } from "ramda";
 import { filter, get, mod, all } from "shades";
-import { accounts as default_accounts } from "~/data/coa";
 import { useLoaderData } from "@remix-run/react";
-import { sha256 } from "js-sha256";
 import { v4 as uuidv4 } from "uuid";
 
 function classNames(...classes) {
@@ -55,17 +53,6 @@ const useInvoice = create((set) => ({
 		set((state) => pipe(mod(...path)(() => value))(state)),
 }));
 
-const useAsset = create((set) => ({
-	form: {
-		name: "",
-		description: "",
-		price_rate: "",
-		type: "inventory",
-	},
-	set_asset: (path, value) =>
-		set((state) => pipe(mod("form", ...path)(() => value))(state)),
-}));
-
 const useAccounts = create((set) => ({
 	accounts: [],
 	set_accounts: (accounts) => set((state) => ({ accounts })),
@@ -81,9 +68,17 @@ export const loader = async () => {
 	const coa_response = await getDocs(collection(firestore, "coa"));
 	let coa = coa_response.docs.map((doc) => doc.data());
 	coa = pipe(filter({ account_type: "revenue" }))(coa);
+
 	const products_response = await getDocs(collection(firestore, "assets"));
 	let products_and_services = products_response.docs.map((doc) => doc.data());
-	return { coa, products_and_services };
+
+	const customers_response = await getDocs(
+		collection(firestore, "customers")
+	);
+
+	let customers = customers_response.docs.map((doc) => doc.data());
+
+	return { coa, products_and_services, customers };
 };
 
 function ProductsAndServicesSelect({ invoice_item_index }) {
@@ -195,6 +190,111 @@ function ProductsAndServicesSelect({ invoice_item_index }) {
 	);
 }
 
+function CustomersSelect() {
+	let { customers } = useLoaderData();
+
+	let set_invoice = useInvoice((state) => state.set_invoice);
+	const [selected, set_selected] = useState({});
+
+	useEffect(() => {
+		let has_empty_value = isEmpty(selected);
+
+		if (has_empty_value) {
+			set_selected(customers[0]);
+		}
+	}, [customers]);
+
+	useEffect(() => {
+		if (!isEmpty(selected)) {
+			set_invoice(["customer_id"], selected.id);
+		}
+	}, [selected]);
+
+	const onSelect = (value) => {
+		set_selected(value);
+	};
+
+	return (
+		<Listbox value={selected} onChange={onSelect}>
+			{({ open }) => (
+				<>
+					<div className="relative mt-2">
+						<Listbox.Button className="relative w-full cursor-default rounded-md bg-white py-1.5 pl-3 pr-10 text-left text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-600 sm:text-sm sm:leading-6">
+							<div className="flex flex-row space-x-1">
+								<span className="block truncate">
+									{selected?.personal?.company_name}
+								</span>
+							</div>
+							<span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
+								<ChevronUpDownIcon
+									className="h-5 w-5 text-gray-400"
+									aria-hidden="true"
+								/>
+							</span>
+						</Listbox.Button>
+
+						<Transition
+							show={open}
+							as={Fragment}
+							leave="transition ease-in duration-100"
+							leaveFrom="opacity-100"
+							leaveTo="opacity-0"
+						>
+							<Listbox.Options className="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
+								{customers.map((item) => (
+									<Listbox.Option
+										key={item.id}
+										className={({ active }) =>
+											classNames(
+												active
+													? "bg-indigo-600 text-white"
+													: "text-gray-900",
+												"relative cursor-default select-none py-2 pl-3 pr-9"
+											)
+										}
+										value={item}
+									>
+										{({ selected, active }) => (
+											<>
+												<span
+													className={classNames(
+														selected
+															? "font-semibold"
+															: "font-normal",
+														"block truncate"
+													)}
+												>
+													{item.personal.company_name}
+												</span>
+
+												{selected ? (
+													<span
+														className={classNames(
+															active
+																? "text-white"
+																: "text-indigo-600",
+															"absolute inset-y-0 right-0 flex items-center pr-4"
+														)}
+													>
+														<CheckIcon
+															className="h-5 w-5"
+															aria-hidden="true"
+														/>
+													</span>
+												) : null}
+											</>
+										)}
+									</Listbox.Option>
+								))}
+							</Listbox.Options>
+						</Transition>
+					</div>
+				</>
+			)}
+		</Listbox>
+	);
+}
+
 const InvoiceItem = ({ id, item_index }) => {
 	const get_item = (id) => pipe(filter({ id }), head);
 	let invoice_item = useInvoice((state) => get_item(id)(state.items));
@@ -269,8 +369,6 @@ const InvoiceItem = ({ id, item_index }) => {
 };
 
 function Form() {
-	const asset = useAsset((state) => state.form);
-	const setAsset = useAsset((state) => state.set_asset);
 	const invoice_items = useInvoice((state) => state.items);
 	const set_invoice = useInvoice((state) => state.set_invoice);
 	const invoice_total = useInvoice((state) => state.total);
@@ -319,20 +417,10 @@ function Form() {
 					<div className="flex flex-col w-full space-y-6 pt-5">
 						<div className="flex flex-col w-full">
 							<label className="block text-sm font-medium leading-6 text-gray-900">
-								Name
+								Customer
 							</label>
 							<div className="mt-2">
-								<div className="flex rounded-md shadow-sm ring-1 ring-inset ring-gray-300">
-									<input
-										type="text"
-										className="flex flex-col w-full border-0 bg-transparent py-1.5 px-3 text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:text-sm sm:leading-6 outline-none"
-										placeholder="Product name"
-										value={asset.name}
-										onChange={(e) =>
-											setAsset(["name"], e.target.value)
-										}
-									/>
-								</div>
+								<CustomersSelect />
 							</div>
 						</div>
 
