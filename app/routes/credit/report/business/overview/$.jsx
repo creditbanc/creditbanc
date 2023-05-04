@@ -1,4 +1,7 @@
-import { HandThumbUpIcon } from "@heroicons/react/24/outline";
+import {
+	HandThumbUpIcon,
+	ChevronDoubleRightIcon,
+} from "@heroicons/react/24/outline";
 
 const ScoreCard = () => {
 	return (
@@ -288,9 +291,111 @@ const AccountCard = () => {
 	);
 };
 
-export default function Overview() {
+const ScoreFactors = () => {
+	return (
+		<div className="overflow-hidden bg-white rounded-lg border">
+			<div className="px-4 py-5 sm:px-6">
+				<h3 className="text-lg font-medium leading-6 text-gray-900">
+					Here are the factors influencing your score
+				</h3>
+			</div>
+			<div className="border-t border-gray-200 p-6">
+				<div className="flex flex-col w-full space-y-6">
+					<div className="flex flex-row items-center space-x-2">
+						<div className="w-[20px]">
+							<ChevronDoubleRightIcon />
+						</div>
+						<div>
+							Pct of new commercial accts to total nbr of accts
+						</div>
+					</div>
+					<div className="flex flex-row items-center space-x-2">
+						<div className="w-[20px]">
+							<ChevronDoubleRightIcon />
+						</div>
+						<div>
+							Pct of new commercial accts to total nbr of accts
+						</div>
+					</div>
+					<div className="flex flex-row items-center space-x-2">
+						<div className="w-[20px]">
+							<ChevronDoubleRightIcon />
+						</div>
+						<div>
+							Pct of new commercial accts to total nbr of accts
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	);
+};
+
+const Derogatories = () => {
+	return (
+		<div className="overflow-hidden bg-white rounded-lg border">
+			<div className="px-4 py-5 sm:px-6">
+				<h3 className="text-lg font-medium leading-6 text-gray-900">
+					Derogatories
+				</h3>
+			</div>
+			<div className="border-t border-gray-200 p-5 space-y-5">
+				<div className="flex flex-col w-full [&>*:nth-child(odd)]:bg-gray-50 border rounded">
+					<div className="flex flex-row py-2 px-3">
+						<div className="flex flex-col w-3/4">
+							First Credit Account
+						</div>
+						<div>N/A</div>
+					</div>
+					<div className="flex flex-row py-2 px-3">
+						<div className="flex flex-col w-3/4">
+							First Credit Account
+						</div>
+						<div>N/A</div>
+					</div>
+					<div className="flex flex-row py-2 px-3">
+						<div className="flex flex-col w-3/4">
+							First Credit Account
+						</div>
+						<div>N/A</div>
+					</div>
+				</div>
+				<div className="flex flex-row w-full">
+					<div className="flex flex-col items-center w-1/4 space-y-1">
+						<div>Collections</div>
+						<div className="flex flex-col w-[90%] h-[1px] bg-gray-200"></div>
+						<div>0</div>
+					</div>
+					<div className="flex flex-col items-center w-1/4 space-y-1">
+						<div>Collections</div>
+						<div className="flex flex-col w-[90%] h-[1px] bg-gray-200"></div>
+						<div>0</div>
+					</div>
+					<div className="flex flex-col items-center w-1/4 space-y-1">
+						<div>Collections</div>
+						<div className="flex flex-col w-[90%] h-[1px] bg-gray-200"></div>
+						<div>0</div>
+					</div>
+					<div className="flex flex-col items-center w-1/4 space-y-1">
+						<div>Collections</div>
+						<div className="flex flex-col w-[90%] h-[1px] bg-gray-200"></div>
+						<div>0</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	);
+};
+
+export default function Container() {
 	return (
 		<div className="flex flex-col w-full space-y-5">
+			<div>
+				<Derogatories />
+			</div>
+			<div>
+				<ScoreFactors />
+			</div>
 			<div>
 				<AccountCard />
 			</div>

@@ -2,7 +2,7 @@ import { Fragment } from "react";
 import { Link, useLocation } from "@remix-run/react";
 import { Listbox, Transition } from "@headlessui/react";
 import { CheckIcon, ChevronUpDownIcon } from "@heroicons/react/20/solid";
-import { tabs } from "~/data/personal_tabs";
+import { tabs } from "~/data/business_credit_tabs";
 import { pipe, head } from "ramda";
 import { filter } from "shades";
 
