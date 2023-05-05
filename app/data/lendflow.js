@@ -8514,5 +8514,54 @@ Lendflow.experian.factors = pipe(
 	]
 );
 
+Lendflow.dnb = {};
+
+Lendflow.dnb.score = pipe(
+	get(
+		"data",
+		"commercial_data",
+		"dnb",
+		"pi_l3",
+		"organization",
+		"businessTrading",
+		0,
+		"summary",
+		0,
+		"paydexScore"
+	)
+);
+
+Lendflow.dnb.delinquency_score = pipe(
+	get(
+		"data",
+		"commercial_data",
+		"dnb",
+		"fi_l2",
+		"organization",
+		"dnbAssessment",
+		"delinquencyScore",
+		"classScoreDescription"
+	)
+);
+
+Lendflow.dnb.total_balance_high = pipe(
+	get(
+		"data",
+		"commercial_data",
+		"dnb",
+		"pi_l3",
+		"organization",
+		"businessTrading",
+		0,
+		"summary",
+		0,
+		"totalExperiencesAmount"
+	)
+);
+
+Lendflow.dnb.duns_number = pipe(
+	get("data", "commercial_data", "dnb", "fi_l2", "organization", "duns")
+);
+
 // console.log("api_response");
-// console.log(Lendflow.experian.factors);
+// console.log(Lendflow.dnb.delinquency_score);
