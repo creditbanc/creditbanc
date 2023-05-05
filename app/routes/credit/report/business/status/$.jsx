@@ -1,9 +1,25 @@
 import {
+	HandThumbDownIcon,
 	HandThumbUpIcon,
-	ChevronDoubleRightIcon,
 } from "@heroicons/react/24/outline";
+import { useLoaderData } from "@remix-run/react";
+import { mrm_credit_report, Lendflow } from "~/data/lendflow";
+import { currency } from "~/utils/helpers";
+import { pipe, map } from "ramda";
+
+export const loader = () => {
+	let trade_payment_totals =
+		Lendflow.experian.trade_payment_totals(mrm_credit_report);
+
+	let trade_lines = Lendflow.experian.trade_lines(mrm_credit_report);
+
+	return { trade_payment_totals, trade_lines };
+};
 
 const PaymentStatus = () => {
+	let { trade_payment_totals, trade_lines } = useLoaderData();
+	let { trade_lines: trade_lines_payment_totals } = trade_payment_totals;
+
 	return (
 		<div className="overflow-hidden bg-white rounded-lg border">
 			<div className="px-4 py-5 sm:px-6">
@@ -18,19 +34,28 @@ const PaymentStatus = () => {
 						<div className="flex flex-col space-y-1">
 							<div>Active Accounts</div>
 							<div className="flex flex-col h-[1px] bg-gray-200 w-[90%]"></div>
-							<div className="font-semibold">4</div>
+							<div className="font-semibold">
+								{trade_lines_payment_totals.tradelineCount}
+							</div>
 						</div>
 
 						<div className="flex flex-col space-y-1">
-							<div>Active Accounts</div>
+							<div>Delinquent Accounts</div>
 							<div className="flex flex-col h-[1px] bg-gray-200 w-[90%]"></div>
-							<div className="font-semibold">4</div>
+							<div className="font-semibold">
+								{trade_lines_payment_totals.dbt30}
+							</div>
 						</div>
 
 						<div className="flex flex-col space-y-1">
-							<div>Active Accounts</div>
+							<div>Balance of all accounts</div>
 							<div className="flex flex-col h-[1px] bg-gray-200 w-[90%]"></div>
-							<div className="font-semibold">4</div>
+							<div className="font-semibold">
+								{currency.format(
+									trade_lines_payment_totals
+										.totalAccountBalance.amount
+								)}
+							</div>
 						</div>
 					</div>
 				</div>
@@ -64,39 +89,54 @@ const ExplanationCard = () => {
 	);
 };
 
-const AccountCard = () => {
+const AccountCard = ({ trade_line }) => {
+	let is_current =
+		trade_line.dbt30 === 0 &&
+		trade_line.dbt60 === 0 &&
+		trade_line.dbt90 == 0;
+
 	return (
 		<div className="overflow-hidden bg-white rounded-lg border">
 			<div className="px-4 py-5 sm:px-6">
 				<h3 className="text-lg font-medium leading-6 text-gray-900">
-					Packaging
+					{trade_line.businessCategory}
 				</h3>
 			</div>
 			<div className="border-t border-gray-200 p-5 pt-1">
-				<div className="flex flex-row space-x-3 px-2 py-2 bg-green-100 rounded my-3">
-					<div className="flex flex-col h-full justify-center w-[20px] mt-[2px]">
-						<HandThumbUpIcon />
+				{is_current && (
+					<div className="flex flex-row space-x-3 px-2 py-2 bg-green-100 rounded my-3">
+						<div className="flex flex-col h-full justify-center w-[20px] mt-[2px]">
+							<HandThumbUpIcon />
+						</div>
+
+						<div>This account is current</div>
 					</div>
-					<div>This account is current</div>
-				</div>
+				)}
+
+				{!is_current && (
+					<div className="flex flex-row space-x-3 px-2 py-2 bg-red-100 rounded my-3">
+						<div className="flex flex-col h-full justify-center w-[20px] mt-[2px]">
+							<HandThumbDownIcon />
+						</div>
+
+						<div>This account is not current</div>
+					</div>
+				)}
+
 				<div className="flex flex-col w-full [&>*:nth-child(odd)]:bg-gray-50 border rounded">
 					<div className="flex flex-row py-2 px-3">
-						<div className="flex flex-col w-3/4">
-							First Credit Account
-						</div>
-						<div>N/A</div>
+						<div className="flex flex-col w-3/4">Date Reported</div>
+						<div>{trade_line.dateReported}</div>
 					</div>
 					<div className="flex flex-row py-2 px-3">
 						<div className="flex flex-col w-3/4">
-							First Credit Account
+							Date of Last Activity
 						</div>
-						<div>N/A</div>
+						<div>{trade_line.dateLastActivity}</div>
 					</div>
 					<div className="flex flex-row py-2 px-3">
-						<div className="flex flex-col w-3/4">
-							First Credit Account
-						</div>
-						<div>N/A</div>
+						<div className="flex flex-col w-3/4">Term</div>
+						<div>{trade_line.terms}</div>
 					</div>
 				</div>
 				<div className="flex flex-col w-full my-4">
@@ -113,18 +153,28 @@ const AccountCard = () => {
 						<div className="flex flex-col items-center w-1/4 space-y-1">
 							<div>High credit</div>
 							<div className="flex flex-col w-[90%] h-[1px] bg-gray-200"></div>
-							<div className="font-semibold">$0</div>
+							<div className="font-semibold">
+								{currency.format(
+									trade_line.recentHighCredit.amount
+								)}
+							</div>
 						</div>
 						<div className="flex flex-col items-center w-1/4 space-y-1">
-							<div>High credit</div>
+							<div>Account balance</div>
 							<div className="flex flex-col w-[90%] h-[1px] bg-gray-200"></div>
-							<div className="font-semibold">$0</div>
+							<div className="font-semibold">
+								{currency.format(
+									trade_line.accountBalance.amount
+								)}
+							</div>
 						</div>
 						<div className="flex flex-col w-1/2 items-end space-y-1">
 							<div className="flex flex-col items-center w-1/2">
 								<div>High credit</div>
 								<div className="flex flex-col w-[90%] h-[1px] bg-gray-200"></div>
-								<div className="font-semibold">$0</div>
+								<div className="font-semibold">
+									{trade_line.currentPercentage}%
+								</div>
 							</div>
 						</div>
 					</div>
@@ -135,6 +185,8 @@ const AccountCard = () => {
 };
 
 export default function Container() {
+	let { trade_lines } = useLoaderData();
+
 	return (
 		<div className="flex flex-col w-full space-y-5">
 			<div>
@@ -143,8 +195,10 @@ export default function Container() {
 			<div>
 				<ExplanationCard />
 			</div>
-			<div>
-				<AccountCard />
+			<div className="flex flex-col space-y-4">
+				{pipe(
+					map((trade_line) => <AccountCard trade_line={trade_line} />)
+				)(trade_lines)}
 			</div>
 		</div>
 	);

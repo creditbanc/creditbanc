@@ -1,7 +1,16 @@
-import {
-	HandThumbUpIcon,
-	ChevronDoubleRightIcon,
-} from "@heroicons/react/24/outline";
+import { HandThumbUpIcon } from "@heroicons/react/24/outline";
+import { useLoaderData } from "@remix-run/react";
+import { mrm_credit_report, Lendflow } from "~/data/lendflow";
+import { pipe, map } from "ramda";
+
+export const loader = () => {
+	let trade_payment_totals =
+		Lendflow.experian.trade_payment_totals(mrm_credit_report);
+
+	let trade_lines = Lendflow.experian.trade_lines(mrm_credit_report);
+
+	return { trade_payment_totals, trade_lines };
+};
 
 const ExplanationCard = () => {
 	return (
@@ -133,6 +142,8 @@ const SummaryCard = () => {
 };
 
 export default function Container() {
+	let { trade_lines } = useLoaderData();
+
 	return (
 		<div className="flex flex-col w-full space-y-5">
 			<div>
@@ -141,8 +152,10 @@ export default function Container() {
 			<div>
 				<ExplanationCard />
 			</div>
-			<div>
-				<AccountCard />
+			<div className="flex flex-col space-y-4">
+				{pipe(
+					map((trade_line) => <AccountCard trade_line={trade_line} />)
+				)(trade_lines)}
 			</div>
 		</div>
 	);

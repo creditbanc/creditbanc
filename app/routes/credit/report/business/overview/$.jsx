@@ -2,8 +2,20 @@ import {
 	HandThumbUpIcon,
 	ChevronDoubleRightIcon,
 } from "@heroicons/react/24/outline";
+import { useLoaderData } from "@remix-run/react";
+import { mrm_credit_report, Lendflow } from "~/data/lendflow";
+
+export const loader = () => {
+	let score = Lendflow.experian.score(mrm_credit_report);
+	let risk_class = Lendflow.experian.risk_class(mrm_credit_report);
+	let business = Lendflow.business(mrm_credit_report);
+	let trade_summary = Lendflow.experian.trade_summary(mrm_credit_report);
+	return { score, risk_class, business, trade_summary };
+};
 
 const ScoreCard = () => {
+	let { score, risk_class, business } = useLoaderData();
+
 	return (
 		<div className="overflow-hidden bg-white rounded-lg border">
 			<div className="px-4 py-5 sm:px-6">
@@ -13,13 +25,30 @@ const ScoreCard = () => {
 			</div>
 			<div className="border-t border-gray-200 space-y-8 p-6">
 				<div className="flex flex-row w-full">
-					<div className="flex flex-col w-1/2">a</div>
 					<div className="flex flex-col w-1/2">
-						<div>Experian Business Record shown for:</div>
+						<div className="flex flex-col items-center justify-center h-full space-y-2">
+							<div className="flex flex-col text-5xl">
+								{score}
+							</div>
+							<div className="flex flex-col">
+								{risk_class.definition}
+							</div>
+						</div>
+					</div>
+					<div className="flex flex-col w-1/2 text-sm">
+						<div className="flex flex-col mb-2 font-semibold">
+							Experian Business Record shown for:
+						</div>
 						<div className="flex flex-col">
-							<div>MRM CAPITAL HOLDINGS, INC</div>
-							<div>9315 TRINANA CIR, WINTER</div>
-							<div>GARDEN, FL 34787-4</div>
+							<div>{business.name}</div>
+							<div>{business.address.street}</div>
+							<div className="flex flex-row space-x-1">
+								<div className="flex flex-col mr-1">
+									{business.address.city},
+								</div>
+								<div>{business.address.state}</div>
+								<div>{business.address.zip}</div>
+							</div>
 						</div>
 					</div>
 				</div>
@@ -130,6 +159,8 @@ const SummaryCard = () => {
 };
 
 const DaysBeyondTerms = () => {
+	let { trade_summary } = useLoaderData();
+
 	return (
 		<div className="overflow-hidden bg-white rounded-lg border">
 			<div className="px-4 py-5 sm:px-6">
@@ -142,17 +173,23 @@ const DaysBeyondTerms = () => {
 					<div className="flex flex-col items-center w-1/3 space-y-2">
 						<div>Current DBT</div>
 						<div className="flex flex-col w-[90%] h-[1px] bg-gray-200"></div>
-						<div className="font-semibold">0</div>
+						<div className="font-semibold">
+							{trade_summary.currentDbt}
+						</div>
 					</div>
 					<div className="flex flex-col items-center w-1/3 space-y-2">
-						<div>Current DBT</div>
+						<div>Average DBT</div>
 						<div className="flex flex-col w-[90%] h-[1px] bg-gray-200"></div>
-						<div className="font-semibold">0</div>
+						<div className="font-semibold">
+							{trade_summary.monthlyAverageDbt}
+						</div>
 					</div>
 					<div className="flex flex-col items-center w-1/3 space-y-2">
-						<div>Current DBT</div>
+						<div>Highest DBT</div>
 						<div className="flex flex-col w-[90%] h-[1px] bg-gray-200"></div>
-						<div className="font-semibold">0</div>
+						<div className="font-semibold">
+							{trade_summary.highestDbt5Quarters}
+						</div>
 					</div>
 				</div>
 			</div>
@@ -391,31 +428,11 @@ export default function Container() {
 	return (
 		<div className="flex flex-col w-full space-y-5">
 			<div>
-				<Derogatories />
-			</div>
-			<div>
-				<ScoreFactors />
-			</div>
-			<div>
-				<AccountCard />
-			</div>
-			<div>
-				<ExplanationCard />
-			</div>
-			<div>
 				<ScoreCard />
 			</div>
-			<div>
-				<PaymentStatus />
-			</div>
+
 			<div>
 				<DaysBeyondTerms />
-			</div>
-			<div>
-				<SummaryCard />
-			</div>
-			<div>
-				<PersonalInfoCard />
 			</div>
 		</div>
 	);

@@ -1,3 +1,6 @@
+import { pipe } from "ramda";
+import { get } from "shades";
+
 export const test_identity_one = {
 	basic_info: {
 		first_name: "Tony",
@@ -5554,27 +5557,2962 @@ export const fb_credit_report = {
 	},
 };
 
-// {
-//     "basic_info": {
-//         "first_name": "Matthew",
-//         "last_name": "Meehan",
-//         "email_address": "matt@mrmcapitalgroup.com",
-//         "telephone": "646-303-6828",
-//         "doing_business_as": ""
-//     },
-//     "business_address": {
-//         "address_line": "9315 trinana circle ",
-//         "address_line2": "",
-//         "city": "winter garden",
-//         "state": "FL",
-//         "country": "US",
-//         "zip": "34787"
-//     },
-//     "business_start_date": "2015-01-01",
-//     "business_entity": "business_entity_type_4",
-//     "business_legal_name": "MRM Capital holdings",
-//     "employee_identification_number": "464612632",
-//     "terms_of_service": true,
-//     "requested_products": ["experian_business_match","experian_intelliscore","dnb_bm_l1","dnb_ci_l2"],
-//     "plaid_data": {}
-// }
+export const mrm_credit_report = {
+	data: {
+		uuid: "88c4cb9e-5e42-4e9e-a87a-f6620f63db06",
+		business_legal_name: "MRM Capital holdings",
+		dates: {
+			dnb_fi_l2: "2023-05-04 21:53:46",
+			experian_gdn_risk_check: "2023-05-04 21:53:32",
+			experian_gdn_company_profile: "2023-05-04 21:53:26",
+			experian_gdn_extended_report: "2023-05-04 21:53:20",
+			experian_business_facts: "2023-05-04 21:52:29",
+			experian_fsr: "2023-05-04 21:52:07",
+			experian_intelliscore: "2023-05-04 21:51:43",
+			dnb_dti_l1: "2023-03-29 16:16:24",
+			dnb_pi_l3: "2023-03-29 15:52:15",
+			experian_trades: "2023-03-29 15:47:51",
+			experian_business_match: "2023-03-29 15:47:49",
+		},
+		statuses: {
+			middesk: "Not yet started",
+			dnb: {
+				cer_l1: "Not yet started",
+				ci_l2: "Not yet started",
+				pi_l3: "Success",
+				fi_l2: "Success",
+				fi_l3: "Not yet started",
+				fi_l4: "Not yet started",
+				dti_l1: "Success",
+				bm_l1: "Not yet started",
+			},
+			experian: {
+				intelliscore: "Success",
+				intelliscore_v3: "Not yet started",
+				uccs: "Not yet started",
+				bankruptcies: "Not yet started",
+				judgments: "Not yet started",
+				liens: "Not yet started",
+				fsr: "Success",
+				fsr_v2: "Not yet started",
+				commercial_collections: "Not yet started",
+				credit_statuses: "Not yet started",
+				legal_collections: "Not yet started",
+				trades: "Success",
+				corporate_registrations: "Not yet started",
+				contacts: "Not yet started",
+				facts: "Success",
+				fraud_shields: "Not yet started",
+				gdn: {
+					company_profile: "Access token is invalid",
+					risk_check: "Access token is invalid",
+					small_report: "Not yet started",
+					extended_report: "Access token is invalid",
+					canadian_profile_report: "Not yet started",
+				},
+				business_match: "Success",
+				bop: {
+					blended_prequalification: {
+						vantage4: "Not yet started",
+						fico8: "Not yet started",
+						fico9: "Not yet started",
+						fico_v2: "Not yet started",
+						fico_advanced2: "Not yet started",
+					},
+					commercial_lending_to_a_sole_prop: {
+						vantage4: "Not yet started",
+						fico8: "Not yet started",
+						fico9: "Not yet started",
+						fico_v2: "Not yet started",
+						fico_advanced2: "Not yet started",
+					},
+					commercial_lending_with_a_pg: {
+						vantage4: "Not yet started",
+						fico8: "Not yet started",
+						fico9: "Not yet started",
+						fico_v2: "Not yet started",
+						fico_advanced2: "Not yet started",
+					},
+					commercial_insurance: {
+						vantage4: "Not yet started",
+						fico8: "Not yet started",
+						fico9: "Not yet started",
+						fico_v2: "Not yet started",
+						fico_advanced2: "Not yet started",
+					},
+					merchant_cash_advance: {
+						vantage4: "Not yet started",
+						fico8: "Not yet started",
+						fico9: "Not yet started",
+						fico_v2: "Not yet started",
+						fico_advanced2: "Not yet started",
+					},
+					merchant_acquisition: {
+						vantage4: "Not yet started",
+						fico8: "Not yet started",
+						fico9: "Not yet started",
+						fico_v2: "Not yet started",
+						fico_advanced2: "Not yet started",
+					},
+					commercial_factoring: {
+						vantage4: "Not yet started",
+						fico8: "Not yet started",
+						fico9: "Not yet started",
+						fico_v2: "Not yet started",
+						fico_advanced2: "Not yet started",
+					},
+					blended_account_review: {
+						vantage4: "Not yet started",
+						fico8: "Not yet started",
+						fico9: "Not yet started",
+						fico_v2: "Not yet started",
+						fico_advanced2: "Not yet started",
+					},
+					commercial_collections: {
+						vantage4: "Not yet started",
+						fico8: "Not yet started",
+						fico9: "Not yet started",
+						fico_v2: "Not yet started",
+						fico_advanced2: "Not yet started",
+					},
+					blended_prequalification_pdf_report: {
+						vantage4: "Not yet started",
+						fico8: "Not yet started",
+						fico9: "Not yet started",
+						fico_v2: "Not yet started",
+						fico_advanced2: "Not yet started",
+					},
+					commercial_lending_to_a_sole_prop_pdf_report: {
+						vantage4: "Not yet started",
+						fico8: "Not yet started",
+						fico9: "Not yet started",
+						fico_v2: "Not yet started",
+						fico_advanced2: "Not yet started",
+					},
+					commercial_lending_with_a_pg_pdf_report: {
+						vantage4: "Not yet started",
+						fico8: "Not yet started",
+						fico9: "Not yet started",
+						fico_v2: "Not yet started",
+						fico_advanced2: "Not yet started",
+					},
+					commercial_insurance_pdf_report: {
+						vantage4: "Not yet started",
+						fico8: "Not yet started",
+						fico9: "Not yet started",
+						fico_v2: "Not yet started",
+						fico_advanced2: "Not yet started",
+					},
+					merchant_cash_advance_pdf_report: {
+						vantage4: "Not yet started",
+						fico8: "Not yet started",
+						fico9: "Not yet started",
+						fico_v2: "Not yet started",
+						fico_advanced2: "Not yet started",
+					},
+					merchant_acquisition_pdf_report: {
+						vantage4: "Not yet started",
+						fico8: "Not yet started",
+						fico9: "Not yet started",
+						fico_v2: "Not yet started",
+						fico_advanced2: "Not yet started",
+					},
+					commercial_factoring_pdf_report: {
+						vantage4: "Not yet started",
+						fico8: "Not yet started",
+						fico9: "Not yet started",
+						fico_v2: "Not yet started",
+						fico_advanced2: "Not yet started",
+					},
+					blended_account_review_pdf_report: {
+						vantage4: "Not yet started",
+						fico8: "Not yet started",
+						fico9: "Not yet started",
+						fico_v2: "Not yet started",
+						fico_advanced2: "Not yet started",
+					},
+					commercial_collections_pdf_report: {
+						vantage4: "Not yet started",
+						fico8: "Not yet started",
+						fico9: "Not yet started",
+						fico_v2: "Not yet started",
+						fico_advanced2: "Not yet started",
+					},
+					blended_prequalification_premier_attributes: {
+						vantage4: "Not yet started",
+						fico8: "Not yet started",
+						fico9: "Not yet started",
+						fico_v2: "Not yet started",
+						fico_advanced2: "Not yet started",
+					},
+					commercial_lending_to_a_sole_prop_premier_attributes: {
+						vantage4: "Not yet started",
+						fico8: "Not yet started",
+						fico9: "Not yet started",
+						fico_v2: "Not yet started",
+						fico_advanced2: "Not yet started",
+					},
+					commercial_lending_with_a_pg_premier_attributes: {
+						vantage4: "Not yet started",
+						fico8: "Not yet started",
+						fico9: "Not yet started",
+						fico_v2: "Not yet started",
+						fico_advanced2: "Not yet started",
+					},
+					commercial_insurance_premier_attributes: {
+						vantage4: "Not yet started",
+						fico8: "Not yet started",
+						fico9: "Not yet started",
+						fico_v2: "Not yet started",
+						fico_advanced2: "Not yet started",
+					},
+					merchant_cash_advance_premier_attributes: {
+						vantage4: "Not yet started",
+						fico8: "Not yet started",
+						fico9: "Not yet started",
+						fico_v2: "Not yet started",
+						fico_advanced2: "Not yet started",
+					},
+					merchant_acquisition_premier_attributes: {
+						vantage4: "Not yet started",
+						fico8: "Not yet started",
+						fico9: "Not yet started",
+						fico_v2: "Not yet started",
+						fico_advanced2: "Not yet started",
+					},
+					commercial_factoring_premier_attributes: {
+						vantage4: "Not yet started",
+						fico8: "Not yet started",
+						fico9: "Not yet started",
+						fico_v2: "Not yet started",
+						fico_advanced2: "Not yet started",
+					},
+					blended_account_review_premier_attributes: {
+						vantage4: "Not yet started",
+						fico8: "Not yet started",
+						fico9: "Not yet started",
+						fico_v2: "Not yet started",
+						fico_advanced2: "Not yet started",
+					},
+					commercial_collections_premier_attributes: {
+						vantage4: "Not yet started",
+						fico8: "Not yet started",
+						fico9: "Not yet started",
+						fico_v2: "Not yet started",
+						fico_advanced2: "Not yet started",
+					},
+				},
+			},
+			ocrolus_cfa: "Not yet started",
+			moneythumb_cfa: "Not yet started",
+			moneythumb_transactions: "Not yet started",
+			plaid: "Not yet started",
+			sentilink: "Not yet started",
+			sentilink_ssn_completion: "Not yet started",
+			sentilink_dob_completion: "Not yet started",
+			ekata: "Not yet started",
+			heron: "Not yet started",
+			equifax: {
+				bpr: "Not yet started",
+			},
+			scorely: "Not yet started",
+			tax_status: {
+				business: {
+					verify: "Not yet started",
+				},
+				individual: {
+					verify: "Not yet started",
+				},
+			},
+			clear: {
+				person_search: "Not yet started",
+				clear_id_confirm_person: "Not yet started",
+				clear_risk_inform_person_search: "Not yet started",
+				clear_risk_inform_person_report: "Not yet started",
+				clear_id_confirm_business: "Not yet started",
+				clear_risk_inform_business_search: "Not yet started",
+				clear_risk_inform_business_report: "Not yet started",
+				clear_court_search: "Not yet started",
+				clear_adverse_media_search: "Not yet started",
+				clear_adverse_media_report: "Not yet started",
+			},
+			enigma: {
+				business_match: "Not yet started",
+				business_lookup: "Not yet started",
+			},
+			socure: {
+				kyc: "Not yet started",
+				fraud: "Not yet started",
+			},
+			lexis_nexis: {
+				kyc: "Not yet started",
+				kyc_report: "Not yet started",
+				kyb_search: "Not yet started",
+				kyb_report: "Not yet started",
+				corporate_filing_search: "Not yet started",
+				corporate_filing_report: "Not yet started",
+				ucc_filing_search: "Not yet started",
+				ucc_filing_report: "Not yet started",
+				bankruptcy_search: "Not yet started",
+				bankruptcy_report: "Not yet started",
+				liens_search: "Not yet started",
+				liens_report: "Not yet started",
+				judgments_search: "Not yet started",
+				judgments_report: "Not yet started",
+			},
+			codat: "Not yet started",
+			railz: "Not yet started",
+			rutter: "Not yet started",
+			mx: "Not yet started",
+		},
+		commercial_data: {
+			middesk: null,
+			sentilink: null,
+			sentilink_ssn_completion: null,
+			sentilink_dob_completion: null,
+			experian: {
+				intelliscore: {
+					businessHeader: {
+						bin: "408026840",
+						phone: "+13214306828",
+						taxId: "464612632",
+						address: {
+							zip: "34787",
+							city: "WINTER GARDEN",
+							state: "FL",
+							street: "9315 TRINANA CIR",
+							zipExtension: "0004",
+						},
+						dbaNames: null,
+						websiteUrl: null,
+						businessName: "MRM CAPITAL HOLDINGS, INC",
+						legalBusinessName: "MRM CAPITAL HOLDINGS, INC",
+						customerDisputeIndicator: false,
+					},
+					commercialScore: {
+						score: 72,
+						modelCode: "000224",
+						riskClass: {
+							code: 2,
+							definition: "LOW TO MEDIUM RISK",
+						},
+						modelTitle: "INTELLISCORE PLUS V2",
+						customModelCode: "03",
+						percentileRanking: 71,
+						recommendedCreditLimitAmount: 31700,
+					},
+					commercialScoreTrends: [
+						{
+							score: 72,
+							quarter: "FEB-APR",
+						},
+						{
+							score: 69,
+							quarter: "NOV-JAN",
+						},
+						{
+							score: 66,
+							quarter: "AUG-OCT",
+						},
+						{
+							score: 56,
+							quarter: "MAY-JUL",
+						},
+					],
+					commercialScoreFactors: [
+						{
+							code: "045",
+							definition: "NUMBER OF GOOD COMMERCIAL ACCOUNTS",
+						},
+						{
+							code: "059",
+							definition: "LENGTH OF TIME ON EXPERIAN'S FILE",
+						},
+						{
+							code: "061",
+							definition:
+								"RATIO OF BALANCE TO HIGH CREDIT FOR COMMERCIAL ACCOUNTS",
+						},
+						{
+							code: "021",
+							definition:
+								"PCT OF NEW COMMERCIAL ACCTS TO TOTAL NBR OF ACCTS",
+						},
+					],
+				},
+				intelliscore_v3: null,
+				uccs: null,
+				bankruptcies: null,
+				judgments: null,
+				liens: null,
+				fsr: {
+					fsrScore: {
+						score: 82,
+						modelCode: "000223",
+						riskClass: {
+							code: 1,
+							definition: "LOW RISK",
+						},
+						modelTitle: "FINANCIAL STABILITY RISK",
+						percentileRanking: 81,
+						recommendedCreditLimitAmount: null,
+					},
+					businessHeader: {
+						bin: "408026840",
+						phone: "+13214306828",
+						taxId: "464612632",
+						address: {
+							zip: "34787",
+							city: "WINTER GARDEN",
+							state: "FL",
+							street: "9315 TRINANA CIR",
+							zipExtension: "0004",
+						},
+						dbaNames: null,
+						websiteUrl: null,
+						businessName: "MRM CAPITAL HOLDINGS, INC",
+						legalBusinessName: "MRM CAPITAL HOLDINGS, INC",
+						customerDisputeIndicator: false,
+					},
+					fsrScoreTrends: [
+						{
+							score: 81,
+							quarter: "FEB-APR",
+						},
+						{
+							score: 77,
+							quarter: "NOV-JAN",
+						},
+						{
+							score: 70,
+							quarter: "AUG-OCT",
+						},
+						{
+							score: 43,
+							quarter: "MAY-JUL",
+						},
+					],
+					fsrScoreFactors: [
+						{
+							code: "004",
+							definition:
+								"RISK ASSOCIATED WITH THE COMPANY'S INDUSTRY SECTOR",
+						},
+						{
+							code: "009",
+							definition: "NUMBER OF ACTIVE COMMERCIAL ACCOUNTS",
+						},
+						{
+							code: "002",
+							definition:
+								"RISK ASSOCIATED WITH THE BUSINESS TYPE",
+						},
+						{
+							code: "003",
+							definition: "EMPLOYEE SIZE OF BUSINESS",
+						},
+					],
+				},
+				fsr_v2: null,
+				commercial_collections: null,
+				credit_statuses: null,
+				legal_collections: null,
+				trades: {
+					businessHeader: {
+						bin: "408026840",
+						phone: "+13214306828",
+						taxId: "464612632",
+						address: {
+							zip: "34787",
+							city: "WINTER GARDEN",
+							state: "FL",
+							street: "9315 TRINANA CIR",
+							zipExtension: "0004",
+						},
+						dbaNames: null,
+						websiteUrl: null,
+						businessName: "MRM CAPITAL HOLDINGS, INC",
+						legalBusinessName: "MRM CAPITAL HOLDINGS, INC",
+						customerDisputeIndicator: false,
+					},
+					tradeIndicator: true,
+					tradePaymentTotals: {
+						tradelines: {
+							dbt30: 0,
+							dbt60: 0,
+							dbt90: 0,
+							dbt91Plus: 0,
+							currentDbt: null,
+							tradelineCount: 4,
+							currentPercentage: 100,
+							totalAccountBalance: {
+								amount: 43800,
+							},
+							totalHighCreditAmount: {
+								amount: 96900,
+							},
+						},
+						combinedTradelines: {
+							dbt30: 0,
+							dbt60: 0,
+							dbt90: 0,
+							dbt91Plus: 0,
+							currentDbt: 0,
+							tradelineCount: 2,
+							currentPercentage: 100,
+							totalAccountBalance: {
+								amount: 41100,
+							},
+							totalHighCreditAmount: {
+								amount: 68400,
+							},
+						},
+						additionalTradelines: {
+							dbt30: 0,
+							dbt60: 0,
+							dbt90: 0,
+							dbt91Plus: 0,
+							currentDbt: null,
+							tradelineCount: 2,
+							currentPercentage: 100,
+							totalAccountBalance: {
+								amount: 2700,
+							},
+							totalHighCreditAmount: {
+								amount: 28500,
+							},
+						},
+						newlyReportedTradelines: {
+							dbt30: 0,
+							dbt60: 0,
+							dbt90: 0,
+							dbt91Plus: 0,
+							currentDbt: 0,
+							tradelineCount: 0,
+							currentPercentage: 0,
+							totalAccountBalance: {
+								amount: 0,
+							},
+							totalHighCreditAmount: {
+								amount: 0,
+							},
+						},
+						continuouslyReportedTradelines: {
+							dbt30: 0,
+							dbt60: 0,
+							dbt90: 0,
+							dbt91Plus: 0,
+							currentDbt: 0,
+							tradelineCount: 2,
+							currentPercentage: 100,
+							totalAccountBalance: {
+								amount: 41100,
+							},
+							totalHighCreditAmount: {
+								amount: 68400,
+							},
+						},
+					},
+					tradePaymentTrends: {
+						monthlyTrends: [
+							{
+								dbt: 0,
+								date: "2023-03-01",
+								dbt30: 0,
+								dbt60: 0,
+								dbt90: 0,
+								dbt91Plus: 0,
+								currentPercentage: 100,
+								totalAccountBalance: {
+									amount: 41100,
+								},
+							},
+							{
+								dbt: 0,
+								date: "2023-03-01",
+								dbt30: 0,
+								dbt60: 0,
+								dbt90: 0,
+								dbt91Plus: 0,
+								currentPercentage: 100,
+								totalAccountBalance: {
+									amount: 41100,
+								},
+							},
+							{
+								dbt: 0,
+								date: "2023-02-01",
+								dbt30: 0,
+								dbt60: 0,
+								dbt90: 0,
+								dbt91Plus: 0,
+								currentPercentage: 100,
+								totalAccountBalance: {
+									amount: 41100,
+								},
+							},
+							{
+								dbt: 0,
+								date: "2023-01-01",
+								dbt30: 0,
+								dbt60: 0,
+								dbt90: 0,
+								dbt91Plus: 0,
+								currentPercentage: 100,
+								totalAccountBalance: {
+									amount: 42700,
+								},
+							},
+							{
+								dbt: 0,
+								date: "2022-12-01",
+								dbt30: 0,
+								dbt60: 0,
+								dbt90: 0,
+								dbt91Plus: 0,
+								currentPercentage: 100,
+								totalAccountBalance: {
+									amount: 45300,
+								},
+							},
+							{
+								dbt: 0,
+								date: "2022-11-01",
+								dbt30: 0,
+								dbt60: 0,
+								dbt90: 0,
+								dbt91Plus: 0,
+								currentPercentage: 100,
+								totalAccountBalance: {
+									amount: 45900,
+								},
+							},
+							{
+								dbt: 0,
+								date: "2022-10-01",
+								dbt30: 0,
+								dbt60: 0,
+								dbt90: 0,
+								dbt91Plus: 0,
+								currentPercentage: 100,
+								totalAccountBalance: {
+									amount: 47600,
+								},
+							},
+						],
+						quarterlyTrends: [
+							{
+								dbt: 0,
+								date: "2022-10-01",
+								dbt30: 0,
+								dbt60: 0,
+								dbt90: 0,
+								dbt91Plus: 0,
+								currentPercentage: 100,
+								totalAccountBalance: {
+									amount: 44700,
+								},
+							},
+							{
+								dbt: 0,
+								date: "2022-07-01",
+								dbt30: 0,
+								dbt60: 0,
+								dbt90: 0,
+								dbt91Plus: 0,
+								currentPercentage: 100,
+								totalAccountBalance: {
+									amount: 49100,
+								},
+							},
+							{
+								dbt: 0,
+								date: "2022-04-01",
+								dbt30: 0,
+								dbt60: 0,
+								dbt90: 0,
+								dbt91Plus: 0,
+								currentPercentage: 100,
+								totalAccountBalance: {
+									amount: 53900,
+								},
+							},
+							{
+								dbt: 0,
+								date: "2022-01-01",
+								dbt30: 0,
+								dbt60: 0,
+								dbt90: 0,
+								dbt91Plus: 0,
+								currentPercentage: 100,
+								totalAccountBalance: {
+									amount: 58500,
+								},
+							},
+							{
+								dbt: 0,
+								date: "2021-10-01",
+								dbt30: 0,
+								dbt60: 0,
+								dbt90: 0,
+								dbt91Plus: 0,
+								currentPercentage: 100,
+								totalAccountBalance: {
+									amount: 63100,
+								},
+							},
+						],
+					},
+					tradePaymentSummary: {
+						currentDbt: 0,
+						singleHighCredit: 68400,
+						allTradelineCount: 4,
+						highestDbt6Months: 0,
+						monthlyAverageDbt: 0,
+						allTradelineBalance: 43800,
+						highestDbt5Quarters: 0,
+						currentAccountBalance: 41100,
+						currentTradelineCount: 2,
+						medianCreditAmountExtended: null,
+					},
+					tradePaymentExperiences: {
+						tradeAdditional: [
+							{
+								dbt30: 0,
+								dbt60: 0,
+								dbt90: 0,
+								terms: "REVOLVE",
+								dbt91Plus: 0,
+								dateReported: "2023-03-01",
+								accountBalance: {
+									amount: 2700,
+								},
+								businessCategory: "BANK CARD",
+								dateLastActivity: null,
+								recentHighCredit: {
+									amount: 28500,
+								},
+								currentPercentage: 100,
+								newlyReportedIndicator: false,
+								customerDisputeIndicator: false,
+							},
+							{
+								dbt30: 0,
+								dbt60: 0,
+								dbt90: 0,
+								terms: "NET 30",
+								comments: "CUST  3 YR",
+								dbt91Plus: 0,
+								dateReported: "2021-08-01",
+								accountBalance: {
+									amount: 0,
+								},
+								businessCategory: "PACKAGING",
+								dateLastActivity: null,
+								recentHighCredit: {
+									amount: 0,
+								},
+								currentPercentage: 0,
+								newlyReportedIndicator: false,
+								customerDisputeIndicator: false,
+							},
+						],
+						tradeNewAndContinuous: [
+							{
+								dbt30: 0,
+								dbt60: 0,
+								dbt90: 0,
+								terms: "MONTHLY",
+								comments: "CUST 1-5 Y",
+								dbt91Plus: 0,
+								dateReported: "2023-02-01",
+								accountBalance: {
+									amount: 0,
+								},
+								businessCategory: "BUS SERVCS",
+								dateLastActivity: "2023-01-01",
+								recentHighCredit: {
+									amount: 0,
+								},
+								currentPercentage: 0,
+								newlyReportedIndicator: false,
+								customerDisputeIndicator: false,
+							},
+							{
+								dbt30: 0,
+								dbt60: 0,
+								dbt90: 0,
+								terms: "CONTRCT",
+								dbt91Plus: 0,
+								dateReported: "2023-01-01",
+								accountBalance: {
+									amount: 41100,
+								},
+								businessCategory: "FINCL SVCS",
+								dateLastActivity: null,
+								recentHighCredit: {
+									amount: 68400,
+								},
+								currentPercentage: 100,
+								newlyReportedIndicator: false,
+								customerDisputeIndicator: false,
+							},
+						],
+					},
+				},
+				corporate_registrations: null,
+				contacts: null,
+				facts: {
+					sicCodes: [
+						{
+							code: "6719",
+							definition: "HOLDING COMPANIES, NEC",
+						},
+					],
+					naicsCodes: [
+						{
+							code: "551112",
+							definition: "Offices of Other Holding Companies",
+						},
+					],
+					fortune1000: {
+						rank: null,
+						year: null,
+					},
+					yearsOnFile: 8,
+					businessType: "Corporation",
+					employeeSize: 1,
+					salesRevenue: 837000,
+					salesSizeCode: "B",
+					businessHeader: {
+						bin: "408026840",
+						phone: "+13214306828",
+						taxId: "464612632",
+						address: {
+							zip: "34787",
+							city: "WINTER GARDEN",
+							state: "FL",
+							street: "9315 TRINANA CIR",
+							zipExtension: "0004",
+						},
+						dbaNames: null,
+						websiteUrl: null,
+						businessName: "MRM CAPITAL HOLDINGS, INC",
+						legalBusinessName: "MRM CAPITAL HOLDINGS, INC",
+						customerDisputeIndicator: false,
+					},
+					publicIndicator: false,
+					employeeSizeCode: "A",
+					nonProfitIndicator: false,
+					dateOfIncorporation: "2015-11-12",
+					corporateLinkageType: "Stand alone business",
+					executiveInformation: [
+						{
+							title: "CEO",
+							lastName: "MATTHEW",
+							firstName: "MEEHAN",
+							middleName: null,
+						},
+						{
+							title: "VICE PRESIDENT",
+							lastName: "DASCOLI",
+							firstName: "KRISSY",
+							middleName: "M",
+						},
+					],
+					stateOfIncorporation: "FL",
+				},
+				fraud_shields: null,
+				gdn: {
+					company_profile: {
+						errors: [
+							{
+								errorMsg: "Access token is invalid",
+								errorCode: "4002",
+							},
+						],
+						success: "false",
+						requestId:
+							"rrt-083b9fc3900f9a7e7-c-wo-17668-27483687-1",
+					},
+					risk_check: {
+						errors: [
+							{
+								errorMsg: "Access token is invalid",
+								errorCode: "4002",
+							},
+						],
+						success: "false",
+						requestId:
+							"rrt-083b9fc3900f9a7e7-c-wo-17668-27483731-1",
+					},
+					small_report: null,
+					extended_report: {
+						errors: [
+							{
+								errorMsg: "Access token is invalid",
+								errorCode: "4002",
+							},
+						],
+						success: "false",
+						requestId:
+							"rrt-00cf170f009d45570-a-wo-17693-27920109-1",
+					},
+					canadian_profile_report: null,
+				},
+				bop: {
+					blended_prequalification: null,
+					commercial_lending_to_a_sole_prop: null,
+					commercial_lending_with_a_pg: null,
+					commercial_insurance: null,
+					merchant_cash_advance: null,
+					merchant_acquisition: null,
+					commercial_factoring: null,
+					blended_account_review: null,
+					commercial_collections: null,
+					blended_prequalification_premier_attributes: null,
+					commercial_lending_to_a_sole_prop_premier_attributes: null,
+					commercial_lending_with_a_pg_premier_attributes: null,
+					commercial_insurance_premier_attributes: null,
+					merchant_cash_advance_premier_attributes: null,
+					merchant_acquisition_premier_attributes: null,
+					commercial_factoring_premier_attributes: null,
+					blended_account_review_premier_attributes: null,
+					commercial_collections_premier_attributes: null,
+					pdf_reports: [],
+				},
+				business_match: {
+					id: 242233,
+					service_id: 3,
+					response: [
+						{
+							bin: "408026840",
+							phone: "+13214306828",
+							address: {
+								zip: "34787",
+								city: "WINTER GARDEN",
+								state: "FL",
+								street: "9315 TRINANA CIR",
+								zipExtension: "0004",
+							},
+							businessName: "MRM CAPITAL HOLDINGS, INC",
+							uccIndicator: true,
+							businessGeocode: {
+								msaCode: "0000",
+								latitude: 28.5226,
+								longitude: -81.5995,
+								censusTractCode: "017104",
+								censusBlkGrpCode: "",
+								cottageIndicator: true,
+								dateLastReported: "2023-03-16",
+								latitudeLongitudeLevel: "Census Tract Level",
+								congressionalDistrictCode: "10",
+							},
+							reliabilityCode: 100,
+							inquiryIndicator: true,
+							bankDataIndicator: false,
+							keyFactsIndicator: true,
+							numberOfTradelines: 4,
+							matchingNameAndAddress: null,
+							governmentDataIndicator: false,
+							executiveSummaryIndicator: true,
+							financialStatementIndicator: false,
+						},
+					],
+					created_at: "2023-03-29T15:47:51.000000Z",
+					updated_at: "2023-03-29T15:47:51.000000Z",
+					business_credit_service: "experian_business_match",
+					business_id: 313603,
+					request: {
+						geo: true,
+						zip: "34787",
+						city: "winter garden",
+						name: "MRM Capital holdings",
+						phone: "+16463036828",
+						state: "FL",
+						taxId: "464612632",
+						street: "9315 trinana circle",
+						subcode: "0446260",
+					},
+					status_code: 200,
+					deleted_at: null,
+				},
+			},
+			dnb: {
+				cer_l1: null,
+				fi_l2: {
+					blockStatus: [
+						{
+							reason: null,
+							status: "ok",
+							blockID: "financialstrengthinsight_L2_v1",
+						},
+						{
+							reason: null,
+							status: "ok",
+							blockID: "baseinfo_L1_v1",
+						},
+					],
+					organization: {
+						duns: "017519793",
+						tsrRating: [],
+						layOffScore: {
+							scoreDate: "2023-04-27",
+							classScore: 2,
+							probability: 0.01,
+							classScoreDescription: "moderately low",
+							nationalRiskPercentile: 45,
+						},
+						primaryName: "MRM Capital Holdings, Inc.",
+						dnbAssessment: {
+							failureScore: {
+								scoreDate: "2023-01-08",
+								classScore: 2,
+								scoreModel: {
+									dnbCode: 19884,
+									description: "US Failure Score Model 7.1",
+								},
+								nationalPercentile: 72,
+								scoreOverrideReasons: [],
+								classScoreDescription:
+									"Moderate risk of severe financial stress, such as a bankruptcy, over the next 12 months.",
+							},
+							historyRating: [],
+							standardRating: {
+								rating: "DS",
+								scoreDate: "2017-01-11",
+								riskSegment: null,
+								ratingReason: [],
+								financialStrength: "DS",
+								ratingOverrideReasons: [],
+							},
+							nordicAAARating: [],
+							delinquencyScore: {
+								scoreDate: "2022-12-01",
+								classScore: 2,
+								scoreModel: {
+									dnbCode: 26183,
+									description: "U.S. Delinquency Predictor",
+								},
+								nationalPercentile: 90,
+								scoreOverrideReasons: [],
+								classScoreDescription:
+									"Moderate risk of severe payment delinquency over next 12 months.",
+							},
+							financialCondition: [],
+							hasSevereNegativeEvents: false,
+							creditLimitRecommendation: {
+								assessmentDate: null,
+								averageRecommendedLimit: [],
+								maximumRecommendedLimit: {
+									value: 22500,
+									currency: "USD",
+								},
+							},
+							emergingMarketMediationScore: [],
+						},
+						isHighRiskBusiness: null,
+						countryISOAlpha2Code: "US",
+						isDeterioratingBusiness: null,
+					},
+					inquiryDetail: {
+						duns: "017519793",
+						blockIDs: ["financialstrengthinsight_L2_v1"],
+					},
+					transactionDetail: {
+						inLanguage: "en-US",
+						transactionID:
+							"rrt-029b49081c63df860-b-wo-17052-9008498-62",
+						transactionTimestamp: "2023-05-04T21:53:47.208Z",
+					},
+				},
+				fi_l3: null,
+				dti_l1: {
+					blockStatus: [
+						{
+							reason: null,
+							status: "ok",
+							blockID: "dtri_L1_v1",
+						},
+						{
+							reason: null,
+							status: "ok",
+							blockID: "baseinfo_L1_v1",
+						},
+					],
+					organization: {
+						dtri: {
+							currentPaydex: {
+								threeMonthsDataCoverage: {
+									paydexScore: null,
+									paydexAccountsUsedCount: 0,
+									paydexSuppliersUsedCount: 0,
+								},
+								twelveMonthsDataCoverage: {
+									paydexScore: 80,
+									paydexAccountsUsedCount: 3,
+									paydexSuppliersUsedCount: 3,
+								},
+							},
+						},
+						duns: "017519793",
+						primaryName: "MRM Capital Holdings, Inc.",
+						countryISOAlpha2Code: "US",
+					},
+					inquiryDetail: {
+						duns: "017519793",
+						blockIDs: ["dtri_L1_v1"],
+					},
+					transactionDetail: {
+						inLanguage: "en-US",
+						transactionID:
+							"rrt-05b8aae4b99350e99-b-wo-17125-3422819-70",
+						transactionTimestamp: "2023-03-29T16:16:25.213Z",
+					},
+				},
+				ci_l2: null,
+				pi_l3: {
+					blockStatus: [
+						{
+							reason: null,
+							status: "ok",
+							blockID: "paymentinsight_L3_v1",
+						},
+						{
+							reason: null,
+							status: "ok",
+							blockID: "baseinfo_L1_v1",
+						},
+					],
+					organization: {
+						duns: "017519793",
+						primaryName: "MRM Capital Holdings, Inc.",
+						businessTrading: [
+							{
+								summary: [
+									{
+										paydexScore: 80,
+										dataCoverage: {
+											dnbCode: 24186,
+											description: "24 Months",
+										},
+										maximumOwedAmount: 0,
+										averageOwingAmount: null,
+										totalPastDueAmount: 0,
+										paymentBehaviorDays: 0,
+										maximumPastDueAmount: 0,
+										slowExperiencesCount: null,
+										negativePaymentsCount: null,
+										paymentBehaviorResult: {
+											dnbCode: 1232,
+											description: "Prompt",
+										},
+										slowExperiencesAmount: null,
+										totalExperiencesCount: 6,
+										totalExperiencesAmount: 63250,
+										averageHighCreditAmount: 21000,
+										badDebtExperiencesCount: null,
+										currentExperiencesCount: 3,
+										maximumHighCreditAmount: 55000,
+										badDebtExperiencesAmount: null,
+										currentExperiencesAmount: 63000,
+										favorableExperiencesCount: 3,
+										negativeExperiencesAmount: null,
+										placedForCollectionAmount: null,
+										slowExperiencesPercentage: null,
+										subtotalExperiencesAmount: 63000,
+										favorableExperiencesAmount: 63000,
+										highCreditExperiencesCount: 6,
+										slowOrNegativePaymentsCount: null,
+										threeMonthsPriorPaydexScore: 80,
+										unfavorableExperiencesCount: null,
+										badDebtExperiencesPercentage: null,
+										satisfactoryExperiencesCount: 3,
+										totalPastDueExperiencesCount: null,
+										unfavorableExperiencesAmount: null,
+										negativeExperiencesPercentage: null,
+										satisfactoryExperiencesAmount: 63000,
+										favorableExperiencesPercentage: 99.6,
+										currentManneredExperiencesCount: 3,
+										currentManneredExperiencesAmount: 63000,
+										slowAndNegativeExperiencesAmount: null,
+										slowOrNegativePaymentsPercentage: null,
+										unfavorableExperiencesPercentage: null,
+										satisfactoryExperiencesPercentage: 99.6,
+										slowExperiencesHighestCreditAmount:
+											null,
+										placedForCollectionExperiencesCount:
+											null,
+										currentManneredExperiencesPercentage: 99.6,
+										badDebtExperiencesHighestCreditAmount:
+											null,
+										negativeExperiencesHighestCreditAmount:
+											null,
+										placedForCollectionHighestCreditAmount:
+											null,
+										favorableExperiencesHighestCreditAmount: 55000,
+										placedForCollectionExperiencesPercentage:
+											null,
+										unfavorableExperiencesHighestCreditAmount:
+											null,
+										currentManneredExperiencesHighestCreditAmount: 55000,
+										slowAndNegativeExperiencesHighestCreditAmount:
+											null,
+									},
+								],
+								currency: "USD",
+								summaryDate: "2023-03-01",
+							},
+						],
+						businessTradingNorms: [
+							{
+								industryNorms: {
+									normsKey: "US#6719",
+									normsDate: "2023-02-28",
+									paydexScoreNorms: {
+										medianScore: 80,
+										lowerQuartileScore: 79,
+										upperQuartileScore: 80,
+									},
+									paymentBehaviourNorms: {
+										medianResult: {
+											dnbCode: 1232,
+										},
+										medianDaysQuantity: 0,
+										lowerQuartileResult: {
+											dnbCode: 1239,
+										},
+										upperQuartileResult: {
+											dnbCode: 1232,
+										},
+										lowerQuartileDaysQuantity: 2,
+										upperQuartileDaysQuantity: 0,
+									},
+								},
+								calculationTimestamp: "2023-02-28",
+							},
+						],
+						countryISOAlpha2Code: "US",
+					},
+					inquiryDetail: {
+						duns: "017519793",
+						blockIDs: ["paymentinsight_L3_v1"],
+					},
+					transactionDetail: {
+						inLanguage: "en-US",
+						transactionID:
+							"rrt-05d10aa25d6a8fd93-c-wo-17468-3418190-352",
+						transactionTimestamp: "2023-03-29T15:52:15.976Z",
+					},
+				},
+				fi_l4: null,
+				bm_l1: {
+					id: 242237,
+					service_id: 7,
+					response: {
+						matchCandidates: [
+							{
+								organization: {
+									duns: "017519793",
+									telephone: [
+										{
+											isUnreachable: false,
+											telephoneNumber: "3214306828",
+										},
+									],
+									primaryName: "MRM CAPITAL HOLDINGS, INC.",
+									isStandalone: true,
+									mailingAddress: {
+										postalCode: null,
+										addressRegion: [],
+										streetAddress: [],
+										addressCountry: {
+											name: "United States",
+											isoAlpha2Code: "US",
+										},
+										addressLocality: [],
+										postalCodeExtension: null,
+									},
+									primaryAddress: {
+										postalCode: "34787",
+										addressRegion: {
+											name: null,
+											abbreviatedName: "FL",
+										},
+										streetAddress: {
+											line1: "9315 TRINANA CIR",
+											line2: null,
+										},
+										addressCountry: {
+											name: "United States",
+											isoAlpha2Code: "US",
+										},
+										addressLocality: {
+											name: "WINTER GARDEN",
+										},
+										postalCodeExtension: "0004",
+									},
+									websiteAddress: [],
+									tradeStyleNames: [],
+									corporateLinkage: [],
+									dunsControlStatus: {
+										operatingStatus: {
+											dnbCode: 9074,
+											description: "Active",
+										},
+										isMailUndeliverable: false,
+									},
+									registrationNumbers: [],
+									mostSeniorPrincipals: [
+										{
+											fullName: "MATTHEW  MEEHAN",
+										},
+									],
+								},
+								displaySequence: 1,
+								matchQualityInformation: {
+									matchGrade: "AAAAAZZAFAA",
+									confidenceCode: 10,
+									nameMatchScore: 100,
+									matchDataProfile:
+										"0000000000989800000000009998",
+									matchGradeComponents: [
+										{
+											componentType: "Name",
+											componentRating: "A",
+										},
+										{
+											componentType: "Street Number",
+											componentRating: "A",
+										},
+										{
+											componentType: "Street Name",
+											componentRating: "A",
+										},
+										{
+											componentType: "City",
+											componentRating: "A",
+										},
+										{
+											componentType: "State",
+											componentRating: "A",
+										},
+										{
+											componentType: "PO Box",
+											componentRating: "Z",
+										},
+										{
+											componentType: "Phone",
+											componentRating: "Z",
+										},
+										{
+											componentType: "Postal Code",
+											componentRating: "A",
+										},
+										{
+											componentType: "Density",
+											componentRating: "F",
+										},
+										{
+											componentType: "Uniqueness",
+											componentRating: "A",
+										},
+										{
+											componentType: "Sic",
+											componentRating: "A",
+										},
+									],
+									matchGradeComponentsCount: 11,
+									matchDataProfileComponents: [
+										{
+											componentType: "Name",
+											componentValue: "00",
+										},
+										{
+											componentType: "Street Number",
+											componentValue: "00",
+										},
+										{
+											componentType: "Street Name",
+											componentValue: "00",
+										},
+										{
+											componentType: "City",
+											componentValue: "00",
+										},
+										{
+											componentType: "State",
+											componentValue: "00",
+										},
+										{
+											componentType: "PO Box",
+											componentValue: "98",
+										},
+										{
+											componentType: "Phone",
+											componentValue: "98",
+										},
+										{
+											componentType: "Postal Code",
+											componentValue: "00",
+										},
+										{
+											componentType: "DUNS",
+											componentValue: "00",
+										},
+										{
+											componentType: "SIC",
+											componentValue: "00",
+										},
+										{
+											componentType: "Density",
+											componentValue: "00",
+										},
+										{
+											componentType: "Uniqueness",
+											componentValue: "00",
+										},
+										{
+											componentType: "National ID",
+											componentValue: "99",
+										},
+										{
+											componentType: "URL",
+											componentValue: "98",
+										},
+									],
+									matchDataProfileComponentsCount: 14,
+								},
+							},
+							{
+								organization: {
+									duns: "068631263",
+									telephone: [
+										{
+											isUnreachable: false,
+											telephoneNumber: "3059745275",
+										},
+									],
+									primaryName: "MRM CAPITAL INC",
+									isStandalone: true,
+									mailingAddress: {
+										postalCode: null,
+										addressRegion: [],
+										streetAddress: [],
+										addressCountry: {
+											name: "United States",
+											isoAlpha2Code: "US",
+										},
+										addressLocality: [],
+										postalCodeExtension: null,
+									},
+									primaryAddress: {
+										postalCode: "33179",
+										addressRegion: {
+											name: null,
+											abbreviatedName: "FL",
+										},
+										streetAddress: {
+											line1: "21340 NE 8TH CT",
+											line2: null,
+										},
+										addressCountry: {
+											name: "United States",
+											isoAlpha2Code: "US",
+										},
+										addressLocality: {
+											name: "MIAMI",
+										},
+										postalCodeExtension: "1268",
+									},
+									websiteAddress: [],
+									tradeStyleNames: [],
+									corporateLinkage: [],
+									dunsControlStatus: {
+										operatingStatus: {
+											dnbCode: 403,
+											description: "Out of business",
+										},
+										isMailUndeliverable: false,
+									},
+									registrationNumbers: [],
+									mostSeniorPrincipals: [
+										{
+											fullName: "MARISOL  MARRERO",
+										},
+									],
+								},
+								displaySequence: 2,
+								matchQualityInformation: {
+									matchGrade: "AFFFAZZFFAF",
+									confidenceCode: 6,
+									nameMatchScore: 80,
+									matchDataProfile:
+										"0000000000989800000000009998",
+									matchGradeComponents: [
+										{
+											componentType: "Name",
+											componentRating: "A",
+										},
+										{
+											componentType: "Street Number",
+											componentRating: "F",
+										},
+										{
+											componentType: "Street Name",
+											componentRating: "F",
+										},
+										{
+											componentType: "City",
+											componentRating: "F",
+										},
+										{
+											componentType: "State",
+											componentRating: "A",
+										},
+										{
+											componentType: "PO Box",
+											componentRating: "Z",
+										},
+										{
+											componentType: "Phone",
+											componentRating: "Z",
+										},
+										{
+											componentType: "Postal Code",
+											componentRating: "F",
+										},
+										{
+											componentType: "Density",
+											componentRating: "F",
+										},
+										{
+											componentType: "Uniqueness",
+											componentRating: "A",
+										},
+										{
+											componentType: "Sic",
+											componentRating: "F",
+										},
+									],
+									matchGradeComponentsCount: 11,
+									matchDataProfileComponents: [
+										{
+											componentType: "Name",
+											componentValue: "00",
+										},
+										{
+											componentType: "Street Number",
+											componentValue: "00",
+										},
+										{
+											componentType: "Street Name",
+											componentValue: "00",
+										},
+										{
+											componentType: "City",
+											componentValue: "00",
+										},
+										{
+											componentType: "State",
+											componentValue: "00",
+										},
+										{
+											componentType: "PO Box",
+											componentValue: "98",
+										},
+										{
+											componentType: "Phone",
+											componentValue: "98",
+										},
+										{
+											componentType: "Postal Code",
+											componentValue: "00",
+										},
+										{
+											componentType: "DUNS",
+											componentValue: "00",
+										},
+										{
+											componentType: "SIC",
+											componentValue: "00",
+										},
+										{
+											componentType: "Density",
+											componentValue: "00",
+										},
+										{
+											componentType: "Uniqueness",
+											componentValue: "00",
+										},
+										{
+											componentType: "National ID",
+											componentValue: "99",
+										},
+										{
+											componentType: "URL",
+											componentValue: "98",
+										},
+									],
+									matchDataProfileComponentsCount: 14,
+								},
+							},
+							{
+								organization: {
+									duns: "016048356",
+									telephone: [
+										{
+											isUnreachable: false,
+											telephoneNumber: "8636473311",
+										},
+									],
+									primaryName: "MRM PROPERTY HOLDING LLC",
+									isStandalone: true,
+									mailingAddress: {
+										postalCode: null,
+										addressRegion: [],
+										streetAddress: [],
+										addressCountry: {
+											name: "United States",
+											isoAlpha2Code: "US",
+										},
+										addressLocality: [],
+										postalCodeExtension: null,
+									},
+									primaryAddress: {
+										postalCode: "33811",
+										addressRegion: {
+											name: null,
+											abbreviatedName: "FL",
+										},
+										streetAddress: {
+											line1: "3602 DMG DR STE 1",
+											line2: null,
+										},
+										addressCountry: {
+											name: "United States",
+											isoAlpha2Code: "US",
+										},
+										addressLocality: {
+											name: "LAKELAND",
+										},
+										postalCodeExtension: "1001",
+									},
+									websiteAddress: [],
+									tradeStyleNames: [],
+									corporateLinkage: [],
+									dunsControlStatus: {
+										operatingStatus: {
+											dnbCode: 9074,
+											description: "Active",
+										},
+										isMailUndeliverable: false,
+									},
+									registrationNumbers: [],
+									mostSeniorPrincipals: [
+										{
+											fullName: "BILL  MOORE",
+										},
+									],
+								},
+								displaySequence: 3,
+								matchQualityInformation: {
+									matchGrade: "BFFFAZZFFAA",
+									confidenceCode: 4,
+									nameMatchScore: 37,
+									matchDataProfile:
+										"0000000000989800000000009998",
+									matchGradeComponents: [
+										{
+											componentType: "Name",
+											componentRating: "B",
+										},
+										{
+											componentType: "Street Number",
+											componentRating: "F",
+										},
+										{
+											componentType: "Street Name",
+											componentRating: "F",
+										},
+										{
+											componentType: "City",
+											componentRating: "F",
+										},
+										{
+											componentType: "State",
+											componentRating: "A",
+										},
+										{
+											componentType: "PO Box",
+											componentRating: "Z",
+										},
+										{
+											componentType: "Phone",
+											componentRating: "Z",
+										},
+										{
+											componentType: "Postal Code",
+											componentRating: "F",
+										},
+										{
+											componentType: "Density",
+											componentRating: "F",
+										},
+										{
+											componentType: "Uniqueness",
+											componentRating: "A",
+										},
+										{
+											componentType: "Sic",
+											componentRating: "A",
+										},
+									],
+									matchGradeComponentsCount: 11,
+									matchDataProfileComponents: [
+										{
+											componentType: "Name",
+											componentValue: "00",
+										},
+										{
+											componentType: "Street Number",
+											componentValue: "00",
+										},
+										{
+											componentType: "Street Name",
+											componentValue: "00",
+										},
+										{
+											componentType: "City",
+											componentValue: "00",
+										},
+										{
+											componentType: "State",
+											componentValue: "00",
+										},
+										{
+											componentType: "PO Box",
+											componentValue: "98",
+										},
+										{
+											componentType: "Phone",
+											componentValue: "98",
+										},
+										{
+											componentType: "Postal Code",
+											componentValue: "00",
+										},
+										{
+											componentType: "DUNS",
+											componentValue: "00",
+										},
+										{
+											componentType: "SIC",
+											componentValue: "00",
+										},
+										{
+											componentType: "Density",
+											componentValue: "00",
+										},
+										{
+											componentType: "Uniqueness",
+											componentValue: "00",
+										},
+										{
+											componentType: "National ID",
+											componentValue: "99",
+										},
+										{
+											componentType: "URL",
+											componentValue: "98",
+										},
+									],
+									matchDataProfileComponentsCount: 14,
+								},
+							},
+							{
+								organization: {
+									duns: "108526295",
+									telephone: [],
+									primaryName: "RD HOLDINGS CAPITAL LLC",
+									isStandalone: true,
+									mailingAddress: {
+										postalCode: null,
+										addressRegion: [],
+										streetAddress: [],
+										addressCountry: {
+											name: "United States",
+											isoAlpha2Code: "US",
+										},
+										addressLocality: [],
+										postalCodeExtension: null,
+									},
+									primaryAddress: {
+										postalCode: "34744",
+										addressRegion: {
+											name: null,
+											abbreviatedName: "FL",
+										},
+										streetAddress: {
+											line1: "1920 DAS CT",
+											line2: null,
+										},
+										addressCountry: {
+											name: "United States",
+											isoAlpha2Code: "US",
+										},
+										addressLocality: {
+											name: "KISSIMMEE",
+										},
+										postalCodeExtension: "6610",
+									},
+									websiteAddress: [],
+									tradeStyleNames: [],
+									corporateLinkage: [],
+									dunsControlStatus: {
+										operatingStatus: {
+											dnbCode: 9074,
+											description: "Active",
+										},
+										isMailUndeliverable: false,
+									},
+									registrationNumbers: [],
+									mostSeniorPrincipals: [],
+								},
+								displaySequence: 4,
+								matchQualityInformation: {
+									matchGrade: "BFFFAZZBFAF",
+									confidenceCode: 4,
+									nameMatchScore: 37,
+									matchDataProfile:
+										"0000000000989800000000009998",
+									matchGradeComponents: [
+										{
+											componentType: "Name",
+											componentRating: "B",
+										},
+										{
+											componentType: "Street Number",
+											componentRating: "F",
+										},
+										{
+											componentType: "Street Name",
+											componentRating: "F",
+										},
+										{
+											componentType: "City",
+											componentRating: "F",
+										},
+										{
+											componentType: "State",
+											componentRating: "A",
+										},
+										{
+											componentType: "PO Box",
+											componentRating: "Z",
+										},
+										{
+											componentType: "Phone",
+											componentRating: "Z",
+										},
+										{
+											componentType: "Postal Code",
+											componentRating: "B",
+										},
+										{
+											componentType: "Density",
+											componentRating: "F",
+										},
+										{
+											componentType: "Uniqueness",
+											componentRating: "A",
+										},
+										{
+											componentType: "Sic",
+											componentRating: "F",
+										},
+									],
+									matchGradeComponentsCount: 11,
+									matchDataProfileComponents: [
+										{
+											componentType: "Name",
+											componentValue: "00",
+										},
+										{
+											componentType: "Street Number",
+											componentValue: "00",
+										},
+										{
+											componentType: "Street Name",
+											componentValue: "00",
+										},
+										{
+											componentType: "City",
+											componentValue: "00",
+										},
+										{
+											componentType: "State",
+											componentValue: "00",
+										},
+										{
+											componentType: "PO Box",
+											componentValue: "98",
+										},
+										{
+											componentType: "Phone",
+											componentValue: "98",
+										},
+										{
+											componentType: "Postal Code",
+											componentValue: "00",
+										},
+										{
+											componentType: "DUNS",
+											componentValue: "00",
+										},
+										{
+											componentType: "SIC",
+											componentValue: "00",
+										},
+										{
+											componentType: "Density",
+											componentValue: "00",
+										},
+										{
+											componentType: "Uniqueness",
+											componentValue: "00",
+										},
+										{
+											componentType: "National ID",
+											componentValue: "99",
+										},
+										{
+											componentType: "URL",
+											componentValue: "98",
+										},
+									],
+									matchDataProfileComponentsCount: 14,
+								},
+							},
+							{
+								organization: {
+									duns: "060276522",
+									telephone: [],
+									primaryName:
+										"INNOVATION HOLDING CAPITAL LLC",
+									isStandalone: true,
+									mailingAddress: {
+										postalCode: null,
+										addressRegion: [],
+										streetAddress: [],
+										addressCountry: {
+											name: "United States",
+											isoAlpha2Code: "US",
+										},
+										addressLocality: [],
+										postalCodeExtension: null,
+									},
+									primaryAddress: {
+										postalCode: "32113",
+										addressRegion: {
+											name: null,
+											abbreviatedName: "FL",
+										},
+										streetAddress: {
+											line1: "840 W HIGHWAY 329",
+											line2: null,
+										},
+										addressCountry: {
+											name: "United States",
+											isoAlpha2Code: "US",
+										},
+										addressLocality: {
+											name: "CITRA",
+										},
+										postalCodeExtension: "4026",
+									},
+									websiteAddress: [],
+									tradeStyleNames: [],
+									corporateLinkage: [],
+									dunsControlStatus: {
+										operatingStatus: {
+											dnbCode: 9074,
+											description: "Active",
+										},
+										isMailUndeliverable: false,
+									},
+									registrationNumbers: [],
+									mostSeniorPrincipals: [],
+								},
+								displaySequence: 5,
+								matchQualityInformation: {
+									matchGrade: "BFFFAZZFBAF",
+									confidenceCode: 4,
+									nameMatchScore: 37,
+									matchDataProfile:
+										"0000000000989800000000009998",
+									matchGradeComponents: [
+										{
+											componentType: "Name",
+											componentRating: "B",
+										},
+										{
+											componentType: "Street Number",
+											componentRating: "F",
+										},
+										{
+											componentType: "Street Name",
+											componentRating: "F",
+										},
+										{
+											componentType: "City",
+											componentRating: "F",
+										},
+										{
+											componentType: "State",
+											componentRating: "A",
+										},
+										{
+											componentType: "PO Box",
+											componentRating: "Z",
+										},
+										{
+											componentType: "Phone",
+											componentRating: "Z",
+										},
+										{
+											componentType: "Postal Code",
+											componentRating: "F",
+										},
+										{
+											componentType: "Density",
+											componentRating: "B",
+										},
+										{
+											componentType: "Uniqueness",
+											componentRating: "A",
+										},
+										{
+											componentType: "Sic",
+											componentRating: "F",
+										},
+									],
+									matchGradeComponentsCount: 11,
+									matchDataProfileComponents: [
+										{
+											componentType: "Name",
+											componentValue: "00",
+										},
+										{
+											componentType: "Street Number",
+											componentValue: "00",
+										},
+										{
+											componentType: "Street Name",
+											componentValue: "00",
+										},
+										{
+											componentType: "City",
+											componentValue: "00",
+										},
+										{
+											componentType: "State",
+											componentValue: "00",
+										},
+										{
+											componentType: "PO Box",
+											componentValue: "98",
+										},
+										{
+											componentType: "Phone",
+											componentValue: "98",
+										},
+										{
+											componentType: "Postal Code",
+											componentValue: "00",
+										},
+										{
+											componentType: "DUNS",
+											componentValue: "00",
+										},
+										{
+											componentType: "SIC",
+											componentValue: "00",
+										},
+										{
+											componentType: "Density",
+											componentValue: "00",
+										},
+										{
+											componentType: "Uniqueness",
+											componentValue: "00",
+										},
+										{
+											componentType: "National ID",
+											componentValue: "99",
+										},
+										{
+											componentType: "URL",
+											componentValue: "98",
+										},
+									],
+									matchDataProfileComponentsCount: 14,
+								},
+							},
+							{
+								organization: {
+									duns: "111327877",
+									telephone: [],
+									primaryName: "BRIDGE HOLDINGS CAPITAL LLC",
+									isStandalone: true,
+									mailingAddress: {
+										postalCode: null,
+										addressRegion: [],
+										streetAddress: [],
+										addressCountry: {
+											name: "United States",
+											isoAlpha2Code: "US",
+										},
+										addressLocality: [],
+										postalCodeExtension: null,
+									},
+									primaryAddress: {
+										postalCode: "32413",
+										addressRegion: {
+											name: null,
+											abbreviatedName: "FL",
+										},
+										streetAddress: {
+											line1: "22520 FRONT BEACH RD",
+											line2: null,
+										},
+										addressCountry: {
+											name: "United States",
+											isoAlpha2Code: "US",
+										},
+										addressLocality: {
+											name: "PANAMA CITY BEACH",
+										},
+										postalCodeExtension: "3013",
+									},
+									websiteAddress: [],
+									tradeStyleNames: [],
+									corporateLinkage: [],
+									dunsControlStatus: {
+										operatingStatus: {
+											dnbCode: 9074,
+											description: "Active",
+										},
+										isMailUndeliverable: false,
+									},
+									registrationNumbers: [],
+									mostSeniorPrincipals: [],
+								},
+								displaySequence: 6,
+								matchQualityInformation: {
+									matchGrade: "BFFFAZZFBAF",
+									confidenceCode: 4,
+									nameMatchScore: 37,
+									matchDataProfile:
+										"0000000000989800000000009998",
+									matchGradeComponents: [
+										{
+											componentType: "Name",
+											componentRating: "B",
+										},
+										{
+											componentType: "Street Number",
+											componentRating: "F",
+										},
+										{
+											componentType: "Street Name",
+											componentRating: "F",
+										},
+										{
+											componentType: "City",
+											componentRating: "F",
+										},
+										{
+											componentType: "State",
+											componentRating: "A",
+										},
+										{
+											componentType: "PO Box",
+											componentRating: "Z",
+										},
+										{
+											componentType: "Phone",
+											componentRating: "Z",
+										},
+										{
+											componentType: "Postal Code",
+											componentRating: "F",
+										},
+										{
+											componentType: "Density",
+											componentRating: "B",
+										},
+										{
+											componentType: "Uniqueness",
+											componentRating: "A",
+										},
+										{
+											componentType: "Sic",
+											componentRating: "F",
+										},
+									],
+									matchGradeComponentsCount: 11,
+									matchDataProfileComponents: [
+										{
+											componentType: "Name",
+											componentValue: "00",
+										},
+										{
+											componentType: "Street Number",
+											componentValue: "00",
+										},
+										{
+											componentType: "Street Name",
+											componentValue: "00",
+										},
+										{
+											componentType: "City",
+											componentValue: "00",
+										},
+										{
+											componentType: "State",
+											componentValue: "00",
+										},
+										{
+											componentType: "PO Box",
+											componentValue: "98",
+										},
+										{
+											componentType: "Phone",
+											componentValue: "98",
+										},
+										{
+											componentType: "Postal Code",
+											componentValue: "00",
+										},
+										{
+											componentType: "DUNS",
+											componentValue: "00",
+										},
+										{
+											componentType: "SIC",
+											componentValue: "00",
+										},
+										{
+											componentType: "Density",
+											componentValue: "00",
+										},
+										{
+											componentType: "Uniqueness",
+											componentValue: "00",
+										},
+										{
+											componentType: "National ID",
+											componentValue: "99",
+										},
+										{
+											componentType: "URL",
+											componentValue: "98",
+										},
+									],
+									matchDataProfileComponentsCount: 14,
+								},
+							},
+							{
+								organization: {
+									duns: "113324801",
+									telephone: [],
+									primaryName:
+										"HOLDINGS TRADERS CAPITAL INVESTMENTS L.L.C",
+									isStandalone: true,
+									mailingAddress: {
+										postalCode: null,
+										addressRegion: [],
+										streetAddress: [],
+										addressCountry: {
+											name: "United States",
+											isoAlpha2Code: "US",
+										},
+										addressLocality: [],
+										postalCodeExtension: null,
+									},
+									primaryAddress: {
+										postalCode: "33196",
+										addressRegion: {
+											name: null,
+											abbreviatedName: "FL",
+										},
+										streetAddress: {
+											line1: "9630 SW 148TH PL",
+											line2: null,
+										},
+										addressCountry: {
+											name: "United States",
+											isoAlpha2Code: "US",
+										},
+										addressLocality: {
+											name: "MIAMI",
+										},
+										postalCodeExtension: "1577",
+									},
+									websiteAddress: [],
+									tradeStyleNames: [],
+									corporateLinkage: [],
+									dunsControlStatus: {
+										operatingStatus: {
+											dnbCode: 9074,
+											description: "Active",
+										},
+										isMailUndeliverable: false,
+									},
+									registrationNumbers: [],
+									mostSeniorPrincipals: [],
+								},
+								displaySequence: 7,
+								matchQualityInformation: {
+									matchGrade: "BFFFAZZFBAF",
+									confidenceCode: 4,
+									nameMatchScore: 37,
+									matchDataProfile:
+										"0000000000989800000000009998",
+									matchGradeComponents: [
+										{
+											componentType: "Name",
+											componentRating: "B",
+										},
+										{
+											componentType: "Street Number",
+											componentRating: "F",
+										},
+										{
+											componentType: "Street Name",
+											componentRating: "F",
+										},
+										{
+											componentType: "City",
+											componentRating: "F",
+										},
+										{
+											componentType: "State",
+											componentRating: "A",
+										},
+										{
+											componentType: "PO Box",
+											componentRating: "Z",
+										},
+										{
+											componentType: "Phone",
+											componentRating: "Z",
+										},
+										{
+											componentType: "Postal Code",
+											componentRating: "F",
+										},
+										{
+											componentType: "Density",
+											componentRating: "B",
+										},
+										{
+											componentType: "Uniqueness",
+											componentRating: "A",
+										},
+										{
+											componentType: "Sic",
+											componentRating: "F",
+										},
+									],
+									matchGradeComponentsCount: 11,
+									matchDataProfileComponents: [
+										{
+											componentType: "Name",
+											componentValue: "00",
+										},
+										{
+											componentType: "Street Number",
+											componentValue: "00",
+										},
+										{
+											componentType: "Street Name",
+											componentValue: "00",
+										},
+										{
+											componentType: "City",
+											componentValue: "00",
+										},
+										{
+											componentType: "State",
+											componentValue: "00",
+										},
+										{
+											componentType: "PO Box",
+											componentValue: "98",
+										},
+										{
+											componentType: "Phone",
+											componentValue: "98",
+										},
+										{
+											componentType: "Postal Code",
+											componentValue: "00",
+										},
+										{
+											componentType: "DUNS",
+											componentValue: "00",
+										},
+										{
+											componentType: "SIC",
+											componentValue: "00",
+										},
+										{
+											componentType: "Density",
+											componentValue: "00",
+										},
+										{
+											componentType: "Uniqueness",
+											componentValue: "00",
+										},
+										{
+											componentType: "National ID",
+											componentValue: "99",
+										},
+										{
+											componentType: "URL",
+											componentValue: "98",
+										},
+									],
+									matchDataProfileComponentsCount: 14,
+								},
+							},
+							{
+								organization: {
+									duns: "619697068",
+									telephone: [],
+									primaryName:
+										"FINANCIAL HOLDINGS CAPITAL MGT",
+									isStandalone: true,
+									mailingAddress: {
+										postalCode: null,
+										addressRegion: [],
+										streetAddress: [],
+										addressCountry: {
+											name: "United States",
+											isoAlpha2Code: "US",
+										},
+										addressLocality: [],
+										postalCodeExtension: null,
+									},
+									primaryAddress: {
+										postalCode: "33626",
+										addressRegion: {
+											name: null,
+											abbreviatedName: "FL",
+										},
+										streetAddress: {
+											line1: "12157 W LINEBAUGH AVE # 429",
+											line2: null,
+										},
+										addressCountry: {
+											name: "United States",
+											isoAlpha2Code: "US",
+										},
+										addressLocality: {
+											name: "TAMPA",
+										},
+										postalCodeExtension: "1732",
+									},
+									websiteAddress: [],
+									tradeStyleNames: [],
+									corporateLinkage: [],
+									dunsControlStatus: {
+										operatingStatus: {
+											dnbCode: 403,
+											description: "Out of business",
+										},
+										isMailUndeliverable: false,
+									},
+									registrationNumbers: [],
+									mostSeniorPrincipals: [
+										{
+											fullName: "CAESAR A VERBEL",
+										},
+									],
+								},
+								displaySequence: 8,
+								matchQualityInformation: {
+									matchGrade: "BFFFAZZFFAA",
+									confidenceCode: 4,
+									nameMatchScore: 37,
+									matchDataProfile:
+										"0000000000989800000000009998",
+									matchGradeComponents: [
+										{
+											componentType: "Name",
+											componentRating: "B",
+										},
+										{
+											componentType: "Street Number",
+											componentRating: "F",
+										},
+										{
+											componentType: "Street Name",
+											componentRating: "F",
+										},
+										{
+											componentType: "City",
+											componentRating: "F",
+										},
+										{
+											componentType: "State",
+											componentRating: "A",
+										},
+										{
+											componentType: "PO Box",
+											componentRating: "Z",
+										},
+										{
+											componentType: "Phone",
+											componentRating: "Z",
+										},
+										{
+											componentType: "Postal Code",
+											componentRating: "F",
+										},
+										{
+											componentType: "Density",
+											componentRating: "F",
+										},
+										{
+											componentType: "Uniqueness",
+											componentRating: "A",
+										},
+										{
+											componentType: "Sic",
+											componentRating: "A",
+										},
+									],
+									matchGradeComponentsCount: 11,
+									matchDataProfileComponents: [
+										{
+											componentType: "Name",
+											componentValue: "00",
+										},
+										{
+											componentType: "Street Number",
+											componentValue: "00",
+										},
+										{
+											componentType: "Street Name",
+											componentValue: "00",
+										},
+										{
+											componentType: "City",
+											componentValue: "00",
+										},
+										{
+											componentType: "State",
+											componentValue: "00",
+										},
+										{
+											componentType: "PO Box",
+											componentValue: "98",
+										},
+										{
+											componentType: "Phone",
+											componentValue: "98",
+										},
+										{
+											componentType: "Postal Code",
+											componentValue: "00",
+										},
+										{
+											componentType: "DUNS",
+											componentValue: "00",
+										},
+										{
+											componentType: "SIC",
+											componentValue: "00",
+										},
+										{
+											componentType: "Density",
+											componentValue: "00",
+										},
+										{
+											componentType: "Uniqueness",
+											componentValue: "00",
+										},
+										{
+											componentType: "National ID",
+											componentValue: "99",
+										},
+										{
+											componentType: "URL",
+											componentValue: "98",
+										},
+									],
+									matchDataProfileComponentsCount: 14,
+								},
+							},
+						],
+					},
+					created_at: "2023-03-29T15:52:15.000000Z",
+					updated_at: "2023-03-29T15:52:15.000000Z",
+					business_credit_service: "dnb_bm_l1",
+					business_id: 313603,
+					request: {
+						duns: "",
+						name: "MRM Capital holdings",
+						email: "matt@mrmcapitalgroup.com",
+						postalCode: "34787",
+						addressRegion: "FL",
+						addressLocality: "winter garden",
+						telephoneNumber: "+16463036828",
+						streetAddressLine1: "9315 trinana circle",
+						streetAddressLine2: null,
+						countryISOAlpha2Code: "US",
+					},
+					status_code: null,
+					deleted_at: null,
+				},
+			},
+			tax_status: {
+				business: {
+					verify: null,
+				},
+				individual: {
+					verify: null,
+				},
+			},
+			clear: {
+				person_search: null,
+				clear_id_confirm_person: null,
+				clear_risk_inform_person_search: null,
+				clear_risk_inform_person_report: null,
+				clear_adverse_media_search: null,
+				clear_adverse_media_report: null,
+				clear_id_confirm_business: null,
+				clear_risk_inform_business_search: null,
+				clear_risk_inform_business_report: null,
+				clear_court_search: null,
+			},
+			enigma: {
+				business_match: null,
+				business_lookup: null,
+			},
+			equifax: {
+				bpr: null,
+			},
+			scorely: null,
+			ekata: null,
+			socure: {
+				kyc: null,
+				fraud: null,
+			},
+			lexis_nexis: {
+				kyc: null,
+				kyc_report: null,
+				kyb_search: null,
+				kyb_report: null,
+				corporate_filing_search: null,
+				corporate_filing_report: null,
+				ucc_filing_search: null,
+				ucc_filing_report: null,
+				bankruptcy_search: null,
+				bankruptcy_report: null,
+				liens_search: null,
+				liens_report: null,
+				judgments_search: null,
+				judgments_report: null,
+			},
+			codat: [],
+			railz: [],
+			rutter: [],
+			moneythumb_cfa: null,
+			moneythumb_transactions: null,
+			heron: {
+				pnl: null,
+				pnl_transactions: null,
+			},
+			document_verifications: [],
+		},
+		request_data: {
+			middesk: null,
+			sentilink: null,
+			sentilink_ssn_completion: null,
+			sentilink_dob_completion: null,
+			experian: {
+				intelliscore: {
+					bin: "408026840",
+					subcode: "0446260",
+					commercialScore: true,
+				},
+				intelliscore_v3: null,
+				uccs: null,
+				bankruptcies: null,
+				judgments: null,
+				liens: null,
+				fsr: {
+					bin: "408026840",
+					subcode: "0446260",
+					fsrScore: true,
+				},
+				fsr_v2: null,
+				commercial_collections: null,
+				credit_statuses: null,
+				legal_collections: null,
+				trades: {
+					bin: "408026840",
+					subcode: "0446260",
+					tradePaymentTotals: true,
+					tradePaymentTrends: true,
+					tradePaymentSummary: true,
+					tradePaymentExperiences: true,
+				},
+				corporate_registrations: null,
+				contacts: null,
+				facts: {
+					bin: "408026840",
+					subcode: "0446260",
+				},
+				fraud_shields: null,
+				gdn: {
+					company_profile: {
+						gbin: "408026840",
+						subcode: "0446260",
+						countryCode: "USA",
+						applicationReference: "313603",
+						legitimateInterestCode: "001",
+					},
+					risk_check: {
+						gbin: "408026840",
+						subcode: "0446260",
+						countryCode: "USA",
+						applicationReference: "313603",
+						legitimateInterestCode: "001",
+					},
+					small_report: null,
+					extended_report: {
+						gbin: "408026840",
+						subcode: "0446260",
+						countryCode: "USA",
+						applicationReference: "313603",
+						legitimateInterestCode: "001",
+					},
+					canadian_profile_report: null,
+				},
+				bop: {
+					blended_prequalification: null,
+					commercial_lending_to_a_sole_prop: null,
+					commercial_lending_with_a_pg: null,
+					commercial_insurance: null,
+					merchant_cash_advance: null,
+					merchant_acquisition: null,
+					commercial_factoring: null,
+					blended_account_review: null,
+					commercial_collections: null,
+					blended_prequalification_premier_attributes: null,
+					commercial_lending_to_a_sole_prop_premier_attributes: null,
+					commercial_lending_with_a_pg_premier_attributes: null,
+					commercial_insurance_premier_attributes: null,
+					merchant_cash_advance_premier_attributes: null,
+					merchant_acquisition_premier_attributes: null,
+					commercial_factoring_premier_attributes: null,
+					blended_account_review_premier_attributes: null,
+					commercial_collections_premier_attributes: null,
+				},
+			},
+			dnb: {
+				cer_l1: null,
+				fi_l2: {
+					duns: "017519793",
+					name: "MRM Capital holdings",
+					email: "matt@mrmcapitalgroup.com",
+					postalCode: "34787",
+					addressRegion: "FL",
+					addressLocality: "winter garden",
+					telephoneNumber: "+16463036828",
+					registrationNumber: "464612632",
+					streetAddressLine1: "9315 trinana circle",
+					streetAddressLine2: null,
+					countryISOAlpha2Code: "US",
+					registrationNumberType: "6863",
+				},
+				fi_l3: null,
+				dti_l1: {
+					duns: "017519793",
+					name: "MRM Capital holdings",
+					email: "matt@mrmcapitalgroup.com",
+					postalCode: "34787",
+					addressRegion: "FL",
+					addressLocality: "winter garden",
+					telephoneNumber: "+16463036828",
+					streetAddressLine1: "9315 trinana circle",
+					streetAddressLine2: null,
+					countryISOAlpha2Code: "US",
+				},
+				ci_l2: null,
+				pi_l3: {
+					duns: "017519793",
+					name: "MRM Capital holdings",
+					email: "matt@mrmcapitalgroup.com",
+					postalCode: "34787",
+					addressRegion: "FL",
+					addressLocality: "winter garden",
+					telephoneNumber: "+16463036828",
+					streetAddressLine1: "9315 trinana circle",
+					streetAddressLine2: null,
+					countryISOAlpha2Code: "US",
+				},
+				fi_l4: null,
+			},
+			tax_status: {
+				business: {
+					verify: null,
+				},
+				individual: {
+					verify: null,
+				},
+			},
+			clear: {
+				person_search: null,
+				clear_id_confirm_person: null,
+				clear_risk_inform_person_search: null,
+				clear_risk_inform_person_report: null,
+				clear_adverse_media_search: null,
+				clear_adverse_media_report: null,
+				clear_id_confirm_business: null,
+				clear_risk_inform_business_search: null,
+				clear_risk_inform_business_report: null,
+				clear_court_search: null,
+			},
+			enigma: {
+				business_match: null,
+				business_lookup: null,
+			},
+			equifax: {
+				bpr: null,
+			},
+			scorely: null,
+			ekata: null,
+			socure: {
+				kyc: null,
+				fraud: null,
+			},
+			lexis_nexis: {
+				kyc: null,
+				kyc_report: null,
+				kyb_search: null,
+				kyb_report: null,
+				corporate_filing_search: null,
+				corporate_filing_report: null,
+				ucc_filing_search: null,
+				ucc_filing_report: null,
+				bankruptcy_search: null,
+				bankruptcy_report: null,
+				liens_search: null,
+				liens_report: null,
+				judgments_search: null,
+				judgments_report: null,
+			},
+		},
+	},
+};
+
+export const Lendflow = {};
+Lendflow.experian = {};
+
+Lendflow.experian.score = pipe(
+	get(
+		"data",
+		"commercial_data",
+		"experian",
+		"intelliscore",
+		"commercialScore",
+		"score"
+	)
+);
+
+Lendflow.experian.risk_class = pipe(
+	get(
+		"data",
+		"commercial_data",
+		"experian",
+		"intelliscore",
+		"commercialScore",
+		"riskClass"
+	)
+);
+
+Lendflow.business = pipe(
+	get("data", "commercial_data", "experian", "business_match", "response", 0),
+	(business) => ({
+		name: pipe(get("businessName"))(business),
+		phone: pipe(get("phone"))(business),
+		address: pipe(get("address"))(business),
+	})
+);
+
+Lendflow.experian.trade_payment_totals = pipe(
+	get("data", "commercial_data", "experian", "trades", "tradePaymentTotals"),
+	(totals) => ({
+		trade_lines: pipe(get("tradelines"))(totals),
+		combined_trade_lines: pipe(get("combinedTradelines"))(totals),
+		additional_trade_lines: pipe(get("additionalTradelines"))(totals),
+		newly_reported_trade_lines: pipe(get("newlyReportedTradelines"))(
+			totals
+		),
+		continuously_reported_trade_lines: pipe(
+			get("continuouslyReportedTradelines")
+		)(totals),
+	})
+);
+
+Lendflow.experian.trade_summary = pipe(
+	get("data", "commercial_data", "experian", "trades", "tradePaymentSummary")
+);
+
+Lendflow.experian.trade_lines = pipe(
+	get(
+		"data",
+		"commercial_data",
+		"experian",
+		"trades",
+		"tradePaymentExperiences"
+	),
+	(trades) => [...trades.tradeAdditional, ...trades.tradeNewAndContinuous]
+);
+
+Lendflow.experian.sic_codes = pipe(
+	get("data", "commercial_data", "experian", "facts", "sicCodes")
+);
+
+Lendflow.experian.years_on_file = pipe(
+	get("data", "commercial_data", "experian", "facts", "yearsOnFile")
+);
+
+Lendflow.experian.employee_size = pipe(
+	get("data", "commercial_data", "experian", "facts", "employeeSize")
+);
+
+Lendflow.experian.naics_codes = pipe(
+	get("data", "commercial_data", "experian", "facts", "naicsCodes")
+);
+
+Lendflow.experian.sales_revenue = pipe(
+	get("data", "commercial_data", "experian", "facts", "salesRevenue")
+);
+
+Lendflow.experian.factors = pipe(
+	get("data", "commercial_data", "experian"),
+	(experian) => [
+		...experian.intelliscore.commercialScoreFactors,
+		...experian.fsr.fsrScoreFactors,
+	]
+);
+
+// console.log("api_response");
+// console.log(Lendflow.experian.factors);
