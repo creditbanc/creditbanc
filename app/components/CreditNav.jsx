@@ -333,7 +333,7 @@ export default function Nav({
 										</div>
 									</div>
 								)}
-								<a
+								<Link
 									className="flex flex-shrink-0 items-center"
 									href="/"
 								>
@@ -342,7 +342,7 @@ export default function Nav({
 										src={cb_logo}
 										alt="Your Company"
 									/>
-								</a>
+								</Link>
 								{/* <div className="text-xs hidden sm:flex flex-row space-x-1">
 									<div>Fueling Growth</div>
 									<div>&#8226;</div>

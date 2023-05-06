@@ -77,6 +77,8 @@ export default function App() {
 		}
 	}, [transition.state]);
 
+	// console.log("root");
+
 	return (
 		<html lang="en">
 			<head>

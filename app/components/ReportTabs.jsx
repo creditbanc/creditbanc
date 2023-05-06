@@ -7,6 +7,7 @@ import { CheckIcon, ChevronUpDownIcon } from "@heroicons/react/20/solid";
 import { filter, get } from "shades";
 import { head, pipe } from "ramda";
 import { redirect } from "@remix-run/node";
+import { Link } from "@remix-run/react";
 
 function classNames(...classes) {
 	return classes.filter(Boolean).join(" ");
@@ -117,9 +118,9 @@ export default function ReportTabs({ selected = "report" }) {
 				<div className="border-b border-gray-200">
 					<nav className="-mb-px flex space-x-8" aria-label="Tabs">
 						{tabs.map((tab) => (
-							<a
+							<Link
 								key={tab.name}
-								href={tab.href(location.pathname)}
+								to={tab.href(location.pathname)}
 								className={classNames(
 									selected == tab.id
 										? "border-blue-500 text-blue-600"
@@ -137,7 +138,7 @@ export default function ReportTabs({ selected = "report" }) {
 									aria-hidden="true"
 								/>
 								<span>{tab.name}</span>
-							</a>
+							</Link>
 						))}
 					</nav>
 				</div>
