@@ -311,7 +311,7 @@ export default function Nav({
 	};
 
 	return (
-		<Disclosure as="nav" className="bg-white shadow top-0 sticky z-50">
+		<Disclosure as="nav" className="bg-white top-0 sticky z-50">
 			{({ open }) => (
 				<>
 					<Panel

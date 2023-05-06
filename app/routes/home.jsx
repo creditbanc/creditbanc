@@ -71,12 +71,14 @@ export default function Home() {
 
 	return (
 		<div className="flex flex-col h-full w-full">
-			<CreditNav
-				user_id={user_id}
-				origin={origin}
-				can_share={true}
-				reports={reports}
-			/>
+			<div className="flex flex-col border-b">
+				<CreditNav
+					user_id={user_id}
+					origin={origin}
+					can_share={true}
+					reports={reports}
+				/>
+			</div>
 			<div className="flex flex-row h-full overflow-hidden">
 				{user_id && <LeftNav data={reports} can_manage_roles={false} />}
 				<div className="flex flex-col flex-1 overflow-scroll">
