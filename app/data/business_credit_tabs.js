@@ -13,7 +13,7 @@ export const tabs = [
 	{
 		name: "Overview",
 		href: ({ pathname = "", search = "" } = {}) =>
-			"/credit/report/business/overview" +
+			"/credit/report/business/experian/overview" +
 			to_resource_pathname(pathname) +
 			search,
 		icon: Bars3Icon,
@@ -23,7 +23,7 @@ export const tabs = [
 	{
 		name: "Payment Status",
 		href: ({ pathname = "", search = "" } = {}) =>
-			"/credit/report/business/status" +
+			"/credit/report/business/experian/status" +
 			to_resource_pathname(pathname) +
 			search,
 		icon: CheckCircleIcon,
@@ -33,7 +33,7 @@ export const tabs = [
 	{
 		name: "Derogatories",
 		href: ({ pathname = "", search = "" } = {}) =>
-			"/credit/report/business/derogatories" +
+			"/credit/report/business/experian/derogatories" +
 			to_resource_pathname(pathname) +
 			search,
 		icon: BellIcon,
@@ -43,7 +43,7 @@ export const tabs = [
 	{
 		name: "Credit Utilization",
 		href: ({ pathname = "", search = "" } = {}) =>
-			"/credit/report/business/utilization" +
+			"/credit/report/business/experian/utilization" +
 			to_resource_pathname(pathname) +
 			search,
 		icon: Battery50Icon,
@@ -53,7 +53,7 @@ export const tabs = [
 	{
 		name: "Payment Trends",
 		href: ({ pathname = "", search = "" } = {}) =>
-			"/credit/report/business/trends" +
+			"/credit/report/business/experian/trends" +
 			to_resource_pathname(pathname) +
 			search,
 		icon: ArrowTrendingUpIcon,
@@ -63,7 +63,7 @@ export const tabs = [
 	{
 		name: "Company Info",
 		href: ({ pathname = "", search = "" } = {}) =>
-			"/credit/report/business/info" +
+			"/credit/report/business/experian/info" +
 			to_resource_pathname(pathname) +
 			search,
 		icon: InformationCircleIcon,
@@ -73,7 +73,7 @@ export const tabs = [
 	{
 		name: "Score Factors",
 		href: ({ pathname = "", search = "" } = {}) =>
-			"/credit/report/business/factors" +
+			"/credit/report/business/experian/factors" +
 			to_resource_pathname(pathname) +
 			search,
 		icon: QuestionMarkCircleIcon,
