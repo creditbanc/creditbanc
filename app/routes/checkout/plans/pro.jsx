@@ -173,25 +173,25 @@ export default function Checkout() {
 							</div>
 						</dl>
 
-						<Popover className="fixed inset-x-0 bottom-0 flex flex-col-reverse text-sm font-medium text-gray-900 lg:hidden">
+						<div className="fixed inset-x-0 bottom-0 flex flex-col-reverse text-sm font-medium text-gray-900 lg:hidden">
 							<div className="relative z-10 border-t border-gray-200 bg-white px-4 sm:px-6">
 								<div className="mx-auto max-w-lg">
-									<Popover.Button className="flex w-full items-center py-6 font-medium">
+									<div className="flex w-full items-center py-6 font-medium">
 										<span className="mr-auto text-base">
 											Total
 										</span>
 										<span className="mr-2 text-base">
 											$361.80
 										</span>
-										<ChevronUpIcon
+										{/* <ChevronUpIcon
 											className="h-5 w-5 text-gray-500"
 											aria-hidden="true"
-										/>
-									</Popover.Button>
+										/> */}
+									</div>
 								</div>
 							</div>
 
-							<Transition.Root as={Fragment}>
+							{/* <Transition.Root as={Fragment}>
 								<div>
 									<Transition.Child
 										as={Fragment}
@@ -240,40 +240,13 @@ export default function Checkout() {
 										</Popover.Panel>
 									</Transition.Child>
 								</div>
-							</Transition.Root>
-						</Popover>
+							</Transition.Root> */}
+						</div>
 					</div>
 				</section>
 
 				<form className="px-4 pb-36 pt-16 sm:px-6 lg:col-start-1 lg:row-start-1 lg:px-0 lg:pb-16">
 					<div className="mx-auto max-w-lg lg:max-w-none">
-						{/* <section aria-labelledby="contact-info-heading">
-							<h2
-								id="contact-info-heading"
-								className="text-lg font-medium text-gray-900"
-							>
-								Contact information
-							</h2>
-
-							<div className="mt-6">
-								<label
-									htmlFor="email-address"
-									className="block text-sm font-medium text-gray-700"
-								>
-									Email address
-								</label>
-								<div className="mt-1">
-									<input
-										type="email"
-										id="email-address"
-										name="email-address"
-										autoComplete="email"
-										className="block w-full rounded-md h-[35px] border border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-									/>
-								</div>
-							</div>
-						</section> */}
-
 						<section aria-labelledby="payment-heading" className="">
 							<h2
 								id="payment-heading"
@@ -514,9 +487,6 @@ export default function Checkout() {
 							>
 								Upgrade Now
 							</button>
-							{/* <p className="mt-4 text-center text-sm text-gray-500 sm:mt-0 sm:text-left">
-								You won't be charged until the next step.
-							</p> */}
 						</div>
 					</div>
 				</form>
