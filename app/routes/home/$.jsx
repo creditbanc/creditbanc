@@ -1,4 +1,10 @@
-import { ChevronRightIcon, PlayIcon } from "@heroicons/react/20/solid";
+import {
+	ChevronRightIcon,
+	PlayIcon,
+	EllipsisVerticalIcon,
+} from "@heroicons/react/20/solid";
+import { Fragment } from "react";
+import { Menu, Transition } from "@headlessui/react";
 
 const profile = {
 	name: "Ricardo Cooper",
@@ -165,7 +171,7 @@ const PersonalCredit = () => {
 					</div>
 
 					<div className="flex flex-col w-1/3 text-2xl font-bold justify-center">
-						<div className="flex flex-row w-full items-center justify-between">
+						<div className="flex flex-row w-full justify-end items-center">
 							<div className="flex flex-col">800</div>
 							<div className="flex flex-col w-[30px] cursor-pointer">
 								<ChevronRightIcon />
@@ -210,10 +216,35 @@ const PersonalCredit = () => {
 	);
 };
 
+const HeadingTwo = () => {
+	return (
+		<div className="flex flex-col w-full px-3 mt-3 mb-6">
+			<div className="mx-auto flex items-center justify-between gap-x-8 lg:mx-0">
+				<div className="flex items-center gap-x-6">
+					<img
+						src="https://tailwindui.com/img/logos/48x48/tuple.svg"
+						alt=""
+						className="h-16 w-16 flex-none rounded-full ring-1 ring-gray-900/10"
+					/>
+					<h1>
+						<div className="text-sm leading-6 text-gray-500">
+							Invoice{" "}
+							<span className="text-gray-700">#00011</span>
+						</div>
+						<div className="mt-1 text-base font-semibold leading-6 text-gray-900">
+							Tuple, Inc
+						</div>
+					</h1>
+				</div>
+			</div>
+		</div>
+	);
+};
+
 export default function Home() {
 	return (
-		<div className="w-full h-full flex flex-col items-center mb-3">
-			<Banner />
+		<div className="w-full h-full flex flex-col items-center mb-3 p-5">
+			<HeadingTwo />
 			<div className="flex flex-col h-full max-w-7xl">
 				<div className="flex flex-col lg:flex-row space-y-3 lg:space-y-0">
 					<div className="flex flex-col w-full">
