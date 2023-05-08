@@ -16,8 +16,8 @@ export const loader = async ({ request }) => {
 	let user_id = await get_user_id(request);
 	let group_id = get_group_id(url.pathname);
 
-	console.log("group_id");
-	console.log(group_id);
+	// console.log("group_id");
+	// console.log(group_id);
 
 	if (!group_id) {
 		let root_gruop_resource_path_id = await get_root_group_resource_path_id(
