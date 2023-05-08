@@ -334,6 +334,7 @@ export default function Nav({
 									</div>
 								)}
 								<Link
+									to="/"
 									className="flex flex-shrink-0 items-center"
 									href="/"
 								>
