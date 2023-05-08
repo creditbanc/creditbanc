@@ -9,7 +9,7 @@ const shield_advisory_logo = "/images/logos/shield_advisory_group_logo.png";
 const liquid_lunch_logo = "/images/logos/liquid_lunch_logo.jpg";
 const the_weekly_logo = "/images/logos/the_weekly_logo.png";
 const cb_logo_3 = "/images/logos/cb_logo_3.png";
-import { Plans } from "~/components/Plans";
+import { Plans } from "~/components/IndexPricingPlans";
 import { plans } from "~/data/index_plans";
 
 const navigation = [
