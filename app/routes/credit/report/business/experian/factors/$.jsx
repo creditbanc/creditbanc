@@ -3,13 +3,24 @@ import {
 	HandThumbUpIcon,
 	ChevronDoubleRightIcon,
 } from "@heroicons/react/24/outline";
+import { get_file_id, mapIndexed } from "~/utils/helpers";
+import { prisma } from "~/utils/prisma.server";
 
 import { useLoaderData } from "@remix-run/react";
 import { mrm_credit_report, Lendflow } from "~/data/lendflow";
 import { pipe, map, head } from "ramda";
 
-export const loader = () => {
-	let factors = Lendflow.experian.factors(mrm_credit_report);
+export const loader = async ({ request }) => {
+	let url = new URL(request.url);
+	let file_id = get_file_id(url.pathname);
+
+	let report = await prisma.business_credit_report.findUnique({
+		where: {
+			id: file_id,
+		},
+	});
+
+	let factors = Lendflow.experian.factors(report);
 
 	return {
 		factors,
@@ -70,8 +81,11 @@ const ScoreFactors = () => {
 			<div className="border-t border-gray-200 p-6">
 				<div className="flex flex-col w-full space-y-6">
 					{pipe(
-						map((factor) => (
-							<div className="flex flex-row items-center space-x-2">
+						mapIndexed((factor, idx) => (
+							<div
+								className="flex flex-row items-center space-x-2"
+								key={idx}
+							>
 								<div className="w-[20px]">
 									<ChevronDoubleRightIcon />
 								</div>

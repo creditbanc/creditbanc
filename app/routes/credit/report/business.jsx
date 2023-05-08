@@ -19,9 +19,9 @@ import { validate_action, is_resource_owner_p } from "~/utils/resource.server";
 import { redirect } from "@remix-run/node";
 import { fb_credit_report } from "~/data/lendflow";
 import { VerticalNav } from "~/components/BusinessCreditNav";
+import { prisma } from "~/utils/prisma.server";
 
 export default function BusinessReport() {
-	let report = fb_credit_report;
 	let location = useLocation();
 	const [target, setTarget] = useState();
 	const elmSize = useElmSize(target);

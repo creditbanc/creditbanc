@@ -2,14 +2,25 @@ import { useLoaderData } from "@remix-run/react";
 import { mrm_credit_report, Lendflow } from "~/data/lendflow";
 import { currency } from "~/utils/helpers";
 import { head } from "ramda";
+import { get_file_id, mapIndexed } from "~/utils/helpers";
+import { prisma } from "~/utils/prisma.server";
 
-export const loader = () => {
-	let years_on_file = Lendflow.experian.years_on_file(mrm_credit_report);
-	let employee_size = Lendflow.experian.employee_size(mrm_credit_report);
-	let sic_code = head(Lendflow.experian.sic_codes(mrm_credit_report));
-	let naics_code = head(Lendflow.experian.naics_codes(mrm_credit_report));
-	let sales_revenue = Lendflow.experian.sales_revenue(mrm_credit_report);
-	let business = Lendflow.business(mrm_credit_report);
+export const loader = async ({ request }) => {
+	let url = new URL(request.url);
+	let file_id = get_file_id(url.pathname);
+
+	let report = await prisma.business_credit_report.findUnique({
+		where: {
+			id: file_id,
+		},
+	});
+
+	let years_on_file = Lendflow.experian.years_on_file(report);
+	let employee_size = Lendflow.experian.employee_size(report);
+	let sic_code = head(Lendflow.experian.sic_codes(report));
+	let naics_code = head(Lendflow.experian.naics_codes(report));
+	let sales_revenue = Lendflow.experian.sales_revenue(report);
+	let business = Lendflow.business(report);
 
 	return {
 		years_on_file,

@@ -4,14 +4,24 @@ import {
 } from "@heroicons/react/24/outline";
 import { useLoaderData } from "@remix-run/react";
 import { mrm_credit_report, Lendflow } from "~/data/lendflow";
-import { currency } from "~/utils/helpers";
+import { currency, mapIndexed } from "~/utils/helpers";
 import { pipe, map } from "ramda";
+import { get_file_id } from "~/utils/helpers";
+import { prisma } from "~/utils/prisma.server";
 
-export const loader = () => {
-	let trade_payment_totals =
-		Lendflow.experian.trade_payment_totals(mrm_credit_report);
+export const loader = async ({ request }) => {
+	let url = new URL(request.url);
+	let file_id = get_file_id(url.pathname);
 
-	let trade_lines = Lendflow.experian.trade_lines(mrm_credit_report);
+	let report = await prisma.business_credit_report.findUnique({
+		where: {
+			id: file_id,
+		},
+	});
+
+	let trade_payment_totals = Lendflow.experian.trade_payment_totals(report);
+
+	let trade_lines = Lendflow.experian.trade_lines(report);
 
 	return { trade_payment_totals, trade_lines };
 };
@@ -190,7 +200,9 @@ export default function Container() {
 			</div>
 			<div className="flex flex-col space-y-4">
 				{pipe(
-					map((trade_line) => <AccountCard trade_line={trade_line} />)
+					mapIndexed((trade_line, idx) => (
+						<AccountCard trade_line={trade_line} key={idx} />
+					))
 				)(trade_lines)}
 			</div>
 		</div>

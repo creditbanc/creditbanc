@@ -3,18 +3,31 @@ import {
 	ChevronDoubleRightIcon,
 } from "@heroicons/react/24/outline";
 import { useLoaderData } from "@remix-run/react";
+import { useEffect } from "react";
 import { mrm_credit_report, Lendflow } from "~/data/lendflow";
 
-export const loader = () => {
-	let score = Lendflow.experian.score(mrm_credit_report);
-	let risk_class = Lendflow.experian.risk_class(mrm_credit_report);
-	let business = Lendflow.business(mrm_credit_report);
-	let trade_summary = Lendflow.experian.trade_summary(mrm_credit_report);
+import { get_file_id } from "~/utils/helpers";
+import { prisma } from "~/utils/prisma.server";
+
+export const loader = async ({ request }) => {
+	let url = new URL(request.url);
+	let file_id = get_file_id(url.pathname);
+
+	let report = await prisma.business_credit_report.findUnique({
+		where: {
+			id: file_id,
+		},
+	});
+
+	let score = Lendflow.experian.score(report);
+	let risk_class = Lendflow.experian.risk_class(report);
+	let business = Lendflow.business(report);
+	let trade_summary = Lendflow.experian.trade_summary(report);
 	return { score, risk_class, business, trade_summary };
 };
 
 const ScoreCard = () => {
-	let { score, risk_class, business } = useLoaderData();
+	let { score, risk_class, business, trade_summary } = useLoaderData();
 
 	return (
 		<div className="overflow-hidden bg-white rounded-lg border">
