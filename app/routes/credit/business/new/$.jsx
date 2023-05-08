@@ -8,10 +8,12 @@ import { create } from "zustand";
 import { useSubmit } from "@remix-run/react";
 import { inspect, to_resource_pathname, get_group_id } from "~/utils/helpers";
 import { json, redirect } from "@remix-run/node";
-import { create as create_personal_credit_report } from "~/utils/personal_credit_report.server";
 import { test_identity_one } from "~/data/lendflow";
 import { Listbox, Transition } from "@headlessui/react";
 import { CheckIcon, ChevronUpDownIcon } from "@heroicons/react/20/solid";
+import { mrm_credit_report } from "~/data/lendflow";
+import { get_user_id } from "~/utils/auth.server";
+import { create as create_new_report } from "~/utils/business_credit_report.server";
 
 const useReportStore = create((set) => ({
 	form: {
@@ -58,6 +60,7 @@ export const action = async ({ request }) => {
 	const payload = JSON.parse(form.get("payload"));
 	console.log("payload", payload);
 	let data = test_identity_one;
+	let entity_id = await get_user_id(request);
 
 	var options = {
 		method: "post",
@@ -69,6 +72,21 @@ export const action = async ({ request }) => {
 		},
 		data: data,
 	};
+
+	let credit_report_payload = mrm_credit_report;
+
+	console.log("credit_report_payload");
+	console.log(credit_report_payload);
+
+	let file = await create_new_report({
+		group_id,
+		...credit_report_payload,
+	});
+
+	console.log("report");
+	console.log(file);
+
+	return json({ status: 200 });
 
 	try {
 		let response = await axios(options);

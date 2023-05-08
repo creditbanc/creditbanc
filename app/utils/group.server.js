@@ -363,6 +363,9 @@ export const get_docs = async ({ resource_id, entity_id }) => {
 			subscriptions.map(async (subscription) => {
 				let { model, type, resource_path_id, shared } = subscription;
 
+				// console.log("model");
+				// console.log(model);
+
 				let resource = await prisma[model].findFirst({
 					where: { id: resource_path_id },
 				});
@@ -370,20 +373,46 @@ export const get_docs = async ({ resource_id, entity_id }) => {
 				// console.log("resource");
 				// console.log(resource);
 
-				let { id, resource_id, first_name, last_name, city, state } =
-					resource;
+				if (model == "personal_credit_report") {
+					let {
+						id,
+						resource_id,
+						first_name,
+						last_name,
+						city,
+						state,
+					} = resource;
 
-				return {
-					id,
-					resource_id,
-					type,
-					model,
-					shared,
-					first_name,
-					last_name,
-					city,
-					state,
-				};
+					return {
+						id,
+						resource_id,
+						type,
+						model,
+						shared,
+						first_name,
+						last_name,
+						city,
+						state,
+					};
+				}
+
+				if (model == "business_credit_report") {
+					// console.log("resourceis");
+					// console.log(resource);
+
+					let { id, data, resource_id } = resource;
+
+					let { business_legal_name } = data;
+
+					return {
+						id,
+						resource_id,
+						business_legal_name,
+						type,
+						model,
+						shared,
+					};
+				}
 			})
 		);
 

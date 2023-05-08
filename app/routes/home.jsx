@@ -49,7 +49,7 @@ export const loader = async ({ request }) => {
 	// )(group_docs);
 
 	// console.log("group_docs");
-	// console.log(report);
+	// console.log(group_docs);
 
 	let reports = pipe((resources) => ({
 		personal_credit_reports: pipe(

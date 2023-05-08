@@ -31,6 +31,7 @@ export const create = async (payload) => {
 			state,
 			zip,
 			trade_lines,
+			type: "personal_credit_report",
 		},
 	});
 

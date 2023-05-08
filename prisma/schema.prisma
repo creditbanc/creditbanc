@@ -114,4 +114,14 @@ model personal_credit_report {
   state       String?
   zip         String?
   trade_lines Json?
+  type        String?
+}
+
+model business_credit_report {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  created_at  DateTime @default(now())
+  updated_at  DateTime @updatedAt
+  resource_id String?  @db.ObjectId
+  data        Json?
+  type        String?
 }

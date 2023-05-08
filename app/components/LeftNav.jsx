@@ -1,13 +1,14 @@
 import { useEffect, useState } from "react";
 import { useLocation, Link, useFetcher } from "@remix-run/react";
 import { useNavStore } from "~/stores/useNavStore";
-import { defaultTo, map, pipe } from "ramda";
+import { defaultTo, flatten, head, map, pipe, values } from "ramda";
 import {
 	to_group_pathname,
 	get_entity_id,
 	get_group_id,
 	mapIndexed,
 } from "~/utils/helpers";
+import { filter } from "shades";
 
 let ChevronLeftIcon = () => {
 	return (
@@ -171,10 +172,22 @@ export default function LeftNav({ data = {}, can_manage_roles } = {}) {
 	};
 
 	const onDelete = async (file_id, e) => {
-		console.log("onDeleteReport");
+		// console.log("onDeleteReport");
 		e.preventDefault();
 		let entity_id = get_entity_id(location.pathname);
 		let group_id = get_group_id(location.pathname);
+
+		// console.log("data");
+		// console.log(data);
+		// console.log("file_id");
+		// console.log(file_id);
+
+		let file = pipe(values, flatten, filter({ id: file_id }), head)(data);
+		// console.log("file");
+		// console.log(file);
+
+		let { model, resource_id } = file;
+
 		// console.log("entity_id");
 		// console.log(entity_id);
 		// console.log("file_id");
@@ -191,7 +204,7 @@ export default function LeftNav({ data = {}, can_manage_roles } = {}) {
 			file_id;
 
 		fetcher.submit(
-			{ file_id, group_id },
+			{ file_id, group_id, model, resource_id },
 			{
 				method: "post",
 				action: delete_resource_url,
@@ -204,6 +217,9 @@ export default function LeftNav({ data = {}, can_manage_roles } = {}) {
 		// console.log("is_owner");
 		// console.log(is_owner);
 	};
+
+	// console.log("leftnavdata");
+	// console.log(data);
 
 	return (
 		<div
@@ -329,15 +345,19 @@ export default function LeftNav({ data = {}, can_manage_roles } = {}) {
 								<Link
 									key={report.id}
 									to={
-										"/credit/report/business/personal" +
+										"/credit/report/business/experian/overview" +
 										to_group_pathname(location.pathname) +
 										`/f/${report.id}` +
 										`?rand=${Math.random()}`
 									}
-									className="border rounded-md text-sm py-1 px-2 cursor-pointer hover:border-indigo-400 flex flex-row justify-between my-2 text-gray-700"
+									className="border rounded-md text-sm py-1 px-2 cursor-pointer hover:border-indigo-400 flex flex-row justify-between items-center my-2 text-gray-700"
 								>
-									<div>Margot F</div>
-									<div>FL</div>
+									<div>{report.business_legal_name}</div>
+									<div
+										onClick={(e) => onDelete(report.id, e)}
+									>
+										<DeleteIcon />
+									</div>
 								</Link>
 							))
 						)(data.business_credit_reports)}
