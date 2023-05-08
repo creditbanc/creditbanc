@@ -100,8 +100,22 @@ export const get_route_endpoint = (uri) => {
 	return pipe(to_route_pathname, split("/"), last)(uri);
 };
 
+export const get_report_type = (uri) => {
+	let report_type = pipe(split("/"), trim, get(2))(uri);
+	return report_type;
+};
+
 export const get_report_endpoint = (uri) => {
-	return pipe(to_route_pathname, split("/"), trim, nth(1))(uri);
+	let report_type = get_report_type(uri);
+	if (report_type === "business") {
+		let value = pipe(to_route_pathname, split("/"), trim, nth(3))(uri);
+		return value;
+	}
+
+	if (report_type === "personal") {
+		let value = pipe(to_route_pathname, split("/"), trim, nth(1))(uri);
+		return value;
+	}
 };
 
 export const to_group_pathname = (uri) => {
