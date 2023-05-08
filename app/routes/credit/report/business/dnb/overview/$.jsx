@@ -54,15 +54,13 @@ const ScoreCard = () => {
 				</div>
 				<div className="flex flex-col w-full space-y-3">
 					<div className="font-semibold">
-						What is the Experian Intelliscore Plus℠ V2 Score?
+						What is the Dun & Bradstreet PAYDEX Score?
 					</div>
 					<div>
-						Using both personal and business credit data, the
-						Intelliscore is a good measure of your business’s
-						overall credit health. The higher your Intelliscore, the
-						lower a risk you seem to business lenders and other
-						creditors. Payment history, as well as utilization and
-						trended data, are important factors in this score.
+						Your D&B PAYDEX® indicates that your company is likely
+						to meet its credit obligations and make its payments
+						promptly or within payment terms. A D&B PAYDEX® between
+						71-100 is considered Low risk.
 					</div>
 				</div>
 			</div>
