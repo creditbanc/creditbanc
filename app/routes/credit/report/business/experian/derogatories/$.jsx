@@ -34,22 +34,22 @@ const Derogatories = () => {
 				</div>
 				<div className="flex flex-row w-full">
 					<div className="flex flex-col items-center w-1/4 space-y-1">
-						<div>Collections</div>
+						<div>Tax Liens</div>
 						<div className="flex flex-col w-[90%] h-[1px] bg-gray-200"></div>
 						<div>0</div>
 					</div>
 					<div className="flex flex-col items-center w-1/4 space-y-1">
-						<div>Collections</div>
+						<div>Judgements</div>
 						<div className="flex flex-col w-[90%] h-[1px] bg-gray-200"></div>
 						<div>0</div>
 					</div>
 					<div className="flex flex-col items-center w-1/4 space-y-1">
-						<div>Collections</div>
+						<div>Lawsuits</div>
 						<div className="flex flex-col w-[90%] h-[1px] bg-gray-200"></div>
 						<div>0</div>
 					</div>
 					<div className="flex flex-col items-center w-1/4 space-y-1">
-						<div>Collections</div>
+						<div>Derogatory Collateral</div>
 						<div className="flex flex-col w-[90%] h-[1px] bg-gray-200"></div>
 						<div>0</div>
 					</div>

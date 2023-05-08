@@ -86,7 +86,7 @@ export const action = async ({ request }) => {
 	console.log("report");
 	console.log(file);
 
-	return json({ status: 200 });
+	return redirect(`/home`);
 
 	try {
 		let response = await axios(options);

@@ -5,6 +5,7 @@ import { CheckIcon, ChevronUpDownIcon } from "@heroicons/react/20/solid";
 import { tabs } from "~/data/business_credit_tabs";
 import { pipe, head } from "ramda";
 import { filter } from "shades";
+import { get_business_report_bureau } from "~/utils/helpers";
 
 function classNames(...classes) {
 	return classes.filter(Boolean).join(" ");
@@ -13,10 +14,11 @@ function classNames(...classes) {
 export const VerticalNav = ({ selected = "Personal" }) => {
 	let location = useLocation();
 	let search_params = location.search;
+	let business_bureau = get_business_report_bureau(location.pathname);
 
 	return (
-		<nav className="flex flex-col justify-start" aria-label="Tabs">
-			{tabs.map((tab) => (
+		<nav className="flex flex-col justify-star" aria-label="Tabs">
+			{tabs(business_bureau).map((tab) => (
 				<Link
 					key={tab.name}
 					to={tab.href({

@@ -9,11 +9,11 @@ import {
 } from "@heroicons/react/24/outline";
 import { to_resource_pathname } from "~/utils/helpers";
 
-export const tabs = [
+export const tabs = (bureau = "experian") => [
 	{
 		name: "Overview",
 		href: ({ pathname = "", search = "" } = {}) =>
-			"/credit/report/business/experian/overview" +
+			`/credit/report/business/${bureau}/overview` +
 			to_resource_pathname(pathname) +
 			search,
 		icon: Bars3Icon,
@@ -23,7 +23,7 @@ export const tabs = [
 	{
 		name: "Payment Status",
 		href: ({ pathname = "", search = "" } = {}) =>
-			"/credit/report/business/experian/status" +
+			`/credit/report/business/${bureau}/status` +
 			to_resource_pathname(pathname) +
 			search,
 		icon: CheckCircleIcon,
@@ -33,7 +33,7 @@ export const tabs = [
 	{
 		name: "Derogatories",
 		href: ({ pathname = "", search = "" } = {}) =>
-			"/credit/report/business/experian/derogatories" +
+			`/credit/report/business/${bureau}/derogatories` +
 			to_resource_pathname(pathname) +
 			search,
 		icon: BellIcon,
@@ -43,7 +43,7 @@ export const tabs = [
 	{
 		name: "Credit Utilization",
 		href: ({ pathname = "", search = "" } = {}) =>
-			"/credit/report/business/experian/utilization" +
+			`/credit/report/business/${bureau}/utilization` +
 			to_resource_pathname(pathname) +
 			search,
 		icon: Battery50Icon,
@@ -53,7 +53,7 @@ export const tabs = [
 	{
 		name: "Payment Trends",
 		href: ({ pathname = "", search = "" } = {}) =>
-			"/credit/report/business/experian/trends" +
+			`/credit/report/business/${bureau}/trends` +
 			to_resource_pathname(pathname) +
 			search,
 		icon: ArrowTrendingUpIcon,
@@ -63,7 +63,7 @@ export const tabs = [
 	{
 		name: "Company Info",
 		href: ({ pathname = "", search = "" } = {}) =>
-			"/credit/report/business/experian/info" +
+			`/credit/report/business/${bureau}/info` +
 			to_resource_pathname(pathname) +
 			search,
 		icon: InformationCircleIcon,
@@ -73,7 +73,7 @@ export const tabs = [
 	{
 		name: "Score Factors",
 		href: ({ pathname = "", search = "" } = {}) =>
-			"/credit/report/business/experian/factors" +
+			`/credit/report/business/${bureau}/factors` +
 			to_resource_pathname(pathname) +
 			search,
 		icon: QuestionMarkCircleIcon,

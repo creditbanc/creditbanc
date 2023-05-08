@@ -105,6 +105,11 @@ export const get_report_type = (uri) => {
 	return report_type;
 };
 
+export const get_business_report_bureau = (uri) => {
+	let report_type = pipe(split("/"), trim, get(3))(uri);
+	return report_type;
+};
+
 export const get_report_endpoint = (uri) => {
 	let report_type = get_report_type(uri);
 	if (report_type === "business") {

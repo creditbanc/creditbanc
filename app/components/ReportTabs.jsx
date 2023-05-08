@@ -222,7 +222,7 @@ export default function ReportTabs({ selected = "report" }) {
 			<div className="sm:hidden px-2">
 				<ReportTabsSelect selected={selected} />
 			</div>
-			<div className="hidden sm:block  ml-5">
+			<div className="hidden relative sm:block w-full ml-5 z-10 bg-white">
 				<div className="border-b border-gray-200 flex flex-row">
 					{report_type == "business" && <BusinessReportsDropdown />}
 					<nav className="-mb-px flex space-x-8" aria-label="Tabs">
