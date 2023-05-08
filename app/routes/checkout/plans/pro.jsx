@@ -317,7 +317,7 @@ export default function Checkout() {
 							</div>
 						</section>
 
-						<section
+						{/* <section
 							aria-labelledby="shipping-heading"
 							className="mt-10"
 						>
@@ -465,7 +465,7 @@ export default function Checkout() {
 									</label>
 								</div>
 							</div>
-						</section>
+						</section> */}
 
 						<div className="mt-10 border-t border-gray-200 pt-6 w-full">
 							<button
