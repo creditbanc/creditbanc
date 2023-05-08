@@ -2,7 +2,7 @@ export const plans = [
 	{
 		name: "Banc Essentials",
 		id: "personal",
-		href: "/credit/personal/new",
+		href: "/signup",
 		priceMonthly: "$0",
 		description: "The essentials to provide your best work for clients.",
 		features: [
@@ -35,7 +35,7 @@ export const plans = [
 	{
 		name: "Banc Builder",
 		id: "personal_business",
-		href: "#",
+		href: "signup",
 		priceMonthly: "$35",
 		description: "A plan that scales with your rapidly growing business.",
 		features: [
@@ -68,7 +68,7 @@ export const plans = [
 	{
 		name: "Banc Pro",
 		id: "business",
-		href: "/credit/business/new",
+		href: "/signup",
 		priceMonthly: "$85",
 		description: "Dedicated support and infrastructure for your company.",
 		features: [
