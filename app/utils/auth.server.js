@@ -199,7 +199,10 @@ export const signin = async (form) => {
 		business_credit_report: "business",
 	};
 
-	let redirect_url = `/root`;
+	let redirect_url = `/home`;
+
+	console.log("redirect_url");
+	console.log(redirect_url);
 
 	if (!user || !(await bcrypt.compare(password, user.password))) {
 		return json(

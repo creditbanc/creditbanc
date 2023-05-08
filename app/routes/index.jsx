@@ -2,17 +2,15 @@ import { useState } from "react";
 import { Link } from "@remix-run/react";
 import { get_user_id } from "~/utils/auth.server";
 import { Dialog } from "@headlessui/react";
-import { Bars3Icon, XMarkIcon, CheckIcon } from "@heroicons/react/24/outline";
+import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
 import CreditScoreDoughnut from "~/components/CreditScoreDoughnut";
 import { redirect } from "@remix-run/node";
 const shield_advisory_logo = "/images/logos/shield_advisory_group_logo.png";
 const liquid_lunch_logo = "/images/logos/liquid_lunch_logo.jpg";
 const the_weekly_logo = "/images/logos/the_weekly_logo.png";
 const cb_logo_3 = "/images/logos/cb_logo_3.png";
-
-function classNames(...classes) {
-	return classes.filter(Boolean).join(" ");
-}
+import { Plans } from "~/components/Plans";
+import { plans } from "~/data/index_plans";
 
 const navigation = [
 	{ name: "Pro", href: "/comingsoon" },
@@ -20,108 +18,6 @@ const navigation = [
 	{ name: "Tax Credits", href: "/comingsoon" },
 	{ name: "Business Valuations", href: "/comingsoon" },
 	{ name: "CB University", href: "/comingsoon" },
-];
-
-const tiers = [
-	{
-		name: "Banc Essentials",
-		id: "personal",
-		href: "/credit/personal/new",
-		priceMonthly: "$0",
-		description: "The essentials to provide your best work for clients.",
-		features: [
-			{ included: true, text: "Business & Personal Scores" },
-			{
-				included: true,
-				text: "1-on-1s with credit & lending specialists",
-			},
-			{ included: true, text: "Cash flow insights & Education" },
-			{ included: false, text: "Identity Restoration Services" },
-			{ included: false, text: "$1M Identity theft protection" },
-			{ included: false, text: "Full Business Credit Reports" },
-			{ included: false, text: "Dun & Bradstreet" },
-			{
-				included: false,
-				text: "Experian Intelliscore",
-			},
-			{ included: false, text: "3 Bureau Full Credit Reports" },
-			{ included: false, text: "Credit Alerts & Simulations" },
-			{ included: false, text: "UCC Filing Reports" },
-			{ included: false, text: "Lien Reports" },
-			{ included: false, text: "Judgement Reports" },
-			{
-				included: false,
-				text: "Tradeline reporting for business credit support",
-			},
-		],
-		mostPopular: false,
-	},
-	{
-		name: "Banc Builder",
-		id: "personal_business",
-		href: "#",
-		priceMonthly: "$35",
-		description: "A plan that scales with your rapidly growing business.",
-		features: [
-			{ included: true, text: "Business & Personal Scores" },
-			{
-				included: true,
-				text: "1-on-1s with credit & lending specialists",
-			},
-			{ included: true, text: "Cash flow insights & Education" },
-			{ included: true, text: "Identity Restoration Services" },
-			{ included: true, text: "$1M Identity theft protection" },
-			{ included: true, text: "Full Business Credit Reports" },
-			{ included: true, text: "Dun & Bradstreet" },
-			{
-				included: true,
-				text: "Experian Intelliscore",
-			},
-			{ included: true, text: "3 Bureau Full Credit Reports" },
-			{ included: false, text: "Credit Alerts & Simulations" },
-			{ included: false, text: "UCC Filing Reports" },
-			{ included: false, text: "Lien Reports" },
-			{ included: false, text: "Judgement Reports" },
-			{
-				included: false,
-				text: "Tradeline reporting for business credit support",
-			},
-		],
-		mostPopular: true,
-	},
-	{
-		name: "Banc Pro",
-		id: "business",
-		href: "/credit/business/new",
-		priceMonthly: "$85",
-		description: "Dedicated support and infrastructure for your company.",
-		features: [
-			{ included: true, text: "Business & Personal Scores" },
-			{
-				included: true,
-				text: "1-on-1s with credit & lending specialists",
-			},
-			{ included: true, text: "Cash flow insights & Education" },
-			{ included: true, text: "Identity Restoration Services" },
-			{ included: true, text: "$1M Identity theft protection" },
-			{ included: true, text: "Full Business Credit Reports" },
-			{ included: true, text: "Dun & Bradstreet" },
-			{
-				included: true,
-				text: "Experian Intelliscore",
-			},
-			{ included: true, text: "3 Bureau Full Credit Reports" },
-			{ included: true, text: "Credit Alerts & Simulations" },
-			{ included: true, text: "UCC Filing Reports" },
-			{ included: true, text: "Lien Reports" },
-			{ included: true, text: "Judgement Reports" },
-			{
-				included: true,
-				text: "Tradeline reporting for business credit support",
-			},
-		],
-		mostPopular: false,
-	},
 ];
 
 const footerNavigation = [
@@ -464,97 +360,8 @@ export default function LandingPage() {
 					</div>
 				</div>
 
-				<div className="mx-auto max-w-7xl px-6 lg:px-8 -mt-[40px]">
-					<div className="isolate mx-auto mt-16 grid max-w-xl grid-cols-1 gap-y-8 lg:mx-0 lg:max-w-none lg:grid-cols-3">
-						{tiers.map((tier, tierIdx) => (
-							<div
-								key={tier.id}
-								className={classNames(
-									tier.mostPopular
-										? "lg:z-10 lg:rounded-b-none"
-										: "lg:mt-8",
-									tierIdx === 0 ? "lg:rounded-r-none" : "",
-									tierIdx === tiers.length - 1
-										? "lg:rounded-l-none"
-										: "",
-									"flex flex-col justify-between rounded-3xl bg-white p-8 ring-1 ring-gray-200 xl:p-10"
-								)}
-							>
-								<div>
-									<div className="flex justify-between gap-x-4">
-										<h3
-											id={tier.id}
-											className={classNames(
-												tier.mostPopular
-													? "text-[#55CF9E]"
-													: "text-gray-900",
-												"text-lg font-semibold"
-											)}
-										>
-											{tier.name}
-										</h3>
-										{tier.mostPopular ? (
-											<div className="w-[175px]">
-												<div className="rounded-full bg-indigo-300/10 text-xs font-semibold text-[#55CF9E] flex flex-row items-center justify-center mt-2 py-1">
-													Most popular
-												</div>
-											</div>
-										) : null}
-									</div>
-									<p className="mt-4 text-sm leading-6 text-gray-600">
-										{tier.description}
-									</p>
-									<p className="mt-6 flex items-baseline gap-x-1">
-										<span className="text-4xl font-bold tracking-tight text-gray-900">
-											{tier.priceMonthly}
-										</span>
-										<span className="text-sm font-semibold leading-6 text-gray-600">
-											/month
-										</span>
-									</p>
-									<ul
-										role="list"
-										className="mt-8 space-y-3 text-sm leading-6 text-gray-600"
-									>
-										{tier.features.map((feature) => (
-											<li
-												key={feature}
-												className="flex gap-x-3"
-											>
-												{feature.included && (
-													<CheckIcon
-														className="h-6 w-5 flex-none text-[#55CF9E]"
-														aria-hidden="true"
-													/>
-												)}
+				<Plans plans={plans} />
 
-												{!feature.included && (
-													<XMarkIcon
-														className="h-6 w-5 flex-none text-red-500"
-														aria-hidden="true"
-													/>
-												)}
-												{feature.text}
-											</li>
-										))}
-									</ul>
-								</div>
-								<a
-									href={tier.href}
-									aria-describedby={tier.id}
-									className={classNames(
-										tier.mostPopular
-											? "bg-[#55CF9E] text-white shadow-sm hover:bg-[#55CF9E]"
-											: "text-[#55CF9E] ring-1 ring-inset ring-[#55CF9E] hover:ring-[#55CF9E]",
-										"mt-8 block rounded-md py-2 px-3 text-center text-sm font-semibold leading-6 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-									)}
-								>
-									Pull Report
-								</a>
-							</div>
-						))}
-					</div>
-				</div>
 				<div className="pb-14">
 					<PoweredBy />
 				</div>
