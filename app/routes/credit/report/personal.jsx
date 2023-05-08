@@ -43,10 +43,7 @@ export const loader = async ({ request }) => {
 		entity_id: user_id,
 	});
 
-	let report = pipe(
-		filter((report) => report.id == file_id),
-		head
-	)(group_docs);
+	let report = pipe(filter({ id: file_id }), head)(group_docs);
 
 	return { report };
 };
