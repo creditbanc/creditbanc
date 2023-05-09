@@ -2,6 +2,7 @@ import { useLoaderData } from "@remix-run/react";
 import Nav from "~/components/CreditNav";
 import { pipe, map, length } from "ramda";
 import moment from "moment";
+import { mapIndexed } from "~/utils/helpers";
 const stripe = require("stripe")(process.env.STRIPE);
 
 export const loader = async () => {
@@ -44,8 +45,11 @@ const CustomerTable = () => {
 			<CustomerTableHeader />
 			<div className="flex flex-col">
 				{pipe(
-					map((customer) => (
-						<div className="flex flex-row border-b py-2 text-sm">
+					mapIndexed((customer, idx) => (
+						<div
+							className="flex flex-row border-b py-2 text-sm"
+							key={idx}
+						>
 							<div className="flex flex-col w-1/3">
 								{customer.id}
 							</div>
