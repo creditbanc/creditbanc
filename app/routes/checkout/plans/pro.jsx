@@ -6,7 +6,11 @@ import {
 } from "@heroicons/react/20/solid";
 import { Popover, Transition } from "@headlessui/react";
 const cb_logo = "/images/logos/cb_logo_3.png";
-import { Link } from "@remix-run/react";
+import { Link, useSubmit } from "@remix-run/react";
+import { get_user_id } from "~/utils/auth.server";
+import { hasPath, length, pipe } from "ramda";
+import { get, has } from "shades";
+const stripe = require("stripe")(process.env.STRIPE);
 
 const steps = [
 	// { name: "Cart", href: "#", status: "complete" },
@@ -26,7 +30,94 @@ let features = [
 	"Tradeline reporting for business credit support",
 ];
 
+export const action = async ({ request }) => {
+	console.log("action");
+	let entity_id = await get_user_id(request);
+	var form = await request.formData();
+
+	const email = form.get("email");
+	const password = form.get("password");
+
+	const customer_search_response = await stripe.customers.search({
+		query: `metadata["entity_id"]: "${entity_id}"`,
+	});
+
+	let has_customer = pipe(has({ data: (data) => length(data) > 0 }))(
+		customer_search_response
+	);
+
+	console.log("has_customer");
+	console.log(has_customer);
+
+	const create_token = async () => {
+		const token = await stripe.tokens.create({
+			card: {
+				number: "4242424242424242",
+				exp_month: 5,
+				exp_year: 2024,
+				cvc: "314",
+			},
+		});
+
+		return token;
+	};
+
+	const create_customer = async (entity_id) => {
+		let token = await create_token();
+		let { id: token_id } = token;
+
+		const customer = await stripe.customers.create({
+			name: entity_id,
+			metadata: {
+				entity_id,
+			},
+			source: token_id,
+		});
+
+		return customer;
+	};
+
+	const subscribe_customer = async (customer_id) => {
+		const subscription = await stripe.subscriptions.create({
+			customer: customer_id,
+			items: [{ price: "price_1N5wxGJlRXkfyebs5BWgNLZU" }],
+		});
+		return subscription;
+	};
+
+	if (has_customer) {
+		let customer = pipe(get("data", 0))(customer_search_response);
+		let { id: customer_id } = customer;
+		let subscription = await subscribe_customer(customer_id);
+
+		console.log("subscription");
+		console.log(subscription);
+	}
+
+	let customer = await create_customer(entity_id);
+	let { id: customer_id } = customer;
+	let subscription = await subscribe_customer(customer_id);
+
+	console.log("subscription");
+	console.log(subscription);
+};
+
 export default function Checkout() {
+	const submit = useSubmit();
+
+	const onSubmit = (event) => {
+		console.log("onSubmit");
+		event.preventDefault();
+		let form = event.currentTarget;
+		submit(
+			{},
+			{
+				method: "post",
+				action: "/checkout/plans/pro" + window.location.search,
+			}
+		);
+	};
+
 	return (
 		<div className="bg-white">
 			<div
@@ -467,7 +558,10 @@ export default function Checkout() {
 							</div>
 						</section> */}
 
-						<div className="mt-10 border-t border-gray-200 pt-6 w-full">
+						<div
+							className="mt-10 border-t border-gray-200 pt-6 w-full"
+							onClick={onSubmit}
+						>
 							<button
 								type="submit"
 								className="flex flex-col w-full items-center rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-gray-50 sm:order-last"
