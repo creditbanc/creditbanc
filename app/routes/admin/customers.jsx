@@ -79,7 +79,7 @@ export default function Customers() {
 			<div className="flex flex-col w-full border-b">
 				<Nav />
 			</div>
-			<div className="flex flex-col w-full p-5">
+			<div className="flex flex-col w-full p-8">
 				<SectionHeading />
 				<CustomerTable />
 				<div className="flex flex-col text-sm mt-3">

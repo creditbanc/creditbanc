@@ -1105,6 +1105,10 @@ video {
   margin-top: 5px;
 }
 
+.mt-12 {
+  margin-top: 3rem;
+}
+
 .block {
   display: block;
 }
@@ -1780,6 +1784,10 @@ video {
   grid-template-columns: repeat(3, minmax(0, 1fr));
 }
 
+.grid-cols-2 {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
 .flex-row {
   flex-direction: row;
 }
@@ -2019,6 +2027,12 @@ video {
   --tw-divide-y-reverse: 0;
   border-top-width: calc(1px * calc(1 - var(--tw-divide-y-reverse)));
   border-bottom-width: calc(1px * var(--tw-divide-y-reverse));
+}
+
+.divide-x > :not([hidden]) ~ :not([hidden]) {
+  --tw-divide-x-reverse: 0;
+  border-right-width: calc(1px * var(--tw-divide-x-reverse));
+  border-left-width: calc(1px * calc(1 - var(--tw-divide-x-reverse)));
 }
 
 .divide-gray-100 > :not([hidden]) ~ :not([hidden]) {
@@ -2468,10 +2482,6 @@ video {
   padding: 3px;
 }
 
-.p-10 {
-  padding: 2.5rem;
-}
-
 .px-1 {
   padding-left: 0.25rem;
   padding-right: 0.25rem;
@@ -2774,6 +2784,10 @@ video {
   padding-top: calc(23 / 318 * 100%);
 }
 
+.pb-24 {
+  padding-bottom: 6rem;
+}
+
 .text-left {
   text-align: left;
 }
@@ -2850,6 +2864,10 @@ video {
 
 .capitalize {
   text-transform: capitalize;
+}
+
+.not-italic {
+  font-style: normal;
 }
 
 .tabular-nums {
@@ -3769,6 +3787,10 @@ body {
     margin-top: 5rem;
   }
 
+  .sm\:ml-40 {
+    margin-left: 10rem;
+  }
+
   .sm\:block {
     display: block;
   }
@@ -3793,6 +3815,10 @@ body {
     height: 42.375rem;
   }
 
+  .sm\:h-40 {
+    height: 10rem;
+  }
+
   .sm\:w-0 {
     width: 0px;
   }
@@ -3815,6 +3841,10 @@ body {
 
   .sm\:w-full {
     width: 100%;
+  }
+
+  .sm\:w-40 {
+    width: 10rem;
   }
 
   .sm\:max-w-sm {
@@ -3923,6 +3953,12 @@ body {
     margin-left: calc(2rem * calc(1 - var(--tw-space-x-reverse)));
   }
 
+  .sm\:space-x-6 > :not([hidden]) ~ :not([hidden]) {
+    --tw-space-x-reverse: 0;
+    margin-right: calc(1.5rem * var(--tw-space-x-reverse));
+    margin-left: calc(1.5rem * calc(1 - var(--tw-space-x-reverse)));
+  }
+
   .sm\:rounded-lg {
     border-radius: 0.5rem;
   }
@@ -3979,6 +4015,14 @@ body {
 
   .sm\:pt-80 {
     padding-top: 20rem;
+  }
+
+  .sm\:pl-6 {
+    padding-left: 1.5rem;
+  }
+
+  .sm\:pt-24 {
+    padding-top: 6rem;
   }
 
   .sm\:text-3xl {
@@ -4307,6 +4351,11 @@ body {
   .lg\:px-8 {
     padding-left: 2rem;
     padding-right: 2rem;
+  }
+
+  .lg\:py-32 {
+    padding-top: 8rem;
+    padding-bottom: 8rem;
   }
 
   .lg\:pb-16 {
