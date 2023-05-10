@@ -9,12 +9,13 @@ import {
 	ChevronUpDownIcon,
 } from "@heroicons/react/20/solid";
 import { filter, get, mod } from "shades";
-import { defaultTo, head, pipe, split } from "ramda";
+import { defaultTo, head, includes, pipe, split } from "ramda";
 import { Link } from "@remix-run/react";
 import { create } from "zustand";
 
 const useReport = create((set) => ({
 	type: "personal",
+	selected: "report",
 	set_report: (path, value) =>
 		set((state) => pipe(mod(...path)(() => value))(state)),
 }));
@@ -77,16 +78,28 @@ const reports_items = [
 ];
 
 function BusinessReportsDropdown() {
+	let report_type = useReport((state) => state.type);
+	let selected = useReport((state) => state.selected);
+
+	let is_business_selected = includes(selected, ["experian", "dnb"]);
+
 	return (
 		<Menu as="div" className="relative inline-block text-left">
-			<div className="flex flex-col h-full justify-end">
-				<Menu.Button className="flex flex-row gap-x-1.5 rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-500">
+			<div className="flex flex-col h-full justify-end ">
+				<Menu.Button
+					className={`flex flex-row gap-x-1.5 rounded-md bg-white px-3 py-2 text-sm font-semibold ${
+						is_business_selected ? "text-blue-600" : "text-gray-400"
+					}`}
+				>
 					Business Reports
 					<ChevronDownIcon
 						className="-mr-1 h-5 w-5 text-gray-400"
 						aria-hidden="true"
 					/>
 				</Menu.Button>
+				{is_business_selected && (
+					<div className="h-[2px] bg-blue-500"></div>
+				)}
 			</div>
 
 			<Transition
@@ -206,6 +219,11 @@ const ReportTabsSelect = ({ selected = "experian" }) => {
 export default function ReportTabs({ selected = "report" }) {
 	const report_type = useReport((state) => state.type);
 	const set_report = useReport((state) => state.set_report);
+
+	useEffect(() => {
+		set_report(["selected"], selected);
+	}, [selected]);
+
 	let location = useLocation();
 
 	useEffect(() => {

@@ -112,6 +112,14 @@ export const get_business_report_bureau = (uri) => {
 
 export const get_report_endpoint = (uri) => {
 	let report_type = get_report_type(uri);
+
+	// console.log("report_type");
+	// console.log(report_type);
+
+	if (report_type === "resource") {
+		return "documents";
+	}
+
 	if (report_type === "business") {
 		let value = pipe(to_route_pathname, split("/"), trim, nth(3))(uri);
 		return value;
@@ -119,6 +127,8 @@ export const get_report_endpoint = (uri) => {
 
 	if (report_type === "personal") {
 		let value = pipe(to_route_pathname, split("/"), trim, nth(1))(uri);
+		// console.log("value");
+		// console.log(value);
 		return value;
 	}
 };
