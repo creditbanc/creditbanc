@@ -80,7 +80,13 @@ const Stat = () => {
 	);
 };
 
-const TradeLine = ({ trade_line, type = "basic" }) => {
+const TradeLine = ({
+	trade_line,
+	type = "basic",
+	experian = false,
+	equifax = false,
+	transunion = false,
+}) => {
 	return (
 		<div className="overflow-hidden bg-white border rounded-lg">
 			<div className="px-4 py-5 flex flex-row justify-between">
@@ -147,13 +153,18 @@ const TradeLine = ({ trade_line, type = "basic" }) => {
 										<div className=" text-gray-500 text-xs sm:hidden">
 											Transunion
 										</div>
+
 										<div>
 											{pipe(
 												filter({
 													source: "TransUnion",
 												}),
 												head,
-												get("value")
+												get("value"),
+												(value) =>
+													transunion
+														? value
+														: "Upgrade"
 											)(value)}
 										</div>
 									</div>
@@ -167,7 +178,9 @@ const TradeLine = ({ trade_line, type = "basic" }) => {
 													source: "Equifax",
 												}),
 												head,
-												get("value")
+												get("value"),
+												(value) =>
+													equifax ? value : "Upgrade"
 											)(value)}
 										</div>
 									</div>
@@ -181,7 +194,9 @@ const TradeLine = ({ trade_line, type = "basic" }) => {
 													source: "Experian",
 												}),
 												head,
-												get("value")
+												get("value"),
+												(value) =>
+													experian ? value : "Upgrade"
 											)(value)}
 										</div>
 									</div>
@@ -206,7 +221,11 @@ const TradeLine = ({ trade_line, type = "basic" }) => {
 													source: "TransUnion",
 												}),
 												head,
-												get("value")
+												get("value"),
+												(value) =>
+													transunion
+														? value
+														: "Upgrade"
 											)(value)}
 										</div>
 									</div>
@@ -220,7 +239,9 @@ const TradeLine = ({ trade_line, type = "basic" }) => {
 													source: "Equifax",
 												}),
 												head,
-												get("value")
+												get("value"),
+												(value) =>
+													equifax ? value : "Upgrade"
 											)(value)}
 										</div>
 									</div>
@@ -234,7 +255,9 @@ const TradeLine = ({ trade_line, type = "basic" }) => {
 													source: "Experian",
 												}),
 												head,
-												get("value")
+												get("value"),
+												(value) =>
+													experian ? value : "Upgrade"
 											)(value)}
 										</div>
 									</div>
@@ -260,7 +283,10 @@ const TradeLine = ({ trade_line, type = "basic" }) => {
 												}),
 												head,
 												get("value"),
-												currency.format
+												(value) =>
+													transunion
+														? currency.format(value)
+														: "Upgrade"
 											)(value)}
 										</div>
 									</div>
@@ -275,7 +301,11 @@ const TradeLine = ({ trade_line, type = "basic" }) => {
 												}),
 												head,
 												get("value"),
-												currency.format
+
+												(value) =>
+													equifax
+														? currency.format(value)
+														: "Upgrade"
 											)(value)}
 										</div>
 									</div>
@@ -290,7 +320,11 @@ const TradeLine = ({ trade_line, type = "basic" }) => {
 												}),
 												head,
 												get("value"),
-												currency.format
+
+												(value) =>
+													experian
+														? currency.format(value)
+														: "Upgrade"
 											)(value)}
 										</div>
 									</div>
@@ -315,7 +349,11 @@ const TradeLine = ({ trade_line, type = "basic" }) => {
 													source: "TransUnion",
 												}),
 												head,
-												get("value")
+												get("value"),
+												(value) =>
+													transunion
+														? value
+														: "Upgrade"
 											)(value)}
 										</div>
 									</div>
@@ -329,7 +367,9 @@ const TradeLine = ({ trade_line, type = "basic" }) => {
 													source: "Equifax",
 												}),
 												head,
-												get("value")
+												get("value"),
+												(value) =>
+													equifax ? value : "Upgrade"
 											)(value)}
 										</div>
 									</div>
@@ -343,7 +383,9 @@ const TradeLine = ({ trade_line, type = "basic" }) => {
 													source: "Experian",
 												}),
 												head,
-												get("value")
+												get("value"),
+												(value) =>
+													experian ? value : "Upgrade"
 											)(value)}
 										</div>
 									</div>
@@ -369,7 +411,11 @@ const TradeLine = ({ trade_line, type = "basic" }) => {
 												}),
 												head,
 												get("value"),
-												currency.format
+
+												(value) =>
+													transunion
+														? currency.format(value)
+														: "Upgrade"
 											)(value)}
 										</div>
 									</div>
@@ -384,7 +430,11 @@ const TradeLine = ({ trade_line, type = "basic" }) => {
 												}),
 												head,
 												get("value"),
-												currency.format
+
+												(value) =>
+													equifax
+														? currency.format(value)
+														: "Upgrade"
 											)(value)}
 										</div>
 									</div>
@@ -399,7 +449,11 @@ const TradeLine = ({ trade_line, type = "basic" }) => {
 												}),
 												head,
 												get("value"),
-												currency.format
+
+												(value) =>
+													experian
+														? currency.format(value)
+														: "Upgrade"
 											)(value)}
 										</div>
 									</div>
@@ -424,7 +478,11 @@ const TradeLine = ({ trade_line, type = "basic" }) => {
 													source: "TransUnion",
 												}),
 												head,
-												get("value")
+												get("value"),
+												(value) =>
+													transunion
+														? value
+														: "Upgrade"
 											)(value)}
 										</div>
 									</div>
@@ -438,7 +496,9 @@ const TradeLine = ({ trade_line, type = "basic" }) => {
 													source: "Equifax",
 												}),
 												head,
-												get("value")
+												get("value"),
+												(value) =>
+													equifax ? value : "Upgrade"
 											)(value)}
 										</div>
 									</div>
@@ -452,7 +512,9 @@ const TradeLine = ({ trade_line, type = "basic" }) => {
 													source: "Experian",
 												}),
 												head,
-												get("value")
+												get("value"),
+												(value) =>
+													experian ? value : "Upgrade"
 											)(value)}
 										</div>
 									</div>
@@ -478,7 +540,11 @@ const TradeLine = ({ trade_line, type = "basic" }) => {
 												}),
 												head,
 												get("value"),
-												currency.format
+
+												(value) =>
+													transunion
+														? currency.format(value)
+														: "Upgrade"
 											)(value)}
 										</div>
 									</div>
@@ -493,7 +559,11 @@ const TradeLine = ({ trade_line, type = "basic" }) => {
 												}),
 												head,
 												get("value"),
-												currency.format
+
+												(value) =>
+													equifax
+														? currency.format(value)
+														: "Upgrade"
 											)(value)}
 										</div>
 									</div>
@@ -508,7 +578,11 @@ const TradeLine = ({ trade_line, type = "basic" }) => {
 												}),
 												head,
 												get("value"),
-												currency.format
+
+												(value) =>
+													experian
+														? currency.format(value)
+														: "Upgrade"
 											)(value)}
 										</div>
 									</div>
@@ -534,7 +608,11 @@ const TradeLine = ({ trade_line, type = "basic" }) => {
 												}),
 												head,
 												get("value"),
-												currency.format
+
+												(value) =>
+													transunion
+														? currency.format(value)
+														: "Upgrade"
 											)(value)}
 										</div>
 									</div>
@@ -549,7 +627,11 @@ const TradeLine = ({ trade_line, type = "basic" }) => {
 												}),
 												head,
 												get("value"),
-												currency.format
+
+												(value) =>
+													equifax
+														? currency.format(value)
+														: "Upgrade"
 											)(value)}
 										</div>
 									</div>
@@ -564,7 +646,11 @@ const TradeLine = ({ trade_line, type = "basic" }) => {
 												}),
 												head,
 												get("value"),
-												currency.format
+
+												(value) =>
+													experian
+														? currency.format(value)
+														: "Upgrade"
 											)(value)}
 										</div>
 									</div>
@@ -589,7 +675,11 @@ const TradeLine = ({ trade_line, type = "basic" }) => {
 													source: "TransUnion",
 												}),
 												head,
-												get("value")
+												get("value"),
+												(value) =>
+													transunion
+														? value
+														: "Upgrade"
 											)(value)}
 										</div>
 									</div>
@@ -603,7 +693,9 @@ const TradeLine = ({ trade_line, type = "basic" }) => {
 													source: "Equifax",
 												}),
 												head,
-												get("value")
+												get("value"),
+												(value) =>
+													equifax ? value : "Upgrade"
 											)(value)}
 										</div>
 									</div>
@@ -617,7 +709,9 @@ const TradeLine = ({ trade_line, type = "basic" }) => {
 													source: "Experian",
 												}),
 												head,
-												get("value")
+												get("value"),
+												(value) =>
+													experian ? value : "Upgrade"
 											)(value)}
 										</div>
 									</div>
@@ -642,7 +736,11 @@ const TradeLine = ({ trade_line, type = "basic" }) => {
 													source: "TransUnion",
 												}),
 												head,
-												get("value")
+												get("value"),
+												(value) =>
+													transunion
+														? value
+														: "Upgrade"
 											)(value)}
 										</div>
 									</div>
@@ -656,7 +754,9 @@ const TradeLine = ({ trade_line, type = "basic" }) => {
 													source: "Equifax",
 												}),
 												head,
-												get("value")
+												get("value"),
+												(value) =>
+													equifax ? value : "Upgrade"
 											)(value)}
 										</div>
 									</div>
@@ -670,7 +770,9 @@ const TradeLine = ({ trade_line, type = "basic" }) => {
 													source: "Experian",
 												}),
 												head,
-												get("value")
+												get("value"),
+												(value) =>
+													experian ? value : "Upgrade"
 											)(value)}
 										</div>
 									</div>
@@ -758,13 +860,25 @@ const TradeLine = ({ trade_line, type = "basic" }) => {
 	);
 };
 
-export const Accounts = ({ trade_lines, type = "basic" }) => {
+export const Accounts = ({
+	trade_lines,
+	type = "basic",
+	experian = false,
+	equifax = false,
+	transunion = false,
+}) => {
 	return (
 		<div className="flex flex-col">
 			{mapIndexed(
 				(trade_line, tl_index) => (
 					<div className="my-2" key={tl_index}>
-						<TradeLine trade_line={trade_line} type={type} />
+						<TradeLine
+							trade_line={trade_line}
+							type={type}
+							experian={experian}
+							equifax={equifax}
+							transunion={transunion}
+						/>
 					</div>
 				),
 				trade_lines
