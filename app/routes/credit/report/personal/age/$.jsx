@@ -102,7 +102,12 @@ export default function Age() {
 	return (
 		<div className="flex flex-col w-full">
 			<InfoCard />
-			<Accounts trade_lines={trade_lines} />
+			<Accounts
+				trade_lines={trade_lines}
+				experian={true}
+				transunion={false}
+				equifax={false}
+			/>
 		</div>
 	);
 }
