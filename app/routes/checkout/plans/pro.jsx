@@ -10,7 +10,7 @@ import { Link, useSubmit } from "@remix-run/react";
 import { get_user_id } from "~/utils/auth.server";
 import { hasPath, length, pipe } from "ramda";
 import { get, has } from "shades";
-const stripe = require("stripe")(process.env.STRIPE);
+var stripe = require("stripe");
 
 const steps = [
 	// { name: "Cart", href: "#", status: "complete" },
@@ -32,6 +32,7 @@ let features = [
 
 export const action = async ({ request }) => {
 	console.log("action");
+	stripe = stripe(process.env.STRIPE);
 	let entity_id = await get_user_id(request);
 	var form = await request.formData();
 
@@ -81,6 +82,10 @@ export const action = async ({ request }) => {
 		const subscription = await stripe.subscriptions.create({
 			customer: customer_id,
 			items: [{ price: "price_1N5wxGJlRXkfyebs5BWgNLZU" }],
+			metadata: {
+				entity_id,
+				customer_id,
+			},
 		});
 		return subscription;
 	};

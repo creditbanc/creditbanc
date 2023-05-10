@@ -1,19 +1,20 @@
-import { useLoaderData } from "@remix-run/react";
+import { useLoaderData, Link } from "@remix-run/react";
 import Nav from "~/components/CreditNav";
 import { pipe, map, length } from "ramda";
 import moment from "moment";
 import { mapIndexed } from "~/utils/helpers";
-const stripe = require("stripe")(process.env.STRIPE);
+var stripe = require("stripe");
 
 export const loader = async () => {
+	stripe = stripe(process.env.STRIPE);
 	const customers_response = await stripe.customers.list({
 		limit: 500,
 	});
 
 	let { data: customers } = customers_response;
 
-	// console.log("customers");
-	// console.log(customers);
+	console.log("customers");
+	console.log(customers);
 
 	return { customers };
 };
@@ -51,7 +52,11 @@ const CustomerTable = () => {
 							key={idx}
 						>
 							<div className="flex flex-col w-1/3">
-								{customer.id}
+								<Link
+									to={`/admin/customers/${customer.metadata.entity_id}`}
+								>
+									{customer.metadata.entity_id}
+								</Link>
 							</div>
 							<div className="flex flex-col w-[100px]">
 								{customer.balance}
