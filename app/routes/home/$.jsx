@@ -6,62 +6,64 @@ import {
 import { Fragment } from "react";
 import { Menu, Transition } from "@headlessui/react";
 import { Link } from "@remix-run/react";
+import { get_user_id } from "~/utils/auth.server";
+import { get_docs as get_group_docs } from "~/utils/group.server";
+import { get_group_id } from "~/utils/helpers";
+import { head, pipe } from "ramda";
+import { filter, get } from "shades";
+import { prisma } from "~/utils/prisma.server";
+import { Lendflow } from "~/data/lendflow";
+import { Array, credit_report_data } from "~/data/array";
+import { useLoaderData } from "@remix-run/react";
 
-const profile = {
-	name: "Ricardo Cooper",
-	business_name: "Apple Inc.",
-	email: "ricardo.cooper@example.com",
-	avatar: "https://images.unsplash.com/photo-1463453091185-61582044d556?ixlib=rb-=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=8&w=1024&h=1024&q=80",
-	backgroundImage:
-		"https://images.unsplash.com/photo-1444628838545-ac4016a5418a?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80",
-	fields: [
-		["Phone", "(555) 123-4567"],
-		["Email", "ricardocooper@example.com"],
-		["Title", "Senior Front-End Developer"],
-		["Team", "Product Development"],
-		["Location", "San Francisco"],
-		["Sits", "Oasis, 4th floor"],
-		["Salary", "$145,000"],
-		["Birthday", "June 8, 1990"],
-	],
-};
+export const loader = async ({ request }) => {
+	let url = new URL(request.url);
+	let entity_id = get_user_id(request);
+	let group_id = get_group_id(url.pathname);
 
-function Banner() {
-	return (
-		<div className="w-full mb-7">
-			<div>
-				<img
-					className="h-32 w-full object-cover lg:h-48"
-					src={profile.backgroundImage}
-					alt=""
-				/>
-			</div>
-			<div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
-				<div className="-mt-12 sm:-mt-16 flex flex-row sm:items-end sm:space-x-5">
-					<div className="flex flex-col">
-						<img
-							className="h-24 w-24 rounded-full ring-4 ring-white sm:h-32 sm:w-32"
-							src={profile.avatar}
-							alt=""
-						/>
-					</div>
-					<div className="mt-14 ml-5 flex flex-col">
-						<h1 className="truncate text-2xl font-bold text-gray-900">
-							{profile.name}s
-						</h1>
-						<div>{profile.business_name}</div>
-					</div>
-					{/* <div className="mt-6 hidden min-w-0 sm:flex sm:flex-col">
-						<h1 className="truncate text-2xl font-bold text-gray-900">
-							{profile.name}f
-						</h1>
-						<div>{profile.business_name}</div>
-					</div> */}
-				</div>
-			</div>
-		</div>
+	let group_docs = await get_group_docs({
+		resource_id: group_id,
+		entity_id,
+	});
+
+	let business_credit_report_response = pipe(
+		filter({ model: "business_credit_report" }),
+		head
+	)(group_docs);
+
+	let personal_credit_report_response = pipe(
+		filter({ model: "personal_credit_report" }),
+		head
+	)(group_docs);
+
+	let business_credit_report = await prisma.business_credit_report.findUnique(
+		{
+			where: {
+				id: business_credit_report_response.id,
+			},
+		}
 	);
-}
+
+	let personal_credit_report = await prisma.personal_credit_report.findUnique(
+		{
+			where: {
+				id: personal_credit_report_response.id,
+			},
+		}
+	);
+
+	let experian_business_score = Lendflow.experian.score(
+		business_credit_report
+	);
+
+	let experian_personal_score = Array.experian.score(credit_report_data);
+
+	let experian_business_report = {
+		score: experian_business_score,
+	};
+
+	return { entity_id, experian_business_report, experian_personal_score };
+};
 
 function Heading() {
 	return (
@@ -114,12 +116,40 @@ const VideoCard = () => {
 };
 
 const BusinessCredit = () => {
+	let { experian_business_report } = useLoaderData();
+	let { score } = experian_business_report;
+
 	return (
 		<div className="flex flex-col border mx-2 shadow-sm rounded px-4">
 			<div className="border-b border-gray-200">
 				<h3 className="text-base font-semibold leading-6 text-gray-900 py-3">
 					Business Credit
 				</h3>
+			</div>
+			<div className="flex flex-col w-full py-3">
+				<div className="flex flex-row w-full">
+					<div className="flex flex-col w-2/3">
+						<div className="font-semibold">Experian ®</div>
+						<div className="text-gray-400 text-sm">
+							Intelliscore
+						</div>
+					</div>
+
+					{score && (
+						<div className="flex flex-row w-full justify-end items-center text-2xl font-bold">
+							<div className="flex flex-col">{score}</div>
+							<div className="flex flex-col w-[30px] cursor-pointer">
+								<ChevronRightIcon />
+							</div>
+						</div>
+					)}
+
+					{!score && (
+						<div className="flex flex-col w-1/3 font-semibold text-blue-700 text-sm cursor-pointer items-end mr-2 justify-center">
+							Upgrade Accounts
+						</div>
+					)}
+				</div>
 			</div>
 
 			<div className="flex flex-col w-full py-3 border-b border-gray-200">
@@ -128,20 +158,6 @@ const BusinessCredit = () => {
 						<div className="font-semibold">Dun & Bradstreet ®</div>
 						<div className="text-gray-400 text-sm">
 							PAYDEX Score
-						</div>
-					</div>
-					<div className="flex flex-col w-1/3 font-semibold text-blue-700 text-sm cursor-pointer items-end mr-2 justify-center">
-						Upgrade Account
-					</div>
-				</div>
-			</div>
-
-			<div className="flex flex-col w-full py-3">
-				<div className="flex flex-row w-full">
-					<div className="flex flex-col w-2/3">
-						<div className="font-semibold">Experian ®</div>
-						<div className="text-gray-400 text-sm">
-							Intelliscore
 						</div>
 					</div>
 					<div className="flex flex-col w-1/3 font-semibold text-blue-700 text-sm cursor-pointer items-end mr-2 justify-center">

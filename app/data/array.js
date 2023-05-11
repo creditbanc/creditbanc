@@ -1,4 +1,4 @@
-import { get, all, mod } from "shades";
+import { get, all, mod, filter } from "shades";
 import {
 	pipe,
 	map,
@@ -6686,3 +6686,14 @@ export const TradeLine = (trade_line) => {
 		values,
 	};
 };
+
+export const Array = {};
+
+Array.experian = {};
+
+Array.experian.score = pipe(
+	get("CREDIT_RESPONSE", "CREDIT_SCORE"),
+	filter({ "@CreditRepositorySourceType": "Experian" }),
+	head,
+	get("@_Value")
+);
