@@ -64,8 +64,8 @@ export const loader = async ({ request }) => {
 		href: `/credit/report/business/experian/overview/resource/e/${entity_id}/g/${group_id}/f/${business_credit_report.id}`,
 	};
 
-	console.log("experian_business_report");
-	console.log(experian_business_report);
+	// console.log("experian_business_report");
+	// console.log(experian_business_report);
 
 	let experian_personal_report = {
 		score: experian_personal_score,
@@ -137,7 +137,7 @@ const BusinessCredit = () => {
 					Business Credit
 				</h3>
 			</div>
-			<div className="flex flex-col w-full py-3">
+			<div className="flex flex-col w-full py-3 border-b border-gray-200">
 				<div className="flex flex-row w-full">
 					<div className="flex flex-col w-2/3">
 						<div className="font-semibold">Experian ®</div>
@@ -212,7 +212,7 @@ const PersonalCredit = () => {
 							className="flex flex-col w-1/3 text-2xl font-bold justify-center"
 						>
 							<div className="flex flex-row w-full justify-end items-center cursor-pointer">
-								<div className="flex flex-col">800</div>
+								<div className="flex flex-col">{score}</div>
 								<div className="flex flex-col w-[30px] ">
 									<ChevronRightIcon />
 								</div>
