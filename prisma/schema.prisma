@@ -125,3 +125,20 @@ model business_credit_report {
   data        Json?
   type        String?
 }
+
+model Plan {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  created_at  DateTime @default(now())
+  updated_at  DateTime @updatedAt
+  name        String?
+  description String?
+  price       Float?
+}
+
+model Account {
+  id         String   @id @default(auto()) @map("_id") @db.ObjectId
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+  entity_id  String?  @db.ObjectId
+  plan_id    String?  @db.ObjectId
+}

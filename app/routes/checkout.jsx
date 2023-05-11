@@ -1,5 +1,4 @@
 import { Outlet } from "@remix-run/react";
-import Nav from "~/components/CreditNav";
 
 export default function CheckoutLayout() {
 	return (
