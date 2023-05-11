@@ -62,7 +62,11 @@ export const loader = async ({ request }) => {
 		score: experian_business_score,
 	};
 
-	return { entity_id, experian_business_report, experian_personal_score };
+	let experian_personal_report = {
+		score: experian_personal_score,
+	};
+
+	return { entity_id, experian_business_report, experian_personal_report };
 };
 
 function Heading() {
@@ -136,10 +140,12 @@ const BusinessCredit = () => {
 					</div>
 
 					{score && (
-						<div className="flex flex-row w-full justify-end items-center text-2xl font-bold">
-							<div className="flex flex-col">{score}</div>
-							<div className="flex flex-col w-[30px] cursor-pointer">
-								<ChevronRightIcon />
+						<div className="flex flex-col w-1/3 text-2xl font-bold justify-center">
+							<div className="flex flex-row w-full justify-end items-center cursor-pointer">
+								<div className="flex flex-col">{score}</div>
+								<div className="flex flex-col w-[30px] ">
+									<ChevronRightIcon />
+								</div>
 							</div>
 						</div>
 					)}
@@ -170,6 +176,9 @@ const BusinessCredit = () => {
 };
 
 const PersonalCredit = () => {
+	let { experian_personal_report } = useLoaderData();
+	let { score } = experian_personal_report;
+
 	return (
 		<div className="flex flex-col border mx-2 shadow-sm rounded px-4">
 			<div className="border-b border-gray-200">
@@ -187,18 +196,22 @@ const PersonalCredit = () => {
 						</div>
 					</div>
 
-					<div className="flex flex-col w-1/3 text-2xl font-bold justify-center">
-						<div className="flex flex-row w-full justify-end items-center">
-							<div className="flex flex-col">800</div>
-							<div className="flex flex-col w-[30px] cursor-pointer">
-								<ChevronRightIcon />
+					{score && (
+						<div className="flex flex-col w-1/3 text-2xl font-bold justify-center">
+							<div className="flex flex-row w-full justify-end items-center cursor-pointer">
+								<div className="flex flex-col">800</div>
+								<div className="flex flex-col w-[30px] ">
+									<ChevronRightIcon />
+								</div>
 							</div>
 						</div>
-					</div>
+					)}
 
-					{/* <div className="flex flex-col w-1/3 font-semibold text-blue-700 text-sm cursor-pointer">
-					Upgrade Account
-				</div> */}
+					{!score && (
+						<div className="flex flex-col w-1/3 font-semibold text-blue-700 text-sm cursor-pointer">
+							Upgrade Account
+						</div>
+					)}
 				</div>
 			</div>
 
