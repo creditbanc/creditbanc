@@ -60,10 +60,17 @@ export const loader = async ({ request }) => {
 
 	let experian_business_report = {
 		score: experian_business_score,
+		id: business_credit_report.id,
+		href: `/credit/report/business/experian/overview/resource/e/${entity_id}/g/${group_id}/f/${business_credit_report.id}`,
 	};
+
+	console.log("experian_business_report");
+	console.log(experian_business_report);
 
 	let experian_personal_report = {
 		score: experian_personal_score,
+		id: personal_credit_report.id,
+		href: `/credit/report/personal/personal/resource/e/${entity_id}/g/${group_id}/f/${business_credit_report.id}`,
 	};
 
 	return { entity_id, experian_business_report, experian_personal_report };
@@ -121,7 +128,7 @@ const VideoCard = () => {
 
 const BusinessCredit = () => {
 	let { experian_business_report } = useLoaderData();
-	let { score } = experian_business_report;
+	let { score, href } = experian_business_report;
 
 	return (
 		<div className="flex flex-col border mx-2 shadow-sm rounded px-4">
@@ -140,14 +147,17 @@ const BusinessCredit = () => {
 					</div>
 
 					{score && (
-						<div className="flex flex-col w-1/3 text-2xl font-bold justify-center">
+						<Link
+							to={href}
+							className="flex flex-col w-1/3 text-2xl font-bold justify-center"
+						>
 							<div className="flex flex-row w-full justify-end items-center cursor-pointer">
 								<div className="flex flex-col">{score}</div>
 								<div className="flex flex-col w-[30px] ">
 									<ChevronRightIcon />
 								</div>
 							</div>
-						</div>
+						</Link>
 					)}
 
 					{!score && (
@@ -177,7 +187,7 @@ const BusinessCredit = () => {
 
 const PersonalCredit = () => {
 	let { experian_personal_report } = useLoaderData();
-	let { score } = experian_personal_report;
+	let { score, href } = experian_personal_report;
 
 	return (
 		<div className="flex flex-col border mx-2 shadow-sm rounded px-4">
@@ -197,14 +207,17 @@ const PersonalCredit = () => {
 					</div>
 
 					{score && (
-						<div className="flex flex-col w-1/3 text-2xl font-bold justify-center">
+						<Link
+							to={href}
+							className="flex flex-col w-1/3 text-2xl font-bold justify-center"
+						>
 							<div className="flex flex-row w-full justify-end items-center cursor-pointer">
 								<div className="flex flex-col">800</div>
 								<div className="flex flex-col w-[30px] ">
 									<ChevronRightIcon />
 								</div>
 							</div>
-						</div>
+						</Link>
 					)}
 
 					{!score && (
