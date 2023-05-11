@@ -68,7 +68,7 @@ export default function Nav({ entity_id = false }) {
 												<Menu.Item>
 													{({ active }) => (
 														<Link
-															to="/account/settings"
+															to="/settings/account"
 															className={classNames(
 																active
 																	? "bg-gray-100"
