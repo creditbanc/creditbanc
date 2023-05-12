@@ -97,15 +97,15 @@ export const action = async ({ request }) => {
 		let { id: customer_id } = customer;
 		let subscription = await subscribe_customer(customer_id);
 
-		console.log("subscription");
-		console.log(subscription);
+		// console.log("subscription");
+		// console.log(subscription);
 
 		await prisma.entity.update({
 			where: {
 				id: entity_id,
 			},
 			data: {
-				plan_id: "pro",
+				plan_id: "builder",
 			},
 		});
 
@@ -121,7 +121,7 @@ export const action = async ({ request }) => {
 			id: entity_id,
 		},
 		data: {
-			plan_id: "pro",
+			plan_id: "builder",
 			stripe_customer_id: customer_id,
 			stripe_subscription_id: subscription.id,
 		},
@@ -144,7 +144,7 @@ export default function Checkout() {
 			{},
 			{
 				method: "post",
-				action: "/checkout/plans/pro" + window.location.search,
+				action: "/checkout/plans/builder" + window.location.search,
 			}
 		);
 	};

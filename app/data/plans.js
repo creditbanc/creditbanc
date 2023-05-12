@@ -92,3 +92,54 @@ plans.builder = {
 		},
 	},
 };
+
+plans.pro = {
+	personal: {
+		experian: {
+			authorized: true,
+			score: true,
+			trade_lines: true,
+			factors: true,
+		},
+		equifax: {
+			authorized: true,
+			score: true,
+			trade_lines: true,
+			factors: true,
+		},
+		transunion: {
+			authorized: true,
+			score: true,
+			trade_lines: true,
+			factors: true,
+		},
+	},
+	business: {
+		experian: {
+			score: true,
+			risk_class: true,
+			business: true,
+			trade_summary: true,
+			trade_lines_payment_totals: true,
+			trade_lines: true,
+			derogatories: true,
+			trends: true,
+			years_on_file: true,
+			employee_size: true,
+			sic_code: true,
+			naics_code: true,
+			sales_revenue: true,
+			years_on_file: true,
+			employee_size: true,
+			sic_code: true,
+			naics_code: true,
+			sales_revenue: true,
+			factors: true,
+		},
+		dnb: {
+			score: true,
+			trade_lines: true,
+			factors: true,
+		},
+	},
+};

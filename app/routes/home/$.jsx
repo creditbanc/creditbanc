@@ -174,6 +174,9 @@ export const loader = async ({ request }) => {
 		};
 	}
 
+	// console.log("plan_id");
+	// console.log(plan_id);
+
 	return {
 		...personal_credit_report_payload,
 		...business_credit_report_payload,
@@ -194,7 +197,7 @@ function Heading() {
 						Credit Banc University
 					</h1>
 					<p className="mt-1 truncate text-sm text-gray-500">
-						Checkout and Payments Team
+						Learn how to build your credit and get funding
 					</p>
 				</div>
 
@@ -280,7 +283,7 @@ const BusinessCredit = () => {
 
 					{!can_view_experian_business_score && (
 						<Link
-							to={experian_business_report.href}
+							to="/plans"
 							className="flex flex-col w-1/3 font-semibold text-blue-700 text-sm cursor-pointer items-end mr-2 justify-center"
 						>
 							Upgrade Account
@@ -314,7 +317,7 @@ const BusinessCredit = () => {
 
 					{!can_view_dnb_business_score && (
 						<Link
-							to={dnb_business_report.href}
+							to="/plans"
 							className="flex flex-col w-1/3 font-semibold text-blue-700 text-sm cursor-pointer items-end mr-2 justify-center"
 						>
 							Upgrade Account
@@ -333,6 +336,7 @@ const PersonalCredit = () => {
 		transunion_personal_report,
 		plan_id,
 	} = useLoaderData();
+
 	let { score: experian_score } = experian_personal_report;
 	let { score: equifax_score } = equifax_personal_report;
 	let { score: transunion_score } = transunion_personal_report;
@@ -383,9 +387,12 @@ const PersonalCredit = () => {
 					)}
 
 					{!can_view_experian_personal_score && (
-						<div className="flex flex-col w-1/3 font-semibold text-blue-700 text-sm cursor-pointer">
+						<Link
+							to="/plans"
+							className="flex flex-col w-1/3 font-semibold text-blue-700 text-sm cursor-pointer"
+						>
 							Upgrade Account
-						</div>
+						</Link>
 					)}
 				</div>
 			</div>
@@ -416,9 +423,12 @@ const PersonalCredit = () => {
 					)}
 
 					{!can_view_transunion_personal_score && (
-						<div className="flex flex-col w-1/3 font-semibold text-blue-700 text-sm cursor-pointer items-end mr-2 justify-center">
+						<Link
+							to="/plans"
+							className="flex flex-col w-1/3 font-semibold text-blue-700 text-sm cursor-pointer items-end mr-2 justify-center"
+						>
 							Upgrade Account
-						</div>
+						</Link>
 					)}
 				</div>
 			</div>
@@ -449,9 +459,12 @@ const PersonalCredit = () => {
 					)}
 
 					{!can_view_equifax_personal_score && (
-						<div className="flex flex-col w-1/3 font-semibold text-blue-700 text-sm cursor-pointer items-end mr-2 justify-center">
+						<Link
+							to="/plans"
+							className="flex flex-col w-1/3 font-semibold text-blue-700 text-sm cursor-pointer items-end mr-2 justify-center"
+						>
 							Upgrade Account
-						</div>
+						</Link>
 					)}
 				</div>
 			</div>
