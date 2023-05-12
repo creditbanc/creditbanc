@@ -34,6 +34,7 @@ export const create = async (payload) => {
 			trade_lines,
 			type: "personal_credit_report",
 			entity_id,
+			data: credit_report_data,
 		},
 	});
 

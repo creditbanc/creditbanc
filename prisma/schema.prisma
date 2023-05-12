@@ -119,6 +119,7 @@ model personal_credit_report {
   trade_lines Json?
   type        String?
   entity_id   String?  @db.ObjectId
+  data        Json?
 }
 
 model business_credit_report {

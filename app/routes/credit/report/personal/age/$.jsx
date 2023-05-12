@@ -7,13 +7,17 @@ import { get_file_id, inspect } from "~/utils/helpers";
 import { TradeLine as Tradeline } from "~/data/array";
 import { get_doc as get_credit_report } from "~/utils/personal_credit_report.server";
 import { all, get } from "shades";
+import { plans } from "~/data/plans";
+import { get_user_id } from "~/utils/auth.server";
+import { prisma } from "~/utils/prisma.server";
 
 export const loader = async ({ request }) => {
 	let url = new URL(request.url);
 	let pathname = url.pathname;
 	let report_id = get_file_id(pathname);
+	let entity_id = await get_user_id(request);
 
-	let credit_report = await get_credit_report({
+	let report = await get_credit_report({
 		resource_id: report_id,
 	});
 
@@ -21,12 +25,18 @@ export const loader = async ({ request }) => {
 		map(Tradeline),
 		map((tl) => tl.values()),
 		filter((tl) => pipe(get(all, "value"), includes("Closed"))(tl.status))
-	)(credit_report.trade_lines);
+	)(report.trade_lines);
 
-	// console.log("trade_lines");
-	// inspect(trade_lines);
+	let is_owner = report.entity_id == entity_id;
 
-	return trade_lines;
+	let { plan_id } = await prisma.entity.findUnique({
+		where: { id: is_owner ? entity_id : report.entity_id },
+		select: {
+			plan_id: true,
+		},
+	});
+
+	return { trade_lines, plan_id };
 };
 
 const InfoCard = () => {
@@ -97,16 +107,28 @@ const InfoCard = () => {
 };
 
 export default function Age() {
-	let trade_lines = useLoaderData();
+	let { trade_lines, plan_id } = useLoaderData();
+
+	let experian = pipe(get(plan_id, "personal", "experian", "authorized"))(
+		plans
+	);
+
+	let transunion = pipe(get(plan_id, "personal", "transunion", "authorized"))(
+		plans
+	);
+
+	let equifax = pipe(get(plan_id, "personal", "equifax", "authorized"))(
+		plans
+	);
 
 	return (
 		<div className="flex flex-col w-full">
 			<InfoCard />
 			<Accounts
 				trade_lines={trade_lines}
-				experian={true}
-				transunion={false}
-				equifax={false}
+				experian={experian}
+				transunion={transunion}
+				equifax={equifax}
 			/>
 		</div>
 	);

@@ -1,6 +1,6 @@
 import { useLoaderData } from "@remix-run/react";
 import { useEffect } from "react";
-import { mrm_credit_report, Lendflow } from "~/data/lendflow";
+import { Array } from "~/data/array";
 import { get_file_id } from "~/utils/helpers";
 import { get_user_id } from "~/utils/auth.server";
 import { prisma } from "~/utils/prisma.server";
@@ -28,17 +28,24 @@ export const loader = async ({ request }) => {
 		},
 	});
 
-	console.log("plan_id");
-	console.log(plan_id);
+	let { data } = report;
 
-	// let score = Lendflow.experian.score(report);
-	// let risk_class = Lendflow.experian.risk_class(report);
-	// let business = Lendflow.business(report);
-	// let trade_summary = Lendflow.experian.trade_summary(report);
-	return { plan_id };
+	let first_name = Array.first_name(data);
+	let last_name = Array.last_name(data);
+	let residence = Array.residence(data);
+	let dob = Array.dob(data);
+
+	return { plan_id, first_name, last_name, residence, dob };
 };
 
 const PersonalInfoCard = () => {
+	let { plan_id, first_name, last_name, residence, dob } = useLoaderData();
+
+	// console.log("residence");
+	// console.log(residence);
+
+	// let plan = pipe(get(plan_id, "personal", "experian"))(plans);
+
 	return (
 		<div className="overflow-hidden bg-white rounded-lg border">
 			<div className="px-4 py-5 sm:px-6">
@@ -59,15 +66,15 @@ const PersonalInfoCard = () => {
 							Name
 						</dt>
 						<dd className="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0">
-							Margot Foster
+							{first_name} {last_name}
 						</dd>
 					</div>
 					<div className="py-4 flex flex-col sm:flex-row sm:py-5 sm:px-6">
 						<dt className="text-sm font-medium text-gray-500 w-[200px]">
-							Aliases
+							Date of birth
 						</dt>
 						<dd className="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0">
-							Date of birth
+							{dob}
 						</dd>
 					</div>
 					<div className="py-4 flex flex-col sm:flex-row sm:py-5 sm:px-6">
@@ -75,15 +82,14 @@ const PersonalInfoCard = () => {
 							Address
 						</dt>
 						<dd className="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0">
-							margotfoster@example.com
-						</dd>
-					</div>
-					<div className="py-4 flex flex-col sm:flex-row sm:py-5 sm:px-6">
-						<dt className="text-sm font-medium text-gray-500 w-[200px]">
-							Employers
-						</dt>
-						<dd className="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0">
-							$120,000
+							<div className="flex flex-col">
+								<div>{residence["@_StreetAddress"]}</div>
+								<div className="flex flex-row space-x-1">
+									<div>{residence["@_City"]},</div>
+									<div>{residence["@_State"]}</div>
+									<div>{residence["@_PostalCode"]}</div>
+								</div>
+							</div>
 						</dd>
 					</div>
 				</dl>

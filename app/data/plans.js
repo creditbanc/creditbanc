@@ -4,21 +4,12 @@ plans.essential = {
 	personal: {
 		experian: {
 			authorized: true,
-			score: true,
-			trade_lines: false,
-			factors: false,
 		},
 		equifax: {
 			authorized: false,
-			score: true,
-			trade_lines: false,
-			factors: false,
 		},
 		transunion: {
 			authorized: false,
-			score: true,
-			trade_lines: false,
-			factors: false,
 		},
 	},
 	business: {

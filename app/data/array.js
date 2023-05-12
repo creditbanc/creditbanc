@@ -6693,6 +6693,15 @@ Array.experian = {};
 Array.equifax = {};
 Array.transunion = {};
 
+Array.first_name = pipe(get("CREDIT_RESPONSE", "BORROWER", "@_FirstName"));
+Array.last_name = pipe(get("CREDIT_RESPONSE", "BORROWER", "@_LastName"));
+Array.dob = pipe(get("CREDIT_RESPONSE", "BORROWER", "@_BirthDate"));
+Array.residence = pipe(
+	get("CREDIT_RESPONSE", "BORROWER", "_RESIDENCE"),
+	filter({ "@BorrowerResidencyType": "Current" }),
+	head
+);
+
 Array.experian.score = pipe(
 	get("CREDIT_RESPONSE", "CREDIT_SCORE"),
 	filter({ "@CreditRepositorySourceType": "Experian" }),
