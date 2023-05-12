@@ -1,58 +1,190 @@
-import { useState } from "react";
-import { Switch } from "@headlessui/react";
+import { useState, Fragment, useEffect } from "react";
+import { Switch, Listbox, Transition } from "@headlessui/react";
 import { get_user_id } from "~/utils/auth.server";
-import { useLoaderData } from "@remix-run/react";
+import { useLoaderData, useSubmit } from "@remix-run/react";
+import { CheckIcon, ChevronUpDownIcon } from "@heroicons/react/20/solid";
+import { create } from "zustand";
+import { head, pipe } from "ramda";
+import { filter, mod } from "shades";
+import { prisma } from "~/utils/prisma.server";
 
 function classNames(...classes) {
 	return classes.filter(Boolean).join(" ");
 }
 
-export const loader = async ({ request }) => {
-	let entity_id = await get_user_id(request);
-	return { entity_id };
+const useStore = create((set) => ({
+	plan: null,
+	set_store: (path, value) =>
+		set((state) => pipe(mod(...path)(() => value))(state)),
+}));
+
+const plans = [
+	{ id: "essential", name: "Banc Essentials" },
+	{ id: "builder", name: "Banc Builder" },
+	{ id: "pro", name: "Banc Pro" },
+];
+
+export const action = async ({ request }) => {
+	var form = await request.formData();
+
+	const plan_id = form.get("id");
+	const entity_id = form.get("entity_id");
+
+	await prisma.entity.update({
+		where: { id: entity_id },
+		data: {
+			plan_id,
+		},
+	});
+
+	return null;
 };
 
+export const loader = async ({ request }) => {
+	let entity_id = await get_user_id(request);
+
+	let { plan_id } = await prisma.entity.findUnique({
+		where: { id: entity_id },
+		select: {
+			plan_id: true,
+		},
+	});
+
+	return { entity_id, plan_id };
+};
+
+function PlansSelect() {
+	const plan = useStore((state) => state.plan);
+	const set_store = useStore((state) => state.set_store);
+
+	const onSelectPlan = (value) => {
+		set_store(["plan"], value);
+	};
+
+	useEffect(() => {
+		if (!plan) {
+			set_store(["plan"], plans[0]);
+		}
+	}, [plan]);
+
+	return (
+		<Listbox value={plan} onChange={onSelectPlan}>
+			{({ open }) => (
+				<>
+					<div className="relative mt-2">
+						<Listbox.Button className="relative w-full cursor-default rounded-md bg-white py-1.5 pl-3 pr-10 text-left text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-600 sm:text-sm sm:leading-6">
+							<span className="block truncate">{plan?.name}</span>
+							<span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
+								<ChevronUpDownIcon
+									className="h-5 w-5 text-gray-400"
+									aria-hidden="true"
+								/>
+							</span>
+						</Listbox.Button>
+
+						<Transition
+							show={open}
+							as={Fragment}
+							leave="transition ease-in duration-100"
+							leaveFrom="opacity-100"
+							leaveTo="opacity-0"
+						>
+							<Listbox.Options className="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
+								{plans.map((person) => (
+									<Listbox.Option
+										key={person.id}
+										className={({ active }) =>
+											classNames(
+												active
+													? "bg-indigo-600 text-white"
+													: "text-gray-900",
+												"relative cursor-default select-none py-2 pl-3 pr-9"
+											)
+										}
+										value={person}
+									>
+										{({ selected, active }) => (
+											<>
+												<span
+													className={classNames(
+														selected
+															? "font-semibold"
+															: "font-normal",
+														"block truncate"
+													)}
+												>
+													{person.name}
+												</span>
+
+												{selected ? (
+													<span
+														className={classNames(
+															active
+																? "text-white"
+																: "text-indigo-600",
+															"absolute inset-y-0 right-0 flex items-center pr-4"
+														)}
+													>
+														<CheckIcon
+															className="h-5 w-5"
+															aria-hidden="true"
+														/>
+													</span>
+												) : null}
+											</>
+										)}
+									</Listbox.Option>
+								))}
+							</Listbox.Options>
+						</Transition>
+					</div>
+				</>
+			)}
+		</Listbox>
+	);
+}
+
 export default function Plan() {
-	const { entity_id } = useLoaderData();
-	const [automaticTimezoneEnabled, setAutomaticTimezoneEnabled] =
-		useState(true);
+	const { entity_id, plan_id } = useLoaderData();
+	const plan = useStore((state) => state.plan);
+	const set_store = useStore((state) => state.set_store);
+	const submit = useSubmit();
+
+	useEffect(() => {
+		if (plan_id) {
+			set_store(["plan"], pipe(filter({ id: plan_id }), head)(plans));
+		}
+	}, [plan_id]);
+
+	const onUpdatePlan = async () => {
+		submit(
+			{ ...plan, entity_id },
+			{ method: "post", action: "/settings/plan" }
+		);
+	};
 
 	return (
 		<main className="px-4 sm:px-6 lg:flex-auto lg:px-0">
-			<div className="mx-auto max-w-2xl space-y-16 sm:space-y-20 lg:mx-0 lg:max-w-none">
+			<div className="mx-auto max-w-4xl space-y-16 sm:space-y-20 lg:mx-0 lg:max-w-none">
 				<div>
 					<h2 className="text-base font-semibold leading-7 text-gray-900">
-						Profile
+						Plan
 					</h2>
 					<p className="mt-1 text-sm leading-6 text-gray-500">
-						This information will be displayed publicly so be
-						careful what you share.
+						This is your current Credit Banc Plan
 					</p>
 
 					<dl className="mt-6 space-y-6 divide-y divide-gray-100 border-t border-gray-200 text-sm leading-6">
 						<div className="pt-6 sm:flex">
 							<dt className="font-medium text-gray-900 sm:w-64 sm:flex-none sm:pr-6">
-								Full name
+								Plan name
 							</dt>
 							<dd className="mt-1 flex justify-between gap-x-6 sm:mt-0 sm:flex-auto">
-								<div className="text-gray-900">Tom Cook</div>
-								<button
-									type="button"
-									className="font-semibold text-indigo-600 hover:text-indigo-500"
-								>
-									Update
-								</button>
-							</dd>
-						</div>
-						<div className="pt-6 sm:flex">
-							<dt className="font-medium text-gray-900 sm:w-64 sm:flex-none sm:pr-6">
-								Email address
-							</dt>
-							<dd className="mt-1 flex justify-between gap-x-6 sm:mt-0 sm:flex-auto">
-								<div className="text-gray-900">
-									tom.cook@example.com
+								<div className="text-gray-900 w-[200px]">
+									<PlansSelect />
 								</div>
 								<button
+									onClick={onUpdatePlan}
 									type="button"
 									className="font-semibold text-indigo-600 hover:text-indigo-500"
 								>
@@ -60,176 +192,6 @@ export default function Plan() {
 								</button>
 							</dd>
 						</div>
-						<div className="pt-6 sm:flex">
-							<dt className="font-medium text-gray-900 sm:w-64 sm:flex-none sm:pr-6">
-								Title
-							</dt>
-							<dd className="mt-1 flex justify-between gap-x-6 sm:mt-0 sm:flex-auto">
-								<div className="text-gray-900">
-									Human Resources Manager
-								</div>
-								<button
-									type="button"
-									className="font-semibold text-indigo-600 hover:text-indigo-500"
-								>
-									Update
-								</button>
-							</dd>
-						</div>
-					</dl>
-				</div>
-
-				<div>
-					<h2 className="text-base font-semibold leading-7 text-gray-900">
-						Bank accounts
-					</h2>
-					<p className="mt-1 text-sm leading-6 text-gray-500">
-						Connect bank accounts to your account.
-					</p>
-
-					<ul
-						role="list"
-						className="mt-6 divide-y divide-gray-100 border-t border-gray-200 text-sm leading-6"
-					>
-						<li className="flex justify-between gap-x-6 py-6">
-							<div className="font-medium text-gray-900">
-								TD Canada Trust
-							</div>
-							<button
-								type="button"
-								className="font-semibold text-indigo-600 hover:text-indigo-500"
-							>
-								Update
-							</button>
-						</li>
-						<li className="flex justify-between gap-x-6 py-6">
-							<div className="font-medium text-gray-900">
-								Royal Bank of Canada
-							</div>
-							<button
-								type="button"
-								className="font-semibold text-indigo-600 hover:text-indigo-500"
-							>
-								Update
-							</button>
-						</li>
-					</ul>
-
-					<div className="flex border-t border-gray-100 pt-6">
-						<button
-							type="button"
-							className="text-sm font-semibold leading-6 text-indigo-600 hover:text-indigo-500"
-						>
-							<span aria-hidden="true">+</span> Add another bank
-						</button>
-					</div>
-				</div>
-
-				<div>
-					<h2 className="text-base font-semibold leading-7 text-gray-900">
-						Integrations
-					</h2>
-					<p className="mt-1 text-sm leading-6 text-gray-500">
-						Connect applications to your account.
-					</p>
-
-					<ul
-						role="list"
-						className="mt-6 divide-y divide-gray-100 border-t border-gray-200 text-sm leading-6"
-					>
-						<li className="flex justify-between gap-x-6 py-6">
-							<div className="font-medium text-gray-900">
-								QuickBooks
-							</div>
-							<button
-								type="button"
-								className="font-semibold text-indigo-600 hover:text-indigo-500"
-							>
-								Update
-							</button>
-						</li>
-					</ul>
-
-					<div className="flex border-t border-gray-100 pt-6">
-						<button
-							type="button"
-							className="text-sm font-semibold leading-6 text-indigo-600 hover:text-indigo-500"
-						>
-							<span aria-hidden="true">+</span> Add another
-							application
-						</button>
-					</div>
-				</div>
-
-				<div>
-					<h2 className="text-base font-semibold leading-7 text-gray-900">
-						Language and dates
-					</h2>
-					<p className="mt-1 text-sm leading-6 text-gray-500">
-						Choose what language and date format to use throughout
-						your account.
-					</p>
-
-					<dl className="mt-6 space-y-6 divide-y divide-gray-100 border-t border-gray-200 text-sm leading-6">
-						<div className="pt-6 sm:flex">
-							<dt className="font-medium text-gray-900 sm:w-64 sm:flex-none sm:pr-6">
-								Language
-							</dt>
-							<dd className="mt-1 flex justify-between gap-x-6 sm:mt-0 sm:flex-auto">
-								<div className="text-gray-900">English</div>
-								<button
-									type="button"
-									className="font-semibold text-indigo-600 hover:text-indigo-500"
-								>
-									Update
-								</button>
-							</dd>
-						</div>
-						<div className="pt-6 sm:flex">
-							<dt className="font-medium text-gray-900 sm:w-64 sm:flex-none sm:pr-6">
-								Date format
-							</dt>
-							<dd className="mt-1 flex justify-between gap-x-6 sm:mt-0 sm:flex-auto">
-								<div className="text-gray-900">DD-MM-YYYY</div>
-								<button
-									type="button"
-									className="font-semibold text-indigo-600 hover:text-indigo-500"
-								>
-									Update
-								</button>
-							</dd>
-						</div>
-						<Switch.Group as="div" className="flex pt-6">
-							<Switch.Label
-								as="dt"
-								className="w-64 flex-none pr-6 font-medium text-gray-900"
-								passive
-							>
-								Automatic timezone
-							</Switch.Label>
-							<dd className="flex flex-auto items-center justify-end">
-								<Switch
-									checked={automaticTimezoneEnabled}
-									onChange={setAutomaticTimezoneEnabled}
-									className={classNames(
-										automaticTimezoneEnabled
-											? "bg-indigo-600"
-											: "bg-gray-200",
-										"flex w-8 cursor-pointer rounded-full p-px ring-1 ring-inset ring-gray-900/5 transition-colors duration-200 ease-in-out focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-									)}
-								>
-									<span
-										aria-hidden="true"
-										className={classNames(
-											automaticTimezoneEnabled
-												? "translate-x-3.5"
-												: "translate-x-0",
-											"h-4 w-4 transform rounded-full bg-white shadow-sm ring-1 ring-gray-900/5 transition duration-200 ease-in-out"
-										)}
-									/>
-								</Switch>
-							</dd>
-						</Switch.Group>
 					</dl>
 				</div>
 			</div>

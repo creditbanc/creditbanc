@@ -25,6 +25,7 @@ model Entity {
   root_group_resource_path_id     String?    @db.ObjectId
   first_name                      String?
   last_name                       String?
+  plan_id                         String?
 }
 
 // the mental model is:

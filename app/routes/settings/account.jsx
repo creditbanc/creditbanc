@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Switch } from "@headlessui/react";
-import { get_user_id } from "~/utils/auth.server";
+import { get_user_id, get_user } from "~/utils/auth.server";
 import { useLoaderData } from "@remix-run/react";
 
 function classNames(...classes) {
@@ -9,6 +9,11 @@ function classNames(...classes) {
 
 export const loader = async ({ request }) => {
 	let entity_id = await get_user_id(request);
+	let entity = await get_user(request);
+
+	console.log("entity");
+	console.log(entity);
+
 	return { entity_id };
 };
 
@@ -19,7 +24,7 @@ export default function Account() {
 
 	return (
 		<main className="px-4 sm:px-6 lg:flex-auto lg:px-0">
-			<div className="mx-auto max-w-2xl space-y-16 sm:space-y-20 lg:mx-0 lg:max-w-none">
+			<div className="mx-auto max-w-4xl space-y-16 sm:space-y-20 lg:mx-0 lg:max-w-none">
 				<div>
 					<h2 className="text-base font-semibold leading-7 text-gray-900">
 						Profile

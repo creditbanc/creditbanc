@@ -34,6 +34,16 @@ export const loader = async ({ request }) => {
 	return { entity_id };
 };
 
+function Heading() {
+	return (
+		<div className="border-b border-gray-200 pb-5 w-full flex flex-col">
+			<h3 className="text-base font-semibold leading-6 text-gray-900 px-8 lg:px-0">
+				Job Postings
+			</h3>
+		</div>
+	);
+}
+
 export default function Account() {
 	const { entity_id } = useLoaderData();
 	const [automaticTimezoneEnabled, setAutomaticTimezoneEnabled] =
@@ -43,6 +53,12 @@ export default function Account() {
 		<div>
 			<div className="flex flex-col w-full border-b">
 				<Nav entity_id={entity_id} />
+			</div>
+
+			<div className="flex flex-col items-center w-full pt-8">
+				<div className="flex flex-col max-w-7xl w-full lg:px-8">
+					<Heading />
+				</div>
 			</div>
 
 			<div className="mx-auto max-w-7xl lg:flex lg:gap-x-16 lg:px-8">
@@ -80,7 +96,7 @@ export default function Account() {
 					</nav>
 				</aside>
 
-				<main className="px-4 py-16 sm:px-6 lg:flex-auto lg:px-0 lg:py-20">
+				<main className="px-4 py-8 sm:px-6 lg:flex-auto lg:px-0 lg:py-20">
 					<Outlet />
 				</main>
 			</div>
