@@ -11,9 +11,6 @@ export const loader = async ({ request }) => {
 	let entity_id = await get_user_id(request);
 	let entity = await get_user(request);
 
-	console.log("entity");
-	console.log(entity);
-
 	return { entity_id };
 };
 

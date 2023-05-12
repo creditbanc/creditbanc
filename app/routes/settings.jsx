@@ -38,7 +38,7 @@ function Heading() {
 	return (
 		<div className="border-b border-gray-200 pb-5 w-full flex flex-col">
 			<h3 className="text-base font-semibold leading-6 text-gray-900 px-8 lg:px-0">
-				Job Postings
+				Settings
 			</h3>
 		</div>
 	);
