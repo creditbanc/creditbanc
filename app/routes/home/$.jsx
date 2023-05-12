@@ -17,11 +17,24 @@ import { Array, credit_report_data } from "~/data/array";
 import { useLoaderData } from "@remix-run/react";
 import { plans } from "~/data/plans";
 import { redirect } from "@remix-run/node";
+var cookie = require("cookie");
 
 export const loader = async ({ request }) => {
 	let url = new URL(request.url);
 	let entity_id = await get_user_id(request);
 	let group_id = get_group_id(url.pathname);
+	let cookies = request.headers.get("Cookie");
+	// console.log("cookie");
+	// console.log(cookie);
+
+	var cookies_json = cookie.parse(cookies);
+	// console.log("cookies_json");
+	// console.log(cookies_json);
+
+	let { allow_empty } = cookies_json;
+
+	// console.log("allow_empty");
+	// console.log(allow_empty);
 
 	let { plan_id } = await prisma.entity.findUnique({
 		where: { id: entity_id },
@@ -38,7 +51,7 @@ export const loader = async ({ request }) => {
 	// console.log("group_docs");
 	// console.log(group_docs);
 
-	if (isEmpty(group_docs))
+	if (isEmpty(group_docs) && !allow_empty)
 		return redirect(
 			`/credit/business/new/resource/e/${entity_id}/g/${group_id}`
 		);
