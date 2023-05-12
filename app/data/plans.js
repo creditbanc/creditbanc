@@ -44,7 +44,7 @@ plans.essential = {
 			factors: false,
 		},
 		dnb: {
-			score: true,
+			score: false,
 			trade_lines: false,
 			factors: false,
 		},

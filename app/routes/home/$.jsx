@@ -169,13 +169,13 @@ const BusinessCredit = () => {
 	let { score: experian_score } = experian_business_report;
 	let { score: dnb_score } = dnb_business_report;
 
-	let experian_business_score = pipe(
+	let can_view_experian_business_score = pipe(
 		get(plan_id, "business", "experian", "score")
 	)(plans);
 
-	let dnb_business_score = pipe(get(plan_id, "business", "dnb", "score"))(
-		plans
-	);
+	let can_view_dnb_business_score = pipe(
+		get(plan_id, "business", "dnb", "score")
+	)(plans);
 
 	return (
 		<div className="flex flex-col border mx-2 shadow-sm rounded px-4">
@@ -193,7 +193,7 @@ const BusinessCredit = () => {
 						</div>
 					</div>
 
-					{experian_score && (
+					{can_view_experian_business_score && (
 						<Link
 							to={experian_business_report.href}
 							className="flex flex-col w-1/3 text-2xl font-bold justify-center"
@@ -209,9 +209,9 @@ const BusinessCredit = () => {
 						</Link>
 					)}
 
-					{!experian_score && (
+					{!can_view_experian_business_score && (
 						<div className="flex flex-col w-1/3 font-semibold text-blue-700 text-sm cursor-pointer items-end mr-2 justify-center">
-							Upgrade Accounts
+							Upgrade Account
 						</div>
 					)}
 				</div>
@@ -226,7 +226,7 @@ const BusinessCredit = () => {
 						</div>
 					</div>
 
-					{experian_score && (
+					{can_view_dnb_business_score && (
 						<Link
 							to={dnb_business_report.href}
 							className="flex flex-col w-1/3 text-2xl font-bold justify-center"
@@ -240,7 +240,7 @@ const BusinessCredit = () => {
 						</Link>
 					)}
 
-					{!dnb_score && (
+					{!can_view_dnb_business_score && (
 						<div className="flex flex-col w-1/3 font-semibold text-blue-700 text-sm cursor-pointer items-end mr-2 justify-center">
 							Upgrade Account
 						</div>
@@ -262,16 +262,16 @@ const PersonalCredit = () => {
 	let { score: equifax_score } = equifax_personal_report;
 	let { score: transunion_score } = transunion_personal_report;
 
-	let experian_personal_score = pipe(
-		get(plan_id, "personal", "experian", "score")
+	let can_view_experian_personal_score = pipe(
+		get(plan_id, "personal", "experian", "authorized")
 	)(plans);
 
-	let equifax_personal_score = pipe(
-		get(plan_id, "personal", "equifax", "score")
+	let can_view_equifax_personal_score = pipe(
+		get(plan_id, "personal", "equifax", "authorized")
 	)(plans);
 
-	let transunion_personal_score = pipe(
-		get(plan_id, "personal", "transunion", "score")
+	let can_view_transunion_personal_score = pipe(
+		get(plan_id, "personal", "transunion", "authorized")
 	)(plans);
 
 	return (
@@ -291,7 +291,7 @@ const PersonalCredit = () => {
 						</div>
 					</div>
 
-					{experian_score && (
+					{can_view_experian_personal_score && (
 						<Link
 							to={experian_personal_report.href}
 							className="flex flex-col w-1/3 text-2xl font-bold justify-center"
@@ -307,7 +307,7 @@ const PersonalCredit = () => {
 						</Link>
 					)}
 
-					{!experian_score && (
+					{!can_view_experian_personal_score && (
 						<div className="flex flex-col w-1/3 font-semibold text-blue-700 text-sm cursor-pointer">
 							Upgrade Account
 						</div>
@@ -324,7 +324,7 @@ const PersonalCredit = () => {
 						</div>
 					</div>
 
-					{transunion_score && (
+					{can_view_transunion_personal_score && (
 						<Link
 							to={transunion_personal_report.href}
 							className="flex flex-col w-1/3 text-2xl font-bold justify-center"
@@ -340,7 +340,7 @@ const PersonalCredit = () => {
 						</Link>
 					)}
 
-					{!transunion_score && (
+					{!can_view_transunion_personal_score && (
 						<div className="flex flex-col w-1/3 font-semibold text-blue-700 text-sm cursor-pointer items-end mr-2 justify-center">
 							Upgrade Account
 						</div>
@@ -357,7 +357,7 @@ const PersonalCredit = () => {
 						</div>
 					</div>
 
-					{equifax_score && (
+					{can_view_equifax_personal_score && (
 						<Link
 							to={equifax_personal_report.href}
 							className="flex flex-col w-1/3 text-2xl font-bold justify-center"
@@ -373,7 +373,7 @@ const PersonalCredit = () => {
 						</Link>
 					)}
 
-					{!equifax_score && (
+					{!can_view_equifax_personal_score && (
 						<div className="flex flex-col w-1/3 font-semibold text-blue-700 text-sm cursor-pointer items-end mr-2 justify-center">
 							Upgrade Account
 						</div>
