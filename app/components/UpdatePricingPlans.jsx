@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { XMarkIcon, CheckIcon } from "@heroicons/react/24/outline";
+import { Link } from "@remix-run/react";
 
 const frequencies = [
 	{ value: "monthly", label: "Monthly", priceSuffix: "/month" },
@@ -10,7 +11,7 @@ function classNames(...classes) {
 	return classes.filter(Boolean).join(" ");
 }
 
-export const Plans = ({ plans }) => {
+export const Plans = ({ plans, plan_id }) => {
 	const [frequency, setFrequency] = useState(frequencies[0]);
 
 	return (
@@ -54,18 +55,36 @@ export const Plans = ({ plans }) => {
 							{frequency.priceSuffix}
 						</span>
 					</p>
-					<a
-						href={tier.href}
-						aria-describedby={tier.id}
-						className={classNames(
-							tier.mostPopular
-								? "bg-indigo-600 text-white shadow-sm hover:bg-indigo-500"
-								: "text-indigo-600 ring-1 ring-inset ring-indigo-200 hover:ring-indigo-300",
-							"mt-6 block rounded-md py-2 px-3 text-center text-sm font-semibold leading-6 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-						)}
-					>
-						Upgrade
-					</a>
+
+					{plan_id !== tier.id && (
+						<Link
+							to={tier.href}
+							aria-describedby={tier.id}
+							className={classNames(
+								tier.mostPopular
+									? "bg-indigo-600 text-white shadow-sm hover:bg-indigo-500"
+									: "text-indigo-600 ring-1 ring-inset ring-indigo-200 hover:ring-indigo-300",
+								"mt-6 block rounded-md py-2 px-3 text-center text-sm font-semibold leading-6 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+							)}
+						>
+							Select Plan
+						</Link>
+					)}
+
+					{plan_id == tier.id && (
+						<div
+							aria-describedby={tier.id}
+							className={classNames(
+								tier.mostPopular
+									? "bg-indigo-600 text-white shadow-sm hover:bg-indigo-500"
+									: "text-indigo-600 ring-1 ring-inset ring-indigo-200 hover:ring-indigo-300",
+								"mt-6 block rounded-md py-2 px-3 text-center text-sm font-semibold leading-6 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+							)}
+						>
+							Current Plan
+						</div>
+					)}
+
 					<ul
 						role="list"
 						className="mt-8 space-y-3 text-sm leading-6 text-gray-600 xl:mt-10"

@@ -1,17 +1,36 @@
 import CreditNav from "~/components/CreditNav";
 import { plans } from "~/data/upgrade_plans";
-import { Link } from "@remix-run/react";
+import { Link, useLoaderData } from "@remix-run/react";
 import { XMarkIcon, CheckIcon } from "@heroicons/react/24/outline";
 import { useState } from "react";
 import { RadioGroup } from "@headlessui/react";
 import { Plans as SubscriptionPlans } from "~/components/UpdatePricingPlans";
+import { get_user_id } from "~/utils/auth.server";
+import { prisma } from "~/utils/prisma.server";
+import { get } from "shades";
+import { pipe } from "ramda";
 
 const frequencies = [
 	{ value: "monthly", label: "Monthly", priceSuffix: "/month" },
 	{ value: "annually", label: "Annually", priceSuffix: "/year" },
 ];
 
+export const loader = async ({ request }) => {
+	let entity_id = await get_user_id(request);
+
+	let { plan_id } = await prisma.entity.findUnique({
+		where: { id: entity_id },
+		select: {
+			plan_id: true,
+		},
+	});
+
+	return { plan_id };
+};
+
 export default function Plans() {
+	let { plan_id } = useLoaderData();
+
 	return (
 		<div className="flex flex-col h-full">
 			<div className="border-b">
@@ -33,7 +52,7 @@ export default function Plans() {
 						loyalty, and driving sales.
 					</p>
 					<div>
-						<SubscriptionPlans plans={plans} />
+						<SubscriptionPlans plans={plans} plan_id={plan_id} />
 					</div>
 				</div>
 			</div>

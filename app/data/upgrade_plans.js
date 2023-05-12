@@ -1,10 +1,10 @@
 export const plans = [
 	{
 		name: "Banc Essentials",
-		id: "essentials",
+		id: "essential",
 		href: "/checkout/plans/pro",
 		priceMonthly: "$0",
-		price: { monthly: "$15", annually: "$144" },
+		price: { monthly: "$0", annually: "$0" },
 		description: "The essentials to provide your best work for clients.",
 		features: [
 			{ included: true, text: "Business & Personal Scores" },
@@ -38,7 +38,7 @@ export const plans = [
 		id: "builder",
 		href: "/checkout/plans/builder",
 		priceMonthly: "$35",
-		price: { monthly: "$15", annually: "$144" },
+		price: { monthly: "$35", annually: "$420" },
 		description: "A plan that scales with your rapidly growing business.",
 		features: [
 			{ included: true, text: "Business & Personal Scores" },
@@ -72,7 +72,7 @@ export const plans = [
 		id: "pro",
 		href: "/checkout/plans/pro",
 		priceMonthly: "$85",
-		price: { monthly: "$15", annually: "$144" },
+		price: { monthly: "$85", annually: "$1,020" },
 		description: "Dedicated support and infrastructure for your company.",
 		features: [
 			{ included: true, text: "Business & Personal Scores" },
