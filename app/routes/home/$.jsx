@@ -270,9 +270,12 @@ const BusinessCredit = () => {
 					)}
 
 					{!can_view_experian_business_score && (
-						<div className="flex flex-col w-1/3 font-semibold text-blue-700 text-sm cursor-pointer items-end mr-2 justify-center">
+						<Link
+							to={experian_business_report.href}
+							className="flex flex-col w-1/3 font-semibold text-blue-700 text-sm cursor-pointer items-end mr-2 justify-center"
+						>
 							Upgrade Account
-						</div>
+						</Link>
 					)}
 				</div>
 			</div>
@@ -301,9 +304,12 @@ const BusinessCredit = () => {
 					)}
 
 					{!can_view_dnb_business_score && (
-						<div className="flex flex-col w-1/3 font-semibold text-blue-700 text-sm cursor-pointer items-end mr-2 justify-center">
+						<Link
+							to={dnb_business_report.href}
+							className="flex flex-col w-1/3 font-semibold text-blue-700 text-sm cursor-pointer items-end mr-2 justify-center"
+						>
 							Upgrade Account
-						</div>
+						</Link>
 					)}
 				</div>
 			</div>
