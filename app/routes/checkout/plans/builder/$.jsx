@@ -71,7 +71,7 @@ export const action = async ({ request }) => {
 	const subscribe_customer = async (customer_id) => {
 		const subscription = await stripe.subscriptions.create({
 			customer: customer_id,
-			items: [{ price: "price_1N5wxGJlRXkfyebs5BWgNLZU" }],
+			items: [{ price: "price_1N61DjJlRXkfyebsWDaUadR0" }],
 			metadata: {
 				entity_id,
 				customer_id,
