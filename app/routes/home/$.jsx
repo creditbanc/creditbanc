@@ -126,19 +126,19 @@ export const loader = async ({ request }) => {
 		let experian_personal_report = {
 			score: experian_personal_score,
 			id: personal_credit_report.id,
-			href: `/credit/report/personal/personal/resource/e/${entity_id}/g/${group_id}/f/${business_credit_report.id}`,
+			href: `/credit/report/personal/personal/resource/e/${entity_id}/g/${group_id}/f/${personal_credit_report.id}`,
 		};
 
 		let equifax_personal_report = {
 			score: equifax_personal_score,
 			id: personal_credit_report.id,
-			href: `/credit/report/personal/personal/resource/e/${entity_id}/g/${group_id}/f/${business_credit_report.id}`,
+			href: `/credit/report/personal/personal/resource/e/${entity_id}/g/${group_id}/f/${personal_credit_report.id}`,
 		};
 
 		let transunion_personal_report = {
 			score: transunion_personal_score,
 			id: personal_credit_report.id,
-			href: `/credit/report/personal/personal/resource/e/${entity_id}/g/${group_id}/f/${business_credit_report.id}`,
+			href: `/credit/report/personal/personal/resource/e/${entity_id}/g/${group_id}/f/${personal_credit_report.id}`,
 		};
 
 		personal_credit_report_payload = {
