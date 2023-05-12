@@ -75,7 +75,7 @@ export default function Home() {
 				<CreditNav
 					user_id={user_id}
 					origin={origin}
-					can_share={true}
+					can_share={false}
 					reports={reports}
 				/>
 			</div>
