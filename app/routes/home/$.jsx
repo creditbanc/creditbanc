@@ -15,11 +15,19 @@ import { prisma } from "~/utils/prisma.server";
 import { Lendflow } from "~/data/lendflow";
 import { Array, credit_report_data } from "~/data/array";
 import { useLoaderData } from "@remix-run/react";
+import { plans } from "~/data/plans";
 
 export const loader = async ({ request }) => {
 	let url = new URL(request.url);
-	let entity_id = get_user_id(request);
+	let entity_id = await get_user_id(request);
 	let group_id = get_group_id(url.pathname);
+
+	let { plan_id } = await prisma.entity.findUnique({
+		where: { id: entity_id },
+		select: {
+			plan_id: true,
+		},
+	});
 
 	let group_docs = await get_group_docs({
 		resource_id: group_id,
@@ -56,7 +64,13 @@ export const loader = async ({ request }) => {
 		business_credit_report
 	);
 
+	let dnb_business_score = Lendflow.dnb.score(business_credit_report);
+
 	let experian_personal_score = Array.experian.score(credit_report_data);
+
+	let equifax_personal_score = Array.equifax.score(credit_report_data);
+
+	let transunion_personal_score = Array.transunion.score(credit_report_data);
 
 	let experian_business_report = {
 		score: experian_business_score,
@@ -64,8 +78,11 @@ export const loader = async ({ request }) => {
 		href: `/credit/report/business/experian/overview/resource/e/${entity_id}/g/${group_id}/f/${business_credit_report.id}`,
 	};
 
-	// console.log("experian_business_report");
-	// console.log(experian_business_report);
+	let dnb_business_report = {
+		score: dnb_business_score,
+		id: business_credit_report.id,
+		href: `/credit/report/business/dnb/overview/resource/e/${entity_id}/g/${group_id}/f/${business_credit_report.id}`,
+	};
 
 	let experian_personal_report = {
 		score: experian_personal_score,
@@ -73,7 +90,27 @@ export const loader = async ({ request }) => {
 		href: `/credit/report/personal/personal/resource/e/${entity_id}/g/${group_id}/f/${business_credit_report.id}`,
 	};
 
-	return { entity_id, experian_business_report, experian_personal_report };
+	let equifax_personal_report = {
+		score: equifax_personal_score,
+		id: personal_credit_report.id,
+		href: `/credit/report/personal/personal/resource/e/${entity_id}/g/${group_id}/f/${business_credit_report.id}`,
+	};
+
+	let transunion_personal_report = {
+		score: transunion_personal_score,
+		id: personal_credit_report.id,
+		href: `/credit/report/personal/personal/resource/e/${entity_id}/g/${group_id}/f/${business_credit_report.id}`,
+	};
+
+	return {
+		entity_id,
+		experian_business_report,
+		dnb_business_report,
+		experian_personal_report,
+		equifax_personal_report,
+		transunion_personal_report,
+		plan_id,
+	};
 };
 
 function Heading() {
@@ -127,8 +164,18 @@ const VideoCard = () => {
 };
 
 const BusinessCredit = () => {
-	let { experian_business_report } = useLoaderData();
-	let { score, href } = experian_business_report;
+	let { experian_business_report, dnb_business_report, plan_id } =
+		useLoaderData();
+	let { score: experian_score } = experian_business_report;
+	let { score: dnb_score } = dnb_business_report;
+
+	let experian_business_score = pipe(
+		get(plan_id, "business", "experian", "score")
+	)(plans);
+
+	let dnb_business_score = pipe(get(plan_id, "business", "dnb", "score"))(
+		plans
+	);
 
 	return (
 		<div className="flex flex-col border mx-2 shadow-sm rounded px-4">
@@ -146,13 +193,15 @@ const BusinessCredit = () => {
 						</div>
 					</div>
 
-					{score && (
+					{experian_score && (
 						<Link
-							to={href}
+							to={experian_business_report.href}
 							className="flex flex-col w-1/3 text-2xl font-bold justify-center"
 						>
 							<div className="flex flex-row w-full justify-end items-center cursor-pointer">
-								<div className="flex flex-col">{score}</div>
+								<div className="flex flex-col">
+									{experian_score}
+								</div>
 								<div className="flex flex-col w-[30px] ">
 									<ChevronRightIcon />
 								</div>
@@ -160,7 +209,7 @@ const BusinessCredit = () => {
 						</Link>
 					)}
 
-					{!score && (
+					{!experian_score && (
 						<div className="flex flex-col w-1/3 font-semibold text-blue-700 text-sm cursor-pointer items-end mr-2 justify-center">
 							Upgrade Accounts
 						</div>
@@ -176,9 +225,26 @@ const BusinessCredit = () => {
 							PAYDEX Score
 						</div>
 					</div>
-					<div className="flex flex-col w-1/3 font-semibold text-blue-700 text-sm cursor-pointer items-end mr-2 justify-center">
-						Upgrade Account
-					</div>
+
+					{experian_score && (
+						<Link
+							to={dnb_business_report.href}
+							className="flex flex-col w-1/3 text-2xl font-bold justify-center"
+						>
+							<div className="flex flex-row w-full justify-end items-center cursor-pointer">
+								<div className="flex flex-col">{dnb_score}</div>
+								<div className="flex flex-col w-[30px] ">
+									<ChevronRightIcon />
+								</div>
+							</div>
+						</Link>
+					)}
+
+					{!dnb_score && (
+						<div className="flex flex-col w-1/3 font-semibold text-blue-700 text-sm cursor-pointer items-end mr-2 justify-center">
+							Upgrade Account
+						</div>
+					)}
 				</div>
 			</div>
 		</div>
@@ -186,8 +252,27 @@ const BusinessCredit = () => {
 };
 
 const PersonalCredit = () => {
-	let { experian_personal_report } = useLoaderData();
-	let { score, href } = experian_personal_report;
+	let {
+		experian_personal_report,
+		equifax_personal_report,
+		transunion_personal_report,
+		plan_id,
+	} = useLoaderData();
+	let { score: experian_score } = experian_personal_report;
+	let { score: equifax_score } = equifax_personal_report;
+	let { score: transunion_score } = transunion_personal_report;
+
+	let experian_personal_score = pipe(
+		get(plan_id, "personal", "experian", "score")
+	)(plans);
+
+	let equifax_personal_score = pipe(
+		get(plan_id, "personal", "equifax", "score")
+	)(plans);
+
+	let transunion_personal_score = pipe(
+		get(plan_id, "personal", "transunion", "score")
+	)(plans);
 
 	return (
 		<div className="flex flex-col border mx-2 shadow-sm rounded px-4">
@@ -206,13 +291,15 @@ const PersonalCredit = () => {
 						</div>
 					</div>
 
-					{score && (
+					{experian_score && (
 						<Link
-							to={href}
+							to={experian_personal_report.href}
 							className="flex flex-col w-1/3 text-2xl font-bold justify-center"
 						>
 							<div className="flex flex-row w-full justify-end items-center cursor-pointer">
-								<div className="flex flex-col">{score}</div>
+								<div className="flex flex-col">
+									{experian_score}
+								</div>
 								<div className="flex flex-col w-[30px] ">
 									<ChevronRightIcon />
 								</div>
@@ -220,7 +307,7 @@ const PersonalCredit = () => {
 						</Link>
 					)}
 
-					{!score && (
+					{!experian_score && (
 						<div className="flex flex-col w-1/3 font-semibold text-blue-700 text-sm cursor-pointer">
 							Upgrade Account
 						</div>
@@ -236,9 +323,28 @@ const PersonalCredit = () => {
 							VantageScore® 3.0
 						</div>
 					</div>
-					<div className="flex flex-col w-1/3 font-semibold text-blue-700 text-sm cursor-pointer items-end mr-2 justify-center">
-						Upgrade Account
-					</div>
+
+					{transunion_score && (
+						<Link
+							to={transunion_personal_report.href}
+							className="flex flex-col w-1/3 text-2xl font-bold justify-center"
+						>
+							<div className="flex flex-row w-full justify-end items-center cursor-pointer">
+								<div className="flex flex-col">
+									{transunion_score}
+								</div>
+								<div className="flex flex-col w-[30px] ">
+									<ChevronRightIcon />
+								</div>
+							</div>
+						</Link>
+					)}
+
+					{!transunion_score && (
+						<div className="flex flex-col w-1/3 font-semibold text-blue-700 text-sm cursor-pointer items-end mr-2 justify-center">
+							Upgrade Account
+						</div>
+					)}
 				</div>
 			</div>
 
@@ -250,9 +356,28 @@ const PersonalCredit = () => {
 							VantageScore® 3.0
 						</div>
 					</div>
-					<div className="flex flex-col w-1/3 font-semibold text-blue-700 text-sm cursor-pointer items-end mr-2 justify-center">
-						Upgrade Account
-					</div>
+
+					{equifax_score && (
+						<Link
+							to={equifax_personal_report.href}
+							className="flex flex-col w-1/3 text-2xl font-bold justify-center"
+						>
+							<div className="flex flex-row w-full justify-end items-center cursor-pointer">
+								<div className="flex flex-col">
+									{equifax_score}
+								</div>
+								<div className="flex flex-col w-[30px] ">
+									<ChevronRightIcon />
+								</div>
+							</div>
+						</Link>
+					)}
+
+					{!equifax_score && (
+						<div className="flex flex-col w-1/3 font-semibold text-blue-700 text-sm cursor-pointer items-end mr-2 justify-center">
+							Upgrade Account
+						</div>
+					)}
 				</div>
 			</div>
 		</div>

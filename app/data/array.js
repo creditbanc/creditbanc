@@ -6690,10 +6690,26 @@ export const TradeLine = (trade_line) => {
 export const Array = {};
 
 Array.experian = {};
+Array.equifax = {};
+Array.transunion = {};
 
 Array.experian.score = pipe(
 	get("CREDIT_RESPONSE", "CREDIT_SCORE"),
 	filter({ "@CreditRepositorySourceType": "Experian" }),
+	head,
+	get("@_Value")
+);
+
+Array.equifax.score = pipe(
+	get("CREDIT_RESPONSE", "CREDIT_SCORE"),
+	filter({ "@CreditRepositorySourceType": "Equifax" }),
+	head,
+	get("@_Value")
+);
+
+Array.transunion.score = pipe(
+	get("CREDIT_RESPONSE", "CREDIT_SCORE"),
+	filter({ "@CreditRepositorySourceType": "TransUnion" }),
 	head,
 	get("@_Value")
 );
