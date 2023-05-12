@@ -1,23 +1,27 @@
-import { Link, Outlet } from "@remix-run/react";
-import { useState } from "react";
+import { Link, Outlet, useLocation } from "@remix-run/react";
+import { useEffect, useState } from "react";
 import { FingerPrintIcon, UserCircleIcon } from "@heroicons/react/24/outline";
 import Nav from "~/components/TopNavNoSharing";
 import { get_user_id } from "~/utils/auth.server";
 import { useLoaderData } from "@remix-run/react";
 import { redirect } from "@remix-run/node";
+import { create } from "zustand";
+
+const useSettingsNavStore = create((set) => ({
+	current: "/settings/plan",
+	set_current_tab: (current) => set({ current }),
+}));
 
 const secondaryNavigation = [
 	{
 		name: "Account",
 		href: "/settings/account",
 		icon: UserCircleIcon,
-		current: true,
 	},
 	{
 		name: "Plan",
 		href: "/settings/plan",
 		icon: FingerPrintIcon,
-		current: false,
 	},
 ];
 
@@ -45,9 +49,9 @@ function Heading() {
 }
 
 export default function Account() {
-	const { entity_id } = useLoaderData();
-	const [automaticTimezoneEnabled, setAutomaticTimezoneEnabled] =
-		useState(true);
+	var { entity_id } = useLoaderData();
+	let location = useLocation();
+	let current_tab = location.pathname;
 
 	return (
 		<div>
@@ -73,7 +77,7 @@ export default function Account() {
 									<Link
 										to={item.href}
 										className={classNames(
-											item.current
+											item.href === current_tab
 												? "bg-gray-50 text-indigo-600"
 												: "text-gray-700 hover:text-indigo-600 hover:bg-gray-50",
 											"group flex gap-x-3 rounded-md py-2 pl-2 pr-3 text-sm leading-6 font-semibold"
@@ -81,7 +85,7 @@ export default function Account() {
 									>
 										<item.icon
 											className={classNames(
-												item.current
+												item.href === current_tab
 													? "text-indigo-600"
 													: "text-gray-400 group-hover:text-indigo-600",
 												"h-6 w-6 shrink-0"
