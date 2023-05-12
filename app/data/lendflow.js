@@ -1,4 +1,4 @@
-import { pipe } from "ramda";
+import { defaultTo, pipe } from "ramda";
 import { get } from "shades";
 
 export const test_identity_one = {
@@ -8493,6 +8493,8 @@ Lendflow.experian.sic_codes = pipe(
 Lendflow.experian.years_on_file = pipe(
 	get("data", "commercial_data", "experian", "facts", "yearsOnFile")
 );
+
+Lendflow.experian.derogatories = pipe(defaultTo([]));
 
 Lendflow.experian.employee_size = pipe(
 	get("data", "commercial_data", "experian", "facts", "employeeSize")

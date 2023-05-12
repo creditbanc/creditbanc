@@ -1,57 +1,99 @@
-import {
-	HandThumbUpIcon,
-	ChevronDoubleRightIcon,
-} from "@heroicons/react/24/outline";
+import { useLoaderData } from "@remix-run/react";
+import { mrm_credit_report, Lendflow } from "~/data/lendflow";
+import { currency, mapIndexed } from "~/utils/helpers";
+import { pipe, map } from "ramda";
+import { get_file_id } from "~/utils/helpers";
+import { get_user_id } from "~/utils/auth.server";
+import { prisma } from "~/utils/prisma.server";
+import { plans } from "~/data/plans";
+import { get } from "shades";
+
+export const loader = async ({ request }) => {
+	let url = new URL(request.url);
+	let file_id = get_file_id(url.pathname);
+	let entity_id = await get_user_id(request);
+
+	let { plan_id } = await prisma.entity.findUnique({
+		where: { id: entity_id },
+		select: {
+			plan_id: true,
+		},
+	});
+
+	let report = await prisma.business_credit_report.findUnique({
+		where: {
+			id: file_id,
+		},
+	});
+
+	let derogatories = Lendflow.experian.derogatories(report);
+
+	return { derogatories, plan_id };
+};
 
 const Derogatories = () => {
+	let { plan_id } = useLoaderData();
+
+	let plan = pipe(get(plan_id, "business", "experian"))(plans);
+
 	return (
 		<div className="overflow-hidden bg-white rounded-lg border">
-			<div className="px-4 py-5 sm:px-6">
+			<div className="px-4 py-5 sm:px-6 flex flex-row justify-between">
 				<h3 className="text-lg font-medium leading-6 text-gray-900">
 					Derogatories
 				</h3>
+
+				{!plan.derogatories && (
+					<div className="font-semibold">Upgrade</div>
+				)}
 			</div>
 			<div className="border-t border-gray-200 p-5 space-y-5">
 				<div className="flex flex-col w-full [&>*:nth-child(odd)]:bg-gray-50 border rounded">
 					<div className="flex flex-row py-2 px-3">
-						<div className="flex flex-col w-3/4">
-							First Credit Account
+						<div className="flex flex-col w-3/4 font-semibold">
+							Derogatories
 						</div>
-						<div>N/A</div>
+						<div className={`${!plan.derogatories && "blur-sm"}`}>
+							N/A
+						</div>
 					</div>
 					<div className="flex flex-row py-2 px-3">
-						<div className="flex flex-col w-3/4">
-							First Credit Account
+						<div className="flex flex-col w-3/4 font-semibold">
+							Total legal filings
 						</div>
-						<div>N/A</div>
-					</div>
-					<div className="flex flex-row py-2 px-3">
-						<div className="flex flex-col w-3/4">
-							First Credit Account
+						<div className={`${!plan.derogatories && "blur-sm"}`}>
+							N/A
 						</div>
-						<div>N/A</div>
 					</div>
 				</div>
-				<div className="flex flex-row w-full">
+				<div className="flex flex-row w-full text-sm">
 					<div className="flex flex-col items-center w-1/4 space-y-1">
-						<div>Tax Liens</div>
+						<div>Collections</div>
 						<div className="flex flex-col w-[90%] h-[1px] bg-gray-200"></div>
-						<div>0</div>
+						<div className={`${!plan.derogatories && "blur-sm"}`}>
+							0
+						</div>
 					</div>
 					<div className="flex flex-col items-center w-1/4 space-y-1">
-						<div>Judgements</div>
+						<div>Tax liens</div>
 						<div className="flex flex-col w-[90%] h-[1px] bg-gray-200"></div>
-						<div>0</div>
+						<div className={`${!plan.derogatories && "blur-sm"}`}>
+							0
+						</div>
 					</div>
 					<div className="flex flex-col items-center w-1/4 space-y-1">
-						<div>Lawsuits</div>
+						<div>Judgments</div>
 						<div className="flex flex-col w-[90%] h-[1px] bg-gray-200"></div>
-						<div>0</div>
+						<div className={`${!plan.derogatories && "blur-sm"}`}>
+							0
+						</div>
 					</div>
 					<div className="flex flex-col items-center w-1/4 space-y-1">
 						<div>Derogatory Collateral</div>
 						<div className="flex flex-col w-[90%] h-[1px] bg-gray-200"></div>
-						<div>0</div>
+						<div className={`${!plan.derogatories && "blur-sm"}`}>
+							0
+						</div>
 					</div>
 				</div>
 			</div>

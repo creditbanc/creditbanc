@@ -1,6 +1,6 @@
-export const plan = {};
+export const plans = {};
 
-plan.essential = {
+plans.essential = {
 	personal: {
 		experian: {
 			score: true,
@@ -33,7 +33,7 @@ plan.essential = {
 	},
 };
 
-plan.builder = {
+plans.builder = {
 	personal: {
 		experian: {
 			score: true,
@@ -54,9 +54,24 @@ plan.builder = {
 	business: {
 		experian: {
 			score: true,
-			risk_class: true,
-			business: true,
-			trade_summary: true,
+			risk_class: false,
+			business: false,
+			trade_summary: false,
+			trade_lines_payment_totals: false,
+			trade_lines: false,
+			derogatories: false,
+			trends: false,
+			years_on_file: false,
+			employee_size: false,
+			sic_code: false,
+			naics_code: false,
+			sales_revenue: false,
+			years_on_file: false,
+			employee_size: false,
+			sic_code: false,
+			naics_code: false,
+			sales_revenue: false,
+			factors: false,
 		},
 		dnb: {
 			score: true,

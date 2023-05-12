@@ -5,14 +5,24 @@ import {
 } from "@heroicons/react/24/outline";
 import { get_file_id, mapIndexed } from "~/utils/helpers";
 import { prisma } from "~/utils/prisma.server";
-
 import { useLoaderData } from "@remix-run/react";
 import { mrm_credit_report, Lendflow } from "~/data/lendflow";
 import { pipe, map, head } from "ramda";
+import { get_user_id } from "~/utils/auth.server";
+import { plans } from "~/data/plans";
+import { get } from "shades";
 
 export const loader = async ({ request }) => {
 	let url = new URL(request.url);
 	let file_id = get_file_id(url.pathname);
+	let entity_id = await get_user_id(request);
+
+	let { plan_id } = await prisma.entity.findUnique({
+		where: { id: entity_id },
+		select: {
+			plan_id: true,
+		},
+	});
 
 	let report = await prisma.business_credit_report.findUnique({
 		where: {
@@ -24,6 +34,7 @@ export const loader = async ({ request }) => {
 
 	return {
 		factors,
+		plan_id,
 	};
 };
 
@@ -70,13 +81,18 @@ const ExplanationCard = () => {
 };
 
 const ScoreFactors = () => {
-	let { factors } = useLoaderData();
+	let { factors, plan_id } = useLoaderData();
+
+	let plan = pipe(get(plan_id, "business", "experian"))(plans);
+
 	return (
 		<div className="overflow-hidden bg-white rounded-lg border">
-			<div className="px-4 py-5 sm:px-6">
+			<div className="px-4 py-5 sm:px-6 flex flex-row justify-between">
 				<h3 className="text-lg font-medium leading-6 text-gray-900">
 					Here are the factors influencing your score
 				</h3>
+
+				{!plan.factors && <div className="font-semibold">Upgrade</div>}
 			</div>
 			<div className="border-t border-gray-200 p-6">
 				<div className="flex flex-col w-full space-y-6">
@@ -89,7 +105,11 @@ const ScoreFactors = () => {
 								<div className="w-[20px]">
 									<ChevronDoubleRightIcon />
 								</div>
-								<div>{factor.definition}</div>
+								<div
+									className={`${!plan.factors && "blur-sm"}`}
+								>
+									{factor.definition}
+								</div>
 							</div>
 						))
 					)(factors)}

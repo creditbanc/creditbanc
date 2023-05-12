@@ -5,13 +5,24 @@ import {
 import { useLoaderData } from "@remix-run/react";
 import { useEffect } from "react";
 import { mrm_credit_report, Lendflow } from "~/data/lendflow";
-
 import { get_file_id } from "~/utils/helpers";
+import { get_user_id } from "~/utils/auth.server";
 import { prisma } from "~/utils/prisma.server";
+import { plans } from "~/data/plans";
+import { get } from "shades";
+import { pipe } from "ramda";
 
 export const loader = async ({ request }) => {
 	let url = new URL(request.url);
 	let file_id = get_file_id(url.pathname);
+	let entity_id = await get_user_id(request);
+
+	let { plan_id } = await prisma.entity.findUnique({
+		where: { id: entity_id },
+		select: {
+			plan_id: true,
+		},
+	});
 
 	let report = await prisma.business_credit_report.findUnique({
 		where: {
@@ -23,7 +34,7 @@ export const loader = async ({ request }) => {
 	let risk_class = Lendflow.experian.risk_class(report);
 	let business = Lendflow.business(report);
 	let trade_summary = Lendflow.experian.trade_summary(report);
-	return { score, risk_class, business, trade_summary };
+	return { score, risk_class, business, trade_summary, plan_id };
 };
 
 const ScoreCard = () => {
@@ -172,7 +183,9 @@ const SummaryCard = () => {
 };
 
 const DaysBeyondTerms = () => {
-	let { trade_summary } = useLoaderData();
+	let { trade_summary, plan_id } = useLoaderData();
+
+	let plan = pipe(get(plan_id, "business", "experian"))(plans);
 
 	return (
 		<div className="overflow-hidden bg-white rounded-lg border">
@@ -186,23 +199,41 @@ const DaysBeyondTerms = () => {
 					<div className="flex flex-col items-center w-1/3 space-y-2">
 						<div>Current DBT</div>
 						<div className="flex flex-col w-[90%] h-[1px] bg-gray-200"></div>
-						<div className="font-semibold">
-							{trade_summary.currentDbt}
-						</div>
+						{plan.trade_summary && (
+							<div className="font-semibold">
+								{trade_summary.currentDbt}
+							</div>
+						)}
+
+						{!plan.trade_summary && (
+							<div className="font-semibold">Upgrade</div>
+						)}
 					</div>
 					<div className="flex flex-col items-center w-1/3 space-y-2">
 						<div>Average DBT</div>
 						<div className="flex flex-col w-[90%] h-[1px] bg-gray-200"></div>
-						<div className="font-semibold">
-							{trade_summary.monthlyAverageDbt}
-						</div>
+						{plan.trade_summary && (
+							<div className="font-semibold">
+								{trade_summary.monthlyAverageDbt}
+							</div>
+						)}
+
+						{!plan.trade_summary && (
+							<div className="font-semibold">Upgrade</div>
+						)}
 					</div>
 					<div className="flex flex-col items-center w-1/3 space-y-2">
 						<div>Highest DBT</div>
 						<div className="flex flex-col w-[90%] h-[1px] bg-gray-200"></div>
-						<div className="font-semibold">
-							{trade_summary.highestDbt5Quarters}
-						</div>
+						{plan.trade_summary && (
+							<div className="font-semibold">
+								{trade_summary.highestDbt5Quarters}
+							</div>
+						)}
+
+						{!plan.trade_summary && (
+							<div className="font-semibold">Upgrade</div>
+						)}
 					</div>
 				</div>
 			</div>

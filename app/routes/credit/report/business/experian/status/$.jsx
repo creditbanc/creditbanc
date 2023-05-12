@@ -7,11 +7,23 @@ import { mrm_credit_report, Lendflow } from "~/data/lendflow";
 import { currency, mapIndexed } from "~/utils/helpers";
 import { pipe, map } from "ramda";
 import { get_file_id } from "~/utils/helpers";
+import { get_user_id } from "~/utils/auth.server";
 import { prisma } from "~/utils/prisma.server";
+import { plans } from "~/data/plans";
+import { get } from "shades";
+import AccountCard from "~/components/AccountCard";
 
 export const loader = async ({ request }) => {
 	let url = new URL(request.url);
 	let file_id = get_file_id(url.pathname);
+	let entity_id = await get_user_id(request);
+
+	let { plan_id } = await prisma.entity.findUnique({
+		where: { id: entity_id },
+		select: {
+			plan_id: true,
+		},
+	});
 
 	let report = await prisma.business_credit_report.findUnique({
 		where: {
@@ -23,12 +35,14 @@ export const loader = async ({ request }) => {
 
 	let trade_lines = Lendflow.experian.trade_lines(report);
 
-	return { trade_payment_totals, trade_lines };
+	return { trade_payment_totals, trade_lines, plan_id };
 };
 
 const PaymentStatus = () => {
-	let { trade_payment_totals, trade_lines } = useLoaderData();
+	let { trade_payment_totals, plan_id } = useLoaderData();
 	let { trade_lines: trade_lines_payment_totals } = trade_payment_totals;
+
+	let plan = pipe(get(plan_id, "business", "experian"))(plans);
 
 	return (
 		<div className="overflow-hidden bg-white rounded-lg border">
@@ -44,28 +58,46 @@ const PaymentStatus = () => {
 						<div className="flex flex-col space-y-1">
 							<div>Active Accounts</div>
 							<div className="flex flex-col h-[1px] bg-gray-200 w-[90%]"></div>
-							<div className="font-semibold">
-								{trade_lines_payment_totals.tradelineCount}
-							</div>
+							{plan.trade_lines_payment_totals && (
+								<div className="font-semibold">
+									{trade_lines_payment_totals.tradelineCount}
+								</div>
+							)}
+
+							{!plan.trade_lines_payment_totals && (
+								<div className="font-semibold">Upgrade</div>
+							)}
 						</div>
 
 						<div className="flex flex-col space-y-1">
 							<div>Delinquent Accounts</div>
 							<div className="flex flex-col h-[1px] bg-gray-200 w-[90%]"></div>
-							<div className="font-semibold">
-								{trade_lines_payment_totals.dbt30}
-							</div>
+							{plan.trade_lines_payment_totals && (
+								<div className="font-semibold">
+									{trade_lines_payment_totals.dbt30}
+								</div>
+							)}
+
+							{!plan.trade_lines_payment_totals && (
+								<div className="font-semibold">Upgrade</div>
+							)}
 						</div>
 
 						<div className="flex flex-col space-y-1">
 							<div>Balance of all accounts</div>
 							<div className="flex flex-col h-[1px] bg-gray-200 w-[90%]"></div>
-							<div className="font-semibold">
-								{currency.format(
-									trade_lines_payment_totals
-										.totalAccountBalance.amount
-								)}
-							</div>
+							{plan.trade_lines_payment_totals && (
+								<div className="font-semibold">
+									{currency.format(
+										trade_lines_payment_totals
+											.totalAccountBalance.amount
+									)}
+								</div>
+							)}
+
+							{!plan.trade_lines_payment_totals && (
+								<div className="font-semibold">Upgrade</div>
+							)}
 						</div>
 					</div>
 				</div>
@@ -99,103 +131,8 @@ const ExplanationCard = () => {
 	);
 };
 
-const AccountCard = ({ trade_line }) => {
-	let is_current =
-		trade_line.dbt30 === 0 &&
-		trade_line.dbt60 === 0 &&
-		trade_line.dbt90 == 0;
-
-	return (
-		<div className="overflow-hidden bg-white rounded-lg border">
-			<div className="px-4 py-5 sm:px-6">
-				<h3 className="text-lg font-medium leading-6 text-gray-900">
-					{trade_line.businessCategory}
-				</h3>
-			</div>
-			<div className="border-t border-gray-200 p-5 pt-1">
-				{is_current && (
-					<div className="flex flex-row space-x-3 px-2 py-2 bg-green-100 rounded my-3">
-						<div className="flex flex-col h-full justify-center w-[20px] mt-[2px]">
-							<HandThumbUpIcon />
-						</div>
-
-						<div>This account is current</div>
-					</div>
-				)}
-
-				{!is_current && (
-					<div className="flex flex-row space-x-3 px-2 py-2 bg-red-100 rounded my-3">
-						<div className="flex flex-col h-full justify-center w-[20px] mt-[2px]">
-							<HandThumbDownIcon />
-						</div>
-
-						<div>This account is not current</div>
-					</div>
-				)}
-
-				<div className="flex flex-col w-full [&>*:nth-child(odd)]:bg-gray-50 border rounded">
-					<div className="flex flex-row py-2 px-3">
-						<div className="flex flex-col w-3/4">Date Reported</div>
-						<div>{trade_line.dateReported}</div>
-					</div>
-					<div className="flex flex-row py-2 px-3">
-						<div className="flex flex-col w-3/4">
-							Date of Last Activity
-						</div>
-						<div>{trade_line.dateLastActivity}</div>
-					</div>
-					<div className="flex flex-row py-2 px-3">
-						<div className="flex flex-col w-3/4">Term</div>
-						<div>{trade_line.terms}</div>
-					</div>
-				</div>
-				<div className="flex flex-col w-full my-4">
-					<div className="flex flex-col w-full space-y-2 mb-5">
-						<div className="font-semibold">Payment History</div>
-						<div className="flex flex-col h-[1px] bg-gray-200"></div>
-						<div className="pt-3">
-							This is the history of how many of your payments
-							within this account were made within the terms and
-							how many were not.
-						</div>
-					</div>
-					<div className="flex flex-row w-full">
-						<div className="flex flex-col items-center w-1/4 space-y-1">
-							<div>High credit</div>
-							<div className="flex flex-col w-[90%] h-[1px] bg-gray-200"></div>
-							<div className="font-semibold">
-								{currency.format(
-									trade_line.recentHighCredit.amount
-								)}
-							</div>
-						</div>
-						<div className="flex flex-col items-center w-1/4 space-y-1">
-							<div>Account balance</div>
-							<div className="flex flex-col w-[90%] h-[1px] bg-gray-200"></div>
-							<div className="font-semibold">
-								{currency.format(
-									trade_line.accountBalance.amount
-								)}
-							</div>
-						</div>
-						<div className="flex flex-col w-1/2 items-end space-y-1">
-							<div className="flex flex-col items-center w-1/2">
-								<div>High credit</div>
-								<div className="flex flex-col w-[90%] h-[1px] bg-gray-200"></div>
-								<div className="font-semibold">
-									{trade_line.currentPercentage}%
-								</div>
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-	);
-};
-
 export default function Container() {
-	let { trade_lines } = useLoaderData();
+	let { trade_lines, plan_id } = useLoaderData();
 
 	return (
 		<div className="flex flex-col w-full space-y-5">
@@ -208,7 +145,11 @@ export default function Container() {
 			<div className="flex flex-col space-y-4">
 				{pipe(
 					mapIndexed((trade_line, idx) => (
-						<AccountCard trade_line={trade_line} key={idx} />
+						<AccountCard
+							trade_line={trade_line}
+							key={idx}
+							plan_id={plan_id}
+						/>
 					))
 				)(trade_lines)}
 			</div>
