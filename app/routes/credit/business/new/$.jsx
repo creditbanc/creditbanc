@@ -58,7 +58,7 @@ export const action = async ({ request }) => {
 	const group_id = get_group_id(request.url);
 	const form = await request.formData();
 	const payload = JSON.parse(form.get("payload"));
-	console.log("payload", payload);
+
 	let data = test_identity_one;
 	let entity_id = await get_user_id(request);
 
@@ -75,18 +75,20 @@ export const action = async ({ request }) => {
 
 	let credit_report_payload = mrm_credit_report;
 
-	console.log("credit_report_payload");
-	console.log(credit_report_payload);
+	// console.log("credit_report_payload");
+	// console.log(credit_report_payload);
 
-	let file = await create_new_report({
+	let { file } = await create_new_report({
 		group_id,
 		...credit_report_payload,
 	});
 
-	console.log("report");
-	console.log(file);
+	// console.log("report");
+	// console.log(file);
 
-	return redirect(`/home`);
+	return redirect(
+		`/credit/report/business/experian/overview/resource/e/${entity_id}/g/${group_id}/f/${file.id}`
+	);
 
 	try {
 		let response = await axios(options);

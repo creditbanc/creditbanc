@@ -59,7 +59,13 @@ export async function action({ request }) {
 	// 	// console.log("noDisplayToken");
 	// let redirect_to = `/credit/personal/create?${url.searchParams.toString()}`;
 	// let redirect_to = `/credit/personal/new${url.searchParams.toString()}`;
-	let redirect_to = `/credit/business/new`;
+	let redirect_to;
+
+	if (plan == "essential") {
+		redirect_to = `/credit/business/new`;
+	} else {
+		redirect_to = `/checkout/plans/pro`;
+	}
 
 	return await signup({
 		email,

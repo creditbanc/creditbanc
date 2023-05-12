@@ -26,6 +26,8 @@ model Entity {
   first_name                      String?
   last_name                       String?
   plan_id                         String?
+  stripe_customer_id              String?
+  stripe_subscription_id          String?
 }
 
 // the mental model is:

@@ -10,6 +10,8 @@ import { Link, useSubmit } from "@remix-run/react";
 import { get_user_id } from "~/utils/auth.server";
 import { hasPath, length, pipe } from "ramda";
 import { get, has } from "shades";
+import { prisma } from "~/utils/prisma.server";
+import { redirect } from "@remix-run/node";
 var stripe = require("stripe");
 
 const steps = [
@@ -97,11 +99,25 @@ export const action = async ({ request }) => {
 
 		console.log("subscription");
 		console.log(subscription);
+
+		return redirect("/home");
 	}
 
 	let customer = await create_customer(entity_id);
 	let { id: customer_id } = customer;
 	let subscription = await subscribe_customer(customer_id);
+
+	await prisma.entity.update({
+		where: {
+			id: entity_id,
+		},
+		data: {
+			stripe_customer_id: customer_id,
+			stripe_subscription_id: subscription.id,
+		},
+	});
+
+	return redirect("/home");
 
 	console.log("subscription");
 	console.log(subscription);
