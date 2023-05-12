@@ -345,10 +345,14 @@ export const get_docs = async ({ resource_id, entity_id }) => {
 	);
 
 	let resources_data = pipe(
-		mod(all)(pick(["id", "type", "model", "resource_path_id"]))
+		mod(all)(pick(["id", "type", "model", "resource_path_id", "shared"]))
 	);
 
-	let entity_resources = pipe(get_subscriptions)(entity_resources_response);
+	let entity_resources = pipe(
+		get_subscriptions,
+		mod(all)((resource) => ({ ...resource, shared: false }))
+	)(entity_resources_response);
+
 	let shared_resources = pipe(
 		mod(all)((resource) => ({ ...resource, shared: true }))
 	)(shared_resources_response);
@@ -363,8 +367,8 @@ export const get_docs = async ({ resource_id, entity_id }) => {
 			subscriptions.map(async (subscription) => {
 				let { model, type, resource_path_id, shared } = subscription;
 
-				// console.log("model");
-				// console.log(model);
+				// console.log("get_resources");
+				// console.log(shared);
 
 				let resource = await prisma[model].findFirst({
 					where: { id: resource_path_id },
@@ -381,6 +385,8 @@ export const get_docs = async ({ resource_id, entity_id }) => {
 						last_name,
 						city,
 						state,
+						shared,
+						entity_id,
 					} = resource;
 
 					return {
@@ -393,6 +399,7 @@ export const get_docs = async ({ resource_id, entity_id }) => {
 						last_name,
 						city,
 						state,
+						entity_id,
 					};
 				}
 
@@ -400,7 +407,7 @@ export const get_docs = async ({ resource_id, entity_id }) => {
 					// console.log("resourceis");
 					// console.log(resource);
 
-					let { id, data, resource_id } = resource;
+					let { id, data, resource_id, entity_id } = resource;
 
 					let { business_legal_name } = data;
 
@@ -411,6 +418,7 @@ export const get_docs = async ({ resource_id, entity_id }) => {
 						type,
 						model,
 						shared,
+						entity_id,
 					};
 				}
 			})

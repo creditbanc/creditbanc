@@ -80,11 +80,12 @@ export const action = async ({ request }) => {
 
 	let { file } = await create_new_report({
 		group_id,
+		entity_id,
 		...credit_report_payload,
 	});
 
-	// console.log("report");
-	// console.log(file);
+	console.log("report");
+	console.log(file);
 
 	return redirect(
 		`/credit/report/business/experian/overview/resource/e/${entity_id}/g/${group_id}/f/${file.id}`

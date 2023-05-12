@@ -163,6 +163,9 @@ export default function LeftNav({ data = {}, can_manage_roles } = {}) {
 	let location = useLocation();
 	let fetcher = useFetcher();
 
+	// console.log("data");
+	// console.log(data);
+
 	useEffect(() => {
 		setCollapsed(collapsed);
 	}, []);
@@ -352,6 +355,7 @@ export default function LeftNav({ data = {}, can_manage_roles } = {}) {
 									}
 									className="border rounded-md text-sm py-1 px-2 cursor-pointer hover:border-indigo-400 flex flex-row justify-between items-center my-2 text-gray-700"
 								>
+									{/* <div>{report.resource_id}</div> */}
 									<div>{report.business_legal_name}</div>
 									<div
 										onClick={(e) => onDelete(report.id, e)}

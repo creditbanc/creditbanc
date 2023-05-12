@@ -9,6 +9,7 @@ import {
 } from "~/utils/helpers";
 import { isEmpty, pipe } from "ramda";
 import { useModalStore } from "~/hooks/useModal";
+import Modal from "./Modal";
 const cb_logo = "/images/logos/cb_logo_3.png";
 
 function classNames(...classes) {

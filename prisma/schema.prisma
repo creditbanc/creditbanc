@@ -118,6 +118,7 @@ model personal_credit_report {
   zip         String?
   trade_lines Json?
   type        String?
+  entity_id   String?  @db.ObjectId
 }
 
 model business_credit_report {
@@ -127,6 +128,7 @@ model business_credit_report {
   resource_id String?  @db.ObjectId
   data        Json?
   type        String?
+  entity_id   String?  @db.ObjectId
 }
 
 model Plan {

@@ -13,16 +13,18 @@ export const loader = async ({ request }) => {
 	let file_id = get_file_id(url.pathname);
 	let entity_id = await get_user_id(request);
 
-	let { plan_id } = await prisma.entity.findUnique({
-		where: { id: entity_id },
-		select: {
-			plan_id: true,
-		},
-	});
-
 	let report = await prisma.business_credit_report.findUnique({
 		where: {
 			id: file_id,
+		},
+	});
+
+	let is_owner = report.entity_id == entity_id;
+
+	let { plan_id } = await prisma.entity.findUnique({
+		where: { id: is_owner ? entity_id : report.entity_id },
+		select: {
+			plan_id: true,
 		},
 	});
 

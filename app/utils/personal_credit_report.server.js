@@ -4,6 +4,7 @@ import { credit_report_data, CreditReport, Liabilities } from "~/data/array";
 
 export const create = async (payload) => {
 	let {
+		entity_id,
 		group_id,
 		first_name = "",
 		last_name = "",
@@ -32,6 +33,7 @@ export const create = async (payload) => {
 			zip,
 			trade_lines,
 			type: "personal_credit_report",
+			entity_id,
 		},
 	});
 

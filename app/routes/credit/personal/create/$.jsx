@@ -118,7 +118,11 @@ export const loader = async ({ request }) => {
 
 	// return null;
 
-	let { file } = await create({ group_id, ...credit_report_payload });
+	let { file } = await create({
+		entity_id,
+		group_id,
+		...credit_report_payload,
+	});
 
 	// let { file } = report;
 	// console.log("report");
