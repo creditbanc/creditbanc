@@ -1402,10 +1402,6 @@ video {
   width: 15rem;
 }
 
-.w-64 {
-  width: 16rem;
-}
-
 .w-8 {
   width: 2rem;
 }
@@ -1676,16 +1672,6 @@ video {
 
 .translate-x-0 {
   --tw-translate-x: 0px;
-  transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
-}
-
-.translate-x-3 {
-  --tw-translate-x: 0.75rem;
-  transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
-}
-
-.translate-x-3\.5 {
-  --tw-translate-x: 0.875rem;
   transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
 }
 
@@ -2498,10 +2484,6 @@ video {
   padding: 3px;
 }
 
-.p-px {
-  padding: 1px;
-}
-
 .px-1 {
   padding-left: 0.25rem;
   padding-right: 0.25rem;
@@ -2751,10 +2733,6 @@ video {
 
 .pr-5 {
   padding-right: 1.25rem;
-}
-
-.pr-6 {
-  padding-right: 1.5rem;
 }
 
 .pr-9 {
@@ -3206,10 +3184,6 @@ video {
 
 .ring-gray-900\/10 {
   --tw-ring-color: rgb(17 24 39 / 0.1);
-}
-
-.ring-gray-900\/5 {
-  --tw-ring-color: rgb(17 24 39 / 0.05);
 }
 
 .ring-green-600\/20 {

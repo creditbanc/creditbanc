@@ -13,8 +13,8 @@ export const loader = async () => {
 
 	let { data: customers } = customers_response;
 
-	console.log("customers");
-	console.log(customers);
+	// console.log("customers");
+	// console.log(customers);
 
 	return { customers };
 };
