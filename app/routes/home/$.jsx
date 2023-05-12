@@ -44,71 +44,131 @@ export const loader = async ({ request }) => {
 		head
 	)(group_docs);
 
-	let business_credit_report = await prisma.business_credit_report.findUnique(
-		{
-			where: {
-				id: business_credit_report_response.id,
-			},
-		}
-	);
+	let business_credit_report_payload = {};
 
-	let personal_credit_report = await prisma.personal_credit_report.findUnique(
-		{
-			where: {
-				id: personal_credit_report_response.id,
-			},
-		}
-	);
+	if (business_credit_report_response) {
+		let business_credit_report =
+			await prisma.business_credit_report.findUnique({
+				where: {
+					id: business_credit_report_response.id,
+				},
+			});
 
-	let experian_business_score = Lendflow.experian.score(
-		business_credit_report
-	);
+		let experian_business_score = Lendflow.experian.score(
+			business_credit_report
+		);
 
-	let dnb_business_score = Lendflow.dnb.score(business_credit_report);
+		let dnb_business_score = Lendflow.dnb.score(business_credit_report);
 
-	let experian_personal_score = Array.experian.score(credit_report_data);
+		let experian_business_report = {
+			score: experian_business_score,
+			id: business_credit_report.id,
+			href: `/credit/report/business/experian/overview/resource/e/${entity_id}/g/${group_id}/f/${business_credit_report.id}`,
+		};
 
-	let equifax_personal_score = Array.equifax.score(credit_report_data);
+		let dnb_business_report = {
+			score: dnb_business_score,
+			id: business_credit_report.id,
+			href: `/credit/report/business/dnb/overview/resource/e/${entity_id}/g/${group_id}/f/${business_credit_report.id}`,
+		};
 
-	let transunion_personal_score = Array.transunion.score(credit_report_data);
+		business_credit_report_payload = {
+			experian_business_report,
+			dnb_business_report,
+		};
+	}
 
-	let experian_business_report = {
-		score: experian_business_score,
-		id: business_credit_report.id,
-		href: `/credit/report/business/experian/overview/resource/e/${entity_id}/g/${group_id}/f/${business_credit_report.id}`,
-	};
+	if (!business_credit_report_response) {
+		let experian_business_report = {
+			score: 0,
+			id: 0,
+			href: `/credit/business/new`,
+		};
 
-	let dnb_business_report = {
-		score: dnb_business_score,
-		id: business_credit_report.id,
-		href: `/credit/report/business/dnb/overview/resource/e/${entity_id}/g/${group_id}/f/${business_credit_report.id}`,
-	};
+		let dnb_business_report = {
+			score: 0,
+			id: 0,
+			href: `/credit/business/new`,
+		};
 
-	let experian_personal_report = {
-		score: experian_personal_score,
-		id: personal_credit_report.id,
-		href: `/credit/report/personal/personal/resource/e/${entity_id}/g/${group_id}/f/${business_credit_report.id}`,
-	};
+		business_credit_report_payload = {
+			experian_business_report,
+			dnb_business_report,
+		};
+	}
 
-	let equifax_personal_report = {
-		score: equifax_personal_score,
-		id: personal_credit_report.id,
-		href: `/credit/report/personal/personal/resource/e/${entity_id}/g/${group_id}/f/${business_credit_report.id}`,
-	};
+	let personal_credit_report_payload = {};
 
-	let transunion_personal_report = {
-		score: transunion_personal_score,
-		id: personal_credit_report.id,
-		href: `/credit/report/personal/personal/resource/e/${entity_id}/g/${group_id}/f/${business_credit_report.id}`,
-	};
+	if (personal_credit_report_response) {
+		let personal_credit_report =
+			await prisma.personal_credit_report.findUnique({
+				where: {
+					id: personal_credit_report_response.id,
+				},
+			});
+
+		let experian_personal_score = Array.experian.score(credit_report_data);
+
+		let equifax_personal_score = Array.equifax.score(credit_report_data);
+
+		let transunion_personal_score =
+			Array.transunion.score(credit_report_data);
+
+		let experian_personal_report = {
+			score: experian_personal_score,
+			id: personal_credit_report.id,
+			href: `/credit/report/personal/personal/resource/e/${entity_id}/g/${group_id}/f/${business_credit_report.id}`,
+		};
+
+		let equifax_personal_report = {
+			score: equifax_personal_score,
+			id: personal_credit_report.id,
+			href: `/credit/report/personal/personal/resource/e/${entity_id}/g/${group_id}/f/${business_credit_report.id}`,
+		};
+
+		let transunion_personal_report = {
+			score: transunion_personal_score,
+			id: personal_credit_report.id,
+			href: `/credit/report/personal/personal/resource/e/${entity_id}/g/${group_id}/f/${business_credit_report.id}`,
+		};
+
+		personal_credit_report_payload = {
+			experian_personal_report,
+			equifax_personal_report,
+			transunion_personal_report,
+		};
+	}
+
+	if (!personal_credit_report_response) {
+		let experian_personal_report = {
+			score: 0,
+			id: 0,
+			href: `/credit/personal/new`,
+		};
+
+		let equifax_personal_report = {
+			score: 0,
+			id: 0,
+			href: `/credit/personal/new`,
+		};
+
+		let transunion_personal_report = {
+			score: 0,
+			id: 0,
+			href: `/credit/personal/new`,
+		};
+
+		personal_credit_report_payload = {
+			experian_personal_report,
+			equifax_personal_report,
+			transunion_personal_report,
+		};
+	}
 
 	return {
+		...personal_credit_report_payload,
+		...business_credit_report_payload,
 		entity_id,
-		experian_business_report,
-		dnb_business_report,
-		experian_personal_report,
-		equifax_personal_report,
-		transunion_personal_report,
 		plan_id,
 	};
 };

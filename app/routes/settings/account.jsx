@@ -11,11 +11,11 @@ export const loader = async ({ request }) => {
 	let entity_id = await get_user_id(request);
 	let entity = await get_user(request);
 
-	return { entity_id };
+	return { entity_id, entity };
 };
 
 export default function Account() {
-	const { entity_id } = useLoaderData();
+	const { entity_id, entity } = useLoaderData();
 	const [automaticTimezoneEnabled, setAutomaticTimezoneEnabled] =
 		useState(true);
 
@@ -52,7 +52,7 @@ export default function Account() {
 							</dt>
 							<dd className="mt-1 flex justify-between gap-x-6 sm:mt-0 sm:flex-auto">
 								<div className="text-gray-900">
-									tom.cook@example.com
+									{entity.email}
 								</div>
 								<button
 									type="button"
