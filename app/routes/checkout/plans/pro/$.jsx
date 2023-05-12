@@ -6,30 +6,19 @@ import {
 } from "@heroicons/react/20/solid";
 import { Popover, Transition } from "@headlessui/react";
 const cb_logo = "/images/logos/cb_logo_3.png";
-import { Link, useSubmit } from "@remix-run/react";
-import { get_user_id } from "~/utils/auth.server";
-import { hasPath, length, pipe } from "ramda";
-import { get, has } from "shades";
+import { Link, useLoaderData, useSubmit } from "@remix-run/react";
+import { get_user_id, get_user } from "~/utils/auth.server";
+import { hasPath, head, length, pipe } from "ramda";
+import { filter, get, has } from "shades";
 import { prisma } from "~/utils/prisma.server";
 import { redirect } from "@remix-run/node";
+import { plans } from "~/data/upgrade_plans";
 var stripe = require("stripe");
 
 const steps = [
 	// { name: "Cart", href: "#", status: "complete" },
 	{ name: "Billing Information", href: "#", status: "current" },
 	{ name: "Confirmation", href: "#", status: "upcoming" },
-];
-
-let features = [
-	"Full business & personal credit reports",
-	"Actionable cash flow insights & alerts",
-	"1-on-1s with credit & lending specialists",
-	"Identity restoration services",
-	"$1M Identity theft protection",
-	"Lost wallet replacement",
-	"Follow up to 5 businesses’ credit reports",
-	"Simple quarterly billing option",
-	"Tradeline reporting for business credit support",
 ];
 
 export const action = async ({ request }) => {
@@ -49,8 +38,8 @@ export const action = async ({ request }) => {
 		customer_search_response
 	);
 
-	console.log("has_customer");
-	console.log(has_customer);
+	// console.log("has_customer");
+	// console.log(has_customer);
 
 	const create_token = async () => {
 		const token = await stripe.tokens.create({
@@ -97,8 +86,8 @@ export const action = async ({ request }) => {
 		let { id: customer_id } = customer;
 		let subscription = await subscribe_customer(customer_id);
 
-		console.log("subscription");
-		console.log(subscription);
+		// console.log("subscription");
+		// console.log(subscription);
 
 		await prisma.entity.update({
 			where: {
@@ -133,7 +122,21 @@ export const action = async ({ request }) => {
 	console.log(subscription);
 };
 
+export const loader = async ({ request }) => {
+	let entity = await get_user(request);
+
+	// console.log("entity");
+	// console.log(entity);
+
+	let { stripe_subscription_id } = entity;
+
+	return { stripe_subscription_id };
+};
+
 export default function Checkout() {
+	let { stripe_subscription_id } = useLoaderData();
+	let plan = pipe(filter({ id: "pro" }), head)(plans);
+
 	const submit = useSubmit();
 
 	const onSubmit = (event) => {
@@ -221,135 +224,14 @@ export default function Checkout() {
 						</h2>
 
 						<div className="flex flex-col space-y-5 my-5">
-							{features.map((feature, idx) => (
+							{plan.features.map((feature, idx) => (
 								<div className="flex flex-row w-full" key={idx}>
 									<div className="w-[20px] mr-[15px] text-green-500">
 										<CheckIcon />
 									</div>
-									<div>{feature}</div>
+									<div>{feature.text}</div>
 								</div>
 							))}
-						</div>
-						{/* <ul
-							role="list"
-							className="divide-y divide-gray-200 text-sm font-medium text-gray-900"
-						>
-							{products.map((product) => (
-								<li
-									key={product.id}
-									className="flex items-start space-x-4 py-6"
-								>
-									<img
-										src={product.imageSrc}
-										alt={product.imageAlt}
-										className="h-20 w-20 flex-none rounded-md object-cover object-center"
-									/>
-									<div className="flex-auto space-y-1">
-										<h3>{product.name}</h3>
-										<p className="text-gray-500">
-											{product.color}
-										</p>
-										<p className="text-gray-500">
-											{product.size}
-										</p>
-									</div>
-									<p className="flex-none text-base font-medium">
-										{product.price}
-									</p>
-								</li>
-							))}
-						</ul> */}
-
-						<dl className="hidden space-y-6  border-gray-200 pt-6 text-sm font-medium text-gray-900 lg:block">
-							{/* <div className="flex items-center justify-between">
-								<dt className="text-gray-600">Subtotal</dt>
-								<dd>$320.00</dd>
-							</div> */}
-
-							{/* <div className="flex items-center justify-between">
-								<dt className="text-gray-600">Shipping</dt>
-								<dd>$15.00</dd>
-							</div>
-
-							<div className="flex items-center justify-between">
-								<dt className="text-gray-600">Taxes</dt>
-								<dd>$26.80</dd>
-							</div> */}
-
-							<div className="flex items-center justify-between border-t border-gray-200 pt-6">
-								<dt className="text-base">Total</dt>
-								<dd className="text-base">$361.80</dd>
-							</div>
-						</dl>
-
-						<div className="fixed inset-x-0 bottom-0 flex flex-col-reverse text-sm font-medium text-gray-900 lg:hidden">
-							<div className="relative z-10 border-t border-gray-200 bg-white px-4 sm:px-6">
-								<div className="mx-auto max-w-lg">
-									<div className="flex w-full items-center py-6 font-medium">
-										<span className="mr-auto text-base">
-											Total
-										</span>
-										<span className="mr-2 text-base">
-											$361.80
-										</span>
-										{/* <ChevronUpIcon
-											className="h-5 w-5 text-gray-500"
-											aria-hidden="true"
-										/> */}
-									</div>
-								</div>
-							</div>
-
-							{/* <Transition.Root as={Fragment}>
-								<div>
-									<Transition.Child
-										as={Fragment}
-										enter="transition-opacity ease-linear duration-300"
-										enterFrom="opacity-0"
-										enterTo="opacity-100"
-										leave="transition-opacity ease-linear duration-300"
-										leaveFrom="opacity-100"
-										leaveTo="opacity-0"
-									>
-										<Popover.Overlay className="fixed inset-0 bg-black bg-opacity-25" />
-									</Transition.Child>
-
-									<Transition.Child
-										as={Fragment}
-										enter="transition ease-in-out duration-300 transform"
-										enterFrom="translate-y-full"
-										enterTo="translate-y-0"
-										leave="transition ease-in-out duration-300 transform"
-										leaveFrom="translate-y-0"
-										leaveTo="translate-y-full"
-									>
-										<Popover.Panel className="relative bg-white px-4 py-6 sm:px-6">
-											<dl className="mx-auto max-w-lg space-y-6">
-												<div className="flex items-center justify-between">
-													<dt className="text-gray-600">
-														Subtotal
-													</dt>
-													<dd>$320.00</dd>
-												</div>
-
-												<div className="flex items-center justify-between">
-													<dt className="text-gray-600">
-														Shipping
-													</dt>
-													<dd>$15.00</dd>
-												</div>
-
-												<div className="flex items-center justify-between">
-													<dt className="text-gray-600">
-														Taxes
-													</dt>
-													<dd>$26.80</dd>
-												</div>
-											</dl>
-										</Popover.Panel>
-									</Transition.Child>
-								</div>
-							</Transition.Root> */}
 						</div>
 					</div>
 				</section>
@@ -357,12 +239,19 @@ export default function Checkout() {
 				<form className="px-4 pb-36 pt-16 sm:px-6 lg:col-start-1 lg:row-start-1 lg:px-0 lg:pb-16">
 					<div className="mx-auto max-w-lg lg:max-w-none">
 						<section aria-labelledby="payment-heading" className="">
-							<h2
-								id="payment-heading"
-								className="text-lg font-medium text-gray-900"
-							>
-								Payment details
-							</h2>
+							<div className="flex flex-row justify-between">
+								<h2
+									id="payment-heading"
+									className="text-lg font-medium text-gray-900"
+								>
+									Payment details
+								</h2>
+
+								<div className="flex flex-row space-x-1">
+									<div>Plan:</div>
+									<div>{plan.name}</div>
+								</div>
+							</div>
 
 							<div className="mt-6 grid grid-cols-3 gap-x-4 gap-y-6 sm:grid-cols-4">
 								<div className="col-span-3 sm:col-span-4">
@@ -439,165 +328,23 @@ export default function Checkout() {
 							</div>
 						</section>
 
-						{/* <section
-							aria-labelledby="shipping-heading"
-							className="mt-10"
-						>
-							<h2
-								id="shipping-heading"
-								className="text-lg font-medium text-gray-900"
-							>
-								Shipping address
-							</h2>
-
-							<div className="mt-6 grid grid-cols-1 gap-x-4 gap-y-6 sm:grid-cols-3">
-								<div className="sm:col-span-3">
-									<label
-										htmlFor="company"
-										className="block text-sm font-medium text-gray-700"
-									>
-										Company
-									</label>
-									<div className="mt-1">
-										<input
-											type="text"
-											id="company"
-											name="company"
-											className="block w-full rounded-md h-[35px] border border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-										/>
-									</div>
-								</div>
-
-								<div className="sm:col-span-3">
-									<label
-										htmlFor="address"
-										className="block text-sm font-medium text-gray-700"
-									>
-										Address
-									</label>
-									<div className="mt-1">
-										<input
-											type="text"
-											id="address"
-											name="address"
-											autoComplete="street-address"
-											className="block w-full rounded-md h-[35px] border border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-										/>
-									</div>
-								</div>
-
-								<div className="sm:col-span-3">
-									<label
-										htmlFor="apartment"
-										className="block text-sm font-medium text-gray-700"
-									>
-										Apartment, suite, etc.
-									</label>
-									<div className="mt-1">
-										<input
-											type="text"
-											id="apartment"
-											name="apartment"
-											className="block w-full rounded-md h-[35px] border border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-										/>
-									</div>
-								</div>
-
-								<div>
-									<label
-										htmlFor="city"
-										className="block text-sm font-medium text-gray-700"
-									>
-										City
-									</label>
-									<div className="mt-1">
-										<input
-											type="text"
-											id="city"
-											name="city"
-											autoComplete="address-level2"
-											className="block w-full rounded-md h-[35px] border border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-										/>
-									</div>
-								</div>
-
-								<div>
-									<label
-										htmlFor="region"
-										className="block text-sm font-medium text-gray-700"
-									>
-										State / Province
-									</label>
-									<div className="mt-1">
-										<input
-											type="text"
-											id="region"
-											name="region"
-											autoComplete="address-level1"
-											className="block w-full rounded-md h-[35px] border border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-										/>
-									</div>
-								</div>
-
-								<div>
-									<label
-										htmlFor="postal-code"
-										className="block text-sm font-medium text-gray-700"
-									>
-										Postal code
-									</label>
-									<div className="mt-1">
-										<input
-											type="text"
-											id="postal-code"
-											name="postal-code"
-											autoComplete="postal-code"
-											className="block w-full rounded-md h-[35px] border border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-										/>
-									</div>
-								</div>
+						<div className="flex flex-col w-full border-t border-gray-200 mt-10 pt-2">
+							<div className="flex flex-row w-full justify-between font-semibold">
+								<div>Total</div>
+								<div>{plan.price.monthly}</div>
 							</div>
-						</section>
-
-						<section
-							aria-labelledby="billing-heading"
-							className="mt-10"
-						>
-							<h2
-								id="billing-heading"
-								className="text-lg font-medium text-gray-900"
-							>
-								Billing information
-							</h2>
-
-							<div className="mt-6 flex items-center">
-								<input
-									id="same-as-shipping"
-									name="same-as-shipping"
-									type="checkbox"
-									defaultChecked
-									className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
-								/>
-								<div className="ml-2">
-									<label
-										htmlFor="same-as-shipping"
-										className="text-sm font-medium text-gray-900"
-									>
-										Same as shipping information
-									</label>
-								</div>
-							</div>
-						</section> */}
-
+						</div>
 						<div
-							className="mt-10 border-t border-gray-200 pt-6 w-full"
+							className="border-gray-200 pt-6 w-full"
 							onClick={onSubmit}
 						>
 							<button
 								type="submit"
 								className="flex flex-col w-full items-center rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-gray-50 sm:order-last"
 							>
-								Upgrade Now
+								{stripe_subscription_id
+									? "Change Plan"
+									: "Continue"}
 							</button>
 						</div>
 					</div>

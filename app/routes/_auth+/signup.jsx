@@ -64,7 +64,7 @@ export async function action({ request }) {
 	if (plan == "essential") {
 		redirect_to = `/credit/business/new`;
 	} else {
-		redirect_to = `/checkout/plans/pro`;
+		redirect_to = `/checkout/plans/${plan}`;
 	}
 
 	return await signup({

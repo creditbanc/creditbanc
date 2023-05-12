@@ -6,8 +6,8 @@ import {
 } from "@heroicons/react/20/solid";
 import { Popover, Transition } from "@headlessui/react";
 const cb_logo = "/images/logos/cb_logo_3.png";
-import { Link, useSubmit } from "@remix-run/react";
-import { get_user_id } from "~/utils/auth.server";
+import { Link, useLoaderData, useSubmit } from "@remix-run/react";
+import { get_user_id, get_user } from "~/utils/auth.server";
 import { hasPath, head, length, pipe } from "ramda";
 import { filter, get, has } from "shades";
 import { prisma } from "~/utils/prisma.server";
@@ -19,18 +19,6 @@ const steps = [
 	{ name: "Billing Information", href: "#", status: "current" },
 	{ name: "Confirmation", href: "#", status: "upcoming" },
 ];
-
-// let features = [
-// 	"Full business & personal credit reports",
-// 	"Actionable cash flow insights & alerts",
-// 	"1-on-1s with credit & lending specialists",
-// 	"Identity restoration services",
-// 	"$1M Identity theft protection",
-// 	"Lost wallet replacement",
-// 	"Follow up to 5 businesses’ credit reports",
-// 	"Simple quarterly billing option",
-// 	"Tradeline reporting for business credit support",
-// ];
 
 export const action = async ({ request }) => {
 	console.log("action");
@@ -133,7 +121,19 @@ export const action = async ({ request }) => {
 	console.log(subscription);
 };
 
+export const loader = async ({ request }) => {
+	let entity = await get_user(request);
+
+	// console.log("entity");
+	// console.log(entity);
+
+	let { stripe_subscription_id } = entity;
+
+	return { stripe_subscription_id };
+};
+
 export default function Checkout() {
+	let { stripe_subscription_id } = useLoaderData();
 	let plan = pipe(filter({ id: "builder" }), head)(plans);
 
 	const submit = useSubmit();
@@ -232,30 +232,6 @@ export default function Checkout() {
 								</div>
 							))}
 						</div>
-
-						{/* <dl className="hidden space-y-6  border-gray-200 pt-6 text-sm font-medium text-gray-900 lg:block">
-							<div className="flex items-center justify-between border-t border-gray-200 pt-6">
-								<dt className="text-base">Total</dt>
-								<dd className="text-base">
-									{plan.price.monthly}
-								</dd>
-							</div>
-						</dl>
-
-						<div className="fixed inset-x-0 bottom-0 flex flex-col-reverse text-sm font-medium text-gray-900 lg:hidden">
-							<div className="relative z-10 border-t border-gray-200 bg-white px-4 sm:px-6">
-								<div className="mx-auto max-w-lg">
-									<div className="flex w-full items-center py-6 font-medium">
-										<span className="mr-auto text-base">
-											Total
-										</span>
-										<span className="mr-2 text-base">
-											{plan.price.yearly}
-										</span>
-									</div>
-								</div>
-							</div>
-						</div> */}
 					</div>
 				</section>
 
@@ -365,7 +341,9 @@ export default function Checkout() {
 								type="submit"
 								className="flex flex-col w-full items-center rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-gray-50 sm:order-last"
 							>
-								Change Plan
+								{stripe_subscription_id
+									? "Change Plan"
+									: "Continue"}
 							</button>
 						</div>
 					</div>
