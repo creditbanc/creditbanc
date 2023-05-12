@@ -31,6 +31,7 @@ export const signup = async ({
 	new_entity = false,
 	first_name,
 	last_name,
+	plan_id = "essential",
 }) => {
 	// console.log("signup");
 	// console.log("email", email);
@@ -52,6 +53,7 @@ export const signup = async ({
 		password,
 		first_name,
 		last_name,
+		plan_id,
 	});
 
 	if (!entity) {

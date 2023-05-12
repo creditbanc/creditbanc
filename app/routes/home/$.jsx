@@ -9,13 +9,14 @@ import { Link } from "@remix-run/react";
 import { get_user_id } from "~/utils/auth.server";
 import { get_docs as get_group_docs } from "~/utils/group.server";
 import { get_group_id } from "~/utils/helpers";
-import { head, pipe } from "ramda";
+import { head, isEmpty, pipe } from "ramda";
 import { filter, get } from "shades";
 import { prisma } from "~/utils/prisma.server";
 import { Lendflow } from "~/data/lendflow";
 import { Array, credit_report_data } from "~/data/array";
 import { useLoaderData } from "@remix-run/react";
 import { plans } from "~/data/plans";
+import { redirect } from "@remix-run/node";
 
 export const loader = async ({ request }) => {
 	let url = new URL(request.url);
@@ -33,6 +34,14 @@ export const loader = async ({ request }) => {
 		resource_id: group_id,
 		entity_id,
 	});
+
+	// console.log("group_docs");
+	// console.log(group_docs);
+
+	if (isEmpty(group_docs))
+		return redirect(
+			`/credit/business/new/resource/e/${entity_id}/g/${group_id}`
+		);
 
 	let business_credit_report_response = pipe(
 		filter({ model: "business_credit_report" }),

@@ -28,10 +28,10 @@ export async function action({ request }) {
 	// console.log(request.url);
 	const url = new URL(request.url);
 	let search = Object.fromEntries(url.searchParams);
-	let { displayToken } = search;
+	let { displayToken, plan } = search;
 
 	// console.log("displayToken");
-	// console.log(displayToken);
+	// console.log(plan);
 	// console.log(url.searchParams.toString());
 
 	const email = form.get("email");
@@ -47,8 +47,8 @@ export async function action({ request }) {
 		return json({ error: "Invalid form data" }, { status: 400 });
 	}
 
-	console.log("displayToken");
-	console.log(displayToken);
+	// console.log("displayToken");
+	// console.log(displayToken);
 
 	// return null;
 
@@ -58,7 +58,9 @@ export async function action({ request }) {
 	// } else {
 	// 	// console.log("noDisplayToken");
 	// let redirect_to = `/credit/personal/create?${url.searchParams.toString()}`;
-	let redirect_to = `/credit/personal/new${url.searchParams.toString()}`;
+	// let redirect_to = `/credit/personal/new${url.searchParams.toString()}`;
+	let redirect_to = `/credit/business/new`;
+
 	return await signup({
 		email,
 		password,
@@ -66,8 +68,8 @@ export async function action({ request }) {
 		last_name,
 		redirect_to,
 		new_entity: true,
+		plan_id: plan,
 	});
-	// }
 }
 
 const Form = () => {

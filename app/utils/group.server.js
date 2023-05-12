@@ -16,7 +16,7 @@ import {
 	create as create_resource,
 	get as get_resource,
 } from "./resource.server";
-import { inspect } from "./helpers";
+import { inspect, trim } from "./helpers";
 
 import { create as create_role } from "./role.server";
 
@@ -419,16 +419,16 @@ export const get_docs = async ({ resource_id, entity_id }) => {
 		return resources;
 	};
 
-	// let resources = await get_resources(
-	// 	resources_data([...shared_resources, ...entity_resources])
-	// );
+	let resources = await get_resources(
+		resources_data([...shared_resources, ...entity_resources])
+	);
 
-	let resources = await get_resources(resources_data([...shared_resources]));
+	// let resources = await get_resources(resources_data([...shared_resources]));
 
 	// console.log("resources");
 	// inspect(resources);
 
-	return resources;
+	return trim(resources);
 };
 
 export const delete_all = async () => {
