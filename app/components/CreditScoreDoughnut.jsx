@@ -8,49 +8,52 @@ import { useLayoutStore } from "~/stores/useLayoutStore";
 ChartJS.register(ArcElement, Tooltip, Legend);
 
 export const data = {
-	// labels: ["Red", "Green", "Orange"],
 	datasets: [
 		{
-			// label: "# of Votes",
 			data: [33, 33, 33],
 			backgroundColor: [
 				"rgba(231, 76, 60, 1)",
 				"rgba(255, 164, 46, 1)",
 				"rgba(46, 204, 113, 1)",
 			],
-			// borderColor: [
-			// 	"rgba(255, 255, 255 ,1)",
-			// 	"rgba(255, 255, 255 ,1)",
-			// 	"rgba(255, 255, 255 ,1)",
-			// ],
 			borderWidth: 5,
 		},
 	],
 };
 
-export const data2 = {
-	// labels: ["Red", "Green", "Orange"],
+const get_doughnut_pointer_color = (score) => {
+	if (score < 33) {
+		return "rgba(231, 76, 60, 1)";
+	}
+
+	if (score > 33 && score < 66) {
+		return "rgba(255, 164, 46, 1)";
+	}
+
+	if (score > 66) {
+		return "rgba(46, 204, 113, 1)";
+	}
+};
+
+export const data2 = (score) => ({
 	datasets: [
 		{
-			// label: "# of Votes",
-			data: [90, 3.5, 6.5],
+			data: [score, 3.5, 100 - score - 3.5],
 			backgroundColor: [
 				"rgba(0,0,0,0)",
-				// "rgba(255,255,255,1)",
-				"rgba(46, 204, 113, 1)",
+				get_doughnut_pointer_color(score),
 				"rgba(0,0,0,0)",
 			],
 			borderColor: [
 				"rgba(0, 0, 0 ,0)",
 				"rgba(255,255,255,1)",
-				// "rgba(46, 204, 113, 1)",
 				"rgba(0, 0, 0 ,0)",
 			],
 			borderWidth: 2,
 			borderRadius: 0,
 		},
 	],
-};
+});
 
 let options = {
 	rotation: -90,
@@ -63,6 +66,15 @@ let options = {
 	},
 	events: [],
 	responsive: true,
+};
+
+const get_score_range_percentage = (score) => {
+	let min = 300;
+	let max = 850;
+	let range = max - min;
+	let correctedStartValue = score - min;
+	let percentage = (correctedStartValue * 100) / range;
+	return percentage;
 };
 
 export default function CreditScoreDoughnut({
@@ -108,7 +120,11 @@ export default function CreditScoreDoughnut({
 				options={options}
 				ref={doughnutRef}
 			/>
-			<Doughnut className="absolute" data={data2} options={options} />
+			<Doughnut
+				className="absolute"
+				data={data2(get_score_range_percentage(score))}
+				options={options}
+			/>
 			{children && children}
 			{!children && (
 				<div
