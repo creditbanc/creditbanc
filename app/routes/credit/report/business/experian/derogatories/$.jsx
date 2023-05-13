@@ -34,7 +34,7 @@ export const loader = async ({ request }) => {
 };
 
 const Derogatories = () => {
-	let { plan_id } = useLoaderData();
+	let { plan_id, derogatories } = useLoaderData();
 
 	let plan = pipe(get(plan_id, "business", "experian"))(plans);
 
@@ -56,7 +56,7 @@ const Derogatories = () => {
 							Derogatories
 						</div>
 						<div className={`${!plan.derogatories && "blur-sm"}`}>
-							N/A
+							{derogatories?.legalFilingsSummary?.legalCount || 0}
 						</div>
 					</div>
 					<div className="flex flex-row py-2 px-3">
@@ -64,7 +64,8 @@ const Derogatories = () => {
 							Total legal filings
 						</div>
 						<div className={`${!plan.derogatories && "blur-sm"}`}>
-							N/A
+							{derogatories?.legalFilingsSummary
+								?.derogatoryLegalCount || 0}
 						</div>
 					</div>
 				</div>
@@ -73,28 +74,32 @@ const Derogatories = () => {
 						<div>Collections</div>
 						<div className="flex flex-col w-[90%] h-[1px] bg-gray-200"></div>
 						<div className={`${!plan.derogatories && "blur-sm"}`}>
-							0
+							{derogatories?.legalFilingsCollectionsSummary
+								?.collectionCount || 0}
 						</div>
 					</div>
 					<div className="flex flex-col items-center w-1/4 space-y-1">
-						<div>Tax liens</div>
+						<div>Liens</div>
 						<div className="flex flex-col w-[90%] h-[1px] bg-gray-200"></div>
 						<div className={`${!plan.derogatories && "blur-sm"}`}>
-							0
+							{derogatories?.legalFilingsCollectionsSummary
+								?.lienCount || 0}
 						</div>
 					</div>
 					<div className="flex flex-col items-center w-1/4 space-y-1">
 						<div>Judgments</div>
 						<div className="flex flex-col w-[90%] h-[1px] bg-gray-200"></div>
 						<div className={`${!plan.derogatories && "blur-sm"}`}>
-							0
+							{derogatories?.legalFilingsCollectionsSummary
+								?.judgmentCount || 0}
 						</div>
 					</div>
 					<div className="flex flex-col items-center w-1/4 space-y-1">
-						<div>Derogatory Collateral</div>
+						<div>Legal</div>
 						<div className="flex flex-col w-[90%] h-[1px] bg-gray-200"></div>
 						<div className={`${!plan.derogatories && "blur-sm"}`}>
-							0
+							{derogatories?.legalFilingsCollectionsSummary
+								?.derogatoryLegalCount || 0}
 						</div>
 					</div>
 				</div>

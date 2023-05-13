@@ -6,12 +6,12 @@ import { useLoaderData } from "@remix-run/react";
 import { mrm_credit_report, Lendflow } from "~/data/lendflow";
 import { currency, mapIndexed } from "~/utils/helpers";
 import { pipe, map } from "ramda";
-import { get_file_id } from "~/utils/helpers";
+import { get_file_id, get_account_utilization } from "~/utils/helpers";
 import { prisma } from "~/utils/prisma.server";
 import { get_user_id } from "~/utils/auth.server";
 import { plans } from "~/data/plans";
 import { get } from "shades";
-import AccountCard from "~/components/AccountCard";
+import AccountUtilizationCard from "~/components/AccountUtilizationCard";
 
 export const loader = async ({ request }) => {
 	let url = new URL(request.url);
@@ -84,7 +84,15 @@ const CreditUtilization = () => {
 			</div>
 			<div className="border-t border-gray-200 space-y-8 p-6">
 				<div className="flex flex-row w-full">
-					<div className="flex flex-col w-1/2">a</div>
+					<div className="flex flex-col w-1/2 h-full">
+						<div className="flex flex-col items-center">
+							{get_account_utilization(
+								trade_lines.totalAccountBalance.amount,
+								trade_lines.totalHighCreditAmount.amount
+							)}
+							%
+						</div>
+					</div>
 					<div className="flex flex-col w-1/2 space-y-5">
 						<div className="flex flex-col space-y-1">
 							<div>Total Balance (High)</div>
@@ -134,7 +142,7 @@ export default function Container() {
 			<div className="flex flex-col space-y-4">
 				{pipe(
 					mapIndexed((trade_line, idx) => (
-						<AccountCard
+						<AccountUtilizationCard
 							trade_line={trade_line}
 							key={idx}
 							plan_id={plan_id}

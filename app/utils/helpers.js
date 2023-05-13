@@ -27,6 +27,11 @@ import {
 const util = require("util");
 import { get } from "shades";
 
+export const get_account_utilization = (balance, high) => {
+	if (balance == 0) return 0;
+	return Math.round((balance / high) * 100).toFixed(0);
+};
+
 export const mapIndexed = addIndex(map);
 
 export const truncate = curry((length, str) => {

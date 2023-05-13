@@ -1,4 +1,4 @@
-import { defaultTo, pipe } from "ramda";
+import { defaultTo, pipe, tryCatch } from "ramda";
 import { get } from "shades";
 
 export const test_identity_one = {
@@ -1356,7 +1356,45 @@ export const fb_credit_report = {
 				fsr_v2: "Not yet started",
 				commercial_collections: "Success",
 				credit_statuses: "Not yet started",
-				legal_collections: "Not yet started",
+				legal_collections: {
+					businessHeader: {
+						bin: "408026840",
+						phone: "+13214306828",
+						taxId: "464612632",
+						address: {
+							zip: "34787",
+							city: "WINTER GARDEN",
+							state: "FL",
+							street: "9315 TRINANA CIR",
+							zipExtension: "0004",
+						},
+						dbaNames: null,
+						websiteUrl: null,
+						businessName: "MRM CAPITAL HOLDINGS, INC",
+						legalBusinessName: "MRM CAPITAL HOLDINGS, INC",
+						customerDisputeIndicator: false,
+					},
+					legalFilingsSummary: {
+						legalCount: 6,
+						legalBalance: 0,
+						derogatoryLegalCount: 0,
+					},
+					legalFilingsCollectionsSummary: {
+						lienCount: 0,
+						legalCount: 6,
+						lienBalance: 0,
+						legalBalance: 0,
+						judgmentCount: 0,
+						bankruptcyCount: 0,
+						collectionCount: 0,
+						judgmentBalance: 0,
+						uccFilingsCount: 2,
+						collectionBalance: 0,
+						uccDerogatoryCount: 2,
+						bankruptcyIndicator: false,
+						derogatoryLegalCount: 0,
+					},
+				},
 				trades: "Success",
 				corporate_registrations: "Not yet started",
 				contacts: "Not yet started",
@@ -6016,7 +6054,45 @@ export const mrm_credit_report = {
 				fsr_v2: null,
 				commercial_collections: null,
 				credit_statuses: null,
-				legal_collections: null,
+				legal_collections: {
+					businessHeader: {
+						bin: "408026840",
+						phone: "+13214306828",
+						taxId: "464612632",
+						address: {
+							zip: "34787",
+							city: "WINTER GARDEN",
+							state: "FL",
+							street: "9315 TRINANA CIR",
+							zipExtension: "0004",
+						},
+						dbaNames: null,
+						websiteUrl: null,
+						businessName: "MRM CAPITAL HOLDINGS, INC",
+						legalBusinessName: "MRM CAPITAL HOLDINGS, INC",
+						customerDisputeIndicator: false,
+					},
+					legalFilingsSummary: {
+						legalCount: 6,
+						legalBalance: 0,
+						derogatoryLegalCount: 0,
+					},
+					legalFilingsCollectionsSummary: {
+						lienCount: 0,
+						legalCount: 6,
+						lienBalance: 0,
+						legalBalance: 0,
+						judgmentCount: 0,
+						bankruptcyCount: 0,
+						collectionCount: 0,
+						judgmentBalance: 0,
+						uccFilingsCount: 2,
+						collectionBalance: 0,
+						uccDerogatoryCount: 2,
+						bankruptcyIndicator: false,
+						derogatoryLegalCount: 0,
+					},
+				},
 				trades: {
 					businessHeader: {
 						bin: "408026840",
@@ -8494,8 +8570,6 @@ Lendflow.experian.years_on_file = pipe(
 	get("data", "commercial_data", "experian", "facts", "yearsOnFile")
 );
 
-Lendflow.experian.derogatories = pipe(defaultTo([]));
-
 Lendflow.experian.employee_size = pipe(
 	get("data", "commercial_data", "experian", "facts", "employeeSize")
 );
@@ -8514,6 +8588,31 @@ Lendflow.experian.factors = pipe(
 		...experian.intelliscore.commercialScoreFactors,
 		...experian.fsr.fsrScoreFactors,
 	]
+);
+
+Lendflow.experian.derogatories = tryCatch(
+	pipe(
+		get("data", "commercial_data", "experian", "legal_collections"),
+		({ legalFilingsCollectionsSummary, legalFilingsSummary }) => ({
+			legalFilingsCollectionsSummary,
+			legalFilingsSummary,
+		})
+	),
+	defaultTo({})
+);
+
+Lendflow.experian.payment_trends = tryCatch(
+	pipe(
+		get(
+			"data",
+			"commercial_data",
+			"experian",
+			"trades",
+			"tradePaymentTrends",
+			"monthlyTrends"
+		)
+	),
+	defaultTo([])
 );
 
 Lendflow.dnb = {};
@@ -8566,4 +8665,4 @@ Lendflow.dnb.duns_number = pipe(
 );
 
 // console.log("api_response");
-// console.log(Lendflow.dnb.delinquency_score);
+// console.log(Lendflow.experian.derogatories(mrm_credit_report));

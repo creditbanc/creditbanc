@@ -1,7 +1,7 @@
 import { HandThumbUpIcon } from "@heroicons/react/24/outline";
 import { useLoaderData } from "@remix-run/react";
 import { mrm_credit_report, Lendflow } from "~/data/lendflow";
-import { pipe, map } from "ramda";
+import { pipe, map, head } from "ramda";
 import { get_file_id, mapIndexed } from "~/utils/helpers";
 import { prisma } from "~/utils/prisma.server";
 import { get_user_id } from "~/utils/auth.server";
@@ -29,11 +29,11 @@ export const loader = async ({ request }) => {
 		},
 	});
 
-	let trade_payment_totals = Lendflow.experian.trade_payment_totals(report);
+	let payment_trends = Lendflow.experian.payment_trends(report);
 
 	let trade_lines = Lendflow.experian.trade_lines(report);
 
-	return { trade_payment_totals, trade_lines, plan_id };
+	return { payment_trends, trade_lines, plan_id };
 };
 
 const ExplanationCard = () => {
@@ -62,7 +62,7 @@ const ExplanationCard = () => {
 };
 
 const PaymentTrendsCard = () => {
-	let { plan_id } = useLoaderData();
+	let { plan_id, payment_trends } = useLoaderData();
 
 	let plan = pipe(get(plan_id, "business", "experian"))(plans);
 
@@ -82,7 +82,7 @@ const PaymentTrendsCard = () => {
 							Predicted DBT (Days Beyond Terms)
 						</div>
 						<div className={`${!plan.trends && "blur-sm"}`}>
-							N/A
+							{pipe(head, get("dbt"))(payment_trends)}
 						</div>
 					</div>
 				</div>
