@@ -71,6 +71,7 @@ export default function CreditScoreDoughnut({
 	scoreClassNames = "",
 	bureauTitleClassNames = "",
 	children,
+	score,
 }) {
 	const chartContainerRef = useRef(null);
 	const size = useWindowSize();
@@ -114,7 +115,9 @@ export default function CreditScoreDoughnut({
 					className="absolute flex flex-col items-center justify-end"
 					style={chartStyle}
 				>
-					<div className={`font-bold ${scoreClassNames}`}>500</div>
+					<div className={`font-bold ${scoreClassNames}`}>
+						{score}
+					</div>
 					<div className={`${bureauTitleClassNames}`}>{bureau}</div>
 				</div>
 			)}

@@ -12,6 +12,8 @@ import { get_user_id } from "~/utils/auth.server";
 import { validate_action, is_resource_owner_p } from "~/utils/resource.server";
 import { redirect } from "@remix-run/node";
 import { CreditTabsSelect } from "~/components/PersonalCreditTabs";
+import { Array } from "~/data/array";
+import { prisma } from "~/utils/prisma.server";
 
 export const loader = async ({ request }) => {
 	let url = new URL(request.url);
@@ -45,11 +47,28 @@ export const loader = async ({ request }) => {
 
 	let report = pipe(filter({ id: file_id }), head)(group_docs);
 
-	return { report };
+	let { data: report_response } =
+		await prisma.personal_credit_report.findUnique({
+			where: {
+				id: report.id,
+			},
+		});
+
+	let experian_score = Array.experian.score(report_response);
+	let equifax_score = Array.experian.score(report_response);
+	let transunion_score = Array.experian.score(report_response);
+
+	let scores = {
+		experian: experian_score,
+		equifax: equifax_score,
+		transunion: transunion_score,
+	};
+
+	return { report, scores };
 };
 
 export default function CreditReport() {
-	var { report } = useLoaderData() ?? {};
+	var { report, scores } = useLoaderData() ?? {};
 	const [target, setTarget] = useState();
 	const elmSize = useElmSize(target);
 	let setContentWidth = useLayoutStore((state) => state.set_content_width);
@@ -78,7 +97,7 @@ export default function CreditReport() {
 					className="flex flex-col w-full p-[10px] max-w-5xl mx-auto"
 					ref={setTarget}
 				>
-					<CreditScoreHero report={report} />
+					<CreditScoreHero report={report} scores={scores} />
 
 					<div
 						className={`py-3 mb-10 flex ${

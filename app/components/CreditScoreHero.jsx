@@ -3,9 +3,24 @@ import CreditScoreDoughnut from "~/components/CreditScoreDoughnut";
 import { useLayoutStore } from "~/stores/useLayoutStore";
 import { Carousel } from "antd";
 
-const Single = () => {
+const Single = ({ scores }) => {
 	const [index, setIndex] = useState(0);
+	const [score, setScore] = useState("");
 	const ref = useRef(null);
+
+	useEffect(() => {
+		if (index == 0) {
+			setScore(scores.experian);
+		}
+
+		if (index == 1) {
+			setScore(scores.equifax);
+		}
+
+		if (index == 2) {
+			setScore(scores.transunion);
+		}
+	}, [index]);
 
 	const go_to = (index) => {
 		ref.current.goTo(index);
@@ -21,6 +36,7 @@ const Single = () => {
 							classNames={index == 0 ? "visible" : "hidden"}
 							scoreClassNames="text-6xl"
 							bureauTitleClassNames="text-1xl"
+							score={score}
 						/>
 					</div>
 					<div>
@@ -29,6 +45,7 @@ const Single = () => {
 							classNames={index == 1 ? "visible" : "hidden"}
 							scoreClassNames="text-6xl"
 							bureauTitleClassNames="text-1xl"
+							score={score}
 						/>
 					</div>
 					<div>
@@ -37,6 +54,7 @@ const Single = () => {
 							classNames={index == 2 ? "visible" : "hidden"}
 							scoreClassNames="text-6xl"
 							bureauTitleClassNames="text-1xl"
+							score={score}
 						/>
 					</div>
 				</Carousel>
@@ -107,31 +125,34 @@ const Single = () => {
 	);
 };
 
-const Triple = () => {
+const Triple = ({ scores }) => {
 	return (
 		<div className="sm:flex sm:flex-row sm:justify-around">
 			<CreditScoreDoughnut
 				bureau={"Experian"}
 				scoreClassNames="sm:text-3xl md:text-4xl lg:text-5xl"
 				bureauTitleClassNames="sm:text-base sm:text-l"
+				score={scores.experian}
 			/>
 			<div className="mx-4"></div>
 			<CreditScoreDoughnut
 				bureau={"Equifax"}
 				scoreClassNames="sm:text-3xl md:text-4xl lg:text-5xl"
 				bureauTitleClassNames="sm:text-base sm:text-l"
+				score={scores.equifax}
 			/>
 			<div className="mx-4"></div>
 			<CreditScoreDoughnut
 				bureau={"Transunion"}
 				scoreClassNames="sm:text-3xl md:text-4xl lg:text-5xl"
 				bureauTitleClassNames="sm:text-base sm:text-l"
+				score={scores.transunion}
 			/>
 		</div>
 	);
 };
 
-export default function CreditScoreHero({ report }) {
+export default function CreditScoreHero({ report, scores }) {
 	let content_width = useLayoutStore((state) => state.content_width);
 	let [isMobile, setIsMobile] = useState(true);
 
@@ -154,7 +175,7 @@ export default function CreditScoreHero({ report }) {
 				</p>
 			</div>
 
-			{isMobile ? <Single /> : <Triple />}
+			{isMobile ? <Single scores={scores} /> : <Triple scores={scores} />}
 		</div>
 	);
 }
