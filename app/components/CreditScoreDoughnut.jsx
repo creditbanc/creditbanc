@@ -68,11 +68,9 @@ let options = {
 	responsive: true,
 };
 
-const get_score_range_percentage = (score) => {
-	let min = 300;
-	let max = 850;
+const get_range_percentage = (value, min, max) => {
 	let range = max - min;
-	let correctedStartValue = score - min;
+	let correctedStartValue = value - min;
 	let percentage = (correctedStartValue * 100) / range;
 	return percentage;
 };
@@ -122,7 +120,7 @@ export default function CreditScoreDoughnut({
 			/>
 			<Doughnut
 				className="absolute"
-				data={data2(get_score_range_percentage(score))}
+				data={data2(get_range_percentage(score, 300, 850))}
 				options={options}
 			/>
 			{children && children}
