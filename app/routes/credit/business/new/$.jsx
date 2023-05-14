@@ -3,18 +3,20 @@ import CreditNav from "~/components/CreditNav";
 import CreditHeroGradient from "~/components/CreditHeroGradient";
 import axios from "axios";
 import { head, pipe } from "ramda";
-import { filter, mod, set } from "shades";
+import { filter, get, mod, set } from "shades";
 import { create } from "zustand";
 import { useSubmit } from "@remix-run/react";
 import { inspect, to_resource_pathname, get_group_id } from "~/utils/helpers";
 import { json, redirect } from "@remix-run/node";
-import { test_identity_one, test_identity_three } from "~/data/lendflow";
+import { test_identity_three } from "~/data/lendflow";
 import { Listbox, Transition } from "@headlessui/react";
 import { CheckIcon, ChevronUpDownIcon } from "@heroicons/react/20/solid";
-import { mrm_credit_report } from "~/data/lendflow";
+// import { mrm_credit_report } from "~/data/lendflow";
 import { get_user_id } from "~/utils/auth.server";
 import { create as create_new_report } from "~/utils/business_credit_report.server";
 import Cookies from "js-cookie";
+import { plan_product_requests } from "~/data/lendflow_plan_product_requests";
+import { prisma } from "~/utils/prisma.server";
 
 const useReportStore = create((set) => ({
 	form: {
@@ -56,14 +58,34 @@ export const action = async ({ request }) => {
 	const bearer = "ItLqFE9UpAFDlCFQ7cNUBWW7iQN9cms0";
 	const group_id = get_group_id(request.url);
 	const form = await request.formData();
-	let requested_products = ["experian_intelliscore"];
-	const payload = pipe(
-		mod("requested_products")((value) => requested_products)
-	)(JSON.parse(form.get("payload")));
+	// let requested_products = ["experian_intelliscore"];
 
 	// let data = test_identity_one;
 	let entity_id = await get_user_id(request);
 
+	let { plan_id } = await prisma.entity.findUnique({
+		where: { id: entity_id },
+		select: {
+			plan_id: true,
+		},
+	});
+
+	console.log("plan_id");
+	console.log(plan_id);
+
+	let requested_products = pipe(get(plan_id))(plan_product_requests);
+
+	console.log("requested_products");
+	console.log(requested_products);
+
+	const payload = pipe(
+		mod("requested_products")((value) => requested_products)
+	)(JSON.parse(form.get("payload")));
+
+	console.log("payload");
+	console.log(payload);
+
+	// return null;
 	var options = {
 		method: "post",
 		maxBodyLength: Infinity,
@@ -124,8 +146,6 @@ export const action = async ({ request }) => {
 
 			try {
 				let response = await axios(options);
-				let { data } = response?.data;
-
 				return response?.data;
 			} catch (error) {
 				console.log("error");
@@ -138,6 +158,7 @@ export const action = async ({ request }) => {
 			console.log("start");
 			await new Promise((resolve) => setTimeout(resolve, 10000));
 			console.log("end");
+
 			let report = await get_report();
 			// console.log("report");
 			// inspect(report);
@@ -145,6 +166,7 @@ export const action = async ({ request }) => {
 			let { file } = await create_new_report({
 				group_id,
 				entity_id,
+				application_id,
 				...report,
 			});
 
@@ -154,8 +176,6 @@ export const action = async ({ request }) => {
 			return redirect(
 				`/credit/report/business/experian/overview/resource/e/${entity_id}/g/${group_id}/f/${file.id}`
 			);
-
-			return null;
 		}
 
 		return json({ error: "No application_id" }, { status: 500 });

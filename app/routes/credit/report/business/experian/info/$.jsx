@@ -1,12 +1,15 @@
 import { useLoaderData } from "@remix-run/react";
-import { mrm_credit_report, Lendflow } from "~/data/lendflow";
+import { Lendflow } from "~/data/lendflow";
 import { currency } from "~/utils/helpers";
-import { head, pipe } from "ramda";
-import { get_file_id, mapIndexed } from "~/utils/helpers";
+import { head, pipe, allPass, not } from "ramda";
+import { get_file_id } from "~/utils/helpers";
 import { prisma } from "~/utils/prisma.server";
 import { get_user_id } from "~/utils/auth.server";
 import { plans } from "~/data/plans";
 import { get } from "shades";
+import { report_tests } from "~/data/report_tests";
+import { get_lendflow_report } from "~/utils/lendflow";
+import { update_business_report } from "~/utils/business_credit_report.server";
 
 export const loader = async ({ request }) => {
 	let url = new URL(request.url);
@@ -28,6 +31,12 @@ export const loader = async ({ request }) => {
 		},
 	});
 
+	if (pipe(allPass(report_tests[plan_id]), not)(report)) {
+		console.log("didnotpass");
+		let lendflow_report = await get_lendflow_report(report.application_id);
+		report = await update_business_report(report.id, lendflow_report);
+	}
+
 	let years_on_file = Lendflow.experian.years_on_file(report);
 	let employee_size = Lendflow.experian.employee_size(report);
 	let sic_code = head(Lendflow.experian.sic_codes(report));
@@ -35,15 +44,17 @@ export const loader = async ({ request }) => {
 	let sales_revenue = Lendflow.experian.sales_revenue(report);
 	let business = Lendflow.business(report);
 
-	return {
+	let report_payload = {
 		years_on_file,
 		employee_size,
 		sic_code,
 		naics_code,
 		sales_revenue,
 		business,
-		plan_id,
 	};
+	// console.log("report_payload");
+	// console.log(report_payload);
+	return { ...report_payload, plan_id };
 };
 
 const ExplanationCard = () => {

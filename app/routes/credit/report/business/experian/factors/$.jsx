@@ -1,16 +1,15 @@
-import {
-	HandThumbDownIcon,
-	HandThumbUpIcon,
-	ChevronDoubleRightIcon,
-} from "@heroicons/react/24/outline";
+import { ChevronDoubleRightIcon } from "@heroicons/react/24/outline";
 import { get_file_id, mapIndexed } from "~/utils/helpers";
 import { prisma } from "~/utils/prisma.server";
 import { useLoaderData } from "@remix-run/react";
-import { mrm_credit_report, Lendflow } from "~/data/lendflow";
-import { pipe, map, head } from "ramda";
+import { Lendflow } from "~/data/lendflow";
+import { pipe, allPass, not } from "ramda";
 import { get_user_id } from "~/utils/auth.server";
 import { plans } from "~/data/plans";
 import { get } from "shades";
+import { report_tests } from "~/data/report_tests";
+import { get_lendflow_report } from "~/utils/lendflow";
+import { update_business_report } from "~/utils/business_credit_report.server";
 
 export const loader = async ({ request }) => {
 	let url = new URL(request.url);
@@ -32,12 +31,17 @@ export const loader = async ({ request }) => {
 		},
 	});
 
-	let factors = Lendflow.experian.factors(report);
+	if (pipe(allPass(report_tests[plan_id]), not)(report)) {
+		console.log("didnotpass");
+		let lendflow_report = await get_lendflow_report(report.application_id);
+		report = await update_business_report(report.id, lendflow_report);
+	}
 
-	return {
-		factors,
-		plan_id,
-	};
+	let factors = Lendflow.experian.factors(report);
+	let report_payload = { factors };
+	// console.log("report_payload");
+	// console.log(report_payload);
+	return { ...report_payload, plan_id };
 };
 
 const ExplanationCard = () => {

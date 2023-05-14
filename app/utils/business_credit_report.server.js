@@ -1,6 +1,5 @@
 import { prisma } from "./prisma.server";
 import { create as create_resource } from "./resource.server";
-// import { credit_report_data, CreditReport, Liabilities } from "~/data/array";
 
 export const create = async (payload) => {
 	let { group_id, ...rest } = payload;
@@ -45,4 +44,15 @@ export const create = async (payload) => {
 	});
 
 	return { type: "file", file: credit_report_record, credit_report_resource };
+};
+
+export const update_business_report = async (report_id, data) => {
+	let updated_report = await prisma.business_credit_report.update({
+		where: { id: report_id },
+		data: {
+			...data,
+		},
+	});
+
+	return updated_report;
 };

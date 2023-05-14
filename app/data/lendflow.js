@@ -8842,93 +8842,135 @@ export const mrm_credit_report = {
 export const Lendflow = {};
 Lendflow.experian = {};
 
-Lendflow.experian.score = pipe(
-	get(
-		"data",
-		"commercial_data",
-		"experian",
-		"intelliscore",
-		"commercialScore",
-		"score"
-	)
-);
-
-Lendflow.experian.risk_class = pipe(
-	get(
-		"data",
-		"commercial_data",
-		"experian",
-		"intelliscore",
-		"commercialScore",
-		"riskClass"
-	)
-);
-
-Lendflow.business = pipe(
-	get("data", "commercial_data", "experian", "business_match", "response", 0),
-	(business) => ({
-		name: pipe(get("businessName"))(business),
-		phone: pipe(get("phone"))(business),
-		address: pipe(get("address"))(business),
-	})
-);
-
-Lendflow.experian.trade_payment_totals = pipe(
-	get("data", "commercial_data", "experian", "trades", "tradePaymentTotals"),
-	(totals) => ({
-		trade_lines: pipe(get("tradelines"))(totals),
-		combined_trade_lines: pipe(get("combinedTradelines"))(totals),
-		additional_trade_lines: pipe(get("additionalTradelines"))(totals),
-		newly_reported_trade_lines: pipe(get("newlyReportedTradelines"))(
-			totals
-		),
-		continuously_reported_trade_lines: pipe(
-			get("continuouslyReportedTradelines")
-		)(totals),
-	})
-);
-
-Lendflow.experian.trade_summary = pipe(
-	get("data", "commercial_data", "experian", "trades", "tradePaymentSummary")
-);
-
-Lendflow.experian.trade_lines = pipe(
-	get(
-		"data",
-		"commercial_data",
-		"experian",
-		"trades",
-		"tradePaymentExperiences"
+Lendflow.experian.score = tryCatch(
+	pipe(
+		get(
+			"data",
+			"commercial_data",
+			"experian",
+			"intelliscore",
+			"commercialScore",
+			"score"
+		)
 	),
-	(trades) => [...trades.tradeAdditional, ...trades.tradeNewAndContinuous]
+	defaultTo(0)
 );
 
-Lendflow.experian.sic_codes = pipe(
-	get("data", "commercial_data", "experian", "facts", "sicCodes")
+Lendflow.experian.risk_class = tryCatch(
+	pipe(
+		get(
+			"data",
+			"commercial_data",
+			"experian",
+			"intelliscore",
+			"commercialScore",
+			"riskClass"
+		)
+	),
+	defaultTo({})
 );
 
-Lendflow.experian.years_on_file = pipe(
-	get("data", "commercial_data", "experian", "facts", "yearsOnFile")
+Lendflow.business = tryCatch(
+	pipe(
+		get(
+			"data",
+			"commercial_data",
+			"experian",
+			"business_match",
+			"response",
+			0
+		),
+		(business) => ({
+			name: pipe(get("businessName"))(business),
+			phone: pipe(get("phone"))(business),
+			address: pipe(get("address"))(business),
+		})
+	),
+	defaultTo({})
 );
 
-Lendflow.experian.employee_size = pipe(
-	get("data", "commercial_data", "experian", "facts", "employeeSize")
+Lendflow.experian.trade_payment_totals = tryCatch(
+	pipe(
+		get(
+			"data",
+			"commercial_data",
+			"experian",
+			"trades",
+			"tradePaymentTotals"
+		),
+		(totals) => ({
+			trade_lines: pipe(get("tradelines"))(totals),
+			combined_trade_lines: pipe(get("combinedTradelines"))(totals),
+			additional_trade_lines: pipe(get("additionalTradelines"))(totals),
+			newly_reported_trade_lines: pipe(get("newlyReportedTradelines"))(
+				totals
+			),
+			continuously_reported_trade_lines: pipe(
+				get("continuouslyReportedTradelines")
+			)(totals),
+		})
+	),
+	defaultTo({})
 );
 
-Lendflow.experian.naics_codes = pipe(
-	get("data", "commercial_data", "experian", "facts", "naicsCodes")
+Lendflow.experian.trade_summary = tryCatch(
+	pipe(
+		get(
+			"data",
+			"commercial_data",
+			"experian",
+			"trades",
+			"tradePaymentSummary"
+		)
+	),
+	defaultTo({})
 );
 
-Lendflow.experian.sales_revenue = pipe(
-	get("data", "commercial_data", "experian", "facts", "salesRevenue")
+Lendflow.experian.trade_lines = tryCatch(
+	pipe(
+		get(
+			"data",
+			"commercial_data",
+			"experian",
+			"trades",
+			"tradePaymentExperiences"
+		),
+		(trades) => [...trades.tradeAdditional, ...trades.tradeNewAndContinuous]
+	),
+	defaultTo([])
 );
 
-Lendflow.experian.factors = pipe(
-	get("data", "commercial_data", "experian"),
-	(experian) => [
+Lendflow.experian.sic_codes = tryCatch(
+	pipe(get("data", "commercial_data", "experian", "facts", "sicCodes")),
+	defaultTo({})
+);
+
+Lendflow.experian.years_on_file = tryCatch(
+	pipe(get("data", "commercial_data", "experian", "facts", "yearsOnFile")),
+	defaultTo(0)
+);
+
+Lendflow.experian.employee_size = tryCatch(
+	pipe(get("data", "commercial_data", "experian", "facts", "employeeSize")),
+	defaultTo(0)
+);
+
+Lendflow.experian.naics_codes = tryCatch(
+	pipe(get("data", "commercial_data", "experian", "facts", "naicsCodes")),
+	defaultTo({})
+);
+
+Lendflow.experian.sales_revenue = tryCatch(
+	pipe(get("data", "commercial_data", "experian", "facts", "salesRevenue")),
+	defaultTo(0)
+);
+
+Lendflow.experian.factors = tryCatch(
+	pipe(get("data", "commercial_data", "experian"), (experian) => [
 		...experian.intelliscore.commercialScoreFactors,
 		...experian.fsr.fsrScoreFactors,
-	]
+	]),
+	defaultTo([])
 );
 
 Lendflow.experian.derogatories = tryCatch(
@@ -8958,51 +9000,57 @@ Lendflow.experian.payment_trends = tryCatch(
 
 Lendflow.dnb = {};
 
-Lendflow.dnb.score = pipe(
-	get(
-		"data",
-		"commercial_data",
-		"dnb",
-		"pi_l3",
-		"organization",
-		"businessTrading",
-		0,
-		"summary",
-		0,
-		"paydexScore"
+Lendflow.dnb.score = tryCatch(
+	pipe(
+		get(
+			"data",
+			"commercial_data",
+			"dnb",
+			"pi_l3",
+			"organization",
+			"businessTrading",
+			0,
+			"summary",
+			0,
+			"paydexScore"
+		)
 	)
 );
 
-Lendflow.dnb.delinquency_score = pipe(
-	get(
-		"data",
-		"commercial_data",
-		"dnb",
-		"fi_l2",
-		"organization",
-		"dnbAssessment",
-		"delinquencyScore",
-		"classScoreDescription"
+Lendflow.dnb.delinquency_score = tryCatch(
+	pipe(
+		get(
+			"data",
+			"commercial_data",
+			"dnb",
+			"fi_l2",
+			"organization",
+			"dnbAssessment",
+			"delinquencyScore",
+			"classScoreDescription"
+		)
 	)
 );
 
-Lendflow.dnb.total_balance_high = pipe(
-	get(
-		"data",
-		"commercial_data",
-		"dnb",
-		"pi_l3",
-		"organization",
-		"businessTrading",
-		0,
-		"summary",
-		0,
-		"totalExperiencesAmount"
+Lendflow.dnb.total_balance_high = tryCatch(
+	pipe(
+		get(
+			"data",
+			"commercial_data",
+			"dnb",
+			"pi_l3",
+			"organization",
+			"businessTrading",
+			0,
+			"summary",
+			0,
+			"totalExperiencesAmount"
+		)
 	)
 );
 
-Lendflow.dnb.duns_number = pipe(
-	get("data", "commercial_data", "dnb", "fi_l2", "organization", "duns")
+Lendflow.dnb.duns_number = tryCatch(
+	pipe(get("data", "commercial_data", "dnb", "fi_l2", "organization", "duns"))
 );
 
 Lendflow.dnb.payment_status = tryCatch(

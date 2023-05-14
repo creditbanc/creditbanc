@@ -123,13 +123,14 @@ model personal_credit_report {
 }
 
 model business_credit_report {
-  id          String   @id @default(auto()) @map("_id") @db.ObjectId
-  created_at  DateTime @default(now())
-  updated_at  DateTime @updatedAt
-  resource_id String?  @db.ObjectId
-  data        Json?
-  type        String?
-  entity_id   String?  @db.ObjectId
+  id             String   @id @default(auto()) @map("_id") @db.ObjectId
+  created_at     DateTime @default(now())
+  updated_at     DateTime @updatedAt
+  resource_id    String?  @db.ObjectId
+  data           Json?
+  type           String?
+  entity_id      String?  @db.ObjectId
+  application_id String?
 }
 
 model Plan {

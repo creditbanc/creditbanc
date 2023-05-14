@@ -1,12 +1,14 @@
 import { useLoaderData } from "@remix-run/react";
-import { mrm_credit_report, Lendflow } from "~/data/lendflow";
-import { currency, mapIndexed } from "~/utils/helpers";
-import { pipe, map } from "ramda";
+import { Lendflow } from "~/data/lendflow";
+import { allPass, pipe, not } from "ramda";
 import { get_file_id } from "~/utils/helpers";
 import { get_user_id } from "~/utils/auth.server";
 import { prisma } from "~/utils/prisma.server";
 import { plans } from "~/data/plans";
 import { get } from "shades";
+import { report_tests } from "~/data/report_tests";
+import { get_lendflow_report } from "~/utils/lendflow";
+import { update_business_report } from "~/utils/business_credit_report.server";
 
 export const loader = async ({ request }) => {
 	let url = new URL(request.url);
@@ -28,9 +30,17 @@ export const loader = async ({ request }) => {
 		},
 	});
 
-	let derogatories = Lendflow.experian.derogatories(report);
+	if (pipe(allPass(report_tests[plan_id]), not)(report)) {
+		console.log("didnotpass");
+		let lendflow_report = await get_lendflow_report(report.application_id);
+		report = await update_business_report(report.id, lendflow_report);
+	}
 
-	return { derogatories, plan_id };
+	let derogatories = Lendflow.experian.derogatories(report);
+	let report_payload = { derogatories };
+	// console.log("report_payload");
+	// console.log(report_payload);
+	return { ...report_payload, plan_id };
 };
 
 const Derogatories = () => {
