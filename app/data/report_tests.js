@@ -1,6 +1,6 @@
 import { pipe, hasPath } from "ramda";
 
-export const tests = {
+export const experian_tests = {
 	has_score: pipe(
 		hasPath([
 			"data",
@@ -87,17 +87,21 @@ export const tests = {
 };
 
 export const report_tests = {
-	essential: [tests.has_score],
-	builder: [
-		tests.has_score,
-		tests.has_risk,
-		tests.has_business,
-		tests.has_trade_summary,
-		tests.has_trade_payment_totals,
-		tests.has_trade_lines,
-		tests.has_derogatories,
-		tests.has_payment_trends,
-		tests.has_company_info,
-		tests.has_factors,
-	],
+	essential: {
+		experian: [experian_tests.has_score],
+	},
+	builder: {
+		experian: [
+			experian_tests.has_score,
+			experian_tests.has_risk,
+			experian_tests.has_business,
+			experian_tests.has_trade_summary,
+			experian_tests.has_trade_payment_totals,
+			experian_tests.has_trade_lines,
+			experian_tests.has_derogatories,
+			experian_tests.has_payment_trends,
+			experian_tests.has_company_info,
+			experian_tests.has_factors,
+		],
+	},
 };

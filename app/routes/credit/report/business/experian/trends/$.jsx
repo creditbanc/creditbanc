@@ -31,7 +31,7 @@ export const loader = async ({ request }) => {
 		},
 	});
 
-	if (pipe(allPass(report_tests[plan_id]), not)(report)) {
+	if (pipe(allPass(report_tests[plan_id]["experian"]), not)(report)) {
 		console.log("didnotpass");
 		let lendflow_report = await get_lendflow_report(report.application_id);
 		report = await update_business_report(report.id, lendflow_report);
@@ -40,8 +40,8 @@ export const loader = async ({ request }) => {
 	let payment_trends = Lendflow.experian.payment_trends(report);
 	let trade_lines = Lendflow.experian.trade_lines(report);
 	let report_payload = { payment_trends, trade_lines };
-	console.log("report_payload");
-	console.log(report_payload);
+	// console.log("report_payload");
+	// console.log(report_payload);
 	return { ...report_payload, plan_id };
 };
 

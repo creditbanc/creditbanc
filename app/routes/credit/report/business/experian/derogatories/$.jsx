@@ -30,7 +30,7 @@ export const loader = async ({ request }) => {
 		},
 	});
 
-	if (pipe(allPass(report_tests[plan_id]), not)(report)) {
+	if (pipe(allPass(report_tests[plan_id]["experian"]), not)(report)) {
 		console.log("didnotpass");
 		let lendflow_report = await get_lendflow_report(report.application_id);
 		report = await update_business_report(report.id, lendflow_report);
