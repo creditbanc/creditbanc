@@ -1,6 +1,6 @@
 import { useLoaderData } from "@remix-run/react";
 import { Lendflow } from "~/data/lendflow";
-import { pipe, allPass, head, not } from "ramda";
+import { pipe, allPass, head, not, defaultTo, tryCatch, always } from "ramda";
 import { get_file_id, mapIndexed } from "~/utils/helpers";
 import { prisma } from "~/utils/prisma.server";
 import { get_user_id } from "~/utils/auth.server";
@@ -91,7 +91,10 @@ const PaymentTrendsCard = () => {
 							Predicted DBT (Days Beyond Terms)
 						</div>
 						<div className={`${!plan.trends && "blur-sm"}`}>
-							{pipe(head, get("dbt"))(payment_trends)}
+							{pipe(
+								head,
+								tryCatch(get("dbt"), always(0))
+							)(payment_trends)}
 						</div>
 					</div>
 				</div>

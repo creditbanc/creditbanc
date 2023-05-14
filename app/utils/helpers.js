@@ -29,7 +29,8 @@ import { get } from "shades";
 
 export const get_account_utilization = (balance, high) => {
 	if (balance == 0) return 0;
-	return Math.round((balance / high) * 100).toFixed(0);
+	let res = Math.round((balance / high) * 100).toFixed(0);
+	return res == "NaN" ? 0 : res;
 };
 
 export const mapIndexed = addIndex(map);

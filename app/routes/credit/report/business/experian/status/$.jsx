@@ -68,7 +68,8 @@ const PaymentStatus = () => {
 							<div className="flex flex-col h-[1px] bg-gray-200 w-[90%]"></div>
 							{plan.trade_lines_payment_totals && (
 								<div className="font-semibold">
-									{trade_lines_payment_totals.tradelineCount}
+									{trade_lines_payment_totals?.tradelineCount ||
+										0}
 								</div>
 							)}
 
@@ -82,7 +83,7 @@ const PaymentStatus = () => {
 							<div className="flex flex-col h-[1px] bg-gray-200 w-[90%]"></div>
 							{plan.trade_lines_payment_totals && (
 								<div className="font-semibold">
-									{trade_lines_payment_totals.dbt30}
+									{trade_lines_payment_totals?.dbt30 || 0}
 								</div>
 							)}
 
@@ -98,7 +99,7 @@ const PaymentStatus = () => {
 								<div className="font-semibold">
 									{currency.format(
 										trade_lines_payment_totals
-											.totalAccountBalance.amount
+											?.totalAccountBalance?.amount || 0
 									)}
 								</div>
 							)}

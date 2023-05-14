@@ -1,4 +1,4 @@
-import { defaultTo, pipe, tryCatch } from "ramda";
+import { defaultTo, pipe, tryCatch, always } from "ramda";
 import { get } from "shades";
 import { inspect } from "~/utils/helpers";
 
@@ -8853,7 +8853,7 @@ Lendflow.experian.score = tryCatch(
 			"score"
 		)
 	),
-	defaultTo(0)
+	always(0)
 );
 
 Lendflow.experian.risk_class = tryCatch(
@@ -8867,7 +8867,7 @@ Lendflow.experian.risk_class = tryCatch(
 			"riskClass"
 		)
 	),
-	defaultTo({})
+	always({})
 );
 
 Lendflow.business = tryCatch(
@@ -8886,7 +8886,7 @@ Lendflow.business = tryCatch(
 			address: pipe(get("address"))(business),
 		})
 	),
-	defaultTo({})
+	always({})
 );
 
 Lendflow.experian.trade_payment_totals = tryCatch(
@@ -8910,7 +8910,7 @@ Lendflow.experian.trade_payment_totals = tryCatch(
 			)(totals),
 		})
 	),
-	defaultTo({})
+	always({})
 );
 
 Lendflow.experian.trade_summary = tryCatch(
@@ -8923,7 +8923,7 @@ Lendflow.experian.trade_summary = tryCatch(
 			"tradePaymentSummary"
 		)
 	),
-	defaultTo({})
+	always({})
 );
 
 Lendflow.experian.trade_lines = tryCatch(
@@ -8937,32 +8937,32 @@ Lendflow.experian.trade_lines = tryCatch(
 		),
 		(trades) => [...trades.tradeAdditional, ...trades.tradeNewAndContinuous]
 	),
-	defaultTo([])
+	always([])
 );
 
 Lendflow.experian.sic_codes = tryCatch(
 	pipe(get("data", "commercial_data", "experian", "facts", "sicCodes")),
-	defaultTo({})
+	always({})
 );
 
 Lendflow.experian.years_on_file = tryCatch(
 	pipe(get("data", "commercial_data", "experian", "facts", "yearsOnFile")),
-	defaultTo(0)
+	always(0)
 );
 
 Lendflow.experian.employee_size = tryCatch(
 	pipe(get("data", "commercial_data", "experian", "facts", "employeeSize")),
-	defaultTo(0)
+	always(0)
 );
 
 Lendflow.experian.naics_codes = tryCatch(
 	pipe(get("data", "commercial_data", "experian", "facts", "naicsCodes")),
-	defaultTo({})
+	always({})
 );
 
 Lendflow.experian.sales_revenue = tryCatch(
 	pipe(get("data", "commercial_data", "experian", "facts", "salesRevenue")),
-	defaultTo(0)
+	always(0)
 );
 
 Lendflow.experian.factors = tryCatch(
@@ -8970,7 +8970,7 @@ Lendflow.experian.factors = tryCatch(
 		...experian.intelliscore.commercialScoreFactors,
 		...experian.fsr.fsrScoreFactors,
 	]),
-	defaultTo([])
+	always([])
 );
 
 Lendflow.experian.derogatories = tryCatch(
@@ -8981,7 +8981,7 @@ Lendflow.experian.derogatories = tryCatch(
 			legalFilingsSummary,
 		})
 	),
-	defaultTo({})
+	always({})
 );
 
 Lendflow.experian.payment_trends = tryCatch(
@@ -8995,7 +8995,7 @@ Lendflow.experian.payment_trends = tryCatch(
 			"monthlyTrends"
 		)
 	),
-	defaultTo([])
+	always([])
 );
 
 Lendflow.dnb = {};

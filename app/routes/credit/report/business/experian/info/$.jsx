@@ -123,7 +123,7 @@ const ExplanationCard = () => {
 				<div className="flex flex-col w-full space-y-2">
 					{plan.sic_code && (
 						<div className="flex flex-col font-semibold">
-							SIC Code: {sic_code.code} - {sic_code.definition}
+							SIC Code: {sic_code?.code} - {sic_code?.definition}
 						</div>
 					)}
 
@@ -141,14 +141,14 @@ const ExplanationCard = () => {
 					</div>
 				</div>
 				<div className="flex flex-col w-full space-y-2">
-					{plan.naics_code && (
+					{plan?.naics_code && (
 						<div className="flex flex-col font-semibold">
-							NAICS & Description: {naics_code.code} -{" "}
-							{naics_code.definition}
+							NAICS & Description: {naics_code?.code} -{" "}
+							{naics_code?.definition}
 						</div>
 					)}
 
-					{!plan.naics_code && (
+					{!plan?.naics_code && (
 						<div className="flex flex-col font-semibold">
 							Upgrade
 						</div>
@@ -164,13 +164,13 @@ const ExplanationCard = () => {
 					</div>
 				</div>
 				<div className="flex flex-col w-full space-y-2">
-					{plan.sales_revenue && (
+					{plan?.sales_revenue && (
 						<div className="flex flex-col font-semibold">
 							Reveneue: {currency.format(sales_revenue)}
 						</div>
 					)}
 
-					{!plan.sales_revenue && (
+					{!plan?.sales_revenue && (
 						<div className="flex flex-col font-semibold">
 							Upgrade
 						</div>
@@ -178,21 +178,21 @@ const ExplanationCard = () => {
 				</div>
 
 				<div className="flex flex-col w-full space-y-0">
-					{plan.business && (
+					{plan?.business && (
 						<div>
 							<div className="flex flex-col font-semibold">
 								Your company info:
 							</div>
 							<div className="flex flex-col">
-								<div>{business.name}</div>
-								<div>{business.phone}</div>
-								<div>{business.address.street}</div>
+								<div>{business?.name}</div>
+								<div>{business?.phone}</div>
+								<div>{business?.address?.street}</div>
 								<div className="flex flex-row space-x-1">
 									<div className="flex flex-col mr-1">
-										{business.address.city},
+										{business?.address?.city},
 									</div>
-									<div>{business.address.state}</div>
-									<div>{business.address.zip}</div>
+									<div>{business?.address?.state}</div>
+									<div>{business?.address?.zip}</div>
 								</div>
 							</div>
 						</div>

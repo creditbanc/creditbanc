@@ -93,8 +93,8 @@ const CreditUtilization = () => {
 					<div className="flex flex-col w-1/2 h-full">
 						<div className="flex flex-col items-center">
 							{get_account_utilization(
-								trade_lines.totalAccountBalance.amount,
-								trade_lines.totalHighCreditAmount.amount
+								trade_lines?.totalAccountBalance?.amount,
+								trade_lines?.totalHighCreditAmount?.amount
 							)}
 							%
 						</div>
@@ -109,7 +109,8 @@ const CreditUtilization = () => {
 								}`}
 							>
 								{currency.format(
-									trade_lines.totalHighCreditAmount.amount
+									trade_lines?.totalHighCreditAmount
+										?.amount || 0
 								)}
 							</div>
 						</div>
@@ -123,7 +124,8 @@ const CreditUtilization = () => {
 								}`}
 							>
 								{currency.format(
-									trade_lines.totalAccountBalance.amount
+									trade_lines?.totalAccountBalance?.amount ||
+										0
 								)}
 							</div>
 						</div>
