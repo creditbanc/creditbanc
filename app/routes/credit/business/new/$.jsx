@@ -16,7 +16,6 @@ import { create as create_new_report } from "~/utils/business_credit_report.serv
 import Cookies from "js-cookie";
 import { plan_product_requests } from "~/data/lendflow_plan_product_requests";
 import { prisma } from "~/utils/prisma.server";
-const LENDFLOW_BEARER = process.env.LENDFLOW;
 
 const useReportStore = create((set) => ({
 	form: {
@@ -52,10 +51,13 @@ const useReportStore = create((set) => ({
 		set((state) => pipe(mod("form", ...path)(() => value))(state)),
 }));
 
-export const action = async ({ request }) => {
+export const action = async ({ request, context }) => {
 	console.log("new_business_credit_action");
+	console.log("context");
+	console.log(context);
+	console.log(process.env.LENDFLOW);
 
-	const bearer = LENDFLOW_BEARER;
+	const bearer = process.env.LENDFLOW;
 	const group_id = get_group_id(request.url);
 	const form = await request.formData();
 	// let requested_products = ["experian_intelliscore"];
@@ -70,6 +72,9 @@ export const action = async ({ request }) => {
 		},
 	});
 
+	// console.log("bearer");
+	// console.log(bearer);
+
 	console.log("plan_id");
 	console.log(plan_id);
 
@@ -82,8 +87,8 @@ export const action = async ({ request }) => {
 		mod("requested_products")((value) => requested_products)
 	)(JSON.parse(form.get("payload")));
 
-	console.log("payload");
-	console.log(payload);
+	// console.log("payload");
+	// console.log(payload);
 
 	// return null;
 	var options = {
@@ -98,8 +103,8 @@ export const action = async ({ request }) => {
 		// data,
 	};
 
-	// console.log("payload");
-	// console.log(payload);
+	// console.log("options");
+	// console.log(options);
 	// return null;
 
 	// let credit_report_payload = mrm_credit_report;
@@ -132,7 +137,7 @@ export const action = async ({ request }) => {
 
 		// return null;
 
-		const get_report = async () => {
+		const get_report = async (bearer, application_id) => {
 			var options = {
 				method: "get",
 				maxBodyLength: Infinity,
@@ -159,7 +164,7 @@ export const action = async ({ request }) => {
 			await new Promise((resolve) => setTimeout(resolve, 10000));
 			console.log("end");
 
-			let report = await get_report();
+			let report = await get_report(bearer, application_id);
 			// console.log("report");
 			// inspect(report);
 
