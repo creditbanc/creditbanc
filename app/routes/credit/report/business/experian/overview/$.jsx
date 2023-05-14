@@ -32,11 +32,13 @@ export const loader = async ({ request }) => {
 		},
 	});
 
+	// return null;
+
 	let score = Lendflow.experian.score(report);
-	let risk_class = Lendflow.experian.risk_class(report);
-	let business = Lendflow.business(report);
-	let trade_summary = Lendflow.experian.trade_summary(report);
-	return { score, risk_class, business, trade_summary, plan_id };
+	// let risk_class = Lendflow.experian.risk_class(report);
+	// let business = Lendflow.business(report);
+	// let trade_summary = Lendflow.experian.trade_summary(report);
+	return { score, plan_id };
 };
 
 const ScoreCard = () => {
@@ -57,7 +59,7 @@ const ScoreCard = () => {
 								{score}
 							</div>
 							<div className="flex flex-col">
-								{risk_class.definition}
+								{risk_class?.definition}
 							</div>
 						</div>
 					</div>
@@ -66,14 +68,14 @@ const ScoreCard = () => {
 							Experian Business Record shown for:
 						</div>
 						<div className="flex flex-col">
-							<div>{business.name}</div>
-							<div>{business.address.street}</div>
+							<div>{business?.name}</div>
+							<div>{business?.address?.street}</div>
 							<div className="flex flex-row space-x-1">
 								<div className="flex flex-col mr-1">
-									{business.address.city},
+									{business?.address?.city},
 								</div>
-								<div>{business.address.state}</div>
-								<div>{business.address.zip}</div>
+								<div>{business?.address?.state}</div>
+								<div>{business?.address?.zip}</div>
 							</div>
 						</div>
 					</div>
@@ -477,9 +479,9 @@ export default function Container() {
 				<ScoreCard />
 			</div>
 
-			<div>
+			{/* <div>
 				<DaysBeyondTerms />
-			</div>
+			</div> */}
 		</div>
 	);
 }

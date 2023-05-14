@@ -3,12 +3,12 @@ import CreditNav from "~/components/CreditNav";
 import CreditHeroGradient from "~/components/CreditHeroGradient";
 import axios from "axios";
 import { head, pipe } from "ramda";
-import { filter, mod } from "shades";
+import { filter, mod, set } from "shades";
 import { create } from "zustand";
 import { useSubmit } from "@remix-run/react";
 import { inspect, to_resource_pathname, get_group_id } from "~/utils/helpers";
 import { json, redirect } from "@remix-run/node";
-import { test_identity_one } from "~/data/lendflow";
+import { test_identity_one, test_identity_three } from "~/data/lendflow";
 import { Listbox, Transition } from "@headlessui/react";
 import { CheckIcon, ChevronUpDownIcon } from "@heroicons/react/20/solid";
 import { mrm_credit_report } from "~/data/lendflow";
@@ -42,12 +42,10 @@ const useReportStore = create((set) => ({
 		business_legal_name: "",
 		employee_identification_number: "",
 		terms_of_service: true,
-		requested_products: [
-			"experian_business_match",
-			"experian_intelliscore",
-			"experian_liens",
-		],
+		requested_products: ["experian_intelliscore"],
 	},
+	set_state: (path, value) =>
+		set((state) => pipe(mod(...path)(() => value))(state)),
 	setForm: (path, value) =>
 		set((state) => pipe(mod("form", ...path)(() => value))(state)),
 }));
@@ -58,9 +56,12 @@ export const action = async ({ request }) => {
 	const bearer = "ItLqFE9UpAFDlCFQ7cNUBWW7iQN9cms0";
 	const group_id = get_group_id(request.url);
 	const form = await request.formData();
-	const payload = JSON.parse(form.get("payload"));
+	let requested_products = ["experian_intelliscore"];
+	const payload = pipe(
+		mod("requested_products")((value) => requested_products)
+	)(JSON.parse(form.get("payload")));
 
-	let data = test_identity_one;
+	// let data = test_identity_one;
 	let entity_id = await get_user_id(request);
 
 	var options = {
@@ -71,56 +72,90 @@ export const action = async ({ request }) => {
 			Authorization: `Bearer ${bearer}`,
 			"Content-Type": "application/json",
 		},
-		data: data,
+		data: payload,
+		// data,
 	};
 
-	let credit_report_payload = mrm_credit_report;
+	// console.log("payload");
+	// console.log(payload);
+	// return null;
+
+	// let credit_report_payload = mrm_credit_report;
+
+	// return null;
 
 	// console.log("credit_report_payload");
 	// console.log(credit_report_payload);
 
-	let { file } = await create_new_report({
-		group_id,
-		entity_id,
-		...credit_report_payload,
-	});
+	// let { file } = await create_new_report({
+	// 	group_id,
+	// 	entity_id,
+	// 	...credit_report_payload,
+	// });
 
-	console.log("report");
-	console.log(file);
+	// console.log("report");
+	// console.log(file);
 
-	return redirect(
-		`/credit/report/business/experian/overview/resource/e/${entity_id}/g/${group_id}/f/${file.id}`
-	);
+	// return redirect(
+	// 	`/credit/report/business/experian/overview/resource/e/${entity_id}/g/${group_id}/f/${file.id}`
+	// );
 
 	try {
 		let response = await axios(options);
 		let { application_id } = response?.data?.data;
-		console.log("response");
-		console.log(application_id);
 
-		if (application_id) {
+		// console.log("application_id_response");
+		// console.log(payload);
+		// console.log(application_id);
+
+		// return null;
+
+		const get_report = async () => {
 			var options = {
 				method: "get",
 				maxBodyLength: Infinity,
-				url: `https://api.lendflow.com/api/v2/applications/${application_id}`,
+				url: `https://api.lendflow.com/api/int/applications/${application_id}/commercial_data`,
+				// url: `https://api.lendflow.com/api/v2/applications/${application_id}`,
 				headers: {
 					Authorization: `Bearer ${bearer}`,
 				},
-				data: data,
+				data: {},
 			};
 
 			try {
 				let response = await axios(options);
 				let { data } = response?.data;
-				console.log("response");
-				console.log(data);
 
-				return redirect(`/credit/business/report`);
+				return response?.data;
 			} catch (error) {
 				console.log("error");
 				console.log(error.response.data);
 				return json({ error: error.message }, { status: 500 });
 			}
+		};
+
+		if (application_id) {
+			console.log("start");
+			await new Promise((resolve) => setTimeout(resolve, 10000));
+			console.log("end");
+			let report = await get_report();
+			// console.log("report");
+			// inspect(report);
+
+			let { file } = await create_new_report({
+				group_id,
+				entity_id,
+				...report,
+			});
+
+			console.log("file");
+			console.log(file);
+
+			return redirect(
+				`/credit/report/business/experian/overview/resource/e/${entity_id}/g/${group_id}/f/${file.id}`
+			);
+
+			return null;
 		}
 
 		return json({ error: "No application_id" }, { status: 500 });
@@ -726,10 +761,21 @@ const Heading = () => {
 };
 
 export default function New() {
+	let set_state = useReportStore((state) => state.set_state);
+
+	const onPreFill = () => {
+		set_state(["form"], test_identity_three);
+	};
+
 	return (
 		<div className="flex flex-col w-full">
+			<div
+				className="absolute top-0 right-0 z-[101] cursor-pointer"
+				onClick={onPreFill}
+			>
+				Fill out form
+			</div>
 			<CreditNav />
-			{/* <CreditHeroGradient /> */}
 			<div className="flex flex-col w-full p-[20px] max-w-2xl mx-auto">
 				<Heading />
 				<Form />

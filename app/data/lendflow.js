@@ -50,6 +50,34 @@ export const test_identity_two = {
 	requested_products: ["experian_business_match"],
 };
 
+export const test_identity_three = {
+	basic_info: {
+		first_name: "Matthew",
+		last_name: "Meehan",
+		email_address: "matt@mrmcapitalgroup.com",
+		telephone: "646-303-6828",
+		doing_business_as: "",
+	},
+	business_address: {
+		address_line: "9315 trinana circle ",
+		address_line2: "",
+		city: "winter garden",
+		state: "FL",
+		country: "US",
+		zip: "34787",
+	},
+	business_start_date: {
+		month: "01",
+		day: "01",
+		year: "2015",
+	},
+	business_entity: "business_entity_type_4",
+	business_legal_name: "MRM Capital holdings",
+	employee_identification_number: "464612632",
+	terms_of_service: true,
+	// requested_products: ["xperian_legal_collections"],
+};
+
 export const credit_report_data = {
 	bop: {
 		blended_prequalification: {
