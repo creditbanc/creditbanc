@@ -51,11 +51,8 @@ const useReportStore = create((set) => ({
 		set((state) => pipe(mod("form", ...path)(() => value))(state)),
 }));
 
-export const action = async ({ request, context }) => {
+export const action = async ({ request }) => {
 	console.log("new_business_credit_action");
-	console.log("context");
-	console.log(context);
-	console.log(process.env.LENDFLOW);
 
 	const bearer = process.env.LENDFLOW;
 	const group_id = get_group_id(request.url);
