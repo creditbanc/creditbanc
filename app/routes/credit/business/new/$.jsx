@@ -11,12 +11,12 @@ import { json, redirect } from "@remix-run/node";
 import { test_identity_three } from "~/data/lendflow";
 import { Listbox, Transition } from "@headlessui/react";
 import { CheckIcon, ChevronUpDownIcon } from "@heroicons/react/20/solid";
-// import { mrm_credit_report } from "~/data/lendflow";
 import { get_user_id } from "~/utils/auth.server";
 import { create as create_new_report } from "~/utils/business_credit_report.server";
 import Cookies from "js-cookie";
 import { plan_product_requests } from "~/data/lendflow_plan_product_requests";
 import { prisma } from "~/utils/prisma.server";
+const LENDFLOW_BEARER = process.env.LENDFLOW;
 
 const useReportStore = create((set) => ({
 	form: {
@@ -55,7 +55,7 @@ const useReportStore = create((set) => ({
 export const action = async ({ request }) => {
 	console.log("new_business_credit_action");
 
-	const bearer = "ItLqFE9UpAFDlCFQ7cNUBWW7iQN9cms0";
+	const bearer = LENDFLOW_BEARER;
 	const group_id = get_group_id(request.url);
 	const form = await request.formData();
 	// let requested_products = ["experian_intelliscore"];
