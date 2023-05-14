@@ -19,6 +19,8 @@ export const tabs = (bureau = "experian") => [
 		icon: Bars3Icon,
 		current: true,
 		id: "overview",
+		experian: true,
+		dnb: true,
 	},
 	{
 		name: "Payment Status",
@@ -29,6 +31,8 @@ export const tabs = (bureau = "experian") => [
 		icon: CheckCircleIcon,
 		current: false,
 		id: "status",
+		experian: true,
+		dnb: true,
 	},
 	{
 		name: "Derogatories",
@@ -39,6 +43,8 @@ export const tabs = (bureau = "experian") => [
 		icon: BellIcon,
 		current: false,
 		id: "derogatories",
+		experian: true,
+		dnb: false,
 	},
 	{
 		name: "Credit Utilization",
@@ -49,6 +55,8 @@ export const tabs = (bureau = "experian") => [
 		icon: Battery50Icon,
 		current: false,
 		id: "utilization",
+		experian: true,
+		dnb: true,
 	},
 	{
 		name: "Payment Trends",
@@ -59,6 +67,8 @@ export const tabs = (bureau = "experian") => [
 		icon: ArrowTrendingUpIcon,
 		current: false,
 		id: "trends",
+		experian: true,
+		dnb: true,
 	},
 	{
 		name: "Company Info",
@@ -69,6 +79,8 @@ export const tabs = (bureau = "experian") => [
 		icon: InformationCircleIcon,
 		current: false,
 		id: "info",
+		experian: true,
+		dnb: true,
 	},
 	{
 		name: "Score Factors",
@@ -79,5 +91,7 @@ export const tabs = (bureau = "experian") => [
 		icon: QuestionMarkCircleIcon,
 		current: false,
 		id: "factors",
+		experian: true,
+		dnb: false,
 	},
 ];

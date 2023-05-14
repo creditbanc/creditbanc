@@ -1,5 +1,6 @@
 import { defaultTo, pipe, tryCatch } from "ramda";
 import { get } from "shades";
+import { inspect } from "~/utils/helpers";
 
 export const test_identity_one = {
 	basic_info: {
@@ -6746,7 +6747,319 @@ export const mrm_credit_report = {
 						transactionTimestamp: "2023-03-29T16:16:25.213Z",
 					},
 				},
-				ci_l2: null,
+				ci_l2: {
+					blockStatus: [
+						{
+							reason: null,
+							status: "ok",
+							blockID: "companyinfo_L2_v1",
+						},
+						{
+							reason: null,
+							status: "ok",
+							blockID: "baseinfo_L1_v1",
+						},
+					],
+					organization: {
+						duns: "017519793",
+						banks: [],
+						email: [],
+						isAgent: null,
+						summary: [],
+						legalForm: {
+							dnbCode: 31217,
+							startDate: "2015-11-12",
+							description: "Corporation",
+							registrationLocation: {
+								addressRegion: "FL",
+							},
+						},
+						startDate: "2016",
+						telephone: [
+							{
+								isdCode: "1",
+								telephoneNumber: "3214306828",
+							},
+						],
+						activities: [
+							{
+								language: {
+									dnbCode: 331,
+									description: "US English",
+								},
+								description: "Holding company",
+							},
+						],
+						financials: [
+							{
+								unitCode: "SingleUnits",
+								yearlyRevenue: [
+									{
+										value: 0,
+										currency: "USD",
+									},
+								],
+								reliabilityDnBCode: 9094,
+								reliabilityDescription: "Modelled",
+								informationScopeDnBCode: 9067,
+								financialStatementToDate: "2022-03-14",
+								financialStatementDuration: null,
+								informationScopeDescription: "Consolidated",
+							},
+						],
+						isExporter: null,
+						isImporter: null,
+						charterType: {
+							dnbCode: 9123,
+							description: "Profit",
+						},
+						primaryName: "MRM Capital Holdings, Inc.",
+						unspscCodes: [
+							{
+								code: "84000000",
+								priority: 1,
+								description: "Financial and Insurance Services",
+							},
+						],
+						isStandalone: true,
+						fiscalYearEnd: null,
+						industryCodes: [
+							{
+								code: "551112",
+								priority: 1,
+								description:
+									"Offices of Other Holding Companies",
+								typeDnBCode: 37788,
+								typeDescription:
+									"North American Industry Classification System 2022",
+							},
+							{
+								code: "67190000",
+								priority: 1,
+								description: "Holding companies, nec",
+								typeDnBCode: 3599,
+								typeDescription: "D&B Standard Industry Code",
+							},
+							{
+								code: "6420",
+								priority: 1,
+								description: "Activities of holding companies",
+								typeDnBCode: 29104,
+								typeDescription: "NACE Revision 2",
+							},
+							{
+								code: "6719",
+								priority: 1,
+								description: "Holding company",
+								typeDnBCode: 399,
+								typeDescription:
+									"US Standard Industry Code 1987 - 4 digit",
+							},
+							{
+								code: "2024",
+								priority: 1,
+								description:
+									"Management of Companies & Enterprises",
+								typeDnBCode: 25838,
+								typeDescription: "D&B Hoovers Industry Code",
+							},
+							{
+								code: "H",
+								priority: 1,
+								description:
+									"Finance, Insurance, and Real Estate",
+								typeDnBCode: 24657,
+								typeDescription:
+									"D&B Standard Major Industry Code",
+							},
+						],
+						tsrReportDate: null,
+						certifiedEmail: null,
+						globalUltimate: [],
+						mailingAddress: [],
+						primaryAddress: {
+							language: [],
+							latitude: 28.430386,
+							longitude: -81.611738,
+							postalCode: "34787-0004",
+							streetName: null,
+							streetNumber: null,
+							addressCounty: {
+								name: "Orange",
+							},
+							addressRegion: {
+								name: "Florida",
+								abbreviatedName: "FL",
+								isoSubDivisionCode: "US-FL",
+								isoSubDivisionName: "Florida",
+							},
+							minorTownName: null,
+							postOfficeBox: [],
+							streetAddress: {
+								line1: "9315 Trinana Cir",
+								line2: null,
+							},
+							addressCountry: {
+								name: "United States",
+								isoAlpha2Code: "US",
+							},
+							addressLocality: {
+								name: "Winter Garden",
+							},
+							statisticalArea: {
+								economicAreaOfInfluenceCode: "121",
+							},
+							continentalRegion: {
+								name: "North America",
+							},
+							postalCodePosition: [],
+							isRegisteredAddress: false,
+							standardAddressCodes: [],
+							geographicalPrecision: {
+								dnbCode: 30257,
+								description: "Street Address Centroid",
+							},
+							isManufacturingLocation: null,
+						},
+						registeredName: "MRM CAPITAL HOLDINGS, INC.",
+						stockExchanges: [],
+						websiteAddress: [
+							{
+								url: "www.mrmcapitalgroup.com",
+								domainName: "mrmcapitalgroup.com",
+							},
+						],
+						defaultCurrency: "USD",
+						isSmallBusiness: null,
+						tradeStyleNames: [
+							{
+								name: "SHIELD ADVISORY GROUP",
+								priority: 1,
+							},
+						],
+						domesticUltimate: [],
+						incorporatedDate: "2015-11-12",
+						dunsControlStatus: {
+							isDelisted: false,
+							recordClass: {
+								dnbCode: 10929,
+								description: "Class 1 record",
+							},
+							isMarketable: true,
+							firstReportDate: "2017-01-11",
+							operatingStatus: {
+								dnbCode: 9074,
+								startDate: "2016",
+								description: "Active",
+							},
+							selfRequestDate: null,
+							operatingSubStatus: {
+								dnbCode: 9074,
+								startDate: "2016",
+								description: "Active",
+							},
+							isMailUndeliverable: false,
+							isSelfRequestedDUNS: null,
+							subjectHandlingDetails: [],
+							detailedOperatingStatus: {
+								dnbCode: 29929,
+								description: "Operationally Active",
+							},
+							isTelephoneDisconnected: false,
+						},
+						investigationDate: null,
+						numberOfEmployees: [
+							{
+								trend: [],
+								value: 0,
+								employeeCategories: [],
+								reliabilityDnBCode: 9094,
+								employeeFiguresDate: "2022-03-14",
+								reliabilityDescription: "Modelled",
+								informationScopeDnBCode: 9067,
+								informationScopeDescription: "Consolidated",
+							},
+							{
+								value: 0,
+								employeeCategories: [],
+								reliabilityDnBCode: 9094,
+								employeeFiguresDate: "2022-03-14",
+								reliabilityDescription: "Modelled",
+								informationScopeDnBCode: 9066,
+								informationScopeDescription: "Individual",
+							},
+						],
+						preferredLanguage: [],
+						registeredAddress: [],
+						registeredDetails: {
+							legalForm: {
+								dnbCode: 7101,
+								description: "Corporation (US)",
+								localLegalForms: [],
+								registrationStatus: [],
+							},
+						},
+						businessEntityType: {
+							dnbCode: 451,
+							description: "Corporation",
+						},
+						businessTrustIndex: {
+							scoreDate: "2021-05",
+							trustClass: {
+								dnbCode: 13693,
+								description: "Low",
+							},
+							trustIndex: 0,
+							dataProvider: [],
+							scoreReasons: [],
+							nationalPercentile: null,
+							excludedOrganization: [],
+						},
+						securitiesReportID: null,
+						employerDesignation: {
+							scoreDate: "2020-10",
+							indexScore: null,
+							designation: {
+								dnbCode: 36134,
+								description: "Holding Company",
+							},
+							reliability: {
+								dnbCode: 11176,
+								description: "Derived",
+							},
+						},
+						isFortune1000Listed: null,
+						primaryIndustryCode: {
+							usSicV4: "6719",
+							usSicV4Description: "Holding company",
+						},
+						registrationNumbers: [],
+						controlOwnershipDate: "2016",
+						controlOwnershipType: [],
+						countryISOAlpha2Code: "US",
+						multiLingualSearchNames: [],
+						multilingualPrimaryName: [],
+						organizationSizeCategory: [],
+						imperialCalendarStartYear: null,
+						multilingualPrimaryAddress: [],
+						standardizedStockExchanges: [],
+						multilingualRegisteredNames: [],
+						multilingualTradestyleNames: [],
+						isNonClassifiedEstablishment: null,
+						multilingualRegisteredAddress: [],
+						isForbesLargestPrivateCompaniesListed: null,
+					},
+					inquiryDetail: {
+						duns: "017519793",
+						blockIDs: ["companyinfo_L2_v1"],
+					},
+					transactionDetail: {
+						inLanguage: "en-US",
+						transactionID:
+							"rrt-029b49081c63df860-b-wo-17053-10414996-13",
+						transactionTimestamp: "2023-05-14T01:42:31.797Z",
+					},
+				},
 				pi_l3: {
 					blockStatus: [
 						{
@@ -8664,5 +8977,165 @@ Lendflow.dnb.duns_number = pipe(
 	get("data", "commercial_data", "dnb", "fi_l2", "organization", "duns")
 );
 
+Lendflow.dnb.payment_status = tryCatch(
+	pipe(
+		get(
+			"data",
+			"commercial_data",
+			"dnb",
+			"pi_l3",
+			"organization",
+			"businessTrading",
+			0,
+			"summary",
+			0
+		),
+		(value) => ({
+			maximumOwedAmount: pipe(get("maximumOwedAmount"))(value),
+			totalPastDueAmount: pipe(get("totalPastDueAmount"))(value),
+			maximumPastDueAmount: pipe(get("maximumPastDueAmount"))(value),
+			slowExperiencesCount: pipe(get("slowExperiencesCount"))(value),
+			negativePaymentsCount: pipe(get("negativePaymentsCount"))(value),
+			paymentBehaviorResult: pipe(get("paymentBehaviorResult"))(value),
+			badDebtExperiencesCount: pipe(get("badDebtExperiencesCount"))(
+				value
+			),
+			maximumHighCreditAmount: pipe(get("maximumHighCreditAmount"))(
+				value
+			),
+			badDebtExperiencesAmount: pipe(get("badDebtExperiencesAmount"))(
+				value
+			),
+			negativeExperiencesAmount: pipe(get("negativeExperiencesAmount"))(
+				value
+			),
+			slowExperiencesPercentage: pipe(get("slowExperiencesPercentage"))(
+				value
+			),
+			slowOrNegativePaymentsCount: pipe(
+				get("slowOrNegativePaymentsCount")
+			)(value),
+			unfavorableExperiencesCount: pipe(
+				get("unfavorableExperiencesCount")
+			)(value),
+			badDebtExperiencesPercentage: pipe(
+				get("badDebtExperiencesPercentage")
+			)(value),
+			unfavorableExperiencesAmount: pipe(
+				get("unfavorableExperiencesAmount")
+			)(value),
+			negativeExperiencesPercentage: pipe(
+				get("negativeExperiencesPercentage")
+			)(value),
+			slowAndNegativeExperiencesAmount: pipe(
+				get("slowAndNegativeExperiencesAmount")
+			)(value),
+			slowOrNegativePaymentsPercentage: pipe(
+				get("slowOrNegativePaymentsPercentage")
+			)(value),
+			unfavorableExperiencesPercentage: pipe(
+				get("unfavorableExperiencesPercentage")
+			)(value),
+			slowExperiencesHighestCreditAmount: pipe(
+				get("slowExperiencesHighestCreditAmount")
+			)(value),
+		})
+	),
+	defaultTo({})
+);
+
+Lendflow.dnb.credit_utilization = tryCatch(
+	pipe(
+		get(
+			"data",
+			"commercial_data",
+			"dnb",
+			"pi_l3",
+			"organization",
+			"businessTrading",
+			0,
+			"summary",
+			0
+		),
+		(value) => ({
+			averageHighCreditAmount: pipe(get("averageHighCreditAmount"))(
+				value
+			),
+			maximumHighCreditAmount: pipe(get("maximumHighCreditAmount"))(
+				value
+			),
+			highCreditExperiencesCount: pipe(get("highCreditExperiencesCount"))(
+				value
+			),
+			satisfactoryExperiencesCount: pipe(
+				get("satisfactoryExperiencesCount")
+			)(value),
+			satisfactoryExperiencesAmount: pipe(
+				get("satisfactoryExperiencesAmount")
+			)(value),
+			satisfactoryExperiencesPercentage: pipe(
+				get("satisfactoryExperiencesPercentage")
+			)(value),
+			slowExperiencesHighestCreditAmount: pipe(
+				get("slowExperiencesHighestCreditAmount")
+			)(value),
+		})
+	),
+	defaultTo({})
+);
+
+Lendflow.dnb.payment_trends = tryCatch(
+	pipe(
+		get(
+			"data",
+			"commercial_data",
+			"dnb",
+			"pi_l3",
+			"organization",
+			"businessTrading",
+			0,
+			"summary",
+			0
+		),
+		(value) => ({
+			badDebtExperiencesCount: pipe(get("badDebtExperiencesCount"))(
+				value
+			),
+			totalPastDueExperiencesCount: pipe(
+				get("totalPastDueExperiencesCount")
+			)(value),
+		})
+	),
+	defaultTo({})
+);
+
+Lendflow.dnb.company_info = tryCatch(
+	pipe(
+		get("data", "commercial_data", "dnb", "ci_l2", "organization"),
+		(value) => ({
+			duns: pipe(get("duns"))(value),
+			legalForm: pipe(get("legalForm"))(value),
+			startDate: pipe(get("startDate"))(value),
+			telephone: pipe(get("telephone"))(value),
+			activities: pipe(get("activities"))(value),
+			financials: pipe(get("financials"))(value),
+			primaryName: pipe(get("primaryName"))(value),
+			primaryAddress: pipe(get("primaryAddress"))(value),
+			registeredName: pipe(get("registeredName"))(value),
+			websiteAddress: pipe(get("websiteAddress"))(value),
+			tradeStyleNames: pipe(get("tradeStyleNames"))(value),
+			incorporatedDate: pipe(get("incorporatedDate"))(value),
+			numberOfEmployees: pipe(get("numberOfEmployees"))(value),
+		})
+	),
+	defaultTo({})
+);
+
+// Lendflow.dnb.score_factors = tryCatch(
+// 	pipe(get("data", "commercial_data", "dnb", "ci_l2", "organization")),
+// 	defaultTo({})
+// );
+
 // console.log("api_response");
-// console.log(Lendflow.experian.derogatories(mrm_credit_report));
+
+// inspect(Lendflow.dnb.company_info(mrm_credit_report));
