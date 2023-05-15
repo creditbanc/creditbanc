@@ -5,6 +5,7 @@ import {
 } from "~/utils/resource.server";
 import { get_user_id } from "~/utils/auth.server";
 import { prisma } from "~/utils/prisma.server";
+import { redirect } from "@remix-run/node";
 
 export const action = async ({ request }) => {
 	console.log("delete_personal_report");
@@ -50,8 +51,7 @@ export const action = async ({ request }) => {
 		// console.log("resource");
 		// console.log(resource);
 
-		return { file, resource };
+		// return { file, resource };
 	}
-
-	return null;
+	return redirect(`/home`);
 };

@@ -684,10 +684,6 @@ video {
   top: calc(23 / 729 * 100%);
 }
 
-.right-\[20px\] {
-  right: 20px;
-}
-
 .isolate {
   isolation: isolate;
 }

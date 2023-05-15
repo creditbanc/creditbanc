@@ -201,7 +201,7 @@ export default function LeftNav({ data = {}, can_manage_roles } = {}) {
 		// });
 
 		let delete_resource_url =
-			"/credit/personal/delete" +
+			"/credit/report/delete" +
 			to_group_pathname(location.pathname) +
 			"/" +
 			file_id;

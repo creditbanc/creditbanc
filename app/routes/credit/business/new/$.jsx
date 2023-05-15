@@ -89,8 +89,8 @@ export const action = async ({ request }) => {
 		...dnb_requested_products,
 	];
 
-	console.log("requested_products");
-	console.log(requested_products);
+	// console.log("requested_products");
+	// console.log(requested_products);
 
 	// return null;
 
