@@ -1,25 +1,114 @@
 import { useEffect, useState } from "react";
-import { Outlet, useLoaderData, useLocation } from "@remix-run/react";
+import {
+	Outlet,
+	useLoaderData,
+	useLocation,
+	useSubmit,
+} from "@remix-run/react";
 import { useLayoutStore } from "~/stores/useLayoutStore";
 import { useElmSize } from "~/hooks/useElmSize";
-import {
-	get_group_id,
-	get_route_endpoint,
-	capitalize,
-	get_file_id,
-} from "~/utils/helpers";
-import { get_docs as get_group_docs } from "~/utils/group.server";
-import { head, pipe } from "ramda";
-import { filter } from "shades";
-// import PersonalCreditTabs from "~/components/PersonalCreditTabs";
-import CreditScoreHero from "~/components/CreditScoreHero";
-import CreditHeroGradient from "~/components/CreditHeroGradient";
+import { get_route_endpoint, get_file_id } from "~/utils/helpers";
 import { get_user_id } from "~/utils/auth.server";
-import { validate_action, is_resource_owner_p } from "~/utils/resource.server";
 import { redirect } from "@remix-run/node";
-import { fb_credit_report } from "~/data/lendflow";
 import { VerticalNav } from "~/components/BusinessCreditNav";
 import { prisma } from "~/utils/prisma.server";
+import { plans_index } from "~/data/plans_index";
+
+export const action = async ({ request }) => {
+	var form = await request.formData();
+	const application_id = form.get("application_id");
+	const plan_id = form.get("plan_id");
+	const report_id = form.get("report_id");
+	const entity_id = form.get("entity_id");
+	const report_plan_id = form.get("report_plan_id");
+	const redirect_to = form.get("redirect_to");
+
+	console.log("form");
+	console.log(application_id);
+	console.log(plan_id);
+	console.log(report_id);
+	console.log(entity_id);
+	console.log(report_plan_id);
+
+	return redirect(redirect_to);
+};
+
+export const loader = async ({ request }) => {
+	let url = new URL(request.url);
+	let file_id = get_file_id(url.pathname);
+	let entity_id = await get_user_id(request);
+
+	let report = await prisma.business_credit_report.findUnique({
+		where: {
+			id: file_id,
+		},
+	});
+
+	// console.log("report");
+	// console.log(report);
+
+	let { plan_id } = await prisma.entity.findUnique({
+		where: { id: entity_id },
+		select: {
+			plan_id: true,
+		},
+	});
+
+	return {
+		entity_id,
+		plan_id,
+		report_id: file_id,
+		application_id: report?.application_id,
+		report_plan_id: report?.plan_id,
+	};
+};
+
+const UpgradeCard = () => {
+	const loader_data = useLoaderData();
+	const location = useLocation();
+	const submit = useSubmit();
+
+	const onUpdateReport = (e) => {
+		e.preventDefault();
+
+		submit(
+			{ ...loader_data, redirect_to: location.pathname },
+			{
+				method: "post",
+				action: "/credit/report/business",
+			}
+		);
+	};
+
+	return (
+		<div className="bg-white border shadow sm:rounded-lg mx-2 my-5">
+			<div className="px-4 py-5 sm:p-6">
+				<div className="sm:flex sm:items-start sm:justify-between">
+					<div>
+						<h3 className="text-base font-semibold leading-6 text-gray-900">
+							Upgrade to full report
+						</h3>
+						<div className="mt-2 max-w-xl text-sm text-gray-500">
+							<p>
+								Click to upgrade the report and to see the full
+								details.
+							</p>
+						</div>
+					</div>
+					<div className="mt-5 sm:ml-6 sm:mt-0 sm:flex sm:flex-shrink-0 sm:items-center cursor-pointer">
+						<div
+							onClick={onUpdateReport}
+							type="button"
+							className="inline-flex items-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+						>
+							Get Full Report
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	);
+};
 
 export default function BusinessReport() {
 	let location = useLocation();
@@ -28,6 +117,7 @@ export default function BusinessReport() {
 	let setContentWidth = useLayoutStore((state) => state.set_content_width);
 	let content_width = useLayoutStore((state) => state.content_width);
 	let [isMobile, setIsMobile] = useState(true);
+	let { plan_id, report_plan_id } = useLoaderData();
 
 	useEffect(() => {
 		if (content_width > 640) {
@@ -45,6 +135,11 @@ export default function BusinessReport() {
 
 	return (
 		<div className="flex flex-col flex-1 overflow-scroll">
+			{plans_index[report_plan_id] < plans_index[plan_id] && (
+				<div>
+					<UpgradeCard />
+				</div>
+			)}
 			<div className="flex flex-col w-full">
 				<div
 					className="flex flex-col w-full p-[10px] max-w-5xl mx-auto"

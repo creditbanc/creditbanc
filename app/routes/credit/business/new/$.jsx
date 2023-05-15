@@ -16,6 +16,7 @@ import { create as create_new_report } from "~/utils/business_credit_report.serv
 import Cookies from "js-cookie";
 import { plan_product_requests } from "~/data/lendflow_plan_product_requests";
 import { prisma } from "~/utils/prisma.server";
+import { get_lendflow_report } from "~/utils/lendflow.server";
 
 const useReportStore = create((set) => ({
 	form: {
@@ -134,46 +135,25 @@ export const action = async ({ request }) => {
 
 		// return null;
 
-		const get_report = async (bearer, application_id) => {
-			var options = {
-				method: "get",
-				maxBodyLength: Infinity,
-				url: `https://api.lendflow.com/api/int/applications/${application_id}/commercial_data`,
-				// url: `https://api.lendflow.com/api/v2/applications/${application_id}`,
-				headers: {
-					Authorization: `Bearer ${bearer}`,
-				},
-				data: {},
-			};
-
-			try {
-				let response = await axios(options);
-				return response?.data;
-			} catch (error) {
-				console.log("error");
-				console.log(error.response.data);
-				return json({ error: error.message }, { status: 500 });
-			}
-		};
-
 		if (application_id) {
 			console.log("start");
 			await new Promise((resolve) => setTimeout(resolve, 10000));
 			console.log("end");
 
-			let report = await get_report(bearer, application_id);
-			// console.log("report");
-			// inspect(report);
+			let report = await get_lendflow_report(application_id);
+			console.log("report");
+			inspect(report);
 
 			let { file } = await create_new_report({
 				group_id,
 				entity_id,
 				application_id,
+				plan_id,
 				...report,
 			});
 
 			console.log("file");
-			console.log(file);
+			console.log(file.id);
 
 			return redirect(
 				`/credit/report/business/experian/overview/resource/e/${entity_id}/g/${group_id}/f/${file.id}`

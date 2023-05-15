@@ -120,6 +120,7 @@ model personal_credit_report {
   type        String?
   entity_id   String?  @db.ObjectId
   data        Json?
+  plan_id     String?
 }
 
 model business_credit_report {
@@ -131,6 +132,7 @@ model business_credit_report {
   type           String?
   entity_id      String?  @db.ObjectId
   application_id String?
+  plan_id        String?
 }
 
 model Plan {

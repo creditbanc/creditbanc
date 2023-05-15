@@ -11,7 +11,7 @@ import { plans } from "~/data/plans";
 import { get, has } from "shades";
 import { allPass, pipe, not } from "ramda";
 import { report_tests } from "~/data/report_tests";
-import { get_lendflow_report } from "~/utils/lendflow";
+import { get_lendflow_report } from "~/utils/lendflow.server";
 import { update_business_report } from "~/utils/business_credit_report.server";
 
 export const loader = async ({ request }) => {
