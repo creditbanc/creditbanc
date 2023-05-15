@@ -78,6 +78,11 @@ const CreditUtilization = () => {
 
 	let plan = pipe(get(plan_id, "business", "experian"))(plans);
 
+	let utilization_ratio = get_account_utilization(
+		trade_lines?.totalAccountBalance?.amount,
+		trade_lines?.totalHighCreditAmount?.amount
+	);
+
 	return (
 		<div className="overflow-hidden bg-white rounded-lg border">
 			<div className="px-4 py-5 sm:px-6 flex flex-row justify-between">
@@ -92,7 +97,12 @@ const CreditUtilization = () => {
 			<div className="border-t border-gray-200 space-y-8 p-6">
 				<div className="flex flex-row w-full">
 					<div className="flex flex-col w-1/2 h-full">
-						<DoughnutChart>
+						<DoughnutChart
+							dataset={[
+								utilization_ratio,
+								100 - utilization_ratio,
+							]}
+						>
 							<div className="absolute top-[40%] left-[27%] text-5xl font-semibold">
 								{get_account_utilization(
 									trade_lines?.totalAccountBalance?.amount,

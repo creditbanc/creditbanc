@@ -24,14 +24,17 @@ export const data = (dataset) => ({
 	datasets: [
 		{
 			data: [...dataset],
-			backgroundColor: ["rgba(255, 0, 0, 1)", "rgba(46, 204, 113, 1)"],
+			backgroundColor: [
+				"rgba(248, 248, 255, 1)",
+				"rgba(46, 204, 113, 1)",
+			],
 			borderWidth: 1,
 			borderRadius: 1,
 		},
 	],
 });
 
-export default function DoughnutChart({ children, dataset }) {
+export default function DoughnutChart({ children, dataset = [100, 0] }) {
 	return (
 		<div className="flex flex-col items-center w-full">
 			<div className="flex flex-col w-[200px] h-[200px] relative">
