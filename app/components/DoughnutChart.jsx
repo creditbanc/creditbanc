@@ -24,11 +24,7 @@ export const data = (dataset) => ({
 	datasets: [
 		{
 			data: [...dataset],
-			backgroundColor: [
-				// "rgba(231, 76, 60, 1)",
-				"rgba(255, 164, 46, 1)",
-				"rgba(46, 204, 113, 1)",
-			],
+			backgroundColor: ["rgba(255, 0, 0, 1)", "rgba(46, 204, 113, 1)"],
 			borderWidth: 1,
 			borderRadius: 1,
 		},
