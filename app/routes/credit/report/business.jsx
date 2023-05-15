@@ -7,12 +7,19 @@ import {
 } from "@remix-run/react";
 import { useLayoutStore } from "~/stores/useLayoutStore";
 import { useElmSize } from "~/hooks/useElmSize";
-import { get_route_endpoint, get_file_id } from "~/utils/helpers";
+import { get_route_endpoint, get_file_id, inspect } from "~/utils/helpers";
 import { get_user_id } from "~/utils/auth.server";
 import { redirect } from "@remix-run/node";
 import { VerticalNav } from "~/components/BusinessCreditNav";
 import { prisma } from "~/utils/prisma.server";
 import { plans_index } from "~/data/plans_index";
+import { plan_product_requests } from "~/data/lendflow_plan_product_requests";
+import { pipe } from "ramda";
+import { get } from "shades";
+import {
+	update_lendflow_report,
+	get_lendflow_report,
+} from "~/utils/lendflow.server";
 
 export const action = async ({ request }) => {
 	var form = await request.formData();
@@ -23,12 +30,42 @@ export const action = async ({ request }) => {
 	const report_plan_id = form.get("report_plan_id");
 	const redirect_to = form.get("redirect_to");
 
-	console.log("form");
-	console.log(application_id);
-	console.log(plan_id);
-	console.log(report_id);
-	console.log(entity_id);
-	console.log(report_plan_id);
+	// console.log("form");
+	// console.log(application_id);
+	// console.log(plan_id);
+	// console.log(report_id);
+	// console.log(entity_id);
+	// console.log(report_plan_id);
+
+	let requested_products = pipe(get(plan_id))(plan_product_requests);
+	// console.log("requested_products");
+	// console.log(requested_products);
+
+	await update_lendflow_report(application_id, requested_products);
+
+	// console.log("credit_report");
+	// console.log(credit_report);
+
+	console.log("start");
+	await new Promise((resolve) => setTimeout(resolve, 10000));
+	console.log("end");
+
+	let credit_report = await get_lendflow_report(application_id);
+	// console.log("credit_report");
+	// inspect(credit_report);
+
+	let report = await prisma.business_credit_report.update({
+		where: {
+			id: report_id,
+		},
+		data: {
+			...credit_report,
+			plan_id,
+		},
+	});
+
+	// console.log("report");
+	// console.log(report);
 
 	return redirect(redirect_to);
 };
@@ -81,7 +118,7 @@ const UpgradeCard = () => {
 	};
 
 	return (
-		<div className="bg-white border shadow sm:rounded-lg mx-2 my-5">
+		<div className="bg-white border shadow sm:rounded-lg mx-2 mt-5">
 			<div className="px-4 py-5 sm:p-6">
 				<div className="sm:flex sm:items-start sm:justify-between">
 					<div>
@@ -136,8 +173,10 @@ export default function BusinessReport() {
 	return (
 		<div className="flex flex-col flex-1 overflow-scroll">
 			{plans_index[report_plan_id] < plans_index[plan_id] && (
-				<div>
-					<UpgradeCard />
+				<div className="flex flex-col w-full items-center">
+					<div className="flex flex-col w-full max-w-5xl">
+						<UpgradeCard />
+					</div>
 				</div>
 			)}
 			<div className="flex flex-col w-full">
