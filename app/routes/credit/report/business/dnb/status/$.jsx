@@ -45,7 +45,7 @@ const PaymentStatus = () => {
 		<div className="overflow-hidden bg-white rounded-lg border">
 			<div className="px-4 py-5 sm:px-6">
 				<h3 className="text-lg font-medium leading-6 text-gray-900">
-					Derogatories
+					Payment Status
 				</h3>
 			</div>
 			<div className="border-t border-gray-200 p-5 space-y-5">

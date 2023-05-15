@@ -4,10 +4,26 @@ import {
 } from "@heroicons/react/24/outline";
 import { useLoaderData } from "@remix-run/react";
 import { mrm_credit_report, Lendflow } from "~/data/lendflow";
+import { get_file_id, inspect } from "~/utils/helpers";
+import { get_user_id } from "~/utils/auth.server";
+import { prisma } from "~/utils/prisma.server";
 
-export const loader = () => {
-	let score = Lendflow.dnb.score(mrm_credit_report);
-	let delinquency_score = Lendflow.dnb.delinquency_score(mrm_credit_report);
+export const loader = async ({ request }) => {
+	let url = new URL(request.url);
+	let file_id = get_file_id(url.pathname);
+	let entity_id = await get_user_id(request);
+
+	let report = await prisma.business_credit_report.findUnique({
+		where: {
+			id: file_id,
+		},
+	});
+
+	let score = Lendflow.dnb.score(report);
+
+	let delinquency_score = Lendflow.dnb.delinquency_score(report);
+	// console.log("delinquency_score");
+	// console.log(delinquency_score);
 	let business = Lendflow.business(mrm_credit_report);
 	// let trade_summary = Lendflow.experian.trade_summary(mrm_credit_report);
 	return { score, delinquency_score, business };
@@ -20,7 +36,7 @@ const ScoreCard = () => {
 		<div className="overflow-hidden bg-white rounded-lg border">
 			<div className="px-4 py-5 sm:px-6">
 				<h3 className="text-lg font-medium leading-6 text-gray-900">
-					dun & bradstreet PAYDEX
+					Dun & Bradstreet PAYDEX
 				</h3>
 			</div>
 			<div className="border-t border-gray-200 space-y-8 p-6">
@@ -30,7 +46,7 @@ const ScoreCard = () => {
 							<div className="flex flex-col text-5xl">
 								{score}
 							</div>
-							<div className="flex flex-col">
+							<div className="flex flex-col text-center">
 								{delinquency_score}
 							</div>
 						</div>

@@ -9056,7 +9056,8 @@ Lendflow.dnb.delinquency_score = tryCatch(
 			"delinquencyScore",
 			"classScoreDescription"
 		)
-	)
+	),
+	always("")
 );
 
 Lendflow.dnb.total_balance_high = tryCatch(
