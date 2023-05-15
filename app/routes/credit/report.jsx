@@ -92,9 +92,6 @@ export default function Report() {
 			<div className="flex flex-row h-full overflow-hidden">
 				{user_id && <LeftNav data={reports} can_manage_roles={false} />}
 				<div className="flex flex-col flex-1 overflow-scroll">
-					{/* <div className="px-2">
-						<UpgradeCard />
-					</div> */}
 					<ReportTabs
 						selected={get_report_endpoint(location.pathname)}
 					/>

@@ -24,8 +24,8 @@ export const create = async (payload) => {
 		resource_path_id: credit_report_id,
 	});
 
-	console.log("credit_report_resource");
-	console.log(credit_report_resource);
+	// console.log("credit_report_resource");
+	// console.log(credit_report_resource);
 
 	await prisma.resource.update({
 		where: {

@@ -9014,7 +9014,8 @@ Lendflow.dnb.score = tryCatch(
 			0,
 			"paydexScore"
 		)
-	)
+	),
+	always(0)
 );
 
 Lendflow.dnb.delinquency_score = tryCatch(
@@ -9117,7 +9118,7 @@ Lendflow.dnb.payment_status = tryCatch(
 			)(value),
 		})
 	),
-	defaultTo({})
+	always({})
 );
 
 Lendflow.dnb.credit_utilization = tryCatch(
@@ -9157,7 +9158,7 @@ Lendflow.dnb.credit_utilization = tryCatch(
 			)(value),
 		})
 	),
-	defaultTo({})
+	always({})
 );
 
 Lendflow.dnb.payment_trends = tryCatch(
@@ -9182,7 +9183,7 @@ Lendflow.dnb.payment_trends = tryCatch(
 			)(value),
 		})
 	),
-	defaultTo({})
+	always({})
 );
 
 Lendflow.dnb.company_info = tryCatch(
@@ -9204,7 +9205,7 @@ Lendflow.dnb.company_info = tryCatch(
 			numberOfEmployees: pipe(get("numberOfEmployees"))(value),
 		})
 	),
-	defaultTo({})
+	always({})
 );
 
 // Lendflow.dnb.score_factors = tryCatch(

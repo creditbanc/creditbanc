@@ -14,7 +14,7 @@ import { CheckIcon, ChevronUpDownIcon } from "@heroicons/react/20/solid";
 import { get_user_id } from "~/utils/auth.server";
 import { create as create_new_report } from "~/utils/business_credit_report.server";
 import Cookies from "js-cookie";
-import { plan_product_requests } from "~/data/lendflow_plan_product_requests";
+import { plan_product_requests } from "~/data/plan_product_requests";
 import { prisma } from "~/utils/prisma.server";
 import { get_lendflow_report } from "~/utils/lendflow.server";
 
@@ -58,9 +58,7 @@ export const action = async ({ request }) => {
 	const bearer = process.env.LENDFLOW;
 	const group_id = get_group_id(request.url);
 	const form = await request.formData();
-	// let requested_products = ["experian_intelliscore"];
 
-	// let data = test_identity_one;
 	let entity_id = await get_user_id(request);
 
 	let { plan_id } = await prisma.entity.findUnique({
@@ -73,13 +71,24 @@ export const action = async ({ request }) => {
 	// console.log("bearer");
 	// console.log(bearer);
 
-	console.log("plan_id");
-	console.log(plan_id);
+	// console.log("plan_id");
+	// console.log(plan_id);
 
-	let requested_products = pipe(get(plan_id))(plan_product_requests);
+	let experian_requested_products = pipe(get(plan_id))(
+		plan_product_requests.experian
+	);
+
+	let dnb_requested_products = pipe(get(plan_id))(plan_product_requests.dnb);
+
+	let requested_products = [
+		...experian_requested_products,
+		...dnb_requested_products,
+	];
 
 	console.log("requested_products");
 	console.log(requested_products);
+
+	// return null;
 
 	const payload = pipe(
 		mod("requested_products")((value) => requested_products)
@@ -141,8 +150,8 @@ export const action = async ({ request }) => {
 			console.log("end");
 
 			let report = await get_lendflow_report(application_id);
-			console.log("report");
-			inspect(report);
+			// console.log("report");
+			// inspect(report);
 
 			let { file } = await create_new_report({
 				group_id,
@@ -152,8 +161,8 @@ export const action = async ({ request }) => {
 				...report,
 			});
 
-			console.log("file");
-			console.log(file.id);
+			// console.log("file");
+			// console.log(file.id);
 
 			return redirect(
 				`/credit/report/business/experian/overview/resource/e/${entity_id}/g/${group_id}/f/${file.id}`

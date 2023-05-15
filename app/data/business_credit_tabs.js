@@ -80,7 +80,7 @@ export const tabs = (bureau = "experian") => [
 		current: false,
 		id: "info",
 		experian: true,
-		dnb: true,
+		dnb: false,
 	},
 	{
 		name: "Score Factors",

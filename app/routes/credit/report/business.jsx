@@ -13,7 +13,7 @@ import { redirect } from "@remix-run/node";
 import { VerticalNav } from "~/components/BusinessCreditNav";
 import { prisma } from "~/utils/prisma.server";
 import { plans_index } from "~/data/plans_index";
-import { plan_product_requests } from "~/data/lendflow_plan_product_requests";
+import { plan_product_requests } from "~/data/plan_product_requests";
 import { pipe } from "ramda";
 import { get } from "shades";
 import {
@@ -37,9 +37,21 @@ export const action = async ({ request }) => {
 	// console.log(entity_id);
 	// console.log(report_plan_id);
 
-	let requested_products = pipe(get(plan_id))(plan_product_requests);
-	// console.log("requested_products");
-	// console.log(requested_products);
+	let experian_requested_products = pipe(get(plan_id))(
+		plan_product_requests.experian
+	);
+
+	let dnb_requested_products = pipe(get(plan_id))(plan_product_requests.dnb);
+
+	let requested_products = [
+		...experian_requested_products,
+		...dnb_requested_products,
+	];
+
+	console.log("requested_products");
+	console.log(requested_products);
+
+	// return null;
 
 	await update_lendflow_report(application_id, requested_products);
 
