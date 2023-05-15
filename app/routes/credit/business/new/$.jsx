@@ -1,12 +1,16 @@
 import { useState, Fragment } from "react";
 import CreditNav from "~/components/CreditNav";
-import CreditHeroGradient from "~/components/CreditHeroGradient";
 import axios from "axios";
 import { head, pipe } from "ramda";
 import { filter, get, mod, set } from "shades";
 import { create } from "zustand";
-import { useSubmit } from "@remix-run/react";
-import { inspect, to_resource_pathname, get_group_id } from "~/utils/helpers";
+import { useLocation, useSubmit } from "@remix-run/react";
+import {
+	inspect,
+	to_resource_pathname,
+	get_group_id,
+	get_search_params_obj,
+} from "~/utils/helpers";
 import { json, redirect } from "@remix-run/node";
 import { test_identity_three, test_identity_four } from "~/data/lendflow";
 import { Listbox, Transition } from "@headlessui/react";
@@ -779,7 +783,7 @@ const PreFills = () => {
 	};
 
 	return (
-		<div className="absolute top-0 right-0 z-[101]">
+		<div className="absolute top-0 right-[10px] z-[101] space-y-2 py-5">
 			<div
 				className="cursor-pointer"
 				onClick={() => onPreFill(test_identity_three)}
@@ -798,9 +802,15 @@ const PreFills = () => {
 };
 
 export default function NewBusinessReport() {
+	let location = useLocation();
+	let search_obj = get_search_params_obj(location.search);
+
+	console.log("location");
+	console.log(search_obj);
+
 	return (
 		<div className="flex flex-col w-full">
-			<PreFills />
+			{search_obj.cookie == "monster" && <PreFills />}
 			<CreditNav />
 			<div className="flex flex-col w-full p-[20px] max-w-2xl mx-auto">
 				<Heading />

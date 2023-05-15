@@ -33,6 +33,9 @@ export const get_account_utilization = (balance, high) => {
 	return res == "NaN" ? 0 : res;
 };
 
+export const get_search_params_obj = (search) =>
+	Object.fromEntries(new URLSearchParams(search));
+
 export const mapIndexed = addIndex(map);
 
 export const truncate = curry((length, str) => {
