@@ -12,7 +12,13 @@ import {
 	get_search_params_obj,
 } from "~/utils/helpers";
 import { json, redirect } from "@remix-run/node";
-import { test_identity_three, test_identity_four } from "~/data/lendflow";
+import {
+	test_identity_three,
+	test_identity_four,
+	test_identity_five,
+	test_identity_six,
+	test_identity_seven,
+} from "~/data/lendflow";
 import { Listbox, Transition } from "@headlessui/react";
 import { CheckIcon, ChevronUpDownIcon } from "@heroicons/react/20/solid";
 import { get_user_id } from "~/utils/auth.server";
@@ -796,6 +802,27 @@ const PreFills = () => {
 				onClick={() => onPreFill(test_identity_four)}
 			>
 				Meta
+			</div>
+
+			<div
+				className="cursor-pointer"
+				onClick={() => onPreFill(test_identity_five)}
+			>
+				McDonalds
+			</div>
+
+			<div
+				className="cursor-pointer"
+				onClick={() => onPreFill(test_identity_six)}
+			>
+				Lkq Auto Parts Of North Texas, Inc.
+			</div>
+
+			<div
+				className="cursor-pointer"
+				onClick={() => onPreFill(test_identity_seven)}
+			>
+				Nuveen New York Quality Income Municipal Fund Inc
 			</div>
 		</div>
 	);

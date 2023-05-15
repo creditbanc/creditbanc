@@ -104,6 +104,87 @@ export const test_identity_four = {
 	terms_of_service: true,
 };
 
+export const test_identity_five = {
+	basic_info: {
+		first_name: "Test",
+		last_name: "Consumer",
+		email_address: "mcdonalds@facebook.com",
+		telephone: "949-567-3800",
+		doing_business_as: "",
+	},
+	business_address: {
+		address_line: "110 North Carpenter Street",
+		address_line2: "",
+		city: "Chicago",
+		state: "IL",
+		country: "US",
+		zip: "60607",
+	},
+	business_start_date: {
+		month: "05",
+		day: "21",
+		year: "2021",
+	},
+	business_entity: "business_entity_type_1",
+	business_legal_name: "Mcdonalds Corp",
+	employee_identification_number: "362361282",
+	terms_of_service: true,
+};
+
+export const test_identity_six = {
+	basic_info: {
+		first_name: "Test",
+		last_name: "Consumer",
+		email_address: "lkq@lkqcorp.com",
+		telephone: "312-621-1950",
+		doing_business_as: "",
+	},
+	business_address: {
+		address_line: "500 West Madison Street",
+		address_line2: "",
+		city: "Chicago",
+		state: "IL",
+		country: "US",
+		zip: "60661",
+	},
+	business_start_date: {
+		month: "05",
+		day: "21",
+		year: "2021",
+	},
+	business_entity: "business_entity_type_1",
+	business_legal_name: "Lkq Auto Parts Of North Texas, Inc.",
+	employee_identification_number: "010550506",
+	terms_of_service: true,
+};
+
+export const test_identity_seven = {
+	basic_info: {
+		first_name: "Test",
+		last_name: "Consumer",
+		email_address: "lkq@lkqcorp.com",
+		telephone: "3129-178-200",
+		doing_business_as: "",
+	},
+	business_address: {
+		address_line: "333 West Wacker Dr",
+		address_line2: "",
+		city: "Chicago",
+		state: "IL",
+		country: "US",
+		zip: "60606",
+	},
+	business_start_date: {
+		month: "05",
+		day: "21",
+		year: "2021",
+	},
+	business_entity: "business_entity_type_1",
+	business_legal_name: "Nuveen New York Quality Income Municipal Fund Inc",
+	employee_identification_number: "000087981",
+	terms_of_service: true,
+};
+
 export const credit_report_data = {
 	bop: {
 		blended_prequalification: {
