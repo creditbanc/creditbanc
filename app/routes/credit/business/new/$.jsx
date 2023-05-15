@@ -8,7 +8,7 @@ import { create } from "zustand";
 import { useSubmit } from "@remix-run/react";
 import { inspect, to_resource_pathname, get_group_id } from "~/utils/helpers";
 import { json, redirect } from "@remix-run/node";
-import { test_identity_three } from "~/data/lendflow";
+import { test_identity_three, test_identity_four } from "~/data/lendflow";
 import { Listbox, Transition } from "@headlessui/react";
 import { CheckIcon, ChevronUpDownIcon } from "@heroicons/react/20/solid";
 import { get_user_id } from "~/utils/auth.server";
@@ -771,21 +771,36 @@ const Heading = () => {
 	);
 };
 
-export default function New() {
+const PreFills = () => {
 	let set_state = useReportStore((state) => state.set_state);
 
-	const onPreFill = () => {
-		set_state(["form"], test_identity_three);
+	const onPreFill = (identity) => {
+		set_state(["form"], identity);
 	};
 
 	return (
-		<div className="flex flex-col w-full">
+		<div className="absolute top-0 right-0 z-[101]">
 			<div
-				className="absolute top-0 right-0 z-[101] cursor-pointer"
-				onClick={onPreFill}
+				className="cursor-pointer"
+				onClick={() => onPreFill(test_identity_three)}
 			>
-				Fill out form
+				MRM
 			</div>
+
+			<div
+				className="cursor-pointer"
+				onClick={() => onPreFill(test_identity_four)}
+			>
+				Meta
+			</div>
+		</div>
+	);
+};
+
+export default function NewBusinessReport() {
+	return (
+		<div className="flex flex-col w-full">
+			<PreFills />
 			<CreditNav />
 			<div className="flex flex-col w-full p-[20px] max-w-2xl mx-auto">
 				<Heading />

@@ -20,10 +20,10 @@ let options = {
 	responsive: true,
 };
 
-export const data = {
+export const data = (dataset) => ({
 	datasets: [
 		{
-			data: [66, 33],
+			data: [...dataset],
 			backgroundColor: [
 				// "rgba(231, 76, 60, 1)",
 				"rgba(255, 164, 46, 1)",
@@ -33,14 +33,18 @@ export const data = {
 			borderRadius: 1,
 		},
 	],
-};
+});
 
-export default function DoughnutChart({ children }) {
+export default function DoughnutChart({ children, dataset }) {
 	return (
 		<div className="flex flex-col items-center w-full">
 			<div className="flex flex-col w-[200px] h-[200px] relative">
 				{children}
-				<Doughnut key={Math.random()} data={data} options={options} />
+				<Doughnut
+					key={Math.random()}
+					data={data(dataset)}
+					options={options}
+				/>
 			</div>
 		</div>
 	);

@@ -75,7 +75,33 @@ export const test_identity_three = {
 	business_legal_name: "MRM Capital holdings",
 	employee_identification_number: "464612632",
 	terms_of_service: true,
-	// requested_products: ["xperian_legal_collections"],
+};
+
+export const test_identity_four = {
+	basic_info: {
+		first_name: "Test",
+		last_name: "Consumer",
+		email_address: "mark@facebook.com",
+		telephone: "949-567-3800",
+		doing_business_as: "",
+	},
+	business_address: {
+		address_line: "1601 willlow road",
+		address_line2: "",
+		city: "California",
+		state: "CA",
+		country: "US",
+		zip: "94025",
+	},
+	business_start_date: {
+		month: "05",
+		day: "21",
+		year: "2021",
+	},
+	business_entity: "business_entity_type_1",
+	business_legal_name: "Facebook Inc",
+	employee_identification_number: "201665019",
+	terms_of_service: true,
 };
 
 export const credit_report_data = {

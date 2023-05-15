@@ -15,6 +15,9 @@ export default function AccountCard({ trade_line, plan_id = "essential" }) {
 
 	let plan = pipe(get(plan_id, "business", "experian"))(plans);
 
+	// console.log("plan");
+	// console.log(trade_line);
+
 	return (
 		<div className="overflow-hidden bg-white rounded-lg border">
 			<div className="px-4 py-5 sm:px-6 flex flex-row justify-between">
@@ -111,7 +114,7 @@ export default function AccountCard({ trade_line, plan_id = "essential" }) {
 						</div>
 						<div className="flex flex-col w-1/2 items-end space-y-1">
 							<div className="flex flex-col items-center w-1/2">
-								<div>High credit</div>
+								<div>Current</div>
 								<div className="flex flex-col w-[90%] h-[1px] bg-gray-200"></div>
 								<div
 									className={`font-semibold ${

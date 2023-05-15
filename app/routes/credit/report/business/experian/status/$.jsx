@@ -53,6 +53,10 @@ const PaymentStatus = () => {
 
 	let plan = pipe(get(plan_id, "business", "experian"))(plans);
 
+	let trade_count = trade_lines_payment_totals?.tradelineCount || 0;
+	let delinquent_count = trade_lines_payment_totals?.dbt30 || 0;
+	let delinquent_ratio = (delinquent_count / trade_count) * 100;
+
 	return (
 		<div className="overflow-hidden bg-white rounded-lg border">
 			<div className="px-4 py-5 sm:px-6">
@@ -63,9 +67,11 @@ const PaymentStatus = () => {
 			<div className="border-t border-gray-200 space-y-8 p-6">
 				<div className="flex flex-row w-full">
 					<div className="flex flex-col w-1/2">
-						<DoughnutChart>
-							<div className="absolute top-[40%] left-[27%] text-5xl font-semibold">
-								300
+						<DoughnutChart
+							dataset={[delinquent_ratio, 100 - delinquent_ratio]}
+						>
+							<div className="absolute w-full h-full flex flex-col items-center justify-center text-5xl font-semibold">
+								{delinquent_ratio}%
 							</div>
 						</DoughnutChart>
 					</div>
@@ -75,8 +81,7 @@ const PaymentStatus = () => {
 							<div className="flex flex-col h-[1px] bg-gray-200 w-[90%]"></div>
 							{plan.trade_lines_payment_totals && (
 								<div className="font-semibold">
-									{trade_lines_payment_totals?.tradelineCount ||
-										0}
+									{trade_count}
 								</div>
 							)}
 
@@ -90,7 +95,7 @@ const PaymentStatus = () => {
 							<div className="flex flex-col h-[1px] bg-gray-200 w-[90%]"></div>
 							{plan.trade_lines_payment_totals && (
 								<div className="font-semibold">
-									{trade_lines_payment_totals?.dbt30 || 0}
+									{delinquent_count}
 								</div>
 							)}
 
