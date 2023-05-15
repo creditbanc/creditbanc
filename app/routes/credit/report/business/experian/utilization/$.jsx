@@ -11,6 +11,7 @@ import AccountUtilizationCard from "~/components/AccountUtilizationCard";
 import { report_tests } from "~/data/report_tests";
 import { get_lendflow_report } from "~/utils/lendflow.server";
 import { update_business_report } from "~/utils/business_credit_report.server";
+import DoughnutChart from "~/components/DoughnutChart";
 
 export const loader = async ({ request }) => {
 	let url = new URL(request.url);
@@ -91,13 +92,15 @@ const CreditUtilization = () => {
 			<div className="border-t border-gray-200 space-y-8 p-6">
 				<div className="flex flex-row w-full">
 					<div className="flex flex-col w-1/2 h-full">
-						<div className="flex flex-col items-center">
-							{get_account_utilization(
-								trade_lines?.totalAccountBalance?.amount,
-								trade_lines?.totalHighCreditAmount?.amount
-							)}
-							%
-						</div>
+						<DoughnutChart>
+							<div className="absolute top-[40%] left-[27%] text-5xl font-semibold">
+								{get_account_utilization(
+									trade_lines?.totalAccountBalance?.amount,
+									trade_lines?.totalHighCreditAmount?.amount
+								)}
+								%
+							</div>
+						</DoughnutChart>
 					</div>
 					<div className="flex flex-col w-1/2 space-y-5">
 						<div className="flex flex-col space-y-1">

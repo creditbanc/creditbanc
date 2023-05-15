@@ -11,6 +11,7 @@ import AccountCard from "~/components/AccountCard";
 import { report_tests } from "~/data/report_tests";
 import { get_lendflow_report } from "~/utils/lendflow.server";
 import { update_business_report } from "~/utils/business_credit_report.server";
+import DoughnutChart from "~/components/DoughnutChart";
 
 export const loader = async ({ request }) => {
 	let url = new URL(request.url);
@@ -61,7 +62,13 @@ const PaymentStatus = () => {
 			</div>
 			<div className="border-t border-gray-200 space-y-8 p-6">
 				<div className="flex flex-row w-full">
-					<div className="flex flex-col w-1/2">a</div>
+					<div className="flex flex-col w-1/2">
+						<DoughnutChart>
+							<div className="absolute top-[40%] left-[27%] text-5xl font-semibold">
+								300
+							</div>
+						</DoughnutChart>
+					</div>
 					<div className="flex flex-col w-1/2 space-y-5">
 						<div className="flex flex-col space-y-1">
 							<div>Active Accounts</div>
