@@ -128,17 +128,20 @@ const ExplanationCard = () => {
 		<div className="overflow-hidden bg-white rounded-lg border">
 			<div className="px-4 py-5 sm:px-6">
 				<h3 className="text-lg font-medium leading-6 text-gray-900">
-					What are Derogatories?
+					Explain Credit Utilization and Why I Should Care
 				</h3>
 			</div>
 			<div className="border-t border-gray-200 space-y-8 p-6">
 				<div className="flex flex-col w-full">
-					Public records are an important source of business credit
-					information. Liens, judgments, bankruptcies, UCC filings and
-					other derogatory items can indicate that your company has
-					had financial trouble in the past and can limit your ability
-					to get financing and potentially even deter potential
-					suppliers, vendors or partners from doing business with you.
+					One way your business's street cred (or should we say
+					creditworthiness?) is determined is by how much credit
+					you're using, a.k.a: Credit Utilization. It looks at the
+					ratio of current account balances to recent high credit
+					balances. Because many business accounts don't have balance
+					limits, this ratio can reveal if you're feeling the
+					financial heat. The closer a business gets to its highest
+					historical debt amount, the more difficult it might be for
+					said business to make on-time payments.
 				</div>
 			</div>
 		</div>

@@ -50,37 +50,29 @@ const ExplanationCard = () => {
 		<div className="overflow-hidden bg-white rounded-lg border">
 			<div className="px-4 py-5 sm:px-6">
 				<h3 className="text-lg font-medium leading-6 text-gray-900">
-					Why are Score Factors Important?
+					Why You Should Pay Attention To Your Score Factors
 				</h3>
 			</div>
 			<div className="border-t border-gray-200 space-y-6 p-6">
 				<div className="flex flex-col w-full">
-					Score factors or "Reason Codes" are as many as 5 statements
-					that are on your credit report explaining why your credit
-					score wasn't higher. Score factors are populated by the
-					scoring model being used to determine your credit score. The
-					numbers preceding each reason code or score factor are
-					numeric identifiers; sometimes they appear with the text and
-					sometimes they don't. Score factors are listed in the order
-					of impact on your credit score with the factor that has the
-					greatest impact listed first.
+					Score Factors or "Reason Codes" on your credit report are
+					like clues from a Sherlock Holmes mystery, shedding light on
+					why your score didn't reach the stratospheric heights you
+					hoped for. Up to five factors are listed in order of their
+					impact, with the most significant one first.
 				</div>
 				<div className="flex flex-col w-full">
-					Even if you have excellent credit scores your credit report
-					will still list 4 to 5 score factors. This is because
-					lenders are required by law to provide a consumer with a
-					disclosure notice if their credit report data is used in the
-					review of a loan application and the application is either
-					denied or the application is approved but with less than the
-					best terms offer. This required disclosure includes your
-					credit score and the score factors explaining why your score
-					isn't higher.
+					And you'll see those scores even if you have Rockstar
+					credit. Lenders are required by law to disclose score
+					factors each time your credit report is used for a loan
+					application that is denied or approved with less than
+					favorable terms.
 				</div>
 				<div className="flex flex-col w-full">
-					Reason codes or score factors are very helpful as a roadmap
-					to score improvement. They paint a very clear picture of the
-					top reason why your score isn't higher, so you can take
-					steps to improve over time.
+					Reason codes or score factors serve as a valuable guide for
+					improving your score. They provide a clear picture of why
+					your score isn't higher and shows what steps you can take to
+					improve it over time.
 				</div>
 			</div>
 		</div>

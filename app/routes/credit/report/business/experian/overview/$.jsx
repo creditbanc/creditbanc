@@ -91,15 +91,14 @@ const ScoreCard = () => {
 				</div>
 				<div className="flex flex-col w-full space-y-3">
 					<div className="font-semibold">
-						What is the Experian Intelliscore Plus℠ V2 Score?
+						What Exactly is an Intelliscore?
 					</div>
 					<div>
-						Using both personal and business credit data, the
-						Intelliscore is a good measure of your business’s
-						overall credit health. The higher your Intelliscore, the
-						lower a risk you seem to business lenders and other
-						creditors. Payment history, as well as utilization and
-						trended data, are important factors in this score.
+						Your business's Intelliscore is like a crystal ball into
+						your credit health. It takes into account your payment
+						history, utilization, and even your trended data. And
+						the higher the score, the better; lenders don't like to
+						play risky business when it comes to their money.
 					</div>
 				</div>
 			</div>

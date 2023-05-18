@@ -97,12 +97,12 @@ const ExplanationCard = () => {
 					)}
 
 					<div className="flex flex-col">
-						The longer you have been in business the better when it
-						comes to business credit. Lenders, suppliers, and
-						customers in this category want to know whether or not
-						you'll still be in business down the road. A longer
-						history is indicative of continued success and business
-						longevity.
+						The longer you've been in business, the better. It not
+						only gives you an edge in terms of your credit, but
+						lenders, suppliers, and customers tend to feel more
+						secure working with a company with a track record of
+						success and longevity. It shows your business will be
+						sustainable in the long run.
 					</div>
 				</div>
 				<div className="flex flex-col w-full space-y-2">
@@ -119,10 +119,9 @@ const ExplanationCard = () => {
 					)}
 
 					<div className="flex flex-col">
-						Banks, suppliers, and customers may look to your number
-						of employees as an indication of your business's
-						financial stability and ability to continue operations.
-						Make sure this number is accurate.
+						Another indicator of your business's financial and
+						operational stability is the number of people you
+						employ. Make sure this number is accurate.
 					</div>
 				</div>
 				<div className="flex flex-col w-full space-y-2">

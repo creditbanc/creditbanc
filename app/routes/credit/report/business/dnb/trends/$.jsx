@@ -94,24 +94,22 @@ const ExplanationCard = () => {
 			</div>
 			<div className="border-t border-gray-200 space-y-6 p-6">
 				<div className="flex flex-col w-full">
-					If you are paying your bills increasingly late, your payment
-					trend may show that your average DBT (Days Beyond Terms) is
-					increasing, and your score could take a hit. In contrast,
-					paying your bills on time or early may lower your average
-					DBT and impact your score. Slow or late payments trends, as
-					well as total number of delinquent accounts are the most
-					important factors to consider within the payment status
-					category.
+					If you've been playing the "paying bills late" game, your
+					average Days Beyond Terms (DBT) is going to go up...which
+					means your credit score is going to go down. (Past behavior
+					predicts future behavior, right?) This is the type of trend
+					you don't want to be a part of.
 				</div>
 
 				<div className="flex flex-col w-full">
-					In personal credit, a bill is considered late when it is at
-					least 30 days overdue. But in business credit, there are a
-					wide variety of payment terms such as Net 30, Net 60, etc.
-					So, for example, if a business is supposed to pay its bills
-					within 60 days and the business pays on day 67, the DBT is
-					7. Your business credit may be negatively impacted the
-					higher your DBT is.
+					It's also important to remember that personal and business
+					credit have different criteria for "late" bills. Any bill at
+					least 30 days overdue is considered delinquent on your
+					personal credit score. However, business credit has a
+					variety of payment terms (we're talking Net 30, Net 60,
+					etc.). So, if you're supposed to pay within 60 days but wait
+					until day 67, the DBT is 7. A higher DBT = a negative impact
+					on your credit score.
 				</div>
 			</div>
 		</div>

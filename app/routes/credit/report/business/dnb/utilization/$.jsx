@@ -157,25 +157,20 @@ const ExplanationCard = () => {
 		<div className="overflow-hidden bg-white rounded-lg border">
 			<div className="px-4 py-5 sm:px-6">
 				<h3 className="text-lg font-medium leading-6 text-gray-900">
-					How is Credit Utilization measured?
+					Explain Credit Utilization and Why I Should Care
 				</h3>
 			</div>
 			<div className="border-t border-gray-200 space-y-6 p-6">
 				<div className="flex flex-col w-full">
-					Credit utilization is the ratio of current account balances
-					to recent high credit balances. The ratio of delinquent
-					balances to credit limits, and balances carried in relation
-					to the rest of businesses in the same industry all affect
-					business creditworthiness.
-				</div>
-
-				<div className="flex flex-col w-full">
-					Since many business credit accounts don't have balance
-					limits, this ratio may be used as an indicator of how much
-					financial stress a business might be experiencing. The
-					assumption is that the closer a business gets to its highest
-					historical debt amount, the more difficult it may be for
-					that business to make its payments on time.
+					One way your business's street cred (or should we say
+					creditworthiness?) is determined is by how much credit
+					you're using, a.k.a: Credit Utilization. It looks at the
+					ratio of current account balances to recent high credit
+					balances. Because many business accounts don't have balance
+					limits, this ratio can reveal if you're feeling the
+					financial heat. The closer a business gets to its highest
+					historical debt amount, the more difficult it might be for
+					said business to make on-time payments.
 				</div>
 			</div>
 		</div>
