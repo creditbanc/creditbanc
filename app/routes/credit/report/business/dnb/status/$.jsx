@@ -41,7 +41,6 @@ export const loader = async ({ request }) => {
 
 const PaymentStatus = () => {
 	let { payment_status, report_plan_id } = useLoaderData();
-	// report_plan_id = "essential";
 	let plan = pipe(get(report_plan_id, "business", "dnb"))(plans);
 
 	return (

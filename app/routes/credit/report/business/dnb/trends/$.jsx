@@ -89,20 +89,29 @@ const ExplanationCard = () => {
 		<div className="overflow-hidden bg-white rounded-lg border">
 			<div className="px-4 py-5 sm:px-6">
 				<h3 className="text-lg font-medium leading-6 text-gray-900">
-					How is Payment Status Important?
+					What are Payment Trends?
 				</h3>
 			</div>
-			<div className="border-t border-gray-200 space-y-8 p-6">
+			<div className="border-t border-gray-200 space-y-6 p-6">
 				<div className="flex flex-col w-full">
-					Payment status on commercial accounts is treated much
-					differently than personal accounts. On the personal side, a
-					consumer has 30 days after a payment is due to pay before a
-					late payment can be reported on their credit. It's not the
-					same with business credit. A creditor can report a late or
-					slow payment the day after it's due. So if your business is
-					only 1 day late making a payment, it can be reported as late
-					or slow on your business credit. The more promptly you make
-					your payments, the better your business credit score can be.
+					If you are paying your bills increasingly late, your payment
+					trend may show that your average DBT (Days Beyond Terms) is
+					increasing, and your score could take a hit. In contrast,
+					paying your bills on time or early may lower your average
+					DBT and impact your score. Slow or late payments trends, as
+					well as total number of delinquent accounts are the most
+					important factors to consider within the payment status
+					category.
+				</div>
+
+				<div className="flex flex-col w-full">
+					In personal credit, a bill is considered late when it is at
+					least 30 days overdue. But in business credit, there are a
+					wide variety of payment terms such as Net 30, Net 60, etc.
+					So, for example, if a business is supposed to pay its bills
+					within 60 days and the business pays on day 67, the DBT is
+					7. Your business credit may be negatively impacted the
+					higher your DBT is.
 				</div>
 			</div>
 		</div>
