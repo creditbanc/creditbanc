@@ -98,6 +98,9 @@ export const loader = async ({ request }) => {
 	let lendflow_report = await get_lendflow_report(report.application_id);
 	let is_latest_report = deepEqual(report.data, lendflow_report.data);
 
+	console.log("is_latest_report");
+	console.log(is_latest_report);
+
 	if (!is_latest_report) {
 		report = await prisma.business_credit_report.update({
 			where: {

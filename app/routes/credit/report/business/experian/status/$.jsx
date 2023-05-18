@@ -56,6 +56,7 @@ const PaymentStatus = () => {
 	let trade_count = trade_lines_payment_totals?.tradelineCount || 0;
 	let delinquent_count = trade_lines_payment_totals?.dbt30 || 0;
 	let delinquent_ratio = (delinquent_count / trade_count) * 100;
+	delinquent_ratio = isNaN(delinquent_ratio) ? 0 : delinquent_ratio;
 
 	return (
 		<div className="overflow-hidden bg-white rounded-lg border">

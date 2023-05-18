@@ -1,4 +1,4 @@
-import { useLoaderData } from "@remix-run/react";
+import { useLoaderData, Link } from "@remix-run/react";
 import { Lendflow } from "~/data/lendflow";
 import { currency, mapIndexed } from "~/utils/helpers";
 import { allPass, pipe, not } from "ramda";

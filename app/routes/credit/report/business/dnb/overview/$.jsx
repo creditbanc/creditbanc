@@ -20,6 +20,8 @@ export const loader = async ({ request }) => {
 	});
 
 	let score = Lendflow.dnb.score(report);
+	console.log("score");
+	console.log(score);
 
 	let delinquency_score = Lendflow.dnb.delinquency_score(report);
 	// console.log("delinquency_score");
