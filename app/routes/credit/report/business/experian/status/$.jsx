@@ -172,7 +172,7 @@ export default function Container() {
 						<AccountCard
 							trade_line={trade_line}
 							key={idx}
-							plan_id={"essential"}
+							plan_id={report_plan_id}
 						/>
 					))
 				)(trade_lines)}
