@@ -221,6 +221,7 @@ export default function BusinessReport() {
 									selected={get_route_endpoint(
 										location.pathname
 									)}
+									report_plan_id={report_plan_id}
 								/>
 							</div>
 						)}

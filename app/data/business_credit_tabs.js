@@ -21,6 +21,7 @@ export const tabs = (bureau = "experian") => [
 		id: "overview",
 		experian: true,
 		dnb: true,
+		plans: ["essential", "builder", "pro"],
 	},
 	{
 		name: "Payment Status",
@@ -33,6 +34,7 @@ export const tabs = (bureau = "experian") => [
 		id: "status",
 		experian: true,
 		dnb: true,
+		plans: ["builder", "pro"],
 	},
 	{
 		name: "Derogatories",
@@ -45,6 +47,7 @@ export const tabs = (bureau = "experian") => [
 		id: "derogatories",
 		experian: true,
 		dnb: false,
+		plans: ["builder", "pro"],
 	},
 	{
 		name: "Credit Utilization",
@@ -57,6 +60,7 @@ export const tabs = (bureau = "experian") => [
 		id: "utilization",
 		experian: true,
 		dnb: true,
+		plans: ["builder", "pro"],
 	},
 	{
 		name: "Payment Trends",
@@ -69,6 +73,7 @@ export const tabs = (bureau = "experian") => [
 		id: "trends",
 		experian: true,
 		dnb: true,
+		plans: ["builder", "pro"],
 	},
 	{
 		name: "Company Info",
@@ -81,6 +86,7 @@ export const tabs = (bureau = "experian") => [
 		id: "info",
 		experian: true,
 		dnb: false,
+		plans: ["builder", "pro"],
 	},
 	{
 		name: "Score Factors",
@@ -93,5 +99,6 @@ export const tabs = (bureau = "experian") => [
 		id: "factors",
 		experian: true,
 		dnb: false,
+		plans: ["builder", "pro"],
 	},
 ];
