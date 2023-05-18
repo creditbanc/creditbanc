@@ -235,23 +235,6 @@ export default function LeftNav({ data = {}, can_manage_roles } = {}) {
 				{collapsed ? <ChevronRightIcon /> : <ChevronLeftIcon />}
 			</div>
 
-			{/* {can_manage_roles && (
-				<Link
-					className={`flex flex-col absolute bottom-0 cursor-pointer ${
-						collapsed ? "w-[45px]" : "w-[200px]"
-					}`}
-					to={"/roles" + to_resource_pathname(location.pathname)}
-				>
-					<div className="flex flex-col border-t" />
-					<NavCategory
-						title="Settings"
-						icon={SettingsIcon}
-						onToggleNav={onToggleNav}
-						collapsed={collapsed}
-					/>
-				</Link>
-			)} */}
-
 			<div className="overflow-y-scroll mb-[20px] scrollbar-hide">
 				<NavCategory
 					title="Personal reports"
