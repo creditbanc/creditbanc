@@ -16,10 +16,12 @@ import { plans_index } from "~/data/plans_index";
 import { plan_product_requests } from "~/data/plan_product_requests";
 import { pipe } from "ramda";
 import { get } from "shades";
+import { Lendflow } from "~/data/lendflow";
 import {
 	update_lendflow_report,
 	get_lendflow_report,
 } from "~/utils/lendflow.server";
+import deepEqual from "deep-equal";
 
 export const action = async ({ request }) => {
 	var form = await request.formData();
@@ -48,8 +50,8 @@ export const action = async ({ request }) => {
 		...dnb_requested_products,
 	];
 
-	console.log("requested_products");
-	console.log(requested_products);
+	// console.log("requested_products");
+	// console.log(requested_products);
 
 	// return null;
 
@@ -93,8 +95,20 @@ export const loader = async ({ request }) => {
 		},
 	});
 
-	// console.log("report");
-	// console.log(report);
+	let lendflow_report = await get_lendflow_report(report.application_id);
+	let is_latest_report = deepEqual(report.data, lendflow_report.data);
+
+	if (!is_latest_report) {
+		report = await prisma.business_credit_report.update({
+			where: {
+				id: report.id,
+			},
+			data: {
+				...lendflow_report,
+			},
+		});
+		return redirect(url);
+	}
 
 	let { plan_id } = await prisma.entity.findUnique({
 		where: { id: entity_id },
