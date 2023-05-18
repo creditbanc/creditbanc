@@ -6,6 +6,7 @@ import { currency } from "~/utils/helpers";
 import { pipe } from "ramda";
 import { plans } from "~/data/plans";
 import { get } from "shades";
+import { Link } from "@remix-run/react";
 
 export default function AccountCard({ trade_line, plan_id = "essential" }) {
 	let is_current =
@@ -23,13 +24,18 @@ export default function AccountCard({ trade_line, plan_id = "essential" }) {
 			<div className="px-4 py-5 sm:px-6 flex flex-row justify-between">
 				<h3
 					className={`text-lg font-medium leading-6 text-gray-900 ${
-						!plan.trade_lines && "blur-md"
+						!plan.trade_lines && "blur-sm"
 					}`}
 				>
 					{trade_line.businessCategory}
 				</h3>
 				{!plan.trade_lines && (
-					<div className="font-semibold">Upgrade</div>
+					<Link
+						to={"/plans"}
+						className="font-semibold text-blue-600 underline"
+					>
+						Upgrade
+					</Link>
 				)}
 			</div>
 			<div className="border-t border-gray-200 p-5 pt-1">
@@ -56,7 +62,8 @@ export default function AccountCard({ trade_line, plan_id = "essential" }) {
 				<div className="flex flex-col w-full [&>*:nth-child(odd)]:bg-gray-50 border rounded">
 					<div className="flex flex-row py-2 px-3">
 						<div className="flex flex-col w-3/4">Date Reported</div>
-						<div className={`${!plan.trade_lines && "blur-md"}`}>
+
+						<div className={`${!plan.trade_lines && "blur-sm"}`}>
 							{trade_line.dateReported}
 						</div>
 					</div>
@@ -64,13 +71,13 @@ export default function AccountCard({ trade_line, plan_id = "essential" }) {
 						<div className="flex flex-col w-3/4">
 							Date of Last Activity
 						</div>
-						<div className={`${!plan.trade_lines && "blur-md"}`}>
+						<div className={`${!plan.trade_lines && "blur-sm"}`}>
 							{trade_line.dateLastActivity}
 						</div>
 					</div>
 					<div className="flex flex-row py-2 px-3">
 						<div className="flex flex-col w-3/4">Term</div>
-						<div className={`${!plan.trade_lines && "blur-md"}`}>
+						<div className={`${!plan.trade_lines && "blur-sm"}`}>
 							{trade_line.terms}
 						</div>
 					</div>
@@ -91,7 +98,7 @@ export default function AccountCard({ trade_line, plan_id = "essential" }) {
 							<div className="flex flex-col w-[90%] h-[1px] bg-gray-200"></div>
 							<div
 								className={`font-semibold ${
-									!plan.trade_lines && "blur-md"
+									!plan.trade_lines && "blur-sm"
 								}`}
 							>
 								{currency.format(
@@ -104,7 +111,7 @@ export default function AccountCard({ trade_line, plan_id = "essential" }) {
 							<div className="flex flex-col w-[90%] h-[1px] bg-gray-200"></div>
 							<div
 								className={`font-semibold ${
-									!plan.trade_lines && "blur-md"
+									!plan.trade_lines && "blur-sm"
 								}`}
 							>
 								{currency.format(
@@ -118,7 +125,7 @@ export default function AccountCard({ trade_line, plan_id = "essential" }) {
 								<div className="flex flex-col w-[90%] h-[1px] bg-gray-200"></div>
 								<div
 									className={`font-semibold ${
-										!plan.trade_lines && "blur-md"
+										!plan.trade_lines && "blur-sm"
 									}`}
 								>
 									{trade_line.currentPercentage}%

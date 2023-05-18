@@ -34,7 +34,6 @@ export const loader = async ({ request }) => {
 	});
 
 	if (pipe(allPass(report_tests[plan_id]["experian"]), not)(report)) {
-		console.log("didnotpass");
 		let lendflow_report = await get_lendflow_report(report.application_id);
 		report = await update_business_report(report.id, lendflow_report);
 	}
@@ -42,16 +41,20 @@ export const loader = async ({ request }) => {
 	let trade_payment_totals = Lendflow.experian.trade_payment_totals(report);
 	let trade_lines = Lendflow.experian.trade_lines(report);
 	let report_payload = { trade_payment_totals, trade_lines };
+	let report_plan_id = report?.plan_id || "essential";
 	// console.log("report_payload");
 	// console.log(report_payload);
-	return { ...report_payload, plan_id };
+	return { ...report_payload, plan_id, report_plan_id };
 };
 
 const PaymentStatus = () => {
-	let { trade_payment_totals, plan_id } = useLoaderData();
+	let { trade_payment_totals, plan_id, report_plan_id } = useLoaderData();
 	let { trade_lines: trade_lines_payment_totals } = trade_payment_totals;
 
-	let plan = pipe(get(plan_id, "business", "experian"))(plans);
+	let plan = pipe(get(report_plan_id, "business", "experian"))(plans);
+
+	console.log("test");
+	console.log(plan.trade_lines_payment_totals);
 
 	let trade_count = trade_lines_payment_totals?.tradelineCount || 0;
 	let delinquent_count = trade_lines_payment_totals?.dbt30 || 0;
@@ -153,7 +156,7 @@ const ExplanationCard = () => {
 };
 
 export default function Container() {
-	let { trade_lines, plan_id } = useLoaderData();
+	let { trade_lines, plan_id, report_plan_id } = useLoaderData();
 
 	return (
 		<div className="flex flex-col w-full space-y-5">
@@ -169,7 +172,7 @@ export default function Container() {
 						<AccountCard
 							trade_line={trade_line}
 							key={idx}
-							plan_id={plan_id}
+							plan_id={"essential"}
 						/>
 					))
 				)(trade_lines)}
