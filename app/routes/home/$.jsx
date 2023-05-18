@@ -305,7 +305,7 @@ const BusinessCredit = () => {
 				</div>
 			</div>
 
-			<div className="flex flex-col w-full py-3 border-b border-gray-200">
+			<div className="flex flex-col w-full py-3 ">
 				<div className="flex flex-row w-full">
 					<div className="flex flex-col w-2/3">
 						<div className="font-semibold">Dun & Bradstreet ®</div>
