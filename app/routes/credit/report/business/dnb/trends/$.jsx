@@ -2,7 +2,7 @@ import {
 	HandThumbDownIcon,
 	HandThumbUpIcon,
 } from "@heroicons/react/24/outline";
-import { useLoaderData } from "@remix-run/react";
+import { useLoaderData, Link } from "@remix-run/react";
 import { mrm_credit_report, Lendflow } from "~/data/lendflow";
 import { currency, mapIndexed } from "~/utils/helpers";
 import { pipe, map } from "ramda";
@@ -34,19 +34,31 @@ export const loader = async ({ request }) => {
 	});
 
 	let payment_trends = Lendflow.dnb.payment_trends(report);
+	let report_plan_id = report?.plan_id || "essential";
 
-	return { payment_trends, plan_id };
+	return { payment_trends, plan_id, report_plan_id };
 };
 
 const PaymentTrends = () => {
-	let { credit_utilization: data } = useLoaderData();
+	let { credit_utilization: data, report_plan_id } = useLoaderData();
+
+	let plan = pipe(get(report_plan_id, "business", "dnb"))(plans);
 
 	return (
 		<div className="overflow-hidden bg-white rounded-lg border">
-			<div className="px-4 py-5 sm:px-6">
+			<div className="px-4 py-5 sm:px-6 flex flex-row justify-between">
 				<h3 className="text-lg font-medium leading-6 text-gray-900">
-					Derogatories
+					Payment Trends
 				</h3>
+
+				{report_plan_id == "essential" && (
+					<Link
+						to={"/plans"}
+						className="font-semibold text-blue-600 underline"
+					>
+						Upgrade
+					</Link>
+				)}
 			</div>
 			<div className="border-t border-gray-200 p-5 space-y-5">
 				<div className="flex flex-col w-full [&>*:nth-child(odd)]:bg-gray-50 border rounded">
@@ -54,13 +66,17 @@ const PaymentTrends = () => {
 						<div className="flex flex-col w-3/4">
 							Bad Debt Experiences Count
 						</div>
-						<div>{data?.badDebtExperiencesCount || 0}</div>
+						<div className={`${!plan.trends && "blur-sm"}`}>
+							{data?.badDebtExperiencesCount || 0}
+						</div>
 					</div>
 					<div className="flex flex-row py-2 px-3">
 						<div className="flex flex-col w-3/4">
 							Total Past Due Experiences Count
 						</div>
-						<div>{data?.badDebtExperiencesCount || 0}</div>
+						<div className={`${!plan.trends && "blur-sm"}`}>
+							{data?.badDebtExperiencesCount || 0}
+						</div>
 					</div>
 				</div>
 			</div>
