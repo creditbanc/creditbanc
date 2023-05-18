@@ -171,7 +171,7 @@ export default function Plan() {
 						Plan
 					</h2>
 					<p className="mt-1 text-sm leading-6 text-gray-500">
-						This is your current Credit Banc Plan
+						This is your current Credit Banc plan
 					</p>
 
 					<dl className="mt-6 space-y-6 divide-y divide-gray-100 border-t border-gray-200 text-sm leading-6">
