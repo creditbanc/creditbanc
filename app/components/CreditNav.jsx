@@ -73,31 +73,48 @@ const BusinessIcon = () => {
 	);
 };
 
-const SettingsIcon = () => {
+let DeleteIcon = () => {
+	let [color, setColor] = useState("currentColor");
 	return (
 		<svg
 			xmlns="http://www.w3.org/2000/svg"
 			fill="none"
 			viewBox="0 0 24 24"
-			strokeWidth="1.5"
-			stroke="currentColor"
-			className="w-6 h-6"
+			strokeWidth={1.5}
+			stroke={color}
+			className="w-3 h-3"
+			onMouseEnter={(e) => setColor("red")}
+			onMouseLeave={(e) => setColor("currentColor")}
 		>
 			<path
 				strokeLinecap="round"
 				strokeLinejoin="round"
-				d="M10.343 3.94c.09-.542.56-.94 1.11-.94h1.093c.55 0 1.02.398 1.11.94l.149.894c.07.424.384.764.78.93.398.164.855.142 1.205-.108l.737-.527a1.125 1.125 0 011.45.12l.773.774c.39.389.44 1.002.12 1.45l-.527.737c-.25.35-.272.806-.107 1.204.165.397.505.71.93.78l.893.15c.543.09.94.56.94 1.109v1.094c0 .55-.397 1.02-.94 1.11l-.893.149c-.425.07-.765.383-.93.78-.165.398-.143.854.107 1.204l.527.738c.32.447.269 1.06-.12 1.45l-.774.773a1.125 1.125 0 01-1.449.12l-.738-.527c-.35-.25-.806-.272-1.203-.107-.397.165-.71.505-.781.929l-.149.894c-.09.542-.56.94-1.11.94h-1.094c-.55 0-1.019-.398-1.11-.94l-.148-.894c-.071-.424-.384-.764-.781-.93-.398-.164-.854-.142-1.204.108l-.738.527c-.447.32-1.06.269-1.45-.12l-.773-.774a1.125 1.125 0 01-.12-1.45l.527-.737c.25-.35.273-.806.108-1.204-.165-.397-.505-.71-.93-.78l-.894-.15c-.542-.09-.94-.56-.94-1.109v-1.094c0-.55.398-1.02.94-1.11l.894-.149c.424-.07.765-.383.93-.78.165-.398.143-.854-.107-1.204l-.527-.738a1.125 1.125 0 01.12-1.45l.773-.773a1.125 1.125 0 011.45-.12l.737.527c.35.25.807.272 1.204.107.397-.165.71-.505.78-.929l.15-.894z"
-			/>
-			<path
-				strokeLinecap="round"
-				strokeLinejoin="round"
-				d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+				d="M15 12H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z"
 			/>
 		</svg>
 	);
 };
 
-const Reports = ({ reports }) => {
+let PlusIcon = () => {
+	return (
+		<svg
+			xmlns="http://www.w3.org/2000/svg"
+			fill="none"
+			viewBox="0 0 24 24"
+			strokeWidth={1.5}
+			stroke="currentColor"
+			className="w-4 h-4"
+		>
+			<path
+				strokeLinecap="round"
+				strokeLinejoin="round"
+				d="M12 4.5v15m7.5-7.5h-15"
+			/>
+		</svg>
+	);
+};
+
+const PersonalReports = ({ reports }) => {
 	// console.log("reports");
 	// console.log(reports);
 
@@ -108,27 +125,27 @@ const Reports = ({ reports }) => {
 			{pipe(
 				mapIndexed((report, idx) => (
 					<Link
-						className="relative flex flex-col items-start border rounded hover:border-indigo-500 my-2"
+						key={idx}
 						to={
 							"/credit/report/personal/personal" +
 							to_group_pathname(location.pathname) +
 							`/f/${report.id}` +
-							location.search
+							`?rand=${Math.random()}`
 						}
-						key={idx}
+						className="border rounded-md text-sm py-1 px-2 cursor-pointer hover:border-indigo-400 flex flex-row justify-between my-2 text-gray-700 min-h-[30px]"
 					>
-						<div className="text-sm p-2 py-2 font-medium text-gray-500 flex flex-col w-full">
-							<div className="flex flex-row w-full justify-between mb-1">
-								<div className="flex flex-row text-[#374151]">
+						<div className="flex flex-col w-full">
+							<div className="flex flex-row font-semibold my-1 justify-between items-center">
+								<div className="flex flex-row">
 									<div>{report.last_name}</div>
-									<div>,</div>
-									<div className="ml-1">
-										{report.first_name}
-									</div>
+									<div className="mr-1">,</div>
+									<div>{report.first_name}</div>
 								</div>
-								<div className="delete"></div>
+								<div onClick={(e) => onDelete(report.id, e)}>
+									<DeleteIcon />
+								</div>
 							</div>
-							<div className="flex flex-row justify-between text-xs">
+							<div className="flex flex-row justify-between text-xs text-gray-500">
 								<div>{report.city}</div>
 								<div>{report.state}</div>
 							</div>
@@ -140,12 +157,35 @@ const Reports = ({ reports }) => {
 	);
 };
 
-function Panel({ is_open, setPanel, reports = {} }) {
-	// let location = useLocation();
+const BusinessReports = ({ reports }) => {
+	return (
+		<div>
+			{pipe(
+				mapIndexed((report, idx) => (
+					<Link
+						to={
+							"/credit/report/business/experian/overview" +
+							to_group_pathname(location.pathname) +
+							`/f/${report.id}` +
+							`?rand=${Math.random()}`
+						}
+						key={idx}
+						className="border rounded-md text-sm py-1 px-2 cursor-pointer hover:border-indigo-400 flex flex-row justify-between items-center my-2 text-gray-700"
+					>
+						{/* <div>{report.resource_id}</div> */}
+						<div>{report.business_legal_name}</div>
+						<div onClick={(e) => onDelete(report.id, e)}>
+							<DeleteIcon />
+						</div>
+					</Link>
+				))
+			)(reports)}
+		</div>
+	);
+};
 
-	// const onLinkClick = (url) => {
-	// 	window.location.href = url;
-	// };
+function Panel({ is_open, setPanel, reports = {} }) {
+	let location = useLocation();
 
 	if (isEmpty(reports)) {
 		return <div></div>;
@@ -154,8 +194,6 @@ function Panel({ is_open, setPanel, reports = {} }) {
 	return (
 		<Transition.Root show={is_open} as={Fragment}>
 			<Dialog as="div" className="relative z-50" onClose={setPanel}>
-				<div className="fixed inset-0" />
-
 				<div className="fixed inset-0 overflow-hidden">
 					<div className="absolute inset-0 overflow-hidden">
 						<div className="pointer-events-none fixed inset-y-0 left-0 flex max-w-full">
@@ -213,7 +251,7 @@ function Panel({ is_open, setPanel, reports = {} }) {
 															</div>
 
 															<div className="py-3">
-																<Reports
+																<PersonalReports
 																	reports={
 																		reports.personal_credit_reports
 																	}
@@ -229,54 +267,38 @@ function Panel({ is_open, setPanel, reports = {} }) {
 																	reports
 																</div>
 															</div>
-
-															<div className="py-5">
-																{pipe(
-																	mapIndexed(
-																		(
-																			report,
-																			idx
-																		) => (
-																			<div
-																				className="relative flex items-start ml-2"
-																				key={
-																					idx
-																				}
-																			>
-																				<div className="text-sm border-l pl-2">
-																					<div className="font-medium text-gray-500 cursor-pointer">
-																						{
-																							report.id
-																						}
-																					</div>
-																				</div>
-																			</div>
+															<div className="py-3">
+																<Link
+																	className="border-gray-200 cursor-pointer flex flex-row border rounded-md hover:border-indigo-400"
+																	to={
+																		"/credit/business/new" +
+																		to_group_pathname(
+																			location.pathname
 																		)
-																	)
-																)(
-																	reports.business_credit_reports
-																)}
+																	}
+																>
+																	<div className="text-sm mx-2 text-gray-700 justify-start w-full ">
+																		<div className="flex flex-row items-center justify-between py-1 rounded">
+																			<div>
+																				Add
+																				new
+																			</div>
+																			<div className="pr-1">
+																				<PlusIcon />
+																			</div>
+																		</div>
+																	</div>
+																</Link>
+																<BusinessReports
+																	reports={
+																		reports.business_credit_reports
+																	}
+																/>
 															</div>
 														</div>
 													</fieldset>
 												</div>
 											</div>
-											{/* <div className="absolute bottom-0 left-[15px] right-[15px] flex flex-col border-t pt-3">
-												<Link
-													className="flex flex-row cursor-pointer w-[100px]"
-													to={
-														"/roles" +
-														to_resource_pathname(
-															location.pathname
-														)
-													}
-												>
-													<div className="mr-3">
-														<SettingsIcon />
-													</div>
-													<div>Settings</div>
-												</Link>
-											</div> */}
 										</div>
 									</div>
 								</Dialog.Panel>
