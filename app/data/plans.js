@@ -35,9 +35,12 @@ plans.essential = {
 			factors: false,
 		},
 		dnb: {
-			score: false,
+			score: true,
 			trade_lines: false,
 			factors: false,
+			payment_status: false,
+			credit_utilization: false,
+			trends: false,
 		},
 	},
 };
@@ -87,8 +90,11 @@ plans.builder = {
 		},
 		dnb: {
 			score: true,
-			trade_lines: false,
-			factors: false,
+			trade_lines: true,
+			factors: true,
+			payment_status: true,
+			credit_utilization: true,
+			trends: true,
 		},
 	},
 };
@@ -140,6 +146,9 @@ plans.pro = {
 			score: true,
 			trade_lines: true,
 			factors: true,
+			payment_status: true,
+			credit_utilization: true,
+			trends: true,
 		},
 	},
 };
