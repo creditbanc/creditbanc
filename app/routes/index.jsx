@@ -205,6 +205,7 @@ const Single = () => {
 				bureau={"Equifax"}
 				scoreClassNames="text-6xl"
 				bureauTitleClassNames="text-1xl"
+				score={750}
 			>
 				<div className="mt-[170px] font-bold text-5xl">750</div>
 			</CreditScoreDoughnut>
