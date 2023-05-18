@@ -3,7 +3,7 @@ import { Link, useLocation } from "@remix-run/react";
 import { LockClosedIcon } from "@heroicons/react/24/outline";
 
 import { tabs } from "~/data/business_credit_tabs";
-import { pipe, head, map, includes } from "ramda";
+import { pipe, head, map, includes, not } from "ramda";
 import { filter } from "shades";
 import { get_business_report_bureau } from "~/utils/helpers";
 
@@ -51,7 +51,10 @@ export const VerticalNav = ({
 								<span>{tab.name}</span>
 							</div>
 							{selected == tab.id &&
-								pipe(includes(report_plan_id))(tab.plans) && (
+								pipe(
+									includes(report_plan_id),
+									not
+								)(tab.plans) && (
 									<div>
 										<div className="w-[13px] flex flex-col h-full justify-center">
 											<LockClosedIcon />
