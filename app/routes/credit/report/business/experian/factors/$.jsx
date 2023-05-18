@@ -1,7 +1,7 @@
+import { useLoaderData, Link } from "@remix-run/react";
 import { ChevronDoubleRightIcon } from "@heroicons/react/24/outline";
 import { get_file_id, mapIndexed } from "~/utils/helpers";
 import { prisma } from "~/utils/prisma.server";
-import { useLoaderData } from "@remix-run/react";
 import { Lendflow } from "~/data/lendflow";
 import { pipe, allPass, not } from "ramda";
 import { get_user_id } from "~/utils/auth.server";
@@ -39,9 +39,10 @@ export const loader = async ({ request }) => {
 
 	let factors = Lendflow.experian.factors(report);
 	let report_payload = { factors };
+	let report_plan_id = report?.plan_id || "essential";
 	// console.log("report_payload");
 	// console.log(report_payload);
-	return { ...report_payload, plan_id };
+	return { ...report_payload, plan_id, report_plan_id };
 };
 
 const ExplanationCard = () => {
@@ -87,9 +88,9 @@ const ExplanationCard = () => {
 };
 
 const ScoreFactors = () => {
-	let { factors, plan_id } = useLoaderData();
+	let { factors, plan_id, report_plan_id } = useLoaderData();
 
-	let plan = pipe(get(plan_id, "business", "experian"))(plans);
+	let plan = pipe(get(report_plan_id, "business", "experian"))(plans);
 
 	return (
 		<div className="overflow-hidden bg-white rounded-lg border">
@@ -98,7 +99,14 @@ const ScoreFactors = () => {
 					Here are the factors influencing your score
 				</h3>
 
-				{!plan.factors && <div className="font-semibold">Upgrade</div>}
+				{report_plan_id == "essential" && (
+					<Link
+						to={"/plans"}
+						className="font-semibold text-blue-600 underline"
+					>
+						Upgrade
+					</Link>
+				)}
 			</div>
 			<div className="border-t border-gray-200 p-6">
 				<div className="flex flex-col w-full space-y-6">

@@ -43,6 +43,7 @@ export const loader = async ({ request }) => {
 	let naics_code = head(Lendflow.experian.naics_codes(report));
 	let sales_revenue = Lendflow.experian.sales_revenue(report);
 	let business = Lendflow.business(report);
+	let report_plan_id = report?.plan_id || "essential";
 
 	let report_payload = {
 		years_on_file,
@@ -54,7 +55,7 @@ export const loader = async ({ request }) => {
 	};
 	// console.log("report_payload");
 	// console.log(report_payload);
-	return { ...report_payload, plan_id };
+	return { ...report_payload, plan_id, report_plan_id };
 };
 
 const ExplanationCard = () => {
@@ -66,9 +67,10 @@ const ExplanationCard = () => {
 		sales_revenue,
 		business,
 		plan_id,
+		report_plan_id,
 	} = useLoaderData();
 
-	let plan = pipe(get(plan_id, "business", "experian"))(plans);
+	let plan = pipe(get(report_plan_id, "business", "experian"))(plans);
 
 	return (
 		<div className="overflow-hidden bg-white rounded-lg border">
@@ -85,10 +87,13 @@ const ExplanationCard = () => {
 						</div>
 					)}
 
-					{!plan.years_on_file && (
-						<div className="flex flex-col font-semibold">
+					{report_plan_id == "essential" && (
+						<Link
+							to={"/plans"}
+							className="font-semibold text-blue-600 underline"
+						>
 							Upgrade
-						</div>
+						</Link>
 					)}
 
 					<div className="flex flex-col">

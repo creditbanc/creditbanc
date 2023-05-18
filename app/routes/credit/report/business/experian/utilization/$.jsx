@@ -42,9 +42,10 @@ export const loader = async ({ request }) => {
 	let trade_payment_totals = Lendflow.experian.trade_payment_totals(report);
 	let trade_lines = Lendflow.experian.trade_lines(report);
 	let report_payload = { trade_payment_totals, trade_lines };
+	let report_plan_id = report?.plan_id || "essential";
 	// console.log("report_payload");
 	// console.log(report_payload);
-	return { ...report_payload, plan_id };
+	return { ...report_payload, plan_id, report_plan_id };
 };
 
 const ExplanationCard = () => {
@@ -73,10 +74,10 @@ const ExplanationCard = () => {
 };
 
 const CreditUtilization = () => {
-	let { trade_payment_totals, plan_id } = useLoaderData();
+	let { trade_payment_totals, plan_id, report_plan_id } = useLoaderData();
 	let { trade_lines } = trade_payment_totals;
 
-	let plan = pipe(get(plan_id, "business", "experian"))(plans);
+	let plan = pipe(get(report_plan_id, "business", "experian"))(plans);
 
 	let utilization_ratio = get_account_utilization(
 		trade_lines?.totalAccountBalance?.amount,
@@ -90,8 +91,13 @@ const CreditUtilization = () => {
 					Credit Utilization
 				</h3>
 
-				{!plan.trade_lines && (
-					<div className="font-semibold">Upgrade</div>
+				{report_plan_id == "essential" && (
+					<Link
+						to={"/plans"}
+						className="font-semibold text-blue-600 underline"
+					>
+						Upgrade
+					</Link>
 				)}
 			</div>
 			<div className="border-t border-gray-200 space-y-8 p-6">
@@ -150,7 +156,7 @@ const CreditUtilization = () => {
 };
 
 export default function Container() {
-	let { trade_lines, plan_id } = useLoaderData();
+	let { trade_lines, plan_id, report_plan_id } = useLoaderData();
 
 	return (
 		<div className="flex flex-col w-full space-y-5">
@@ -166,7 +172,7 @@ export default function Container() {
 						<AccountUtilizationCard
 							trade_line={trade_line}
 							key={idx}
-							plan_id={plan_id}
+							plan_id={report_plan_id}
 						/>
 					))
 				)(trade_lines)}

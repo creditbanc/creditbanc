@@ -1,4 +1,4 @@
-import { useLoaderData } from "@remix-run/react";
+import { useLoaderData, Link } from "@remix-run/react";
 import { Lendflow } from "~/data/lendflow";
 import { allPass, pipe, not } from "ramda";
 import { get_file_id } from "~/utils/helpers";
@@ -38,15 +38,15 @@ export const loader = async ({ request }) => {
 
 	let derogatories = Lendflow.experian.derogatories(report);
 	let report_payload = { derogatories };
-	// console.log("report_payload");
-	// console.log(report_payload);
-	return { ...report_payload, plan_id };
+	let report_plan_id = report?.plan_id || "essential";
+
+	return { ...report_payload, plan_id, report_plan_id };
 };
 
 const Derogatories = () => {
-	let { plan_id, derogatories } = useLoaderData();
+	let { plan_id, derogatories, report_plan_id } = useLoaderData();
 
-	let plan = pipe(get(plan_id, "business", "experian"))(plans);
+	let plan = pipe(get(report_plan_id, "business", "experian"))(plans);
 
 	return (
 		<div className="overflow-hidden bg-white rounded-lg border">
@@ -55,8 +55,13 @@ const Derogatories = () => {
 					Derogatories
 				</h3>
 
-				{!plan.derogatories && (
-					<div className="font-semibold">Upgrade</div>
+				{report_plan_id == "essential" && (
+					<Link
+						to={"/plans"}
+						className="font-semibold text-blue-600 underline"
+					>
+						Upgrade
+					</Link>
 				)}
 			</div>
 			<div className="border-t border-gray-200 p-5 space-y-5">

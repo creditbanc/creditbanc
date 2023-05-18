@@ -1,4 +1,4 @@
-import { useLoaderData } from "@remix-run/react";
+import { useLoaderData, Link } from "@remix-run/react";
 import { Lendflow } from "~/data/lendflow";
 import { pipe, allPass, head, not, defaultTo, tryCatch, always } from "ramda";
 import { get_file_id, mapIndexed } from "~/utils/helpers";
@@ -40,9 +40,10 @@ export const loader = async ({ request }) => {
 	let payment_trends = Lendflow.experian.payment_trends(report);
 	let trade_lines = Lendflow.experian.trade_lines(report);
 	let report_payload = { payment_trends, trade_lines };
+	let report_plan_id = report?.plan_id || "essential";
 	// console.log("report_payload");
 	// console.log(report_payload);
-	return { ...report_payload, plan_id };
+	return { ...report_payload, plan_id, report_plan_id };
 };
 
 const ExplanationCard = () => {
@@ -71,9 +72,9 @@ const ExplanationCard = () => {
 };
 
 const PaymentTrendsCard = () => {
-	let { plan_id, payment_trends } = useLoaderData();
+	let { plan_id, payment_trends, report_plan_id } = useLoaderData();
 
-	let plan = pipe(get(plan_id, "business", "experian"))(plans);
+	let plan = pipe(get(report_plan_id, "business", "experian"))(plans);
 
 	return (
 		<div className="overflow-hidden bg-white rounded-lg border">
@@ -82,7 +83,14 @@ const PaymentTrendsCard = () => {
 					Payment Trends
 				</h3>
 
-				{!plan.trends && <div className="font-semibold">Upgrade</div>}
+				{report_plan_id == "essential" && (
+					<Link
+						to={"/plans"}
+						className="font-semibold text-blue-600 underline"
+					>
+						Upgrade
+					</Link>
+				)}
 			</div>
 			<div className="border-t border-gray-200 p-5">
 				<div className="flex flex-col w-full [&>*:nth-child(odd)]:bg-gray-50 border rounded">
@@ -104,7 +112,7 @@ const PaymentTrendsCard = () => {
 };
 
 export default function Container() {
-	let { trade_lines, plan_id } = useLoaderData();
+	let { trade_lines, plan_id, report_plan_id } = useLoaderData();
 
 	return (
 		<div className="flex flex-col w-full space-y-5">
@@ -120,7 +128,7 @@ export default function Container() {
 						<AccountCard
 							trade_line={trade_line}
 							key={idx}
-							plan_id={plan_id}
+							plan_id={report_plan_id}
 						/>
 					))
 				)(trade_lines)}

@@ -1,4 +1,4 @@
-import { useLoaderData } from "@remix-run/react";
+import { useLoaderData, Link } from "@remix-run/react";
 import { Lendflow } from "~/data/lendflow";
 import { currency, mapIndexed } from "~/utils/helpers";
 import { allPass, pipe, not } from "ramda";
@@ -51,10 +51,7 @@ const PaymentStatus = () => {
 	let { trade_payment_totals, plan_id, report_plan_id } = useLoaderData();
 	let { trade_lines: trade_lines_payment_totals } = trade_payment_totals;
 
-	let plan = pipe(get(report_plan_id, "business", "experian"))(plans);
-
-	console.log("test");
-	console.log(plan.trade_lines_payment_totals);
+	let plan = pipe(get("essential", "business", "experian"))(plans);
 
 	let trade_count = trade_lines_payment_totals?.tradelineCount || 0;
 	let delinquent_count = trade_lines_payment_totals?.dbt30 || 0;
@@ -62,10 +59,19 @@ const PaymentStatus = () => {
 
 	return (
 		<div className="overflow-hidden bg-white rounded-lg border">
-			<div className="px-4 py-5 sm:px-6">
+			<div className="px-4 py-5 sm:px-6 flex flex-row justify-between">
 				<h3 className="text-lg font-medium leading-6 text-gray-900">
 					Payment Status
 				</h3>
+
+				{report_plan_id == "essential" && (
+					<Link
+						to={"/plans"}
+						className="font-semibold text-blue-600 underline"
+					>
+						Upgrade
+					</Link>
+				)}
 			</div>
 			<div className="border-t border-gray-200 space-y-8 p-6">
 				<div className="flex flex-row w-full">
