@@ -137,10 +137,10 @@ export default function Container() {
 	return (
 		<div className="flex flex-col w-full space-y-5">
 			<div>
-				<ScoreFactors />
+				<ExplanationCard />
 			</div>
 			<div>
-				<ExplanationCard />
+				<ScoreFactors />
 			</div>
 		</div>
 	);
