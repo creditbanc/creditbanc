@@ -165,7 +165,6 @@ const Form = () => {
 							type="text"
 							name="first-name"
 							id="first-name"
-							autoComplete="given-name"
 							className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm border h-[38px] pl-2"
 							value={first_name}
 							onChange={(e) =>
@@ -187,7 +186,6 @@ const Form = () => {
 							type="text"
 							name="last-name"
 							id="last-name"
-							autoComplete="family-name"
 							className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm border h-[38px] pl-2"
 							value={last_name}
 							onChange={(e) =>
@@ -199,7 +197,7 @@ const Form = () => {
 
 				<div className="sm:col-span-6">
 					<label
-						htmlFor="street-address"
+						htmlFor="ssn"
 						className="block text-sm font-medium text-gray-700"
 					>
 						Social security number
@@ -207,9 +205,8 @@ const Form = () => {
 					<div className="mt-1">
 						<input
 							type="text"
-							name="street-address"
-							id="street-address"
-							autoComplete="street-address"
+							name="ssn"
+							id="ssn"
 							className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm border h-[38px] pl-2"
 							value={ssn}
 							onChange={(e) => setForm(["ssn"], e.target.value)}
@@ -225,7 +222,7 @@ const Form = () => {
 
 				<div className="sm:col-span-2">
 					<label
-						htmlFor="city"
+						htmlFor="month"
 						className="block text-sm font-medium text-gray-700"
 					>
 						Month
@@ -233,9 +230,8 @@ const Form = () => {
 					<div className="mt-1">
 						<input
 							type="text"
-							name="city"
-							id="city"
-							autoComplete="address-level2"
+							name="month"
+							id="month"
 							className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm border h-[38px] pl-2"
 							value={month}
 							onChange={(e) =>
@@ -247,7 +243,7 @@ const Form = () => {
 
 				<div className="sm:col-span-2">
 					<label
-						htmlFor="region"
+						htmlFor="day"
 						className="block text-sm font-medium text-gray-700"
 					>
 						Day
@@ -255,9 +251,8 @@ const Form = () => {
 					<div className="mt-1">
 						<input
 							type="text"
-							name="region"
-							id="region"
-							autoComplete="address-level1"
+							name="day"
+							id="day"
 							className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm border h-[38px] pl-2"
 							value={day}
 							onChange={(e) =>
@@ -269,7 +264,7 @@ const Form = () => {
 
 				<div className="sm:col-span-2">
 					<label
-						htmlFor="postal-code"
+						htmlFor="year"
 						className="block text-sm font-medium text-gray-700"
 					>
 						Year
@@ -277,9 +272,8 @@ const Form = () => {
 					<div className="mt-1">
 						<input
 							type="text"
-							name="postal-code"
-							id="postal-code"
-							autoComplete="postal-code"
+							name="year"
+							id="year"
 							className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm border h-[38px] pl-2"
 							value={year}
 							onChange={(e) =>
@@ -307,7 +301,6 @@ const Form = () => {
 							type="text"
 							name="street-address"
 							id="street-address"
-							autoComplete="street-address"
 							className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm border h-[38px] pl-2"
 							value={street}
 							onChange={(e) =>
@@ -329,7 +322,6 @@ const Form = () => {
 							type="text"
 							name="city"
 							id="city"
-							autoComplete="address-level2"
 							className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm border h-[38px] pl-2"
 							value={city}
 							onChange={(e) =>
@@ -341,7 +333,7 @@ const Form = () => {
 
 				<div className="sm:col-span-2">
 					<label
-						htmlFor="region"
+						htmlFor="state"
 						className="block text-sm font-medium text-gray-700"
 					>
 						State / Province
@@ -349,9 +341,8 @@ const Form = () => {
 					<div className="mt-1">
 						<input
 							type="text"
-							name="region"
-							id="region"
-							autoComplete="address-level1"
+							name="state"
+							id="state"
 							className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm border h-[38px] pl-2"
 							value={state}
 							onChange={(e) =>
@@ -373,7 +364,6 @@ const Form = () => {
 							type="text"
 							name="postal-code"
 							id="postal-code"
-							autoComplete="postal-code"
 							className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm border h-[38px] pl-2"
 							value={zip}
 							onChange={(e) =>
