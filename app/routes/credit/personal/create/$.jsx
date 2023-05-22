@@ -1,4 +1,4 @@
-import { to_resource_pathname, get_group_id } from "~/utils/helpers";
+import { to_resource_pathname, get_group_id, inspect } from "~/utils/helpers";
 import { json } from "@remix-run/node";
 import { create } from "~/utils/personal_credit_report.server";
 import axios from "axios";
@@ -21,9 +21,6 @@ export const loader = async ({ request }) => {
 	let search = new URLSearchParams(url_object.search);
 	let group_id = search.get("group_id");
 	let session = await getSession(request.headers.get("Cookie"));
-	let entity_personal_data = JSON.parse(
-		session.get("personal_credit_report")
-	);
 
 	// let { address, firstName, lastName, ssn, dob } = entity_personal_data;
 	// let { street, city, state, zip } = address;
@@ -55,17 +52,6 @@ export const loader = async ({ request }) => {
 		// zip,
 		ssn,
 	};
-
-	// console.log("session");
-	// console.log(credit_report_payload);
-
-	// return null;
-
-	// console.log("group_id");
-	// console.log(group_id);
-
-	// console.log("entity_id");
-	// console.log(entity_id);
 
 	let displayToken = search.get("displayToken");
 	let reportKey = search.get("reportKey");
@@ -114,19 +100,18 @@ export const loader = async ({ request }) => {
 		}
 	};
 
-	// let report = await get_credit_report(reportKey, displayToken);
+	let report = await get_credit_report(reportKey, displayToken);
+
+	console.log("report");
+	inspect(report);
 
 	// return null;
 
 	let { file } = await create({
 		entity_id,
 		group_id,
-		...credit_report_payload,
+		data: report,
 	});
-
-	// let { file } = report;
-	// console.log("report");
-	// console.log(report);
 
 	return redirect(
 		`/credit/report/personal/personal/resource/e/${entity_id}/g/${group_id}/f/${file.id}`

@@ -14,10 +14,11 @@ export const create = async (payload) => {
 		city = "",
 		state = "",
 		zip = "",
+		data = {},
 	} = payload;
 	if (!group_id) throw new Error("group_id is required");
 
-	let credit_report = CreditReport(credit_report_data);
+	let credit_report = CreditReport(data);
 	let liabilities = Liabilities(credit_report.liabilities());
 	let trade_lines = liabilities.trade_lines();
 
@@ -34,7 +35,7 @@ export const create = async (payload) => {
 			trade_lines,
 			type: "personal_credit_report",
 			entity_id,
-			data: credit_report_data,
+			data,
 		},
 	});
 

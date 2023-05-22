@@ -12,16 +12,16 @@ import {
 import { to_resource_pathname } from "~/utils/helpers";
 
 export const tabs = [
-	{
-		name: "Overview",
-		href: ({ pathname = "", search = "" } = {}) =>
-			"/credit/report/personal/personal" +
-			to_resource_pathname(pathname) +
-			search,
-		icon: Bars3Icon,
-		current: true,
-		id: "overview",
-	},
+	// {
+	// 	name: "Overview",
+	// 	href: ({ pathname = "", search = "" } = {}) =>
+	// 		"/credit/report/personal/personal" +
+	// 		to_resource_pathname(pathname) +
+	// 		search,
+	// 	icon: Bars3Icon,
+	// 	current: true,
+	// 	id: "overview",
+	// },
 	{
 		name: "Personal",
 		href: ({ pathname = "", search = "" } = {}) =>

@@ -33,19 +33,12 @@ const useVerificationQuestionsStore = create((set) => ({
 }));
 
 export const action = async ({ request }) => {
-	// console.log(":verification:");
-	let entity_id = await get_user_id(request);
 	const form = await request.formData();
 	const payload = JSON.parse(form.get("payload"));
 	let { clientKey, authToken, answers } = payload;
 	let url = new URL(request.url);
 	let search = new URLSearchParams(url.search);
 	let group_id = search.get("group_id");
-	// console.log("group_id");
-	// console.log(group_id);
-
-	// console.log("answers");
-	// console.log(answers);
 
 	const options = {
 		method: "POST",
@@ -62,14 +55,11 @@ export const action = async ({ request }) => {
 		},
 	};
 
-	// return redirect(`/signup?displayToken=1`);
-
 	let response = await axios(options);
 
 	let { userToken = null } = response.data;
 
 	if (userToken) {
-		// console.log("here1");
 		var data = JSON.stringify({
 			clientKey,
 			productCode: "credmo3bReportScore",
@@ -90,16 +80,9 @@ export const action = async ({ request }) => {
 		let { displayToken = null, reportKey = null } = response.data;
 
 		if (displayToken && reportKey) {
-			// console.log("here2");
-			if (!entity_id) {
-				return redirect(
-					`/signup?displayToken=${displayToken}&reportKey=${reportKey}`
-				);
-			} else {
-				return redirect(
-					`/credit/personal/create?displayToken=${displayToken}&reportKey=${reportKey}&group_id=${group_id}`
-				);
-			}
+			return redirect(
+				`/credit/personal/create?displayToken=${displayToken}&reportKey=${reportKey}&group_id=${group_id}`
+			);
 		}
 	} else {
 		return json({ ...response.data });

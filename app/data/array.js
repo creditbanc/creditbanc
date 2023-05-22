@@ -6431,6 +6431,7 @@ export const Liabilities = (liabilities) => {
 				index,
 				source: get("CREDIT_REPOSITORY", "@_SourceType")(value),
 			})),
+			// filter((value) => value["@CreditTradeReferenceID"] == "Primary")
 			splitWhenever(
 				(value) => value["@CreditTradeReferenceID"] == "Primary"
 			)
@@ -6438,15 +6439,19 @@ export const Liabilities = (liabilities) => {
 
 	return {
 		trade_lines,
+		liabilities,
 	};
 };
 
 export const TradeLine = (trade_line) => {
 	const accounts = () => trade_line;
+	// console.log("trade_line");
+	// inspect(trade_line);
 
 	const id = () =>
 		pipe(
 			mod(all)(pick(["@_AccountIdentifier", "source"])),
+			// pick(["@_AccountIdentifier", "source"]),
 			map((value) => ({
 				source: value.source,
 				value: value["@_AccountIdentifier"] || "",
@@ -6455,6 +6460,7 @@ export const TradeLine = (trade_line) => {
 
 	const account_type = () =>
 		pipe(
+			// pick(["@_AccountType", "source"]),
 			mod(all)(pick(["@_AccountType", "source"])),
 			map((value) => ({
 				source: value.source,
@@ -6464,6 +6470,7 @@ export const TradeLine = (trade_line) => {
 
 	const loan_type = () =>
 		pipe(
+			// pick(["@CreditLoanType", "source"]),
 			mod(all)(pick(["@CreditLoanType", "source"])),
 			map((value) => ({
 				source: value.source,
@@ -6473,6 +6480,7 @@ export const TradeLine = (trade_line) => {
 
 	const status = () =>
 		pipe(
+			// pick(["@_AccountStatusType", "source"]),
 			mod(all)(pick(["@_AccountStatusType", "source"])),
 			map((value) => ({
 				source: value.source,
@@ -6482,6 +6490,7 @@ export const TradeLine = (trade_line) => {
 
 	const payment_amount = () =>
 		pipe(
+			// pick(["@_MonthlyPaymentAmount", "source"]),
 			mod(all)(pick(["@_MonthlyPaymentAmount", "source"])),
 			map((value) => ({
 				source: value.source,
@@ -6491,6 +6500,7 @@ export const TradeLine = (trade_line) => {
 
 	const opened_date = () =>
 		pipe(
+			// pick(["@_AccountOpenedDate", "source"]),
 			mod(all)(pick(["@_AccountOpenedDate", "source"])),
 			map((value) => ({
 				source: value.source,
@@ -6499,16 +6509,21 @@ export const TradeLine = (trade_line) => {
 		)(trade_line);
 
 	const original_balance = () =>
-		pipe(
-			mod(all)(pick(["@_OriginalBalanceAmount", "source"])),
-			map((value) => ({
-				source: value.source,
-				value: value["@_OriginalBalanceAmount"] || 0,
-			}))
+		tryCatch(
+			pipe(
+				// pick(["@_OriginalBalanceAmount", "source"]),
+				mod(all)(pick(["@_OriginalBalanceAmount", "source"])),
+				map((value) => ({
+					source: value.source,
+					value: value["@_OriginalBalanceAmount"] || 0,
+				}))
+			),
+			always(0)
 		)(trade_line);
 
 	const unpaid_balance = () =>
 		pipe(
+			// pick(["@_UnpaidBalanceAmount", "source"]),
 			mod(all)(pick(["@_UnpaidBalanceAmount", "source"])),
 			map((value) => ({
 				source: value.source,
@@ -6518,6 +6533,7 @@ export const TradeLine = (trade_line) => {
 
 	const high_balance = () =>
 		pipe(
+			// pick(["@_HighBalanceAmount", "source"]),
 			mod(all)(pick(["@_HighBalanceAmount", "source"])),
 			map((value) => ({
 				source: value.source,
@@ -6527,6 +6543,7 @@ export const TradeLine = (trade_line) => {
 
 	const terms = () =>
 		pipe(
+			// pick(["@_TermsMonthsCount", "source"]),
 			mod(all)(pick(["@_TermsMonthsCount", "source"])),
 			map((value) => ({
 				source: value.source,
@@ -6536,6 +6553,7 @@ export const TradeLine = (trade_line) => {
 
 	const credit_limit = () =>
 		pipe(
+			// pick(["@_CreditLimitAmount", "source"]),
 			mod(all)(pick(["@_CreditLimitAmount", "source"])),
 			map((value) => ({
 				source: value.source,
@@ -6545,6 +6563,7 @@ export const TradeLine = (trade_line) => {
 
 	const past_due_amount = () =>
 		pipe(
+			// pick(["@_PastDueAmount", "source"]),
 			mod(all)(pick(["@_PastDueAmount", "source"])),
 			map((value) => ({
 				source: value.source,
@@ -6558,6 +6577,7 @@ export const TradeLine = (trade_line) => {
 
 	const current_rating = () =>
 		pipe(
+			// pick(["_CURRENT_RATING", "source"]),
 			mod(all)(pick(["_CURRENT_RATING", "source"])),
 			map((value) => ({
 				source: value.source,
@@ -6573,6 +6593,7 @@ export const TradeLine = (trade_line) => {
 
 	const account_reported_date = () =>
 		pipe(
+			// pick(["@_AccountReportedDate", "source"]),
 			mod(all)(pick(["@_AccountReportedDate", "source"])),
 			map((value) => ({
 				source: value.source,
@@ -6582,6 +6603,7 @@ export const TradeLine = (trade_line) => {
 
 	const comments = () =>
 		pipe(
+			// pick(["CREDIT_COMMENT", "source"]),
 			mod(all)(pick(["CREDIT_COMMENT", "source"])),
 			map((value) => ({
 				source: value.source,
@@ -6591,6 +6613,7 @@ export const TradeLine = (trade_line) => {
 
 	const last_activity_date = () =>
 		pipe(
+			// pick(["@_LastActivityDate", "source"]),
 			mod(all)(pick(["@_LastActivityDate", "source"])),
 			map((value) => ({
 				source: value.source,
@@ -6600,6 +6623,7 @@ export const TradeLine = (trade_line) => {
 
 	const last_payment_date = () =>
 		pipe(
+			// pick(["@LastPaymentDate", "source"]),
 			mod(all)(pick(["@LastPaymentDate", "source"])),
 			map((value) => ({
 				source: value.source,
@@ -6609,6 +6633,7 @@ export const TradeLine = (trade_line) => {
 
 	const payment_pattern = () =>
 		pipe(
+			// pick(["_PAYMENT_PATTERN", "source"]),
 			mod(all)(pick(["_PAYMENT_PATTERN", "source"])),
 			map((value) => ({
 				source: value.source,
@@ -6618,6 +6643,7 @@ export const TradeLine = (trade_line) => {
 
 	const creditor = () =>
 		pipe(
+			// pick(["_CREDITOR", "source"]),
 			mod(all)(pick(["_CREDITOR", "source"])),
 			map((value) => ({
 				source: value.source,
@@ -6627,6 +6653,7 @@ export const TradeLine = (trade_line) => {
 
 	const original_creditor = () =>
 		pipe(
+			// pick(["@_OriginalCreditorName", "source"]),
 			mod(all)(pick(["@_OriginalCreditorName", "source"])),
 			map((value) => ({
 				source: value.source,
@@ -6702,23 +6729,32 @@ Array.residence = pipe(
 	head
 );
 
-Array.experian.score = pipe(
-	get("CREDIT_RESPONSE", "CREDIT_SCORE"),
-	filter({ "@CreditRepositorySourceType": "Experian" }),
-	head,
-	get("@_Value")
+Array.experian.score = tryCatch(
+	pipe(
+		get("CREDIT_RESPONSE", "CREDIT_SCORE"),
+		filter({ "@CreditRepositorySourceType": "Experian" }),
+		head,
+		get("@_Value")
+	),
+	always(300)
 );
 
-Array.equifax.score = pipe(
-	get("CREDIT_RESPONSE", "CREDIT_SCORE"),
-	filter({ "@CreditRepositorySourceType": "Equifax" }),
-	head,
-	get("@_Value")
+Array.equifax.score = tryCatch(
+	pipe(
+		get("CREDIT_RESPONSE", "CREDIT_SCORE"),
+		filter({ "@CreditRepositorySourceType": "Equifax" }),
+		head,
+		get("@_Value")
+	),
+	always(300)
 );
 
-Array.transunion.score = pipe(
-	get("CREDIT_RESPONSE", "CREDIT_SCORE"),
-	filter({ "@CreditRepositorySourceType": "TransUnion" }),
-	head,
-	get("@_Value")
+Array.transunion.score = tryCatch(
+	pipe(
+		get("CREDIT_RESPONSE", "CREDIT_SCORE"),
+		filter({ "@CreditRepositorySourceType": "TransUnion" }),
+		head,
+		get("@_Value")
+	),
+	always(0)
 );

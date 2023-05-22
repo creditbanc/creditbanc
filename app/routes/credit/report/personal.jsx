@@ -2,7 +2,12 @@ import { useEffect, useState } from "react";
 import { Outlet, useLoaderData, useLocation } from "@remix-run/react";
 import { useLayoutStore } from "~/stores/useLayoutStore";
 import { useElmSize } from "~/hooks/useElmSize";
-import { get_group_id, get_route_endpoint, get_file_id } from "~/utils/helpers";
+import {
+	get_group_id,
+	get_route_endpoint,
+	get_file_id,
+	inspect,
+} from "~/utils/helpers";
 import { get_docs as get_group_docs } from "~/utils/group.server";
 import { head, pipe } from "ramda";
 import { filter } from "shades";
@@ -55,8 +60,8 @@ export const loader = async ({ request }) => {
 		});
 
 	let experian_score = Array.experian.score(report_response);
-	let equifax_score = Array.experian.score(report_response);
-	let transunion_score = Array.experian.score(report_response);
+	let equifax_score = Array.equifax.score(report_response);
+	let transunion_score = Array.transunion.score(report_response);
 
 	let scores = {
 		experian: experian_score,

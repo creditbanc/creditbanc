@@ -19,6 +19,9 @@ export const loader = async ({ request }) => {
 		},
 	});
 
+	// console.log("report");
+	// console.log(report);
+
 	let is_owner = report.entity_id == entity_id;
 
 	let { plan_id } = await prisma.entity.findUnique({
