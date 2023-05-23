@@ -514,7 +514,9 @@ export default function Home() {
 		<div className="w-full h-full flex flex-col items-center mb-3 p-5">
 			<HeadingTwo />
 			<div className="flex flex-col h-full max-w-7xl">
-				{plan_id == "essential" && <UpgradeBanner />}
+				<div className="mb-5">
+					{plan_id == "essential" && <UpgradeBanner />}
+				</div>
 
 				<div className="flex flex-col lg:flex-row space-y-3 lg:space-y-0">
 					<div className="flex flex-col w-full">

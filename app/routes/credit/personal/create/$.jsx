@@ -52,6 +52,11 @@ export const loader = async ({ request }) => {
 		ssn,
 	};
 
+	// console.log("credit_report_payload");
+	// console.log(credit_report_payload);
+
+	// return null;
+
 	let displayToken = search.get("displayToken");
 	let reportKey = search.get("reportKey");
 
@@ -101,12 +106,13 @@ export const loader = async ({ request }) => {
 
 	let report = await get_credit_report(reportKey, displayToken);
 
-	console.log("report");
-	inspect(report);
+	// console.log("report");
+	// inspect(report);
 
 	// return null;
 
 	let { file } = await create({
+		...credit_report_payload,
 		entity_id,
 		group_id,
 		data: report,

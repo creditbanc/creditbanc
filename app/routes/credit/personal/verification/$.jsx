@@ -20,6 +20,7 @@ import { json, redirect } from "@remix-run/node";
 import { get_group_id, inspect } from "~/utils/helpers";
 import { get_user_id } from "~/utils/auth.server";
 import { appKey, authenticate_url, report_url } from "~/data/array";
+import { prisma } from "~/utils/prisma.server";
 
 // let auth_url = "https://sandbox.array.io/api/authenticate/v2";
 // let auth_url = "https://array.io/api/authenticate/v2";
@@ -42,12 +43,27 @@ const useVerificationQuestionsStore = create((set) => ({
 }));
 
 export const action = async ({ request }) => {
+	let entity_id = await get_user_id(request);
 	const form = await request.formData();
 	const payload = JSON.parse(form.get("payload"));
 	let { clientKey, authToken, answers } = payload;
 	let url = new URL(request.url);
 	let search = new URLSearchParams(url.search);
 	let group_id = search.get("group_id");
+
+	let { plan_id } = await prisma.entity.findUnique({
+		where: { id: entity_id },
+		select: {
+			plan_id: true,
+		},
+	});
+
+	let productCode =
+		plan_id == "essential" ? "exp1bScore" : "credmo3bReportScore";
+
+	// console.log("plan_id");
+	// console.log(plan_id);
+	// return null;
 
 	const options = {
 		method: "POST",
@@ -71,7 +87,7 @@ export const action = async ({ request }) => {
 	if (userToken) {
 		var data = JSON.stringify({
 			clientKey,
-			productCode: "credmo3bReportScore",
+			productCode,
 		});
 
 		var display_token_options = {
@@ -102,8 +118,8 @@ export const loader = async ({ request }) => {
 	const url = new URL(request.url);
 	let clientKey = url.searchParams.get("clientKey");
 
-	console.log("clientKey");
-	console.log(clientKey);
+	// console.log("clientKey");
+	// console.log(clientKey);
 
 	let providers = ["tui", "exp", "efx"];
 
@@ -115,8 +131,8 @@ export const loader = async ({ request }) => {
 
 	let verify_url = `${authenticate_url}?appKey=${appKey}&clientKey=${clientKey}&${providers_string}`;
 
-	console.log("verify_url");
-	console.log(verify_url);
+	// console.log("verify_url");
+	// console.log(verify_url);
 
 	// console.log("providers_string");
 	// console.log(providers_string);
@@ -130,8 +146,8 @@ export const loader = async ({ request }) => {
 
 	try {
 		let response = await axios(options);
-		console.log("response.data");
-		inspect(response.data);
+		// console.log("response.data");
+		// inspect(response.data);
 		return response.data;
 	} catch (error) {
 		console.log("error");
