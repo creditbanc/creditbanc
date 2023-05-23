@@ -25,6 +25,10 @@ export const loader = async ({ request }) => {
 
 	let credit_report = CreditReport(credit_report_data);
 	let factors = credit_report.factors();
+	let inquiries = credit_report.inquiries();
+
+	// console.log("inquiries");
+	// inspect(inquiries);
 
 	let is_owner = report.entity_id == entity_id;
 

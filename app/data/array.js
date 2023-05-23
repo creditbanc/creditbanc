@@ -6445,8 +6445,16 @@ export const CreditReport = (credit_report) => {
 			uniqBy((x) => x["@_Code"])
 		)(credit_report);
 
+	const inquiries = () =>
+		pipe(
+			get("CREDIT_RESPONSE")
+			// flatten,
+			// uniqBy((x) => x["@_Code"])
+		)(credit_report);
+
 	return {
 		liabilities,
+		inquiries,
 		factors,
 		value,
 	};

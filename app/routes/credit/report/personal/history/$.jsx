@@ -44,8 +44,8 @@ export const loader = async ({ request }) => {
 		// filter((tl) => pipe(get(all, "value"), includes("Closed"))(tl.status))
 	)(liabilities.trade_lines());
 
-	// console.log("liabilities");
-	// inspect(trade_lines);
+	// console.log("report");
+	// inspect(report);
 
 	return { trade_lines, plan_id };
 };
