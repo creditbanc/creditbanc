@@ -26,11 +26,8 @@ export const loader = async ({ request }) => {
 		resource_id: report_id,
 	});
 
-	console.log("report");
 	let credit_report = CreditReport(credit_report_data);
 	let liabilities = Liabilities(credit_report.liabilities());
-	// console.log("liabilities");
-	// inspect(liabilities);
 
 	let is_owner = report.entity_id == entity_id;
 

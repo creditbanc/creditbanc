@@ -87,8 +87,8 @@ export const action = async ({ request }) => {
 	try {
 		let response = await axios(config);
 		let { clientKey, authToken } = response.data;
-		console.log("request_response");
-		console.log(response.data);
+		// console.log("request_response");
+		// console.log(response.data);
 
 		// return null;
 

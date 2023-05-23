@@ -33,7 +33,6 @@ export const create = async (payload) => {
 			city,
 			state,
 			zip,
-			// trade_lines,
 			type: "personal_credit_report",
 			entity_id,
 			data,

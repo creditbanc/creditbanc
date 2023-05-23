@@ -30,6 +30,9 @@ const get_personal_data = (report) => {
 	if (plan_id !== "essential") {
 		let { data } = report;
 
+		console.log("data");
+		console.log(data);
+
 		let first_name = Array.first_name(data);
 		let last_name = Array.last_name(data);
 		let residence = Array.residence(data);

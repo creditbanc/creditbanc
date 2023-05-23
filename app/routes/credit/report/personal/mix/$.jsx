@@ -2,9 +2,14 @@ import { ChartPieIcon } from "@heroicons/react/24/outline";
 import { FactorBar } from "~/components/FactorBar";
 import { Accounts } from "~/components/TradeLines";
 import { useLoaderData } from "@remix-run/react";
-import { pipe, map, filter, includes } from "ramda";
+import { pipe, map, filter, includes, flatten } from "ramda";
 import { get_file_id, inspect } from "~/utils/helpers";
-import { TradeLine as Tradeline } from "~/data/array";
+import {
+	TradeLine as Tradeline,
+	credit_report_data,
+	CreditReport,
+	Liabilities,
+} from "~/data/array";
 import { get_doc as get_credit_report } from "~/utils/personal_credit_report.server";
 import { all, get } from "shades";
 import { plans } from "~/data/plans";
@@ -21,11 +26,14 @@ export const loader = async ({ request }) => {
 		resource_id: report_id,
 	});
 
+	let credit_report = CreditReport(credit_report_data);
+	let liabilities = Liabilities(credit_report.liabilities());
+
 	let trade_lines = pipe(
-		map(Tradeline),
-		map((tl) => tl.values()),
-		filter((tl) => pipe(get(all, "value"), includes("Closed"))(tl.status))
-	)(report.trade_lines);
+		map((value) => Tradeline(flatten([value]))),
+		map((tl) => tl.values())
+		// filter((tl) => pipe(get(all, "value"), includes("Closed"))(tl.status))
+	)(liabilities.trade_lines());
 
 	let is_owner = report.entity_id == entity_id;
 
