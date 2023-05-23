@@ -101,7 +101,7 @@ export const loader = async ({ request }) => {
 
 	let scores = get_scores(report_response);
 
-	return { report, scores, plan_id, report_plan_id: report.plan_id };
+	return { report, scores, plan_id, report_plan_id: report_response.plan_id };
 };
 
 export default function CreditReport() {
@@ -112,6 +112,10 @@ export default function CreditReport() {
 	let location = useLocation();
 	let content_width = useLayoutStore((state) => state.content_width);
 	let [isMobile, setIsMobile] = useState(true);
+
+	console.log("plans_");
+	console.log(plan_id);
+	console.log(report_plan_id);
 
 	useEffect(() => {
 		if (content_width > 640) {

@@ -22,12 +22,6 @@ import { get_user_id } from "~/utils/auth.server";
 import { appKey, authenticate_url, report_url } from "~/data/array";
 import { prisma } from "~/utils/prisma.server";
 
-// let auth_url = "https://sandbox.array.io/api/authenticate/v2";
-// let auth_url = "https://array.io/api/authenticate/v2";
-
-// let report_url = "https://sandbox.array.io/api/report/v2";
-// let report_url = "https://array.io/api/report/v2";
-
 let mapIndexed = addIndex(map);
 
 const useVerificationQuestionsStore = create((set) => ({
@@ -60,10 +54,6 @@ export const action = async ({ request }) => {
 
 	let productCode =
 		plan_id == "essential" ? "exp1bScore" : "credmo3bReportScore";
-
-	// console.log("plan_id");
-	// console.log(plan_id);
-	// return null;
 
 	const options = {
 		method: "POST",
@@ -106,7 +96,7 @@ export const action = async ({ request }) => {
 
 		if (displayToken && reportKey) {
 			return redirect(
-				`/credit/personal/create?displayToken=${displayToken}&reportKey=${reportKey}&group_id=${group_id}`
+				`/credit/personal/create?displayToken=${displayToken}&reportKey=${reportKey}&group_id=${group_id}&clientKey=${clientKey}&userToken=${userToken}&authToken=${authToken}`
 			);
 		}
 	} else {

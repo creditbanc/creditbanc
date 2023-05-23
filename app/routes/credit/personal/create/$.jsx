@@ -22,6 +22,12 @@ export const loader = async ({ request }) => {
 	let url_object = new URL(url);
 	let search = new URLSearchParams(url_object.search);
 	let group_id = search.get("group_id");
+	let clientKey = search.get("clientKey");
+	let userToken = search.get("userToken");
+	let authToken = search.get("authToken");
+	let displayToken = search.get("displayToken");
+	let reportKey = search.get("reportKey");
+
 	let session = await getSession(request.headers.get("Cookie"));
 
 	let { plan_id } = await prisma.entity.findUnique({
@@ -73,9 +79,6 @@ export const loader = async ({ request }) => {
 	// console.log(credit_report_payload);
 
 	// return null;
-
-	let displayToken = search.get("displayToken");
-	let reportKey = search.get("reportKey");
 
 	// console.log("displayToken");
 	// console.log(displayToken);
@@ -134,6 +137,11 @@ export const loader = async ({ request }) => {
 		group_id,
 		data: report,
 		plan_id,
+		clientKey,
+		userToken,
+		authToken,
+		displayToken,
+		reportKey,
 	});
 
 	return redirect(

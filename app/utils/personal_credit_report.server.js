@@ -16,6 +16,11 @@ export const create = async (payload) => {
 		zip = "",
 		data = {},
 		plan_id,
+		clientKey,
+		userToken,
+		authToken,
+		displayToken,
+		reportKey,
 	} = payload;
 	if (!group_id) throw new Error("group_id is required");
 
@@ -33,10 +38,15 @@ export const create = async (payload) => {
 			city,
 			state,
 			zip,
-			type: "personal_credit_report",
 			entity_id,
 			data,
 			plan_id,
+			clientKey,
+			userToken,
+			authToken,
+			displayToken,
+			reportKey,
+			type: "personal_credit_report",
 		},
 	});
 

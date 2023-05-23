@@ -104,23 +104,28 @@ model Link {
 }
 
 model personal_credit_report {
-  id          String   @id @default(auto()) @map("_id") @db.ObjectId
-  created_at  DateTime @default(now())
-  updated_at  DateTime @updatedAt
-  resource_id String?  @db.ObjectId
-  first_name  String?
-  last_name   String?
-  ssn         String?
-  dob         String?
-  street      String?
-  city        String?
-  state       String?
-  zip         String?
-  trade_lines Json?
-  type        String?
-  entity_id   String?  @db.ObjectId
-  data        Json?
-  plan_id     String?
+  id           String   @id @default(auto()) @map("_id") @db.ObjectId
+  created_at   DateTime @default(now())
+  updated_at   DateTime @updatedAt
+  resource_id  String?  @db.ObjectId
+  first_name   String?
+  last_name    String?
+  ssn          String?
+  dob          String?
+  street       String?
+  city         String?
+  state        String?
+  zip          String?
+  trade_lines  Json?
+  type         String?
+  entity_id    String?  @db.ObjectId
+  data         Json?
+  plan_id      String?
+  authToken    String?
+  userToken    String?
+  clientKey    String?
+  displayToken String?
+  reportKey    String?
 }
 
 model business_credit_report {
