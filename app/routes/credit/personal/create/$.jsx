@@ -13,6 +13,7 @@ import { ParseSSN, RandomSSN } from "ssn";
 import { get, all } from "shades";
 import { report_url } from "~/data/array";
 const cities = require("all-the-cities");
+import { prisma } from "~/utils/prisma.server";
 
 export const loader = async ({ request }) => {
 	console.log("create_personal_credit_report");
@@ -22,6 +23,13 @@ export const loader = async ({ request }) => {
 	let search = new URLSearchParams(url_object.search);
 	let group_id = search.get("group_id");
 	let session = await getSession(request.headers.get("Cookie"));
+
+	let { plan_id } = await prisma.entity.findUnique({
+		where: { id: entity_id },
+		select: {
+			plan_id: true,
+		},
+	});
 
 	// let { address, firstName, lastName, ssn, dob } = entity_personal_data;
 	// let { street, city, state, zip } = address;
@@ -81,26 +89,37 @@ export const loader = async ({ request }) => {
 
 		let response = await axios(options);
 
-		if (response?.data?.CREDIT_RESPONSE) {
-			// return new Promise((resolve, reject) => {
-			// 	resolve({ test: "hi" });
-			// });
-			return response.data;
-		} else {
-			let retry = async () => {
-				return new Promise((resolve, reject) => {
-					setTimeout(async () => {
-						let response = await get_credit_report(
-							reportKey,
-							displayToken
-						);
-						resolve(response);
-					}, 200);
-				});
-			};
-			let response = await retry();
+		// console.log("response");
+		// inspect(response);
 
-			return response;
+		let retry = async (delay_time_in_milliseconds) => {
+			return new Promise((resolve, reject) => {
+				setTimeout(async () => {
+					let response = await get_credit_report(
+						reportKey,
+						displayToken
+					);
+					resolve(response);
+				}, delay_time_in_milliseconds);
+			});
+		};
+
+		if (plan_id == "essential") {
+			if (response?.data) {
+				return response.data;
+			} else {
+				let response = await retry();
+				return response;
+			}
+		}
+
+		if (plan_id !== "essential") {
+			if (response?.data?.CREDIT_RESPONSE) {
+				return response.data;
+			} else {
+				let response = await retry(2000);
+				return response;
+			}
 		}
 	};
 
@@ -116,6 +135,7 @@ export const loader = async ({ request }) => {
 		entity_id,
 		group_id,
 		data: report,
+		plan_id,
 	});
 
 	return redirect(

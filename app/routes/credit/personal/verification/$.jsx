@@ -87,7 +87,7 @@ export const action = async ({ request }) => {
 	if (userToken) {
 		var data = JSON.stringify({
 			clientKey,
-			productCode,
+			productCode: "exp1bScore",
 		});
 
 		var display_token_options = {

@@ -18,9 +18,9 @@ export const create = async (payload) => {
 	} = payload;
 	if (!group_id) throw new Error("group_id is required");
 
-	let credit_report = CreditReport(data);
-	let liabilities = Liabilities(credit_report.liabilities());
-	let trade_lines = liabilities.trade_lines();
+	// let credit_report = CreditReport(data);
+	// let liabilities = Liabilities(credit_report.liabilities());
+	// let trade_lines = liabilities.trade_lines();
 
 	const credit_report_record = await prisma.personal_credit_report.create({
 		data: {
@@ -32,7 +32,7 @@ export const create = async (payload) => {
 			city,
 			state,
 			zip,
-			trade_lines,
+			// trade_lines,
 			type: "personal_credit_report",
 			entity_id,
 			data,
