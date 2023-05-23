@@ -5,6 +5,9 @@ export default function UpgradeCard() {
 	const location = useLocation();
 	const submit = useSubmit();
 
+	console.log("loader_data");
+	console.log(loader_data);
+
 	const onUpdateReport = (e) => {
 		e.preventDefault();
 

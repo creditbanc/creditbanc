@@ -113,10 +113,6 @@ export default function CreditReport() {
 	let content_width = useLayoutStore((state) => state.content_width);
 	let [isMobile, setIsMobile] = useState(true);
 
-	console.log("plans_");
-	console.log(plan_id);
-	console.log(report_plan_id);
-
 	useEffect(() => {
 		if (content_width > 640) {
 			setIsMobile(false);

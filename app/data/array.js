@@ -2,7 +2,6 @@ import { get, all, mod, filter } from "shades";
 import {
 	pipe,
 	map,
-	addIndex,
 	splitWhenever,
 	head,
 	pick,
@@ -12,8 +11,8 @@ import {
 	flatten,
 } from "ramda";
 import { inspect } from "~/utils/helpers";
-
-const mapIndexed = addIndex(map);
+import axios from "axios";
+import { mapIndexed } from "~/utils/helpers";
 
 // sandbox
 export const appKey = "3F03D20E-5311-43D8-8A76-E4B5D77793BD";
@@ -6793,3 +6792,59 @@ Array.transunion.score = tryCatch(
 	),
 	always(0)
 );
+
+export const new_report = async ({ clientKey, productCode, userToken }) => {
+	var data = JSON.stringify({
+		clientKey,
+		productCode,
+	});
+
+	var options = {
+		method: "post",
+		maxBodyLength: Infinity,
+		url: report_url,
+		headers: {
+			"x-credmo-user-token": userToken,
+			"Content-Type": "application/json",
+		},
+		data,
+	};
+
+	try {
+		let response = await axios(options);
+		let { displayToken = null, reportKey = null } = response.data;
+		return { displayToken, reportKey };
+	} catch (error) {
+		return { error };
+	}
+};
+
+export const authenticate_user = async ({
+	appKey,
+	clientKey,
+	authToken,
+	answers,
+}) => {
+	const options = {
+		method: "POST",
+		url: authenticate_url,
+		headers: {
+			accept: "application/json",
+			"content-type": "application/json",
+		},
+		data: {
+			appKey,
+			clientKey,
+			authToken,
+			answers,
+		},
+	};
+
+	try {
+		let response = await axios(options);
+		let { userToken = null } = response.data;
+		return { userToken };
+	} catch (error) {
+		return { error };
+	}
+};

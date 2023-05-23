@@ -38,8 +38,8 @@ export const loader = async ({ request }) => {
 	});
 
 	let entity_personal_data = JSON.parse(session.data.personal_credit_report);
-	console.log("entity_personal_data");
-	console.log(entity_personal_data);
+	// console.log("entity_personal_data");
+	// console.log(entity_personal_data);
 
 	// return null;
 

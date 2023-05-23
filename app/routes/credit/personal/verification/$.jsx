@@ -1,15 +1,5 @@
 import CreditNav from "~/components/CreditNav";
-import CreditHeroGradient from "~/components/CreditHeroGradient";
-import {
-	map,
-	addIndex,
-	isEmpty,
-	includes,
-	values,
-	join,
-	without,
-	equals,
-} from "ramda";
+import { isEmpty, join, equals } from "ramda";
 import axios from "axios";
 import { useLoaderData, useFetcher, useLocation } from "@remix-run/react";
 import { create } from "zustand";
@@ -17,12 +7,15 @@ import { pipe } from "ramda";
 import { all, filter, get, mod } from "shades";
 import { useEffect } from "react";
 import { json, redirect } from "@remix-run/node";
-import { get_group_id, inspect } from "~/utils/helpers";
+import { inspect, mapIndexed } from "~/utils/helpers";
 import { get_user_id } from "~/utils/auth.server";
-import { appKey, authenticate_url, report_url } from "~/data/array";
+import {
+	appKey,
+	authenticate_url,
+	new_report,
+	authenticate_user,
+} from "~/data/array";
 import { prisma } from "~/utils/prisma.server";
-
-let mapIndexed = addIndex(map);
 
 const useVerificationQuestionsStore = create((set) => ({
 	answers: {},
@@ -52,47 +45,26 @@ export const action = async ({ request }) => {
 		},
 	});
 
-	let productCode =
-		plan_id == "essential" ? "exp1bScore" : "credmo3bReportScore";
-
-	const options = {
-		method: "POST",
-		url: authenticate_url,
-		headers: {
-			accept: "application/json",
-			"content-type": "application/json",
-		},
-		data: {
-			appKey,
-			clientKey,
-			authToken,
-			answers,
-		},
-	};
-
-	let response = await axios(options);
-
-	let { userToken = null } = response.data;
+	let { userToken = null, error = null } = await authenticate_user({
+		appKey,
+		clientKey,
+		authToken,
+		answers,
+	});
 
 	if (userToken) {
-		var data = JSON.stringify({
+		let productCode =
+			plan_id == "essential" ? "exp1bScore" : "credmo3bReportScore";
+
+		let {
+			displayToken,
+			reportKey,
+			error = null,
+		} = await new_report({
 			clientKey,
 			productCode,
+			userToken,
 		});
-
-		var display_token_options = {
-			method: "post",
-			maxBodyLength: Infinity,
-			url: report_url,
-			headers: {
-				"x-credmo-user-token": userToken,
-				"Content-Type": "application/json",
-			},
-			data,
-		};
-
-		let response = await axios(display_token_options);
-		let { displayToken = null, reportKey = null } = response.data;
 
 		if (displayToken && reportKey) {
 			return redirect(
@@ -100,7 +72,7 @@ export const action = async ({ request }) => {
 			);
 		}
 	} else {
-		return json({ ...response.data });
+		return json({ error });
 	}
 };
 
