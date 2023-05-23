@@ -11,6 +11,7 @@ import random from "random-name";
 import { sample } from "~/utils/helpers";
 import { ParseSSN, RandomSSN } from "ssn";
 import { get, all } from "shades";
+import { report_url } from "~/data/array";
 const cities = require("all-the-cities");
 
 export const loader = async ({ request }) => {
@@ -40,8 +41,6 @@ export const loader = async ({ request }) => {
 		get(all, "name"),
 		sample
 	)(cities.filter((city) => city.country === "US"));
-	// console.log("city");
-	// console.log(city);
 
 	let credit_report_payload = {
 		first_name,
@@ -69,7 +68,7 @@ export const loader = async ({ request }) => {
 		var options = {
 			method: "get",
 			maxBodyLength: Infinity,
-			url: `https://sandbox.array.io/api/report/v2?reportKey=${reportKey}&displayToken=${displayToken}`,
+			url: `${report_url}?reportKey=${reportKey}&displayToken=${displayToken}`,
 			headers: {
 				"Content-Type": "application/json",
 			},

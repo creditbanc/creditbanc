@@ -1,6 +1,15 @@
 import CreditNav from "~/components/CreditNav";
 import CreditHeroGradient from "~/components/CreditHeroGradient";
-import { map, addIndex, isEmpty, includes, values, join } from "ramda";
+import {
+	map,
+	addIndex,
+	isEmpty,
+	includes,
+	values,
+	join,
+	without,
+	equals,
+} from "ramda";
 import axios from "axios";
 import { useLoaderData, useFetcher, useLocation } from "@remix-run/react";
 import { create } from "zustand";
@@ -10,13 +19,13 @@ import { useEffect } from "react";
 import { json, redirect } from "@remix-run/node";
 import { get_group_id, inspect } from "~/utils/helpers";
 import { get_user_id } from "~/utils/auth.server";
-import { appKey } from "~/data/array";
+import { appKey, authenticate_url, report_url } from "~/data/array";
 
-let auth_url = "https://sandbox.array.io/api/authenticate/v2";
-// let auth_url = 'https://array.io/api/authenticate/v2'
+// let auth_url = "https://sandbox.array.io/api/authenticate/v2";
+// let auth_url = "https://array.io/api/authenticate/v2";
 
-let report_url = "https://sandbox.array.io/api/report/v2";
-// let report_url = 'https://array.io/api/report/v2'
+// let report_url = "https://sandbox.array.io/api/report/v2";
+// let report_url = "https://array.io/api/report/v2";
 
 let mapIndexed = addIndex(map);
 
@@ -42,7 +51,7 @@ export const action = async ({ request }) => {
 
 	const options = {
 		method: "POST",
-		url: auth_url,
+		url: authenticate_url,
 		headers: {
 			accept: "application/json",
 			"content-type": "application/json",
@@ -93,12 +102,21 @@ export const loader = async ({ request }) => {
 	const url = new URL(request.url);
 	let clientKey = url.searchParams.get("clientKey");
 
-	let providers = ["tui", "efx", "exp"];
+	console.log("clientKey");
+	console.log(clientKey);
+
+	let providers = ["tui", "exp", "efx"];
 
 	let providers_string = pipe(
+		// without(["tui"]),
 		mapIndexed((provider, index) => `provider${index + 1}=${provider}`),
 		join("&")
 	)(providers);
+
+	let verify_url = `${authenticate_url}?appKey=${appKey}&clientKey=${clientKey}&${providers_string}`;
+
+	console.log("verify_url");
+	console.log(verify_url);
 
 	// console.log("providers_string");
 	// console.log(providers_string);
@@ -106,21 +124,26 @@ export const loader = async ({ request }) => {
 	var options = {
 		method: "get",
 		maxBodyLength: Infinity,
-		url: `${auth_url}?appKey=${appKey}&clientKey=${clientKey}&${providers_string}`,
+		url: verify_url,
 		headers: {},
 	};
 
-	let response = await axios(options);
-	// console.log("response.data");
-	// inspect(response.data);
-	return response.data;
+	try {
+		let response = await axios(options);
+		console.log("response.data");
+		inspect(response.data);
+		return response.data;
+	} catch (error) {
+		console.log("error");
+		console.log(error);
+		return json({ error: error.message }, { status: 500 });
+	}
 };
 
 const Form = () => {
 	const fetcher = useFetcher();
 	const questions = useVerificationQuestionsStore((state) => state.questions);
-	// console.log("questions");
-	// console.log(questions);
+
 	const answers = useVerificationQuestionsStore((state) => state.answers);
 	const setAnswer = useVerificationQuestionsStore((state) => state.setAnswer);
 	const clearAnswers = useVerificationQuestionsStore(
@@ -129,6 +152,9 @@ const Form = () => {
 	const setQuestions = useVerificationQuestionsStore(
 		(state) => state.setQuestions
 	);
+
+	// console.log("answers");
+	// console.log(answers);
 
 	useEffect(() => {
 		clearAnswers();
@@ -207,10 +233,10 @@ const Form = () => {
 												name={questionIndex}
 												type="radio"
 												className="h-4 w-4 border-gray-300 text-indigo-600 focus:ring-indigo-500 cursor-pointer"
-												checked={includes(
-													answer.id,
-													values(answers)
-												)}
+												checked={pipe(
+													get(question.id),
+													equals(answer.id)
+												)(answers)}
 												onChange={() =>
 													setAnswer(
 														question.id,

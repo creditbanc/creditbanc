@@ -13,14 +13,23 @@ import { inspect } from "~/utils/helpers";
 
 const mapIndexed = addIndex(map);
 
+// sandbox
 export const appKey = "3F03D20E-5311-43D8-8A76-E4B5D77793BD";
+
+// production
 // export const appKey = "F5C7226A-4F96-43BF-B748-09278FFE0E36";
 
-// export const api_url = "https://sandbox.array.io/api/authenticate/v2";
-// export const api_url = 'https://array.io/api/authenticate/v2'
+// sandbox urls
+export const user_url = "https://sandbox.array.io/api/user/v2";
+export const authenticate_url = "https://sandbox.array.io/api/authenticate/v2";
+export const report_url = "https://sandbox.array.io/api/report/v2";
+
+// production urls
+// export const user_url = "https://array.io/api/user/v2";
+// export const authenticate_url = 'https://array.io/api/authenticate/v2'
+// export const report_url = "https://array.io/api/report/v2";
 
 export const test_identity_one = {
-	appKey,
 	ssn: "053723148",
 	firstName: "MATHEW",
 	lastName: "MEEHAN",
@@ -33,22 +42,20 @@ export const test_identity_one = {
 	},
 };
 
-export const test_identity_four = {
-	appKey,
-	firstName: "THOMAS",
-	lastName: "DEVOS",
-	dob: "1957-09-06",
-	ssn: "666023511",
+export const test_identity_two = {
+	ssn: "594794805",
+	firstName: "daniel",
+	lastName: "arzuaga",
+	dob: "1989-09-28",
 	address: {
-		street: "1206 BEAR CREEK RD APT 110",
-		city: "TUSCALOOSA",
-		state: "AL",
-		zip: "35405",
+		street: "12531 ne 18th st",
+		city: "williston",
+		state: "fl",
+		zip: "32696",
 	},
 };
 
-export const test_identity_two = {
-	appKey,
+export const test_identity_three = {
 	ssn: "666285344",
 	firstName: "DONALD",
 	lastName: "BLAIR",
@@ -61,17 +68,29 @@ export const test_identity_two = {
 	},
 };
 
-export const test_identity_three = {
-	appKey,
-	ssn: "594794805",
-	firstName: "daniel",
-	lastName: "arzuaga",
-	dob: "1989-09-28",
+export const test_identity_four = {
+	firstName: "THOMAS",
+	lastName: "DEVOS",
+	dob: "1957-09-06",
+	ssn: "666023511",
 	address: {
-		street: "16555 sw 47th pl rd",
-		city: "ocala",
-		state: "fl",
-		zip: "34481",
+		street: "1206 BEAR CREEK RD APT 110",
+		city: "TUSCALOOSA",
+		state: "AL",
+		zip: "35405",
+	},
+};
+
+export const test_identity_five = {
+	firstName: "MARIA",
+	lastName: "IGLESIAS",
+	dob: "1958-12-28",
+	ssn: "666824123",
+	address: {
+		street: "21 PACIFIC ST",
+		city: "PITTSFIELD",
+		state: "MA",
+		zip: "01201",
 	},
 };
 
@@ -6431,7 +6450,6 @@ export const Liabilities = (liabilities) => {
 				index,
 				source: get("CREDIT_REPOSITORY", "@_SourceType")(value),
 			})),
-			// filter((value) => value["@CreditTradeReferenceID"] == "Primary")
 			splitWhenever(
 				(value) => value["@CreditTradeReferenceID"] == "Primary"
 			)

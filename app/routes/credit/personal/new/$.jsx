@@ -12,7 +12,15 @@ import {
 	sample,
 } from "~/utils/helpers";
 import { json, redirect } from "@remix-run/node";
-import { test_identity_two, test_identity_four } from "~/data/array";
+import {
+	test_identity_one,
+	test_identity_two,
+	test_identity_three,
+	test_identity_four,
+	test_identity_five,
+	appKey,
+	user_url,
+} from "~/data/array";
 import {
 	getSession,
 	commitSession,
@@ -21,7 +29,7 @@ import Cookies from "js-cookie";
 
 const useReportStore = create((set) => ({
 	form: {
-		appKey: "F5C7226A-4F96-43BF-B748-09278FFE0E36",
+		appKey,
 		firstName: "",
 		lastName: "",
 		dob: {
@@ -41,8 +49,8 @@ const useReportStore = create((set) => ({
 		set((state) => pipe(mod("form", ...path)(() => value))(state)),
 }));
 
-let api_url = "https://sandbox.array.io/api/user/v2";
-// let api_url = 'https://array.io/api/user/v2'
+// let api_url = "https://sandbox.array.io/api/user/v2";
+// let api_url = "https://array.io/api/user/v2";
 
 export const action = async ({ request }) => {
 	console.log("new_credit_action");
@@ -50,19 +58,24 @@ export const action = async ({ request }) => {
 	const group_id = get_group_id(request.url);
 	const form = await request.formData();
 	const payload = JSON.parse(form.get("payload"));
-	let data = test_identity_two;
 
 	// console.log("payloaddddd");
 	// console.log(data);
 
-	const options = {
-		method: "POST",
-		url: api_url,
+	let data = {
+		appKey,
+		...test_identity_three,
+	};
+
+	let config = {
+		method: "post",
+		maxBodyLength: Infinity,
+		url: user_url,
 		headers: {
 			accept: "application/json",
-			"content-type": "application/json",
+			"Content-Type": "application/json",
 		},
-		data,
+		data: data,
 	};
 
 	let session = await getSession(request.headers.get("Cookie"));
@@ -71,10 +84,12 @@ export const action = async ({ request }) => {
 	// return null;
 
 	try {
-		let response = await axios(options);
+		let response = await axios(config);
 		let { clientKey, authToken } = response.data;
-		// console.log("response");
-		// console.log(response.data);
+		console.log("request_response");
+		console.log(response.data);
+
+		// return null;
 
 		return redirect(
 			`/credit/personal/verification?clientKey=${clientKey}&authToken=${authToken}&group_id=${group_id}`,
@@ -86,7 +101,7 @@ export const action = async ({ request }) => {
 		);
 	} catch (error) {
 		console.log("error");
-		// console.log(error.response.data);
+		console.log(error.response.data);
 		return json({ error: error.message }, { status: 500 });
 	}
 };

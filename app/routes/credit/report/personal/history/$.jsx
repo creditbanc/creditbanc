@@ -29,7 +29,8 @@ export const loader = async ({ request }) => {
 	console.log("report");
 	let credit_report = CreditReport(credit_report_data);
 	let liabilities = Liabilities(credit_report.liabilities());
-	let trade_liness = liabilities.trade_lines();
+	// console.log("liabilities");
+	// inspect(liabilities);
 
 	let is_owner = report.entity_id == entity_id;
 
@@ -46,8 +47,8 @@ export const loader = async ({ request }) => {
 		// filter((tl) => pipe(get(all, "value"), includes("Closed"))(tl.status))
 	)(liabilities.trade_lines());
 
-	console.log("liabilities");
-	inspect(trade_lines);
+	// console.log("liabilities");
+	// inspect(trade_lines);
 
 	return { trade_lines, plan_id };
 };
