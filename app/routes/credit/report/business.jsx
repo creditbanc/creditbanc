@@ -23,6 +23,7 @@ import {
 } from "~/utils/lendflow.server";
 import deepEqual from "deep-equal";
 import UpgradeBanner from "~/components/UpgradeBanner";
+import UpgradeCard from "~/components/UpgradeCard";
 
 export const action = async ({ request }) => {
 	var form = await request.formData();
@@ -32,13 +33,6 @@ export const action = async ({ request }) => {
 	const entity_id = form.get("entity_id");
 	const report_plan_id = form.get("report_plan_id");
 	const redirect_to = form.get("redirect_to");
-
-	// console.log("form");
-	// console.log(application_id);
-	// console.log(plan_id);
-	// console.log(report_id);
-	// console.log(entity_id);
-	// console.log(report_plan_id);
 
 	let experian_requested_products = pipe(get(plan_id))(
 		plan_product_requests.experian
@@ -51,23 +45,13 @@ export const action = async ({ request }) => {
 		...dnb_requested_products,
 	];
 
-	// console.log("requested_products");
-	// console.log(requested_products);
-
-	// return null;
-
 	await update_lendflow_report(application_id, requested_products);
-
-	// console.log("credit_report");
-	// console.log(credit_report);
 
 	console.log("start");
 	await new Promise((resolve) => setTimeout(resolve, 10000));
 	console.log("end");
 
 	let credit_report = await get_lendflow_report(application_id);
-	// console.log("credit_report");
-	// inspect(credit_report);
 
 	let report = await prisma.business_credit_report.update({
 		where: {
@@ -78,9 +62,6 @@ export const action = async ({ request }) => {
 			plan_id,
 		},
 	});
-
-	// console.log("report");
-	// console.log(report);
 
 	return redirect(redirect_to);
 };
@@ -98,9 +79,6 @@ export const loader = async ({ request }) => {
 
 	let lendflow_report = await get_lendflow_report(report.application_id);
 	let is_latest_report = deepEqual(report.data, lendflow_report.data);
-
-	console.log("is_latest_report");
-	console.log(is_latest_report);
 
 	if (!is_latest_report) {
 		report = await prisma.business_credit_report.update({
@@ -128,53 +106,6 @@ export const loader = async ({ request }) => {
 		application_id: report?.application_id,
 		report_plan_id: report?.plan_id,
 	};
-};
-
-const UpgradeCard = () => {
-	const loader_data = useLoaderData();
-	const location = useLocation();
-	const submit = useSubmit();
-
-	const onUpdateReport = (e) => {
-		e.preventDefault();
-
-		submit(
-			{ ...loader_data, redirect_to: location.pathname },
-			{
-				method: "post",
-				action: "/credit/report/business",
-			}
-		);
-	};
-
-	return (
-		<div className="bg-white border shadow sm:rounded-lg mx-2 mt-5">
-			<div className="px-4 py-5 sm:p-6">
-				<div className="sm:flex sm:items-start sm:justify-between">
-					<div>
-						<h3 className="text-base font-semibold leading-6 text-gray-900">
-							Download the full report
-						</h3>
-						<div className="mt-2 max-w-xl text-sm text-gray-500">
-							<p>
-								Click to download the full report and to see all
-								the details.
-							</p>
-						</div>
-					</div>
-					<div className="mt-5 sm:ml-6 sm:mt-0 sm:flex sm:flex-shrink-0 sm:items-center cursor-pointer">
-						<div
-							onClick={onUpdateReport}
-							type="button"
-							className="inline-flex items-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-						>
-							Download Report
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-	);
 };
 
 export default function BusinessReport() {
@@ -209,6 +140,7 @@ export default function BusinessReport() {
 					</div>
 				</div>
 			)}
+
 			{plans_index[report_plan_id] < plans_index[plan_id] && (
 				<div className="flex flex-col w-full items-center">
 					<div className="flex flex-col w-full max-w-5xl">

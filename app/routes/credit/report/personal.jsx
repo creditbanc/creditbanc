@@ -19,6 +19,9 @@ import { redirect } from "@remix-run/node";
 import { CreditTabsSelect } from "~/components/PersonalCreditTabs";
 import { Array } from "~/data/array";
 import { prisma } from "~/utils/prisma.server";
+import UpgradeBanner from "~/components/UpgradeBanner";
+import UpgradeCard from "~/components/UpgradeCard";
+import { plans_index } from "~/data/plans_index";
 
 const get_scores = (report) => {
 	let { plan_id } = report;
@@ -89,13 +92,20 @@ export const loader = async ({ request }) => {
 		},
 	});
 
+	let { plan_id } = await prisma.entity.findUnique({
+		where: { id: user_id },
+		select: {
+			plan_id: true,
+		},
+	});
+
 	let scores = get_scores(report_response);
 
-	return { report, scores };
+	return { report, scores, plan_id, report_plan_id: report.plan_id };
 };
 
 export default function CreditReport() {
-	var { report, scores } = useLoaderData() ?? {};
+	var { report, scores, plan_id, report_plan_id } = useLoaderData() ?? {};
 	const [target, setTarget] = useState();
 	const elmSize = useElmSize(target);
 	let setContentWidth = useLayoutStore((state) => state.set_content_width);
@@ -119,6 +129,21 @@ export default function CreditReport() {
 
 	return (
 		<div className="flex flex-col flex-1 overflow-scroll">
+			{plan_id == "essential" && (
+				<div className="flex flex-col w-full items-center">
+					<div className="flex flex-col w-full max-w-5xl">
+						<UpgradeBanner />
+					</div>
+				</div>
+			)}
+			{plans_index[report_plan_id] < plans_index[plan_id] && (
+				<div className="flex flex-col w-full items-center">
+					<div className="flex flex-col w-full max-w-5xl">
+						<UpgradeCard />
+					</div>
+				</div>
+			)}
+
 			<div className="flex flex-col w-full pt-5">
 				<div
 					className="flex flex-col w-full p-[10px] max-w-5xl mx-auto"
