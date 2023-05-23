@@ -20,6 +20,37 @@ import { CreditTabsSelect } from "~/components/PersonalCreditTabs";
 import { Array } from "~/data/array";
 import { prisma } from "~/utils/prisma.server";
 
+const get_scores = (report) => {
+	let { plan_id } = report;
+
+	if (plan_id == "essential") {
+		let { data } = report;
+
+		let payload = {
+			experian: data.score,
+			equifax: 0,
+			transunion: 0,
+		};
+
+		return payload;
+	}
+
+	if (plan_id !== "essential") {
+		let { data } = report;
+		let experian_score = Array.experian.score(data);
+		let equifax_score = Array.equifax.score(data);
+		let transunion_score = Array.transunion.score(data);
+
+		let payload = {
+			experian: experian_score,
+			equifax: equifax_score,
+			transunion: transunion_score,
+		};
+
+		return payload;
+	}
+};
+
 export const loader = async ({ request }) => {
 	let url = new URL(request.url);
 
@@ -52,22 +83,13 @@ export const loader = async ({ request }) => {
 
 	let report = pipe(filter({ id: file_id }), head)(group_docs);
 
-	let { data: report_response } =
-		await prisma.personal_credit_report.findUnique({
-			where: {
-				id: report.id,
-			},
-		});
+	let report_response = await prisma.personal_credit_report.findUnique({
+		where: {
+			id: report.id,
+		},
+	});
 
-	let experian_score = Array.experian.score(report_response);
-	let equifax_score = Array.equifax.score(report_response);
-	let transunion_score = Array.transunion.score(report_response);
-
-	let scores = {
-		experian: experian_score,
-		equifax: equifax_score,
-		transunion: transunion_score,
-	};
+	let scores = get_scores(report_response);
 
 	return { report, scores };
 };

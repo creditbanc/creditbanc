@@ -57,14 +57,15 @@ export const action = async ({ request }) => {
 
 	const group_id = get_group_id(request.url);
 	const form = await request.formData();
-	const payload = JSON.parse(form.get("payload"));
+	var payload = JSON.parse(form.get("payload"));
+	payload = test_identity_three;
 
 	// console.log("payloaddddd");
 	// console.log(data);
 
 	let data = {
 		appKey,
-		...test_identity_three,
+		...payload,
 	};
 
 	let config = {
@@ -79,7 +80,7 @@ export const action = async ({ request }) => {
 	};
 
 	let session = await getSession(request.headers.get("Cookie"));
-	session.set("personal_credit_report", JSON.stringify(payload));
+	session.set("personal_credit_report", JSON.stringify({ ...payload }));
 
 	// return null;
 

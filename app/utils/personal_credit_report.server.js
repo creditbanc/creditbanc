@@ -15,6 +15,7 @@ export const create = async (payload) => {
 		state = "",
 		zip = "",
 		data = {},
+		plan_id,
 	} = payload;
 	if (!group_id) throw new Error("group_id is required");
 
@@ -36,6 +37,7 @@ export const create = async (payload) => {
 			type: "personal_credit_report",
 			entity_id,
 			data,
+			plan_id,
 		},
 	});
 

@@ -1,12 +1,58 @@
 import { useLoaderData } from "@remix-run/react";
 import { useEffect } from "react";
 import { Array } from "~/data/array";
-import { get_file_id } from "~/utils/helpers";
+import { get_file_id, inspect } from "~/utils/helpers";
 import { get_user_id } from "~/utils/auth.server";
 import { prisma } from "~/utils/prisma.server";
 import { plans } from "~/data/plans";
 import { get } from "shades";
 import { pipe } from "ramda";
+
+const get_personal_data = (report) => {
+	let { plan_id } = report;
+
+	if (plan_id == "essential") {
+		let { first_name, last_name, street, city, state, zip, dob } = report;
+
+		let payload = {
+			first_name,
+			last_name,
+			street,
+			city,
+			state,
+			zip,
+			dob,
+		};
+
+		return payload;
+	}
+
+	if (plan_id !== "essential") {
+		let { data } = report;
+
+		let first_name = Array.first_name(data);
+		let last_name = Array.last_name(data);
+		let residence = Array.residence(data);
+		let dob = Array.dob(data);
+
+		let street = residence["@_StreetAddress"];
+		let city = residence["@_City"];
+		let state = residence["@_State"];
+		let zip = residence["@_PostalCode"];
+
+		let payload = {
+			first_name,
+			last_name,
+			street,
+			city,
+			state,
+			zip,
+			dob,
+		};
+
+		return payload;
+	}
+};
 
 export const loader = async ({ request }) => {
 	let url = new URL(request.url);
@@ -19,9 +65,6 @@ export const loader = async ({ request }) => {
 		},
 	});
 
-	// console.log("report");
-	// console.log(report);
-
 	let is_owner = report.entity_id == entity_id;
 
 	let { plan_id } = await prisma.entity.findUnique({
@@ -31,23 +74,14 @@ export const loader = async ({ request }) => {
 		},
 	});
 
-	let { data } = report;
+	let personal_data = get_personal_data(report);
 
-	let first_name = Array.first_name(data);
-	let last_name = Array.last_name(data);
-	let residence = Array.residence(data);
-	let dob = Array.dob(data);
-
-	return { plan_id, first_name, last_name, residence, dob };
+	return { plan_id, ...personal_data };
 };
 
 const PersonalInfoCard = () => {
-	let { plan_id, first_name, last_name, residence, dob } = useLoaderData();
-
-	// console.log("residence");
-	// console.log(residence);
-
-	// let plan = pipe(get(plan_id, "personal", "experian"))(plans);
+	let { plan_id, first_name, last_name, street, city, state, zip, dob } =
+		useLoaderData();
 
 	return (
 		<div className="overflow-hidden bg-white rounded-lg border">
@@ -86,11 +120,11 @@ const PersonalInfoCard = () => {
 						</dt>
 						<dd className="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0">
 							<div className="flex flex-col">
-								<div>{residence["@_StreetAddress"]}</div>
+								<div>{street}</div>
 								<div className="flex flex-row space-x-1">
-									<div>{residence["@_City"]},</div>
-									<div>{residence["@_State"]}</div>
-									<div>{residence["@_PostalCode"]}</div>
+									<div>{city},</div>
+									<div>{state}</div>
+									<div>{zip}</div>
 								</div>
 							</div>
 						</dd>
@@ -102,9 +136,5 @@ const PersonalInfoCard = () => {
 };
 
 export default function Personal() {
-	return (
-		<div className="flex flex-col w-full">
-			<PersonalInfoCard />
-		</div>
-	);
+	return <div className="flex flex-col w-full">{<PersonalInfoCard />}</div>;
 }

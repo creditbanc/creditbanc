@@ -31,8 +31,16 @@ export const loader = async ({ request }) => {
 		},
 	});
 
+	let entity_personal_data = JSON.parse(session.data.personal_credit_report);
+	console.log("entity_personal_data");
+	console.log(entity_personal_data);
+
+	// return null;
+
 	// let { address, firstName, lastName, ssn, dob } = entity_personal_data;
+	let { address, dob } = entity_personal_data;
 	// let { street, city, state, zip } = address;
+	let { street, zip } = address;
 
 	let first_name = random.first();
 	let last_name = random.last();
@@ -53,11 +61,12 @@ export const loader = async ({ request }) => {
 	let credit_report_payload = {
 		first_name,
 		last_name,
-		// street,
+		street,
 		city,
 		state,
-		// zip,
+		zip,
 		ssn,
+		dob,
 	};
 
 	// console.log("credit_report_payload");
@@ -104,22 +113,11 @@ export const loader = async ({ request }) => {
 			});
 		};
 
-		if (plan_id == "essential") {
-			if (response?.data) {
-				return response.data;
-			} else {
-				let response = await retry();
-				return response;
-			}
-		}
-
-		if (plan_id !== "essential") {
-			if (response?.data?.CREDIT_RESPONSE) {
-				return response.data;
-			} else {
-				let response = await retry(2000);
-				return response;
-			}
+		if (response?.data) {
+			return response.data;
+		} else {
+			let response = await retry(3000);
+			return response;
 		}
 	};
 
