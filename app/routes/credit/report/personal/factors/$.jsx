@@ -1,4 +1,42 @@
 import { TrophyIcon } from "@heroicons/react/24/outline";
+import { pipe, map, filter, includes, flatten } from "ramda";
+import { get_file_id, inspect, mapIndexed } from "~/utils/helpers";
+import {
+	TradeLine as Tradeline,
+	CreditReport,
+	Liabilities,
+	credit_report_data,
+} from "~/data/array";
+import { get_doc as get_credit_report } from "~/utils/personal_credit_report.server";
+import { get_user_id } from "~/utils/auth.server";
+import { prisma } from "~/utils/prisma.server";
+import { useLoaderData } from "@remix-run/react";
+import { ChevronDoubleRightIcon } from "@heroicons/react/24/outline";
+
+export const loader = async ({ request }) => {
+	let url = new URL(request.url);
+	let pathname = url.pathname;
+	let report_id = get_file_id(pathname);
+	let entity_id = await get_user_id(request);
+
+	let report = await get_credit_report({
+		resource_id: report_id,
+	});
+
+	let credit_report = CreditReport(credit_report_data);
+	let factors = credit_report.factors();
+
+	let is_owner = report.entity_id == entity_id;
+
+	let { plan_id } = await prisma.entity.findUnique({
+		where: { id: is_owner ? entity_id : report.entity_id },
+		select: {
+			plan_id: true,
+		},
+	});
+
+	return { factors, plan_id, report_plan_id: report?.plan_id };
+};
 
 const InfoCard = () => {
 	return (
@@ -52,10 +90,56 @@ const InfoCard = () => {
 	);
 };
 
+const ScoreFactors = () => {
+	let { factors, report_plan_id } = useLoaderData();
+
+	// let plan = pipe(get(report_plan_id, "business", "experian"))(plans);
+
+	return (
+		<div className="overflow-hidden bg-white rounded-lg border">
+			<div className="px-4 py-5 sm:px-6 flex flex-row justify-between">
+				<h3 className="text-lg font-medium leading-6 text-gray-900">
+					Here are the factors influencing your score
+				</h3>
+
+				{/* {report_plan_id == "essential" && (
+					<Link
+						to={"/plans"}
+						className="font-semibold text-blue-600 underline"
+					>
+						Upgrade
+					</Link>
+				)} */}
+			</div>
+			<div className="border-t border-gray-200 p-6">
+				<div className="flex flex-col w-full space-y-6">
+					{pipe(
+						mapIndexed((factor, idx) => (
+							<div
+								className="flex flex-row items-center space-x-2"
+								key={idx}
+							>
+								<div className="w-[20px]">
+									<ChevronDoubleRightIcon />
+								</div>
+								<div>{factor["@_Text"]}</div>
+							</div>
+						))
+					)(factors)}
+				</div>
+			</div>
+		</div>
+	);
+};
+
 export default function Factors() {
 	return (
 		<div className="flex flex-col w-full">
 			<InfoCard />
+
+			<div className="my-5">
+				<ScoreFactors />
+			</div>
 		</div>
 	);
 }

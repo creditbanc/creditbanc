@@ -5,8 +5,8 @@ import { get_file_id, inspect } from "~/utils/helpers";
 import { get_user_id } from "~/utils/auth.server";
 import { prisma } from "~/utils/prisma.server";
 import { plans } from "~/data/plans";
-import { get } from "shades";
-import { pipe } from "ramda";
+import { all, get } from "shades";
+import { flatten, pipe, uniqBy } from "ramda";
 
 const get_personal_data = (report) => {
 	let { plan_id } = report;
@@ -30,8 +30,8 @@ const get_personal_data = (report) => {
 	if (plan_id !== "essential") {
 		let { data } = report;
 
-		console.log("data");
-		console.log(data);
+		// console.log("data");
+		// console.log(data);
 
 		let first_name = Array.first_name(data);
 		let last_name = Array.last_name(data);

@@ -8,6 +8,8 @@ import {
 	pick,
 	tryCatch,
 	always,
+	uniqBy,
+	flatten,
 } from "ramda";
 import { inspect } from "~/utils/helpers";
 
@@ -6436,8 +6438,16 @@ export const CreditReport = (credit_report) => {
 	const liabilities = () =>
 		pipe(get("CREDIT_RESPONSE", "CREDIT_LIABILITY"))(credit_report);
 
+	const factors = () =>
+		pipe(
+			get("CREDIT_RESPONSE", "CREDIT_SCORE", all, "_FACTOR"),
+			flatten,
+			uniqBy((x) => x["@_Code"])
+		)(credit_report);
+
 	return {
 		liabilities,
+		factors,
 		value,
 	};
 };
@@ -6457,7 +6467,6 @@ export const Liabilities = (liabilities) => {
 
 	return {
 		trade_lines,
-		liabilities,
 	};
 };
 
