@@ -53,10 +53,10 @@ export const action = async ({ request }) => {
 	});
 
 	if (userToken) {
-		// let productCode =
-		// 	plan_id == "essential" ? "exp1bScore" : "credmo3bReportScore";
+		let productCode =
+			plan_id == "essential" ? "exp1bScore" : "credmo3bReportScore";
 
-		let productCode = "exp1bScore";
+		// let productCode = "exp1bScore";
 
 		let {
 			displayToken,
