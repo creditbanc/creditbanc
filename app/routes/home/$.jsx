@@ -17,7 +17,7 @@ import { Array, credit_report_data } from "~/data/array";
 import { useLoaderData } from "@remix-run/react";
 import { plans } from "~/data/plans";
 import { redirect } from "@remix-run/node";
-import UpgradeBanner from "~/components/UpgradeBanner";
+import UpgradeBanner from "~/components/UpgradeMembership";
 var cookie = require("cookie");
 
 export const loader = async ({ request }) => {

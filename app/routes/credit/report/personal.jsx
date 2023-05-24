@@ -19,8 +19,8 @@ import { redirect } from "@remix-run/node";
 import { CreditTabsSelect } from "~/components/PersonalCreditTabs";
 import { Array } from "~/data/array";
 import { prisma } from "~/utils/prisma.server";
-import UpgradeBanner from "~/components/UpgradeBanner";
-import UpgradeCard from "~/components/UpgradeCard";
+import UpgradeMembership from "~/components/UpgradeMembership";
+import UpdatePersonalReport from "~/components/UpdatePersonalReport";
 import { plans_index } from "~/data/plans_index";
 
 const get_scores = (report) => {
@@ -138,17 +138,19 @@ export default function CreditReport() {
 			{plan_id == "essential" && (
 				<div className="flex flex-col w-full items-center">
 					<div className="flex flex-col w-full max-w-5xl">
-						<UpgradeBanner />
+						<UpgradeMembership />
 					</div>
 				</div>
 			)}
 			{plans_index[report_plan_id] < plans_index[plan_id] && (
 				<div className="flex flex-col w-full items-center">
 					<div className="flex flex-col w-full max-w-5xl">
-						<UpgradeCard />
+						<UpdatePersonalReport />
 					</div>
 				</div>
 			)}
+
+			<UpdatePersonalReport />
 
 			<div className="flex flex-col w-full pt-5">
 				<div

@@ -12,7 +12,7 @@ import { get_user_id } from "~/utils/auth.server";
 import {
 	appKey,
 	authenticate_url,
-	new_report,
+	new_credit_report,
 	authenticate_user,
 } from "~/data/array";
 import { prisma } from "~/utils/prisma.server";
@@ -53,14 +53,16 @@ export const action = async ({ request }) => {
 	});
 
 	if (userToken) {
-		let productCode =
-			plan_id == "essential" ? "exp1bScore" : "credmo3bReportScore";
+		// let productCode =
+		// 	plan_id == "essential" ? "exp1bScore" : "credmo3bReportScore";
+
+		let productCode = "exp1bScore";
 
 		let {
 			displayToken,
 			reportKey,
 			error = null,
-		} = await new_report({
+		} = await new_credit_report({
 			clientKey,
 			productCode,
 			userToken,

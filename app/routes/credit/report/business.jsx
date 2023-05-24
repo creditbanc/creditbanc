@@ -22,7 +22,7 @@ import {
 	get_lendflow_report,
 } from "~/utils/lendflow.server";
 import deepEqual from "deep-equal";
-import UpgradeBanner from "~/components/UpgradeBanner";
+import UpgradeBanner from "~/components/UpgradeMembership";
 import UpgradeCard from "~/components/UpgradeCard";
 
 export const action = async ({ request }) => {

@@ -11,7 +11,7 @@ import random from "random-name";
 import { sample } from "~/utils/helpers";
 import { ParseSSN, RandomSSN } from "ssn";
 import { get, all } from "shades";
-import { report_url } from "~/data/array";
+import { report_url, get_credit_report } from "~/data/array";
 const cities = require("all-the-cities");
 import { prisma } from "~/utils/prisma.server";
 
@@ -41,8 +41,6 @@ export const loader = async ({ request }) => {
 	// console.log("entity_personal_data");
 	// console.log(entity_personal_data);
 
-	// return null;
-
 	// let { address, firstName, lastName, ssn, dob } = entity_personal_data;
 	let { address, dob } = entity_personal_data;
 	// let { street, city, state, zip } = address;
@@ -56,11 +54,12 @@ export const loader = async ({ request }) => {
 	let randomSSN = new RandomSSN();
 	let ssn = randomSSN.value().toString();
 
-	// console.log("cities");
 	let city = pipe(
 		get(all, "name"),
 		sample
 	)(cities.filter((city) => city.country === "US"));
+
+	let report = await get_credit_report(reportKey, displayToken);
 
 	let credit_report_payload = {
 		first_name,
@@ -72,41 +71,6 @@ export const loader = async ({ request }) => {
 		ssn,
 		dob,
 	};
-
-	let get_credit_report = async (reportKey, displayToken) => {
-		console.log("get_credit_report");
-		var options = {
-			method: "get",
-			maxBodyLength: Infinity,
-			url: `${report_url}?reportKey=${reportKey}&displayToken=${displayToken}`,
-			headers: {
-				"Content-Type": "application/json",
-			},
-		};
-
-		let response = await axios(options);
-
-		let retry = async (delay_time_in_milliseconds) => {
-			return new Promise((resolve, reject) => {
-				setTimeout(async () => {
-					let response = await get_credit_report(
-						reportKey,
-						displayToken
-					);
-					resolve(response);
-				}, delay_time_in_milliseconds);
-			});
-		};
-
-		if (response?.data) {
-			return response.data;
-		} else {
-			let response = await retry(3000);
-			return response;
-		}
-	};
-
-	let report = await get_credit_report(reportKey, displayToken);
 
 	let { file } = await create({
 		...credit_report_payload,

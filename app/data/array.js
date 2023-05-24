@@ -6793,7 +6793,11 @@ Array.transunion.score = tryCatch(
 	always(0)
 );
 
-export const new_report = async ({ clientKey, productCode, userToken }) => {
+export const new_credit_report = async ({
+	clientKey,
+	productCode,
+	userToken,
+}) => {
 	var data = JSON.stringify({
 		clientKey,
 		productCode,
@@ -6812,9 +6816,13 @@ export const new_report = async ({ clientKey, productCode, userToken }) => {
 
 	try {
 		let response = await axios(options);
+		console.log("response.data");
+		console.log(response.data);
+
 		let { displayToken = null, reportKey = null } = response.data;
 		return { displayToken, reportKey };
 	} catch (error) {
+		console.log("error");
 		return { error };
 	}
 };
@@ -6846,5 +6854,35 @@ export const authenticate_user = async ({
 		return { userToken };
 	} catch (error) {
 		return { error };
+	}
+};
+
+export const get_credit_report = async (reportKey, displayToken) => {
+	console.log("get_credit_report");
+	var options = {
+		method: "get",
+		maxBodyLength: Infinity,
+		url: `${report_url}?reportKey=${reportKey}&displayToken=${displayToken}`,
+		headers: {
+			"Content-Type": "application/json",
+		},
+	};
+
+	let response = await axios(options);
+
+	let retry = async (delay_time_in_milliseconds) => {
+		return new Promise((resolve, reject) => {
+			setTimeout(async () => {
+				let response = await get_credit_report(reportKey, displayToken);
+				resolve(response);
+			}, delay_time_in_milliseconds);
+		});
+	};
+
+	if (response?.data) {
+		return response.data;
+	} else {
+		let response = await retry(3000);
+		return response;
 	}
 };
