@@ -70,7 +70,7 @@ export const action = async ({ request }) => {
 
 		if (displayToken && reportKey) {
 			return redirect(
-				`/credit/personal/create?displayToken=${displayToken}&reportKey=${reportKey}&group_id=${group_id}&clientKey=${clientKey}&userToken=${userToken}&authToken=${authToken}`
+				`/credit/personal/create?displayToken=${displayToken}&reportKey=${reportKey}&group_id=${group_id}&clientKey=${clientKey}&userToken=${userToken}&authToken=${authToken}&productCode=${productCode}`
 			);
 		}
 	} else {

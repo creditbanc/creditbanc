@@ -21,6 +21,7 @@ export const create = async (payload) => {
 		authToken,
 		displayToken,
 		reportKey,
+		productCode,
 	} = payload;
 	if (!group_id) throw new Error("group_id is required");
 
@@ -46,6 +47,7 @@ export const create = async (payload) => {
 			authToken,
 			displayToken,
 			reportKey,
+			productCode,
 			type: "personal_credit_report",
 		},
 	});

@@ -27,6 +27,7 @@ export const loader = async ({ request }) => {
 	let authToken = search.get("authToken");
 	let displayToken = search.get("displayToken");
 	let reportKey = search.get("reportKey");
+	let productCode = search.get("productCode");
 
 	let session = await getSession(request.headers.get("Cookie"));
 
@@ -83,6 +84,7 @@ export const loader = async ({ request }) => {
 		authToken,
 		displayToken,
 		reportKey,
+		productCode,
 	});
 
 	return redirect(
