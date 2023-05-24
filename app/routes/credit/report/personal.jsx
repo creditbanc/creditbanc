@@ -26,6 +26,9 @@ import { plans_index } from "~/data/plans_index";
 const get_scores = (report) => {
 	let { plan_id } = report;
 
+	console.log("plan_id");
+	console.log(plan_id);
+
 	if (plan_id == "essential") {
 		let { data } = report;
 
@@ -49,6 +52,9 @@ const get_scores = (report) => {
 			equifax: equifax_score,
 			transunion: transunion_score,
 		};
+
+		console.log("payload");
+		console.log(payload);
 
 		return payload;
 	}

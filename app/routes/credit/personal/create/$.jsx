@@ -50,11 +50,9 @@ export const loader = async ({ request }) => {
 
 	let first_name = random.first();
 	let last_name = random.last();
-
 	var usStates = new UsaStates();
 	var statesAbbreviation = usStates.arrayOf("abbreviations");
 	var state = sample(statesAbbreviation);
-
 	let randomSSN = new RandomSSN();
 	let ssn = randomSSN.value().toString();
 
@@ -75,19 +73,6 @@ export const loader = async ({ request }) => {
 		dob,
 	};
 
-	// console.log("credit_report_payload");
-	// console.log(credit_report_payload);
-
-	// return null;
-
-	// console.log("displayToken");
-	// console.log(displayToken);
-
-	// console.log("reportKey");
-	// console.log(reportKey);
-
-	// return null;
-
 	let get_credit_report = async (reportKey, displayToken) => {
 		console.log("get_credit_report");
 		var options = {
@@ -100,9 +85,6 @@ export const loader = async ({ request }) => {
 		};
 
 		let response = await axios(options);
-
-		// console.log("response");
-		// inspect(response);
 
 		let retry = async (delay_time_in_milliseconds) => {
 			return new Promise((resolve, reject) => {
@@ -125,11 +107,6 @@ export const loader = async ({ request }) => {
 	};
 
 	let report = await get_credit_report(reportKey, displayToken);
-
-	// console.log("report");
-	// inspect(report);
-
-	// return null;
 
 	let { file } = await create({
 		...credit_report_payload,
