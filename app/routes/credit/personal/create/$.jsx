@@ -62,6 +62,9 @@ export const loader = async ({ request }) => {
 
 	let report = await get_credit_report(reportKey, displayToken);
 
+	console.log("credit_report_");
+	console.log(report);
+
 	let credit_report_payload = {
 		first_name,
 		last_name,

@@ -49,9 +49,6 @@ const useReportStore = create((set) => ({
 		set((state) => pipe(mod("form", ...path)(() => value))(state)),
 }));
 
-// let api_url = "https://sandbox.array.io/api/user/v2";
-// let api_url = "https://array.io/api/user/v2";
-
 export const action = async ({ request }) => {
 	console.log("new_credit_action");
 
@@ -59,9 +56,6 @@ export const action = async ({ request }) => {
 	const form = await request.formData();
 	var payload = JSON.parse(form.get("payload"));
 	payload = test_identity_three;
-
-	// console.log("payloaddddd");
-	// console.log(data);
 
 	let data = {
 		appKey,
@@ -82,15 +76,9 @@ export const action = async ({ request }) => {
 	let session = await getSession(request.headers.get("Cookie"));
 	session.set("personal_credit_report", JSON.stringify({ ...payload }));
 
-	// return null;
-
 	try {
 		let response = await axios(config);
 		let { clientKey, authToken } = response.data;
-		// console.log("request_response");
-		// console.log(response.data);
-
-		// return null;
 
 		return redirect(
 			`/credit/personal/verification?clientKey=${clientKey}&authToken=${authToken}&group_id=${group_id}`,

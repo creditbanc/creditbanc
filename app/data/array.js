@@ -27,7 +27,7 @@ export const report_url = "https://sandbox.array.io/api/report/v2";
 
 // production urls
 // export const user_url = "https://array.io/api/user/v2";
-// export const authenticate_url = 'https://array.io/api/authenticate/v2'
+// export const authenticate_url = "https://array.io/api/authenticate/v2";
 // export const report_url = "https://array.io/api/report/v2";
 
 export const test_identity_one = {

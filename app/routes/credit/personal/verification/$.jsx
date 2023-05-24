@@ -45,12 +45,16 @@ export const action = async ({ request }) => {
 		},
 	});
 
-	let { userToken = null, error = null } = await authenticate_user({
+	let auth_payload = {
 		appKey,
 		clientKey,
 		authToken,
 		answers,
-	});
+	};
+
+	let { userToken = null, error = null } = await authenticate_user(
+		auth_payload
+	);
 
 	if (userToken) {
 		let productCode =
@@ -58,15 +62,15 @@ export const action = async ({ request }) => {
 
 		// let productCode = "exp1bScore";
 
-		let {
-			displayToken,
-			reportKey,
-			error = null,
-		} = await new_credit_report({
+		let report_payload = {
 			clientKey,
 			productCode,
 			userToken,
-		});
+		};
+
+		let { displayToken, reportKey, error } = await new_credit_report(
+			report_payload
+		);
 
 		if (displayToken && reportKey) {
 			return redirect(
@@ -82,9 +86,6 @@ export const loader = async ({ request }) => {
 	const url = new URL(request.url);
 	let clientKey = url.searchParams.get("clientKey");
 
-	// console.log("clientKey");
-	// console.log(clientKey);
-
 	let providers = ["tui", "exp", "efx"];
 
 	let providers_string = pipe(
@@ -95,12 +96,6 @@ export const loader = async ({ request }) => {
 
 	let verify_url = `${authenticate_url}?appKey=${appKey}&clientKey=${clientKey}&${providers_string}`;
 
-	// console.log("verify_url");
-	// console.log(verify_url);
-
-	// console.log("providers_string");
-	// console.log(providers_string);
-
 	var options = {
 		method: "get",
 		maxBodyLength: Infinity,
@@ -110,8 +105,6 @@ export const loader = async ({ request }) => {
 
 	try {
 		let response = await axios(options);
-		// console.log("response.data");
-		// inspect(response.data);
 		return response.data;
 	} catch (error) {
 		console.log("error");

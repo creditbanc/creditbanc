@@ -58,7 +58,6 @@ const get_personal_data = (report) => {
 };
 
 export const loader = async ({ request }) => {
-	return null;
 	let url = new URL(request.url);
 	let file_id = get_file_id(url.pathname);
 	let entity_id = await get_user_id(request);
@@ -141,6 +140,8 @@ const PersonalInfoCard = () => {
 
 export default function Personal() {
 	return (
-		<div className="flex flex-col w-full">{/* <PersonalInfoCard /> */}</div>
+		<div className="flex flex-col w-full">
+			<PersonalInfoCard />
+		</div>
 	);
 }

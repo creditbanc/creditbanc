@@ -126,6 +126,7 @@ model personal_credit_report {
   clientKey    String?
   displayToken String?
   reportKey    String?
+  productCode  String?
 }
 
 model business_credit_report {
