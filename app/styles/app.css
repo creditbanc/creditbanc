@@ -1105,6 +1105,18 @@ video {
   margin-top: 5px;
 }
 
+.-mt-\[90px\] {
+  margin-top: -90px;
+}
+
+.mt-0 {
+  margin-top: 0px;
+}
+
+.-mt-\[20px\] {
+  margin-top: -20px;
+}
+
 .block {
   display: block;
 }
@@ -1557,6 +1569,10 @@ video {
 
 .w-screen {
   width: 100vw;
+}
+
+.w-\[900px\] {
+  width: 900px;
 }
 
 .min-w-0 {
@@ -3788,6 +3804,14 @@ body {
 
   .sm\:mt-20 {
     margin-top: 5rem;
+  }
+
+  .sm\:-mt-\[90px\] {
+    margin-top: -90px;
+  }
+
+  .sm\:-mt-\[80px\] {
+    margin-top: -80px;
   }
 
   .sm\:block {

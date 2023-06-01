@@ -39,26 +39,32 @@ export const loader = async ({ request }) => {
 	});
 
 	let entity_personal_data = JSON.parse(session.data.personal_credit_report);
-	// console.log("entity_personal_data");
-	// console.log(entity_personal_data);
+	console.log("entity_personal_data");
+	console.log(entity_personal_data);
 
-	// let { address, firstName, lastName, ssn, dob } = entity_personal_data;
-	let { address, dob } = entity_personal_data;
+	let {
+		address,
+		firstName: first_name,
+		lastName: last_name,
+		ssn,
+		dob,
+	} = entity_personal_data;
+	// let { address, dob } = entity_personal_data;
 	// let { street, city, state, zip } = address;
-	let { street, zip } = address;
+	let { street, city, state, zip } = address;
 
-	let first_name = random.first();
-	let last_name = random.last();
+	// let first_name = random.first();
+	// let last_name = random.last();
 	var usStates = new UsaStates();
 	var statesAbbreviation = usStates.arrayOf("abbreviations");
-	var state = sample(statesAbbreviation);
+	// var state = sample(statesAbbreviation);
 	let randomSSN = new RandomSSN();
-	let ssn = randomSSN.value().toString();
+	// let ssn = randomSSN.value().toString();
 
-	let city = pipe(
-		get(all, "name"),
-		sample
-	)(cities.filter((city) => city.country === "US"));
+	// let city = pipe(
+	// 	get(all, "name"),
+	// 	sample
+	// )(cities.filter((city) => city.country === "US"));
 
 	let report = await get_credit_report(reportKey, displayToken);
 

@@ -14,21 +14,31 @@ import { inspect } from "~/utils/helpers";
 import axios from "axios";
 import { mapIndexed } from "~/utils/helpers";
 
-// sandbox
-export const appKey = "3F03D20E-5311-43D8-8A76-E4B5D77793BD";
+export const is_sandbox = false;
 
-// production
-// export const appKey = "F5C7226A-4F96-43BF-B748-09278FFE0E36";
+export const appKey = is_sandbox
+	? "3F03D20E-5311-43D8-8A76-E4B5D77793BD"
+	: "F5C7226A-4F96-43BF-B748-09278FFE0E36";
 
-// sandbox urls
-export const user_url = "https://sandbox.array.io/api/user/v2";
-export const authenticate_url = "https://sandbox.array.io/api/authenticate/v2";
-export const report_url = "https://sandbox.array.io/api/report/v2";
+export const user_url = is_sandbox
+	? "https://sandbox.array.io/api/user/v2"
+	: "https://array.io/api/user/v2";
 
-// production urls
-// export const user_url = "https://array.io/api/user/v2";
-// export const authenticate_url = "https://array.io/api/authenticate/v2";
-// export const report_url = "https://array.io/api/report/v2";
+export const authenticate_url = is_sandbox
+	? "https://sandbox.array.io/api/authenticate/v2"
+	: "https://array.io/api/authenticate/v2";
+
+export const report_url = is_sandbox
+	? "https://sandbox.array.io/api/report/v2"
+	: "https://array.io/api/report/v2";
+
+export const array_script_tag = is_sandbox
+	? `https://embed.sandbox.array.io/cms/array-web-component.js?appKey=${appKey}`
+	: `https://embed.array.io/cms/array-web-component.js?appKey=${appKey}`;
+
+export const kba_script_tag = is_sandbox
+	? `https://embed.sandbox.array.io/cms/array-authentication-kba.js?appKey=${appKey}`
+	: `https://embed.array.io/cms/array-authentication-kba.js?appKey=${appKey}`;
 
 export const test_identity_one = {
 	ssn: "053723148",
@@ -44,23 +54,37 @@ export const test_identity_one = {
 };
 
 export const test_identity_two = {
-	ssn: "594794805",
 	firstName: "daniel",
 	lastName: "arzuaga",
 	dob: "1989-09-28",
+	ssn: "594794805",
 	address: {
-		street: "12531 ne 18th st",
-		city: "williston",
+		street: "16555 southwest 47th place road",
+		city: "ocala",
 		state: "fl",
-		zip: "32696",
+		zip: "34481",
+	},
+};
+
+const test_identity_ten = {
+	appKey: "F5C7226A-4F96-43BF-B748-09278FFE0E36",
+	firstName: "Daniel",
+	lastName: "Arzuaga",
+	ssn: "594794805",
+	dob: "1989-09-28",
+	address: {
+		street: "16555 southwest 47th place road",
+		city: "Ocala",
+		state: "FL",
+		zip: "34481",
 	},
 };
 
 export const test_identity_three = {
-	ssn: "666285344",
 	firstName: "DONALD",
 	lastName: "BLAIR",
 	dob: "1939-09-20",
+	ssn: "666285344",
 	address: {
 		street: "3627 W POPLAR ST",
 		city: "SAN ANTONIO",

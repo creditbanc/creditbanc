@@ -55,7 +55,7 @@ export const action = async ({ request }) => {
 	const group_id = get_group_id(request.url);
 	const form = await request.formData();
 	var payload = JSON.parse(form.get("payload"));
-	payload = test_identity_three;
+	// payload = test_identity_two;
 
 	let data = {
 		appKey,
@@ -78,6 +78,10 @@ export const action = async ({ request }) => {
 
 	try {
 		let response = await axios(config);
+
+		console.log("response");
+		console.log(response);
+
 		let { clientKey, authToken } = response.data;
 
 		return redirect(

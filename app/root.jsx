@@ -11,6 +11,12 @@ import { useTransition } from "@remix-run/react";
 import { create } from "zustand";
 import { useEffect } from "react";
 const cb_logo_3 = "/images/logos/cb_logo_3.png";
+import {
+	appKey,
+	is_sandbox,
+	array_script_tag,
+	kba_script_tag,
+} from "./data/array";
 
 export const useSpinner = create((set) => ({
 	show_spinner: false,
@@ -84,6 +90,8 @@ export default function App() {
 			<head>
 				<Meta />
 				<Links />
+				<script src={array_script_tag}></script>
+				<script src={kba_script_tag}></script>
 			</head>
 			<body className="flex flex-col ">
 				{show_spinner && <Spinner />}

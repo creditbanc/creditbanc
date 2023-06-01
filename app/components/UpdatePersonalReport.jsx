@@ -19,9 +19,6 @@ export default function UpdatePersonalReport() {
 	let { report } = loader_data;
 	let { id: report_id } = report;
 
-	console.log("UpdatePersonalReport");
-	console.log(loader_data);
-
 	const onUpdateReport = async (e) => {
 		e.preventDefault();
 
