@@ -56,7 +56,7 @@ export const action = async ({ request }) => {
 	const group_id = get_group_id(request.url);
 	const form = await request.formData();
 	var payload = JSON.parse(form.get("payload"));
-	payload = test_identity_ten;
+	// payload = test_identity_ten;
 
 	let data = {
 		appKey,
