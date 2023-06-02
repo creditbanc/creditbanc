@@ -39,8 +39,8 @@ export const loader = async ({ request }) => {
 	});
 
 	let entity_personal_data = JSON.parse(session.data.personal_credit_report);
-	console.log("entity_personal_data");
-	console.log(entity_personal_data);
+	// console.log("entity_personal_data");
+	// console.log(entity_personal_data);
 
 	let {
 		address,
@@ -68,8 +68,8 @@ export const loader = async ({ request }) => {
 
 	let report = await get_credit_report(reportKey, displayToken);
 
-	console.log("credit_report_");
-	console.log(report);
+	// console.log("credit_report_");
+	// console.log(report);
 
 	let credit_report_payload = {
 		first_name,

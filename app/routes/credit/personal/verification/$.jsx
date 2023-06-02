@@ -55,8 +55,8 @@ export const action = async ({ request }) => {
 		userToken,
 	};
 
-	console.log("auth_payload");
-	console.log(auth_payload);
+	// console.log("auth_payload");
+	// console.log(auth_payload);
 
 	let productCode =
 		plan_id == "essential" ? "exp1bScore" : "credmo3bReportScore";
@@ -73,8 +73,8 @@ export const action = async ({ request }) => {
 		report_payload
 	);
 
-	console.log("displayToken", displayToken);
-	console.log("reportKey", reportKey);
+	// console.log("displayToken", displayToken);
+	// console.log("reportKey", reportKey);
 
 	if (displayToken && reportKey) {
 		return redirect(
