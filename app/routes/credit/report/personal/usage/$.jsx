@@ -2,7 +2,7 @@ import { BeakerIcon } from "@heroicons/react/24/outline";
 import { FactorBar } from "~/components/FactorBar";
 import { Accounts } from "~/components/TradeLines";
 import { useLoaderData } from "@remix-run/react";
-import { pipe, map, filter, includes, flatten } from "ramda";
+import { pipe, map, filter, includes, flatten, splitWhenever } from "ramda";
 import { get_file_id, inspect } from "~/utils/helpers";
 import {
 	TradeLine as Tradeline,
@@ -11,7 +11,7 @@ import {
 	Liabilities,
 } from "~/data/array";
 import { get_doc as get_credit_report } from "~/utils/personal_credit_report.server";
-import { all, get } from "shades";
+import { all, get, mod } from "shades";
 import { plans } from "~/data/plans";
 import { get_user_id } from "~/utils/auth.server";
 import { prisma } from "~/utils/prisma.server";
@@ -26,13 +26,12 @@ export const loader = async ({ request }) => {
 		resource_id: report_id,
 	});
 
-	let credit_report = CreditReport(credit_report_data);
+	let credit_report = CreditReport(report.data);
 	let liabilities = Liabilities(credit_report.liabilities());
 
 	let trade_lines = pipe(
 		map((value) => Tradeline(flatten([value]))),
-		map((tl) => tl.values())
-		// filter((tl) => pipe(get(all, "value"), includes("Closed"))(tl.status))
+		map((line) => line.values())
 	)(liabilities.trade_lines());
 
 	let is_owner = report.entity_id == entity_id;
@@ -44,7 +43,7 @@ export const loader = async ({ request }) => {
 		},
 	});
 
-	return { trade_lines, plan_id };
+	return { trade_lines, plan_id, report };
 };
 
 const InfoCard = () => {
@@ -127,7 +126,7 @@ const InfoCard = () => {
 };
 
 export default function Usage() {
-	let { trade_lines, plan_id } = useLoaderData();
+	let { trade_lines, plan_id, report } = useLoaderData();
 
 	let experian = pipe(get(plan_id, "personal", "experian", "authorized"))(
 		plans

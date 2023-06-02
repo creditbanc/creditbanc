@@ -1,7 +1,20 @@
-import { pipe, flatten, uniq, reject, isEmpty, head, split, take } from "ramda";
+import {
+	pipe,
+	flatten,
+	uniq,
+	reject,
+	isEmpty,
+	head,
+	split,
+	take,
+	curry,
+	tryCatch,
+	always,
+} from "ramda";
 import { all, get, filter } from "shades";
 import { mapIndexed, currency } from "~/utils/helpers";
 import { ArrowDownIcon, ArrowUpIcon } from "@heroicons/react/20/solid";
+import { TradeLineApi } from "~/data/array";
 
 let month_mapping = {
 	1: "Jan",
@@ -80,6 +93,58 @@ const Stat = () => {
 	);
 };
 
+const PaymentPattern = ({ pattern }) => {
+	if (!pattern?.value) return null;
+
+	return (
+		<>
+			{pipe((value) => {
+				let start_month = pipe(
+					split("-"),
+					get(1),
+					Number
+				)(value["@_StartDate"]);
+
+				return (
+					<>
+						{pipe(
+							take(12),
+							mapIndexed((value, index) => {
+								let raw_month_number = start_month - index;
+								let month_number =
+									raw_month_number < 1
+										? raw_month_number + 12
+										: raw_month_number;
+
+								let month_border_classname =
+									value == "C"
+										? "border-green-200"
+										: "border-red-300";
+
+								return (
+									<div
+										className={`flex flex-col items-center justify-center flex-grow border-t border-b ${month_border_classname} first-of-type:border-l-rounded last-of-type:rounded-r first-of-type:rounded-l border-r first-of-type:border-l`}
+										key={index}
+									>
+										<div
+											className={`flex flex-col items-center justify-center w-full border-b py-1 ${month_border_classname}`}
+										>
+											{month_mapping[month_number]}
+										</div>
+										<div className="flex flex-col items-center justify-center py-1">
+											{value}
+										</div>
+									</div>
+								);
+							})
+						)(value["@_Data"])}
+					</>
+				);
+			})(pattern.value)}
+		</>
+	);
+};
+
 const TradeLine = ({
 	trade_line,
 	type = "basic",
@@ -147,61 +212,38 @@ const TradeLine = ({
 							Account type
 						</div>
 						<div className="text-sm text-gray-900 flex flex-row justify-between sm:justify-around sm:flex-grow">
-							{pipe(get("account_type"), (value) => (
-								<>
-									<div className="w-[100px] sm:w-[120px]">
-										<div className=" text-gray-500 text-xs sm:hidden">
-											Transunion
-										</div>
-
-										<div>
-											{pipe(
-												filter({
-													source: "TransUnion",
-												}),
-												head,
-												get("value"),
-												(value) =>
-													transunion
-														? value
-														: "Upgrade"
-											)(value)}
-										</div>
+							<>
+								<div className="w-[100px] sm:w-[120px]">
+									<div className=" text-gray-500 text-xs sm:hidden">
+										Transunion
 									</div>
-									<div className="w-[100px] sm:w-[120px]">
-										<div className=" text-gray-500 text-xs sm:hidden">
-											Equifax
-										</div>
-										<div>
-											{pipe(
-												filter({
-													source: "Equifax",
-												}),
-												head,
-												get("value"),
-												(value) =>
-													equifax ? value : "Upgrade"
-											)(value)}
-										</div>
+									<div>
+										{TradeLineApi.account_type(
+											"TransUnion"
+										)(trade_line)}
 									</div>
-									<div className="w-[100px] sm:w-[120px]">
-										<div className=" text-gray-500 text-xs sm:hidden">
-											Experian
-										</div>
-										<div>
-											{pipe(
-												filter({
-													source: "Experian",
-												}),
-												head,
-												get("value"),
-												(value) =>
-													experian ? value : "Upgrade"
-											)(value)}
-										</div>
+								</div>
+								<div className="w-[100px] sm:w-[120px]">
+									<div className=" text-gray-500 text-xs sm:hidden">
+										Equifax
 									</div>
-								</>
-							))(trade_line)}
+									<div>
+										{TradeLineApi.account_type("Equifax")(
+											trade_line
+										)}
+									</div>
+								</div>
+								<div className="w-[100px] sm:w-[120px]">
+									<div className=" text-gray-500 text-xs sm:hidden">
+										Experian
+									</div>
+									<div>
+										{TradeLineApi.account_type("Experian")(
+											trade_line
+										)}
+									</div>
+								</div>
+							</>
 						</div>
 					</div>
 					<div className="flex flex-col sm:flex-row py-2">
@@ -209,60 +251,38 @@ const TradeLine = ({
 							Account status
 						</div>
 						<div className="text-sm text-gray-900 flex flex-row justify-between sm:justify-around sm:flex-grow">
-							{pipe(get("status"), (value) => (
-								<>
-									<div className="w-[100px] sm:w-[120px]">
-										<div className=" text-gray-500 text-xs sm:hidden">
-											Transunion
-										</div>
-										<div>
-											{pipe(
-												filter({
-													source: "TransUnion",
-												}),
-												head,
-												get("value"),
-												(value) =>
-													transunion
-														? value
-														: "Upgrade"
-											)(value)}
-										</div>
+							<>
+								<div className="w-[100px] sm:w-[120px]">
+									<div className=" text-gray-500 text-xs sm:hidden">
+										Transunion
 									</div>
-									<div className="w-[100px] sm:w-[120px]">
-										<div className=" text-gray-500 text-xs sm:hidden">
-											Equifax
-										</div>
-										<div>
-											{pipe(
-												filter({
-													source: "Equifax",
-												}),
-												head,
-												get("value"),
-												(value) =>
-													equifax ? value : "Upgrade"
-											)(value)}
-										</div>
+									<div>
+										{TradeLineApi.account_status(
+											"TransUnion"
+										)(trade_line)}
 									</div>
-									<div className="w-[100px] sm:w-[120px]">
-										<div className=" text-gray-500 text-xs sm:hidden">
-											Experian
-										</div>
-										<div>
-											{pipe(
-												filter({
-													source: "Experian",
-												}),
-												head,
-												get("value"),
-												(value) =>
-													experian ? value : "Upgrade"
-											)(value)}
-										</div>
+								</div>
+								<div className="w-[100px] sm:w-[120px]">
+									<div className=" text-gray-500 text-xs sm:hidden">
+										Equifax
 									</div>
-								</>
-							))(trade_line)}
+									<div>
+										{TradeLineApi.account_status("Equifax")(
+											trade_line
+										)}
+									</div>
+								</div>
+								<div className="w-[100px] sm:w-[120px]">
+									<div className=" text-gray-500 text-xs sm:hidden">
+										Experian
+									</div>
+									<div>
+										{TradeLineApi.account_status(
+											"Experian"
+										)(trade_line)}
+									</div>
+								</div>
+							</>
 						</div>
 					</div>
 					<div className="flex flex-col sm:flex-row py-2">
@@ -270,66 +290,38 @@ const TradeLine = ({
 							Monthly payment
 						</div>
 						<div className="text-sm text-gray-900 flex flex-row justify-between sm:justify-around sm:flex-grow">
-							{pipe(get("payment_amount"), (value) => (
-								<>
-									<div className="w-[100px] sm:w-[120px]">
-										<div className=" text-gray-500 text-xs sm:hidden">
-											Transunion
-										</div>
-										<div>
-											{pipe(
-												filter({
-													source: "TransUnion",
-												}),
-												head,
-												get("value"),
-												(value) =>
-													transunion
-														? currency.format(value)
-														: "Upgrade"
-											)(value)}
-										</div>
+							<>
+								<div className="w-[100px] sm:w-[120px]">
+									<div className=" text-gray-500 text-xs sm:hidden">
+										Transunion
 									</div>
-									<div className="w-[100px] sm:w-[120px]">
-										<div className=" text-gray-500 text-xs sm:hidden">
-											Equifax
-										</div>
-										<div>
-											{pipe(
-												filter({
-													source: "Equifax",
-												}),
-												head,
-												get("value"),
-
-												(value) =>
-													equifax
-														? currency.format(value)
-														: "Upgrade"
-											)(value)}
-										</div>
+									<div>
+										{TradeLineApi.payment_amount(
+											"TransUnion"
+										)(trade_line)}
 									</div>
-									<div className="w-[100px] sm:w-[120px]">
-										<div className=" text-gray-500 text-xs sm:hidden">
-											Experian
-										</div>
-										<div>
-											{pipe(
-												filter({
-													source: "Experian",
-												}),
-												head,
-												get("value"),
-
-												(value) =>
-													experian
-														? currency.format(value)
-														: "Upgrade"
-											)(value)}
-										</div>
+								</div>
+								<div className="w-[100px] sm:w-[120px]">
+									<div className=" text-gray-500 text-xs sm:hidden">
+										Equifax
 									</div>
-								</>
-							))(trade_line)}
+									<div>
+										{TradeLineApi.payment_amount("Equifax")(
+											trade_line
+										)}
+									</div>
+								</div>
+								<div className="w-[100px] sm:w-[120px]">
+									<div className=" text-gray-500 text-xs sm:hidden">
+										Experian
+									</div>
+									<div>
+										{TradeLineApi.payment_amount(
+											"Experian"
+										)(trade_line)}
+									</div>
+								</div>
+							</>
 						</div>
 					</div>
 					<div className="flex flex-col sm:flex-row py-2">
@@ -337,60 +329,38 @@ const TradeLine = ({
 							Date opened
 						</div>
 						<div className="text-sm text-gray-900 flex flex-row justify-between sm:justify-around sm:flex-grow">
-							{pipe(get("opened_date"), (value) => (
-								<>
-									<div className="w-[100px] sm:w-[120px]">
-										<div className=" text-gray-500 text-xs sm:hidden">
-											Transunion
-										</div>
-										<div>
-											{pipe(
-												filter({
-													source: "TransUnion",
-												}),
-												head,
-												get("value"),
-												(value) =>
-													transunion
-														? value
-														: "Upgrade"
-											)(value)}
-										</div>
+							<>
+								<div className="w-[100px] sm:w-[120px]">
+									<div className=" text-gray-500 text-xs sm:hidden">
+										Transunion
 									</div>
-									<div className="w-[100px] sm:w-[120px]">
-										<div className=" text-gray-500 text-xs sm:hidden">
-											Equifax
-										</div>
-										<div>
-											{pipe(
-												filter({
-													source: "Equifax",
-												}),
-												head,
-												get("value"),
-												(value) =>
-													equifax ? value : "Upgrade"
-											)(value)}
-										</div>
+									<div>
+										{TradeLineApi.opened_date("TransUnion")(
+											trade_line
+										)}
 									</div>
-									<div className="w-[100px] sm:w-[120px]">
-										<div className=" text-gray-500 text-xs sm:hidden">
-											Experian
-										</div>
-										<div>
-											{pipe(
-												filter({
-													source: "Experian",
-												}),
-												head,
-												get("value"),
-												(value) =>
-													experian ? value : "Upgrade"
-											)(value)}
-										</div>
+								</div>
+								<div className="w-[100px] sm:w-[120px]">
+									<div className=" text-gray-500 text-xs sm:hidden">
+										Equifax
 									</div>
-								</>
-							))(trade_line)}
+									<div>
+										{TradeLineApi.opened_date("Equifax")(
+											trade_line
+										)}
+									</div>
+								</div>
+								<div className="w-[100px] sm:w-[120px]">
+									<div className=" text-gray-500 text-xs sm:hidden">
+										Experian
+									</div>
+									<div>
+										{TradeLineApi.opened_date("Experian")(
+											trade_line
+										)}
+									</div>
+								</div>
+							</>
 						</div>
 					</div>
 					<div className="flex flex-col sm:flex-row py-2">
@@ -398,67 +368,38 @@ const TradeLine = ({
 							Balance
 						</div>
 						<div className="text-sm text-gray-900 flex flex-row justify-between sm:justify-around sm:flex-grow">
-							{pipe(get("unpaid_balance"), (value) => (
-								<>
-									<div className="w-[100px] sm:w-[120px]">
-										<div className=" text-gray-500 text-xs sm:hidden">
-											Transunion
-										</div>
-										<div>
-											{pipe(
-												filter({
-													source: "TransUnion",
-												}),
-												head,
-												get("value"),
-
-												(value) =>
-													transunion
-														? currency.format(value)
-														: "Upgrade"
-											)(value)}
-										</div>
+							<>
+								<div className="w-[100px] sm:w-[120px]">
+									<div className=" text-gray-500 text-xs sm:hidden">
+										Transunion
 									</div>
-									<div className="w-[100px] sm:w-[120px]">
-										<div className=" text-gray-500 text-xs sm:hidden">
-											Equifax
-										</div>
-										<div>
-											{pipe(
-												filter({
-													source: "Equifax",
-												}),
-												head,
-												get("value"),
-
-												(value) =>
-													equifax
-														? currency.format(value)
-														: "Upgrade"
-											)(value)}
-										</div>
+									<div>
+										{TradeLineApi.unpaid_balance(
+											"TransUnion"
+										)(trade_line)}
 									</div>
-									<div className="w-[100px] sm:w-[120px]">
-										<div className=" text-gray-500 text-xs sm:hidden">
-											Experian
-										</div>
-										<div>
-											{pipe(
-												filter({
-													source: "Experian",
-												}),
-												head,
-												get("value"),
-
-												(value) =>
-													experian
-														? currency.format(value)
-														: "Upgrade"
-											)(value)}
-										</div>
+								</div>
+								<div className="w-[100px] sm:w-[120px]">
+									<div className=" text-gray-500 text-xs sm:hidden">
+										Equifax
 									</div>
-								</>
-							))(trade_line)}
+									<div>
+										{TradeLineApi.unpaid_balance("Equifax")(
+											trade_line
+										)}
+									</div>
+								</div>
+								<div className="w-[100px] sm:w-[120px]">
+									<div className=" text-gray-500 text-xs sm:hidden">
+										Experian
+									</div>
+									<div>
+										{TradeLineApi.unpaid_balance(
+											"Experian"
+										)(trade_line)}
+									</div>
+								</div>
+							</>
 						</div>
 					</div>
 					<div className="flex flex-col sm:flex-row py-2">
@@ -466,60 +407,38 @@ const TradeLine = ({
 							No of months (terms)
 						</div>
 						<div className="text-sm text-gray-900 flex flex-row justify-between sm:justify-around sm:flex-grow">
-							{pipe(get("terms"), (value) => (
-								<>
-									<div className="w-[100px] sm:w-[120px]">
-										<div className=" text-gray-500 text-xs sm:hidden">
-											Transunion
-										</div>
-										<div>
-											{pipe(
-												filter({
-													source: "TransUnion",
-												}),
-												head,
-												get("value"),
-												(value) =>
-													transunion
-														? value
-														: "Upgrade"
-											)(value)}
-										</div>
+							<>
+								<div className="w-[100px] sm:w-[120px]">
+									<div className=" text-gray-500 text-xs sm:hidden">
+										Transunion
 									</div>
-									<div className="w-[100px] sm:w-[120px]">
-										<div className=" text-gray-500 text-xs sm:hidden">
-											Equifax
-										</div>
-										<div>
-											{pipe(
-												filter({
-													source: "Equifax",
-												}),
-												head,
-												get("value"),
-												(value) =>
-													equifax ? value : "Upgrade"
-											)(value)}
-										</div>
+									<div>
+										{TradeLineApi.terms("Transunion")(
+											trade_line
+										)}
 									</div>
-									<div className="w-[100px] sm:w-[120px]">
-										<div className=" text-gray-500 text-xs sm:hidden">
-											Experian
-										</div>
-										<div>
-											{pipe(
-												filter({
-													source: "Experian",
-												}),
-												head,
-												get("value"),
-												(value) =>
-													experian ? value : "Upgrade"
-											)(value)}
-										</div>
+								</div>
+								<div className="w-[100px] sm:w-[120px]">
+									<div className=" text-gray-500 text-xs sm:hidden">
+										Equifax
 									</div>
-								</>
-							))(trade_line)}
+									<div>
+										{TradeLineApi.terms("Equifax")(
+											trade_line
+										)}
+									</div>
+								</div>
+								<div className="w-[100px] sm:w-[120px]">
+									<div className=" text-gray-500 text-xs sm:hidden">
+										Experian
+									</div>
+									<div>
+										{TradeLineApi.terms("Experian")(
+											trade_line
+										)}
+									</div>
+								</div>
+							</>
 						</div>
 					</div>
 					<div className="flex flex-col sm:flex-row py-2">
@@ -527,67 +446,38 @@ const TradeLine = ({
 							High credit
 						</div>
 						<div className="text-sm text-gray-900 flex flex-row justify-between sm:justify-around sm:flex-grow">
-							{pipe(get("credit_limit"), (value) => (
-								<>
-									<div className="w-[100px] sm:w-[120px]">
-										<div className=" text-gray-500 text-xs sm:hidden">
-											Transunion
-										</div>
-										<div>
-											{pipe(
-												filter({
-													source: "TransUnion",
-												}),
-												head,
-												get("value"),
-
-												(value) =>
-													transunion
-														? currency.format(value)
-														: "Upgrade"
-											)(value)}
-										</div>
+							<>
+								<div className="w-[100px] sm:w-[120px]">
+									<div className=" text-gray-500 text-xs sm:hidden">
+										Transunion
 									</div>
-									<div className="w-[100px] sm:w-[120px]">
-										<div className=" text-gray-500 text-xs sm:hidden">
-											Equifax
-										</div>
-										<div>
-											{pipe(
-												filter({
-													source: "Equifax",
-												}),
-												head,
-												get("value"),
-
-												(value) =>
-													equifax
-														? currency.format(value)
-														: "Upgrade"
-											)(value)}
-										</div>
+									<div>
+										{TradeLineApi.credit_limit(
+											"Transunion"
+										)(trade_line)}
 									</div>
-									<div className="w-[100px] sm:w-[120px]">
-										<div className=" text-gray-500 text-xs sm:hidden">
-											Experian
-										</div>
-										<div>
-											{pipe(
-												filter({
-													source: "Experian",
-												}),
-												head,
-												get("value"),
-
-												(value) =>
-													experian
-														? currency.format(value)
-														: "Upgrade"
-											)(value)}
-										</div>
+								</div>
+								<div className="w-[100px] sm:w-[120px]">
+									<div className=" text-gray-500 text-xs sm:hidden">
+										Equifax
 									</div>
-								</>
-							))(trade_line)}
+									<div>
+										{TradeLineApi.credit_limit("Equifax")(
+											trade_line
+										)}
+									</div>
+								</div>
+								<div className="w-[100px] sm:w-[120px]">
+									<div className=" text-gray-500 text-xs sm:hidden">
+										Experian
+									</div>
+									<div>
+										{TradeLineApi.credit_limit("Experian")(
+											trade_line
+										)}
+									</div>
+								</div>
+							</>
 						</div>
 					</div>
 					<div className="flex flex-col sm:flex-row py-2">
@@ -595,67 +485,38 @@ const TradeLine = ({
 							Past due
 						</div>
 						<div className="text-sm text-gray-900 flex flex-row justify-between sm:justify-around sm:flex-grow">
-							{pipe(get("past_due_amount"), (value) => (
-								<>
-									<div className="w-[100px] sm:w-[120px]">
-										<div className=" text-gray-500 text-xs sm:hidden">
-											Transunion
-										</div>
-										<div>
-											{pipe(
-												filter({
-													source: "TransUnion",
-												}),
-												head,
-												get("value"),
-
-												(value) =>
-													transunion
-														? currency.format(value)
-														: "Upgrade"
-											)(value)}
-										</div>
+							<>
+								<div className="w-[100px] sm:w-[120px]">
+									<div className=" text-gray-500 text-xs sm:hidden">
+										Transunion
 									</div>
-									<div className="w-[100px] sm:w-[120px]">
-										<div className=" text-gray-500 text-xs sm:hidden">
-											Equifax
-										</div>
-										<div>
-											{pipe(
-												filter({
-													source: "Equifax",
-												}),
-												head,
-												get("value"),
-
-												(value) =>
-													equifax
-														? currency.format(value)
-														: "Upgrade"
-											)(value)}
-										</div>
+									<div>
+										{TradeLineApi.past_due_amount(
+											"Transunion"
+										)(trade_line)}
 									</div>
-									<div className="w-[100px] sm:w-[120px]">
-										<div className=" text-gray-500 text-xs sm:hidden">
-											Experian
-										</div>
-										<div>
-											{pipe(
-												filter({
-													source: "Experian",
-												}),
-												head,
-												get("value"),
-
-												(value) =>
-													experian
-														? currency.format(value)
-														: "Upgrade"
-											)(value)}
-										</div>
+								</div>
+								<div className="w-[100px] sm:w-[120px]">
+									<div className=" text-gray-500 text-xs sm:hidden">
+										Equifax
 									</div>
-								</>
-							))(trade_line)}
+									<div>
+										{TradeLineApi.past_due_amount(
+											"Equifax"
+										)(trade_line)}
+									</div>
+								</div>
+								<div className="w-[100px] sm:w-[120px]">
+									<div className=" text-gray-500 text-xs sm:hidden">
+										Experian
+									</div>
+									<div>
+										{TradeLineApi.past_due_amount(
+											"Experian"
+										)(trade_line)}
+									</div>
+								</div>
+							</>
 						</div>
 					</div>
 					<div className="flex flex-col sm:flex-row py-2">
@@ -663,60 +524,38 @@ const TradeLine = ({
 							Payment status
 						</div>
 						<div className="text-sm text-gray-900 flex flex-row justify-between sm:justify-around sm:flex-grow">
-							{pipe(get("current_rating"), (value) => (
-								<>
-									<div className="w-[100px] sm:w-[120px]">
-										<div className=" text-gray-500 text-xs sm:hidden">
-											Transunion
-										</div>
-										<div>
-											{pipe(
-												filter({
-													source: "TransUnion",
-												}),
-												head,
-												get("value"),
-												(value) =>
-													transunion
-														? value
-														: "Upgrade"
-											)(value)}
-										</div>
+							<>
+								<div className="w-[100px] sm:w-[120px]">
+									<div className=" text-gray-500 text-xs sm:hidden">
+										Transunion
 									</div>
-									<div className="w-[100px] sm:w-[120px]">
-										<div className=" text-gray-500 text-xs sm:hidden">
-											Equifax
-										</div>
-										<div>
-											{pipe(
-												filter({
-													source: "Equifax",
-												}),
-												head,
-												get("value"),
-												(value) =>
-													equifax ? value : "Upgrade"
-											)(value)}
-										</div>
+									<div>
+										{TradeLineApi.current_rating(
+											"Transunion"
+										)(trade_line)}
 									</div>
-									<div className="w-[100px] sm:w-[120px]">
-										<div className=" text-gray-500 text-xs sm:hidden">
-											Experian
-										</div>
-										<div>
-											{pipe(
-												filter({
-													source: "Experian",
-												}),
-												head,
-												get("value"),
-												(value) =>
-													experian ? value : "Upgrade"
-											)(value)}
-										</div>
+								</div>
+								<div className="w-[100px] sm:w-[120px]">
+									<div className=" text-gray-500 text-xs sm:hidden">
+										Equifax
 									</div>
-								</>
-							))(trade_line)}
+									<div>
+										{TradeLineApi.current_rating("Equifax")(
+											trade_line
+										)}
+									</div>
+								</div>
+								<div className="w-[100px] sm:w-[120px]">
+									<div className=" text-gray-500 text-xs sm:hidden">
+										Experian
+									</div>
+									<div>
+										{TradeLineApi.current_rating(
+											"Experian"
+										)(trade_line)}
+									</div>
+								</div>
+							</>
 						</div>
 					</div>
 					<div className="flex flex-col sm:flex-row py-2">
@@ -724,60 +563,38 @@ const TradeLine = ({
 							Last reported
 						</div>
 						<div className="text-sm text-gray-900 flex flex-row justify-between sm:justify-around sm:flex-grow">
-							{pipe(get("account_reported_date"), (value) => (
-								<>
-									<div className="w-[100px] sm:w-[120px]">
-										<div className=" text-gray-500 text-xs sm:hidden">
-											Transunion
-										</div>
-										<div>
-											{pipe(
-												filter({
-													source: "TransUnion",
-												}),
-												head,
-												get("value"),
-												(value) =>
-													transunion
-														? value
-														: "Upgrade"
-											)(value)}
-										</div>
+							<>
+								<div className="w-[100px] sm:w-[120px]">
+									<div className=" text-gray-500 text-xs sm:hidden">
+										Transunion
 									</div>
-									<div className="w-[100px] sm:w-[120px]">
-										<div className=" text-gray-500 text-xs sm:hidden">
-											Equifax
-										</div>
-										<div>
-											{pipe(
-												filter({
-													source: "Equifax",
-												}),
-												head,
-												get("value"),
-												(value) =>
-													equifax ? value : "Upgrade"
-											)(value)}
-										</div>
+									<div>
+										{TradeLineApi.account_reported_date(
+											"Transunion"
+										)(trade_line)}
 									</div>
-									<div className="w-[100px] sm:w-[120px]">
-										<div className=" text-gray-500 text-xs sm:hidden">
-											Experian
-										</div>
-										<div>
-											{pipe(
-												filter({
-													source: "Experian",
-												}),
-												head,
-												get("value"),
-												(value) =>
-													experian ? value : "Upgrade"
-											)(value)}
-										</div>
+								</div>
+								<div className="w-[100px] sm:w-[120px]">
+									<div className=" text-gray-500 text-xs sm:hidden">
+										Equifax
 									</div>
-								</>
-							))(trade_line)}
+									<div>
+										{TradeLineApi.account_reported_date(
+											"Equifax"
+										)(trade_line)}
+									</div>
+								</div>
+								<div className="w-[100px] sm:w-[120px]">
+									<div className=" text-gray-500 text-xs sm:hidden">
+										Experian
+									</div>
+									<div>
+										{TradeLineApi.account_reported_date(
+											"Experian"
+										)(trade_line)}
+									</div>
+								</div>
+							</>
 						</div>
 					</div>
 					<div className="flex flex-col sm:flex-row py-2">
@@ -787,69 +604,10 @@ const TradeLine = ({
 						<div className="text-sm text-gray-900 flex flex-row justify-between sm:justify-around sm:flex-grow">
 							<div className="w-full flex flex-row justify-between text-xs sm:text-sm">
 								{pipe(
-									get("payment_pattern"),
-									filter(
-										(value) => value.source == "Experian"
-									),
-									head,
-									(pattern) =>
-										pipe((value) => {
-											let start_month = pipe(
-												split("-"),
-												get(1),
-												Number
-											)(value["@_StartDate"]);
-
-											return (
-												<>
-													{pipe(
-														take(12),
-														mapIndexed(
-															(value, index) => {
-																let raw_month_number =
-																	start_month -
-																	index;
-																let month_number =
-																	raw_month_number <
-																	1
-																		? raw_month_number +
-																		  12
-																		: raw_month_number;
-
-																let month_border_classname =
-																	value == "C"
-																		? "border-green-200"
-																		: "border-red-300";
-
-																return (
-																	<div
-																		className={`flex flex-col items-center justify-center flex-grow border-t border-b ${month_border_classname} first-of-type:border-l-rounded last-of-type:rounded-r first-of-type:rounded-l border-r first-of-type:border-l`}
-																		key={
-																			index
-																		}
-																	>
-																		<div
-																			className={`flex flex-col items-center justify-center w-full border-b py-1 ${month_border_classname}`}
-																		>
-																			{
-																				month_mapping[
-																					month_number
-																				]
-																			}
-																		</div>
-																		<div className="flex flex-col items-center justify-center py-1">
-																			{
-																				value
-																			}
-																		</div>
-																	</div>
-																);
-															}
-														)
-													)(value["@_Data"])}
-												</>
-											);
-										})(pattern.value)
+									TradeLineApi.payment_pattern("Experian"),
+									(pattern) => (
+										<PaymentPattern pattern={pattern} />
+									)
 								)(trade_line)}
 							</div>
 						</div>

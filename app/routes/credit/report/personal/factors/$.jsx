@@ -23,7 +23,7 @@ export const loader = async ({ request }) => {
 		resource_id: report_id,
 	});
 
-	let credit_report = CreditReport(credit_report_data);
+	let credit_report = CreditReport(report.data);
 	let factors = credit_report.factors();
 	let inquiries = credit_report.inquiries();
 

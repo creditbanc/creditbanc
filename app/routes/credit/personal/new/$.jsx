@@ -18,6 +18,7 @@ import {
 	test_identity_three,
 	test_identity_four,
 	test_identity_five,
+	test_identity_ten,
 	appKey,
 	user_url,
 } from "~/data/array";
@@ -55,7 +56,7 @@ export const action = async ({ request }) => {
 	const group_id = get_group_id(request.url);
 	const form = await request.formData();
 	var payload = JSON.parse(form.get("payload"));
-	// payload = test_identity_two;
+	payload = test_identity_ten;
 
 	let data = {
 		appKey,
