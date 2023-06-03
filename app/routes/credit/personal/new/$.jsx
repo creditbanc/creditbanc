@@ -64,9 +64,8 @@ export const action = async ({ request }) => {
 	console.log("rogue__?");
 	console.log(rogue);
 
-	var payload = is_sandbox
-		? test_identity_three
-		: JSON.parse(form.get("payload"));
+	var payload = is_sandbox ? test_identity_three : test_identity_two;
+	// JSON.parse(form.get("payload"));
 
 	let session = await getSession(request.headers.get("Cookie"));
 	session.set("personal_credit_report", JSON.stringify({ ...payload }));

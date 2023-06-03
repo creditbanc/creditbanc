@@ -11,12 +11,7 @@ import { useTransition } from "@remix-run/react";
 import { create } from "zustand";
 import { useEffect } from "react";
 const cb_logo_3 = "/images/logos/cb_logo_3.png";
-import {
-	appKey,
-	is_sandbox,
-	array_script_tag,
-	kba_script_tag,
-} from "./data/array";
+import { array_script_tag, kba_script_tag } from "./data/array";
 
 export const useSpinner = create((set) => ({
 	show_spinner: false,
