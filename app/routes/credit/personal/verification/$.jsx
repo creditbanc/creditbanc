@@ -33,35 +33,33 @@ const useVerificationQuestionsStore = create((set) => ({
 }));
 
 export const action = async ({ request }) => {
-	let entity_id = await get_user_id(request);
 	const form = await request.formData();
 	const payload = JSON.parse(form.get("payload"));
 	let { clientKey, authToken, userToken } = payload;
 	let url = new URL(request.url);
 	let search = new URLSearchParams(url.search);
 	let group_id = search.get("group_id");
+	let rogue = search.get("rogue") == "true" ? true : false;
+	let plan_id = search.get("plan_id");
+	let entity_id = search.get("entity_id");
 
-	let { plan_id } = await prisma.entity.findUnique({
-		where: { id: entity_id },
-		select: {
-			plan_id: true,
-		},
-	});
+	console.log("rogue__?");
+	console.log(rogue);
 
-	let auth_payload = {
-		appKey,
-		clientKey,
-		authToken,
-		userToken,
-	};
+	if (!rogue) {
+		let entity_id = await get_user_id(request);
+		let entity = await prisma.entity.findUnique({
+			where: { id: entity_id },
+			select: {
+				plan_id: true,
+			},
+		});
 
-	// console.log("auth_payload");
-	// console.log(auth_payload);
+		plan_id = entity.plan_id;
+	}
 
 	let productCode =
 		plan_id == "essential" ? "exp1bScore" : "credmo3bReportScore";
-
-	// let productCode = "exp1bScore";
 
 	let report_payload = {
 		clientKey,
@@ -73,18 +71,35 @@ export const action = async ({ request }) => {
 		report_payload
 	);
 
-	// console.log("displayToken", displayToken);
-	// console.log("reportKey", reportKey);
+	let params = [
+		`displayToken=${displayToken}`,
+		`reportKey=${reportKey}`,
+		`group_id=${group_id}`,
+		`clientKey=${clientKey}`,
+		`userToken=${userToken}`,
+		`authToken=${authToken}`,
+		`productCode=${productCode}`,
+		`rogue=${rogue}`,
+	];
+
+	let rogue_params = [
+		`displayToken=${displayToken}`,
+		`reportKey=${reportKey}`,
+		`clientKey=${clientKey}`,
+		`userToken=${userToken}`,
+		`authToken=${authToken}`,
+		`productCode=${productCode}`,
+		`entity_id=${entity_id}`,
+		`group_id=${group_id}`,
+		`plan_id=${plan_id}`,
+		`rogue=${rogue}`,
+	];
+
+	let search_params = rogue ? rogue_params.join("&") : params.join("&");
 
 	if (displayToken && reportKey) {
-		return redirect(
-			`/credit/personal/create?displayToken=${displayToken}&reportKey=${reportKey}&group_id=${group_id}&clientKey=${clientKey}&userToken=${userToken}&authToken=${authToken}&productCode=${productCode}`
-		);
+		return redirect(`/credit/personal/create?${search_params}`);
 	}
-	// if (userToken) {
-	// } else {
-	// 	return json({ error });
-	// }
 };
 
 const Heading = () => {
@@ -141,17 +156,12 @@ export default function Verification() {
 		});
 	}, []);
 
-	// useEffect(() => {
-	// 	setQuestions(questions.questions || []);
-	// }, [questions]);
-
 	return (
 		<div className="flex flex-col w-full">
 			<CreditNav />
-			{/* <CreditHeroGradient /> */}
+
 			<div className="flex flex-col w-full  max-w-2xl mx-auto">
 				<Heading />
-				{/* <Form /> */}
 			</div>
 			<div className="-mt-[30px] sm:-mt-[80px]">
 				<array-authentication-kba
@@ -160,8 +170,8 @@ export default function Verification() {
 					userId={clientKey}
 					showResultPages="true"
 					tui={true}
-					exp={true}
-					efx={true}
+					exp={is_sandbox ? false : true}
+					efx={is_sandbox ? false : true}
 				></array-authentication-kba>
 			</div>
 		</div>

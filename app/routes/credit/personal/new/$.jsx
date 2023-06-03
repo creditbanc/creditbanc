@@ -2,7 +2,7 @@ import CreditNav from "~/components/CreditNav";
 import CreditHeroGradient from "~/components/CreditHeroGradient";
 import axios from "axios";
 import { pipe } from "ramda";
-import { mod } from "shades";
+import { get, mod } from "shades";
 import { create } from "zustand";
 import { useSubmit } from "@remix-run/react";
 import {
@@ -10,6 +10,7 @@ import {
 	to_resource_pathname,
 	get_group_id,
 	sample,
+	get_entity_id,
 } from "~/utils/helpers";
 import { json, redirect } from "@remix-run/node";
 import {
@@ -18,9 +19,9 @@ import {
 	test_identity_three,
 	test_identity_four,
 	test_identity_five,
-	test_identity_ten,
 	appKey,
 	user_url,
+	is_sandbox,
 } from "~/data/array";
 import {
 	getSession,
@@ -52,63 +53,75 @@ const useReportStore = create((set) => ({
 
 export const action = async ({ request }) => {
 	console.log("new_credit_action");
-
+	let url = new URL(request.url);
+	let search = new URLSearchParams(url.search);
+	let rogue = search.get("rogue") == "true" ? true : false;
+	let plan_id = search.get("plan_id");
 	const group_id = get_group_id(request.url);
+	const entity_id = get_entity_id(request.url);
 	const form = await request.formData();
-	var payload = JSON.parse(form.get("payload"));
-	// payload = test_identity_ten;
 
-	let data = {
-		appKey,
-		...payload,
-	};
+	console.log("rogue__?");
+	console.log(rogue);
 
-	let config = {
-		method: "post",
-		maxBodyLength: Infinity,
-		url: user_url,
-		headers: {
-			accept: "application/json",
-			"Content-Type": "application/json",
-		},
-		data: data,
-	};
+	var payload = is_sandbox
+		? test_identity_three
+		: JSON.parse(form.get("payload"));
 
 	let session = await getSession(request.headers.get("Cookie"));
 	session.set("personal_credit_report", JSON.stringify({ ...payload }));
 
 	try {
-		let response = await axios(config);
+		let config = {
+			method: "post",
+			maxBodyLength: Infinity,
+			url: user_url,
+			headers: {
+				accept: "application/json",
+				"Content-Type": "application/json",
+			},
+			data: {
+				appKey,
+				...payload,
+			},
+		};
 
-		// console.log("response");
-		// console.log(response);
+		let response = await axios(config);
 
 		let { clientKey, authToken } = response.data;
 
-		return redirect(
-			`/credit/personal/verification?clientKey=${clientKey}&authToken=${authToken}&group_id=${group_id}`,
-			{
-				headers: {
-					"Set-Cookie": await commitSession(session),
-				},
-			}
-		);
+		let params = [
+			`clientKey=${clientKey}`,
+			`authToken=${authToken}`,
+			`group_id=${group_id}`,
+			`rogue=${rogue}`,
+		];
+
+		let rogue_params = [
+			`clientKey=${clientKey}`,
+			`authToken=${authToken}`,
+			`entity_id=${entity_id}`,
+			`group_id=${group_id}`,
+			`plan_id=${plan_id}`,
+			`rogue=${rogue}`,
+		];
+
+		let search_params = rogue ? rogue_params.join("&") : params.join("&");
+
+		console.log("search_params");
+		console.log(search_params);
+
+		return redirect(`/credit/personal/verification?${search_params}`, {
+			headers: {
+				"Set-Cookie": await commitSession(session),
+			},
+		});
 	} catch (error) {
 		console.log("error");
 		console.log(error.response.data);
 		return json({ error: error.message }, { status: 500 });
 	}
 };
-
-// export const loader = async ({ request }) => {
-// 	let entity_id = await get_user_id(request);
-// 	console.log("entity_id");
-// 	console.log(entity_id);
-
-// 	if (!entity_id) return redirect("/signup");
-
-// 	return null;
-// };
 
 const Form = () => {
 	const form = useReportStore((state) => state.form);
@@ -129,7 +142,9 @@ const Form = () => {
 		e.preventDefault();
 		console.log("submitting");
 		// let form_id = uuidv4();
-		let resource_path = to_resource_pathname(window.location.pathname);
+		let resource_path =
+			to_resource_pathname(window.location.pathname) +
+			window.location.search;
 
 		let { dob, ...rest } = form;
 		let dob_string = `${dob.year}-${dob.month}-${dob.day}`;

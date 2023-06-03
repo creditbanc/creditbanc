@@ -90,8 +90,8 @@ export default function App() {
 			<head>
 				<Meta />
 				<Links />
-				<script src={array_script_tag}></script>
 				<script src={kba_script_tag}></script>
+				<script src={array_script_tag}></script>
 			</head>
 			<body className="flex flex-col ">
 				{show_spinner && <Spinner />}
