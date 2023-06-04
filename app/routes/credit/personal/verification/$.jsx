@@ -17,6 +17,7 @@ import {
 	new_credit_report,
 	authenticate_user,
 	is_sandbox,
+	array_url,
 } from "~/data/array";
 import { prisma } from "~/utils/prisma.server";
 
@@ -165,6 +166,7 @@ export default function Verification() {
 			</div>
 			<div className="-mt-[30px] sm:-mt-[80px]">
 				<array-authentication-kba
+					apiUrl={array_url}
 					appKey={appKey}
 					sandbox={is_sandbox}
 					userId={clientKey}
