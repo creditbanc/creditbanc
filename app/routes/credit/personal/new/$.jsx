@@ -1,7 +1,7 @@
 import CreditNav from "~/components/CreditNav";
 import CreditHeroGradient from "~/components/CreditHeroGradient";
 import axios from "axios";
-import { is, pipe } from "ramda";
+import { head, is, map, pipe } from "ramda";
 import { get, mod } from "shades";
 import { create } from "zustand";
 import { useLoaderData, useSubmit } from "@remix-run/react";
@@ -35,6 +35,14 @@ import Cookies from "js-cookie";
 import ApplicantNav from "~/components/ApplicantNav";
 import SimpleNav from "~/components/SimpleNav";
 import { get_user_id } from "~/utils/auth.server";
+import { UsaStates } from "usa-states";
+import { Fragment, useEffect, useState } from "react";
+import { Listbox, Transition } from "@headlessui/react";
+import { CheckIcon, ChevronUpDownIcon } from "@heroicons/react/20/solid";
+
+function classNames(...classes) {
+	return classes.filter(Boolean).join(" ");
+}
 
 const useReportStore = create((set) => ({
 	form: {
@@ -66,6 +74,11 @@ export const action = async ({ request }) => {
 	const group_id = get_group_id(request.url);
 	const entity_id = get_entity_id(request.url);
 	var payload = is_sandbox ? test_identity_three : JSON.parse(form);
+
+	// console.log("form");
+	// console.log(form);
+
+	// return null;
 
 	let session = await getSession(request.headers.get("Cookie"));
 	session.set("personal_credit_report", JSON.stringify({ ...payload }));
@@ -130,6 +143,93 @@ export const loader = async ({ request }) => {
 	let entity_id = await get_user_id(request);
 
 	return { entity_id };
+};
+
+const StatesSelect = () => {
+	var usStates = new UsaStates();
+	let states = pipe(map(get("abbreviation")))(usStates.states);
+	const [selected, setSelected] = useState(head(states));
+	const setForm = useReportStore((state) => state.setForm);
+
+	useEffect(() => {
+		setForm(["address", "state"], selected);
+	}, [selected]);
+
+	return (
+		<Listbox value={selected} onChange={setSelected}>
+			{({ open }) => (
+				<>
+					<div className="relative">
+						<Listbox.Button className="relative w-full cursor-default rounded-md bg-white py-1.5 pl-3 pr-10 text-left text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-600 sm:text-sm sm:leading-6">
+							<span className="block truncate">{selected}</span>
+							<span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
+								<ChevronUpDownIcon
+									className="h-5 w-5 text-gray-400"
+									aria-hidden="true"
+								/>
+							</span>
+						</Listbox.Button>
+
+						<Transition
+							show={open}
+							as={Fragment}
+							leave="transition ease-in duration-100"
+							leaveFrom="opacity-100"
+							leaveTo="opacity-0"
+						>
+							<Listbox.Options className="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
+								{states.map((state, id) => (
+									<Listbox.Option
+										key={id}
+										className={({ active }) =>
+											classNames(
+												active
+													? "bg-indigo-600 text-white"
+													: "text-gray-900",
+												"relative cursor-default select-none py-2 pl-3 pr-9"
+											)
+										}
+										value={state}
+									>
+										{({ selected, active }) => (
+											<>
+												<span
+													className={classNames(
+														selected
+															? "font-semibold"
+															: "font-normal",
+														"block truncate"
+													)}
+												>
+													{state}
+												</span>
+
+												{selected ? (
+													<span
+														className={classNames(
+															active
+																? "text-white"
+																: "text-indigo-600",
+															"absolute inset-y-0 right-0 flex items-center pr-4"
+														)}
+													>
+														<CheckIcon
+															className="h-5 w-5"
+															aria-hidden="true"
+														/>
+													</span>
+												) : null}
+											</>
+										)}
+									</Listbox.Option>
+								))}
+							</Listbox.Options>
+						</Transition>
+					</div>
+				</>
+			)}
+		</Listbox>
+	);
 };
 
 const Form = () => {
@@ -264,6 +364,7 @@ const Form = () => {
 						<input
 							type="text"
 							name="month"
+							placeholder="MM"
 							id="month"
 							className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm border h-[38px] pl-2"
 							value={month}
@@ -285,6 +386,7 @@ const Form = () => {
 						<input
 							type="text"
 							name="day"
+							placeholder="DD"
 							id="day"
 							className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm border h-[38px] pl-2"
 							value={day}
@@ -306,6 +408,7 @@ const Form = () => {
 						<input
 							type="text"
 							name="year"
+							placeholder="YYYY"
 							id="year"
 							className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm border h-[38px] pl-2"
 							value={year}
@@ -372,7 +475,9 @@ const Form = () => {
 						State / Province
 					</label>
 					<div className="mt-1">
-						<input
+						<StatesSelect />
+
+						{/* <input
 							type="text"
 							name="state"
 							id="state"
@@ -381,7 +486,7 @@ const Form = () => {
 							onChange={(e) =>
 								setForm(["address", "state"], e.target.value)
 							}
-						/>
+						/> */}
 					</div>
 				</div>
 
