@@ -1,4 +1,10 @@
-import { to_resource_pathname, get_group_id, inspect } from "~/utils/helpers";
+import {
+	to_resource_pathname,
+	get_group_id,
+	inspect,
+	search_params,
+	is_rogue_p,
+} from "~/utils/helpers";
 import { json } from "@remix-run/node";
 import { create } from "~/utils/personal_credit_report.server";
 import axios from "axios";
@@ -72,23 +78,22 @@ const credit_user = (user) => {
 export const loader = async ({ request }) => {
 	console.log("create_personal_credit_report");
 
-	let url = new URL(request.url);
-	let search = new URLSearchParams(url.search);
-	let group_id = search.get("group_id");
-	let clientKey = search.get("clientKey");
-	let userToken = search.get("userToken");
-	let authToken = search.get("authToken");
-	let displayToken = search.get("displayToken");
-	let reportKey = search.get("reportKey");
-	let productCode = search.get("productCode");
-	let rogue = search.get("rogue") == "true" ? true : false;
-	let entity_id = search.get("entity_id");
-	let plan_id = search.get("plan_id");
+	let {
+		group_id,
+		clientKey,
+		userToken,
+		authToken,
+		displayToken,
+		reportKey,
+		productCode,
+		rogue,
+		entity_id,
+		plan_id,
+	} = search_params(request);
 
-	console.log("rogue");
-	console.log(rogue);
+	let is_rogue = is_rogue_p(rogue);
 
-	if (!rogue) {
+	if (!is_rogue) {
 		console.log("not_rogue");
 		entity_id = await get_user_id(request);
 
@@ -136,7 +141,11 @@ export const loader = async ({ request }) => {
 
 	let { file } = await create(credit_report_payload);
 
-	return redirect(
-		`/credit/report/personal/personal/resource/e/${entity_id}/g/${group_id}/f/${file.id}`
-	);
+	if (is_rogue) {
+		return redirect(`/credit/thankyou`);
+	} else {
+		return redirect(
+			`/credit/report/personal/personal/resource/e/${entity_id}/g/${group_id}/f/${file.id}`
+		);
+	}
 };

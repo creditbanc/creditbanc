@@ -33,6 +33,20 @@ export const get_account_utilization = (balance, high) => {
 	return res == "NaN" ? 0 : res;
 };
 
+export const form_params = async (request) => {
+	const form = await request.formData();
+	return Object.fromEntries(form.entries());
+};
+
+export const search_params = (request) => {
+	let url = new URL(request.url);
+	return Object.fromEntries(new URLSearchParams(url.search));
+};
+
+export const is_rogue_p = (value) => {
+	return value == "true" ? true : false;
+};
+
 export const get_search_params_obj = (search) =>
 	Object.fromEntries(new URLSearchParams(search));
 

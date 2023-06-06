@@ -1,7 +1,7 @@
 import CreditNav from "~/components/CreditNav";
 import CreditHeroGradient from "~/components/CreditHeroGradient";
 import axios from "axios";
-import { pipe } from "ramda";
+import { is, pipe } from "ramda";
 import { get, mod } from "shades";
 import { create } from "zustand";
 import { useSubmit } from "@remix-run/react";
@@ -11,6 +11,9 @@ import {
 	get_group_id,
 	sample,
 	get_entity_id,
+	form_params,
+	search_params,
+	is_rogue_p,
 } from "~/utils/helpers";
 import { json, redirect } from "@remix-run/node";
 import {
@@ -19,6 +22,7 @@ import {
 	test_identity_three,
 	test_identity_four,
 	test_identity_five,
+	test_identity_ten,
 	appKey,
 	user_url,
 	is_sandbox,
@@ -53,20 +57,12 @@ const useReportStore = create((set) => ({
 
 export const action = async ({ request }) => {
 	console.log("new_credit_action");
-	let url = new URL(request.url);
-	let search = new URLSearchParams(url.search);
-	let rogue = search.get("rogue") == "true" ? true : false;
-	let plan_id = search.get("plan_id");
+	let { payload: form } = await form_params(request);
+	let { plan_id, rogue } = search_params(request);
+	let is_rogue = is_rogue_p(rogue);
 	const group_id = get_group_id(request.url);
 	const entity_id = get_entity_id(request.url);
-	const form = await request.formData();
-
-	console.log("rogue__?");
-	console.log(rogue);
-
-	var payload = is_sandbox
-		? test_identity_three
-		: JSON.parse(form.get("payload"));
+	var payload = is_sandbox ? test_identity_three : JSON.parse(form);
 
 	let session = await getSession(request.headers.get("Cookie"));
 	session.set("personal_credit_report", JSON.stringify({ ...payload }));
@@ -94,28 +90,32 @@ export const action = async ({ request }) => {
 			`clientKey=${clientKey}`,
 			`authToken=${authToken}`,
 			`group_id=${group_id}`,
-			`rogue=${rogue}`,
 		];
 
 		let rogue_params = [
 			`clientKey=${clientKey}`,
 			`authToken=${authToken}`,
-			`entity_id=${entity_id}`,
 			`group_id=${group_id}`,
+			`entity_id=${entity_id}`,
 			`plan_id=${plan_id}`,
 			`rogue=${rogue}`,
 		];
 
-		let search_params = rogue ? rogue_params.join("&") : params.join("&");
+		let redirect_search_params = is_rogue
+			? rogue_params.join("&")
+			: params.join("&");
 
-		console.log("search_params");
-		console.log(search_params);
+		// console.log("search_params");
+		// console.log(search_params);
 
-		return redirect(`/credit/personal/verification?${search_params}`, {
-			headers: {
-				"Set-Cookie": await commitSession(session),
-			},
-		});
+		return redirect(
+			`/credit/personal/verification?${redirect_search_params}`,
+			{
+				headers: {
+					"Set-Cookie": await commitSession(session),
+				},
+			}
+		);
 	} catch (error) {
 		console.log("error");
 		console.log(error.response.data);

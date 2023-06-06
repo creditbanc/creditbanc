@@ -41,7 +41,7 @@ export const kba_script_tag = is_sandbox
 	: `https://embed.array.io/cms/array-authentication-kba.js?appKey=${appKey}`;
 
 export const array_url = is_sandbox
-	? "https://mock.array.io"
+	? "https://sandbox.array.io"
 	: "https://array.io";
 
 export const test_identity_one = {

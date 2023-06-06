@@ -9,7 +9,14 @@ import { pipe, always } from "ramda";
 import { all, filter, get, mod } from "shades";
 import { useEffect } from "react";
 import { json, redirect } from "@remix-run/node";
-import { get_search_params_obj, inspect, mapIndexed } from "~/utils/helpers";
+import {
+	get_search_params_obj,
+	inspect,
+	mapIndexed,
+	form_params,
+	search_params,
+	is_rogue_p,
+} from "~/utils/helpers";
 import { get_user_id } from "~/utils/auth.server";
 import {
 	appKey,
@@ -21,33 +28,13 @@ import {
 } from "~/data/array";
 import { prisma } from "~/utils/prisma.server";
 
-const useVerificationQuestionsStore = create((set) => ({
-	answers: {},
-	questions: [],
-	clearAnswers: () => set((state) => pipe(mod("answers")(() => ({})))(state)),
-	setAnswer: (question_id, answer_id) =>
-		set((state) =>
-			pipe(mod("answers", question_id)(() => answer_id))(state)
-		),
-	setQuestions: (questions) =>
-		set((state) => pipe(mod("questions")(() => questions))(state)),
-}));
-
 export const action = async ({ request }) => {
-	const form = await request.formData();
-	const payload = JSON.parse(form.get("payload"));
-	let { clientKey, authToken, userToken } = payload;
-	let url = new URL(request.url);
-	let search = new URLSearchParams(url.search);
-	let group_id = search.get("group_id");
-	let rogue = search.get("rogue") == "true" ? true : false;
-	let plan_id = search.get("plan_id");
-	let entity_id = search.get("entity_id");
+	let { payload: form } = await form_params(request);
+	let { clientKey, authToken, userToken } = JSON.parse(form);
+	let { group_id, rogue, plan_id, entity_id } = search_params(request);
+	let is_rogue = is_rogue_p(rogue);
 
-	console.log("rogue__?");
-	console.log(rogue);
-
-	if (!rogue) {
+	if (!is_rogue) {
 		let entity_id = await get_user_id(request);
 		let entity = await prisma.entity.findUnique({
 			where: { id: entity_id },
@@ -80,7 +67,6 @@ export const action = async ({ request }) => {
 		`userToken=${userToken}`,
 		`authToken=${authToken}`,
 		`productCode=${productCode}`,
-		`rogue=${rogue}`,
 	];
 
 	let rogue_params = [
@@ -96,10 +82,12 @@ export const action = async ({ request }) => {
 		`rogue=${rogue}`,
 	];
 
-	let search_params = rogue ? rogue_params.join("&") : params.join("&");
+	let redirect_search_params = is_rogue
+		? rogue_params.join("&")
+		: params.join("&");
 
 	if (displayToken && reportKey) {
-		return redirect(`/credit/personal/create?${search_params}`);
+		return redirect(`/credit/personal/create?${redirect_search_params}`);
 	}
 };
 
@@ -123,22 +111,13 @@ const Heading = () => {
 
 export default function Verification() {
 	const fetcher = useFetcher();
-	// let { clientKey } = useLoaderData();
-	let location = useLocation();
 	let [searchParams] = useSearchParams();
 	let search_params = get_search_params_obj(searchParams.toString());
 	let { clientKey, authToken } = search_params;
 
-	// console.log("searchParams");
-	// console.log(search_params);
-
 	useEffect(() => {
 		window.addEventListener("array-event", function arrayEvent(arrayEvent) {
-			const {
-				tagName, // the name of the Component that emitted the event
-				event, // the name of the user's action
-				metadata = {}, // Component-specific data
-			} = arrayEvent.detail;
+			const { tagName, event, metadata = {} } = arrayEvent.detail;
 
 			let userToken = tryCatch(
 				pipe(get("user-token")),
@@ -166,7 +145,6 @@ export default function Verification() {
 			</div>
 			<div className="-mt-[30px] sm:-mt-[80px]">
 				<array-authentication-kba
-					apiUrl={array_url}
 					appKey={appKey}
 					sandbox={is_sandbox}
 					userId={clientKey}
