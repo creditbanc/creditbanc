@@ -9,7 +9,7 @@ export default function Nav() {
 	const create_applicate_link = () => {
 		console.log("create_applicate_link");
 		let applicant_link =
-			window.location.href + `?rogue=true&plan_id=builder`;
+			window.location.href + `?applicant=true&plan_id=builder`;
 
 		return applicant_link;
 	};

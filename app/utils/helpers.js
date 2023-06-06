@@ -43,7 +43,7 @@ export const search_params = (request) => {
 	return Object.fromEntries(new URLSearchParams(url.search));
 };
 
-export const is_rogue_p = (value) => {
+export const is_applicant_p = (value) => {
 	return value == "true" ? true : false;
 };
 

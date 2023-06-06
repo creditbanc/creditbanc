@@ -3,7 +3,7 @@ import {
 	get_group_id,
 	inspect,
 	search_params,
-	is_rogue_p,
+	is_applicant_p,
 } from "~/utils/helpers";
 import { json } from "@remix-run/node";
 import { create } from "~/utils/personal_credit_report.server";
@@ -76,8 +76,6 @@ const credit_user = (user) => {
 };
 
 export const loader = async ({ request }) => {
-	console.log("create_personal_credit_report");
-
 	let {
 		group_id,
 		clientKey,
@@ -86,15 +84,15 @@ export const loader = async ({ request }) => {
 		displayToken,
 		reportKey,
 		productCode,
-		rogue,
+		applicant,
 		entity_id,
 		plan_id,
 	} = search_params(request);
 
-	let is_rogue = is_rogue_p(rogue);
+	let is_applicant = is_applicant_p(applicant);
 
-	if (!is_rogue) {
-		console.log("not_rogue");
+	if (!is_applicant) {
+		console.log("not_applicant");
 		entity_id = await get_user_id(request);
 
 		let entity = await prisma.entity.findUnique({
@@ -141,7 +139,7 @@ export const loader = async ({ request }) => {
 
 	let { file } = await create(credit_report_payload);
 
-	if (is_rogue) {
+	if (is_applicant) {
 		return redirect(`/credit/thankyou`);
 	} else {
 		return redirect(

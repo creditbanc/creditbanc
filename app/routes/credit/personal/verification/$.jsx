@@ -16,7 +16,7 @@ import {
 	mapIndexed,
 	form_params,
 	search_params,
-	is_rogue_p,
+	is_applicant_p,
 } from "~/utils/helpers";
 import { get_user_id } from "~/utils/auth.server";
 import {
@@ -32,10 +32,10 @@ import { prisma } from "~/utils/prisma.server";
 export const action = async ({ request }) => {
 	let { payload: form } = await form_params(request);
 	let { clientKey, authToken, userToken } = JSON.parse(form);
-	let { group_id, rogue, plan_id, entity_id } = search_params(request);
-	let is_rogue = is_rogue_p(rogue);
+	let { group_id, applicant, plan_id, entity_id } = search_params(request);
+	let is_applicant = is_applicant_p(applicant);
 
-	if (!is_rogue) {
+	if (!is_applicant) {
 		let entity_id = await get_user_id(request);
 		let entity = await prisma.entity.findUnique({
 			where: { id: entity_id },
@@ -70,7 +70,7 @@ export const action = async ({ request }) => {
 		`productCode=${productCode}`,
 	];
 
-	let rogue_params = [
+	let applicant_params = [
 		`displayToken=${displayToken}`,
 		`reportKey=${reportKey}`,
 		`clientKey=${clientKey}`,
@@ -80,11 +80,11 @@ export const action = async ({ request }) => {
 		`entity_id=${entity_id}`,
 		`group_id=${group_id}`,
 		`plan_id=${plan_id}`,
-		`rogue=${rogue}`,
+		`applicant=${applicant}`,
 	];
 
-	let redirect_search_params = is_rogue
-		? rogue_params.join("&")
+	let redirect_search_params = is_applicant
+		? applicant_params.join("&")
 		: params.join("&");
 
 	if (displayToken && reportKey) {

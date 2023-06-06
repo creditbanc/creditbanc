@@ -13,7 +13,7 @@ import {
 	get_entity_id,
 	form_params,
 	search_params,
-	is_rogue_p,
+	is_applicant_p,
 } from "~/utils/helpers";
 import { json, redirect } from "@remix-run/node";
 import {
@@ -69,16 +69,11 @@ const useReportStore = create((set) => ({
 export const action = async ({ request }) => {
 	console.log("new_credit_action");
 	let { payload: form } = await form_params(request);
-	let { plan_id, rogue } = search_params(request);
-	let is_rogue = is_rogue_p(rogue);
+	let { plan_id, applicant } = search_params(request);
+	let is_applicant = is_applicant_p(applicant);
 	const group_id = get_group_id(request.url);
 	const entity_id = get_entity_id(request.url);
 	var payload = is_sandbox ? test_identity_three : JSON.parse(form);
-
-	// console.log("form");
-	// console.log(form);
-
-	// return null;
 
 	let session = await getSession(request.headers.get("Cookie"));
 	session.set("personal_credit_report", JSON.stringify({ ...payload }));
@@ -108,17 +103,17 @@ export const action = async ({ request }) => {
 			`group_id=${group_id}`,
 		];
 
-		let rogue_params = [
+		let applicant_params = [
 			`clientKey=${clientKey}`,
 			`authToken=${authToken}`,
 			`group_id=${group_id}`,
 			`entity_id=${entity_id}`,
 			`plan_id=${plan_id}`,
-			`rogue=${rogue}`,
+			`applicant=${applicant}`,
 		];
 
-		let redirect_search_params = is_rogue
-			? rogue_params.join("&")
+		let redirect_search_params = is_applicant
+			? applicant_params.join("&")
 			: params.join("&");
 
 		// console.log("search_params");
@@ -141,7 +136,6 @@ export const action = async ({ request }) => {
 
 export const loader = async ({ request }) => {
 	let entity_id = await get_user_id(request);
-
 	return { entity_id };
 };
 
