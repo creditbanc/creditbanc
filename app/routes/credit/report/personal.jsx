@@ -26,8 +26,8 @@ import { plans_index } from "~/data/plans_index";
 const get_scores = (report) => {
 	let { plan_id } = report;
 
-	console.log("plan_id");
-	console.log(plan_id);
+	// console.log("plan_id");
+	// console.log(plan_id);
 
 	if (plan_id == "essential") {
 		let { data } = report;
@@ -142,6 +142,7 @@ export default function CreditReport() {
 					</div>
 				</div>
 			)}
+
 			{plans_index[report_plan_id] < plans_index[plan_id] && (
 				<div className="flex flex-col w-full items-center">
 					<div className="flex flex-col w-full max-w-5xl">
@@ -149,8 +150,6 @@ export default function CreditReport() {
 					</div>
 				</div>
 			)}
-
-			<UpdatePersonalReport />
 
 			<div className="flex flex-col w-full pt-5">
 				<div

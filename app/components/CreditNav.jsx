@@ -364,38 +364,13 @@ export default function Nav({
 									<img
 										className="hidden sm:block h-5 w-auto"
 										src={cb_logo}
-										alt="Your Company"
+										alt="Credit Banc"
 									/>
 								</Link>
-								{/* <div className="text-xs hidden sm:flex flex-row space-x-1">
-									<div>Fueling Growth</div>
-									<div>&#8226;</div>
-									<div>Helping Small Businesses</div>
-								</div> */}
 							</div>
 
 							{can_share && (
 								<div className="flex space-x-8 items-center">
-									{/* <div className="hidden sm:flex -space-x-2 overflow-hidden">
-										<div className="relative inline-flex items-center justify-center w-9 h-9 overflow-hidden bg-white rounded-full border border-gray-200 text-xs ">
-											<span className="font-medium text-gray-600 dark:text-gray-300">
-												JL
-											</span>
-										</div>
-										<div className="relative inline-flex items-center justify-center w-9 h-9 overflow-hidden bg-white rounded-full border border-gray-200 text-xs">
-											<span className="font-medium text-gray-600 dark:text-gray-300">
-												JL
-											</span>
-										</div>
-										<div className="relative inline-flex items-center justify-center w-9 h-9 overflow-hidden bg-white rounded-full border border-gray-200 text-xs">
-											<span className="font-medium text-gray-600 dark:text-gray-300">
-												JL
-											</span>
-										</div>
-										<div className="relative inline-flex items-center justify-center w-9 h-9 overflow-hidden rounded-full border text-gray-600 border-gray-200 bg-white text-xs">
-											+99
-										</div>
-									</div> */}
 									<div
 										type="button"
 										className="text-blue-700 border border-blue-700 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-full text-sm px-5 py-2 dark:border-blue-500 dark:text-blue-500 dark:hover:text-white dark:hover:bg-blue-600 dark:focus:ring-blue-800 flex flex-row items-center justify-center cursor-pointer"

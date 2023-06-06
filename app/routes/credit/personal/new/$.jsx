@@ -32,6 +32,7 @@ import {
 	commitSession,
 } from "~/sessions/personal_credit_report_session";
 import Cookies from "js-cookie";
+import ApplicantNav from "~/components/ApplicantNav";
 
 const useReportStore = create((set) => ({
 	form: {
@@ -438,8 +439,8 @@ const Heading = () => {
 export default function New() {
 	return (
 		<div className="flex flex-col w-full">
-			<CreditNav />
-			{/* <CreditHeroGradient /> */}
+			{/* <CreditNav /> */}
+			<ApplicantNav />
 			<div className="flex flex-col w-full p-[20px] max-w-2xl mx-auto">
 				<Heading />
 				<Form />
