@@ -4,7 +4,7 @@ import axios from "axios";
 import { is, pipe } from "ramda";
 import { get, mod } from "shades";
 import { create } from "zustand";
-import { useSubmit } from "@remix-run/react";
+import { useLoaderData, useSubmit } from "@remix-run/react";
 import {
 	inspect,
 	to_resource_pathname,
@@ -33,6 +33,8 @@ import {
 } from "~/sessions/personal_credit_report_session";
 import Cookies from "js-cookie";
 import ApplicantNav from "~/components/ApplicantNav";
+import SimpleNav from "~/components/SimpleNav";
+import { get_user_id } from "~/utils/auth.server";
 
 const useReportStore = create((set) => ({
 	form: {
@@ -122,6 +124,12 @@ export const action = async ({ request }) => {
 		console.log(error.response.data);
 		return json({ error: error.message }, { status: 500 });
 	}
+};
+
+export const loader = async ({ request }) => {
+	let entity_id = await get_user_id(request);
+
+	return { entity_id };
 };
 
 const Form = () => {
@@ -437,10 +445,12 @@ const Heading = () => {
 };
 
 export default function New() {
+	let { entity_id } = useLoaderData();
+
 	return (
 		<div className="flex flex-col w-full">
-			{/* <CreditNav /> */}
-			<ApplicantNav />
+			{entity_id && <ApplicantNav />}
+			{!entity_id && <SimpleNav />}
 			<div className="flex flex-col w-full p-[20px] max-w-2xl mx-auto">
 				<Heading />
 				<Form />

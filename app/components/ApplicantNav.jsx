@@ -1,8 +1,24 @@
-import { Link } from "@remix-run/react";
+import { Link, useLocation } from "@remix-run/react";
+import copy from "copy-to-clipboard";
 
 const cb_logo = "/images/logos/cb_logo_3.png";
 
 export default function Nav() {
+	let location = useLocation();
+
+	const create_applicate_link = () => {
+		console.log("create_applicate_link");
+		let applicant_link =
+			window.location.href + `?rogue=true&plan_id=builder`;
+
+		return applicant_link;
+	};
+
+	const onCreateApplicantLinkClick = () => {
+		console.log("onCreateApplicantLinkClick");
+		copy(create_applicate_link());
+	};
+
 	return (
 		<div className="flex flex-col w-full border-b h-[65px] justify-center px-5">
 			<div className="flex flex-row justify-between">
@@ -18,7 +34,7 @@ export default function Nav() {
 					<div
 						type="button"
 						className="text-blue-700 border border-blue-700 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-full text-sm px-5 py-2 dark:border-blue-500 dark:text-blue-500 dark:hover:text-white dark:hover:bg-blue-600 dark:focus:ring-blue-800 flex flex-row items-center justify-center cursor-pointer"
-						// onClick={onModalToggle}
+						onClick={onCreateApplicantLinkClick}
 					>
 						<svg
 							xmlns="http://www.w3.org/2000/svg"

@@ -1,4 +1,5 @@
 import CreditNav from "~/components/CreditNav";
+import SimpleNav from "~/components/SimpleNav";
 import { isEmpty, join, equals, tryCatch } from "ramda";
 import axios from "axios";
 import { useLoaderData, useFetcher, useLocation } from "@remix-run/react";
@@ -138,7 +139,7 @@ export default function Verification() {
 
 	return (
 		<div className="flex flex-col w-full">
-			<CreditNav />
+			<SimpleNav />
 
 			<div className="flex flex-col w-full  max-w-2xl mx-auto">
 				<Heading />

@@ -13,9 +13,9 @@ export default function ThankYou() {
 							<div className="text-6xl font-semibold">
 								Thank You
 							</div>
-							<div className="text-xl">
+							{/* <div className="text-xl">
 								Your credit report has been sent
-							</div>
+							</div> */}
 						</div>
 						<div className="flex flex-row">
 							<Link
@@ -29,7 +29,7 @@ export default function ThankYou() {
 					</div>
 				</div>
 			</div>
-			<div className="bg-[url('https://as1.ftcdn.net/jpg/01/26/29/54/160_F_126295456_9dAECi0krjY8214YM0S8ReO9kGj8Ou6N.jpg')] w-full h-full fixed top-0 left-0 -z-[1] opacity-[.3]" />
+			<div className="bg-[url('https://as1.ftcdn.net/jpg/01/26/29/54/160_F_126295456_9dAECi0krjY8214YM0S8ReO9kGj8Ou6N.jpg')] w-full h-full fixed top-0 left-0 -z-[1] opacity-[.2]" />
 		</div>
 	);
 }
