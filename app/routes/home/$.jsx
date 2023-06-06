@@ -49,8 +49,8 @@ export const loader = async ({ request }) => {
 		entity_id,
 	});
 
-	// console.log("group_docs");
-	// console.log(group_docs);
+	console.log("group_docs");
+	console.log(group_docs);
 
 	if (isEmpty(group_docs) && !allow_empty)
 		return redirect(

@@ -37,8 +37,8 @@ export const action = async ({ request }) => {
 		customer_search_response
 	);
 
-	console.log("has_customer");
-	console.log(has_customer);
+	// console.log("has_customer");
+	// console.log(has_customer);
 
 	const create_token = async () => {
 		const token = await stripe.tokens.create({
