@@ -3,7 +3,7 @@ import CreditNav from "~/components/CreditNav";
 
 export default function ThankYou() {
 	return (
-		<div className="flex flex-col w-full flex-1 bg-opacity-25">
+		<div className="flex flex-col w-full flex-1">
 			<CreditNav />
 
 			<div className="flex flex-col w-full h-full  ">
