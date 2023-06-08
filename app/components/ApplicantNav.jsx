@@ -129,6 +129,7 @@ const ApplicantInviteModal = () => {
 };
 
 export default function Nav() {
+	const is_modal_open = useModalStore((state) => state.is_open);
 	const set_modal = useModalStore((state) => state.set_modal);
 
 	const create_applicate_link = () => {
@@ -144,12 +145,12 @@ export default function Nav() {
 		copy(create_applicate_link());
 	};
 
-	useEffect(() => {
+	const onToggleApplicantInviteModal = () => {
 		set_modal({
 			id: "applicant_share_link",
-			is_open: true,
+			is_open: !is_modal_open,
 		});
-	}, []);
+	};
 
 	return (
 		<div className="flex flex-col w-full border-b h-[65px] justify-center px-5">
@@ -169,7 +170,7 @@ export default function Nav() {
 					<div
 						type="button"
 						className="text-blue-700 border border-blue-700 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-full text-sm px-5 py-2 dark:border-blue-500 dark:text-blue-500 dark:hover:text-white dark:hover:bg-blue-600 dark:focus:ring-blue-800 flex flex-row items-center justify-center cursor-pointer"
-						onClick={onCreateApplicantLinkClick}
+						onClick={onToggleApplicantInviteModal}
 					>
 						<svg
 							xmlns="http://www.w3.org/2000/svg"

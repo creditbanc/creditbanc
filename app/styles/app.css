@@ -1213,6 +1213,10 @@ video {
   height: 200px;
 }
 
+.h-\[20px\] {
+  height: 20px;
+}
+
 .h-\[21\.1875rem\] {
   height: 21.1875rem;
 }
@@ -1280,10 +1284,6 @@ video {
 
 .h-full {
   height: 100%;
-}
-
-.h-\[20px\] {
-  height: 20px;
 }
 
 .max-h-12 {
@@ -1553,26 +1553,6 @@ video {
 
 .w-screen {
   width: 100vw;
-}
-
-.w-\[calc\(100\%\+1000px\)\] {
-  width: calc(100% + 1000px);
-}
-
-.w-\[calc\(100\%\+100px\)\] {
-  width: calc(100% + 100px);
-}
-
-.w-\[calc\(100\%\+200px\)\] {
-  width: calc(100% + 200px);
-}
-
-.w-\[calc\(100\%\+500px\)\] {
-  width: calc(100% + 500px);
-}
-
-.w-\[calc\(100\%\+900px\)\] {
-  width: calc(100% + 900px);
 }
 
 .min-w-0 {
@@ -2094,14 +2074,6 @@ video {
 
 .overflow-x-hidden {
   overflow-x: hidden;
-}
-
-.overflow-y-hidden {
-  overflow-y: hidden;
-}
-
-.overflow-x-scroll {
-  overflow-x: scroll;
 }
 
 .overflow-y-scroll {
@@ -3320,16 +3292,8 @@ video {
   overflow-x: hidden;
 }
 
-.scrollbar.overflow-y-hidden {
-  overflow-y: hidden;
-}
-
 .scrollbar-thin.overflow-x-hidden {
   overflow-x: hidden;
-}
-
-.scrollbar-thin.overflow-y-hidden {
-  overflow-y: hidden;
 }
 
 .scrollbar-none {
