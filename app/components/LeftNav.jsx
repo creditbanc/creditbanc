@@ -14,6 +14,7 @@ import {
 	UserCircleIcon,
 	BriefcaseIcon,
 } from "@heroicons/react/24/outline";
+import Cookies from "js-cookie";
 
 let ChevronLeftIcon = () => {
 	return (
@@ -129,9 +130,7 @@ export default function LeftNav({ data = {}, can_manage_roles } = {}) {
 	let navClasses = collapsed ? collapesedNavClasses : expandedNavClasses;
 	let location = useLocation();
 	let fetcher = useFetcher();
-
-	// console.log("data");
-	// console.log(data);
+	let is_admin = Cookies.get("is_cookie_monster") === "true";
 
 	useEffect(() => {
 		setCollapsed(collapsed);
@@ -318,33 +317,37 @@ export default function LeftNav({ data = {}, can_manage_roles } = {}) {
 					</div>
 				)}
 
-				<NavCategory
-					title="Cashflow"
-					icon={BanknotesIcon}
-					onToggleNav={onToggleNav}
-					collapsed={collapsed}
-				/>
+				{is_admin && (
+					<>
+						<NavCategory
+							title="Cashflow"
+							icon={BanknotesIcon}
+							onToggleNav={onToggleNav}
+							collapsed={collapsed}
+						/>
 
-				{!collapsed && (
-					<div className="pl-2">
-						<Link
-							className="border-gray-200 cursor-pointer flex flex-row border rounded-md hover:border-indigo-400"
-							to={
-								"/plaid/oauth" +
-								to_group_pathname(location.pathname) +
-								location.search
-							}
-						>
-							<div className="text-sm mx-2 text-gray-700 justify-start w-full ">
-								<div className="flex flex-row items-center justify-between py-1 rounded">
-									<div>Add new</div>
-									<div className="pr-1">
-										<PlusIcon />
+						{!collapsed && (
+							<div className="pl-2">
+								<Link
+									className="border-gray-200 cursor-pointer flex flex-row border rounded-md hover:border-indigo-400"
+									to={
+										"/plaid/oauth" +
+										to_group_pathname(location.pathname) +
+										location.search
+									}
+								>
+									<div className="text-sm mx-2 text-gray-700 justify-start w-full ">
+										<div className="flex flex-row items-center justify-between py-1 rounded">
+											<div>Add new</div>
+											<div className="pr-1">
+												<PlusIcon />
+											</div>
+										</div>
 									</div>
-								</div>
+								</Link>
 							</div>
-						</Link>
-					</div>
+						)}
+					</>
 				)}
 			</div>
 		</div>
