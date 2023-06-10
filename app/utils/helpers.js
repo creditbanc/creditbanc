@@ -27,6 +27,16 @@ import {
 const util = require("util");
 import { get } from "shades";
 
+export const create_axios_form = (data) => {
+	let form = new FormData();
+
+	for (let key in data) {
+		form.append(key, data[key]);
+	}
+
+	return form;
+};
+
 export const get_account_utilization = (balance, high) => {
 	if (balance == 0) return 0;
 	let res = Math.round((balance / high) * 100).toFixed(0);
