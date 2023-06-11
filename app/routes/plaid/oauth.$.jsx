@@ -1,11 +1,18 @@
 import { useFetcher, useLoaderData, useLocation } from "@remix-run/react";
 import axios from "axios";
-import { pipe } from "ramda";
+import { length, map, pipe } from "ramda";
 import { mod } from "shades";
 import { create } from "zustand";
 import { usePlaidLink } from "react-plaid-link";
-import { create_axios_form } from "~/utils/helpers";
+import { create_axios_form, inspect } from "~/utils/helpers";
 import { useEffect, useState } from "react";
+import { set_doc } from "~/utils/firebase";
+import {
+	get_accounts,
+	get_transactions,
+	institutions,
+	sync_transactions,
+} from "~/api/plaid.server";
 
 const usePlaidStore = create((set) => ({
 	link_token: "",
@@ -30,6 +37,22 @@ export const loader = async ({ request }) => {
 
 	let { data } = response;
 	let { link_token } = data;
+
+	// let transactions = await sync_transactions();
+	// console.log("transactions");
+	// inspect(length(transactions));
+
+	// pipe(
+	// 	map(async (transaction) => {
+	// 		await set_doc(
+	// 			["transactions", transaction.transaction_id],
+	// 			transaction
+	// 		);
+	// 		console.log(`transaction ${transaction.transaction_id} saved`);
+	// 		return transaction;
+	// 	})
+	// )(transactions);
+
 	return { link_token };
 };
 
@@ -43,12 +66,6 @@ export default function PlaidOauth() {
 	const { open, ready } = usePlaidLink({
 		token: link_token,
 		onSuccess: async (public_token, metadata) => {
-			// send public_token to server
-			// console.log("public_token");
-			// console.log(public_token);
-			// console.log("metadata");
-			// console.log(metadata);
-
 			set_plaid(["public_token"], public_token);
 			let plaid_exchange_public_token_url = `${location.origin}/plaid/exchange_public_token`;
 			let data = create_axios_form({ public_token });
@@ -67,6 +84,12 @@ export default function PlaidOauth() {
 			if (access_token) {
 				console.log("plaid_exchange_public_token_response");
 				console.log(access_token);
+
+				let payload = {
+					access_token,
+				};
+
+				await set_doc(["bank_accounts", access_token], payload);
 			}
 		},
 	});

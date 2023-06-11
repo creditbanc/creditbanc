@@ -2,7 +2,15 @@
 import { initializeApp } from "firebase/app";
 import { getStorage } from "firebase/storage";
 import { getFirestore } from "firebase/firestore";
-import { doc, setDoc, getDoc } from "firebase/firestore";
+import {
+	doc,
+	setDoc,
+	getDoc,
+	collection,
+	query,
+	where,
+	getDocs,
+} from "firebase/firestore";
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
@@ -18,6 +26,22 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 export const storage = getStorage(app);
 export const firestore = getFirestore(app);
+
+export const get_collection = async ({ path, queries = null }) => {
+	if (queries) {
+		let qs = queries.map((query) =>
+			where(query.param, query.predicate, query.value)
+		);
+
+		const q = query(collection(firestore, ...path), ...qs);
+		const querySnapshot = await getDocs(q);
+		return querySnapshot.docs.map((doc) => doc.data());
+	} else {
+		const q = query(collection(firestore, ...path));
+		const querySnapshot = await getDocs(q);
+		return querySnapshot.docs.map((doc) => doc.data());
+	}
+};
 
 export const set_doc = async (path, data) => {
 	return await setDoc(doc(firestore, ...path), data);

@@ -55,6 +55,7 @@ model Resource {
   entity_ids       String[]   @db.ObjectId
   entities         Entity[]   @relation(fields: [entity_ids], references: [id])
   name             String?
+  partition_id     String?    @db.ObjectId
 }
 
 model Group {

@@ -10,6 +10,7 @@ import { defaultTo, pipe } from "ramda";
 import { filter } from "shades";
 import { json, redirect } from "@remix-run/node";
 import { Outlet, useLoaderData } from "@remix-run/react";
+import SimpleNav from "~/components/SimpleNav";
 
 export const loader = async ({ request }) => {
 	let url = new URL(request.url);
@@ -66,12 +67,17 @@ export const loader = async ({ request }) => {
 	return { reports, origin: url.origin, user_id };
 };
 
+const SubNav = () => {
+	return <div></div>;
+};
+
 export default function Home() {
 	var { origin, user_id, reports } = useLoaderData();
 
 	return (
 		<div className="flex flex-col h-full w-full">
 			<div className="flex flex-col border-b">
+				{/* <SimpleNav user_id={user_id} /> */}
 				<CreditNav
 					user_id={user_id}
 					origin={origin}
@@ -79,6 +85,10 @@ export default function Home() {
 					reports={reports}
 				/>
 			</div>
+			<div>
+				<SubNav />
+			</div>
+
 			<div className="flex flex-row h-full overflow-hidden">
 				{user_id && <LeftNav data={reports} can_manage_roles={false} />}
 				<div className="flex flex-col flex-1 overflow-scroll">
