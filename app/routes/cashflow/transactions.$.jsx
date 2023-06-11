@@ -65,62 +65,103 @@ let Category = ({ category }) => {
 	);
 };
 
+const TransactionsTable = ({ transactions }) => {
+	return (
+		<div className="flex flex-col pr-5 overflow-hidden">
+			<div className="transactions_table_header flex flex-row pb-3 border-b text-sm">
+				<div className="flex flex-col w-[175px]">Merchant</div>
+				<div className="flex flex-col w-[100px]">Amount</div>
+				<div className="flex flex-col w-[250px]">Category</div>
+				{/* <div className="flex flex-col w-[185px]">
+				Account
+			</div> */}
+				<div className="flex flex-col">Date</div>
+			</div>
+			<div className="flex flex-col w-full overflow-y-scroll">
+				{pipe(
+					mapIndexed((transaction, transaction_idx) => (
+						<div
+							className="flex flex-row items-center py-3 border-b text-sm cursor-pointer hover:bg-gray-50 text-gray-500"
+							key={transaction_idx}
+						>
+							<div className="flex flex-col w-[175px]">
+								{truncate(15, transaction.name)}
+							</div>
+							<div className="flex flex-col w-[100px]">
+								{currency.format(transaction.amount)}
+							</div>
+							<div className="flex flex-row w-[250px]">
+								{pipe(
+									mapIndexed((category, category_idx) => (
+										<Category
+											category={category}
+											key={category_idx}
+										/>
+									))
+								)(transaction.category)}
+							</div>
+							<div className="flex flex-col">
+								{transaction.date}
+							</div>
+						</div>
+					))
+				)(transactions)}
+			</div>
+		</div>
+	);
+};
+
 export default function Transactions() {
 	let { transactions } = useLoaderData();
 
 	return (
-		<div className="flex flex-col w-full p-10">
-			<div className="flex flex-row w-full">
+		<div className="flex flex-col w-full p-5 overflow-hidden">
+			<div className="flex flex-row w-full overflow-hidden">
 				<div className="flex flex-col w-[70%]">
-					<div className="flex flex-col">
-						<div className="transactions_table_header flex flex-row pb-3 mb-3 border-b">
-							<div className="flex flex-col w-[175px]">
-								Merchant
+					<TransactionsTable transactions={transactions} />
+				</div>
+				<div className="flex flex-col w-[30%]">
+					<div className="flex flex-col w-full border p-3 rounded-lg mt-[25px]">
+						<div className="flex flex-row justify-between items-center text-2xl">
+							<div className="flex flex-row items-center">
+								<div className="flex flex-col rounded-full w-[40px] h-[40px] items-center justify-center bg-red-100 mr-[10px] text-red-500">
+									P
+								</div>
+								<div className="text-xl">Phone Bill</div>
 							</div>
-							<div className="flex flex-col w-[100px]">
-								Amount
-							</div>
-							<div className="flex flex-col w-[250px]">
-								Category
-							</div>
-							{/* <div className="flex flex-col w-[185px]">
-								Account
-							</div> */}
-							<div className="flex flex-col">Date</div>
+							<div>{currency.format(80)}</div>
 						</div>
-						{pipe(
-							mapIndexed((transaction, transaction_idx) => (
-								<div
-									className="flex flex-row py-3 border-b text-sm"
-									key={transaction_idx}
-								>
-									<div className="flex flex-col w-[175px]">
-										{truncate(15, transaction.name)}
-									</div>
-									<div className="flex flex-col w-[100px]">
-										{currency.format(transaction.amount)}
-									</div>
-									<div className="flex flex-row w-[250px]">
-										{pipe(
-											mapIndexed(
-												(category, category_idx) => (
-													<Category
-														category={category}
-														key={category_idx}
-													/>
-												)
-											)
-										)(transaction.category)}
-									</div>
-									<div className="flex flex-col">
-										{transaction.date}
+						<div className="flex flex-col my-5">
+							<div className="flex flex-row text-sm ">
+								<div className="flex flex-col w-1/2 space-y-2">
+									<div className="text-gray-400">ACCOUNT</div>
+									<div>
+										<div>American Express</div>
 									</div>
 								</div>
-							))
-						)(transactions)}
+								<div className="flex flex-col w-1/2 space-y-2">
+									<div className="text-gray-400">
+										CATEGORY
+									</div>
+									<div className="flex flex-row">
+										<Category category="Phone Bill" />
+										<Category category="Mobile" />
+									</div>
+								</div>
+							</div>
+						</div>
+						<div className="flex flex-col text-sm my-1 space-y-1">
+							<div className="text-gray-400">
+								Transaction date
+							</div>
+							<div>June 10, 2023</div>
+						</div>
+						<div className="flex flex-col text-sm my-1 space-y-1">
+							<div className="text-gray-400">Location</div>
+							<div>345 Spear St, San Francisco 94105</div>
+						</div>
 					</div>
 				</div>
-				<div>a</div>
 			</div>
 		</div>
 	);
