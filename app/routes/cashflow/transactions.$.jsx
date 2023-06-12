@@ -8,6 +8,14 @@ import {
 	mapIndexed,
 	sample,
 } from "~/utils/helpers";
+import { create } from "zustand";
+import { filter, mod } from "shades";
+
+const useTransactionsStore = create((set) => ({
+	transaction: null,
+	set_state: (path, value) =>
+		set((state) => pipe(mod(...path)(() => value))(state)),
+}));
 
 export const loader = async ({ request }) => {
 	// let queries = [{ param: "amount", predicate: "<", value: 12 }];
@@ -66,6 +74,13 @@ let Category = ({ category }) => {
 };
 
 const TransactionsTable = ({ transactions }) => {
+	let set_state = useTransactionsStore((state) => state.set_state);
+
+	const onSelectTransaction = (transaction_id) => {
+		let transaction = pipe(filter({ transaction_id }), head)(transactions);
+		set_state(["transaction"], transaction);
+	};
+
 	return (
 		<div className="flex flex-col pr-5 overflow-hidden">
 			<div className="transactions_table_header flex flex-row pb-3 border-b text-sm">
@@ -83,6 +98,9 @@ const TransactionsTable = ({ transactions }) => {
 						<div
 							className="flex flex-row items-center py-3 border-b text-sm cursor-pointer hover:bg-gray-50 text-gray-500"
 							key={transaction_idx}
+							onClick={() =>
+								onSelectTransaction(transaction.transaction_id)
+							}
 						>
 							<div className="flex flex-col w-[175px]">
 								{truncate(15, transaction.name)}
@@ -111,6 +129,65 @@ const TransactionsTable = ({ transactions }) => {
 	);
 };
 
+const TransactionDetails = () => {
+	const transaction = useTransactionsStore((state) => state.transaction);
+
+	console.log("transaction");
+	console.log(transaction);
+
+	if (!transaction) {
+		return (
+			<div className="flex flex-col w-full border p-3 rounded-lg mt-[25px]">
+				<div className="flex flex-col w-full items-center justify-center text-gray-400">
+					No Transaction Selected
+				</div>
+			</div>
+		);
+	}
+
+	return (
+		<div className="flex flex-col w-full border p-3 rounded-lg mt-[25px]">
+			<div className="flex flex-row justify-between items-center text-2xl">
+				<div className="flex flex-row items-center">
+					<div className="flex flex-col rounded-full w-[40px] h-[40px] items-center justify-center bg-red-100 mr-[10px] text-red-500">
+						{Array.from(transaction.name)[0].toUpperCase()}
+					</div>
+					<div className="text-xl">{transaction.name}</div>
+				</div>
+				<div>{currency.format(transaction.amount)}</div>
+			</div>
+			<div className="flex flex-col my-5">
+				<div className="flex flex-row text-sm ">
+					<div className="flex flex-col w-1/2 space-y-2">
+						<div className="text-gray-400">ACCOUNT</div>
+						<div>
+							<div>American Express</div>
+						</div>
+					</div>
+					<div className="flex flex-col w-1/2 space-y-2">
+						<div className="text-gray-400">CATEGORY</div>
+						<div className="flex flex-row">
+							{pipe(
+								map((category) => (
+									<Category category={category} />
+								))
+							)(transaction.category)}
+						</div>
+					</div>
+				</div>
+			</div>
+			<div className="flex flex-col text-sm my-1 space-y-1">
+				<div className="text-gray-400">Transaction date</div>
+				<div>{transaction.date}</div>
+			</div>
+			{/* <div className="flex flex-col text-sm my-1 space-y-1">
+				<div className="text-gray-400">Location</div>
+				<div>345 Spear St, San Francisco 94105</div>
+			</div> */}
+		</div>
+	);
+};
+
 export default function Transactions() {
 	let { transactions } = useLoaderData();
 
@@ -121,46 +198,7 @@ export default function Transactions() {
 					<TransactionsTable transactions={transactions} />
 				</div>
 				<div className="flex flex-col w-[30%]">
-					<div className="flex flex-col w-full border p-3 rounded-lg mt-[25px]">
-						<div className="flex flex-row justify-between items-center text-2xl">
-							<div className="flex flex-row items-center">
-								<div className="flex flex-col rounded-full w-[40px] h-[40px] items-center justify-center bg-red-100 mr-[10px] text-red-500">
-									P
-								</div>
-								<div className="text-xl">Phone Bill</div>
-							</div>
-							<div>{currency.format(80)}</div>
-						</div>
-						<div className="flex flex-col my-5">
-							<div className="flex flex-row text-sm ">
-								<div className="flex flex-col w-1/2 space-y-2">
-									<div className="text-gray-400">ACCOUNT</div>
-									<div>
-										<div>American Express</div>
-									</div>
-								</div>
-								<div className="flex flex-col w-1/2 space-y-2">
-									<div className="text-gray-400">
-										CATEGORY
-									</div>
-									<div className="flex flex-row">
-										<Category category="Phone Bill" />
-										<Category category="Mobile" />
-									</div>
-								</div>
-							</div>
-						</div>
-						<div className="flex flex-col text-sm my-1 space-y-1">
-							<div className="text-gray-400">
-								Transaction date
-							</div>
-							<div>June 10, 2023</div>
-						</div>
-						<div className="flex flex-col text-sm my-1 space-y-1">
-							<div className="text-gray-400">Location</div>
-							<div>345 Spear St, San Francisco 94105</div>
-						</div>
-					</div>
+					<TransactionDetails />
 				</div>
 			</div>
 		</div>
