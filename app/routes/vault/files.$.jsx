@@ -5,15 +5,16 @@ import {
 	ChevronRightIcon,
 	TagIcon,
 	XMarkIcon,
-	EllipsisHorizontalCircleIcon,
 	EllipsisHorizontalIcon,
+	PencilIcon,
+	ArrowDownTrayIcon,
+	TrashIcon,
 } from "@heroicons/react/24/outline";
 import { sample, classNames } from "~/utils/helpers";
 import { Disclosure, Menu, Transition } from "@headlessui/react";
 import Modal from "~/components/Modal";
 import { useModalStore } from "~/hooks/useModal";
 import { useEffect, Fragment } from "react";
-import { EllipsisVerticalIcon } from "@heroicons/react/20/solid";
 
 const navigation = [
 	{ name: "All", href: "#", current: true, icon: ListBulletIcon },
@@ -295,10 +296,49 @@ const FileActionsDropdown = () => {
 										active
 											? "bg-gray-100 text-gray-900"
 											: "text-gray-700",
-										"block px-4 py-2 text-sm cursor-pointer"
+										"flex flex-row px-4 py-2 text-sm cursor-pointer items-center space-x-3"
 									)}
 								>
-									Edit
+									<div>
+										<PencilIcon className="h-4 w-4" />
+									</div>
+									<div>Edit</div>
+								</div>
+							)}
+						</Menu.Item>
+						<Menu.Item>
+							{({ active }) => (
+								<div
+									onClick={onEditFileClick}
+									className={classNames(
+										active
+											? "bg-gray-100 text-gray-900"
+											: "text-gray-700",
+										"flex flex-row px-4 py-2 text-sm cursor-pointer items-center space-x-3"
+									)}
+								>
+									<div>
+										<ArrowDownTrayIcon className="h-4 w-4" />
+									</div>
+									<div>Download</div>
+								</div>
+							)}
+						</Menu.Item>
+						<Menu.Item>
+							{({ active }) => (
+								<div
+									onClick={onEditFileClick}
+									className={classNames(
+										active
+											? "bg-gray-100 text-gray-900"
+											: "text-gray-700",
+										"flex flex-row px-4 py-2 text-sm cursor-pointer items-center space-x-3"
+									)}
+								>
+									<div>
+										<TrashIcon className="h-4 w-4" />
+									</div>
+									<div>Delete</div>
 								</div>
 							)}
 						</Menu.Item>
