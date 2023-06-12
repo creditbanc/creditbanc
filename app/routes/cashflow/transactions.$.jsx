@@ -234,7 +234,7 @@ const TransactionDetails = () => {
 	);
 };
 
-const TransactionsHeader = () => {
+const TransactionsHeaderStats = () => {
 	let { totals } = useLoaderData();
 
 	return (
@@ -262,7 +262,7 @@ export default function Transactions() {
 		<div className="flex flex-col w-full p-5 overflow-hidden">
 			<div className="flex flex-row w-full overflow-hidden">
 				<div className="flex flex-col w-[70%] overflow-y-scroll">
-					<TransactionsHeader />
+					<TransactionsHeaderStats />
 					<div className="transactions_table_header flex flex-row pb-3 border-b text-sm sticky top-0 mr-5 bg-white">
 						<div className="flex flex-col w-[175px]">Merchant</div>
 						<div className="flex flex-col w-[100px]">Amount</div>
