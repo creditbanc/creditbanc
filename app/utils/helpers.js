@@ -27,6 +27,10 @@ import {
 const util = require("util");
 import { get } from "shades";
 
+export const classNames = (...classes) => {
+	return classes.filter(Boolean).join(" ");
+};
+
 export const create_axios_form = (data) => {
 	let form = new FormData();
 

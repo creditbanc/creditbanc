@@ -4,9 +4,13 @@ import {
 	ListBulletIcon,
 	ChevronRightIcon,
 	TagIcon,
+	XMarkIcon,
 } from "@heroicons/react/24/outline";
-import { sample } from "~/utils/helpers";
+import { sample, classNames } from "~/utils/helpers";
 import { Disclosure } from "@headlessui/react";
+import Modal from "~/components/Modal";
+import { useModalStore } from "~/hooks/useModal";
+import { useEffect } from "react";
 
 const navigation = [
 	{ name: "All", href: "#", current: true, icon: ListBulletIcon },
@@ -22,10 +26,6 @@ const navigation = [
 		],
 	},
 ];
-
-function classNames(...classes) {
-	return classes.filter(Boolean).join(" ");
-}
 
 const Heading = () => {
 	return (
@@ -177,15 +177,27 @@ const NavIcon = ({ icon: Icon }) => {
 
 const SideNav = () => {
 	return (
-		<nav className="flex flex-1 flex-col">
-			<ul role="list" className="flex flex-1 flex-col gap-y-7 px-2 mt-2">
-				<li>
-					<ul role="list" className="space-y-1">
-						{navigation.map((item) => (
-							<li key={item.name}>
-								{!item.children ? (
-									<a
-										href={item.href}
+		<ul role="list" className="flex flex-1 flex-col px-2 ">
+			{navigation.map((item) => (
+				<li key={item.name}>
+					{!item.children ? (
+						<a
+							href={item.href}
+							className={classNames(
+								item.current
+									? "bg-gray-50"
+									: "hover:bg-gray-50",
+								"flex items-center w-full text-left rounded-md gap-x-3 text-sm leading-6 font-semibold text-gray-700 py-1.5 px-2 my-2"
+							)}
+						>
+							<NavIcon icon={item.icon} />
+							{item.name}
+						</a>
+					) : (
+						<Disclosure as="div">
+							{({ open }) => (
+								<>
+									<Disclosure.Button
 										className={classNames(
 											item.current
 												? "bg-gray-50"
@@ -193,93 +205,142 @@ const SideNav = () => {
 											"flex items-center w-full text-left rounded-md gap-x-3 text-sm leading-6 font-semibold text-gray-700 py-1.5 px-2 my-2"
 										)}
 									>
-										<NavIcon icon={item.icon} />
+										{open && (
+											<NavIcon icon={ChevronDownIcon} />
+										)}
+
+										{!open && (
+											<NavIcon icon={ChevronRightIcon} />
+										)}
+
 										{item.name}
-									</a>
-								) : (
-									<Disclosure as="div">
-										{({ open }) => (
-											<>
+									</Disclosure.Button>
+									<Disclosure.Panel
+										as="ul"
+										className="mt-1 px-2"
+									>
+										{item.children.map((subItem) => (
+											<li key={subItem.name}>
 												<Disclosure.Button
+													as="a"
+													href={subItem.href}
 													className={classNames(
-														item.current
+														subItem.current
 															? "bg-gray-50"
 															: "hover:bg-gray-50",
-														"flex items-center w-full text-left rounded-md gap-x-3 text-sm leading-6 font-semibold text-gray-700 py-1.5 px-2 my-2"
+														"flex flex-row items-center rounded-md py-2 pr-2 pl-4 text-sm leading-6 text-gray-700"
 													)}
 												>
-													{open && (
+													<div className="mr-2">
 														<NavIcon
-															icon={
-																ChevronDownIcon
-															}
+															icon={DocumentIcon}
 														/>
-													)}
-
-													{!open && (
-														<NavIcon
-															icon={
-																ChevronRightIcon
-															}
-														/>
-													)}
-
-													{item.name}
+													</div>
+													{subItem.name}
 												</Disclosure.Button>
-												<Disclosure.Panel
-													as="ul"
-													className="mt-1 px-2"
-												>
-													{item.children.map(
-														(subItem) => (
-															<li
-																key={
-																	subItem.name
-																}
-															>
-																<Disclosure.Button
-																	as="a"
-																	href={
-																		subItem.href
-																	}
-																	className={classNames(
-																		subItem.current
-																			? "bg-gray-50"
-																			: "hover:bg-gray-50",
-																		"flex flex-row items-center rounded-md py-2 pr-2 pl-4 text-sm leading-6 text-gray-700"
-																	)}
-																>
-																	<div className="mr-2">
-																		<NavIcon
-																			icon={
-																				DocumentIcon
-																			}
-																		/>
-																	</div>
-																	{
-																		subItem.name
-																	}
-																</Disclosure.Button>
-															</li>
-														)
-													)}
-												</Disclosure.Panel>
-											</>
-										)}
-									</Disclosure>
-								)}
-							</li>
-						))}
-					</ul>
+											</li>
+										))}
+									</Disclosure.Panel>
+								</>
+							)}
+						</Disclosure>
+					)}
 				</li>
-			</ul>
-		</nav>
+			))}
+		</ul>
+	);
+};
+
+const EditFileModal = () => {
+	let set_modal = useModalStore((state) => state.set_modal);
+
+	useEffect(() => {
+		set_modal({
+			id: "file_edit_modal",
+			is_open: true,
+		});
+	}, []);
+
+	return (
+		<Modal id="file_edit_modal" classes="min-w-[700px] min-h-[200px]">
+			<div className="flex flex-row w-full py-5 px-5 border-b text-2xl items-center">
+				<div className="flex flex-row w-full items-center space-x-3">
+					<div className="">
+						<DocumentIcon className="h-6 w-6 text-red-400" />
+					</div>
+					<div>Hi</div>
+				</div>
+				<div>
+					<XMarkIcon className="h-6 w-6 text-gray-400 cursor-pointer" />
+				</div>
+			</div>
+			<div className="flex flex-col w-full p-5 text-sm space-y-5">
+				<div className="flex flex-col w-full space-y-2">
+					<div className="text-gray-400">Document name</div>
+					<div className="flex flex-col w-full border-2 rounded h-[50px] justify-center px-2 text-lg font-light">
+						<input type="text" className="outline-none w-full" />
+					</div>
+				</div>
+
+				<div className="flex flex-col w-full space-y-3">
+					<div className="flex flex-row justify-between">
+						<div className="text-gray-400">Tags</div>
+						<div className="text-gray-400 cursor-pointer">
+							Clear
+						</div>
+					</div>
+					<div className="flex flex-col w-full text-sm">
+						<div className="flex flex-row w-full space-x-3">
+							<div className="flex flex-col px-3 py-1 border rounded-full text-gray-500 bg-gray-50 cursor-pointer">
+								Form 1040
+							</div>
+							<div className="flex flex-col px-3 py-1 border rounded-full text-gray-500 bg-gray-50 cursor-pointer">
+								Form 1040
+							</div>
+						</div>
+					</div>
+				</div>
+				<div className="flex flex-col w-full space-y-2 border-t pt-3">
+					<div className="flex flex-col w-full text-sm">
+						<div className="flex flex-row w-full space-x-3">
+							<div className="flex flex-col justify-center px-3 py-1 border rounded-full text-gray-500  cursor-pointer">
+								Form 1040 +
+							</div>
+							<div className="flex flex-col justify-center px-3 py-1 border rounded-full text-gray-500  cursor-pointer">
+								Form W-2 +
+							</div>
+							<div className="flex flex-col justify-center px-3 py-1 border rounded-full text-gray-500  cursor-pointer">
+								Form 1099
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<div className="flex flex-col w-full">
+					<div className="flex flex-row justify-end space-x-3">
+						<button
+							type="button"
+							className="bg-white text-gray-700 py-2 px-3 rounded border border-gray-700"
+						>
+							Cancel
+						</button>
+						<button
+							type="button"
+							className="bg-gray-700 text-white py-2 px-3 rounded"
+						>
+							Save
+						</button>
+					</div>
+				</div>
+			</div>
+		</Modal>
 	);
 };
 
 export default function Files() {
 	return (
 		<div className="flex flex-col w-full h-full p-5">
+			<EditFileModal />
 			<div className="flex flex-row w-full border rounded h-full">
 				<div className="flex flex-col w-[250px] border-r">
 					<SideNav />
