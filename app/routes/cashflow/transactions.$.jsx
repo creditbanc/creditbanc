@@ -1,5 +1,5 @@
 import { useLoaderData } from "@remix-run/react";
-import { pipe, map, head, sortBy, prop } from "ramda";
+import { pipe, map, head, sortBy, prop, reverse } from "ramda";
 import { get_collection } from "~/utils/firebase";
 import {
 	inspect,
@@ -15,7 +15,7 @@ export const loader = async ({ request }) => {
 		path: ["transactions"],
 	});
 
-	transactions = pipe(sortBy(prop("date")))(transactions);
+	transactions = pipe(sortBy(prop("date")), reverse)(transactions);
 
 	// console.log("transactions");
 	// console.log(head(transactions));
