@@ -146,8 +146,8 @@ const TransactionsTable = () => {
 				<div className="flex flex-col w-[100px]">Amount</div>
 				<div className="flex flex-col w-[250px]">Category</div>
 				{/* <div className="flex flex-col w-[185px]">
-				Account
-			</div> */}
+					Account
+				</div> */}
 				<div className="flex flex-col">Date</div>
 			</div>
 			<div className="flex flex-col w-full overflow-y-scroll">
