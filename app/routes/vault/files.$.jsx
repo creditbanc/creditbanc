@@ -1,5 +1,31 @@
-import { DocumentIcon } from "@heroicons/react/24/outline";
+import {
+	ChevronDownIcon,
+	DocumentIcon,
+	ListBulletIcon,
+	ChevronRightIcon,
+	TagIcon,
+} from "@heroicons/react/24/outline";
 import { sample } from "~/utils/helpers";
+import { Disclosure } from "@headlessui/react";
+
+const navigation = [
+	{ name: "All", href: "#", current: true, icon: ListBulletIcon },
+	{ name: "Untagged", href: "#", current: false, icon: TagIcon },
+	{
+		name: "Tags",
+		current: false,
+		icon: ListBulletIcon,
+		children: [
+			{ name: "Form 1040", href: "#" },
+			{ name: "Form W-2", href: "#" },
+			{ name: "Form 1099", href: "#" },
+		],
+	},
+];
+
+function classNames(...classes) {
+	return classes.filter(Boolean).join(" ");
+}
 
 const Heading = () => {
 	return (
@@ -145,11 +171,119 @@ const TableRow = () => {
 	);
 };
 
+const NavIcon = ({ icon: Icon }) => {
+	return <Icon className="h-5 w-5 text-gray-400" />;
+};
+
+const SideNav = () => {
+	return (
+		<nav className="flex flex-1 flex-col">
+			<ul role="list" className="flex flex-1 flex-col gap-y-7 px-2 mt-2">
+				<li>
+					<ul role="list" className="space-y-1">
+						{navigation.map((item) => (
+							<li key={item.name}>
+								{!item.children ? (
+									<a
+										href={item.href}
+										className={classNames(
+											item.current
+												? "bg-gray-50"
+												: "hover:bg-gray-50",
+											"flex items-center w-full text-left rounded-md gap-x-3 text-sm leading-6 font-semibold text-gray-700 py-1.5 px-2 my-2"
+										)}
+									>
+										<NavIcon icon={item.icon} />
+										{item.name}
+									</a>
+								) : (
+									<Disclosure as="div">
+										{({ open }) => (
+											<>
+												<Disclosure.Button
+													className={classNames(
+														item.current
+															? "bg-gray-50"
+															: "hover:bg-gray-50",
+														"flex items-center w-full text-left rounded-md gap-x-3 text-sm leading-6 font-semibold text-gray-700 py-1.5 px-2 my-2"
+													)}
+												>
+													{open && (
+														<NavIcon
+															icon={
+																ChevronDownIcon
+															}
+														/>
+													)}
+
+													{!open && (
+														<NavIcon
+															icon={
+																ChevronRightIcon
+															}
+														/>
+													)}
+
+													{item.name}
+												</Disclosure.Button>
+												<Disclosure.Panel
+													as="ul"
+													className="mt-1 px-2"
+												>
+													{item.children.map(
+														(subItem) => (
+															<li
+																key={
+																	subItem.name
+																}
+															>
+																<Disclosure.Button
+																	as="a"
+																	href={
+																		subItem.href
+																	}
+																	className={classNames(
+																		subItem.current
+																			? "bg-gray-50"
+																			: "hover:bg-gray-50",
+																		"flex flex-row items-center rounded-md py-2 pr-2 pl-4 text-sm leading-6 text-gray-700"
+																	)}
+																>
+																	<div className="mr-2">
+																		<NavIcon
+																			icon={
+																				DocumentIcon
+																			}
+																		/>
+																	</div>
+																	{
+																		subItem.name
+																	}
+																</Disclosure.Button>
+															</li>
+														)
+													)}
+												</Disclosure.Panel>
+											</>
+										)}
+									</Disclosure>
+								)}
+							</li>
+						))}
+					</ul>
+				</li>
+			</ul>
+		</nav>
+	);
+};
+
 export default function Files() {
 	return (
 		<div className="flex flex-col w-full h-full p-5">
 			<div className="flex flex-row w-full border rounded h-full">
-				<div className="flex flex-col w-[250px] border-r">1</div>
+				<div className="flex flex-col w-[250px] border-r">
+					<SideNav />
+				</div>
 				<div className="flex flex-col flex-1 p-5">
 					<Heading />
 					<RecentTagsFilter />
