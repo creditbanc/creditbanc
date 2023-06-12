@@ -5,12 +5,15 @@ import {
 	ChevronRightIcon,
 	TagIcon,
 	XMarkIcon,
+	EllipsisHorizontalCircleIcon,
+	EllipsisHorizontalIcon,
 } from "@heroicons/react/24/outline";
 import { sample, classNames } from "~/utils/helpers";
-import { Disclosure } from "@headlessui/react";
+import { Disclosure, Menu, Transition } from "@headlessui/react";
 import Modal from "~/components/Modal";
 import { useModalStore } from "~/hooks/useModal";
-import { useEffect } from "react";
+import { useEffect, Fragment } from "react";
+import { EllipsisVerticalIcon } from "@heroicons/react/20/solid";
 
 const navigation = [
 	{ name: "All", href: "#", current: true, icon: ListBulletIcon },
@@ -87,7 +90,8 @@ const FilesTableHeader = () => {
 				<div className="flex flex-col w-[250px]">Name</div>
 				<div className="flex flex-col flex-1">Tags</div>
 				<div className="flex flex-col w-[80px]">Year</div>
-				<div className="flex flex-col w-[80px]">Uploaded</div>
+				<div className="flex flex-col w-[100px]">Uploaded</div>
+				<div className="flex flex-col w-[50px]"></div>
 			</div>
 		</div>
 	);
@@ -164,8 +168,14 @@ const TableRow = () => {
 					2022
 				</div>
 			</div>
-			<div className="flex flex-col w-[80px]">
+			<div className="flex flex-col w-[100px]">
 				<div>Dec 5, 2022</div>
+			</div>
+			<div className="flex flex-col w-[50px]">
+				<div>
+					{/* <EllipsisHorizontalIcon className="h-5 w-5 cursor-pointer" /> */}
+					<FileActionsDropdown />
+				</div>
 			</div>
 		</div>
 	);
@@ -251,15 +261,66 @@ const SideNav = () => {
 	);
 };
 
-const EditFileModal = () => {
+const FileActionsDropdown = () => {
 	let set_modal = useModalStore((state) => state.set_modal);
 
-	useEffect(() => {
+	const onEditFileClick = () => {
 		set_modal({
 			id: "file_edit_modal",
 			is_open: true,
 		});
-	}, []);
+	};
+
+	return (
+		<Menu as="div" className="relative inline-block text-left">
+			<div>
+				<Menu.Button className="flex items-center rounded-full bg-gray-100 text-gray-400 hover:text-gray-600 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-gray-100">
+					<EllipsisHorizontalIcon className="h-5 w-5" />
+				</Menu.Button>
+			</div>
+
+			<Transition
+				as={Fragment}
+				enter="transition ease-out duration-100"
+				enterFrom="transform opacity-0 scale-95"
+				enterTo="transform opacity-100 scale-100"
+				leave="transition ease-in duration-75"
+				leaveFrom="transform opacity-100 scale-100"
+				leaveTo="transform opacity-0 scale-95"
+			>
+				<Menu.Items className="absolute right-0 z-10 mt-3 w-56 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+					<div className="py-1">
+						<Menu.Item>
+							{({ active }) => (
+								<div
+									onClick={onEditFileClick}
+									className={classNames(
+										active
+											? "bg-gray-100 text-gray-900"
+											: "text-gray-700",
+										"block px-4 py-2 text-sm cursor-pointer"
+									)}
+								>
+									Edit
+								</div>
+							)}
+						</Menu.Item>
+					</div>
+				</Menu.Items>
+			</Transition>
+		</Menu>
+	);
+};
+
+const EditFileModal = () => {
+	let set_modal = useModalStore((state) => state.set_modal);
+
+	const onCloseModal = () => {
+		set_modal({
+			id: "file_edit_modal",
+			is_open: false,
+		});
+	};
 
 	return (
 		<Modal id="file_edit_modal" classes="min-w-[700px] min-h-[200px]">
@@ -270,7 +331,7 @@ const EditFileModal = () => {
 					</div>
 					<div>Hi</div>
 				</div>
-				<div>
+				<div onClick={onCloseModal}>
 					<XMarkIcon className="h-6 w-6 text-gray-400 cursor-pointer" />
 				</div>
 			</div>
@@ -310,7 +371,10 @@ const EditFileModal = () => {
 								Form W-2 +
 							</div>
 							<div className="flex flex-col justify-center px-3 py-1 border rounded-full text-gray-500  cursor-pointer">
-								Form 1099
+								Form 1099 +
+							</div>
+							<div className="flex flex-col justify-center px-3 py-1 border rounded-full text-gray-500  cursor-pointer">
+								Other +
 							</div>
 						</div>
 					</div>
@@ -319,6 +383,7 @@ const EditFileModal = () => {
 				<div className="flex flex-col w-full">
 					<div className="flex flex-row justify-end space-x-3">
 						<button
+							onClick={onCloseModal}
 							type="button"
 							className="bg-white text-gray-700 py-2 px-3 rounded border border-gray-700"
 						>
