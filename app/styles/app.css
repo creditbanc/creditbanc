@@ -817,11 +817,6 @@ video {
   margin-bottom: 5px;
 }
 
-.my-7 {
-  margin-top: 1.75rem;
-  margin-bottom: 1.75rem;
-}
-
 .-mb-6 {
   margin-bottom: -1.5rem;
 }
@@ -952,6 +947,10 @@ video {
 
 .mb-\[3px\] {
   margin-bottom: 3px;
+}
+
+.mb-\[40px\] {
+  margin-bottom: 40px;
 }
 
 .mb-\[50px\] {
@@ -1116,14 +1115,6 @@ video {
 
 .mt-\[50px\] {
   margin-top: 50px;
-}
-
-.mb-20 {
-  margin-bottom: 5rem;
-}
-
-.mb-\[40px\] {
-  margin-bottom: 40px;
 }
 
 .block {
@@ -2871,10 +2862,6 @@ video {
 
 .text-center {
   text-align: center;
-}
-
-.font-serif {
-  font-family: ui-serif, Georgia, Cambria, "Times New Roman", Times, serif;
 }
 
 .text-2xl {

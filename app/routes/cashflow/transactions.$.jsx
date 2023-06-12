@@ -130,7 +130,8 @@ let Category = ({ category }) => {
 	);
 };
 
-const TransactionsTable = ({ transactions }) => {
+const TransactionsTable = () => {
+	let { transactions } = useLoaderData();
 	let set_state = useTransactionsStore((state) => state.set_state);
 
 	const onSelectTransaction = (transaction_id) => {
@@ -242,40 +243,36 @@ const TransactionDetails = () => {
 	);
 };
 
-export default function Transactions() {
-	let { transactions, totals } = useLoaderData();
+const TransactionsHeader = () => {
+	let { totals } = useLoaderData();
 
+	return (
+		<div className="flex flex-col mb-[40px]">
+			<div className="flex flex-row">
+				<div className="flex flex-col w-1/2 space-y-1">
+					<div className="text-sm text-gray-400">Income</div>
+					<div className="text-2xl font-semibold">
+						{pipe(get("all", "income"), currency.format)(totals)}
+					</div>
+				</div>
+				<div className="flex flex-col w-1/2 space-y-1">
+					<div className="text-sm text-gray-400">Expenses</div>
+					<div className="text-2xl font-semibold">
+						{pipe(get("all", "expense"), currency.format)(totals)}
+					</div>
+				</div>
+			</div>
+		</div>
+	);
+};
+
+export default function Transactions() {
 	return (
 		<div className="flex flex-col w-full p-5 overflow-hidden">
 			<div className="flex flex-row w-full overflow-hidden">
 				<div className="flex flex-col w-[70%]">
-					<div className="flex flex-col mb-[40px]">
-						<div className="flex flex-row">
-							<div className="flex flex-col w-1/2 space-y-1">
-								<div className="text-sm text-gray-400">
-									Income
-								</div>
-								<div className="text-2xl font-semibold">
-									{pipe(
-										get("all", "income"),
-										currency.format
-									)(totals)}
-								</div>
-							</div>
-							<div className="flex flex-col w-1/2 space-y-1">
-								<div className="text-sm text-gray-400">
-									Expenses
-								</div>
-								<div className="text-2xl font-semibold">
-									{pipe(
-										get("all", "expense"),
-										currency.format
-									)(totals)}
-								</div>
-							</div>
-						</div>
-					</div>
-					<TransactionsTable transactions={transactions} />
+					<TransactionsHeader />
+					<TransactionsTable />
 				</div>
 				<div className="flex flex-col w-[30%]">
 					<TransactionDetails />
