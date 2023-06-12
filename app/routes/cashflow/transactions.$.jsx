@@ -1,5 +1,5 @@
 import { useLoaderData } from "@remix-run/react";
-import { pipe, map, head, sortBy, prop, reverse } from "ramda";
+import { pipe, map, head, sortBy, prop, reverse, curry, last } from "ramda";
 import { get_collection } from "~/utils/firebase";
 import {
 	inspect,
@@ -9,13 +9,37 @@ import {
 	sample,
 } from "~/utils/helpers";
 import { create } from "zustand";
-import { filter, mod } from "shades";
+import { filter, get, mod } from "shades";
+import moment from "moment";
 
 const useTransactionsStore = create((set) => ({
 	transaction: null,
 	set_state: (path, value) =>
 		set((state) => pipe(mod(...path)(() => value))(state)),
 }));
+
+let total_for_period = curry((start_date, end_date, transactions) => {
+	let filtered_transactions = pipe(
+		filter(({ date }) => date >= start_date && date <= end_date)
+	)(transactions);
+
+	let income = 0;
+	let expense = 0;
+
+	filtered_transactions.forEach(({ amount }) => {
+		if (amount > 0) {
+			income += amount;
+		} else {
+			expense += amount;
+		}
+	});
+
+	return { income, expense };
+});
+
+let date_x_time_ago = (time_range, time_period) => {
+	return moment().subtract(time_period, time_range).format("YYYY-MM-DD");
+};
 
 export const loader = async ({ request }) => {
 	// let queries = [{ param: "amount", predicate: "<", value: 12 }];
@@ -25,10 +49,43 @@ export const loader = async ({ request }) => {
 
 	transactions = pipe(sortBy(prop("date")), reverse)(transactions);
 
-	// console.log("transactions");
-	// console.log(head(transactions));
+	let last_transaction_date = pipe(last, get("date"))(transactions);
+	let difference = moment().diff(last_transaction_date, "days");
 
-	return { transactions };
+	let totals = {
+		"1d": total_for_period(
+			date_x_time_ago(1, "days"),
+			date_x_time_ago(0, "days"),
+			transactions
+		),
+		"1w": total_for_period(
+			date_x_time_ago(7, "days"),
+			date_x_time_ago(0, "days"),
+			transactions
+		),
+		"1m": total_for_period(
+			date_x_time_ago(1, "months"),
+			date_x_time_ago(0, "days"),
+			transactions
+		),
+		"3m": total_for_period(
+			date_x_time_ago(3, "months"),
+			date_x_time_ago(0, "days"),
+			transactions
+		),
+		"1y": total_for_period(
+			date_x_time_ago(1, "years"),
+			date_x_time_ago(0, "days"),
+			transactions
+		),
+		all: total_for_period(
+			date_x_time_ago(difference, "days"),
+			date_x_time_ago(0, "days"),
+			transactions
+		),
+	};
+
+	return { transactions, totals };
 };
 
 let category_styles = [
@@ -132,9 +189,6 @@ const TransactionsTable = ({ transactions }) => {
 const TransactionDetails = () => {
 	const transaction = useTransactionsStore((state) => state.transaction);
 
-	console.log("transaction");
-	console.log(transaction);
-
 	if (!transaction) {
 		return (
 			<div className="flex flex-col w-full border p-3 rounded-lg mt-[25px]">
@@ -189,12 +243,38 @@ const TransactionDetails = () => {
 };
 
 export default function Transactions() {
-	let { transactions } = useLoaderData();
+	let { transactions, totals } = useLoaderData();
 
 	return (
 		<div className="flex flex-col w-full p-5 overflow-hidden">
 			<div className="flex flex-row w-full overflow-hidden">
 				<div className="flex flex-col w-[70%]">
+					<div className="flex flex-col mb-[40px]">
+						<div className="flex flex-row">
+							<div className="flex flex-col w-1/2 space-y-1">
+								<div className="text-sm text-gray-400">
+									Income
+								</div>
+								<div className="text-2xl font-semibold">
+									{pipe(
+										get("all", "income"),
+										currency.format
+									)(totals)}
+								</div>
+							</div>
+							<div className="flex flex-col w-1/2 space-y-1">
+								<div className="text-sm text-gray-400">
+									Expenses
+								</div>
+								<div className="text-2xl font-semibold">
+									{pipe(
+										get("all", "expense"),
+										currency.format
+									)(totals)}
+								</div>
+							</div>
+						</div>
+					</div>
 					<TransactionsTable transactions={transactions} />
 				</div>
 				<div className="flex flex-col w-[30%]">
