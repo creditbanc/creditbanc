@@ -34,7 +34,7 @@ import {
 	uploadBytes,
 	listAll,
 } from "firebase/storage";
-import { findIndex, map, pipe, propEq } from "ramda";
+import { findIndex, map, pipe, propEq, remove } from "ramda";
 import { set_doc } from "~/utils/firebase";
 import moment from "moment";
 import { create } from "zustand";
@@ -228,9 +228,11 @@ const TableRow = ({ document }) => {
 			</div>
 			<div className="flex flex-col flex-1">
 				<div className="flex flex-row w-full">
-					{pipe(map((tag) => <Category category="Form 1040" />))(
-						tags
-					)}
+					{pipe(
+						mapIndexed((tag, tag_index) => (
+							<Category category={tag.label} key={tag_index} />
+						))
+					)(tags)}
 				</div>
 			</div>
 			<div className="flex flex-col w-[80px]">
@@ -445,7 +447,7 @@ const EditFileModal = () => {
 	let set_files = useFilesStore((state) => state.set_files);
 	let files = useFilesStore((state) => state.files);
 	let file = useFileStore((state) => state.file);
-	let { name = "", id } = file;
+	let { name = "", id, tags = [] } = file;
 
 	const onCloseModal = () => {
 		set_modal({
@@ -458,14 +460,14 @@ const EditFileModal = () => {
 		set_file(["file", "name"], e.target.value);
 	};
 
+	const update_files = () => {
+		let { id } = file;
+		let index = pipe(findIndex(propEq("id", id)))(files);
+		set_files(["files"], pipe(mod(index)(() => file))(files));
+	};
+
 	const onSaveFileChanges = async () => {
 		await set_doc(["vault", id], file);
-
-		const update_files = () => {
-			let { id } = file;
-			let index = pipe(findIndex(propEq("id", id)))(files);
-			set_files(["files"], pipe(mod(index)(() => file))(files));
-		};
 
 		update_files();
 
@@ -473,6 +475,14 @@ const EditFileModal = () => {
 			id: "file_edit_modal",
 			is_open: false,
 		});
+	};
+
+	const onAddTag = (tag) => {
+		set_file(["file", "tags"], [...file.tags, tag]);
+	};
+
+	const onRemoveTag = (tag_index) => {
+		set_file(["file", "tags"], remove(tag_index, 1, file.tags));
 	};
 
 	return (
@@ -510,28 +520,53 @@ const EditFileModal = () => {
 					</div>
 					<div className="flex flex-col w-full text-sm">
 						<div className="flex flex-row w-full space-x-3">
-							<div className="flex flex-col px-3 py-1 border rounded-full text-gray-500 bg-gray-50 cursor-pointer">
-								Form 1040
-							</div>
-							<div className="flex flex-col px-3 py-1 border rounded-full text-gray-500 bg-gray-50 cursor-pointer">
-								Form 1040
-							</div>
+							{pipe(
+								mapIndexed((tag, tag_index) => (
+									<div
+										className="flex flex-col px-3 py-1 border rounded-full text-gray-500 bg-gray-50 cursor-pointer"
+										key={tag_index}
+										onClick={() => onRemoveTag(tag_index)}
+									>
+										{tag.label}
+									</div>
+								))
+							)(tags)}
 						</div>
 					</div>
 				</div>
 				<div className="flex flex-col w-full space-y-2 border-t pt-3">
 					<div className="flex flex-col w-full text-sm">
 						<div className="flex flex-row w-full space-x-3">
-							<div className="flex flex-col justify-center px-3 py-1 border rounded-full text-gray-500  cursor-pointer">
+							<div
+								className="flex flex-col justify-center px-3 py-1 border rounded-full text-gray-500  cursor-pointer"
+								onClick={() =>
+									onAddTag({ id: "1040", label: "Form 1040" })
+								}
+							>
 								Form 1040 +
 							</div>
-							<div className="flex flex-col justify-center px-3 py-1 border rounded-full text-gray-500  cursor-pointer">
+							<div
+								className="flex flex-col justify-center px-3 py-1 border rounded-full text-gray-500  cursor-pointer"
+								onClick={() =>
+									onAddTag({ id: "W-2", label: "Form W-2" })
+								}
+							>
 								Form W-2 +
 							</div>
-							<div className="flex flex-col justify-center px-3 py-1 border rounded-full text-gray-500  cursor-pointer">
+							<div
+								className="flex flex-col justify-center px-3 py-1 border rounded-full text-gray-500  cursor-pointer"
+								onClick={() =>
+									onAddTag({ id: "1099", label: "Form 1099" })
+								}
+							>
 								Form 1099 +
 							</div>
-							<div className="flex flex-col justify-center px-3 py-1 border rounded-full text-gray-500  cursor-pointer">
+							<div
+								className="flex flex-col justify-center px-3 py-1 border rounded-full text-gray-500  cursor-pointer"
+								onClick={() =>
+									onAddTag({ id: "other", label: "Other" })
+								}
+							>
 								Other +
 							</div>
 						</div>
