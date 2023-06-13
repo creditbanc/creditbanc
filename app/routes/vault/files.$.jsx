@@ -34,13 +34,21 @@ import {
 	uploadBytes,
 	listAll,
 } from "firebase/storage";
-import { findIndex, map, pipe, propEq, remove } from "ramda";
+import {
+	findIndex,
+	map,
+	pipe,
+	propEq,
+	remove,
+	includes,
+	isEmpty,
+	not,
+} from "ramda";
 import { set_doc } from "~/utils/firebase";
 import moment from "moment";
 import { create } from "zustand";
 import { v4 as uuidv4 } from "uuid";
-import { mod } from "shades";
-import { doc } from "firebase/firestore";
+import { filter, matching, mod, get, all } from "shades";
 
 export const useFileStore = create((set) => ({
 	file: {},
@@ -104,7 +112,9 @@ export const loader = async ({ request }) => {
 
 	let documents = await get_collection({ queries, path: ["vault"] });
 
-	return { documents };
+	return {
+		documents: pipe(map((doc) => ({ ...doc, visible: true })))(documents),
+	};
 };
 
 const Heading = () => {
@@ -136,33 +146,73 @@ const Heading = () => {
 	);
 };
 
-const RecentTagsFilter = () => {
+const HeaderFilters = () => {
+	let files = useFilesStore((state) => state.files);
+	let set_files = useFilesStore((state) => state.set_files);
+
+	const onFilterFiles = (tag_id) => {
+		set_files(
+			["files"],
+			pipe(
+				mod(all, "visible")(() => true),
+				mod(matching({ tags: pipe(filter({ id: tag_id }), isEmpty) }))(
+					(value) => ({ ...value, visible: false })
+				)
+			)(files)
+		);
+	};
+
+	const onShowAllFiles = () => {
+		set_files(["files"], pipe(mod(all, "visible")(() => true))(files));
+	};
+
 	return (
 		<div className="flex flex-col w-full py-5">
 			<div className="flex flex-row w-full items-center text-xs space-x-3">
 				<div className="text-gray-400">Show</div>
-				<div className="flex flex-col px-3 py-1 border rounded-full text-gray-500 bg-gray-50 cursor-pointer">
+				<div
+					className="flex flex-col px-3 py-1 border rounded-full text-gray-500 bg-gray-50 cursor-pointer text-center"
+					onClick={onShowAllFiles}
+				>
+					All
+				</div>
+				<div
+					className="flex flex-col px-3 py-1 border rounded-full text-gray-500 bg-gray-50 cursor-pointer text-center"
+					onClick={() => onFilterFiles("1040")}
+				>
 					Form 1040
 				</div>
-				<div className="flex flex-col px-3 py-1 border rounded-full text-gray-500 bg-gray-50 cursor-pointer">
+				<div
+					className="flex flex-col px-3 py-1 border rounded-full text-gray-500 bg-gray-50 cursor-pointer text-center"
+					onClick={() => onFilterFiles("1065")}
+				>
 					Form 1065
 				</div>
-				<div className="flex flex-col px-3 py-1 border rounded-full text-gray-500 bg-gray-50 cursor-pointer">
+				<div
+					className="flex flex-col px-3 py-1 border rounded-full text-gray-500 bg-gray-50 cursor-pointer text-center"
+					onClick={() => onFilterFiles("1099")}
+				>
 					Form 1099
 				</div>
-				<div className="flex flex-col px-3 py-1 border rounded-full text-gray-500 bg-gray-50 cursor-pointer">
+				<div
+					className="flex flex-col px-3 py-1 border rounded-full text-gray-500 bg-gray-50 cursor-pointer text-center"
+					onClick={() => onFilterFiles("1120")}
+				>
 					Form 1120
 				</div>
-				<div className="flex flex-col px-3 py-1 border rounded-full text-gray-500 bg-gray-50 cursor-pointer">
+				<div
+					className="flex flex-col px-3 py-1 border rounded-full text-gray-500 bg-gray-50 cursor-pointer text-center"
+					onClick={() => onFilterFiles("W-2")}
+				>
 					Form W-2
 				</div>
-				<div className="flex flex-col px-3 py-1 border rounded-full text-gray-500 bg-gray-50 cursor-pointer">
+				<div className="flex flex-col px-3 py-1 border rounded-full text-gray-500 bg-gray-50 cursor-pointer text-center">
 					2021
 				</div>
-				<div className="flex flex-col px-3 py-1 border rounded-full text-gray-500 bg-gray-50 cursor-pointer">
+				<div className="flex flex-col px-3 py-1 border rounded-full text-gray-500 bg-gray-50 cursor-pointer text-center">
 					2022
 				</div>
-				<div className="flex flex-col px-3 py-1 border rounded-full text-gray-500 bg-gray-50 cursor-pointer">
+				<div className="flex flex-col px-3 py-1 border rounded-full text-gray-500 bg-gray-50 cursor-pointer text-center">
 					2023
 				</div>
 			</div>
@@ -828,10 +878,11 @@ export default function Files() {
 				</div>
 				<div className="flex flex-col flex-1 p-5">
 					<Heading />
-					<RecentTagsFilter />
+					<HeaderFilters />
 					<FilesTableHeader />
 					<div className="flex flex-col w-full">
 						{pipe(
+							filter({ visible: true }),
 							mapIndexed((document, document_index) => (
 								<TableRow
 									key={document_index}
