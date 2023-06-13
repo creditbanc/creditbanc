@@ -10,15 +10,22 @@ import {
 	ArrowDownTrayIcon,
 	TrashIcon,
 	ArrowUpOnSquareIcon,
+	EyeIcon,
 } from "@heroicons/react/24/outline";
-import { sample, classNames, get_file_id, mapIndexed } from "~/utils/helpers";
+import {
+	sample,
+	classNames,
+	get_file_id,
+	mapIndexed,
+	truncate,
+} from "~/utils/helpers";
 import { Disclosure, Menu, Transition } from "@headlessui/react";
 import Modal from "~/components/Modal";
 import { useModalStore } from "~/hooks/useModal";
 import { useEffect, Fragment, useState } from "react";
-import { useLoaderData, useLocation } from "@remix-run/react";
+import { Link, useLoaderData, useLocation } from "@remix-run/react";
 import { useFilesStore } from "~/hooks/useFiles";
-import { storage } from "~/utils/firebase";
+import { get_collection, storage } from "~/utils/firebase";
 import {
 	ref,
 	getDownloadURL,
@@ -28,6 +35,19 @@ import {
 	listAll,
 } from "firebase/storage";
 import { map, pipe } from "ramda";
+import { set_doc } from "~/utils/firebase";
+import moment from "moment";
+import { create } from "zustand";
+import { v4 as uuidv4 } from "uuid";
+import { mod } from "shades";
+
+export const useFileStore = create((set) => ({
+	file: {},
+	set_file: (path, value) =>
+		set((state) => pipe(mod(...path)(() => value))(state)),
+}));
+
+let file_id = "6449c89888b2aa8dd68202a8"; // this needs to be changed to the actual resource id
 
 const navigation = [
 	{ name: "All", href: "#", current: true, icon: ListBulletIcon },
@@ -73,24 +93,15 @@ const category_styles = [
 ];
 
 export const loader = async ({ request }) => {
-	let file_id = "6449c95f88b2aa8dd68202ae";
-	const listRef = ref(storage, `files/${file_id}`);
-	const storage_url = `https://firebasestorage.googleapis.com/v0/b/creditbanc-b9822.appspot.com/o/files`;
+	let queries = [
+		{
+			param: "resource_id",
+			predicate: "==",
+			value: file_id,
+		},
+	];
 
-	const get_file_url = (itemRef) =>
-		`${storage_url}${encodeURIComponent(
-			`/${file_id}/${itemRef.name}`
-		)}?alt=media`;
-
-	let documents_response = await listAll(listRef);
-
-	let documents = pipe(
-		mapIndexed((file, idx) => ({
-			id: idx,
-			name: file.name,
-			url: get_file_url(file),
-		}))
-	)(documents_response.items);
+	let documents = await get_collection({ queries, path: ["vault"] });
 
 	return { documents };
 };
@@ -127,16 +138,25 @@ const Heading = () => {
 const RecentTagsFilter = () => {
 	return (
 		<div className="flex flex-col w-full py-5">
-			<div className="flex flex-row w-full items-center text-sm space-x-3 ">
+			<div className="flex flex-row w-full items-center text-xs space-x-3">
 				<div className="text-gray-400">Show</div>
 				<div className="flex flex-col px-3 py-1 border rounded-full text-gray-500 bg-gray-50 cursor-pointer">
 					Form 1040
 				</div>
 				<div className="flex flex-col px-3 py-1 border rounded-full text-gray-500 bg-gray-50 cursor-pointer">
+					Form 1065
+				</div>
+				<div className="flex flex-col px-3 py-1 border rounded-full text-gray-500 bg-gray-50 cursor-pointer">
 					Form 1099
 				</div>
 				<div className="flex flex-col px-3 py-1 border rounded-full text-gray-500 bg-gray-50 cursor-pointer">
+					Form 1120
+				</div>
+				<div className="flex flex-col px-3 py-1 border rounded-full text-gray-500 bg-gray-50 cursor-pointer">
 					Form W-2
+				</div>
+				<div className="flex flex-col px-3 py-1 border rounded-full text-gray-500 bg-gray-50 cursor-pointer">
+					2021
 				</div>
 				<div className="flex flex-col px-3 py-1 border rounded-full text-gray-500 bg-gray-50 cursor-pointer">
 					2022
@@ -183,7 +203,9 @@ let Category = ({ category }) => {
 	);
 };
 
-const TableRow = () => {
+const TableRow = ({ document }) => {
+	let { name, tags, created_at, download_url } = document;
+
 	return (
 		<div className="flex flex-row w-full border-b py-3 items-center text-sm">
 			<div className="flex flex-col w-[40px]">
@@ -193,18 +215,22 @@ const TableRow = () => {
 				/>
 			</div>
 			<div className="flex flex-col w-[250px]">
-				<div className="flex flex-row items-center space-x-3">
+				<Link
+					target="_blank"
+					to={download_url}
+					className="flex flex-row items-center space-x-3"
+				>
 					<div className="flex flex-col ">
 						<DocumentIcon className="h-4 w-4 text-red-400" />
 					</div>
-					<div className="flex flex-col">1040</div>
-				</div>
+					<div className="flex flex-col">{truncate(20, name)}</div>
+				</Link>
 			</div>
 			<div className="flex flex-col flex-1">
 				<div className="flex flex-row w-full">
-					<Category category="Form 1040" />
-					<Category category="Form 1040" />
-					<Category category="Form 1040" />
+					{pipe(map((tag) => <Category category="Form 1040" />))(
+						tags
+					)}
 				</div>
 			</div>
 			<div className="flex flex-col w-[80px]">
@@ -213,10 +239,10 @@ const TableRow = () => {
 				</div>
 			</div>
 			<div className="flex flex-col w-[100px]">
-				<div>Dec 5, 2022</div>
+				<div>{moment(created_at).format("MMM D, YYYY")}</div>
 			</div>
 			<div className="flex flex-col w-[50px]">
-				<FileActionsDropdown />
+				<FileActionsDropdown document={document} />
 			</div>
 		</div>
 	);
@@ -302,10 +328,13 @@ const SideNav = () => {
 	);
 };
 
-const FileActionsDropdown = () => {
+const FileActionsDropdown = ({ document }) => {
 	let set_modal = useModalStore((state) => state.set_modal);
+	let set_file = useFileStore((state) => state.set_file);
 
 	const onEditFileClick = () => {
+		set_file(["file"], document);
+
 		set_modal({
 			id: "file_edit_modal",
 			is_open: true,
@@ -334,6 +363,24 @@ const FileActionsDropdown = () => {
 						<Menu.Item>
 							{({ active }) => (
 								<div
+									// onClick={onEditFileClick}
+									className={classNames(
+										active
+											? "bg-gray-100 text-gray-900"
+											: "text-gray-700",
+										"flex flex-row px-4 py-2 text-sm cursor-pointer items-center space-x-3"
+									)}
+								>
+									<div>
+										<EyeIcon className="h-4 w-4" />
+									</div>
+									<div>View</div>
+								</div>
+							)}
+						</Menu.Item>
+						<Menu.Item>
+							{({ active }) => (
+								<div
 									onClick={onEditFileClick}
 									className={classNames(
 										active
@@ -352,7 +399,7 @@ const FileActionsDropdown = () => {
 						<Menu.Item>
 							{({ active }) => (
 								<div
-									onClick={onEditFileClick}
+									// onClick={onEditFileClick}
 									className={classNames(
 										active
 											? "bg-gray-100 text-gray-900"
@@ -370,7 +417,7 @@ const FileActionsDropdown = () => {
 						<Menu.Item>
 							{({ active }) => (
 								<div
-									onClick={onEditFileClick}
+									// onClick={onEditFileClick}
 									className={classNames(
 										active
 											? "bg-gray-100 text-gray-900"
@@ -394,12 +441,31 @@ const FileActionsDropdown = () => {
 
 const EditFileModal = () => {
 	let set_modal = useModalStore((state) => state.set_modal);
+	let set_file = useFileStore((state) => state.set_file);
+	let file = useFileStore((state) => state.file);
+	let { name = "", id } = file;
 
 	const onCloseModal = () => {
 		set_modal({
 			id: "file_edit_modal",
 			is_open: false,
 		});
+	};
+
+	const onChangeName = (e) => {
+		set_file(["file", "name"], e.target.value);
+	};
+
+	const onSaveFileChanges = async () => {
+		console.log("save file changes");
+		await set_doc(["vault", id], file);
+
+		set_modal({
+			id: "file_edit_modal",
+			is_open: false,
+		});
+
+		console.log("saved");
 	};
 
 	return (
@@ -409,7 +475,7 @@ const EditFileModal = () => {
 					<div className="">
 						<DocumentIcon className="h-6 w-6 text-red-400" />
 					</div>
-					<div>Hi</div>
+					<div>{name}</div>
 				</div>
 				<div onClick={onCloseModal}>
 					<XMarkIcon className="h-6 w-6 text-gray-400 cursor-pointer" />
@@ -419,7 +485,12 @@ const EditFileModal = () => {
 				<div className="flex flex-col w-full space-y-2">
 					<div className="text-gray-400">Document name</div>
 					<div className="flex flex-col w-full border-2 rounded h-[50px] justify-center px-2 text-lg font-light">
-						<input type="text" className="outline-none w-full" />
+						<input
+							type="text"
+							className="outline-none w-full"
+							value={name}
+							onChange={onChangeName}
+						/>
 					</div>
 				</div>
 
@@ -472,6 +543,7 @@ const EditFileModal = () => {
 						<button
 							type="button"
 							className="bg-gray-700 text-white py-2 px-3 rounded"
+							onClick={onSaveFileChanges}
 						>
 							Save
 						</button>
@@ -484,7 +556,7 @@ const EditFileModal = () => {
 
 const UploadForm = () => {
 	const location = useLocation();
-	const file_id = get_file_id(location.pathname);
+	// const file_id = get_file_id(location.pathname);
 	const [file_name, set_file_name] = useState("");
 	const [progress, set_progress] = useState(0);
 	const set_modal = useModalStore((state) => state.set_modal);
@@ -509,7 +581,9 @@ const UploadForm = () => {
 		const file = e.target[0]?.files[0];
 		if (!file) return;
 
-		const storageRef = ref(storage, `files/${file_id}/${file.name}`);
+		let id = uuidv4();
+
+		const storageRef = ref(storage, `files/${file_id}/${id}`);
 		const uploadTask = uploadBytesResumable(storageRef, file);
 
 		const next = (snapshot) => {
@@ -525,15 +599,24 @@ const UploadForm = () => {
 			console.log(error);
 		};
 
-		const complete = () => {
-			getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
-				set_files({
-					files: [
-						...files,
-						{ name: file.name, url: downloadURL, id: files.length },
-					],
-				});
-			});
+		const complete = async () => {
+			let download_url = await getDownloadURL(uploadTask.snapshot.ref);
+
+			console.log("download_url");
+			console.log(download_url);
+
+			let payload = {
+				name: file.name,
+				download_url,
+				tags: [],
+				created_at: new Date().toISOString(),
+				resource_id: file_id,
+				id,
+			};
+
+			await set_doc(["vault", id], payload);
+
+			set_files(["files"], [...files, payload]);
 		};
 
 		uploadTask.on("state_changed", next, error, complete);
@@ -654,6 +737,13 @@ const UploadFileModal = () => {
 
 export default function Files() {
 	let { documents = [] } = useLoaderData();
+	const files = useFilesStore((state) => state.files);
+	const set_files = useFilesStore((state) => state.set_files);
+
+	useEffect(() => {
+		set_files(["files"], documents);
+	}, [documents]);
+
 	return (
 		<div className="flex flex-col w-full h-full p-5 ">
 			<EditFileModal />
@@ -669,9 +759,12 @@ export default function Files() {
 					<div className="flex flex-col w-full">
 						{pipe(
 							mapIndexed((document, document_index) => (
-								<TableRow key={document_index} />
+								<TableRow
+									key={document_index}
+									document={document}
+								/>
 							))
-						)(documents)}
+						)(files)}
 					</div>
 				</div>
 			</div>
