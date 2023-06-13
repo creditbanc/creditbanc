@@ -34,7 +34,7 @@ import {
 	uploadBytes,
 	listAll,
 } from "firebase/storage";
-import { map, pipe } from "ramda";
+import { findIndex, map, pipe, propEq } from "ramda";
 import { set_doc } from "~/utils/firebase";
 import moment from "moment";
 import { create } from "zustand";
@@ -442,6 +442,8 @@ const FileActionsDropdown = ({ document }) => {
 const EditFileModal = () => {
 	let set_modal = useModalStore((state) => state.set_modal);
 	let set_file = useFileStore((state) => state.set_file);
+	let set_files = useFilesStore((state) => state.set_files);
+	let files = useFilesStore((state) => state.files);
 	let file = useFileStore((state) => state.file);
 	let { name = "", id } = file;
 
@@ -457,15 +459,20 @@ const EditFileModal = () => {
 	};
 
 	const onSaveFileChanges = async () => {
-		console.log("save file changes");
 		await set_doc(["vault", id], file);
+
+		const update_files = () => {
+			let { id } = file;
+			let index = pipe(findIndex(propEq("id", id)))(files);
+			set_files(["files"], pipe(mod(index)(() => file))(files));
+		};
+
+		update_files();
 
 		set_modal({
 			id: "file_edit_modal",
 			is_open: false,
 		});
-
-		console.log("saved");
 	};
 
 	return (
@@ -475,7 +482,7 @@ const EditFileModal = () => {
 					<div className="">
 						<DocumentIcon className="h-6 w-6 text-red-400" />
 					</div>
-					<div>{name}</div>
+					<div>{truncate(30, name)}</div>
 				</div>
 				<div onClick={onCloseModal}>
 					<XMarkIcon className="h-6 w-6 text-gray-400 cursor-pointer" />
@@ -602,8 +609,8 @@ const UploadForm = () => {
 		const complete = async () => {
 			let download_url = await getDownloadURL(uploadTask.snapshot.ref);
 
-			console.log("download_url");
-			console.log(download_url);
+			// console.log("download_url");
+			// console.log(download_url);
 
 			let payload = {
 				name: file.name,
