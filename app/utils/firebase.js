@@ -10,6 +10,7 @@ import {
 	query,
 	where,
 	getDocs,
+	deleteDoc,
 } from "firebase/firestore";
 
 // Your web app's Firebase configuration
@@ -45,4 +46,8 @@ export const get_collection = async ({ path, queries = null }) => {
 
 export const set_doc = async (path, data) => {
 	return await setDoc(doc(firestore, ...path), data);
+};
+
+export const delete_doc = async (path) => {
+	await deleteDoc(doc(firestore, ...path));
 };

@@ -25,7 +25,7 @@ import { useModalStore } from "~/hooks/useModal";
 import { useEffect, Fragment, useState } from "react";
 import { Link, useLoaderData, useLocation } from "@remix-run/react";
 import { useFilesStore } from "~/hooks/useFiles";
-import { get_collection, storage } from "~/utils/firebase";
+import { delete_doc, get_collection, storage } from "~/utils/firebase";
 import {
 	ref,
 	getDownloadURL,
@@ -40,6 +40,7 @@ import moment from "moment";
 import { create } from "zustand";
 import { v4 as uuidv4 } from "uuid";
 import { mod } from "shades";
+import { doc } from "firebase/firestore";
 
 export const useFileStore = create((set) => ({
 	file: {},
@@ -331,6 +332,8 @@ const SideNav = () => {
 };
 
 const FileActionsDropdown = ({ document }) => {
+	let files = useFilesStore((state) => state.files);
+	let set_files = useFilesStore((state) => state.set_files);
 	let set_modal = useModalStore((state) => state.set_modal);
 	let set_file = useFileStore((state) => state.set_file);
 
@@ -341,6 +344,34 @@ const FileActionsDropdown = ({ document }) => {
 			id: "file_edit_modal",
 			is_open: true,
 		});
+	};
+
+	const onDownloadFileClick = async () => {
+		let blob = await fetch(document.download_url).then((response) =>
+			response.blob()
+		);
+
+		const url = window.URL.createObjectURL(
+			new Blob([blob], { type: blob.type })
+		);
+
+		const link = window.document.createElement("a");
+		link.href = url;
+		link.download = document.name;
+
+		window.document.body.appendChild(link);
+		link.click();
+
+		link.parentNode.removeChild(link);
+	};
+
+	const onDeleteFileClick = async () => {
+		let { id } = document;
+		let file_path = ["vault", id];
+		await delete_doc(file_path);
+
+		let index = pipe(findIndex(propEq("id", id)))(files);
+		set_files(["files"], remove(index, 1, files));
 	};
 
 	return (
@@ -364,8 +395,9 @@ const FileActionsDropdown = ({ document }) => {
 					<div className="py-1">
 						<Menu.Item>
 							{({ active }) => (
-								<div
-									// onClick={onEditFileClick}
+								<Link
+									to={document.download_url}
+									target="_blank"
 									className={classNames(
 										active
 											? "bg-gray-100 text-gray-900"
@@ -377,7 +409,7 @@ const FileActionsDropdown = ({ document }) => {
 										<EyeIcon className="h-4 w-4" />
 									</div>
 									<div>View</div>
-								</div>
+								</Link>
 							)}
 						</Menu.Item>
 						<Menu.Item>
@@ -401,7 +433,7 @@ const FileActionsDropdown = ({ document }) => {
 						<Menu.Item>
 							{({ active }) => (
 								<div
-									// onClick={onEditFileClick}
+									onClick={onDownloadFileClick}
 									className={classNames(
 										active
 											? "bg-gray-100 text-gray-900"
@@ -419,7 +451,7 @@ const FileActionsDropdown = ({ document }) => {
 						<Menu.Item>
 							{({ active }) => (
 								<div
-									// onClick={onEditFileClick}
+									onClick={onDeleteFileClick}
 									className={classNames(
 										active
 											? "bg-gray-100 text-gray-900"
