@@ -202,7 +202,7 @@ const SideNav = () => {
 							{item.name}
 						</a>
 					) : (
-						<Disclosure as="div">
+						<Disclosure as="div" defaultOpen={true}>
 							{({ open }) => (
 								<>
 									<Disclosure.Button
@@ -441,9 +441,9 @@ const EditFileModal = () => {
 
 export default function Files() {
 	return (
-		<div className="flex flex-col w-full h-full p-5">
+		<div className="flex flex-col w-full h-full p-5 ">
 			<EditFileModal />
-			<div className="flex flex-row w-full border rounded h-full">
+			<div className="flex flex-row w-full border rounded h-full bg-white">
 				<div className="flex flex-col w-[250px] border-r">
 					<SideNav />
 				</div>
