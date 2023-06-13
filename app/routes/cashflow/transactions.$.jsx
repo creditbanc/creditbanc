@@ -141,7 +141,7 @@ const TransactionsTable = () => {
 
 	return (
 		<div className="flex flex-col pr-5">
-			<div className="flex flex-col w-full ">
+			<div className="flex flex-col w-full">
 				{pipe(
 					mapIndexed((transaction, transaction_idx) => (
 						<div
@@ -261,7 +261,7 @@ export default function Transactions() {
 	return (
 		<div className="flex flex-col w-full p-5 overflow-hidden">
 			<div className="flex flex-row w-full overflow-hidden">
-				<div className="flex flex-col w-[70%] overflow-y-scroll">
+				<div className="flex flex-col w-[70%] overflow-y-scroll scrollbar-none">
 					<TransactionsHeaderStats />
 					<div className="transactions_table_header flex flex-row pb-3 border-b text-sm sticky top-0 mr-5 bg-white">
 						<div className="flex flex-col w-[175px]">Merchant</div>
