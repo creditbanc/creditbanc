@@ -107,7 +107,7 @@ const Heading = () => {
 			<div className="flex flex-row justify-between items-end">
 				<div className="flex flex-col">
 					<h3 className="text-base font-semibold leading-6 text-gray-900">
-						Recents
+						Documents
 					</h3>
 				</div>
 				<div className="flex flex-col">
@@ -228,7 +228,7 @@ const NavIcon = ({ icon: Icon }) => {
 
 const SideNav = () => {
 	return (
-		<ul role="list" className="flex flex-1 flex-col px-2 ">
+		<ul role="list" className="flex flex-1 flex-col px-2 mt-2">
 			{navigation.map((item) => (
 				<li key={item.name}>
 					{!item.children ? (
@@ -238,7 +238,7 @@ const SideNav = () => {
 								item.current
 									? "bg-gray-50"
 									: "hover:bg-gray-50",
-								"flex items-center w-full text-left rounded-md gap-x-3 text-sm leading-6 font-semibold text-gray-700 py-1.5 px-2 my-2"
+								"flex items-center w-full text-left rounded-md gap-x-3 text-sm leading-6 font-semibold text-gray-700 px-2 my-1 py-2"
 							)}
 						>
 							<NavIcon icon={item.icon} />
@@ -253,7 +253,7 @@ const SideNav = () => {
 											item.current
 												? "bg-gray-50"
 												: "hover:bg-gray-50",
-											"flex items-center w-full text-left rounded-md gap-x-3 text-sm leading-6 font-semibold text-gray-700 py-1.5 px-2 my-2"
+											"flex items-center w-full text-left rounded-md gap-x-3 text-sm leading-6 font-semibold text-gray-700 py-2 px-2 my-1"
 										)}
 									>
 										{open && (
