@@ -200,20 +200,16 @@ export default function Documents() {
 				`/${file_id}/${itemRef.name}`
 			)}?alt=media`;
 
-		listAll(listRef)
-			.then((res) => {
-				pipe(
-					mapIndexed((file, idx) => ({
-						id: idx,
-						name: file.name,
-						url: get_file_url(file),
-					})),
-					(files) => set_files({ files })
-				)(res.items);
-			})
-			.catch((error) => {
-				// Uh-oh, an error occurred!
-			});
+		listAll(listRef).then((res) => {
+			pipe(
+				mapIndexed((file, idx) => ({
+					id: idx,
+					name: file.name,
+					url: get_file_url(file),
+				})),
+				(files) => set_files({ files })
+			)(res.items);
+		});
 	}, []);
 
 	const onSetUploadModal = () => {

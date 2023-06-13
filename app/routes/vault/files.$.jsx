@@ -11,12 +11,12 @@ import {
 	TrashIcon,
 	ArrowUpOnSquareIcon,
 } from "@heroicons/react/24/outline";
-import { sample, classNames, get_file_id } from "~/utils/helpers";
+import { sample, classNames, get_file_id, mapIndexed } from "~/utils/helpers";
 import { Disclosure, Menu, Transition } from "@headlessui/react";
 import Modal from "~/components/Modal";
 import { useModalStore } from "~/hooks/useModal";
 import { useEffect, Fragment, useState } from "react";
-import { useLocation } from "@remix-run/react";
+import { useLoaderData, useLocation } from "@remix-run/react";
 import { useFilesStore } from "~/hooks/useFiles";
 import { storage } from "~/utils/firebase";
 import {
@@ -27,6 +27,7 @@ import {
 	uploadBytes,
 	listAll,
 } from "firebase/storage";
+import { map, pipe } from "ramda";
 
 const navigation = [
 	{ name: "All", href: "#", current: true, icon: ListBulletIcon },
@@ -42,6 +43,57 @@ const navigation = [
 		],
 	},
 ];
+
+const category_styles = [
+	{
+		bg_color: "bg-red-100",
+		text_color: "text-red-500",
+		border_color: "border-red-500",
+	},
+	{
+		bg_color: "bg-blue-100",
+		text_color: "text-blue-500",
+		border_color: "border-blue-500",
+	},
+	{
+		bg_color: "bg-purple-100",
+		text_color: "text-purple-500",
+		border_color: "border-purple-500",
+	},
+	{
+		bg_color: "bg-green-100",
+		text_color: "text-green-500",
+		border_color: "border-green-500",
+	},
+	{
+		bg_color: "bg-orange-100",
+		text_color: "text-orange-500",
+		border_color: "border-orange-500",
+	},
+];
+
+export const loader = async ({ request }) => {
+	let file_id = "6449c95f88b2aa8dd68202ae";
+	const listRef = ref(storage, `files/${file_id}`);
+	const storage_url = `https://firebasestorage.googleapis.com/v0/b/creditbanc-b9822.appspot.com/o/files`;
+
+	const get_file_url = (itemRef) =>
+		`${storage_url}${encodeURIComponent(
+			`/${file_id}/${itemRef.name}`
+		)}?alt=media`;
+
+	let documents_response = await listAll(listRef);
+
+	let documents = pipe(
+		mapIndexed((file, idx) => ({
+			id: idx,
+			name: file.name,
+			url: get_file_url(file),
+		}))
+	)(documents_response.items);
+
+	return { documents };
+};
 
 const Heading = () => {
 	let set_modal = useModalStore((state) => state.set_modal);
@@ -116,34 +168,6 @@ const FilesTableHeader = () => {
 		</div>
 	);
 };
-
-let category_styles = [
-	{
-		bg_color: "bg-red-100",
-		text_color: "text-red-500",
-		border_color: "border-red-500",
-	},
-	{
-		bg_color: "bg-blue-100",
-		text_color: "text-blue-500",
-		border_color: "border-blue-500",
-	},
-	{
-		bg_color: "bg-purple-100",
-		text_color: "text-purple-500",
-		border_color: "border-purple-500",
-	},
-	{
-		bg_color: "bg-green-100",
-		text_color: "text-green-500",
-		border_color: "border-green-500",
-	},
-	{
-		bg_color: "bg-orange-100",
-		text_color: "text-orange-500",
-		border_color: "border-orange-500",
-	},
-];
 
 let Category = ({ category }) => {
 	let { bg_color, text_color, border_color } = sample(category_styles);
@@ -629,6 +653,7 @@ const UploadFileModal = () => {
 };
 
 export default function Files() {
+	let { documents = [] } = useLoaderData();
 	return (
 		<div className="flex flex-col w-full h-full p-5 ">
 			<EditFileModal />
@@ -642,9 +667,11 @@ export default function Files() {
 					<RecentTagsFilter />
 					<FilesTableHeader />
 					<div className="flex flex-col w-full">
-						<TableRow />
-						<TableRow />
-						<TableRow />
+						{pipe(
+							mapIndexed((document, document_index) => (
+								<TableRow key={document_index} />
+							))
+						)(documents)}
 					</div>
 				</div>
 			</div>
