@@ -9,12 +9,24 @@ import {
 	PencilIcon,
 	ArrowDownTrayIcon,
 	TrashIcon,
+	ArrowUpOnSquareIcon,
 } from "@heroicons/react/24/outline";
-import { sample, classNames } from "~/utils/helpers";
+import { sample, classNames, get_file_id } from "~/utils/helpers";
 import { Disclosure, Menu, Transition } from "@headlessui/react";
 import Modal from "~/components/Modal";
 import { useModalStore } from "~/hooks/useModal";
-import { useEffect, Fragment } from "react";
+import { useEffect, Fragment, useState } from "react";
+import { useLocation } from "@remix-run/react";
+import { useFilesStore } from "~/hooks/useFiles";
+import { storage } from "~/utils/firebase";
+import {
+	ref,
+	getDownloadURL,
+	uploadBytesResumable,
+	getStorage,
+	uploadBytes,
+	listAll,
+} from "firebase/storage";
 
 const navigation = [
 	{ name: "All", href: "#", current: true, icon: ListBulletIcon },
@@ -32,6 +44,12 @@ const navigation = [
 ];
 
 const Heading = () => {
+	let set_modal = useModalStore((state) => state.set_modal);
+
+	const onUploadFileModalOpen = () => {
+		set_modal({ id: "upload_file_modal", is_open: true });
+	};
+
 	return (
 		<div className="border-b border-gray-200 pb-5">
 			<div className="flex flex-row justify-between items-end">
@@ -42,6 +60,7 @@ const Heading = () => {
 				</div>
 				<div className="flex flex-col">
 					<button
+						onClick={onUploadFileModalOpen}
 						type="button"
 						className="rounded-md bg-gray-700 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-gray-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
 					>
@@ -439,10 +458,181 @@ const EditFileModal = () => {
 	);
 };
 
+const UploadForm = () => {
+	const location = useLocation();
+	const file_id = get_file_id(location.pathname);
+	const [file_name, set_file_name] = useState("");
+	const [progress, set_progress] = useState(0);
+	const set_modal = useModalStore((state) => state.set_modal);
+	const files = useFilesStore((state) => state.files);
+	const set_files = useFilesStore((state) => state.set_files);
+
+	useEffect(() => {
+		if (file_name === "") {
+			set_progress(0);
+		}
+	}, [file_name]);
+
+	useEffect(() => {
+		if (progress === 100) {
+			set_modal({ id: "upload_file_modal", is_open: false });
+		}
+	}, [progress]);
+
+	const onUpload = async (e) => {
+		e.preventDefault();
+
+		const file = e.target[0]?.files[0];
+		if (!file) return;
+
+		const storageRef = ref(storage, `files/${file_id}/${file.name}`);
+		const uploadTask = uploadBytesResumable(storageRef, file);
+
+		const next = (snapshot) => {
+			const current_progress = Math.round(
+				(snapshot.bytesTransferred / snapshot.totalBytes) * 100
+			);
+
+			set_progress(current_progress);
+		};
+
+		const error = (error) => {
+			console.log("error");
+			console.log(error);
+		};
+
+		const complete = () => {
+			getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+				set_files({
+					files: [
+						...files,
+						{ name: file.name, url: downloadURL, id: files.length },
+					],
+				});
+			});
+		};
+
+		uploadTask.on("state_changed", next, error, complete);
+	};
+
+	const onSelectFile = (e) => {
+		console.log("onSelectFile");
+		// console.log(e.target.files[0]?.name);
+
+		let file_name = e.target.files[0]?.name;
+		set_file_name(file_name);
+	};
+
+	return (
+		<form className="flex flex-col h-full" onSubmit={onUpload}>
+			<input
+				id="file-upload"
+				type="file"
+				className="hidden"
+				onChange={onSelectFile}
+			/>
+
+			{file_name === "" && (
+				<label
+					htmlFor="file-upload"
+					className="flex flex-col items-center justify-center w-full border border-dashed rounded border-gray-300 text-gray-300 mb-1 h-[300px] cursor-pointer"
+				>
+					<div className="flex flex-col items-center">
+						<div className="w-[50px] my-2">
+							<ArrowUpOnSquareIcon />
+						</div>
+						<div>Click to select file</div>
+					</div>
+				</label>
+			)}
+
+			{file_name !== "" && (
+				<div className="bg-gray-50 flex flex-col items-center rounded my-2 pb-3 pt-2">
+					<div className="flex flex-row w-full mb-3">
+						<div className="flex flex-col w-[50px] items-center">
+							<div className="w-[30px] h-[30px] bg-[#fff] flex flex-col items-center justify-center border border-gray-300 rounded">
+								<div className="w-[17px] flex flex-col items-center justify-center text-gray-400">
+									<DocumentIcon />
+								</div>
+							</div>
+						</div>
+						<div className="flex flex-col grow justify-center">
+							<p className="text-xs">{file_name}</p>
+						</div>
+						<div
+							className="flex flex-col w-[15px] self-start mr-1.5 cursor-pointer text-gray-400"
+							onClick={() => set_file_name("")}
+						>
+							<XMarkIcon />
+						</div>
+					</div>
+					<div className="flex flex-col w-full px-2">
+						<div className="w-full bg-gray-200 rounded-full h-2.5 dark:bg-gray-700">
+							<div
+								className={`bg-blue-600 h-2.5 rounded-full ${
+									progress > 0 ? `w-[${progress}%]` : "w-0"
+								}`}
+							></div>
+						</div>
+					</div>
+				</div>
+			)}
+
+			<button
+				className={`flex flex-row py-1 px-2 rounded justify-center items-center mt-1 ${
+					file_name == ""
+						? "cursor-not-allowed bg-gray-100 text-gray-400"
+						: "text-white cursor-pointer bg-[#55CF9E]"
+				}`}
+				type="submit"
+				disabled={file_name == ""}
+			>
+				{file_name !== "" && (
+					<div className="w-[20px] mr-2 flex flex-col justify-center items-center h-full">
+						<ArrowUpOnSquareIcon />
+					</div>
+				)}
+
+				<div className="flex flex-col justify-center h-[40px]">
+					Upload
+				</div>
+			</button>
+		</form>
+	);
+};
+
+const UploadFileModal = () => {
+	let set_modal = useModalStore((state) => state.set_modal);
+
+	const onCloseModal = () => {
+		set_modal({ id: "upload_file_modal", is_open: false });
+	};
+
+	return (
+		<Modal id="upload_file_modal" classes="min-w-[700px]">
+			<div className="flex flex-row w-full py-5 px-5 border-b text-2xl items-center">
+				<div className="flex flex-row w-full items-center space-x-3 text-gray-400">
+					<div className="">
+						<DocumentIcon className="h-6 w-6 " />
+					</div>
+					<div>Upload File</div>
+				</div>
+				<div onClick={onCloseModal}>
+					<XMarkIcon className="h-6 w-6 text-gray-400 cursor-pointer" />
+				</div>
+			</div>
+			<div className="flex flex-col p-5 ">
+				<UploadForm />
+			</div>
+		</Modal>
+	);
+};
+
 export default function Files() {
 	return (
 		<div className="flex flex-col w-full h-full p-5 ">
 			<EditFileModal />
+			<UploadFileModal />
 			<div className="flex flex-row w-full border rounded h-full bg-white">
 				<div className="flex flex-col w-[250px] border-r">
 					<SideNav />
