@@ -209,10 +209,21 @@ export default function Accounts() {
 	return (
 		<div className="flex flex-col w-full h-full p-5 overflow-hidden">
 			<div className="flex flex-col w-full h-full bg-white rounded p-5">
-				<div className="flex flex-col mb-7 space-y-2">
-					<div className="text-gray-700">Total Balance</div>
-					<div className="text-4xl">
-						{currency.format(5144707.08)}
+				<div className="flex flex-row justify-between">
+					<div className="flex flex-col mb-7 space-y-2">
+						<div className="text-gray-700">Total Balance</div>
+						<div className="text-4xl">
+							{currency.format(5144707.08)}
+						</div>
+					</div>
+					<div className="flex flex-col">
+						<button
+							// onClick={onUploadFileModalOpen}
+							type="button"
+							className="rounded-md bg-gray-700 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-gray-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+						>
+							Add Account
+						</button>
 					</div>
 				</div>
 				<div className="flex flex-row text-sm border-b pb-3 text-gray-400">
