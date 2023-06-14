@@ -43,6 +43,8 @@ import {
 	includes,
 	isEmpty,
 	not,
+	uniqBy,
+	prop,
 } from "ramda";
 import { set_doc } from "~/utils/firebase";
 import moment from "moment";
@@ -251,10 +253,10 @@ let Category = ({ category }) => {
 
 	return (
 		<div
-			className={`flex flex-col rounded-full w-[90px] overflow-hidden h-[25px] border -ml-[20px] first-of-type:ml-0 justify-center ${bg_color} ${text_color} ${border_color}`}
+			className={`flex flex-col rounded-full max-w-[90px] overflow-hidden h-[25px] border -ml-[20px] first-of-type:ml-0 justify-center px-1.5 ${bg_color} ${text_color} ${border_color}`}
 		>
 			<div className={`flex flex-col w-[90%] px-2 overflow-hidden`}>
-				<div className={`w-[300px]`}>{category}</div>
+				<div className={`max-w-[200px] text-center`}>{category}</div>
 			</div>
 		</div>
 	);
@@ -287,7 +289,7 @@ const TableRow = ({ document }) => {
 				<div className="flex flex-row w-full">
 					{pipe(
 						mapIndexed((tag, tag_index) => (
-							<Category category={tag.label} key={tag_index} />
+							<Category category={tag.id} key={tag_index} />
 						))
 					)(tags)}
 				</div>
@@ -566,7 +568,7 @@ const EditFileModal = () => {
 	};
 
 	const onAddTag = (tag) => {
-		set_file(["file", "tags"], [...file.tags, tag]);
+		set_file(["file", "tags"], uniqBy(prop("id"), [...file.tags, tag]));
 	};
 
 	const onRemoveTag = (tag_index) => {
