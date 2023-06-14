@@ -209,6 +209,12 @@ export default function Accounts() {
 	return (
 		<div className="flex flex-col w-full h-full p-5 overflow-hidden">
 			<div className="flex flex-col w-full h-full bg-white rounded p-5">
+				<div className="flex flex-col mb-7 space-y-2">
+					<div className="text-gray-700">Total Balance</div>
+					<div className="text-4xl">
+						{currency.format(5144707.08)}
+					</div>
+				</div>
 				<div className="flex flex-row text-sm border-b pb-3 text-gray-400">
 					<div className="flex flex-col w-[250px]">Account</div>
 					<div className="flex flex-col w-[200px]">
