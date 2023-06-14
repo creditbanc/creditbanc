@@ -892,7 +892,7 @@ export default function Files() {
 	}, [documents]);
 
 	return (
-		<div className="flex flex-col w-full h-full p-5 ">
+		<div className="flex flex-col w-full h-full p-5">
 			<EditFileModal />
 			<UploadFileModal />
 			<div className="flex flex-row w-full border rounded h-full bg-white">

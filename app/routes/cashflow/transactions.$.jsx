@@ -140,7 +140,7 @@ const TransactionsTable = () => {
 	};
 
 	return (
-		<div className="flex flex-col pr-5">
+		<div className="flex flex-col ">
 			<div className="flex flex-col w-full">
 				{pipe(
 					mapIndexed((transaction, transaction_idx) => (
@@ -183,7 +183,7 @@ const TransactionDetails = () => {
 
 	if (!transaction) {
 		return (
-			<div className="flex flex-col w-full border p-3 rounded-lg mt-[25px]">
+			<div className="flex flex-col w-full border p-3 rounded-lg bg-white">
 				<div className="flex flex-col w-full items-center justify-center text-gray-400">
 					No Transaction Selected
 				</div>
@@ -192,7 +192,7 @@ const TransactionDetails = () => {
 	}
 
 	return (
-		<div className="flex flex-col w-full border p-3 rounded-lg mt-[25px]">
+		<div className="flex flex-col w-full border p-3 rounded-lg bg-white">
 			<div className="flex flex-row justify-between items-center text-2xl">
 				<div className="flex flex-row items-center">
 					<div className="flex flex-col rounded-full w-[40px] h-[40px] items-center justify-center bg-red-100 mr-[10px] text-red-500">
@@ -238,7 +238,7 @@ const TransactionsHeaderStats = () => {
 	let { totals } = useLoaderData();
 
 	return (
-		<div className="flex flex-col mb-[40px]">
+		<div className="flex flex-col mb-[40px] mt-5">
 			<div className="flex flex-row">
 				<div className="flex flex-col w-1/2 space-y-1">
 					<div className="text-sm text-gray-400">Income</div>
@@ -261,9 +261,9 @@ export default function Transactions() {
 	return (
 		<div className="flex flex-col w-full p-5 overflow-hidden">
 			<div className="flex flex-row w-full overflow-hidden">
-				<div className="flex flex-col w-[70%] overflow-y-scroll scrollbar-none">
+				<div className="flex flex-col w-[70%] overflow-y-scroll scrollbar-none bg-white px-5 pb-5 rounded">
 					<TransactionsHeaderStats />
-					<div className="transactions_table_header flex flex-row pb-3 border-b text-sm sticky top-0 mr-5 bg-white">
+					<div className="transactions_table_header flex flex-row py-3 border-b text-sm sticky top-0 bg-white">
 						<div className="flex flex-col w-[175px]">Merchant</div>
 						<div className="flex flex-col w-[100px]">Amount</div>
 						<div className="flex flex-col w-[250px]">Category</div>
@@ -276,7 +276,7 @@ export default function Transactions() {
 					</div>
 					<TransactionsTable />
 				</div>
-				<div className="flex flex-col w-[30%]">
+				<div className="flex flex-col w-[30%] ml-5">
 					<TransactionDetails />
 				</div>
 			</div>

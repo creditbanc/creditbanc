@@ -11,8 +11,8 @@ export const loader = async ({ request }) => {
 export default function Cashflow() {
 	let { entity_id } = useLoaderData();
 	return (
-		<div className="flex flex-col w-full h-full">
-			<div className="flex flex-col w-full border-b">
+		<div className="flex flex-col w-full h-full bg-gray-50">
+			<div className="flex flex-col w-full border-b bg-white">
 				<SimpleNav user_id={entity_id} />
 			</div>
 
