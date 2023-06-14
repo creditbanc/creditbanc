@@ -51,6 +51,7 @@ import moment from "moment";
 import { create } from "zustand";
 import { v4 as uuidv4 } from "uuid";
 import { filter, matching, mod, get, all } from "shades";
+import { on } from "form-data";
 
 export const useFileStore = create((set) => ({
 	file: {},
@@ -233,10 +234,10 @@ const FilesTableHeader = () => {
 		<div className="flex flex-col w-full pt-5">
 			<div className="flex flex-row w-full text-sm text-gray-400 items-center border-b pb-5">
 				<div className="flex flex-col w-[40px]">
-					<input
+					{/* <input
 						type="checkbox"
 						className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600 cursor-pointer"
-					/>
+					/> */}
 				</div>
 				<div className="flex flex-col w-[250px]">Name</div>
 				<div className="flex flex-col flex-1">Tags</div>
@@ -264,11 +265,25 @@ let Category = ({ category }) => {
 
 const TableRow = ({ document }) => {
 	let { name, tags, created_at, download_url } = document;
+	let set_modal = useModalStore((state) => state.set_modal);
+	let set_file = useFileStore((state) => state.set_file);
+
+	const onSelectFile = () => {
+		set_file(["file"], document);
+
+		set_modal({
+			id: "file_edit_modal",
+			is_open: true,
+		});
+	};
 
 	return (
 		<div className="flex flex-row w-full border-b py-3 items-center text-sm">
 			<div className="flex flex-col w-[40px]">
 				<input
+					readOnly={true}
+					checked={false}
+					onClick={onSelectFile}
 					type="checkbox"
 					className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600 cursor-pointer"
 				/>
