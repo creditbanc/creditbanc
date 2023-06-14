@@ -192,44 +192,56 @@ const TransactionDetails = () => {
 	}
 
 	return (
-		<div className="flex flex-col w-full border p-3 rounded-lg bg-white">
-			<div className="flex flex-row justify-between items-center text-2xl">
-				<div className="flex flex-row items-center">
-					<div className="flex flex-col rounded-full w-[40px] h-[40px] items-center justify-center bg-red-100 mr-[10px] text-red-500">
-						{Array.from(transaction.name)[0].toUpperCase()}
+		<div className="flex flex-col w-full border rounded-lg bg-white">
+			<div className="p-3">
+				<div className="flex flex-row justify-between items-center text-2xl">
+					<div className="flex flex-row items-center">
+						<div className="flex flex-col rounded-full w-[40px] h-[40px] items-center justify-center bg-red-100 mr-[10px] text-red-500">
+							{Array.from(transaction.name)[0].toUpperCase()}
+						</div>
+						<div className="text-xl">{transaction.name}</div>
 					</div>
-					<div className="text-xl">{transaction.name}</div>
+					<div>{currency.format(transaction.amount)}</div>
 				</div>
-				<div>{currency.format(transaction.amount)}</div>
-			</div>
-			<div className="flex flex-col my-5">
-				<div className="flex flex-row text-sm ">
-					<div className="flex flex-col w-1/2 space-y-2">
-						<div className="text-gray-400">ACCOUNT</div>
-						<div>
-							<div>American Express</div>
+				<div className="flex flex-col my-5">
+					<div className="flex flex-row text-sm ">
+						<div className="flex flex-col w-1/2 space-y-2">
+							<div className="text-gray-400">ACCOUNT</div>
+							<div>
+								<div>American Express</div>
+							</div>
+						</div>
+						<div className="flex flex-col w-1/2 space-y-2">
+							<div className="text-gray-400">CATEGORY</div>
+							<div className="flex flex-row">
+								{pipe(
+									mapIndexed((category, category_idx) => (
+										<Category
+											category={category}
+											key={category_idx}
+										/>
+									))
+								)(transaction.category)}
+							</div>
 						</div>
 					</div>
-					<div className="flex flex-col w-1/2 space-y-2">
-						<div className="text-gray-400">CATEGORY</div>
-						<div className="flex flex-row">
-							{pipe(
-								map((category) => (
-									<Category category={category} />
-								))
-							)(transaction.category)}
-						</div>
-					</div>
+				</div>
+				<div className="flex flex-col text-sm my-1 space-y-1">
+					<div className="text-gray-400">Transaction date</div>
+					<div>{transaction.date}</div>
 				</div>
 			</div>
-			<div className="flex flex-col text-sm my-1 space-y-1">
-				<div className="text-gray-400">Transaction date</div>
-				<div>{transaction.date}</div>
+			<div className="border-t"></div>
+			<div className="flex flex-col text-sm my-3 space-y-2 px-3">
+				<div className="text-gray-400">Notes</div>
+				<div>
+					<textarea
+						rows={3}
+						className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+						defaultValue={""}
+					/>
+				</div>
 			</div>
-			{/* <div className="flex flex-col text-sm my-1 space-y-1">
-				<div className="text-gray-400">Location</div>
-				<div>345 Spear St, San Francisco 94105</div>
-			</div> */}
 		</div>
 	);
 };
