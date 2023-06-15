@@ -6,6 +6,8 @@ import {
 	BuildingLibraryIcon,
 	AtSymbolIcon,
 	PhoneIcon,
+	ArrowRightIcon,
+	ListBulletIcon,
 } from "@heroicons/react/24/outline";
 import { Menu, Transition } from "@headlessui/react";
 import axios from "axios";
@@ -21,7 +23,7 @@ import {
 } from "~/utils/helpers";
 import { useEffect, useState, Fragment } from "react";
 import { set_doc } from "~/utils/firebase";
-import { useLoaderData } from "@remix-run/react";
+import { Link, useLoaderData } from "@remix-run/react";
 import { get_accounts, get_auths, get_identities } from "~/api/plaid.server";
 import {
 	prop,
@@ -170,7 +172,7 @@ const AccountActionsDropdown = ({ document }) => {
 
 const TableRow = ({ account }) => {
 	return (
-		<div className="flex flex-row w-full text-gray-700 border-b py-3">
+		<div className="flex flex-row w-full text-gray-700 border-b py-3 hover:bg-gray-50">
 			<div className="flex flex-row space-x-3 w-[300px]">
 				<div className="flex flex-col justify-center">
 					<span className="inline-flex h-10 w-10 items-center justify-center rounded-full ">
@@ -291,7 +293,7 @@ export default function Accounts() {
 						<div className="flex flex-col w-[50px]"></div>
 					</div>
 				</div>
-				<div className="flex flex-col w-full py-3">
+				<div className="flex flex-col w-full pb-3">
 					{pipe(
 						mapIndexed((account) => (
 							<TableRow
@@ -327,6 +329,19 @@ export default function Accounts() {
 							<div>{account.official_name}</div>
 						</div>
 					</div>
+
+					<Link
+						to={`/cashflow/transactions`}
+						className="px-5 mb-4 flex flex-row items-center space-x-3 text-gray-400 cursor-pointer text-sm"
+					>
+						<div>
+							<ListBulletIcon className="h-4 w-4 text-gray-400" />
+						</div>
+						<div>Show transactions for this account</div>
+						<div>
+							<ArrowRightIcon className="h-4 w-4 text-gray-400" />
+						</div>
+					</Link>
 
 					<div className="flex flex-row px-5 pb-5">
 						<div className="flex flex-col w-1/2 text-sm space-y-1">
