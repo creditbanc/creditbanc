@@ -24,9 +24,14 @@ import {
 	formatPhoneNumber,
 } from "~/utils/helpers";
 import { useEffect, useState, Fragment } from "react";
-import { set_doc } from "~/utils/firebase";
+import { get_collection, set_doc } from "~/utils/firebase";
 import { Link, useLoaderData } from "@remix-run/react";
-import { get_accounts, get_auths, get_identities } from "~/api/plaid.server";
+import {
+	get_accounts,
+	get_auths,
+	get_identities,
+	get_transactions,
+} from "~/api/plaid.server";
 import {
 	prop,
 	pipe,
@@ -36,10 +41,21 @@ import {
 	values,
 	defaultTo,
 	flatten,
+	sortBy,
+	reverse,
+	sum,
+	take,
+	keys,
 } from "ramda";
 import { create } from "zustand";
 import { all, mod, get } from "shades";
 import { isEmpty } from "ramda";
+import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
+import { Doughnut, Line } from "react-chartjs-2";
+import { faker } from "@faker-js/faker";
+import "chart.js/auto";
+
+ChartJS.register(ArcElement, Tooltip, Legend);
 
 export const useAccountStore = create((set) => ({
 	account: {},
@@ -76,6 +92,19 @@ export const loader = async ({ request }) => {
 		numbers: { ach, bacs, eft, international },
 	} = await get_auths();
 
+	let transactions = await get_collection({
+		path: ["transactions"],
+	});
+
+	transactions = pipe(
+		sortBy(prop("date")),
+		reverse,
+		take(20),
+		groupBy(prop("date")),
+		mod(all)((date) => pipe(get(all, "amount"), sum)(date)),
+		mod(all)((value) => (value < 0 ? 0 : value))
+	)(transactions);
+
 	let accounts_payload = pipe(
 		groupBy(prop("account_id")),
 		map(mergeAll),
@@ -89,7 +118,7 @@ export const loader = async ({ request }) => {
 		...international,
 	]);
 
-	return { link_token, accounts: accounts_payload };
+	return { link_token, accounts: accounts_payload, transactions };
 };
 
 const AccountActionsDropdown = ({ document }) => {
@@ -234,7 +263,11 @@ const TableRow = ({ account }) => {
 };
 
 export default function Accounts() {
-	const { link_token, accounts: accounts_data } = useLoaderData();
+	const {
+		link_token,
+		accounts: accounts_data,
+		transactions,
+	} = useLoaderData();
 	const [location, setLocation] = useState(null);
 	const accounts = useAccounstStore((state) => state.accounts);
 	const set_accounts = useAccounstStore((state) => state.set_accounts);
@@ -276,6 +309,53 @@ export default function Accounts() {
 			}
 		},
 	});
+
+	const labels = pipe(keys)(transactions);
+
+	const options = {
+		responsive: true,
+		maintainAspectRatio: false,
+		scales: {
+			x: {
+				offset: false,
+				grid: {
+					display: false,
+				},
+				ticks: {
+					display: false,
+				},
+			},
+			y: {
+				ticks: {
+					display: false,
+				},
+				grid: {
+					display: false,
+				},
+			},
+		},
+		plugins: {
+			legend: {
+				display: false,
+			},
+			title: {
+				display: false,
+				// text: "Chart.js Line Chart",
+			},
+		},
+	};
+
+	const data = {
+		labels,
+		datasets: [
+			{
+				lineTension: 0.5,
+				data: transactions,
+				borderColor: "#3b82f6",
+				backgroundColor: "#BFD7ED",
+			},
+		],
+	};
 
 	return (
 		<div className="flex flex-row w-full h-full p-5 overflow-hiddens space-x-3">
@@ -388,6 +468,12 @@ export default function Accounts() {
 							</div>
 						</div>
 					</div>
+
+					{!isEmpty(account) && (
+						<div className="flex flex-col w-full h-[150px]">
+							<Line options={options} data={data} />
+						</div>
+					)}
 
 					<div className="border-t "></div>
 					<div className="flex flex-col p-5 text-sm space-y-2">
