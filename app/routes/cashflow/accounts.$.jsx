@@ -318,7 +318,9 @@ export default function Accounts() {
 							<div>
 								<span className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-gray-500">
 									<span className="text-lg font-medium leading-none text-white">
-										T
+										{account?.official_name
+											?.charAt(0)
+											.toUpperCase()}
 									</span>
 								</span>
 							</div>
