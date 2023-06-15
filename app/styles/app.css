@@ -1595,6 +1595,10 @@ video {
   width: 100vw;
 }
 
+.w-\[230px\] {
+  width: 230px;
+}
+
 .min-w-0 {
   min-width: 0px;
 }

@@ -4,16 +4,49 @@ import {
 	LinkIcon,
 	PlusCircleIcon,
 	BuildingLibraryIcon,
+	AtSymbolIcon,
+	PhoneIcon,
 } from "@heroicons/react/24/outline";
-import { classNames } from "~/utils/helpers";
 import { Menu, Transition } from "@headlessui/react";
-import { Fragment } from "react";
 import axios from "axios";
 import { usePlaidLink } from "react-plaid-link";
-import { create_axios_form, currency } from "~/utils/helpers";
-import { useEffect, useState } from "react";
+import {
+	create_axios_form,
+	currency,
+	classNames,
+	mapIndexed,
+	capitalize,
+	truncate,
+	formatPhoneNumber,
+} from "~/utils/helpers";
+import { useEffect, useState, Fragment } from "react";
 import { set_doc } from "~/utils/firebase";
 import { useLoaderData } from "@remix-run/react";
+import { get_accounts, get_auths, get_identities } from "~/api/plaid.server";
+import {
+	prop,
+	pipe,
+	groupBy,
+	mergeAll,
+	map,
+	values,
+	defaultTo,
+	flatten,
+} from "ramda";
+import { create } from "zustand";
+import { all, mod, get } from "shades";
+
+export const useAccountStore = create((set) => ({
+	account: {},
+	set_account: (path, value) =>
+		set((state) => pipe(mod(...path)(() => value))(state)),
+}));
+
+export const useAccounstStore = create((set) => ({
+	accounts: [],
+	set_accounts: (path, value) =>
+		set((state) => pipe(mod(...path)(() => value))(state)),
+}));
 
 export const loader = async ({ request }) => {
 	let location = new URL(request.url);
@@ -32,22 +65,26 @@ export const loader = async ({ request }) => {
 	let { data } = response;
 	let { link_token } = data;
 
-	// let transactions = await sync_transactions();
-	// console.log("transactions");
-	// inspect(length(transactions));
+	let { accounts } = await get_accounts();
+	let { accounts: identities_accounts } = await get_identities();
+	let {
+		numbers: { ach, bacs, eft, international },
+	} = await get_auths();
 
-	// pipe(
-	// 	map(async (transaction) => {
-	// 		await set_doc(
-	// 			["transactions", transaction.transaction_id],
-	// 			transaction
-	// 		);
-	// 		console.log(`transaction ${transaction.transaction_id} saved`);
-	// 		return transaction;
-	// 	})
-	// )(transactions);
+	let accounts_payload = pipe(
+		groupBy(prop("account_id")),
+		map(mergeAll),
+		values
+	)([
+		...accounts,
+		...identities_accounts,
+		...ach,
+		...bacs,
+		...eft,
+		...international,
+	]);
 
-	return { link_token };
+	return { link_token, accounts: accounts_payload };
 };
 
 const AccountActionsDropdown = ({ document }) => {
@@ -134,7 +171,7 @@ const AccountActionsDropdown = ({ document }) => {
 const TableRow = ({ account }) => {
 	return (
 		<div className="flex flex-row w-full text-gray-700 border-b py-3">
-			<div className="flex flex-row space-x-3 w-[250px]">
+			<div className="flex flex-row space-x-3 w-[300px]">
 				<div className="flex flex-col justify-center">
 					<span className="inline-flex h-10 w-10 items-center justify-center rounded-full ">
 						<BuildingLibraryIcon className="h-5 w-5 text-gray-400" />
@@ -144,22 +181,27 @@ const TableRow = ({ account }) => {
 					</span>
 				</div>
 				<div className="flex flex-col">
-					<div>Checking ••9876</div>
-					<div className="text-sm text-gray-500">Savings – Chase</div>
+					<div className="flex flex-row space-x-3">
+						<div>{capitalize(account.subtype)}</div>
+						<div>••{account.account.slice(-4)}</div>
+					</div>
+					<div className="text-sm text-gray-500">
+						{capitalize(account.subtype)} – {account.name}
+					</div>
 				</div>
 			</div>
-			<div className="flex flex-row w-[200px] items-center space-x-3">
-				<div>6324309876</div>
+			<div className="flex flex-row w-[230px] items-center space-x-3">
+				<div>{account.account}</div>
 				<div>
 					<EyeIcon className="h-5 w-5 text-gray-400" />
 				</div>
 			</div>
 			<div className="flex flex-row w-[200px] items-center space-x-3">
-				<div>6324309876</div>
+				<div>{account.routing}</div>
 			</div>
 			<div className="flex flex-row flex-1 justify-end items-center">
 				<div className="flex flex-col w-[200px]">
-					{currency.format(1000000)}
+					{currency.format(account.balances.available)}
 				</div>
 				<div className="flex flex-col w-[50px]">
 					<AccountActionsDropdown />
@@ -170,10 +212,20 @@ const TableRow = ({ account }) => {
 };
 
 export default function Accounts() {
-	const { link_token } = useLoaderData();
+	const { link_token, accounts: accounts_data } = useLoaderData();
 	const [location, setLocation] = useState(null);
+	const accounts = useAccounstStore((state) => state.accounts);
+	const set_accounts = useAccounstStore((state) => state.set_accounts);
+	const account = accounts[0] ?? {};
+
+	console.log("accounts");
+	console.log(accounts);
 
 	useEffect(() => setLocation(window.location), []);
+
+	useEffect(() => {
+		set_accounts(["accounts"], accounts_data);
+	}, []);
 
 	const { open, ready } = usePlaidLink({
 		token: link_token,
@@ -207,8 +259,8 @@ export default function Accounts() {
 	});
 
 	return (
-		<div className="flex flex-col w-full h-full p-5 overflow-hidden">
-			<div className="flex flex-col w-full h-full bg-white rounded p-5">
+		<div className="flex flex-row w-full h-full p-5 overflow-hiddens space-x-3">
+			<div className="flex flex-col w-[70%] h-full bg-white rounded p-5">
 				<div className="flex flex-row justify-between">
 					<div className="flex flex-col mb-7 space-y-2">
 						<div className="text-gray-700">Total Balance</div>
@@ -218,7 +270,7 @@ export default function Accounts() {
 					</div>
 					<div className="flex flex-col">
 						<button
-							// onClick={onUploadFileModalOpen}
+							onClick={() => open()}
 							type="button"
 							className="rounded-md bg-gray-700 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-gray-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
 						>
@@ -227,8 +279,8 @@ export default function Accounts() {
 					</div>
 				</div>
 				<div className="flex flex-row text-sm border-b pb-3 text-gray-400">
-					<div className="flex flex-col w-[250px]">Account</div>
-					<div className="flex flex-col w-[200px]">
+					<div className="flex flex-col w-[300px]">Account</div>
+					<div className="flex flex-col w-[230px]">
 						Account number
 					</div>
 					<div className="flex flex-col w-[200px]">
@@ -240,9 +292,14 @@ export default function Accounts() {
 					</div>
 				</div>
 				<div className="flex flex-col w-full py-3">
-					<TableRow />
-					<TableRow />
-					<TableRow />
+					{pipe(
+						mapIndexed((account) => (
+							<TableRow
+								key={account.account_id}
+								account={account}
+							/>
+						))
+					)(accounts)}
 				</div>
 				<div
 					className="flex flex-row items-center space-x-5 border-b pb-3 cursor-pointer pl-1.5"
@@ -252,6 +309,82 @@ export default function Accounts() {
 						<PlusCircleIcon className="h-7 w-7 text-gray-400" />
 					</div>
 					<div>Link Account</div>
+				</div>
+			</div>
+			<div className="flex flex-col w-[30%] ">
+				<div className="flex flex-col bg-white border rounded">
+					<div className="p-5">
+						<div className="flex flex-row space-x-3 items-center">
+							<div>
+								<span className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-gray-500">
+									<span className="text-lg font-medium leading-none text-white">
+										T
+									</span>
+								</span>
+							</div>
+							<div>{account.official_name}</div>
+						</div>
+					</div>
+
+					<div className="flex flex-row px-5 pb-5">
+						<div className="flex flex-col w-1/2 text-sm space-y-1">
+							<div className="text-gray-400">Available</div>
+							<div>
+								{currency.format(
+									account?.balances?.available || 0
+								)}
+							</div>
+						</div>
+						<div className="flex flex-col w-1/2 text-sm space-y-1">
+							<div className="text-gray-400">Current</div>
+							<div>
+								{currency.format(
+									account?.balances?.current || 0
+								)}
+							</div>
+						</div>
+					</div>
+
+					<div className="border-t "></div>
+					<div className="flex flex-col p-5 text-sm space-y-2">
+						<div className=" text-gray-400">Phone numbers</div>
+						<div className="flex flex-col space-y-3">
+							{pipe(
+								get("owners", all, "phone_numbers"),
+								defaultTo([]),
+								flatten,
+								mapIndexed((phone) => (
+									<div className="flex flex-row items-center space-x-2">
+										<div>
+											<PhoneIcon className="h-4 w-4 text-gray-400" />
+										</div>
+										<div>
+											{formatPhoneNumber(phone.data)}
+										</div>
+									</div>
+								))
+							)(account)}
+						</div>
+					</div>
+					<div className="border-t "></div>
+					<div className="flex flex-col p-5 text-sm space-y-2">
+						<div className=" text-gray-400">Emails</div>
+						<div className="flex flex-col space-y-2">
+							{pipe(
+								get("owners", all, "emails"),
+								defaultTo([]),
+								flatten,
+								mapIndexed((email) => (
+									<div className="flex flex-row items-center space-x-2">
+										<div>
+											<AtSymbolIcon className="h-4 w-4 text-gray-400" />
+										</div>
+										<div>{truncate(30, email.data)}</div>
+									</div>
+								))
+							)(account)}
+						</div>
+					</div>
 				</div>
 			</div>
 		</div>

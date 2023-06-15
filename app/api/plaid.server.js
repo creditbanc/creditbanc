@@ -16,6 +16,26 @@ const configuration = new Configuration({
 const plaidClient = new PlaidApi(configuration);
 let access_token = "access-sandbox-82a61619-29cb-4f47-a39f-ac187056412e";
 
+export const get_identities = async () => {
+	const request = {
+		access_token,
+	};
+
+	try {
+		const response = await plaidClient.identityGet(request);
+
+		let { data } = response;
+		// console.log("response");
+		// inspect(data);
+
+		return data;
+	} catch (error) {
+		// handle error
+		console.log("error");
+		console.log(error);
+	}
+};
+
 export const get_accounts = async () => {
 	const request = {
 		access_token,
@@ -25,12 +45,30 @@ export const get_accounts = async () => {
 		const response = await plaidClient.accountsGet(request);
 
 		let { data } = response;
-
-		const accounts = response.data.accounts;
 		// console.log("response");
-		// inspect(accounts);
+		// inspect(data);
 
-		return accounts;
+		return data;
+	} catch (error) {
+		// handle error
+		console.log("error");
+		console.log(error);
+	}
+};
+
+export const get_auths = async () => {
+	const request = {
+		access_token,
+	};
+
+	try {
+		const response = await plaidClient.authGet(request);
+
+		let { data } = response;
+		// console.log("response");
+		// inspect(data);
+
+		return data;
 	} catch (error) {
 		// handle error
 		console.log("error");
