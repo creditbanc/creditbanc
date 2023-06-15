@@ -9,6 +9,7 @@ import {
 	ArrowRightIcon,
 	ListBulletIcon,
 	ArrowDownTrayIcon,
+	EyeSlashIcon,
 } from "@heroicons/react/24/outline";
 import { Menu, Transition } from "@headlessui/react";
 import axios from "axios";
@@ -201,10 +202,19 @@ const TableRow = ({ account }) => {
 					<div className="w-[130px]">{account.account}</div>
 				)}
 				<div>
-					<EyeIcon
-						className="h-5 w-5 text-gray-400"
-						onClick={onToggleAccountNumberVisibility}
-					/>
+					{is_account_number_visible && (
+						<EyeSlashIcon
+							className="h-5 w-5 text-gray-400"
+							onClick={onToggleAccountNumberVisibility}
+						/>
+					)}
+
+					{!is_account_number_visible && (
+						<EyeIcon
+							className="h-5 w-5 text-gray-400"
+							onClick={onToggleAccountNumberVisibility}
+						/>
+					)}
 				</div>
 			</div>
 			<div className="flex flex-row w-[200px] items-center space-x-3">
