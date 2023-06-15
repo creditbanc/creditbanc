@@ -329,7 +329,7 @@ export default function Accounts() {
 					<div className="flex flex-row px-5 pb-5">
 						<div className="flex flex-col w-1/2 text-sm space-y-1">
 							<div className="text-gray-400">Available</div>
-							<div>
+							<div className="text-lg">
 								{currency.format(
 									account?.balances?.available || 0
 								)}
@@ -337,7 +337,7 @@ export default function Accounts() {
 						</div>
 						<div className="flex flex-col w-1/2 text-sm space-y-1">
 							<div className="text-gray-400">Current</div>
-							<div>
+							<div className="text-lg">
 								{currency.format(
 									account?.balances?.current || 0
 								)}
