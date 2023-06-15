@@ -8,6 +8,7 @@ import {
 	PhoneIcon,
 	ArrowRightIcon,
 	ListBulletIcon,
+	ArrowDownTrayIcon,
 } from "@heroicons/react/24/outline";
 import { Menu, Transition } from "@headlessui/react";
 import axios from "axios";
@@ -37,6 +38,7 @@ import {
 } from "ramda";
 import { create } from "zustand";
 import { all, mod, get } from "shades";
+import { isEmpty } from "ramda";
 
 export const useAccountStore = create((set) => ({
 	account: {},
@@ -112,6 +114,24 @@ const AccountActionsDropdown = ({ document }) => {
 						<Menu.Item>
 							{({ active }) => (
 								<div
+									// onClick={onDownloadFileClick}
+									className={classNames(
+										active
+											? "bg-gray-100 text-gray-900"
+											: "text-gray-700",
+										"flex flex-row px-4 py-2 text-sm cursor-pointer items-center space-x-3"
+									)}
+								>
+									<div>
+										<ListBulletIcon className="h-4 w-4" />
+									</div>
+									<div>View Transactions</div>
+								</div>
+							)}
+						</Menu.Item>
+						<Menu.Item>
+							{({ active }) => (
+								<div
 									// onClick={onEditFileClick}
 									className={classNames(
 										active
@@ -127,42 +147,6 @@ const AccountActionsDropdown = ({ document }) => {
 								</div>
 							)}
 						</Menu.Item>
-						{/* <Menu.Item>
-							{({ active }) => (
-								<div
-									// onClick={onDownloadFileClick}
-									className={classNames(
-										active
-											? "bg-gray-100 text-gray-900"
-											: "text-gray-700",
-										"flex flex-row px-4 py-2 text-sm cursor-pointer items-center space-x-3"
-									)}
-								>
-									<div>
-										<ArrowDownTrayIcon className="h-4 w-4" />
-									</div>
-									<div>Download</div>
-								</div>
-							)}
-						</Menu.Item>
-						<Menu.Item>
-							{({ active }) => (
-								<div
-									// onClick={onDeleteFileClick}
-									className={classNames(
-										active
-											? "bg-gray-100 text-gray-900"
-											: "text-gray-700",
-										"flex flex-row px-4 py-2 text-sm cursor-pointer items-center space-x-3"
-									)}
-								>
-									<div>
-										<TrashIcon className="h-4 w-4" />
-									</div>
-									<div>Delete</div>
-								</div>
-							)}
-						</Menu.Item> */}
 					</div>
 				</Menu.Items>
 			</Transition>
@@ -171,15 +155,27 @@ const AccountActionsDropdown = ({ document }) => {
 };
 
 const TableRow = ({ account }) => {
+	const set_account = useAccountStore((state) => state.set_account);
+	const [is_account_number_visible, set_is_account_number_visible] =
+		useState(false);
+
+	const onSelectAccount = () => {
+		set_account(["account"], account);
+	};
+
+	const onToggleAccountNumberVisibility = () => {
+		set_is_account_number_visible(!is_account_number_visible);
+	};
+
 	return (
-		<div className="flex flex-row w-full text-gray-700 border-b py-3 hover:bg-gray-50">
+		<div
+			className="flex flex-row w-full text-gray-700 border-b py-3 hover:bg-gray-50 cursor-pointer text-sm space-x-2"
+			onClick={onSelectAccount}
+		>
 			<div className="flex flex-row space-x-3 w-[300px]">
 				<div className="flex flex-col justify-center">
 					<span className="inline-flex h-10 w-10 items-center justify-center rounded-full ">
 						<BuildingLibraryIcon className="h-5 w-5 text-gray-400" />
-						{/* <span className="font-medium leading-none text-white">
-							TW
-						</span> */}
 					</span>
 				</div>
 				<div className="flex flex-col">
@@ -192,10 +188,23 @@ const TableRow = ({ account }) => {
 					</div>
 				</div>
 			</div>
-			<div className="flex flex-row w-[230px] items-center space-x-3">
-				<div>{account.account}</div>
+			<div className="flex flex-row w-[250px] items-center space-x-3">
+				{!is_account_number_visible && (
+					<input
+						type="password"
+						value={account.account}
+						readOnly={true}
+						className="bg-transparent w-[130px]"
+					></input>
+				)}
+				{is_account_number_visible && (
+					<div className="w-[130px]">{account.account}</div>
+				)}
 				<div>
-					<EyeIcon className="h-5 w-5 text-gray-400" />
+					<EyeIcon
+						className="h-5 w-5 text-gray-400"
+						onClick={onToggleAccountNumberVisibility}
+					/>
 				</div>
 			</div>
 			<div className="flex flex-row w-[200px] items-center space-x-3">
@@ -218,10 +227,7 @@ export default function Accounts() {
 	const [location, setLocation] = useState(null);
 	const accounts = useAccounstStore((state) => state.accounts);
 	const set_accounts = useAccounstStore((state) => state.set_accounts);
-	const account = accounts[0] ?? {};
-
-	console.log("accounts");
-	console.log(accounts);
+	const account = useAccountStore((state) => state.account);
 
 	useEffect(() => setLocation(window.location), []);
 
@@ -280,9 +286,9 @@ export default function Accounts() {
 						</button>
 					</div>
 				</div>
-				<div className="flex flex-row text-sm border-b pb-3 text-gray-400">
+				<div className="flex flex-row text-sm border-b pb-3 text-gray-400 space-x-2">
 					<div className="flex flex-col w-[300px]">Account</div>
-					<div className="flex flex-col w-[230px]">
+					<div className="flex flex-col w-[250px]">
 						Account number
 					</div>
 					<div className="flex flex-col w-[200px]">
@@ -330,18 +336,20 @@ export default function Accounts() {
 						</div>
 					</div>
 
-					<Link
-						to={`/cashflow/transactions`}
-						className="px-5 mb-4 flex flex-row items-center space-x-3 text-gray-400 cursor-pointer text-sm"
-					>
-						<div>
-							<ListBulletIcon className="h-4 w-4 text-gray-400" />
-						</div>
-						<div>Show transactions for this account</div>
-						<div>
-							<ArrowRightIcon className="h-4 w-4 text-gray-400" />
-						</div>
-					</Link>
+					{!isEmpty(account) && (
+						<Link
+							to={`/cashflow/transactions`}
+							className="px-5 mb-4 flex flex-row items-center space-x-3 text-blue-500 cursor-pointer text-sm"
+						>
+							<div>
+								<ListBulletIcon className="h-4 w-4 text-blue-500" />
+							</div>
+							<div>Show transactions for this account</div>
+							<div>
+								<ArrowRightIcon className="h-4 w-4 text-blue-500" />
+							</div>
+						</Link>
+					)}
 
 					<div className="flex flex-row px-5 pb-5">
 						<div className="flex flex-col w-1/2 text-sm space-y-1">
@@ -370,8 +378,11 @@ export default function Accounts() {
 								get("owners", all, "phone_numbers"),
 								defaultTo([]),
 								flatten,
-								mapIndexed((phone) => (
-									<div className="flex flex-row items-center space-x-2">
+								mapIndexed((phone, index) => (
+									<div
+										className="flex flex-row items-center space-x-2"
+										key={index}
+									>
 										<div>
 											<PhoneIcon className="h-4 w-4 text-gray-400" />
 										</div>
@@ -391,8 +402,11 @@ export default function Accounts() {
 								get("owners", all, "emails"),
 								defaultTo([]),
 								flatten,
-								mapIndexed((email) => (
-									<div className="flex flex-row items-center space-x-2">
+								mapIndexed((email, index) => (
+									<div
+										className="flex flex-row items-center space-x-2"
+										key={index}
+									>
 										<div>
 											<AtSymbolIcon className="h-4 w-4 text-gray-400" />
 										</div>
