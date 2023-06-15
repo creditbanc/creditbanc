@@ -250,17 +250,17 @@ const TransactionsHeaderStats = () => {
 	let { totals } = useLoaderData();
 
 	return (
-		<div className="flex flex-col mb-[40px] mt-5">
+		<div className="flex flex-col mb-[30px] mt-5">
 			<div className="flex flex-row">
-				<div className="flex flex-col w-1/2 space-y-1">
+				<div className="flex flex-col w-1/2 space-y-1.5">
 					<div className="text-sm text-gray-400">Income</div>
-					<div className="text-2xl font-semibold">
+					<div className="text-3xl">
 						{pipe(get("all", "income"), currency.format)(totals)}
 					</div>
 				</div>
-				<div className="flex flex-col w-1/2 space-y-1">
+				<div className="flex flex-col w-1/2 space-y-1.5">
 					<div className="text-sm text-gray-400">Expenses</div>
-					<div className="text-2xl font-semibold">
+					<div className="text-3xl ">
 						{pipe(get("all", "expense"), currency.format)(totals)}
 					</div>
 				</div>
@@ -274,8 +274,15 @@ export default function Transactions() {
 		<div className="flex flex-col w-full p-5 overflow-hidden">
 			<div className="flex flex-row w-full overflow-hidden">
 				<div className="flex flex-col w-[70%] overflow-y-scroll scrollbar-none bg-white px-5 pb-5 rounded">
+					<div className="border-b border-gray-200 pb-3 flex flex-row justify-between my-3">
+						<div>
+							<h3 className="mt-2 text-base font-semibold leading-6 text-gray-900">
+								Transactions
+							</h3>
+						</div>
+					</div>
 					<TransactionsHeaderStats />
-					<div className="transactions_table_header flex flex-row py-3 border-b text-sm sticky top-0 bg-white">
+					<div className="transactions_table_header flex flex-row py-3 border-b text-sm sticky top-0 bg-white text-gray-500">
 						<div className="flex flex-col w-[175px]">Merchant</div>
 						<div className="flex flex-col w-[100px]">Amount</div>
 						<div className="flex flex-col w-[250px]">Category</div>

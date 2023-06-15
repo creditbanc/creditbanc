@@ -298,7 +298,7 @@ export default function Accounts() {
 				</div>
 
 				<div className="flex flex-row justify-between">
-					<div className="flex flex-col mb-7 space-y-2">
+					<div className="flex flex-col mb-7 space-y-2 my-2">
 						<div className="text-gray-700">Total Balance</div>
 						<div className="text-4xl">
 							{currency.format(5144707.08)}
