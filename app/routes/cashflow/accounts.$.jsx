@@ -114,7 +114,8 @@ const AccountActionsDropdown = ({ document }) => {
 					<div className="py-1">
 						<Menu.Item>
 							{({ active }) => (
-								<div
+								<Link
+									to={`/cashflow/transactions`}
 									// onClick={onDownloadFileClick}
 									className={classNames(
 										active
@@ -127,7 +128,7 @@ const AccountActionsDropdown = ({ document }) => {
 										<ListBulletIcon className="h-4 w-4" />
 									</div>
 									<div>View Transactions</div>
-								</div>
+								</Link>
 							)}
 						</Menu.Item>
 						<Menu.Item>
