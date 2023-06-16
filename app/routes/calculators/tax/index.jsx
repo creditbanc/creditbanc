@@ -262,11 +262,11 @@ export default function Expenses() {
 	const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
 	let [expenses, setExpenses] = useState([
-		{ year: 2019, amount: 0 },
-		{ year: 2020, amount: 0 },
-		{ year: 2021, amount: 0 },
-		{ year: 2022, amount: 0 },
-		{ year: 2023, amount: 0 },
+		{ year: 2019, amount: "" },
+		{ year: 2020, amount: "" },
+		{ year: 2021, amount: null },
+		{ year: 2022, amount: null },
+		{ year: 2023, amount: null },
 	]);
 
 	const onSubmit = () => {
@@ -345,13 +345,15 @@ export default function Expenses() {
 															)
 														)
 													}
-													value={currency.format(
-														event.amount
-													)}
-													// type="number"
-													name="expense"
+													value={
+														event.amount > 0
+															? currency.format(
+																	event.amount
+															  )
+															: ""
+													}
 													className="block w-full rounded-full border border-gray-300 p-3 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-lg text-center"
-													placeholder="Total yearly expenses"
+													placeholder={`Expenses for ${event.year}`}
 												/>
 											</div>
 										</div>
