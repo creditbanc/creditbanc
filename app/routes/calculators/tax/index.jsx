@@ -1,19 +1,11 @@
-import { useEffect, useState } from "react";
-import {
-	CheckIcon,
-	HandThumbUpIcon,
-	UserIcon,
-} from "@heroicons/react/20/solid";
-import { Dialog } from "@headlessui/react";
-import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
-import {
-	create_axios_form,
-	form_params,
-	inspect,
-	classNames,
-} from "~/utils/helpers";
+import { useState } from "react";
+import { create_axios_form, form_params, classNames } from "~/utils/helpers";
 import axios from "axios";
-
+import { pipe } from "ramda";
+import { mod } from "shades";
+import map from "lodash/map";
+import { Link, useSubmit } from "@remix-run/react";
+import { redirect } from "@remix-run/node";
 import { tax_credit_cookie } from "~/sessions/tax_credit_cookie";
 
 const navigation = [
@@ -22,11 +14,6 @@ const navigation = [
 	{ name: "Marketplace", href: "#" },
 	{ name: "Company", href: "#" },
 ];
-
-import forEach from "lodash/forEach";
-import map from "lodash/map";
-import { Link, useSubmit } from "@remix-run/react";
-import { redirect } from "@remix-run/node";
 
 export const INDUSTRY = [
 	{ id: "1", value: 0.359914571205166, title: "Architecture" },
@@ -247,7 +234,7 @@ export const calculateTaxPerYear = (expenses, states, industry) => {
 // console.log("hi");
 // console.log(calculateTax(expenses, states, industry));
 // console.log(deprecatedCalculateTaxPerYear(expenses, states, industry));
-console.log(calculateTaxPerYear(expenses, states, industry));
+// console.log(calculateTaxPerYear(expenses, states, industry));
 
 export const action = async ({ request }) => {
 	let { expenses } = await form_params(request);
@@ -277,9 +264,17 @@ export default function Expenses() {
 	]);
 
 	const onSubmit = () => {
+		// console.log("expenses");
+		// console.log(expenses);
 		submit(
 			{ expenses: JSON.stringify(expenses) },
 			{ method: "post", url: "/calculators/tax" }
+		);
+	};
+
+	const onSetExpense = (index, amount) => {
+		setExpenses(
+			pipe(mod(index)((expense) => ({ ...expense, amount })))(expenses)
 		);
 	};
 
@@ -340,6 +335,12 @@ export default function Expenses() {
 											</div>
 											<div className="flex min-w-0 flex-1 justify-between space-x-4 pt-1.5">
 												<input
+													onChange={(e) =>
+														onSetExpense(
+															eventIdx,
+															e.target.value
+														)
+													}
 													type="number"
 													name="expense"
 													className="block w-full rounded-full border border-gray-300 p-3 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm text-center"
@@ -355,7 +356,6 @@ export default function Expenses() {
 					<div className="mt-10 flex justify-center sm:justify-end gap-x-6">
 						<div
 							onClick={onSubmit}
-							// to={`/calculators/tax/states`}
 							className="rounded-full bg-indigo-500 text-base font-semibold text-white shadow-sm hover:bg-indigo-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-400 w-full sm:w-[420px] text-center h-[50px] cursor-pointer"
 						>
 							<div className="h-[50px] flex flex-col items-center justify-center">
