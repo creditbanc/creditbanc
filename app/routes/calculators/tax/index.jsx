@@ -265,8 +265,6 @@ export default function Expenses() {
 	]);
 
 	const onSubmit = () => {
-		// console.log("expenses");
-		// console.log(expenses);
 		submit(
 			{ expenses: JSON.stringify(expenses) },
 			{ method: "post", url: "/calculators/tax" }
