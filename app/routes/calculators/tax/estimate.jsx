@@ -72,7 +72,7 @@ export default function Estimate() {
 			<div className="w-full flex flex-col items-center mt-[50px] bg-gray-900 pb-[20px]">
 				<div className="calculator_container w-[400px] sm:w-[500px] flex flex-col px-[10px] sm:px-0">
 					<div className="flex flex-col max-h-[400px] ">
-						<div className="flex flex-scroll w-full justify-center space-x-10 bg-white border rounded p-16 text-4xl font-semibold">
+						<div className="flex flex-scroll w-full justify-center space-x-10 border rounded p-16 text-4xl font-semibold bg-transparent text-white">
 							<div>{currency.format(rangeStartMinus)}</div>
 							<div>to</div>
 							<div>{currency.format(rangeEndMinus)}</div>
