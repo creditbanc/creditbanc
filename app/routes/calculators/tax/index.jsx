@@ -1,5 +1,10 @@
 import { useState } from "react";
-import { create_axios_form, form_params, classNames } from "~/utils/helpers";
+import {
+	create_axios_form,
+	form_params,
+	classNames,
+	currency,
+} from "~/utils/helpers";
 import axios from "axios";
 import { pipe } from "ramda";
 import { mod } from "shades";
@@ -257,11 +262,11 @@ export default function Expenses() {
 	const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
 	let [expenses, setExpenses] = useState([
-		{ year: 2019, amount: 50000 },
-		{ year: 2020, amount: 50000 },
-		{ year: 2021, amount: 50000 },
-		{ year: 2022, amount: 50000 },
-		{ year: 2023, amount: 50000 },
+		{ year: 2019, amount: 0 },
+		{ year: 2020, amount: 0 },
+		{ year: 2021, amount: 0 },
+		{ year: 2022, amount: 0 },
+		{ year: 2023, amount: 0 },
 	]);
 
 	const onSubmit = () => {
@@ -332,10 +337,18 @@ export default function Expenses() {
 													onChange={(e) =>
 														onSetExpense(
 															eventIdx,
-															e.target.value
+															Number(
+																e.target.value.replace(
+																	/[^0-9.-]+/g,
+																	""
+																)
+															)
 														)
 													}
-													type="number"
+													value={currency.format(
+														event.amount
+													)}
+													// type="number"
 													name="expense"
 													className="block w-full rounded-full border border-gray-300 p-3 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-lg text-center"
 													placeholder="Total yearly expenses"
