@@ -7,6 +7,7 @@ import map from "lodash/map";
 import { Link, useSubmit } from "@remix-run/react";
 import { redirect } from "@remix-run/node";
 import { tax_credit_cookie } from "~/sessions/tax_credit_cookie";
+const cb_logo_3 = "/images/logos/cb_logo_3.png";
 
 const navigation = [
 	{ name: "Product", href: "#" },
@@ -286,14 +287,9 @@ export default function Expenses() {
 					aria-label="Global"
 				>
 					<div className="flex lg:flex-1">
-						<a href="#" className="-m-1.5 p-1.5">
-							<span className="sr-only">Your Company</span>
-							<img
-								className="h-8"
-								src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=500"
-								alt=""
-							/>
-						</a>
+						<Link to={"/"} className="-m-1.5 p-1.5">
+							<img className="h-8" src={cb_logo_3} alt="" />
+						</Link>
 					</div>
 				</nav>
 			</div>
