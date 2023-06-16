@@ -337,7 +337,7 @@ export default function Expenses() {
 													}
 													type="number"
 													name="expense"
-													className="block w-full rounded-full border border-gray-300 p-3 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm text-center"
+													className="block w-full rounded-full border border-gray-300 p-3 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-lg text-center"
 													placeholder="Total yearly expenses"
 												/>
 											</div>

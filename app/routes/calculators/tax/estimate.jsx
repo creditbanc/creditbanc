@@ -7,6 +7,7 @@ import { redirect } from "@remix-run/node";
 import { form_params } from "~/utils/helpers";
 import { calculateTaxPerYear, STATES, INDUSTRY } from "~/data/tax";
 import { filter, get } from "shades";
+const cb_logo_3 = "/images/logos/cb_logo_3.png";
 
 export const loader = async ({ request }) => {
 	let cookies = request.headers.get("Cookie");

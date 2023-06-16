@@ -6,6 +6,7 @@ import { tax_credit_cookie } from "~/sessions/tax_credit_cookie";
 import { useEffect, useState } from "react";
 import { redirect } from "@remix-run/node";
 import { form_params } from "~/utils/helpers";
+const cb_logo_3 = "/images/logos/cb_logo_3.png";
 
 export const loader = async ({ request }) => {
 	let cookies = request.headers.get("Cookie");
