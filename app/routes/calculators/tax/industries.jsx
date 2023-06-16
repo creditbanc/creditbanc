@@ -58,7 +58,7 @@ export default function Industries() {
 					</div>
 					<div className="mt-10 flex flex-col items-center sm:justify-center sm:flex-row gap-x-6 gap-y-6">
 						<Link
-							to={`/calculators/tax`}
+							to={`/calculators/tax/states`}
 							className="rounded-full bg-indigo-500 text-base font-semibold text-white shadow-sm hover:bg-indigo-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-400 w-[420px] text-center h-[50px]"
 						>
 							<div className="h-[50px] flex flex-col items-center justify-center">

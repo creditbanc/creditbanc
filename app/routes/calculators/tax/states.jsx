@@ -1,9 +1,10 @@
 import { Link } from "@remix-run/react";
 import { map, pipe } from "ramda";
-import { UsaStates } from "usa-states";
+// import { UsaStates } from "usa-states";
 import { mapIndexed } from "~/utils/helpers";
-var usStates = new UsaStates();
-const states = usStates.states;
+// var usStates = new UsaStates();
+// const states = usStates.states;
+import { STATES } from "~/data/tax";
 
 export default function States() {
 	return (
@@ -52,11 +53,11 @@ export default function States() {
 											/>
 										</div>
 										<div className="flex flex-col">
-											{state.name}
+											{state.title}
 										</div>
 									</div>
 								))
-							)(states)}
+							)(STATES)}
 						</ul>
 					</div>
 					<div className="mt-10 flex flex-col items-center sm:justify-center sm:flex-row gap-x-6 gap-y-6">
