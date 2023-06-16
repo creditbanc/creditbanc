@@ -1,9 +1,46 @@
-import { Link } from "@remix-run/react";
-import { map, pipe } from "ramda";
+import { Link, useLoaderData } from "@remix-run/react";
+import { head, last, map, pipe } from "ramda";
+import { currency, mapIndexed } from "~/utils/helpers";
+import { tax_credit_cookie } from "~/sessions/tax_credit_cookie";
+import { useEffect, useState } from "react";
+import { redirect } from "@remix-run/node";
+import { form_params } from "~/utils/helpers";
+import { calculateTaxPerYear, STATES, INDUSTRY } from "~/data/tax";
+import { filter, get } from "shades";
 
-import { mapIndexed } from "~/utils/helpers";
+export const loader = async ({ request }) => {
+	let cookies = request.headers.get("Cookie");
+	let tax_credit = await tax_credit_cookie.parse(cookies);
+
+	let { expenses, state_id, industry_id } = tax_credit;
+
+	let expenses_payload = {};
+	pipe(map((expense) => (expenses_payload[expense.year] = expense.amount)))(
+		JSON.parse(expenses)
+	);
+
+	let payload = {
+		expenses: expenses_payload,
+		states: pipe(filter({ id: state_id }))(STATES),
+		industry: pipe(filter({ id: industry_id }), head)(INDUSTRY),
+	};
+
+	let estimate_response = calculateTaxPerYear(
+		payload.expenses,
+		payload.states,
+		payload.industry
+	);
+
+	let range = pipe(
+		get("finalTax"),
+		map((value) => parseFloat(value.replace(/,/g, "")))
+	)(estimate_response);
+
+	return range;
+};
 
 export default function Estimate() {
+	let { rangeStartMinus, rangeEndMinus } = useLoaderData();
 	return (
 		<div className="isolate bg-gray-900 w-full flex flex-col absolute top-0 bottom-0">
 			<div className="px-6 pt-6 lg:px-8 mb-[30px]">
@@ -36,9 +73,9 @@ export default function Estimate() {
 				<div className="calculator_container w-[400px] sm:w-[500px] flex flex-col px-[10px] sm:px-0">
 					<div className="flex flex-col max-h-[400px] ">
 						<div className="flex flex-scroll w-full justify-center space-x-10 bg-white border rounded p-16 text-4xl font-semibold">
-							<div>$8.1k</div>
+							<div>{currency.format(rangeStartMinus)}</div>
 							<div>to</div>
-							<div>$8.1k</div>
+							<div>{currency.format(rangeEndMinus)}</div>
 						</div>
 					</div>
 				</div>

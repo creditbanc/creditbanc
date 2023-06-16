@@ -6,8 +6,15 @@ import {
 } from "@heroicons/react/20/solid";
 import { Dialog } from "@headlessui/react";
 import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
-import { inspect } from "~/utils/helpers";
+import {
+	create_axios_form,
+	form_params,
+	inspect,
+	classNames,
+} from "~/utils/helpers";
 import axios from "axios";
+
+import { tax_credit_cookie } from "~/sessions/tax_credit_cookie";
 
 const navigation = [
 	{ name: "Product", href: "#" },
@@ -18,7 +25,8 @@ const navigation = [
 
 import forEach from "lodash/forEach";
 import map from "lodash/map";
-import { Link } from "@remix-run/react";
+import { Link, useSubmit } from "@remix-run/react";
+import { redirect } from "@remix-run/node";
 
 export const INDUSTRY = [
 	{ id: "1", value: 0.359914571205166, title: "Architecture" },
@@ -127,7 +135,7 @@ let expenses = {
 
 let states = [{ id: "1", value: 0.5, title: "Alabama" }];
 
-let industry = INDUSTRY[6];
+let industry = INDUSTRY[0];
 
 export const deprecatedCalculateTaxPerYear = (expenses, states, industry) => {
 	const listStates = [];
@@ -236,32 +244,44 @@ export const calculateTaxPerYear = (expenses, states, industry) => {
 	};
 };
 
-console.log("hi");
+// console.log("hi");
 // console.log(calculateTax(expenses, states, industry));
 // console.log(deprecatedCalculateTaxPerYear(expenses, states, industry));
 console.log(calculateTaxPerYear(expenses, states, industry));
 
-function classNames(...classes) {
-	return classes.filter(Boolean).join(" ");
-}
+export const action = async ({ request }) => {
+	let { expenses } = await form_params(request);
 
-export const loader = () => {
-	console.log("hi");
-	return null;
+	console.log("expenses");
+	console.log(expenses);
+
+	return redirect("/calculators/tax/states", {
+		headers: {
+			"Set-Cookie": await tax_credit_cookie.serialize({
+				expenses,
+			}),
+		},
+	});
 };
 
-export default function TaxCalculator() {
+export default function Expenses() {
+	const submit = useSubmit();
 	const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
-	useEffect(() => {}, []);
-
 	let [expenses, setExpenses] = useState([
-		{ year: 2019, amount: 0 },
-		{ year: 2020, amount: 0 },
-		{ year: 2021, amount: 0 },
-		{ year: 2022, amount: 0 },
-		{ year: 2023, amount: 0 },
+		{ year: 2019, amount: 50000 },
+		{ year: 2020, amount: 50000 },
+		{ year: 2021, amount: 50000 },
+		{ year: 2022, amount: 50000 },
+		{ year: 2023, amount: 50000 },
 	]);
+
+	const onSubmit = () => {
+		submit(
+			{ expenses: JSON.stringify(expenses) },
+			{ method: "post", url: "/calculators/tax" }
+		);
+	};
 
 	return (
 		<div className="isolate bg-gray-900 w-full flex flex-col absolute top-0 bottom-0">
@@ -333,14 +353,15 @@ export default function TaxCalculator() {
 						</ul>
 					</div>
 					<div className="mt-10 flex justify-center sm:justify-end gap-x-6">
-						<Link
-							to={`/calculators/tax/states`}
-							className="rounded-full bg-indigo-500 text-base font-semibold text-white shadow-sm hover:bg-indigo-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-400 w-full sm:w-[420px] text-center h-[50px]"
+						<div
+							onClick={onSubmit}
+							// to={`/calculators/tax/states`}
+							className="rounded-full bg-indigo-500 text-base font-semibold text-white shadow-sm hover:bg-indigo-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-400 w-full sm:w-[420px] text-center h-[50px] cursor-pointer"
 						>
 							<div className="h-[50px] flex flex-col items-center justify-center">
 								Next
 							</div>
-						</Link>
+						</div>
 					</div>
 				</div>
 			</div>

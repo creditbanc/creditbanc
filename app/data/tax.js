@@ -1,3 +1,6 @@
+import forEach from "lodash/forEach";
+import map from "lodash/map";
+
 export const INDUSTRY = [
 	{ id: "1", value: 0.359914571205166, title: "Architecture" },
 	{ id: "2", value: 0.22, title: "Agriculture" },
