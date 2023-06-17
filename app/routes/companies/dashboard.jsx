@@ -7,7 +7,7 @@ import {
 
 const Account = ({ account }) => {
 	return (
-		<div className="flex flex-col w-[200px] h-[200px] bg-gray-50 p-5 justify-between rounded-lg shadow-sm border cursor-pointer">
+		<div className="flex flex-col min-w-full md:min-w-[47%] lg:min-w-[31%] xl:min-w-[23%]  h-[200px] bg-gray-50 p-5 justify-between rounded-lg shadow-sm border cursor-pointer">
 			<div className="flex flex-row justify-between items-center">
 				<div>
 					<FolderIcon className="w-[40px] h-[40px] text-blue-600" />
@@ -68,7 +68,7 @@ export default function Companies() {
 				</div>
 
 				<div className="flex flex-col w-full">
-					<div className="flex flex-row w-full gap-x-14 gap-y-10 flex-wrap">
+					<div className="flex flex-row w-full items-center flex-wrap gap-y-10 justify-between xl:justify-start xl:gap-x-5">
 						<Account />
 						<Account />
 						<Account />
