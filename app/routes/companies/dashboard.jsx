@@ -7,7 +7,11 @@ import {
 
 const Account = ({ account }) => {
 	return (
-		<div className="flex flex-col min-w-full md:min-w-[47%] lg:min-w-[31%] xl:min-w-[23%]  h-[200px] bg-gray-50 p-5 justify-between rounded-lg shadow-sm border cursor-pointer">
+		<div
+			className="flex flex-col min-w-full md:min-w-[47%] lg:min-w-[31%] xl:min-w-[23%]  h-[200px] bg-gray-50 p-5 justify-between rounded-lg shadow-sm border cursor-pointer"
+			onClick={() => console.log("single cick")}
+			onDoubleClick={() => console.log("double click")}
+		>
 			<div className="flex flex-row justify-between items-center">
 				<div>
 					<FolderIcon className="w-[40px] h-[40px] text-blue-600" />
@@ -56,8 +60,8 @@ const Account = ({ account }) => {
 
 export default function Companies() {
 	return (
-		<div className="flex flex-row w-full h-full p-5 overflow-hiddens space-x-3">
-			<div className="flex flex-col w-[70%] h-full bg-white rounded p-5">
+		<div className="flex flex-row w-full h-full p-5 overflow-hiddens space-x-3 overflow-hidden">
+			<div className="flex flex-col w-[70%] h-full bg-white rounded px-5 pt-5">
 				<div className="border-b border-gray-200 pb-3 flex flex-row justify-between mb-3">
 					<div>
 						<h3 className="mt-2 text-base font-semibold leading-6 text-gray-900">
@@ -67,8 +71,22 @@ export default function Companies() {
 					<div></div>
 				</div>
 
-				<div className="flex flex-col w-full mt-5">
+				<div className="flex flex-col w-full pt-5 overflow-y-scroll scrollbar-none">
 					<div className="flex flex-row w-full items-center flex-wrap gap-y-10 justify-between xl:justify-start xl:gap-x-5">
+						<Account />
+						<Account />
+						<Account />
+						<Account />
+						<Account />
+						<Account />
+						<Account />
+						<Account />
+						<Account />
+						<Account />
+						<Account />
+						<Account />
+						<Account />
+						<Account />
 						<Account />
 						<Account />
 						<Account />
