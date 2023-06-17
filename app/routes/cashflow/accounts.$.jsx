@@ -225,7 +225,7 @@ const TableRow = ({ account }) => {
 						type="password"
 						value={account.account}
 						readOnly={true}
-						className="bg-transparent w-[130px]"
+						className="bg-transparent w-[130px] border-none p-0"
 					></input>
 				)}
 				{is_account_number_visible && (

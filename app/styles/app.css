@@ -2410,6 +2410,10 @@ select {
   border-style: dashed;
 }
 
+.border-none {
+  border-style: none;
+}
+
 .border-black {
   --tw-border-opacity: 1;
   border-color: rgb(0 0 0 / var(--tw-border-opacity));
@@ -2765,6 +2769,10 @@ select {
 
 .p-\[3px\] {
   padding: 3px;
+}
+
+.p-0 {
+  padding: 0px;
 }
 
 .px-1 {
