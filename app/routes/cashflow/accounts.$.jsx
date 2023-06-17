@@ -231,7 +231,7 @@ const TableRow = ({ account }) => {
 						type="password"
 						value={account.account}
 						readOnly={true}
-						className="bg-transparent w-[130px] border-none p-0 cursor-default focus:ring-0"
+						className="bg-transparent w-[130px] border-none p-0 cursor-default focus:ring-0 outline-none"
 					></input>
 				)}
 				{is_account_number_visible && (
@@ -270,7 +270,7 @@ const TableRow = ({ account }) => {
 
 export default function Accounts() {
 	const {
-		link_token,
+		link_token = null,
 		accounts: accounts_data,
 		transactions,
 	} = useLoaderData();
