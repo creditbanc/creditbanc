@@ -1275,6 +1275,22 @@ select {
   margin-top: 50px;
 }
 
+.-ml-\[11px\] {
+  margin-left: -11px;
+}
+
+.-ml-\[15px\] {
+  margin-left: -15px;
+}
+
+.-ml-\[5px\] {
+  margin-left: -5px;
+}
+
+.-mb-\[5px\] {
+  margin-bottom: -5px;
+}
+
 .block {
   display: block;
 }
@@ -1759,6 +1775,10 @@ select {
 
 .w-screen {
   width: 100vw;
+}
+
+.w-\[calc\(100\%\+11px\)\] {
+  width: calc(100% + 11px);
 }
 
 .min-w-0 {
@@ -2715,6 +2735,10 @@ select {
      object-position: top;
 }
 
+.p-0 {
+  padding: 0px;
+}
+
 .p-1 {
   padding: 0.25rem;
 }
@@ -2769,10 +2793,6 @@ select {
 
 .p-\[3px\] {
   padding: 3px;
-}
-
-.p-0 {
-  padding: 0px;
 }
 
 .px-1 {

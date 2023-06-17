@@ -69,6 +69,10 @@ export const useAccounstStore = create((set) => ({
 		set((state) => pipe(mod(...path)(() => value))(state)),
 }));
 
+function randomNumber(min, max) {
+	return Math.random() * (max - min) + min;
+}
+
 export const loader = async ({ request }) => {
 	let location = new URL(request.url);
 	let { origin } = location;
@@ -101,7 +105,9 @@ export const loader = async ({ request }) => {
 		reverse,
 		take(20),
 		groupBy(prop("date")),
-		mod(all)((date) => pipe(get(all, "amount"), sum)(date)),
+		mod(all)((date) =>
+			pipe(get(all, "amount"), sum, (value) => randomNumber(30, 50))(date)
+		),
 		mod(all)((value) => (value < 0 ? 0 : value))
 	)(transactions);
 
@@ -225,7 +231,7 @@ const TableRow = ({ account }) => {
 						type="password"
 						value={account.account}
 						readOnly={true}
-						className="bg-transparent w-[130px] border-none p-0"
+						className="bg-transparent w-[130px] border-none p-0 cursor-default focus:ring-0"
 					></input>
 				)}
 				{is_account_number_visible && (
@@ -315,8 +321,12 @@ export default function Accounts() {
 	const options = {
 		responsive: true,
 		maintainAspectRatio: false,
+		layout: {
+			padding: -5,
+		},
 		scales: {
 			x: {
+				display: false,
 				offset: false,
 				grid: {
 					display: false,
@@ -326,6 +336,8 @@ export default function Accounts() {
 				},
 			},
 			y: {
+				display: false,
+				beginAtZero: true,
 				ticks: {
 					display: false,
 				},
@@ -349,10 +361,18 @@ export default function Accounts() {
 		labels,
 		datasets: [
 			{
+				fill: true,
 				lineTension: 0.5,
 				data: transactions,
 				borderColor: "#3b82f6",
 				backgroundColor: "#BFD7ED",
+				backgroundColor: (context) => {
+					const ctx = context.chart.ctx;
+					const gradient = ctx.createLinearGradient(0, 0, 0, 200);
+					gradient.addColorStop(0, "rgba(162,210,241,1)");
+					gradient.addColorStop(1, "rgba(162,210,241,0)");
+					return gradient;
+				},
 			},
 		],
 	};
@@ -470,7 +490,7 @@ export default function Accounts() {
 					</div>
 
 					{!isEmpty(account) && (
-						<div className="flex flex-col w-full h-[150px]">
+						<div className="flex flex-col w-[calc(100%+11px)] h-[150px] -ml-[5px] -mb-[5px]">
 							<Line options={options} data={data} />
 						</div>
 					)}
