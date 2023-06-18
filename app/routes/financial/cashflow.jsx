@@ -441,20 +441,44 @@ const CashflowChart = () => {
 	);
 };
 
+const RevenueChart = () => {
+	return (
+		<div className="flex flex-col w-full h-full">
+			<div className="px-5 pt-5 text-xl font-semibold">Revenue</div>
+			<div className="flex flex-col w-full border-t my-3"></div>
+			<div className="flex flex-col w-full h-full p-3 overflow-hidden">
+				<Bar options={options} data={data} />
+			</div>
+		</div>
+	);
+};
+
+const ExpensesChart = () => {
+	return (
+		<div className="flex flex-col w-full h-full">
+			<div className="px-5 pt-5 text-xl font-semibold">Expenses</div>
+			<div className="flex flex-col w-full border-t my-3"></div>
+			<div className="flex flex-col w-full h-full p-3 overflow-hidden">
+				<Bar options={options} data={data} />
+			</div>
+		</div>
+	);
+};
+
 export default function Cashflow() {
 	return (
 		<div className="flex flex-col w-full h-full overflow-hidden">
-			<div className="flex flex-row h-full w-full p-5 space-x-5">
-				<div className="flex flex-col h-full w-[70%] rounded  gap-y-5">
+			<div className="flex flex-row h-full w-full p-5 space-x-5 ">
+				<div className="flex flex-col h-full w-[70%] rounded  gap-y-5 overflow-scroll scrollbar-none">
 					<div className="flex flex-col w-full max-h-[400px] bg-white rounded">
 						<CashflowChart />
 					</div>
 					<div className="flex flex-row w-full gap-x-5 h-full">
 						<div className="flex flex-col w-1/2 bg-white h-full rounded">
-							a
+							<RevenueChart />
 						</div>
 						<div className="flex flex-col w-1/2 bg-white h-full rounded">
-							a
+							<ExpensesChart />
 						</div>
 					</div>
 				</div>
