@@ -598,7 +598,7 @@ export default function Cashflow() {
 						</div>
 						<div className="flex flex-col w-full border-t"></div>
 						<div className="flex flex-col w-full p-3">
-							<div className="flex flex-col w-full  rounded-lg">
+							<div className="flex flex-col w-full border rounded-lg">
 								<Stats />
 							</div>
 						</div>

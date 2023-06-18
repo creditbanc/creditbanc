@@ -34,8 +34,8 @@ const Companies = () => {
 					<div className="py-1">
 						<Menu.Item>
 							{({ active }) => (
-								<a
-									href="#"
+								<Link
+									to={`/companies/dashboard`}
 									className={classNames(
 										active
 											? "bg-gray-100 text-gray-900"
@@ -43,8 +43,8 @@ const Companies = () => {
 										"block px-4 py-2 text-sm"
 									)}
 								>
-									Account settings
-								</a>
+									All Companies
+								</Link>
 							)}
 						</Menu.Item>
 						<Menu.Item>
