@@ -19,6 +19,34 @@ import {
 	UserCircleIcon,
 } from "@heroicons/react/24/outline";
 import { Link } from "@remix-run/react";
+import { classNames } from "~/utils/helpers";
+
+const Members = () => {
+	return (
+		<div className="flex -space-x-2 overflow-hidden">
+			<img
+				className="inline-block h-8 w-8 rounded-full ring-2 ring-white"
+				src="https://images.unsplash.com/photo-1491528323818-fdd1faba62cc?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
+				alt=""
+			/>
+			<img
+				className="inline-block h-8 w-8 rounded-full ring-2 ring-white"
+				src="https://images.unsplash.com/photo-1550525811-e5869dd03032?ixlib=rb-1.2.1&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
+				alt=""
+			/>
+			<img
+				className="inline-block h-8 w-8 rounded-full ring-2 ring-white"
+				src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2.25&w=256&h=256&q=80"
+				alt=""
+			/>
+			<img
+				className="inline-block h-8 w-8 rounded-full ring-2 ring-white"
+				src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
+				alt=""
+			/>
+		</div>
+	);
+};
 
 const Account = ({ account }) => {
 	return (
@@ -40,32 +68,12 @@ const Account = ({ account }) => {
 			</div>
 			<div className="flex flex-col">
 				<div className="flex flex-row justify-between items-center">
-					<div className="flex -space-x-2 overflow-hidden">
-						<img
-							className="inline-block h-8 w-8 rounded-full ring-2 ring-white"
-							src="https://images.unsplash.com/photo-1491528323818-fdd1faba62cc?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
-							alt=""
-						/>
-						<img
-							className="inline-block h-8 w-8 rounded-full ring-2 ring-white"
-							src="https://images.unsplash.com/photo-1550525811-e5869dd03032?ixlib=rb-1.2.1&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
-							alt=""
-						/>
-						<img
-							className="inline-block h-8 w-8 rounded-full ring-2 ring-white"
-							src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2.25&w=256&h=256&q=80"
-							alt=""
-						/>
-						<img
-							className="inline-block h-8 w-8 rounded-full ring-2 ring-white"
-							src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
-							alt=""
-						/>
-					</div>
 					<div>
-						<div>
-							<LinkIcon className="w-5 h-5 text-blue-500" />
-						</div>
+						<Members />
+					</div>
+
+					<div>
+						<LinkIcon className="w-5 h-5 text-blue-500" />
 					</div>
 				</div>
 			</div>
@@ -89,10 +97,6 @@ const navigation = [
 	{ name: "Cashflow", href: "#", icon: CurrencyDollarIcon, current: false },
 	{ name: "Vault", href: "#", icon: FolderOpenIcon, current: false },
 ];
-
-function classNames(...classes) {
-	return classes.filter(Boolean).join(" ");
-}
 
 const QuickLinks = () => {
 	return (
@@ -207,18 +211,20 @@ export default function Companies() {
 					<div className="border-t "></div>
 					<div className="flex flex-col p-5 text-sm space-y-3">
 						<div className=" text-gray-400">Quick Links</div>
-						<div className="flex flex-col ml-5">
+						<div className="flex flex-col ml-3">
 							<QuickLinks />
 						</div>
 					</div>
-					{/* <div className="border-t "></div>
+					<div className="border-t"></div>
 					<div className="flex flex-col p-5 text-sm space-y-2">
-						<div className=" text-gray-400">Emails</div>
-						<div className="flex flex-col space-y-2">a</div>
-					</div> */}
-					<div className="border-t "></div>
-					<div className="flex flex-col p-3 text-sm space-y-2">
-						<div>Notes</div>
+						<div className="text-gray-400">Members</div>
+						<div className="flex flex-col space-y-2">
+							<Members />
+						</div>
+					</div>
+					<div className="border-t"></div>
+					<div className="flex flex-col p-5 text-sm space-y-2">
+						<div className="text-gray-400">Notes</div>
 						<div className="flex flex-col w-full">
 							<textarea
 								rows={4}
