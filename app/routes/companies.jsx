@@ -5,6 +5,7 @@ import {
 import { Outlet, useLoaderData } from "@remix-run/react";
 import SimpleNavSignedIn from "~/components/SimpleNavSignedIn";
 import { get_user_id } from "~/utils/auth.server";
+import { classNames } from "~/utils/helpers";
 
 export const loader = async ({ request }) => {
 	let entity_id = get_user_id(request);
@@ -16,10 +17,6 @@ const tabs = [
 	{ name: "Personal", href: "#", current: true },
 	{ name: "Business", href: "#", current: false },
 ];
-
-function classNames(...classes) {
-	return classes.filter(Boolean).join(" ");
-}
 
 const SubNav = () => {
 	return (
