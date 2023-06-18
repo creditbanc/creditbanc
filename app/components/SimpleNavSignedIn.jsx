@@ -103,8 +103,8 @@ const Companies = () => {
 
 let navigation = [
 	{ name: "Credit", href: "#", current: true },
-	{ name: "Cashflow", href: "#", current: false },
-	{ name: "Vault", href: "#", current: false },
+	{ name: "Cashflow", href: "/financial/cashflow", current: false },
+	{ name: "Vault", href: "/vault/files", current: false },
 	{ name: "University", href: "#", current: false },
 ];
 
@@ -129,14 +129,15 @@ export default function Nav({ user_id }) {
 						<div className="flex flex-row space-x-3 text-xs lg:text-sm">
 							{pipe(
 								mapIndexed((item, key) => (
-									<div
+									<Link
+										to={item.href}
 										key={key}
 										className={`px-4 py-2 rounded-full cursor-pointer hover:bg-gray-100 ${
 											item.current && "bg-gray-100"
 										}`}
 									>
 										{item.name}
-									</div>
+									</Link>
 								))
 							)(navigation)}
 						</div>
