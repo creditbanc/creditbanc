@@ -3,7 +3,22 @@ import {
 	EllipsisHorizontalIcon,
 	EllipsisVerticalIcon,
 	LinkIcon,
+	ListBulletIcon,
+	ArrowRightIcon,
+	DocumentDuplicateIcon,
+	CalendarIcon,
+	ChartPieIcon,
+	FolderIcon as FolderIconOutline,
+	HomeIcon,
+	UsersIcon,
+	BriefcaseIcon,
+	DocumentIcon,
+	CurrencyDollarIcon,
+	FolderOpenIcon,
+	UserIcon,
+	UserCircleIcon,
 } from "@heroicons/react/24/outline";
+import { Link } from "@remix-run/react";
 
 const Account = ({ account }) => {
 	return (
@@ -58,11 +73,65 @@ const Account = ({ account }) => {
 	);
 };
 
+const navigation = [
+	{
+		name: "Business Credit Report",
+		href: "#",
+		icon: BriefcaseIcon,
+		current: true,
+	},
+	{
+		name: "Personal Credit Report",
+		href: "#",
+		icon: UserCircleIcon,
+		current: false,
+	},
+	{ name: "Cashflow", href: "#", icon: CurrencyDollarIcon, current: false },
+	{ name: "Vault", href: "#", icon: FolderOpenIcon, current: false },
+];
+
+function classNames(...classes) {
+	return classes.filter(Boolean).join(" ");
+}
+
+const QuickLinks = () => {
+	return (
+		<nav className="flex flex-1 flex-col" aria-label="Sidebar">
+			<ul role="list" className="-mx-2 space-y-1">
+				{navigation.map((item) => (
+					<li key={item.name}>
+						<a
+							href={item.href}
+							className={classNames(
+								item.current
+									? "bg-gray-50 text-indigo-600"
+									: "text-gray-700 hover:text-indigo-600 hover:bg-gray-50",
+								"group flex gap-x-2 rounded-md px-2 py-1 text-xs leading-6 font-semibold"
+							)}
+						>
+							<item.icon
+								className={classNames(
+									item.current
+										? "text-indigo-600"
+										: "text-gray-400 group-hover:text-indigo-600",
+									"h-5 w-5 shrink-0"
+								)}
+								aria-hidden="true"
+							/>
+							{item.name}
+						</a>
+					</li>
+				))}
+			</ul>
+		</nav>
+	);
+};
+
 export default function Companies() {
 	return (
 		<div className="flex flex-row w-full h-full p-5 overflow-hiddens space-x-3 overflow-hidden">
 			<div className="flex flex-col w-[70%] h-full bg-white rounded px-5 pt-5">
-				<div className="border-b border-gray-200 pb-3 flex flex-row justify-between mb-3">
+				<div className="border-b border-gray-200 pb-3 flex flex-row justify-between">
 					<div>
 						<h3 className="mt-2 text-base font-semibold leading-6 text-gray-900">
 							Companies
@@ -71,7 +140,7 @@ export default function Companies() {
 					<div></div>
 				</div>
 
-				<div className="flex flex-col w-full pt-5 overflow-y-scroll scrollbar-none">
+				<div className="flex flex-col w-full py-5 overflow-y-scroll scrollbar-none">
 					<div className="flex flex-row w-full items-center flex-wrap gap-y-10 justify-between xl:justify-start xl:gap-x-5">
 						<Account />
 						<Account />
@@ -97,7 +166,67 @@ export default function Companies() {
 				</div>
 			</div>
 			<div className="flex flex-col w-[30%] ">
-				<div className="flex flex-col bg-white border rounded"></div>
+				<div className="flex flex-col bg-white border rounded">
+					<div className="p-5">
+						<div className="flex flex-row space-x-3 items-center">
+							<div>
+								<span className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-gray-500">
+									<span className="text-lg font-medium leading-none text-white">
+										C
+									</span>
+								</span>
+							</div>
+							<div>Credit Banc</div>
+						</div>
+					</div>
+
+					<Link
+						to={`/cashflow/transactions`}
+						className="px-5 mb-4 flex flex-row items-center space-x-3 text-blue-500 cursor-pointer text-sm"
+					>
+						<div>
+							<DocumentDuplicateIcon className="h-4 w-4 text-blue-500" />
+						</div>
+						<div>Copy copmany share link</div>
+						<div>
+							<LinkIcon className="h-4 w-4 text-blue-500" />
+						</div>
+					</Link>
+
+					<div className="flex flex-row px-5 pb-5">
+						<div className="flex flex-col w-1/2 text-sm space-y-1">
+							<div className="text-gray-400">Personal</div>
+							<div className="text-lg">780</div>
+						</div>
+						<div className="flex flex-col w-1/2 text-sm space-y-1">
+							<div className="text-gray-400">Business</div>
+							<div className="text-lg">80</div>
+						</div>
+					</div>
+
+					<div className="border-t "></div>
+					<div className="flex flex-col p-5 text-sm space-y-3">
+						<div className=" text-gray-400">Quick Links</div>
+						<div className="flex flex-col ml-5">
+							<QuickLinks />
+						</div>
+					</div>
+					{/* <div className="border-t "></div>
+					<div className="flex flex-col p-5 text-sm space-y-2">
+						<div className=" text-gray-400">Emails</div>
+						<div className="flex flex-col space-y-2">a</div>
+					</div> */}
+					<div className="border-t "></div>
+					<div className="flex flex-col p-3 text-sm space-y-2">
+						<div>Notes</div>
+						<div className="flex flex-col w-full">
+							<textarea
+								rows={4}
+								className="border rounded p-3"
+							></textarea>
+						</div>
+					</div>
+				</div>
 			</div>
 		</div>
 	);
