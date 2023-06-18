@@ -183,28 +183,34 @@ export default function Companies() {
 							<div>Credit Banc</div>
 						</div>
 					</div>
-
-					<Link
-						to={`/cashflow/transactions`}
-						className="px-5 mb-4 flex flex-row items-center space-x-3 text-blue-500 cursor-pointer text-sm"
-					>
-						<div>
-							<DocumentDuplicateIcon className="h-4 w-4 text-blue-500" />
+					<div className="flex flex-col py-2">
+						<Link
+							to={`/cashflow/transactions`}
+							className="px-5 mb-4 flex flex-row items-center space-x-3 text-blue-500 cursor-pointer text-sm"
+						>
+							<div>
+								<DocumentDuplicateIcon className="h-4 w-4 text-blue-500" />
+							</div>
+							<div>Copy copmany share link</div>
+							<div>
+								<LinkIcon className="h-4 w-4 text-blue-500" />
+							</div>
+						</Link>
+					</div>
+					<div className="border-t "></div>
+					<div className="flex flex-col w-full p-5 space-y-3">
+						<div className="text-gray-400 text-sm">
+							Credit Scores
 						</div>
-						<div>Copy copmany share link</div>
-						<div>
-							<LinkIcon className="h-4 w-4 text-blue-500" />
-						</div>
-					</Link>
-
-					<div className="flex flex-row px-5 pb-5">
-						<div className="flex flex-col w-1/2 text-sm space-y-1">
-							<div className="text-gray-400">Personal</div>
-							<div className="text-lg">780</div>
-						</div>
-						<div className="flex flex-col w-1/2 text-sm space-y-1">
-							<div className="text-gray-400">Business</div>
-							<div className="text-lg">80</div>
+						<div className="flex flex-row">
+							<div className="flex flex-col w-1/2 text-sm space-y-1">
+								<div className="text-gray-400">Personal</div>
+								<div className="text-lg">780</div>
+							</div>
+							<div className="flex flex-col w-1/2 text-sm space-y-1">
+								<div className="text-gray-400">Business</div>
+								<div className="text-lg">80</div>
+							</div>
 						</div>
 					</div>
 
