@@ -418,14 +418,54 @@ export const data = {
 			stack: "Stack 0",
 			barThickness: 30,
 		},
+	],
+};
+
+export const revenue_data = {
+	labels,
+	datasets: [
+		{
+			label: "Dataset 1",
+			data: labels.map(() =>
+				faker.datatype.number({ min: 0, max: 1000 })
+			),
+			backgroundColor: "rgb(13,98,254)",
+			// stack: "Stack 0",
+			barThickness: 30,
+		},
 		// {
-		// 	label: "Dataset 3",
+		// 	label: "Dataset 2",
 		// 	data: labels.map(() =>
-		// 		faker.datatype.number({ min: -1000, max: 1000 })
+		// 		faker.datatype.number({ min: -1000, max: 0 })
 		// 	),
-		// 	backgroundColor: "rgb(53, 162, 235)",
-		// 	stack: "Stack 1",
+		// 	backgroundColor: "rgb(234,238,241)",
+		// 	stack: "Stack 0",
+		// 	barThickness: 30,
 		// },
+	],
+};
+
+export const expenses_data = {
+	labels,
+	datasets: [
+		// {
+		// 	label: "Dataset 1",
+		// 	data: labels.map(() =>
+		// 		faker.datatype.number({ min: 0, max: 1000 })
+		// 	),
+		// 	backgroundColor: "rgb(13,98,254)",
+		// 	stack: "Stack 0",
+		// 	barThickness: 30,
+		// },
+		{
+			label: "Dataset 2",
+			data: labels.map(() =>
+				faker.datatype.number({ min: 0, max: 1000 })
+			),
+			backgroundColor: "rgb(234,238,241)",
+			// stack: "Stack 0",
+			barThickness: 30,
+		},
 	],
 };
 
@@ -447,7 +487,7 @@ const RevenueChart = () => {
 			<div className="px-5 pt-5 text-xl font-semibold">Revenue</div>
 			<div className="flex flex-col w-full border-t my-3"></div>
 			<div className="flex flex-col w-full h-full p-3 overflow-hidden">
-				<Bar options={options} data={data} />
+				<Bar options={options} data={revenue_data} />
 			</div>
 		</div>
 	);
@@ -459,8 +499,77 @@ const ExpensesChart = () => {
 			<div className="px-5 pt-5 text-xl font-semibold">Expenses</div>
 			<div className="flex flex-col w-full border-t my-3"></div>
 			<div className="flex flex-col w-full h-full p-3 overflow-hidden">
-				<Bar options={options} data={data} />
+				<Bar options={options} data={expenses_data} />
 			</div>
+		</div>
+	);
+};
+
+const stats = [
+	{
+		name: "Revenue",
+		value: "$405,091.00",
+		change: "+4.75%",
+		changeType: "positive",
+	},
+	{
+		name: "Overdue invoices",
+		value: "$12,787.00",
+		change: "+54.02%",
+		changeType: "negative",
+	},
+	{
+		name: "Outstanding invoices",
+		value: "$245,988.00",
+		change: "-1.39%",
+		changeType: "positive",
+	},
+	{
+		name: "Expenses",
+		value: "$30,156.00",
+		change: "+10.18%",
+		changeType: "negative",
+	},
+	{
+		name: "Outstanding invoices",
+		value: "$245,988.00",
+		change: "-1.39%",
+		changeType: "positive",
+	},
+	{
+		name: "Expenses",
+		value: "$30,156.00",
+		change: "+10.18%",
+		changeType: "negative",
+	},
+];
+
+const Stats = () => {
+	return (
+		<div className="flex flex-wrap w-full bg-gray-900/5 rounded-lg">
+			{stats.map((stat) => (
+				<div
+					key={stat.name}
+					className="flex flex-col w-full md:w-1/3 justify-between gap-x-4 gap-y-2 bg-white px-4 py-10 border rounded-lg"
+				>
+					<div className="text-sm font-medium leading-6 text-gray-500">
+						{stat.name}
+					</div>
+					<div
+						className={classNames(
+							stat.changeType === "negative"
+								? "text-rose-600"
+								: "text-gray-700",
+							"text-xs font-medium"
+						)}
+					>
+						{stat.change}
+					</div>
+					<div className="w-full flex-none text-3xl font-medium leading-10 tracking-tight text-gray-900">
+						{stat.value}
+					</div>
+				</div>
+			))}
 		</div>
 	);
 };
@@ -481,6 +590,19 @@ export default function Cashflow() {
 							<ExpensesChart />
 						</div>
 					</div>
+					<div className="flex flex-col w-full bg-white rounded ">
+						<div className="flex flex-col py-4 px-5">
+							<div className="font-semibold text-xl">
+								Financial Health Evaluation
+							</div>
+						</div>
+						<div className="flex flex-col w-full border-t"></div>
+						<div className="flex flex-col w-full p-3">
+							<div className="flex flex-col w-full  rounded-lg">
+								<Stats />
+							</div>
+						</div>
+					</div>
 				</div>
 				<div className="flex flex-col w-[30%] rounded border">
 					<div className="flex flex-col w-full h-full rounded bg-white">
@@ -488,7 +610,7 @@ export default function Cashflow() {
 							<div>Recent transactions</div>
 						</div>
 						<div className="flex flex-col w-full border-t"></div>
-						<div className="flex flex-col p-5">
+						<div className="flex flex-col p-5 overflow-scroll">
 							<ActivityFeed />
 						</div>
 					</div>
