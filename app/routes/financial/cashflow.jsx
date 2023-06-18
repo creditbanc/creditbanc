@@ -11,6 +11,27 @@ import {
 } from "@heroicons/react/20/solid";
 import { Listbox, Transition } from "@headlessui/react";
 import { classNames } from "~/utils/helpers";
+import {
+	Chart as ChartJS,
+	CategoryScale,
+	LinearScale,
+	BarElement,
+	Title,
+	Tooltip,
+	Legend,
+} from "chart.js";
+import { Bar } from "react-chartjs-2";
+import { faker } from "@faker-js/faker";
+import "chart.js/auto";
+
+ChartJS.register(
+	CategoryScale,
+	LinearScale,
+	BarElement,
+	Title,
+	Tooltip,
+	Legend
+);
 
 const activity = [
 	{
@@ -336,13 +357,97 @@ const ActivityFeed = () => {
 	);
 };
 
+export const options = {
+	responsive: true,
+	maintainAspectRatio: false,
+	plugins: {
+		// title: {
+		// 	display: true,
+		// 	text: "Chart.js Bar Chart - Stacked",
+		// },
+
+		legend: {
+			display: false,
+		},
+		title: {
+			display: false,
+			// text: "Chart.js Line Chart",
+		},
+	},
+	responsive: true,
+	scales: {
+		x: {
+			stacked: true,
+			grid: {
+				display: false,
+			},
+			// barPercentage: 0.1,
+			// barThickness: 2,
+			// barPercentage: 0.2,
+		},
+		y: {
+			stacked: true,
+			beginAtZero: true,
+			// grid: {
+			// 	display: false,
+			// },
+		},
+	},
+};
+
+const labels = ["January", "February", "March", "April", "May", "June", "July"];
+
+export const data = {
+	labels,
+	datasets: [
+		{
+			label: "Dataset 1",
+			data: labels.map(() =>
+				faker.datatype.number({ min: 0, max: 1000 })
+			),
+			backgroundColor: "rgb(13,98,254)",
+			stack: "Stack 0",
+			barThickness: 30,
+		},
+		{
+			label: "Dataset 2",
+			data: labels.map(() =>
+				faker.datatype.number({ min: -1000, max: 0 })
+			),
+			backgroundColor: "rgb(234,238,241)",
+			stack: "Stack 0",
+			barThickness: 30,
+		},
+		// {
+		// 	label: "Dataset 3",
+		// 	data: labels.map(() =>
+		// 		faker.datatype.number({ min: -1000, max: 1000 })
+		// 	),
+		// 	backgroundColor: "rgb(53, 162, 235)",
+		// 	stack: "Stack 1",
+		// },
+	],
+};
+
+const CashflowChart = () => {
+	return (
+		<div className="flex flex-col w-full h-full">
+			<div className="px-5 pt-5 text-xl font-semibold">Cashflow</div>
+			<div className="flex flex-col w-full border-t my-3"></div>
+			<div className="flex flex-col w-full h-full p-3 overflow-hidden">
+				<Bar options={options} data={data} />
+			</div>
+		</div>
+	);
+};
+
 export default function Cashflow() {
 	return (
 		<div className="flex flex-col w-full h-full overflow-hidden">
 			<div className="flex flex-row h-full w-full p-5 space-x-5">
 				<div className="flex flex-col h-full w-[70%] rounded  gap-y-5">
-					<div className="flex flex-col w-full min-h-[300px] bg-white rounded">
-						a
+					<div className="flex flex-col w-full max-h-[400px] bg-white rounded">
+						<CashflowChart />
 					</div>
 					<div className="flex flex-row w-full gap-x-5 h-full">
 						<div className="flex flex-col w-1/2 bg-white h-full rounded">
