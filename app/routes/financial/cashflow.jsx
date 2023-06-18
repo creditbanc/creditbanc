@@ -546,11 +546,11 @@ const stats = [
 
 const Stats = () => {
 	return (
-		<div className="flex flex-wrap w-full bg-gray-900/5 rounded-lg">
+		<div className="flex flex-wrap w-full rounded-lg gap-x-3 gap-y-3 justify-between">
 			{stats.map((stat) => (
 				<div
 					key={stat.name}
-					className="flex flex-col w-full md:w-1/3 justify-between gap-x-4 gap-y-2 bg-white px-4 py-10 border rounded-lg"
+					className="flex flex-col w-full md:w-[48%] lg:w-[32%] justify-between gap-x-4 gap-y-2 bg-white px-4 py-10 border rounded-lg"
 				>
 					<div className="text-sm font-medium leading-6 text-gray-500">
 						{stat.name}
@@ -598,7 +598,7 @@ export default function Cashflow() {
 						</div>
 						<div className="flex flex-col w-full border-t"></div>
 						<div className="flex flex-col w-full p-3">
-							<div className="flex flex-col w-full border rounded-lg">
+							<div className="flex flex-col w-full rounded-lg">
 								<Stats />
 							</div>
 						</div>
