@@ -2,18 +2,18 @@ import { Fragment } from "react";
 import { Link } from "@remix-run/react";
 const cb_logo = "/images/logos/cb_logo_3.png";
 import UserAccountNavMenu from "./UserAccountNavMenu";
-import { classNames } from "~/utils/helpers";
+import { classNames, mapIndexed } from "~/utils/helpers";
 import { Menu, Transition } from "@headlessui/react";
 import { ChevronDownIcon } from "@heroicons/react/20/solid";
 import { map, pipe } from "ramda";
 import { UsersIcon } from "@heroicons/react/24/outline";
 
-const Accounts = () => {
+const Companies = () => {
 	return (
 		<Menu as="div" className="relative inline-block text-left">
 			<div>
 				<Menu.Button className="inline-flex w-full justify-center gap-x-1.5 rounded-md bg-white px-3 text-sm font-semibold text-gray-900  hover:bg-gray-50">
-					Accounts
+					Companies
 					<ChevronDownIcon
 						className="-mr-1 h-5 w-5 text-gray-400"
 						aria-hidden="true"
@@ -123,13 +123,14 @@ export default function Nav({ user_id }) {
 
 				<div className="flex flex-row flex-1 justify-between  items-center mt-1 pr-5">
 					<div className="">
-						<Accounts />
+						<Companies />
 					</div>
 					<div className="flex flex-col justify-center">
 						<div className="flex flex-row space-x-3 text-xs lg:text-sm">
 							{pipe(
-								map((item) => (
+								mapIndexed((item, key) => (
 									<div
+										key={key}
 										className={`px-4 py-2 rounded-full cursor-pointer hover:bg-gray-100 ${
 											item.current && "bg-gray-100"
 										}`}
