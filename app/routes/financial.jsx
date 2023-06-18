@@ -14,9 +14,9 @@ export const loader = async ({ request }) => {
 };
 
 const tabs = [
-	{ name: "Cashflow", href: "#", current: true },
-	{ name: "Accounts", href: "#", current: false },
-	{ name: "Transactions", href: "#", current: false },
+	{ name: "Cashflow", href: "/financial/cashflow", current: true },
+	{ name: "Accounts", href: "/financial/accounts", current: false },
+	{ name: "Transactions", href: "/financial/transactions", current: false },
 ];
 
 const SubNav = () => {
