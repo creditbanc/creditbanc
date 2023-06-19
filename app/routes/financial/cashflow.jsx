@@ -404,18 +404,14 @@ export const data = {
 	datasets: [
 		{
 			label: "Dataset 1",
-			data: labels.map(() =>
-				faker.datatype.number({ min: 0, max: 1000 })
-			),
+			data: labels.map(() => faker.number.int({ min: 0, max: 1000 })),
 			backgroundColor: "rgb(13,98,254)",
 			stack: "Stack 0",
 			barThickness: 30,
 		},
 		{
 			label: "Dataset 2",
-			data: labels.map(() =>
-				faker.datatype.number({ min: -1000, max: 0 })
-			),
+			data: labels.map(() => faker.number.int({ min: -1000, max: 0 })),
 			backgroundColor: "rgb(234,238,241)",
 			stack: "Stack 0",
 			barThickness: 30,
@@ -428,9 +424,7 @@ export const revenue_data = {
 	datasets: [
 		{
 			label: "Dataset 1",
-			data: labels.map(() =>
-				faker.datatype.number({ min: 0, max: 1000 })
-			),
+			data: labels.map(() => faker.number.int({ min: 0, max: 1000 })),
 			backgroundColor: "rgb(13,98,254)",
 			// stack: "Stack 0",
 			barThickness: 30,
@@ -461,9 +455,7 @@ export const expenses_data = {
 		// },
 		{
 			label: "Dataset 2",
-			data: labels.map(() =>
-				faker.datatype.number({ min: 0, max: 1000 })
-			),
+			data: labels.map(() => faker.number.int({ min: 0, max: 1000 })),
 			backgroundColor: "rgb(234,238,241)",
 			// stack: "Stack 0",
 			barThickness: 30,
