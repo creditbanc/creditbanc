@@ -94,8 +94,18 @@ const navigation = [
 		icon: UserCircleIcon,
 		current: false,
 	},
-	{ name: "Cashflow", href: "#", icon: CurrencyDollarIcon, current: false },
-	{ name: "Vault", href: "#", icon: FolderOpenIcon, current: false },
+	{
+		name: "Cashflow",
+		href: "/financial/cashflow",
+		icon: CurrencyDollarIcon,
+		current: false,
+	},
+	{
+		name: "Vault",
+		href: "/vault/files",
+		icon: FolderOpenIcon,
+		current: false,
+	},
 ];
 
 const QuickLinks = () => {
@@ -169,8 +179,8 @@ export default function Companies() {
 					</div>
 				</div>
 			</div>
-			<div className="flex flex-col w-[30%] ">
-				<div className="flex flex-col bg-white border rounded">
+			<div className="flex flex-col w-[30%]">
+				<div className="flex flex-col bg-white border rounded overflow-hidden">
 					<div className="p-5">
 						<div className="flex flex-row space-x-3 items-center">
 							<div>
@@ -183,59 +193,65 @@ export default function Companies() {
 							<div>Credit Banc</div>
 						</div>
 					</div>
-					<div className="flex flex-col py-2">
-						<Link
-							to={`/cashflow/transactions`}
-							className="px-5 mb-4 flex flex-row items-center space-x-3 text-blue-500 cursor-pointer text-sm"
-						>
-							<div>
-								<DocumentDuplicateIcon className="h-4 w-4 text-blue-500" />
-							</div>
-							<div>Copy copmany share link</div>
-							<div>
-								<LinkIcon className="h-4 w-4 text-blue-500" />
-							</div>
-						</Link>
-					</div>
-					<div className="border-t "></div>
-					<div className="flex flex-col w-full p-5 space-y-3">
-						<div className="text-gray-400 text-sm">
-							Credit Scores
-						</div>
-						<div className="flex flex-row">
-							<div className="flex flex-col w-1/2 text-sm space-y-1">
-								<div className="text-gray-400">Personal</div>
-								<div className="text-lg">780</div>
-							</div>
-							<div className="flex flex-col w-1/2 text-sm space-y-1">
-								<div className="text-gray-400">Business</div>
-								<div className="text-lg">80</div>
-							</div>
-						</div>
-					</div>
 
-					<div className="border-t "></div>
-					<div className="flex flex-col p-5 text-sm space-y-3">
-						<div className=" text-gray-400">Quick Links</div>
-						<div className="flex flex-col ml-3">
-							<QuickLinks />
+					<div className="flex flex-col w-full overflow-scroll scrollbar-none">
+						<div className="flex flex-col py-2">
+							<Link
+								to={`/cashflow/transactions`}
+								className="px-5 mb-4 flex flex-row items-center space-x-3 text-blue-500 cursor-pointer text-sm"
+							>
+								<div>
+									<DocumentDuplicateIcon className="h-4 w-4 text-blue-500" />
+								</div>
+								<div>Copy copmany share link</div>
+								<div>
+									<LinkIcon className="h-4 w-4 text-blue-500" />
+								</div>
+							</Link>
 						</div>
-					</div>
-					<div className="border-t"></div>
-					<div className="flex flex-col p-5 text-sm space-y-2">
-						<div className="text-gray-400">Members</div>
-						<div className="flex flex-col space-y-2">
-							<Members />
+						<div className="border-t "></div>
+						<div className="flex flex-col w-full p-5 space-y-3">
+							<div className="text-gray-400 text-sm">
+								Credit Scores
+							</div>
+							<div className="flex flex-row">
+								<div className="flex flex-col w-1/2 text-sm space-y-1">
+									<div className="text-gray-400">
+										Personal
+									</div>
+									<div className="text-lg">780</div>
+								</div>
+								<div className="flex flex-col w-1/2 text-sm space-y-1">
+									<div className="text-gray-400">
+										Business
+									</div>
+									<div className="text-lg">80</div>
+								</div>
+							</div>
 						</div>
-					</div>
-					<div className="border-t"></div>
-					<div className="flex flex-col p-5 text-sm space-y-2">
-						<div className="text-gray-400">Notes</div>
-						<div className="flex flex-col w-full">
-							<textarea
-								rows={4}
-								className="border rounded p-3"
-							></textarea>
+						<div className="border-t "></div>
+						<div className="flex flex-col p-5 text-sm space-y-3">
+							<div className=" text-gray-400">Quick Links</div>
+							<div className="flex flex-col ml-3">
+								<QuickLinks />
+							</div>
+						</div>
+						<div className="border-t"></div>
+						<div className="flex flex-col p-5 text-sm space-y-2">
+							<div className="text-gray-400">Members</div>
+							<div className="flex flex-col space-y-2">
+								<Members />
+							</div>
+						</div>
+						<div className="border-t"></div>
+						<div className="flex flex-col p-5 text-sm space-y-2">
+							<div className="text-gray-400">Notes</div>
+							<div className="flex flex-col w-full">
+								<textarea
+									rows={4}
+									className="border rounded p-3"
+								></textarea>
+							</div>
 						</div>
 					</div>
 				</div>

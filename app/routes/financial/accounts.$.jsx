@@ -457,7 +457,7 @@ export default function Accounts() {
 
 					{!isEmpty(account) && (
 						<Link
-							to={`/cashflow/transactions`}
+							to={`/financial/transactions`}
 							className="px-5 mb-4 flex flex-row items-center space-x-3 text-blue-500 cursor-pointer text-sm"
 						>
 							<div>
