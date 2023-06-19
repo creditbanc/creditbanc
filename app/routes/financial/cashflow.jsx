@@ -8,9 +8,11 @@ import {
 	HeartIcon,
 	PaperClipIcon,
 	XMarkIcon,
+	ArrowDownIcon,
+	ArrowUpIcon,
 } from "@heroicons/react/20/solid";
 import { Listbox, Transition } from "@headlessui/react";
-import { classNames } from "~/utils/helpers";
+import { classNames, currency } from "~/utils/helpers";
 import {
 	Chart as ChartJS,
 	CategoryScale,
@@ -472,7 +474,9 @@ export const expenses_data = {
 const CashflowChart = () => {
 	return (
 		<div className="flex flex-col w-full h-full">
-			<div className="px-5 pt-5 text-xl font-semibold">Cashflow</div>
+			<div className="px-5 pt-5 text-base font-semibold leading-6 text-gray-900">
+				Cashflow
+			</div>
 			<div className="flex flex-col w-full border-t my-3"></div>
 			<div className="flex flex-col w-full h-full p-3 overflow-hidden">
 				<Bar options={options} data={data} />
@@ -481,13 +485,91 @@ const CashflowChart = () => {
 	);
 };
 
+const stats_data = [
+	{
+		name: "Month over month revenue change",
+		stat: "71,897",
+		previousStat: "70,946",
+		change: "12%",
+		changeType: "increase",
+	},
+	{
+		name: "Highest revenue in last 6 months",
+		stat: "58.16%",
+		previousStat: "56.14%",
+		change: "2.02%",
+		changeType: "increase",
+	},
+];
+
+const HealthStats = () => {
+	return (
+		<div className="bg-white divide-y rounded">
+			{stats_data.map((item) => (
+				<div key={item.name} className="px-4 py-3 sm:p-6">
+					<div className="text-sm font-normal text-gray-900">
+						{item.name}
+					</div>
+					<div className="mt-1 flex items-baseline justify-between md:block lg:flex">
+						<div className="flex items-baseline text-xl font-semibold text-blue-600">
+							{item.stat}
+							<span className="ml-2 text-sm font-medium text-gray-500">
+								from {item.previousStat}
+							</span>
+						</div>
+
+						<div
+							className={classNames(
+								item.changeType === "increase"
+									? "bg-green-100 text-green-800"
+									: "bg-red-100 text-red-800",
+								"inline-flex items-baseline rounded-full px-2.5 py-0.5 text-xs font-medium md:mt-2 lg:mt-0"
+							)}
+						>
+							{item.changeType === "increase" ? (
+								<ArrowUpIcon
+									className="-ml-1 mr-0.5 h-4 w-4 flex-shrink-0 self-center text-green-500"
+									aria-hidden="true"
+								/>
+							) : (
+								<ArrowDownIcon
+									className="-ml-1 mr-0.5 h-4 w-4 flex-shrink-0 self-center text-red-500"
+									aria-hidden="true"
+								/>
+							)}
+
+							{item.change}
+						</div>
+					</div>
+				</div>
+			))}
+		</div>
+	);
+};
+
 const RevenueChart = () => {
 	return (
 		<div className="flex flex-col w-full h-full">
-			<div className="px-5 pt-5 text-xl font-semibold">Revenue</div>
+			<div className="px-5 pt-5 text-base font-semibold leading-6 text-gray-900">
+				Revenue
+			</div>
 			<div className="flex flex-col w-full border-t my-3"></div>
-			<div className="flex flex-col w-full h-full p-3 overflow-hidden">
+
+			<div className="flex flex-row justify-between px-5">
+				<div className="flex flex-col mb-3 space-y-2 my-2">
+					<div className="text-gray-700">Total revenue in June</div>
+					<div className="text-3xl">
+						{currency.format(5144707.08)}
+					</div>
+				</div>
+			</div>
+
+			<div className="flex flex-col w-full h-[250px] p-3 overflow-hidden">
 				<Bar options={options} data={revenue_data} />
+			</div>
+
+			<div>
+				<HealthStats />
 			</div>
 		</div>
 	);
@@ -496,10 +578,26 @@ const RevenueChart = () => {
 const ExpensesChart = () => {
 	return (
 		<div className="flex flex-col w-full h-full">
-			<div className="px-5 pt-5 text-xl font-semibold">Expenses</div>
+			<div className="px-5 pt-5 text-base font-semibold leading-6 text-gray-900">
+				Expenses
+			</div>
 			<div className="flex flex-col w-full border-t my-3"></div>
-			<div className="flex flex-col w-full h-full p-3 overflow-hidden">
+
+			<div className="flex flex-row justify-between px-5">
+				<div className="flex flex-col mb-3 space-y-2 my-2">
+					<div className="text-gray-700">Total spending in June</div>
+					<div className="text-3xl">
+						{currency.format(5144707.08)}
+					</div>
+				</div>
+			</div>
+
+			<div className="flex flex-col w-full h-[250px] p-3 overflow-hidden">
 				<Bar options={options} data={expenses_data} />
+			</div>
+
+			<div>
+				<HealthStats />
 			</div>
 		</div>
 	);
@@ -574,6 +672,20 @@ const Stats = () => {
 	);
 };
 
+const FinancialHealthEvaluationHeading = () => {
+	return (
+		<div className="flex flex-col">
+			<h3 className="text-base font-semibold leading-6 text-gray-900">
+				Financial Health Evaluation
+			</h3>
+			<p className="mt-1 text-sm text-gray-500">
+				The 6 key data points lenders may review in their evaluation of
+				your business:
+			</p>
+		</div>
+	);
+};
+
 export default function Cashflow() {
 	return (
 		<div className="flex flex-col w-full h-full overflow-hidden">
@@ -592,9 +704,7 @@ export default function Cashflow() {
 					</div>
 					<div className="flex flex-col w-full bg-white rounded ">
 						<div className="flex flex-col py-4 px-5">
-							<div className="font-semibold text-xl">
-								Financial Health Evaluation
-							</div>
+							<FinancialHealthEvaluationHeading />
 						</div>
 						<div className="flex flex-col w-full border-t"></div>
 						<div className="flex flex-col w-full p-3">
