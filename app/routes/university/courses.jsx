@@ -261,11 +261,21 @@ const Accounts = () => {
 					<div className="relative w-full">
 						<img
 							src={post.imageUrl}
-							alt=""
 							className="aspect-[16/9] w-full rounded-2xl bg-gray-100 object-cover sm:aspect-[2/1] lg:aspect-[3/2]"
 						/>
 						<div className="absolute inset-0 rounded-2xl ring-1 ring-inset ring-gray-900/10" />
 					</div>
+
+					<div className="my-2 flex flex-col w-full">
+						<div className="flex flex-row w-full justify-between my-2 text-sm text-gray-400">
+							<div>45%</div>
+							<div>4/20 lessons</div>
+						</div>
+						<div class="w-full bg-gray-200 rounded-full h-2.5 dark:bg-gray-700">
+							<div className="bg-blue-600 h-2.5 rounded-full w-[45%]"></div>
+						</div>
+					</div>
+
 					<div className="flex flex-col w-full my-3">
 						<div className="flex flex-row w-full py-2 border border-gray-600 text-gray-600 rounded-lg justify-center items-center cursor-pointer gap-x-3">
 							<div>
@@ -300,10 +310,10 @@ const Accounts = () => {
 								{post.description}
 							</p>
 						</div>
-						<div className="relative mt-8 flex items-center gap-x-4">
+
+						<div className="relative mt-6 flex items-center gap-x-4">
 							<img
 								src={post.author.imageUrl}
-								alt=""
 								className="h-10 w-10 rounded-full bg-gray-100"
 							/>
 							<div className="text-sm leading-6">
@@ -344,44 +354,6 @@ export default function Courses() {
 
 					<div className="flex flex-col w-full py-5 scrollbar-none">
 						<Accounts />
-
-						{/* <div className="flex flex-row w-full items-center flex-wrap gap-y-10 justify-between gap-x-5">
-							<Account
-								img_src={
-									"https://i.insider.com/5e0a2283855cc25cc63f2066"
-								}
-							/>
-							<Account
-								img_src={
-									"https://image.cnbcfm.com/api/v1/image/107236898-1683383558883-1683383202227-WarrenBuffettsopeningstatementat2023BerkshireHathawayannualmeeting.jpg?v=1683383580"
-								}
-							/>
-							<Account
-								img_src={
-									"https://image.cnbcfm.com/api/v1/image/107236898-1683383558883-1683383202227-WarrenBuffettsopeningstatementat2023BerkshireHathawayannualmeeting.jpg?v=1683383580"
-								}
-							/>
-							<Account
-								img_src={
-									"https://image.cnbcfm.com/api/v1/image/107236898-1683383558883-1683383202227-WarrenBuffettsopeningstatementat2023BerkshireHathawayannualmeeting.jpg?v=1683383580"
-								}
-							/>
-							<Account
-								img_src={
-									"https://image.cnbcfm.com/api/v1/image/107236898-1683383558883-1683383202227-WarrenBuffettsopeningstatementat2023BerkshireHathawayannualmeeting.jpg?v=1683383580"
-								}
-							/>
-							<Account
-								img_src={
-									"https://image.cnbcfm.com/api/v1/image/107236898-1683383558883-1683383202227-WarrenBuffettsopeningstatementat2023BerkshireHathawayannualmeeting.jpg?v=1683383580"
-								}
-							/>
-							<Account
-								img_src={
-									"https://image.cnbcfm.com/api/v1/image/107236898-1683383558883-1683383202227-WarrenBuffettsopeningstatementat2023BerkshireHathawayannualmeeting.jpg?v=1683383580"
-								}
-							/>
-						</div> */}
 					</div>
 				</div>
 			</div>
