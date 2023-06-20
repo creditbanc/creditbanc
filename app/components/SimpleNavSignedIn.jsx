@@ -105,7 +105,7 @@ let navigation = [
 	{ name: "Credit", href: "#", current: true },
 	{ name: "Cashflow", href: "/financial/cashflow", current: false },
 	{ name: "Vault", href: "/vault/files", current: false },
-	{ name: "University", href: "#", current: false },
+	{ name: "University", href: "/university/courses", current: false },
 ];
 
 export default function Nav({ user_id }) {

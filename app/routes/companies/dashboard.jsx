@@ -197,7 +197,7 @@ export default function Companies() {
 					<div className="flex flex-col w-full overflow-scroll scrollbar-none">
 						<div className="flex flex-col py-2">
 							<Link
-								to={`/cashflow/transactions`}
+								to={`/financial/transactions`}
 								className="px-5 mb-4 flex flex-row items-center space-x-3 text-blue-500 cursor-pointer text-sm"
 							>
 								<div>

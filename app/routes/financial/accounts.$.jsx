@@ -150,7 +150,7 @@ const AccountActionsDropdown = ({ document }) => {
 						<Menu.Item>
 							{({ active }) => (
 								<Link
-									to={`/cashflow/transactions`}
+									to={`/financial/transactions`}
 									// onClick={onDownloadFileClick}
 									className={classNames(
 										active
