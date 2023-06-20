@@ -1,7 +1,12 @@
-import { FolderIcon, PlayIcon } from "@heroicons/react/20/solid";
-import { ListBulletIcon } from "@heroicons/react/24/outline";
+import { FolderIcon, PlayIcon, ChevronUpIcon } from "@heroicons/react/20/solid";
+import {
+	DocumentIcon,
+	ListBulletIcon,
+	PlayCircleIcon,
+} from "@heroicons/react/24/outline";
 import { Link } from "@remix-run/react";
 import { classNames } from "~/utils/helpers";
+import { Disclosure } from "@headlessui/react";
 
 const Members = () => {
 	return (
@@ -266,16 +271,6 @@ const Accounts = () => {
 						<div className="absolute inset-0 rounded-2xl ring-1 ring-inset ring-gray-900/10" />
 					</div>
 
-					<div className="my-2 flex flex-col w-full">
-						<div className="flex flex-row w-full justify-between my-2 text-sm text-gray-400">
-							<div>45%</div>
-							<div>4/20 lessons</div>
-						</div>
-						<div class="w-full bg-gray-200 rounded-full h-2.5 dark:bg-gray-700">
-							<div className="bg-blue-600 h-2.5 rounded-full w-[45%]"></div>
-						</div>
-					</div>
-
 					<div className="flex flex-col w-full my-3">
 						<div className="flex flex-row w-full py-2 border border-gray-600 text-gray-600 rounded-lg justify-center items-center cursor-pointer gap-x-3">
 							<div>
@@ -311,6 +306,16 @@ const Accounts = () => {
 							</p>
 						</div>
 
+						<div className="my-2 flex flex-col w-full">
+							<div className="flex flex-row w-full justify-between my-2 text-sm text-gray-400">
+								<div>45%</div>
+								<div>4/20 lessons</div>
+							</div>
+							<div className="w-full bg-gray-200 rounded-full h-2.5 dark:bg-gray-700">
+								<div className="bg-blue-600 h-2.5 rounded-full w-[45%]"></div>
+							</div>
+						</div>
+
 						<div className="relative mt-6 flex items-center gap-x-4">
 							<img
 								src={post.author.imageUrl}
@@ -331,6 +336,142 @@ const Accounts = () => {
 					</div>
 				</article>
 			))}
+		</div>
+	);
+};
+
+const CurriculumAccordion = () => {
+	return (
+		<div className="mx-auto w-full max-w-md rounded-2xl bg-white p-2 space-y-3 ">
+			<Disclosure defaultOpen={true}>
+				{({ open }) => (
+					<>
+						<Disclosure.Button className="flex w-full justify-between rounded-lg  px-4 py-2 text-left text-sm font-medium   focus:outline-none focus-visible:ring  focus-visible:ring-opacity-75">
+							<span>What is your refund policy?</span>
+							<ChevronUpIcon
+								className={`${
+									open ? "rotate-180 transform" : ""
+								} h-5 w-5 text-gray-500`}
+							/>
+						</Disclosure.Button>
+						<Disclosure.Panel className="px-4  pb-2 text-gray-500 space-y-3 text-sm">
+							<div className="flex flex-row w-full border p-2 rounded">
+								<div className="flex flex-row w-full space-x-2 items-center space-between cursor-pointer">
+									<div>
+										<PlayCircleIcon className="h-5 w-5 text-gray-500" />
+									</div>
+									<div>Modern Portfolio Theory</div>
+								</div>
+								<div>2:45</div>
+							</div>
+							<div className="flex flex-row w-full border p-2 rounded">
+								<div className="flex flex-row w-full space-x-2 items-center space-between cursor-pointer">
+									<div>
+										<DocumentIcon className="h-5 w-5 text-gray-500" />
+									</div>
+									<div>Modern Portfolio Theory</div>
+								</div>
+								<div>2:45</div>
+							</div>
+							<div className="flex flex-row w-full border p-2 rounded">
+								<div className="flex flex-row w-full space-x-2 items-center space-between cursor-pointer">
+									<div>
+										<PlayCircleIcon className="h-5 w-5 text-gray-500" />
+									</div>
+									<div>Modern Portfolio Theory</div>
+								</div>
+								<div>2:45</div>
+							</div>
+						</Disclosure.Panel>
+					</>
+				)}
+			</Disclosure>
+			<Disclosure defaultOpen={true}>
+				{({ open }) => (
+					<>
+						<Disclosure.Button className="flex w-full justify-between rounded-lg  px-4 py-2 text-left text-sm font-medium   focus:outline-none focus-visible:ring  focus-visible:ring-opacity-75">
+							<span>What is your refund policy?</span>
+							<ChevronUpIcon
+								className={`${
+									open ? "rotate-180 transform" : ""
+								} h-5 w-5 text-gray-500`}
+							/>
+						</Disclosure.Button>
+						<Disclosure.Panel className="px-4  pb-2 text-gray-500 space-y-3 text-sm">
+							<div className="flex flex-row w-full border p-2 rounded">
+								<div className="flex flex-row w-full space-x-2 items-center space-between cursor-pointer">
+									<div>
+										<PlayCircleIcon className="h-5 w-5 text-gray-500" />
+									</div>
+									<div>Modern Portfolio Theory</div>
+								</div>
+								<div>2:45</div>
+							</div>
+							<div className="flex flex-row w-full border p-2 rounded">
+								<div className="flex flex-row w-full space-x-2 items-center space-between cursor-pointer">
+									<div>
+										<DocumentIcon className="h-5 w-5 text-gray-500" />
+									</div>
+									<div>Modern Portfolio Theory</div>
+								</div>
+								<div>2:45</div>
+							</div>
+							<div className="flex flex-row w-full border p-2 rounded">
+								<div className="flex flex-row w-full space-x-2 items-center space-between cursor-pointer">
+									<div>
+										<PlayCircleIcon className="h-5 w-5 text-gray-500" />
+									</div>
+									<div>Modern Portfolio Theory</div>
+								</div>
+								<div>2:45</div>
+							</div>
+						</Disclosure.Panel>
+					</>
+				)}
+			</Disclosure>
+			<Disclosure defaultOpen={true}>
+				{({ open }) => (
+					<>
+						<Disclosure.Button className="flex w-full justify-between rounded-lg  px-4 py-2 text-left text-sm font-medium   focus:outline-none focus-visible:ring  focus-visible:ring-opacity-75">
+							<span>What is your refund policy?</span>
+							<ChevronUpIcon
+								className={`${
+									open ? "rotate-180 transform" : ""
+								} h-5 w-5 text-gray-500`}
+							/>
+						</Disclosure.Button>
+						<Disclosure.Panel className="px-4  pb-2 text-gray-500 space-y-3 text-sm">
+							<div className="flex flex-row w-full border p-2 rounded">
+								<div className="flex flex-row w-full space-x-2 items-center space-between cursor-pointer">
+									<div>
+										<PlayCircleIcon className="h-5 w-5 text-gray-500" />
+									</div>
+									<div>Modern Portfolio Theory</div>
+								</div>
+								<div>2:45</div>
+							</div>
+							<div className="flex flex-row w-full border p-2 rounded">
+								<div className="flex flex-row w-full space-x-2 items-center space-between cursor-pointer">
+									<div>
+										<DocumentIcon className="h-5 w-5 text-gray-500" />
+									</div>
+									<div>Modern Portfolio Theory</div>
+								</div>
+								<div>2:45</div>
+							</div>
+							<div className="flex flex-row w-full border p-2 rounded">
+								<div className="flex flex-row w-full space-x-2 items-center space-between cursor-pointer">
+									<div>
+										<PlayCircleIcon className="h-5 w-5 text-gray-500" />
+									</div>
+									<div>Modern Portfolio Theory</div>
+								</div>
+								<div>2:45</div>
+							</div>
+						</Disclosure.Panel>
+					</>
+				)}
+			</Disclosure>
 		</div>
 	);
 };
@@ -358,21 +499,47 @@ export default function Courses() {
 				</div>
 			</div>
 			<div className="flex flex-col w-[30%]">
-				<div className="flex flex-col bg-white border rounded overflow-hidden">
-					<div className="p-5">
-						<div className="flex flex-row space-x-3 items-center">
-							<div>
-								<span className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-gray-500">
-									<span className="text-lg font-medium leading-none text-white">
-										C
-									</span>
-								</span>
+				<div className="flex flex-col bg-white border rounded overflow-scroll scrollbar-none">
+					<div className="p-3">
+						<img
+							src="https://images.unsplash.com/photo-1496128858413-b36217c2ce36?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=3603&q=80"
+							className="w-full rounded"
+						/>
+					</div>
+
+					<div className="border-b border-gray-200 bg-white px-4 py-5 sm:px-6 sticky top-0 z-10">
+						<h3 className="text-base font-semibold leading-6 text-gray-900">
+							Portfolio Manager
+						</h3>
+
+						<div className="flex flex-col w-full space-y-5">
+							<p className="mt-1 text-sm text-gray-500">
+								Deep dive into the portfolio management process
+								& earn your certification with new topics on the
+								latest trends in ESG, active vs passive
+								investing, and more!
+							</p>
+
+							<p className="mt-1 text-sm text-gray-500">
+								New content – discover our expert interview with
+								a wealth manager!
+							</p>
+						</div>
+
+						<div className="my-2 flex flex-col w-full">
+							<div className="flex flex-row w-full justify-between my-2 text-sm text-gray-400">
+								<div>45%</div>
+								<div>4/20 lessons</div>
 							</div>
-							<div>Credit Banc</div>
+							<div className="w-full bg-gray-200 rounded-full h-2.5 dark:bg-gray-700">
+								<div className="bg-blue-600 h-2.5 rounded-full w-[45%]"></div>
+							</div>
 						</div>
 					</div>
 
-					<div></div>
+					<div className="flex flex-col w-full my-3">
+						<CurriculumAccordion />
+					</div>
 				</div>
 			</div>
 		</div>

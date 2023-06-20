@@ -10,7 +10,7 @@ import { UsersIcon } from "@heroicons/react/24/outline";
 
 const Companies = () => {
 	return (
-		<Menu as="div" className="relative inline-block text-left">
+		<Menu as="div" className="relative inline-block text-left z-50">
 			<div>
 				<Menu.Button className="inline-flex w-full justify-center gap-x-1.5 rounded-md bg-white px-3 text-sm font-semibold text-gray-900  hover:bg-gray-50">
 					Companies
