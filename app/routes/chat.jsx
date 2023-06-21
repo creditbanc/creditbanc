@@ -271,7 +271,7 @@ export default function Chat() {
 							/>
 						</div>
 						<div className="space-y-2">
-							<div className="font-semibold">App</div>
+							<div className="font-semibold">Berkshire</div>
 							<div className="text-sm flex flex-row items-center space-x-2">
 								<div>
 									<Members />
@@ -317,17 +317,17 @@ export default function Chat() {
 						<Message />
 					</div>
 				</div>
-				<div className="flex flex-col w-full bg-white border-t py-3">
-					<div className="flex flex-row w-full h-full">
-						<div className="flex flex-row flex-1 h-full items-end pl-5 space-x-5 ">
+				<div className="flex flex-col w-full bg-white px-3 pb-3">
+					<div className="flex flex-row w-full h-full border p-2 rounded ">
+						<div className="flex flex-row flex-1 h-full items-end space-x-5 ">
 							<div>
 								<PaperClipIcon className="h-6 w-6 text-gray-400 cursor-pointer" />
 							</div>
-							<div className="flex flex-col w-full">
+							<div className="flex flex-col w-full pb-[3px]">
 								<ChatTextArea />
 							</div>
 						</div>
-						<div className="flex flex-row w-[100px] h-full">
+						<div className="flex flex-row  h-full">
 							<div className="flex flex-col justify-end h-full -mt-0.5 items-center w-full ">
 								<FaceSmileIcon className="h-6 w-6 text-gray-400 cursor-pointer " />
 							</div>
