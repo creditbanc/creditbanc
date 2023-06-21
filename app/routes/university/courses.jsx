@@ -268,7 +268,7 @@ const CurriculumAccordion = () => {
 				{({ open }) => (
 					<>
 						<Disclosure.Button className="flex w-full justify-between rounded-lg  px-4 py-2 text-left text-sm font-medium   focus:outline-none focus-visible:ring  focus-visible:ring-opacity-75">
-							<span>What is your refund policy?</span>
+							<span>THE INVESTMENT MANAGEMENT INDUSTRY</span>
 							<ChevronUpIcon
 								className={`${
 									open ? "rotate-180 transform" : ""
@@ -311,7 +311,7 @@ const CurriculumAccordion = () => {
 				{({ open }) => (
 					<>
 						<Disclosure.Button className="flex w-full justify-between rounded-lg  px-4 py-2 text-left text-sm font-medium   focus:outline-none focus-visible:ring  focus-visible:ring-opacity-75">
-							<span>What is your refund policy?</span>
+							<span>ECONOMIC ANALYSIS & ASSET ALLOCATION</span>
 							<ChevronUpIcon
 								className={`${
 									open ? "rotate-180 transform" : ""
@@ -354,7 +354,7 @@ const CurriculumAccordion = () => {
 				{({ open }) => (
 					<>
 						<Disclosure.Button className="flex w-full justify-between rounded-lg  px-4 py-2 text-left text-sm font-medium   focus:outline-none focus-visible:ring  focus-visible:ring-opacity-75">
-							<span>What is your refund policy?</span>
+							<span>SECURITY SELECTION</span>
 							<ChevronUpIcon
 								className={`${
 									open ? "rotate-180 transform" : ""
