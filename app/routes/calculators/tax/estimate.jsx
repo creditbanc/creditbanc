@@ -15,6 +15,9 @@ export const loader = async ({ request }) => {
 
 	let { expenses, state_id, industry_id } = tax_credit;
 
+	// console.log("expenses");
+	// console.log(expenses);
+
 	let expenses_payload = {};
 	pipe(map((expense) => (expenses_payload[expense.year] = expense.amount)))(
 		JSON.parse(expenses)

@@ -25,6 +25,7 @@ import {
 import { Bar } from "react-chartjs-2";
 import { faker } from "@faker-js/faker";
 import "chart.js/auto";
+import { ArrowUpCircleIcon } from "@heroicons/react/24/outline";
 
 ChartJS.register(
 	CategoryScale,
@@ -38,9 +39,11 @@ ChartJS.register(
 const activity = [
 	{
 		id: 1,
-		type: "created",
-		person: { name: "Chelsea Hagon" },
-		date: "7d ago",
+		type: "commented",
+		merchant_name: "Starbucks",
+		person: { name: "Starbucks" },
+		date: "03-16-2023",
+		amount: "$59.00",
 		dateTime: "2023-01-23T10:32",
 	},
 	{
@@ -151,13 +154,25 @@ const ActivityFeed = () => {
 						</div>
 						{activityItem.type === "commented" ? (
 							<>
-								<img
-									src={activityItem.person.imageUrl}
-									alt=""
-									className="relative mt-3 h-6 w-6 flex-none rounded-full bg-gray-50"
-								/>
+								<div className="bg-red-100 rounded-full h-6 w-6 flex flex-col items-center justify-center z-10">
+									<ArrowUpCircleIcon className="h-5 w-5 text-red-500 " />
+								</div>
+
 								<div className="flex-auto rounded-md p-3 ring-1 ring-inset ring-gray-200">
-									<div className="flex justify-between gap-x-4">
+									<div className="flex flex-row w-full justify-between text-xs">
+										<div className="space-y-1">
+											<div className="font-medium">
+												Starbucks
+											</div>
+											<div className="text-gray-600">
+												02-12-2022
+											</div>
+										</div>
+										<div className="flex flex-col justify-center text-lg font-light">
+											-$4.00
+										</div>
+									</div>
+									{/* <div className="flex justify-between gap-x-4">
 										<div className="py-0.5 text-xs leading-5 text-gray-500">
 											<span className="font-medium text-gray-900">
 												{activityItem.person.name}
@@ -173,7 +188,7 @@ const ActivityFeed = () => {
 									</div>
 									<p className="text-sm leading-6 text-gray-500">
 										{activityItem.comment}
-									</p>
+									</p> */}
 								</div>
 							</>
 						) : (
@@ -207,7 +222,7 @@ const ActivityFeed = () => {
 			</ul>
 
 			{/* New comment form */}
-			<div className="mt-6 flex gap-x-3">
+			{/* <div className="mt-6 flex gap-x-3">
 				<img
 					src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
 					alt=""
@@ -354,7 +369,7 @@ const ActivityFeed = () => {
 						</button>
 					</div>
 				</form>
-			</div>
+			</div> */}
 		</>
 	);
 };
@@ -746,38 +761,38 @@ const ExpensesChart = () => {
 
 const stats = [
 	{
-		name: "Revenue",
-		value: "$405,091.00",
+		name: "Lender-recognized annual revenue",
+		value: "$2,198,805.00",
 		change: "+4.75%",
 		changeType: "positive",
 	},
 	{
-		name: "Overdue invoices",
+		name: "Average daily balance",
 		value: "$12,787.00",
 		change: "+54.02%",
 		changeType: "negative",
 	},
 	{
-		name: "Outstanding invoices",
-		value: "$245,988.00",
+		name: "Number of negative balance days",
+		value: "0",
 		change: "-1.39%",
 		changeType: "positive",
 	},
 	{
-		name: "Expenses",
-		value: "$30,156.00",
+		name: "Personal credit utilization percentage",
+		value: "3%",
 		change: "+10.18%",
 		changeType: "negative",
 	},
 	{
-		name: "Outstanding invoices",
-		value: "$245,988.00",
+		name: "Time in business",
+		value: "7 years",
 		change: "-1.39%",
 		changeType: "positive",
 	},
 	{
-		name: "Expenses",
-		value: "$30,156.00",
+		name: "Personal credit",
+		value: "780",
 		change: "+10.18%",
 		changeType: "negative",
 	},

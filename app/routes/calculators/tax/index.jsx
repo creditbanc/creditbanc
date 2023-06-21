@@ -262,11 +262,11 @@ export default function Expenses() {
 	const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
 	let [expenses, setExpenses] = useState([
-		{ year: 2019, amount: "" },
+		// { year: 2019, amount: "" },
 		{ year: 2020, amount: "" },
-		{ year: 2021, amount: null },
-		{ year: 2022, amount: null },
-		{ year: 2023, amount: null },
+		{ year: 2021, amount: "" },
+		{ year: 2022, amount: "" },
+		// { year: 2023, amount: "" },
 	]);
 
 	const onSubmit = () => {

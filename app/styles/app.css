@@ -2491,6 +2491,11 @@ video {
   background-color: rgb(85 207 158 / var(--tw-bg-opacity));
 }
 
+.bg-\[\#ff726f\] {
+  --tw-bg-opacity: 1;
+  background-color: rgb(255 114 111 / var(--tw-bg-opacity));
+}
+
 .bg-\[\#fff\] {
   --tw-bg-opacity: 1;
   background-color: rgb(255 255 255 / var(--tw-bg-opacity));
@@ -2645,6 +2650,11 @@ video {
 .bg-yellow-400 {
   --tw-bg-opacity: 1;
   background-color: rgb(250 204 21 / var(--tw-bg-opacity));
+}
+
+.bg-\[\#F4364C\] {
+  --tw-bg-opacity: 1;
+  background-color: rgb(244 54 76 / var(--tw-bg-opacity));
 }
 
 .bg-opacity-75 {
