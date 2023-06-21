@@ -8,72 +8,6 @@ import { Link } from "@remix-run/react";
 import { classNames } from "~/utils/helpers";
 import { Disclosure } from "@headlessui/react";
 
-const Members = () => {
-	return (
-		<div className="flex -space-x-2 overflow-hidden">
-			<img
-				className="inline-block h-8 w-8 rounded-full ring-2 ring-white"
-				src="https://images.unsplash.com/photo-1491528323818-fdd1faba62cc?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
-				alt=""
-			/>
-			<img
-				className="inline-block h-8 w-8 rounded-full ring-2 ring-white"
-				src="https://images.unsplash.com/photo-1550525811-e5869dd03032?ixlib=rb-1.2.1&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
-				alt=""
-			/>
-			<img
-				className="inline-block h-8 w-8 rounded-full ring-2 ring-white"
-				src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2.25&w=256&h=256&q=80"
-				alt=""
-			/>
-			<img
-				className="inline-block h-8 w-8 rounded-full ring-2 ring-white"
-				src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
-				alt=""
-			/>
-		</div>
-	);
-};
-
-const Account = ({ img_src }) => {
-	return (
-		<div
-			className="flex flex-col w-full lg:min-w-[47%] lg:max-w-[47%] xl:min-w-[30%] xl:max-w-[30%] justify-between rounded-lg border cursor-pointer relative"
-			onClick={() => console.log("single cick")}
-			onDoubleClick={() => console.log("double click")}
-		>
-			<div className="flex flex-col w-full rounded-t items-center h-[150px] overflow-hidden">
-				<div className="flex flex-col items-center justify-center -mt-[50px] h-full absolute overflow-hidden">
-					<PlayIcon className="h-10 w-10 text-white" />
-				</div>
-				<div className="flex flex-col w-[130%]">
-					<img src={img_src} className="" />
-				</div>
-			</div>
-			<div className="flex flex-col flex-1 px-3">
-				<div className="flex flex-col flex-1 py-2">
-					<div className="flex flex-col text-gray-400">
-						Portfolio Manager
-					</div>
-					<div className="flex flex-col text-sm">
-						Deep dive into the portfolio management process & earn
-						your certification with new topics on the latest trends
-						in ESG, active vs passive investing, and more!
-					</div>
-				</div>
-				<div className="flex flex-col w-full h-[55px] justify-center">
-					<div className="flex flex-row w-full py-2 bg-blue-600 rounded text-white justify-center items-center cursor-pointer gap-x-3">
-						<div>
-							<ListBulletIcon className="h-5 w-5 text-white" />
-						</div>
-						<div className="flex flex-col">Course Details</div>
-					</div>
-				</div>
-			</div>
-		</div>
-	);
-};
-
 const UniversityHeader = () => {
 	return (
 		<div className="px-5 mb-5">
@@ -272,12 +206,15 @@ const Accounts = () => {
 					</div>
 
 					<div className="flex flex-col w-full my-3">
-						<div className="flex flex-row w-full py-2 border border-gray-600 text-gray-600 rounded-lg justify-center items-center cursor-pointer gap-x-3">
+						<Link
+							to={`/university/courses/1`}
+							className="flex flex-row w-full py-2 border border-gray-600 text-gray-600 rounded-lg justify-center items-center cursor-pointer gap-x-3"
+						>
 							<div>
 								<ListBulletIcon className="h-5 w-5 text-white" />
 							</div>
 							<div className="flex flex-col">Course Details</div>
-						</div>
+						</Link>
 					</div>
 					<div className="max-w-xl">
 						<div className="mt-2 flex items-center gap-x-4 text-xs">
@@ -508,7 +445,7 @@ export default function Courses() {
 					</div>
 
 					<div className="border-b border-gray-200 bg-white px-4 py-5 sm:px-6 sticky top-0 z-10">
-						<h3 className="text-base font-semibold leading-6 text-gray-900">
+						<h3 className="text-base font-semibold leading-6 text-gray-900 my-2">
 							Portfolio Manager
 						</h3>
 
