@@ -31,25 +31,6 @@ const UniversityHeader = () => {
 };
 
 const HeaderFilters = () => {
-	// let files = useFilesStore((state) => state.files);
-	// let set_files = useFilesStore((state) => state.set_files);
-
-	const onFilterFiles = (tag_id) => {
-		// set_files(
-		// 	["files"],
-		// 	pipe(
-		// 		mod(all, "visible")(() => true),
-		// 		mod(matching({ tags: pipe(filter({ id: tag_id }), isEmpty) }))(
-		// 			(value) => ({ ...value, visible: false })
-		// 		)
-		// 	)(files)
-		// );
-	};
-
-	const onShowAllFiles = () => {
-		// set_files(["files"], pipe(mod(all, "visible")(() => true))(files));
-	};
-
 	return (
 		<div className="flex flex-col w-full py-5 bg-white z-10">
 			<div className="flex flex-row w-full items-center text-xs ">
@@ -60,49 +41,52 @@ const HeaderFilters = () => {
 					<div className="flex flex-row w-full flex-wrap gap-y-3">
 						<div
 							className="flex flex-col px-3 py-1 border rounded-full text-gray-500 bg-gray-50 cursor-pointer text-center min-w-[50px] mr-3"
-							onClick={onShowAllFiles}
+							// onClick={onShowAllFiles}
 						>
 							All
 						</div>
-						<div
-							className="flex flex-col px-3 py-1 border rounded-full text-gray-500 bg-gray-50 cursor-pointer text-center min-w-[100px] mr-3"
-							onClick={() => onFilterFiles("1040")}
-						>
-							Form 1040
+						<div className="flex flex-col px-3 py-1 border rounded-full text-gray-500 bg-gray-50 cursor-pointer text-center min-w-[50px] mr-3">
+							Credit
 						</div>
 						<div
 							className="flex flex-col px-3 py-1 border rounded-full text-gray-500 bg-gray-50 cursor-pointer text-center min-w-[100px] mr-3"
-							onClick={() => onFilterFiles("1065")}
+							// onClick={() => onFilterFiles("1040")}
 						>
-							Form 1065
+							Accounting
 						</div>
 						<div
 							className="flex flex-col px-3 py-1 border rounded-full text-gray-500 bg-gray-50 cursor-pointer text-center min-w-[100px] mr-3"
-							onClick={() => onFilterFiles("1099")}
+							// onClick={() => onFilterFiles("1065")}
 						>
-							Form 1099
+							Asset Management
 						</div>
 						<div
 							className="flex flex-col px-3 py-1 border rounded-full text-gray-500 bg-gray-50 cursor-pointer text-center min-w-[100px] mr-3"
-							onClick={() => onFilterFiles("1120")}
+							// onClick={() => onFilterFiles("1099")}
 						>
-							Form 1120
+							Corporate Finance
 						</div>
-						<div
+						{/* <div
 							className="flex flex-col px-3 py-1 border rounded-full text-gray-500 bg-gray-50 cursor-pointer text-center min-w-[100px] mr-3"
-							onClick={() => onFilterFiles("W-2")}
+							// onClick={() => onFilterFiles("1120")}
 						>
-							Form W-2
+							Financial Statement Analysis
+						</div> */}
+						{/* <div
+							className="flex flex-col px-3 py-1 border rounded-full text-gray-500 bg-gray-50 cursor-pointer text-center min-w-[100px] mr-3"
+							// onClick={() => onFilterFiles("W-2")}
+						>
+							Financial Modeling
+						</div> */}
+						<div className="flex flex-col px-3 py-1 border rounded-full text-gray-500 bg-gray-50 cursor-pointer text-center min-w-[50px] mr-3">
+							Mergers & Acquisitions
 						</div>
 						<div className="flex flex-col px-3 py-1 border rounded-full text-gray-500 bg-gray-50 cursor-pointer text-center min-w-[50px] mr-3">
-							2021
+							Private Equity
 						</div>
-						<div className="flex flex-col px-3 py-1 border rounded-full text-gray-500 bg-gray-50 cursor-pointer text-center min-w-[50px] mr-3">
-							2022
-						</div>
-						<div className="flex flex-col px-3 py-1 border rounded-full text-gray-500 bg-gray-50 cursor-pointer text-center min-w-[50px] mr-3">
-							2023
-						</div>
+						{/* <div className="flex flex-col px-3 py-1 border rounded-full text-gray-500 bg-gray-50 cursor-pointer text-center min-w-[50px] mr-3">
+							Valuation
+						</div> */}
 					</div>
 				</div>
 			</div>
@@ -207,7 +191,7 @@ const Accounts = () => {
 
 					<div className="flex flex-col w-full my-3">
 						<Link
-							to={`/university/courses/1`}
+							to={`/university/courses/1/curriculum`}
 							className="flex flex-row w-full py-2 border border-gray-600 text-gray-600 rounded-lg justify-center items-center cursor-pointer gap-x-3"
 						>
 							<div>

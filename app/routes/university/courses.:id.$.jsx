@@ -1,16 +1,10 @@
-import {
-	ChevronUpIcon,
-	// ForwardIcon,
-	// BackwardIcon,
-	PlayPauseIcon,
-} from "@heroicons/react/20/solid";
+import { ChevronUpIcon } from "@heroicons/react/20/solid";
 import {
 	DocumentIcon,
 	PlayCircleIcon,
 	PlayIcon,
 	BackwardIcon,
 	ForwardIcon,
-	// PlayPauseIcon,
 } from "@heroicons/react/24/outline";
 import { Link } from "@remix-run/react";
 import { classNames } from "~/utils/helpers";
@@ -223,7 +217,7 @@ const CourseDescription = () => {
 					mauris. Tincidunt enim cursus ridiculus mi. Pellentesque nam
 					sed nullam sed diam turpis ipsum eu a sed convallis diam.
 				</p>
-				<figure className="mt-10 border-l border-indigo-600 pl-9">
+				<figure className="mt-10 border-l border-blue-600 pl-9">
 					<blockquote className="font-semibold text-gray-900">
 						<p>
 							“Vel ultricies morbi odio facilisi ultrices accumsan
@@ -286,9 +280,9 @@ export default function Course() {
 								className="absolute top-0 left-0 w-full h-full rounded"
 								src="https://www.youtube.com/embed/ufLZpuiMNh0"
 								title="YouTube video player"
-								frameborder="0"
+								frameBorder="0"
 								allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-								allowfullscreen
+								allowFullScreen={true}
 							></iframe>
 						</div>
 					</div>
