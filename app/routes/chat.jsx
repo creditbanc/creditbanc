@@ -228,17 +228,17 @@ const ChatTextArea = () => {
 	let [num_of_rows, set_num_of_rows] = useState(1);
 
 	const onKeyDown = (event) => {
-		if (num_of_rows < 10) {
-			var key = event.keyCode;
-			if (key === 13) {
+		var key = event.keyCode;
+		if (key === 13) {
+			if (num_of_rows <= 10) {
 				set_num_of_rows(num_of_rows + 1);
 			}
+		}
 
-			if (key === 8) {
-				let text_area_value = event.target.value;
-				var lines = text_area_value.split(/\r|\r\n|\n/);
-				set_num_of_rows(lines.length);
-			}
+		if (key === 8) {
+			let text_area_value = event.target.value;
+			var lines = text_area_value.split(/\r|\r\n|\n/);
+			set_num_of_rows(lines.length);
 		}
 	};
 
@@ -246,7 +246,7 @@ const ChatTextArea = () => {
 		<textarea
 			ref={text_area_ref}
 			rows={num_of_rows}
-			className="outline-none w-full text-gray-600 resize-none scrollbar-none text-sm"
+			className="outline-none w-full text-gray-600 resize-none scrollbar-none text-sm pb-1"
 			onKeyUp={onKeyDown}
 		></textarea>
 	);
@@ -323,7 +323,7 @@ export default function Chat() {
 							<div>
 								<PaperClipIcon className="h-6 w-6 text-gray-400 cursor-pointer" />
 							</div>
-							<div className="flex flex-col w-full pb-[3px]">
+							<div className="flex flex-col w-full">
 								<ChatTextArea />
 							</div>
 						</div>
