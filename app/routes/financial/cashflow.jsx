@@ -147,16 +147,16 @@ const ActivityFeed = () => {
 							<div
 								className={`rounded-full h-8 w-8 flex flex-col items-center justify-center z-10 -ml-1 ${
 									activityItem.type == "expense"
-										? "bg-red-100"
-										: "bg-green-100"
+										? "bg-gray-100"
+										: "bg-blue-100"
 								}`}
 							>
 								{activityItem.type === "expense" && (
-									<ArrowDownCircleIcon className="h-5 w-5 text-red-500 " />
+									<ArrowDownCircleIcon className="h-5 w-5 text-gray-500 " />
 								)}
 
 								{activityItem.type === "revenue" && (
-									<ArrowUpCircleIcon className="h-5 w-5 text-green-500 " />
+									<ArrowUpCircleIcon className="h-5 w-5 text-blue-500 " />
 								)}
 							</div>
 
@@ -174,8 +174,8 @@ const ActivityFeed = () => {
 										<div
 											className={`flex flex-row justify-center items-center text-[14px] font-light space-x-1  ${
 												activityItem.type == "expense"
-													? "text-red-600 bg-red-100 px-3 py-1 rounded"
-													: "text-green-600 bg-green-100 px-3 py-1 rounded"
+													? "text-gray-600 bg-gray-100 px-3 py-1 rounded"
+													: "text-blue-600 bg-blue-100 px-3 py-1 rounded"
 											}`}
 										>
 											{activityItem.type ===

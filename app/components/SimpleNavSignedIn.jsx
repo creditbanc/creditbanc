@@ -6,7 +6,10 @@ import { classNames, mapIndexed } from "~/utils/helpers";
 import { Menu, Transition } from "@headlessui/react";
 import { ChevronDownIcon } from "@heroicons/react/20/solid";
 import { map, pipe } from "ramda";
-import { UsersIcon } from "@heroicons/react/24/outline";
+import {
+	ChatBubbleLeftEllipsisIcon,
+	UsersIcon,
+} from "@heroicons/react/24/outline";
 
 const Companies = () => {
 	return (
@@ -173,6 +176,17 @@ export default function Nav({ user_id }) {
 							</div>
 							<div>Share</div>
 						</div>
+						<Link
+							to={`/chat`}
+							className=" bg-gray-100 flex flex-col items-center rounded-full p-2 cursor-pointer relative"
+						>
+							<div className="absolute -top-2 left-0 text-xs">
+								<div className="flex flex-col bg-red-500 rounded-full text-white h-4 w-4 items-center justify-center">
+									1
+								</div>
+							</div>
+							<ChatBubbleLeftEllipsisIcon className="h-5 w-5 text-gray-500" />
+						</Link>
 					</div>
 				</div>
 
