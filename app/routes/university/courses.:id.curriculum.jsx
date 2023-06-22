@@ -197,9 +197,12 @@ export default function Courses() {
 					</div>
 
 					<div className="flex flex-col w-full h-[90px] px-5 justify-center">
-						<div className="flex flex-col w-full py-4 items-center justify-center bg-blue-600 text-white rounded cursor-pointer">
+						<Link
+							to={`/university/courses/1`}
+							className="flex flex-col w-full py-4 items-center justify-center bg-blue-600 text-white rounded cursor-pointer"
+						>
 							Resume
-						</div>
+						</Link>
 					</div>
 				</div>
 			</div>
