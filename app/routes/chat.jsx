@@ -403,8 +403,8 @@ const DirectMessage = ({ unread = 0 }) => {
 const Channel = ({ selected = false, title, unread = 0 }) => {
 	return (
 		<div
-			className={`flex flex-row w-full text-sm px-2 py-2 justify-between rounded cursor-pointer hover:bg-gray-100 ${
-				selected && "bg-blue-600 text-white"
+			className={`flex flex-row w-full text-sm px-2 py-2 justify-between rounded cursor-pointer  ${
+				selected ? "bg-blue-600 text-white" : "hover:bg-gray-100"
 			}`}
 		>
 			<div className="flex flex-row space-x-2">
