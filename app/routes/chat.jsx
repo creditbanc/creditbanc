@@ -391,7 +391,7 @@ const DirectMessage = ({ unread = 0 }) => {
 			<div className="flex flex-col items-end text-xs space-y-2">
 				<div className="text-gray-400">17h ago</div>
 				{unread > 0 && (
-					<div className="h-5 w-5 bg-red-500 flex flex-col items-center justify-center text-white rounded-full text-xs">
+					<div className="flex flex-col px-2 h-5 bg-red-500 items-center justify-center text-white rounded-full text-xs">
 						{unread}
 					</div>
 				)}
@@ -413,7 +413,7 @@ const Channel = ({ selected = false, title, unread = 0 }) => {
 			</div>
 			<div>
 				{unread > 0 && (
-					<div className="h-5 w-5 bg-red-500 flex flex-col items-center justify-center text-white rounded-full text-xs">
+					<div className="px-2 h-5 bg-red-500 flex flex-col items-center justify-center text-white rounded-full text-xs">
 						{unread}
 					</div>
 				)}
@@ -500,7 +500,7 @@ export default function Chat() {
 						<DirectMessage />
 						<DirectMessage />
 						<DirectMessage />
-						<DirectMessage />
+						<DirectMessage unread={100} />
 						<DirectMessage />
 						<DirectMessage />
 						<DirectMessage />
