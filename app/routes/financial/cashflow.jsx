@@ -360,40 +360,58 @@ const CashflowChart = () => {
 	);
 };
 
-const stats_data = [
-	{
-		name: "Month over month revenue change",
-		stat: "71,897",
-		previousStat: "70,946",
-		change: "12%",
-		changeType: "increase",
-	},
-	{
-		name: "Highest revenue in last 6 months",
-		stat: "58.16%",
-		previousStat: "56.14%",
-		change: "2.02%",
-		changeType: "increase",
-	},
-];
+const stats_data = {
+	expenses: [
+		{
+			name: "Month over month spending change",
+			stat: "71,897",
+			previousStat: "70,946",
+			change: "12%",
+			changeType: "increase",
+		},
+		{
+			name: "Highest spending in last 6 months",
+			stat: "58.16%",
+			previousStat: "56.14%",
+			change: "2.02%",
+			changeType: "increase",
+		},
+	],
+	revenue: [
+		{
+			name: "Month over month revenue change",
+			stat: "71,897",
+			previousStat: "70,946",
+			change: "12%",
+			changeType: "increase",
+		},
+		{
+			name: "Highest revenue in last 6 months",
+			stat: "58.16%",
+			previousStat: "56.14%",
+			change: "2.02%",
+			changeType: "increase",
+		},
+	],
+};
 
 const income_stats_data = [
 	{
-		name: "Month over month revenue change",
+		name: "Projected monthly net income",
 		stat: "71,897",
 		previousStat: "70,946",
 		change: "12%",
 		changeType: "increase",
 	},
 	{
-		name: "Highest revenue in last 6 months",
+		name: "Month over month net income change",
 		stat: "58.16%",
 		previousStat: "56.14%",
 		change: "2.02%",
 		changeType: "increase",
 	},
 	{
-		name: "Highest revenue in last 6 months",
+		name: "Highest net income in last 6 months",
 		stat: "58.16%",
 		previousStat: "56.14%",
 		change: "2.02%",
@@ -446,10 +464,11 @@ const IncomeStats = () => {
 	);
 };
 
-const HealthStats = () => {
+const HealthStats = ({ type = "revenue" }) => {
+	let stats = stats_data[type];
 	return (
 		<div className="bg-white divide-y rounded">
-			{stats_data.map((item) => (
+			{stats.map((item) => (
 				<div key={item.name} className="px-4 py-3 sm:p-6">
 					<div className="text-sm font-normal text-gray-900">
 						{item.name}
@@ -533,7 +552,7 @@ const RevenueChart = () => {
 						How you’re doing in June
 					</h3>
 				</div>
-				<HealthStats />
+				<HealthStats type={"revenue"} />
 			</div>
 		</div>
 	);
@@ -581,7 +600,7 @@ const ExpensesChart = () => {
 						How you’re doing in June
 					</h3>
 				</div>
-				<HealthStats />
+				<HealthStats type={"expenses"} />
 			</div>
 		</div>
 	);
