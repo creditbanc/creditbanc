@@ -1,7 +1,7 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
 import { getStorage } from "firebase/storage";
-import { getFirestore } from "firebase/firestore";
+import { getFirestore, updateDoc } from "firebase/firestore";
 import {
 	doc,
 	setDoc,
@@ -44,8 +44,17 @@ export const get_collection = async ({ path, queries = null }) => {
 	}
 };
 
+export const get_doc = async (path) => {
+	let docSnapshot = await getDoc(doc(firestore, ...path));
+	return docSnapshot.data() ?? {};
+};
+
 export const set_doc = async (path, data) => {
 	return await setDoc(doc(firestore, ...path), data);
+};
+
+export const update_doc = async (path, data) => {
+	return await updateDoc(doc(firestore, ...path), data);
 };
 
 export const delete_doc = async (path) => {
