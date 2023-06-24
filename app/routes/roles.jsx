@@ -6,6 +6,7 @@ import {
 	EllipsisHorizontalIcon,
 	LinkIcon,
 	PlusIcon,
+	TrashIcon,
 	UserIcon,
 	UserPlusIcon,
 	XMarkIcon,
@@ -144,7 +145,7 @@ const RoleActions = ({ role }) => {
 	return (
 		<Menu as="div" className="relative inline-block text-left">
 			<div>
-				<Menu.Button className="flex flex-col rounded-full w-full justify-center items-center gap-x-1.5 bg-white text-sm font-semibold hover:bg-white p-1">
+				<Menu.Button className="flex flex-col rounded-full w-full justify-center items-center gap-x-1.5 bg-white text-sm hover:bg-white p-1">
 					<EllipsisHorizontalIcon
 						className="h-5 w-5 text-gray-700"
 						aria-hidden="true"
@@ -166,6 +167,26 @@ const RoleActions = ({ role }) => {
 						<Menu.Item>
 							{({ active }) => (
 								<div
+									// onClick={onDeleteRole}
+									className={classNames(
+										active
+											? "bg-gray-100 text-gray-900"
+											: "text-gray-700",
+										"block px-4 py-2 text-sm"
+									)}
+								>
+									<div className="flex flex-row items-center space-x-2">
+										<div>
+											<LinkIcon className="h-4 w-4 text-gray-700" />
+										</div>
+										<div>Copy share link</div>
+									</div>
+								</div>
+							)}
+						</Menu.Item>
+						<Menu.Item>
+							{({ active }) => (
+								<div
 									onClick={onDeleteRole}
 									className={classNames(
 										active
@@ -174,7 +195,12 @@ const RoleActions = ({ role }) => {
 										"block px-4 py-2 text-sm"
 									)}
 								>
-									Delete
+									<div className="flex flex-row items-center space-x-2">
+										<div>
+											<TrashIcon className="h-4 w-4 text-gray-700" />
+										</div>
+										<div>Delete</div>
+									</div>
 								</div>
 							)}
 						</Menu.Item>
@@ -207,17 +233,22 @@ const RolesNav = () => {
 									role.current
 										? "bg-gray-50 text-blue-600"
 										: "text-gray-700 hover:text-blue-600 hover:bg-gray-50",
-									"flex flex-row items-center justify-between gap-x-3 rounded-md p-2 pl-3 text-sm leading-6 font-semibold cursor-pointer"
+									"flex flex-row items-center justify-between gap-x-3 rounded-md p-2 pl-3 text-sm leading-6  cursor-pointer"
 								)}
 							>
-								<div className="flex flex-row items-center space-x-2 text-gray-700">
+								<div className="flex flex-row items-center space-x-2 text-gray-700 font-semibold">
 									<div>
 										<UserIcon className="h-5 w-5" />
 									</div>
 									<div>{role.name}</div>
 								</div>
-								<div>
-									<RoleActions role={role} />
+								<div className="flex flex-row items-center space-x-3">
+									<div>
+										<LinkIcon className="h-4 w-4 text-blue-600 cursor-pointer" />
+									</div>
+									<div>
+										<RoleActions role={role} />
+									</div>
 								</div>
 							</div>
 						</li>
