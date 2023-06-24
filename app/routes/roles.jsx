@@ -3,9 +3,6 @@ import SimpleNavSignedIn from "~/components/SimpleNavSignedIn";
 import { get_user_id } from "~/utils/auth.server";
 import { classNames } from "~/utils/helpers";
 import {
-	DocumentIcon,
-	EllipsisHorizontalCircleIcon,
-	EllipsisHorizontalIcon,
 	LinkIcon,
 	PlusIcon,
 	UserPlusIcon,
@@ -133,7 +130,7 @@ const NewRoleModal = () => {
 				<input
 					type="text"
 					className="block w-full rounded-md border-0 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 outline-none px-3 py-3"
-					placeholder="role name"
+					placeholder="Role name"
 				/>
 			</div>
 
@@ -155,12 +152,7 @@ export default function Roles() {
 	let { entity_id } = useLoaderData();
 	let set_modal = useModalStore((state) => state.set_modal);
 
-	// useEffect(() => {
-	// 	set_modal({ id: "new_role_modal", is_open: true });
-	// }, []);
-
 	const onCreateNewRoleModal = () => {
-		console.log("onCreateNewRoleModal");
 		set_modal({ id: "new_role_modal", is_open: true });
 	};
 
@@ -172,7 +164,7 @@ export default function Roles() {
 			</div>
 
 			<div className="flex flex-row w-full h-full gap-x-5 p-5">
-				<div className="flex flex-col w-[25%] bg-white rounded">
+				<div className="flex flex-col w-[25%] bg-white rounded border">
 					<div className="flex flex-row justify-between w-full text-base px-5 items-center h-[37px]">
 						<div>Roles</div>
 						<div onClick={onCreateNewRoleModal}>
