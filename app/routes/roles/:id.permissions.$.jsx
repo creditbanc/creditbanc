@@ -70,9 +70,9 @@ export default function Permissions() {
 			</div>
 			<div className="flex flex-row w-full justify-between my-3 text-sm text-gray-400">
 				<div className="flex-col flex-1">Resource</div>
-				<div className="flex flex-col w-[100px]">Visible</div>
+				<div className="flex flex-col w-[100px]">Hidden</div>
 				<div className="flex flex-col w-[100px]">Read</div>
-				<div className="flex flex-col w-[100px]">Write</div>
+				<div className="flex flex-col w-[100px]">Edit</div>
 			</div>
 			<div className="flex flex-col w-full border-b"></div>
 			<div className="flex flex-col w-full divide-y">
