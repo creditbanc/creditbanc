@@ -3,11 +3,17 @@ import SimpleNavSignedIn from "~/components/SimpleNavSignedIn";
 import { get_user_id } from "~/utils/auth.server";
 import { classNames } from "~/utils/helpers";
 import {
+	DocumentIcon,
 	EllipsisHorizontalCircleIcon,
 	EllipsisHorizontalIcon,
 	LinkIcon,
 	PlusIcon,
+	UserPlusIcon,
+	XMarkIcon,
 } from "@heroicons/react/24/outline";
+import { useModalStore } from "~/hooks/useModal";
+import Modal from "~/components/Modal";
+import { useEffect } from "react";
 
 export const loader = async ({ request }) => {
 	let entity_id = get_user_id(request);
@@ -99,10 +105,68 @@ const RolesNav = () => {
 	);
 };
 
-export default function Cashflow() {
+const NewRoleModal = () => {
+	let set_modal = useModalStore((state) => state.set_modal);
+
+	const onCloseModal = () => {
+		set_modal({ id: "new_role_modal", is_open: false });
+	};
+
+	const onCreateNewRoleClick = () => {
+		console.log("onCreateNewRoleClick");
+	};
+
+	return (
+		<Modal id="new_role_modal" classes="min-w-[700px]">
+			<div className="flex flex-row w-full py-5 px-5 border-b text-2xl items-center">
+				<div className="flex flex-row w-full items-center space-x-3 text-gray-400">
+					<div className="">
+						<UserPlusIcon className="h-6 w-6 " />
+					</div>
+					<div>New Role</div>
+				</div>
+				<div onClick={onCloseModal}>
+					<XMarkIcon className="h-6 w-6 text-gray-400 cursor-pointer" />
+				</div>
+			</div>
+			<div className="flex flex-col p-5">
+				<input
+					type="text"
+					className="block w-full rounded-md border-0 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 outline-none px-3 py-3"
+					placeholder="role name"
+				/>
+			</div>
+
+			<div className="flex flex-col w-full border-b"></div>
+
+			<div className="flex flex-row w-full justify-end p-5">
+				<div
+					className="flex flex-col bg-blue-600 object-fit px-3 py-2 text-white rounded text-sm cursor-pointer"
+					onClick={onCreateNewRoleClick}
+				>
+					Create new role
+				</div>
+			</div>
+		</Modal>
+	);
+};
+
+export default function Roles() {
 	let { entity_id } = useLoaderData();
+	let set_modal = useModalStore((state) => state.set_modal);
+
+	useEffect(() => {
+		set_modal({ id: "new_role_modal", is_open: true });
+	}, []);
+
+	const onCreateNewRoleModal = () => {
+		console.log("onCreateNewRoleModal");
+		set_modal({ id: "new_role_modal", is_open: true });
+	};
+
 	return (
 		<div className="flex flex-col w-full h-full bg-gray-50">
+			<NewRoleModal />
 			<div className="flex flex-col w-full border-b bg-white">
 				<SimpleNavSignedIn user_id={entity_id} />
 			</div>
@@ -111,7 +175,7 @@ export default function Cashflow() {
 				<div className="flex flex-col w-[25%] bg-white rounded">
 					<div className="flex flex-row justify-between w-full text-base px-5 items-center h-[37px]">
 						<div>Roles</div>
-						<div>
+						<div onClick={onCreateNewRoleModal}>
 							<PlusIcon className="h-5 w-5 text-gray-400 cursor-pointer" />
 						</div>
 					</div>
