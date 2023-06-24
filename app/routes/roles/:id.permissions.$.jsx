@@ -2,11 +2,10 @@ import { useEffect, useState } from "react";
 import { Switch } from "@headlessui/react";
 import { classNames, mapIndexed } from "~/utils/helpers";
 import { useLoaderData } from "react-router";
-import { pipe, map, isEmpty, update } from "ramda";
+import { pipe, map, isEmpty } from "ramda";
 import { create } from "zustand";
 import { mod } from "shades";
 import { get_collection, get_doc, set_doc, update_doc } from "~/utils/firebase";
-import deepEqual from "deep-equal";
 
 export const usePermissionsStore = create((set) => ({
 	permissions: [],
@@ -80,7 +79,20 @@ const Toggle = ({ index, permission_key }) => {
 	let enabled = permission[permission_key];
 
 	const set_enabled = async () => {
-		set_permissions(["permissions", index, permission_key], !enabled);
+		if (permission_key === "hidden" && !enabled == true) {
+			set_permissions(["permissions", index], {
+				...permissions[index],
+				hidden: true,
+				read: false,
+				edit: false,
+			});
+		} else {
+			set_permissions(["permissions", index], {
+				...permissions[index],
+				hidden: false,
+				[permission_key]: !enabled,
+			});
+		}
 	};
 
 	return (
