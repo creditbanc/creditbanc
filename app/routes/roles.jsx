@@ -224,10 +224,10 @@ const RolesNav = () => {
 
 	return (
 		<nav className="flex flex-1 flex-col" aria-label="Sidebar">
-			<ul role="list" className="-mx-2 space-y-1">
+			<ul role="list" className="space-y-3">
 				{pipe(
 					mapIndexed((role, role_idx) => (
-						<li key={role_idx}>
+						<li key={role_idx} className="border rounded">
 							<div
 								className={classNames(
 									role.current
@@ -348,7 +348,7 @@ export default function Roles() {
 						</div>
 					</div>
 					<div className="flex flex-col w-full border-t"></div>
-					<div className="flex flex-col w-full p-5">
+					<div className="flex flex-col w-full p-3">
 						<RolesNav />
 					</div>
 				</div>
