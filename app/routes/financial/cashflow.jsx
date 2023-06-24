@@ -1,17 +1,5 @@
-import { Fragment, useState } from "react";
-import { CheckCircleIcon } from "@heroicons/react/24/solid";
-import {
-	FaceFrownIcon,
-	FaceSmileIcon,
-	FireIcon,
-	HandThumbUpIcon,
-	HeartIcon,
-	PaperClipIcon,
-	XMarkIcon,
-	ArrowDownIcon,
-	ArrowUpIcon,
-} from "@heroicons/react/20/solid";
-import { Listbox, Transition } from "@headlessui/react";
+import { ArrowDownIcon, ArrowUpIcon } from "@heroicons/react/20/solid";
+
 import { classNames, currency } from "~/utils/helpers";
 import {
 	Chart as ChartJS,
@@ -29,6 +17,10 @@ import {
 	ArrowDownCircleIcon,
 	ArrowUpCircleIcon,
 } from "@heroicons/react/24/outline";
+import { get_collection, get_doc, set_doc } from "~/utils/firebase";
+import { defaultTo, head, pipe } from "ramda";
+import { filter, get } from "shades";
+import { redirect } from "@remix-run/node";
 
 ChartJS.register(
 	CategoryScale,
@@ -38,6 +30,82 @@ ChartJS.register(
 	Tooltip,
 	Legend
 );
+
+export const loader = async ({ request }) => {
+	console.log("cashflow_loader");
+	const config_id = "db88508c-b4ea-4dee-8d60-43c5a847c172";
+	let group_id = "1";
+	let entity_id = "1";
+	let role_id = group_id + entity_id;
+
+	let test_role = {
+		entity_id,
+		group_id,
+		config_id,
+		role_id,
+	};
+
+	// set_doc(["roles", role_id], test_role);
+
+	const get_permissions = async (entity_id, group_id) => {
+		// check if entity is the owner/creator of the resource
+
+		// if entity is not the owner get the config_id of the role
+		let role_response = await get_collection({
+			path: ["roles"],
+			queries: [
+				{ param: "entity_id", predicate: "==", value: entity_id },
+				{ param: "group_id", predicate: "==", value: group_id },
+			],
+		});
+
+		let role = pipe(head, defaultTo({}))(role_response);
+
+		if (role.config_id) {
+			let config_response = await get_doc([
+				"role_configs",
+				role.config_id,
+			]);
+
+			return config_response;
+		}
+
+		// if there is no role config id then get the default config for the group
+	};
+
+	const validate_permission = (permission_id, action, permissions) => {
+		let has_permission = pipe(
+			filter({ id: permission_id }),
+			head,
+			get(action)
+		)(permissions);
+
+		return has_permission;
+	};
+
+	let role = await get_permissions(entity_id, group_id);
+
+	console.log("role");
+	console.log(role);
+
+	let { permissions } = role;
+
+	console.log("permissions");
+	console.log(permissions);
+
+	let has_permission = validate_permission("cashflow", "read", permissions);
+
+	console.log("has_permission");
+	console.log(has_permission);
+
+	if (!has_permission) {
+		return redirect("/");
+	}
+
+	if (has_permission) {
+		return null;
+	}
+};
 
 const activity = [
 	{
