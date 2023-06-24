@@ -1,21 +1,52 @@
 import { Outlet, useLoaderData } from "@remix-run/react";
 import SimpleNavSignedIn from "~/components/SimpleNavSignedIn";
 import { get_user_id } from "~/utils/auth.server";
-import { classNames } from "~/utils/helpers";
+import { classNames, mapIndexed } from "~/utils/helpers";
 import {
+	EllipsisHorizontalIcon,
 	LinkIcon,
 	PlusIcon,
+	UserIcon,
 	UserPlusIcon,
 	XMarkIcon,
 } from "@heroicons/react/24/outline";
 import { useModalStore } from "~/hooks/useModal";
 import Modal from "~/components/Modal";
-import { useEffect } from "react";
+import { delete_doc, get_collection, set_doc } from "~/utils/firebase";
+import { isEmpty, pipe } from "ramda";
+import { create } from "zustand";
+import { mod } from "shades";
+import { v4 as uuidv4 } from "uuid";
+import { Fragment } from "react";
+import { Menu, Transition } from "@headlessui/react";
+
+export const useRoleStore = create((set) => ({
+	role: {},
+	set_role: (path, value) =>
+		set((state) => pipe(mod(...path)(() => value))(state)),
+}));
 
 export const loader = async ({ request }) => {
-	let entity_id = get_user_id(request);
+	let entity_id = await get_user_id(request);
 
-	return { entity_id };
+	console.log("entity_id");
+	console.log(entity_id);
+
+	let roles = await get_collection({
+		path: ["role_configs"],
+		queries: [
+			{
+				param: "entity_id",
+				predicate: "==",
+				value: entity_id,
+			},
+		],
+	});
+
+	// console.log("roles");
+	// console.log(roles);
+
+	return { entity_id, roles };
 };
 
 const role_tabs = [
@@ -69,52 +100,165 @@ const RoleNav = () => {
 	);
 };
 
-const roles_nav = [
-	{ name: "Dashboard", href: "#", current: true },
-	{ name: "Team", href: "#", current: false },
-	{ name: "Projects", href: "#", current: false },
-	{ name: "Calendar", href: "#", current: false },
-	{ name: "Documents", href: "#", current: false },
-	{ name: "Reports", href: "#", current: false },
-];
+const EmptyRolesState = () => {
+	let set_modal = useModalStore((state) => state.set_modal);
+
+	const onCreateNewRoleModal = () => {
+		set_modal({ id: "new_role_modal", is_open: true });
+	};
+
+	return (
+		<div className="text-center border-dashed p-3 py-5 border-2 rounded">
+			<UserPlusIcon className="h-8 w-8 text-gray-400 mx-auto" />
+			<h3 className="mt-2 text-sm font-semibold text-gray-900">
+				No roles yet
+			</h3>
+			<p className="mt-1 text-sm text-gray-500">
+				Get started by creating a new role.
+			</p>
+			<div className="mt-6">
+				<button
+					type="button"
+					className="inline-flex items-center rounded-md bg-blue-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
+					onClick={onCreateNewRoleModal}
+				>
+					<PlusIcon
+						className="-ml-0.5 mr-1.5 h-5 w-5"
+						aria-hidden="true"
+					/>
+					New Role
+				</button>
+			</div>
+		</div>
+	);
+};
+
+const RoleActions = ({ role }) => {
+	const onDeleteRole = async () => {
+		console.log("onDeleteRole");
+		console.log(role);
+
+		await delete_doc(["role_configs", role.id]);
+	};
+
+	return (
+		<Menu as="div" className="relative inline-block text-left">
+			<div>
+				<Menu.Button className="flex flex-col rounded-full w-full justify-center items-center gap-x-1.5 bg-white text-sm font-semibold hover:bg-white p-1">
+					<EllipsisHorizontalIcon
+						className="h-5 w-5 text-gray-700"
+						aria-hidden="true"
+					/>
+				</Menu.Button>
+			</div>
+
+			<Transition
+				as={Fragment}
+				enter="transition ease-out duration-100"
+				enterFrom="transform opacity-0 scale-95"
+				enterTo="transform opacity-100 scale-100"
+				leave="transition ease-in duration-75"
+				leaveFrom="transform opacity-100 scale-100"
+				leaveTo="transform opacity-0 scale-95"
+			>
+				<Menu.Items className="absolute right-0 z-10 mt-2 w-56 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+					<div className="py-1">
+						<Menu.Item>
+							{({ active }) => (
+								<div
+									onClick={onDeleteRole}
+									className={classNames(
+										active
+											? "bg-gray-100 text-gray-900"
+											: "text-gray-700",
+										"block px-4 py-2 text-sm"
+									)}
+								>
+									Delete
+								</div>
+							)}
+						</Menu.Item>
+					</div>
+				</Menu.Items>
+			</Transition>
+		</Menu>
+	);
+};
 
 const RolesNav = () => {
+	let { roles } = useLoaderData();
+
+	if (isEmpty(roles)) {
+		return (
+			<div>
+				<EmptyRolesState />
+			</div>
+		);
+	}
+
 	return (
 		<nav className="flex flex-1 flex-col" aria-label="Sidebar">
 			<ul role="list" className="-mx-2 space-y-1">
-				{roles_nav.map((item) => (
-					<li key={item.name}>
-						<a
-							href={item.href}
-							className={classNames(
-								item.current
-									? "bg-gray-50 text-blue-600"
-									: "text-gray-700 hover:text-blue-600 hover:bg-gray-50",
-								"group flex gap-x-3 rounded-md p-2 pl-3 text-sm leading-6 font-semibold"
-							)}
-						>
-							{item.name}
-						</a>
-					</li>
-				))}
+				{pipe(
+					mapIndexed((role, role_idx) => (
+						<li key={role_idx}>
+							<div
+								className={classNames(
+									role.current
+										? "bg-gray-50 text-blue-600"
+										: "text-gray-700 hover:text-blue-600 hover:bg-gray-50",
+									"flex flex-row items-center justify-between gap-x-3 rounded-md p-2 pl-3 text-sm leading-6 font-semibold cursor-pointer"
+								)}
+							>
+								<div className="flex flex-row items-center space-x-2 text-gray-700">
+									<div>
+										<UserIcon className="h-5 w-5" />
+									</div>
+									<div>{role.name}</div>
+								</div>
+								<div>
+									<RoleActions role={role} />
+								</div>
+							</div>
+						</li>
+					))
+				)(roles)}
 			</ul>
 		</nav>
 	);
 };
 
 const NewRoleModal = () => {
+	let { entity_id } = useLoaderData();
 	let set_modal = useModalStore((state) => state.set_modal);
+	let set_role = useRoleStore((state) => state.set_role);
+	let role = useRoleStore((state) => state.role);
 
 	const onCloseModal = () => {
 		set_modal({ id: "new_role_modal", is_open: false });
 	};
 
-	const onCreateNewRoleClick = () => {
+	const onCreateNewRoleClick = async () => {
 		console.log("onCreateNewRoleClick");
+
+		let role_config_id = uuidv4();
+
+		let payload = {
+			id: role_config_id,
+			entity_id,
+			...role,
+		};
+
+		console.log("payload");
+		console.log(payload);
+
+		await set_doc(["role_configs", role_config_id], payload);
+
+		set_modal({ id: "new_role_modal", is_open: false });
 	};
 
 	return (
-		<Modal id="new_role_modal" classes="min-w-[700px]">
+		<Modal id="new_role_modal" classes="min-w-[500px]">
 			<div className="flex flex-row w-full py-5 px-5 border-b text-2xl items-center">
 				<div className="flex flex-row w-full items-center space-x-3 text-gray-400">
 					<div className="">
@@ -131,6 +275,7 @@ const NewRoleModal = () => {
 					type="text"
 					className="block w-full rounded-md border-0 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 outline-none px-3 py-3"
 					placeholder="Role name"
+					onChange={(e) => set_role(["role", "name"], e.target.value)}
 				/>
 			</div>
 
@@ -149,7 +294,7 @@ const NewRoleModal = () => {
 };
 
 export default function Roles() {
-	let { entity_id } = useLoaderData();
+	let { entity_id, roles } = useLoaderData();
 	let set_modal = useModalStore((state) => state.set_modal);
 
 	const onCreateNewRoleModal = () => {
@@ -166,7 +311,7 @@ export default function Roles() {
 			<div className="flex flex-row w-full h-full gap-x-5 p-5">
 				<div className="flex flex-col w-[25%] bg-white rounded border">
 					<div className="flex flex-row justify-between w-full text-base px-5 items-center h-[37px]">
-						<div>Roles</div>
+						<div className="font-semibold">Roles</div>
 						<div onClick={onCreateNewRoleModal}>
 							<PlusIcon className="h-5 w-5 text-gray-400 cursor-pointer" />
 						</div>

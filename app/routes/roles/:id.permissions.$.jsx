@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Switch } from "@headlessui/react";
 import { classNames } from "~/utils/helpers";
+import { useLoaderData } from "react-router";
 
 const Toggle = () => {
 	const [enabled, setEnabled] = useState(false);
