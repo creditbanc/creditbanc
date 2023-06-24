@@ -155,9 +155,9 @@ export default function Roles() {
 	let { entity_id } = useLoaderData();
 	let set_modal = useModalStore((state) => state.set_modal);
 
-	useEffect(() => {
-		set_modal({ id: "new_role_modal", is_open: true });
-	}, []);
+	// useEffect(() => {
+	// 	set_modal({ id: "new_role_modal", is_open: true });
+	// }, []);
 
 	const onCreateNewRoleModal = () => {
 		console.log("onCreateNewRoleModal");

@@ -716,10 +716,6 @@ video {
   z-index: 1;
 }
 
-.z-40 {
-  z-index: 40;
-}
-
 .col-span-2 {
   grid-column: span 2 / span 2;
 }
