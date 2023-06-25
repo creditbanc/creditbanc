@@ -233,21 +233,45 @@ const RolesNav = () => {
 									role.current
 										? "bg-gray-50 text-blue-600"
 										: "text-gray-700 hover:text-blue-600 hover:bg-gray-50",
-									"flex flex-row items-center justify-between gap-x-3 rounded-md p-2 pl-3 text-sm leading-6  cursor-pointer"
+									"flex flex-col px-2 py-1.5 text-sm cursor-pointer space-y-2"
 								)}
 							>
-								<div className="flex flex-row items-center space-x-2 text-gray-700 font-semibold">
-									<div>
-										<UserIcon className="h-5 w-5" />
+								<div className="flex flex-row items-center justify-between">
+									<div className="flex flex-row items-center space-x-2 text-gray-700 font-semibold">
+										<div className="pl-1">{role.name}</div>
 									</div>
-									<div>{role.name}</div>
 								</div>
-								<div className="flex flex-row items-center space-x-3">
-									<div>
-										<LinkIcon className="h-4 w-4 text-blue-600 cursor-pointer" />
+
+								<div className="flex flex-row justify-between px-1">
+									<div className="flex flex-row items-center -space-x-1 overflow-hidden">
+										<img
+											className="inline-block h-5 w-5 rounded-full ring-2 ring-white"
+											src="https://images.unsplash.com/photo-1491528323818-fdd1faba62cc?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
+											alt=""
+										/>
+										<img
+											className="inline-block h-5 w-5 rounded-full ring-2 ring-white"
+											src="https://images.unsplash.com/photo-1550525811-e5869dd03032?ixlib=rb-1.2.1&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
+											alt=""
+										/>
+										<img
+											className="inline-block h-5 w-5 rounded-full ring-2 ring-white"
+											src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2.25&w=256&h=256&q=80"
+											alt=""
+										/>
+										<img
+											className="inline-block h-5 w-5 rounded-full ring-2 ring-white"
+											src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
+											alt=""
+										/>
 									</div>
-									<div>
-										<RoleActions role={role} />
+									<div className="flex flex-row items-center space-x-3">
+										<div>
+											<LinkIcon className="h-4 w-4 text-blue-600 cursor-pointer" />
+										</div>
+										<div>
+											<RoleActions role={role} />
+										</div>
 									</div>
 								</div>
 							</div>

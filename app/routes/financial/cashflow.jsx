@@ -31,6 +31,39 @@ ChartJS.register(
 	Legend
 );
 
+const get_permissions = async (entity_id, group_id) => {
+	// check if entity is the owner/creator of the resource
+
+	// if entity is not the owner get the config_id of the role
+	let role_response = await get_collection({
+		path: ["roles"],
+		queries: [
+			{ param: "entity_id", predicate: "==", value: entity_id },
+			{ param: "group_id", predicate: "==", value: group_id },
+		],
+	});
+
+	let role = pipe(head, defaultTo({}))(role_response);
+
+	if (role.config_id) {
+		let config_response = await get_doc(["role_configs", role.config_id]);
+
+		return config_response;
+	}
+
+	// if there is no role config id then get the default config for the group
+};
+
+const validate_permission = (permission_id, action, permissions) => {
+	let has_permission = pipe(
+		filter({ id: permission_id }),
+		head,
+		get(action)
+	)(permissions);
+
+	return has_permission;
+};
+
 export const loader = async ({ request }) => {
 	console.log("cashflow_loader");
 	const config_id = "db88508c-b4ea-4dee-8d60-43c5a847c172";
@@ -46,42 +79,6 @@ export const loader = async ({ request }) => {
 	};
 
 	// set_doc(["roles", role_id], test_role);
-
-	const get_permissions = async (entity_id, group_id) => {
-		// check if entity is the owner/creator of the resource
-
-		// if entity is not the owner get the config_id of the role
-		let role_response = await get_collection({
-			path: ["roles"],
-			queries: [
-				{ param: "entity_id", predicate: "==", value: entity_id },
-				{ param: "group_id", predicate: "==", value: group_id },
-			],
-		});
-
-		let role = pipe(head, defaultTo({}))(role_response);
-
-		if (role.config_id) {
-			let config_response = await get_doc([
-				"role_configs",
-				role.config_id,
-			]);
-
-			return config_response;
-		}
-
-		// if there is no role config id then get the default config for the group
-	};
-
-	const validate_permission = (permission_id, action, permissions) => {
-		let has_permission = pipe(
-			filter({ id: permission_id }),
-			head,
-			get(action)
-		)(permissions);
-
-		return has_permission;
-	};
 
 	let role = await get_permissions(entity_id, group_id);
 
