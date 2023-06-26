@@ -429,7 +429,7 @@ const Messages = () => {
 
 	return (
 		<div className="flex flex-col w-full h-full overflow-hidden py-3 justify-end">
-			<div className="overflow-auto scrollbar-none">
+			<div className="overflow-y-scroll overflow-x-hidden scrollbar-none">
 				{pipe(
 					map((message) => (
 						<Message key={message.message_id} message={message} />

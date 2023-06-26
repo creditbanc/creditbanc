@@ -1,13 +1,35 @@
-import { Link, Outlet, useLoaderData } from "@remix-run/react";
+import { Link, Outlet, useLoaderData, useLocation } from "@remix-run/react";
 import SimpleNavSignedIn from "~/components/SimpleNavSignedIn";
 import { get_user_id } from "~/utils/auth.server";
-import { get_resource_id } from "~/utils/helpers";
+import { get_group_id, get_resource_id } from "~/utils/helpers";
+import { useModalStore } from "~/hooks/useModal";
+import Modal from "~/components/Modal";
+import { useEffect, useState } from "react";
+import { HashtagIcon, XMarkIcon } from "@heroicons/react/24/outline";
+import { v4 as uuidv4 } from "uuid";
+import { get_collection, set_doc } from "~/utils/firebase";
+import { map, pipe } from "ramda";
 
 export const loader = async ({ request }) => {
 	let entity_id = get_user_id(request);
 	let chat_id = get_resource_id(request.url);
+	let group_id = get_group_id(request.url);
 
-	return { entity_id, chat_id };
+	let channels = await get_collection({
+		path: ["chats"],
+		queries: [
+			{
+				param: "group_id",
+				predicate: "==",
+				value: group_id,
+			},
+		],
+	});
+
+	// console.log("channels");
+	// console.log(channels);
+
+	return { entity_id, chat_id, channels };
 };
 
 const DirectMessage = ({ unread = 0 }) => {
@@ -63,11 +85,93 @@ const Channel = ({ selected = false, title, unread = 0, id = 0 }) => {
 	);
 };
 
+const NewChanelModal = () => {
+	let [channel, set_channel] = useState("");
+	let set_modal = useModalStore((state) => state.set_modal);
+
+	const location = useLocation();
+
+	// useEffect(() => {
+	// 	set_modal({ id: "new_channel_modal", is_open: true });
+	// }, []);
+
+	const onCreateChannel = async () => {
+		// console.log("oncreatechannel");
+		// console.log(channel);
+		let group_id = get_group_id(location.pathname);
+		let type = "channel";
+		let chat_id = uuidv4();
+
+		let payload = {
+			id: chat_id,
+			type,
+			group_id,
+			title: channel,
+		};
+
+		await set_doc(["chats", chat_id], payload);
+
+		set_modal({ id: "new_channel_modal", is_open: false });
+	};
+
+	const onCloseModal = () => {
+		set_modal({ id: "new_channel_modal", is_open: false });
+	};
+
+	return (
+		<Modal id="new_channel_modal" classes="min-w-[500px]">
+			<div className="flex flex-row w-full py-5 px-5 border-b text-2xl items-center">
+				<div className="flex flex-row w-full items-center space-x-3 text-gray-400">
+					<div className="">
+						<HashtagIcon className="h-6 w-6 " />
+					</div>
+					<div>Create Channel</div>
+				</div>
+				<div
+					className="border rounded-lg p-2 cursor-pointer"
+					onClick={onCloseModal}
+				>
+					<XMarkIcon className="h-6 w-6 text-gray-400" />
+				</div>
+			</div>
+			<div className="flex flex-col w-full py-5 px-5">
+				<div className="flex flex-col w-full space-y-3">
+					<div className="font-semibold">Channel Name</div>
+					<div className="flex flex-row items-center relative">
+						<div className="absolute left-[10px]">#</div>
+						<input
+							type="text"
+							className="outline-none border p-2 rounded w-full pl-[25px]"
+							placeholder="new channel"
+							value={channel}
+							onChange={(e) => set_channel(e.target.value)}
+						/>
+					</div>
+				</div>
+			</div>
+			<div className="flex flex-row border-t w-full px-5 py-4 justify-end">
+				<div
+					className="flex flex-col px-3 py-3 bg-blue-600 rounded-lg text-white text-sm cursor-pointer"
+					onClick={onCreateChannel}
+				>
+					Create Channel
+				</div>
+			</div>
+		</Modal>
+	);
+};
+
 export default function Chat() {
-	let { entity_id, chat_id } = useLoaderData();
+	let { entity_id, chat_id, channels } = useLoaderData();
+	let set_modal = useModalStore((state) => state.set_modal);
+
+	const onNewChannelClick = () => {
+		set_modal({ id: "new_channel_modal", is_open: true });
+	};
 
 	return (
 		<div className="flex flex-col w-full h-full bg-gray-50 overflow-hidden">
+			<NewChanelModal />
 			<div className="flex flex-col w-full border-b bg-white">
 				<SimpleNavSignedIn user_id={entity_id} />
 			</div>
@@ -84,29 +188,26 @@ export default function Chat() {
 					</div>
 					<div className="flex flex-row w-full border-b p-3 text-sm justify-between items-center">
 						<div>Channels</div>
-						<div className="bg-gray-100 text-gray-600 h-6 w-6 flex flex-col items-center justify-center rounded-full pb-[2px] cursor-pointer">
+						<div
+							className="bg-gray-100 text-gray-600 h-6 w-6 flex flex-col items-center justify-center rounded-full pb-[2px] cursor-pointer"
+							onClick={onNewChannelClick}
+						>
 							+
 						</div>
 					</div>
 
 					<div className="flex flex-col w-full space-y-2 px-2 my-2">
-						<Channel
-							title={"App"}
-							unread={2}
-							id={1}
-							selected={chat_id == 1}
-						/>
-						<Channel
-							selected={chat_id == 2}
-							title={"General"}
-							unread={12}
-							id={2}
-						/>
-						<Channel
-							title={"Accounting"}
-							id={3}
-							selected={chat_id == 3}
-						/>
+						{pipe(
+							map((channel) => (
+								<Channel
+									title={channel.title}
+									unread={2}
+									id={channel.id}
+									selected={chat_id == channel.id}
+									key={channel.id}
+								/>
+							))
+						)(channels)}
 					</div>
 					<div className="flex flex-row w-full border-y p-3 text-sm justify-between items-center">
 						<div>Direct Messages</div>
