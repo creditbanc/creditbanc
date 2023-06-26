@@ -1363,18 +1363,6 @@ video {
   height: 100%;
 }
 
-.h-\[100px\] {
-  height: 100px;
-}
-
-.h-\[100\%\] {
-  height: 100%;
-}
-
-.h-\[70px\] {
-  height: 70px;
-}
-
 .max-h-12 {
   max-height: 3rem;
 }
@@ -1706,10 +1694,6 @@ video {
 
 .w-screen {
   width: 100vw;
-}
-
-.w-\[20\%\] {
-  width: 20%;
 }
 
 .min-w-0 {
