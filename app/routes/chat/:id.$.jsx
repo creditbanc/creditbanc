@@ -25,7 +25,7 @@ import {
 } from "ramda";
 import { get, mod } from "shades";
 import { v4 as uuidv4 } from "uuid";
-import { get_collection, set_doc } from "~/utils/firebase";
+import { get_collection, get_doc, set_doc } from "~/utils/firebase";
 import moment from "moment";
 
 const useMessageStore = create((set) => ({
@@ -37,8 +37,6 @@ const useMessageStore = create((set) => ({
 export const loader = async ({ request }) => {
 	let entity_id = get_user_id(request);
 	let chat_id = get_resource_id(request.url);
-	console.log("chat_id");
-	console.log(chat_id);
 
 	let messages = await get_collection({
 		path: ["messages"],
@@ -53,7 +51,9 @@ export const loader = async ({ request }) => {
 
 	messages = pipe(sortBy(prop("created_at")))(messages);
 
-	return { entity_id, messages, chat_id };
+	let channel = await get_doc(["chats", chat_id]);
+
+	return { entity_id, messages, chat_id, channel };
 };
 
 const MessageActions = () => {
@@ -231,8 +231,8 @@ const MessageTextArea = () => {
 		}
 
 		if (key === 13 && !event.shiftKey) {
-			console.log("submit now");
-			console.log(message);
+			// console.log("submit now");
+			// console.log(message);
 
 			let message_id = uuidv4();
 
@@ -442,6 +442,8 @@ const Messages = () => {
 };
 
 export default function Chat() {
+	let { channel } = useLoaderData();
+
 	return (
 		<div className="flex flex-col flex-1 h-full w-full overflow-hidden">
 			<div className="flex flex-row w-full justify-between items-center px-5 py-2 border-b bg-white">
@@ -453,7 +455,7 @@ export default function Chat() {
 						/>
 					</div>
 					<div className="flex flex-col justify-center space-y-1 h-full">
-						<div className="font-semibold">Berkshire</div>
+						<div className="font-semibold">#{channel.title}</div>
 						<div className="text-sm flex flex-row items-center space-x-2">
 							<div>
 								<Members />
