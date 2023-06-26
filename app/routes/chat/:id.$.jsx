@@ -44,6 +44,9 @@ export const loader = async ({ request }) => {
 	let entity_id = get_user_id(request);
 	let chat_id = get_resource_id(request.url);
 
+	console.log("chat_id");
+	console.log(chat_id);
+
 	let messages = await get_collection({
 		path: ["messages"],
 		queries: [
@@ -56,6 +59,9 @@ export const loader = async ({ request }) => {
 	});
 
 	messages = pipe(sortBy(prop("created_at")))(messages);
+
+	console.log("messages");
+	console.log(messages);
 
 	let channel = await get_doc(["chats", chat_id]);
 
@@ -434,6 +440,10 @@ const Messages = () => {
 	const scrollToBottom = () => {
 		messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
 	};
+
+	useEffect(() => {
+		set_chat_state(["messages"], []);
+	}, []);
 
 	useEffect(() => {
 		if (server_messages.length > 0) {

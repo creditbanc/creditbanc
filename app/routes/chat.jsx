@@ -8,7 +8,7 @@ import { useEffect, useState } from "react";
 import { HashtagIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import { v4 as uuidv4 } from "uuid";
 import { get_collection, set_doc } from "~/utils/firebase";
-import { map, pipe } from "ramda";
+import { map, pipe, prop, sortBy } from "ramda";
 import { mod } from "shades";
 import { create } from "zustand";
 
@@ -36,6 +36,8 @@ export const loader = async ({ request }) => {
 
 	// console.log("channels");
 	// console.log(channels);
+
+	channels = pipe(sortBy(prop("index")))(channels);
 
 	return { entity_id, chat_id, channels };
 };
@@ -117,6 +119,7 @@ const NewChanelModal = () => {
 			type,
 			group_id,
 			title: channel,
+			index: channels.length,
 		};
 
 		set_doc(["chats", chat_id], payload);
