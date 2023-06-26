@@ -1,11 +1,13 @@
 import { Link, Outlet, useLoaderData } from "@remix-run/react";
 import SimpleNavSignedIn from "~/components/SimpleNavSignedIn";
 import { get_user_id } from "~/utils/auth.server";
+import { get_resource_id } from "~/utils/helpers";
 
 export const loader = async ({ request }) => {
 	let entity_id = get_user_id(request);
+	let chat_id = get_resource_id(request.url);
 
-	return { entity_id };
+	return { entity_id, chat_id };
 };
 
 const DirectMessage = ({ unread = 0 }) => {
@@ -41,7 +43,7 @@ const DirectMessage = ({ unread = 0 }) => {
 const Channel = ({ selected = false, title, unread = 0, id = 0 }) => {
 	return (
 		<Link
-			to={`/chat/resource/e/6461f488df5523110dece1ea/g/6461f489df5523110dece1ed/f/${id}`}
+			to={`/chat/resource/e/6461f488df5523110dece1ea/g/6461f489df5523110dece1ed/f/${id}?rand=${Math.random()}`}
 			className={`flex flex-row w-full text-sm px-2 py-2 justify-between rounded cursor-pointer  ${
 				selected ? "bg-blue-600 text-white" : "hover:bg-gray-100"
 			}`}
@@ -62,7 +64,7 @@ const Channel = ({ selected = false, title, unread = 0, id = 0 }) => {
 };
 
 export default function Chat() {
-	let { entity_id } = useLoaderData();
+	let { entity_id, chat_id } = useLoaderData();
 
 	return (
 		<div className="flex flex-col w-full h-full bg-gray-50 overflow-hidden">
@@ -88,14 +90,23 @@ export default function Chat() {
 					</div>
 
 					<div className="flex flex-col w-full space-y-2 px-2 my-2">
-						<Channel title={"App"} unread={2} id={1} />
 						<Channel
-							selected={true}
+							title={"App"}
+							unread={2}
+							id={1}
+							selected={chat_id == 1}
+						/>
+						<Channel
+							selected={chat_id == 2}
 							title={"General"}
 							unread={12}
 							id={2}
 						/>
-						<Channel title={"Accounting"} id={3} />
+						<Channel
+							title={"Accounting"}
+							id={3}
+							selected={chat_id == 3}
+						/>
 					</div>
 					<div className="flex flex-row w-full border-y p-3 text-sm justify-between items-center">
 						<div>Direct Messages</div>
