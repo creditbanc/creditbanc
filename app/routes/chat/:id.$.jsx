@@ -34,6 +34,12 @@ const useMessageStore = create((set) => ({
 		set((state) => pipe(mod(...path)(() => value))(state)),
 }));
 
+const useChatStore = create((set) => ({
+	messages: [],
+	set_chat_state: (path, value) =>
+		set((state) => pipe(mod(...path)(() => value))(state)),
+}));
+
 export const loader = async ({ request }) => {
 	let entity_id = get_user_id(request);
 	let chat_id = get_resource_id(request.url);
@@ -221,6 +227,8 @@ const MessageTextArea = () => {
 	let text_area_ref = useRef(null);
 	let [num_of_rows, set_num_of_rows] = useState(1);
 	let { message, set_message } = useMessageStore();
+	let set_chat_state = useChatStore((state) => state.set_chat_state);
+	let messages = useChatStore((state) => state.messages);
 
 	const onKeyDown = async (event) => {
 		var key = event.keyCode;
@@ -250,6 +258,8 @@ const MessageTextArea = () => {
 			set_doc(["messages", message_id], payload);
 
 			set_message(["message"], "");
+
+			set_chat_state(["messages"], [...messages, payload]);
 		}
 
 		if (key === 8) {
@@ -416,12 +426,20 @@ const NewMessageInput = () => {
 };
 
 const Messages = () => {
-	const { messages } = useLoaderData();
+	const { messages: server_messages } = useLoaderData();
+	const set_chat_state = useChatStore((state) => state.set_chat_state);
+	const messages = useChatStore((state) => state.messages);
 	const messagesEndRef = useRef(null);
 
 	const scrollToBottom = () => {
 		messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
 	};
+
+	useEffect(() => {
+		if (server_messages.length > 0) {
+			set_chat_state(["messages"], server_messages);
+		}
+	}, [server_messages]);
 
 	useEffect(() => {
 		scrollToBottom();
