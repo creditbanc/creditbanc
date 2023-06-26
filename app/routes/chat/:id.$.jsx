@@ -7,7 +7,7 @@ import {
 } from "@heroicons/react/24/outline";
 import { useLoaderData } from "@remix-run/react";
 import { get_user_id } from "~/utils/auth.server";
-import { classNames, mapIndexed } from "~/utils/helpers";
+import { classNames, get_resource_id, mapIndexed } from "~/utils/helpers";
 import { Menu, Transition } from "@headlessui/react";
 import { create } from "zustand";
 import {
@@ -36,6 +36,9 @@ const useMessageStore = create((set) => ({
 
 export const loader = async ({ request }) => {
 	let entity_id = get_user_id(request);
+	let chat_id = get_resource_id(request.url);
+	console.log("chat_id");
+	console.log(chat_id);
 
 	let messages = await get_collection({
 		path: ["messages"],
@@ -43,14 +46,14 @@ export const loader = async ({ request }) => {
 			{
 				param: "chat_id",
 				predicate: "==",
-				value: "1",
+				value: chat_id,
 			},
 		],
 	});
 
 	messages = pipe(sortBy(prop("created_at")))(messages);
 
-	return { entity_id, messages };
+	return { entity_id, messages, chat_id };
 };
 
 const MessageActions = () => {
@@ -214,6 +217,7 @@ const Members = () => {
 };
 
 const MessageTextArea = () => {
+	let { chat_id } = useLoaderData();
 	let text_area_ref = useRef(null);
 	let [num_of_rows, set_num_of_rows] = useState(1);
 	let { message, set_message } = useMessageStore();
@@ -235,7 +239,7 @@ const MessageTextArea = () => {
 			let payload = {
 				message_id,
 				message,
-				chat_id: "1",
+				chat_id,
 				user: {
 					id: "6461f488df5523110dece1ea",
 					name: "Talan Rosser",
@@ -424,7 +428,7 @@ const Messages = () => {
 	}, [messages]);
 
 	return (
-		<div className="flex flex-col w-full h-full overflow-y-scroll overflow-x-hidden scrollbar-none py-3">
+		<div className="flex flex-col w-full h-full overflow-y-scroll overflow-x-hidden scrollbar-none py-3 justify-end">
 			{pipe(
 				map((message) => (
 					<Message key={message.message_id} message={message} />

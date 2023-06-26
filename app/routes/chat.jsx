@@ -1,4 +1,4 @@
-import { Outlet, useLoaderData } from "@remix-run/react";
+import { Link, Outlet, useLoaderData } from "@remix-run/react";
 import SimpleNavSignedIn from "~/components/SimpleNavSignedIn";
 import { get_user_id } from "~/utils/auth.server";
 
@@ -38,9 +38,10 @@ const DirectMessage = ({ unread = 0 }) => {
 	);
 };
 
-const Channel = ({ selected = false, title, unread = 0 }) => {
+const Channel = ({ selected = false, title, unread = 0, id = 0 }) => {
 	return (
-		<div
+		<Link
+			to={`/chat/resource/e/6461f488df5523110dece1ea/g/6461f489df5523110dece1ed/f/${id}`}
 			className={`flex flex-row w-full text-sm px-2 py-2 justify-between rounded cursor-pointer  ${
 				selected ? "bg-blue-600 text-white" : "hover:bg-gray-100"
 			}`}
@@ -56,7 +57,7 @@ const Channel = ({ selected = false, title, unread = 0 }) => {
 					</div>
 				)}
 			</div>
-		</div>
+		</Link>
 	);
 };
 
@@ -87,13 +88,14 @@ export default function Chat() {
 					</div>
 
 					<div className="flex flex-col w-full space-y-2 px-2 my-2">
-						<Channel title={"App"} unread={2} />
+						<Channel title={"App"} unread={2} id={1} />
 						<Channel
 							selected={true}
 							title={"General"}
 							unread={12}
+							id={2}
 						/>
-						<Channel title={"Accounting"} />
+						<Channel title={"Accounting"} id={3} />
 					</div>
 					<div className="flex flex-row w-full border-y p-3 text-sm justify-between items-center">
 						<div>Direct Messages</div>
