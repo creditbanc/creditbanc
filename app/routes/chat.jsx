@@ -9,6 +9,14 @@ import { HashtagIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import { v4 as uuidv4 } from "uuid";
 import { get_collection, set_doc } from "~/utils/firebase";
 import { map, pipe } from "ramda";
+import { mod } from "shades";
+import { create } from "zustand";
+
+const useChatsStore = create((set) => ({
+	channels: [],
+	set_chats_state: (path, value) =>
+		set((state) => pipe(mod(...path)(() => value))(state)),
+}));
 
 export const loader = async ({ request }) => {
 	let entity_id = get_user_id(request);
@@ -88,11 +96,13 @@ const Channel = ({ selected = false, title, unread = 0, id = 0 }) => {
 const NewChanelModal = () => {
 	let [channel, set_channel] = useState("");
 	let set_modal = useModalStore((state) => state.set_modal);
+	let set_chats_state = useChatsStore((state) => state.set_chats_state);
+	let channels = useChatsStore((state) => state.channels);
 
 	const location = useLocation();
 
 	// useEffect(() => {
-	// 	set_modal({ id: "new_channel_modal", is_open: true });
+	// 	set_channel("");
 	// }, []);
 
 	const onCreateChannel = async () => {
@@ -109,8 +119,10 @@ const NewChanelModal = () => {
 			title: channel,
 		};
 
-		await set_doc(["chats", chat_id], payload);
+		set_doc(["chats", chat_id], payload);
 
+		set_chats_state(["channels"], [...channels, payload]);
+		set_channel("");
 		set_modal({ id: "new_channel_modal", is_open: false });
 	};
 
@@ -162,8 +174,16 @@ const NewChanelModal = () => {
 };
 
 export default function Chat() {
-	let { entity_id, chat_id, channels } = useLoaderData();
+	let { entity_id, chat_id, channels: server_channels } = useLoaderData();
 	let set_modal = useModalStore((state) => state.set_modal);
+	let channels = useChatsStore((state) => state.channels);
+	let set_chats_state = useChatsStore((state) => state.set_chats_state);
+
+	useEffect(() => {
+		if (server_channels.length > 0) {
+			set_chats_state(["channels"], server_channels);
+		}
+	}, [server_channels]);
 
 	const onNewChannelClick = () => {
 		set_modal({ id: "new_channel_modal", is_open: true });
