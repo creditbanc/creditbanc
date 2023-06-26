@@ -5,12 +5,20 @@ import { get_group_id, get_resource_id } from "~/utils/helpers";
 import { useModalStore } from "~/hooks/useModal";
 import Modal from "~/components/Modal";
 import { useEffect, useState } from "react";
-import { HashtagIcon, XMarkIcon } from "@heroicons/react/24/outline";
+import {
+	EllipsisHorizontalIcon,
+	HashtagIcon,
+	TrashIcon,
+	XMarkIcon,
+} from "@heroicons/react/24/outline";
 import { v4 as uuidv4 } from "uuid";
-import { get_collection, set_doc } from "~/utils/firebase";
+import { delete_doc, get_collection, set_doc } from "~/utils/firebase";
 import { map, pipe, prop, sortBy } from "ramda";
-import { mod } from "shades";
+import { get, mod, filter } from "shades";
 import { create } from "zustand";
+import { Fragment } from "react";
+import { Menu, Transition } from "@headlessui/react";
+import { classNames } from "~/utils/helpers";
 
 const useChatsStore = create((set) => ({
 	channels: [],
@@ -72,40 +80,107 @@ const DirectMessage = ({ unread = 0 }) => {
 	);
 };
 
+const ChannelActions = ({ channel_id }) => {
+	let channels = useChatsStore((state) => state.channels);
+	let set_chats_state = useChatsStore((state) => state.set_chats_state);
+
+	const onDeleteChannel = async () => {
+		console.log("onDeleteChannel");
+		console.log(channels);
+
+		delete_doc(["chats", channel_id]);
+
+		set_chats_state(
+			["channels"],
+			pipe(filter({ id: (id) => id !== channel_id }))(channels)
+		);
+	};
+
+	return (
+		<Menu as="div" className="relative inline-block text-left">
+			<div>
+				<Menu.Button className="flex flex-col w-full justify-center gap-x-1.5 rounded-full text-sm font-semibold text-gray-900 hover:bg-gray-50">
+					<EllipsisHorizontalIcon
+						className="h-4 w-4 text-gray-400"
+						aria-hidden="true"
+					/>
+				</Menu.Button>
+			</div>
+
+			<Transition
+				as={Fragment}
+				enter="transition ease-out duration-100"
+				enterFrom="transform opacity-0 scale-95"
+				enterTo="transform opacity-100 scale-100"
+				leave="transition ease-in duration-75"
+				leaveFrom="transform opacity-100 scale-100"
+				leaveTo="transform opacity-0 scale-95"
+			>
+				<Menu.Items className="absolute right-0 z-10 mt-2 w-56 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+					<div className="py-1">
+						<Menu.Item>
+							{({ active }) => (
+								<div
+									onClick={onDeleteChannel}
+									className={classNames(
+										active
+											? "bg-gray-100 text-gray-900"
+											: "text-gray-700",
+										"block px-4 py-2 text-sm cursor-pointer"
+									)}
+								>
+									<div className="flex flex-row items-center space-x-3">
+										<div>
+											<TrashIcon className="h-4 w-4 text-gray-400" />
+										</div>
+										<div>Delete</div>
+									</div>
+								</div>
+							)}
+						</Menu.Item>
+					</div>
+				</Menu.Items>
+			</Transition>
+		</Menu>
+	);
+};
+
 const Channel = ({ selected = false, title, unread = 0, id = 0 }) => {
 	return (
-		<Link
-			to={`/chat/resource/e/6461f488df5523110dece1ea/g/6461f489df5523110dece1ed/f/${id}?rand=${Math.random()}`}
-			className={`flex flex-row w-full text-sm px-2 py-2 justify-between rounded cursor-pointer  ${
+		<div
+			className={`flex flex-row w-full text-sm px-2 justify-between rounded ${
 				selected ? "bg-blue-600 text-white" : "hover:bg-gray-100"
 			}`}
 		>
-			<div className="flex flex-row space-x-2">
+			<Link
+				className="flex flex-row space-x-1 w-full cursor-pointer py-2"
+				to={`/chat/resource/e/6461f488df5523110dece1ea/g/6461f489df5523110dece1ed/f/${id}?rand=${Math.random()}`}
+			>
 				<div>#</div>
 				<div>{title}</div>
-			</div>
-			<div>
+			</Link>
+
+			<div className="flex flex-row space-x-3 items-center">
+				<div className="flex flex-col justify-center h-full">
+					<ChannelActions channel_id={id} />
+				</div>
 				{unread > 0 && (
 					<div className="px-2 h-5 bg-red-500 flex flex-col items-center justify-center text-white rounded-full text-xs">
 						{unread}
 					</div>
 				)}
 			</div>
-		</Link>
+		</div>
 	);
 };
 
-const NewChanelModal = () => {
+const NewChannelModal = () => {
 	let [channel, set_channel] = useState("");
 	let set_modal = useModalStore((state) => state.set_modal);
 	let set_chats_state = useChatsStore((state) => state.set_chats_state);
 	let channels = useChatsStore((state) => state.channels);
 
 	const location = useLocation();
-
-	// useEffect(() => {
-	// 	set_channel("");
-	// }, []);
 
 	const onCreateChannel = async () => {
 		// console.log("oncreatechannel");
@@ -194,7 +269,7 @@ export default function Chat() {
 
 	return (
 		<div className="flex flex-col w-full h-full bg-gray-50 overflow-hidden">
-			<NewChanelModal />
+			<NewChannelModal />
 			<div className="flex flex-col w-full border-b bg-white">
 				<SimpleNavSignedIn user_id={entity_id} />
 			</div>
