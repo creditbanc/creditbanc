@@ -19,54 +19,6 @@ export const loader = async ({ request }) => {
 	return { entity_id };
 };
 
-const tabs = [
-	{ name: "Personal", href: "#", current: true },
-	{ name: "Business", href: "#", current: false },
-];
-
-const SubNav = () => {
-	return (
-		<div>
-			<div className="sm:hidden bg-white">
-				<select
-					id="tabs"
-					name="tabs"
-					className="block w-full rounded-md border-gray-300 focus:border-indigo-500 focus:ring-indigo-500"
-					defaultValue={tabs.find((tab) => tab.current).name}
-				>
-					{tabs.map((tab) => (
-						<option key={tab.name}>{tab.name}</option>
-					))}
-				</select>
-			</div>
-			<div className="hidden sm:flex sm:flex-row bg-white px-5 border-b border-gray-200">
-				<div className="flex flex-row justify-between w-full items-center">
-					<nav className="-mb-px flex space-x-5" aria-label="Tabs">
-						{tabs.map((tab) => (
-							<a
-								key={tab.name}
-								href={tab.href}
-								className={classNames(
-									tab.current
-										? "border-blue-500 text-blue-600"
-										: "border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700",
-									" border-b-2 py-2 px-1 text-center text-sm "
-								)}
-								aria-current={tab.current ? "page" : undefined}
-							>
-								{tab.name}
-							</a>
-						))}
-					</nav>
-					<div>
-						<EllipsisHorizontalIcon className="h-6 w-6 text-gray-400 cursor-pointer" />
-					</div>
-				</div>
-			</div>
-		</div>
-	);
-};
-
 const MessageActions = () => {
 	return (
 		<Menu as="div" className="relative inline-block text-left">
@@ -430,39 +382,7 @@ export default function Chat() {
 			<div className="flex flex-col w-full border-b bg-white">
 				<SimpleNavSignedIn user_id={entity_id} />
 			</div>
-
-			<div className="flex flex-row w-full justify-between items-center px-5 py-2 border-b bg-white">
-				<div className="flex flex-row items-center space-x-5 pb-1">
-					<div>
-						<img
-							className="inline-block h-10 w-10 rounded-full"
-							src="https://www.massmoments.org/assets/images/9/05_07.3_1958-cabd01ba.jpg"
-						/>
-					</div>
-					<div className="space-y-1">
-						<div className="font-semibold">Berkshire</div>
-						<div className="text-sm flex flex-row items-center space-x-2">
-							<div>
-								<Members />
-							</div>
-							<div className="flex flex-row items-center space-x-2">
-								<div className="text-gray-600">8 members</div>
-								<div className="h-1 w-1  bg-gray-600 rounded-full"></div>
-								<div className="text-green-500">4 Online</div>
-							</div>
-						</div>
-					</div>
-				</div>
-				<div className="flex flex-row space-x-5">
-					<div>
-						<MagnifyingGlassIcon className="h-6 w-6 text-gray-400 cursor-pointer" />
-					</div>
-					<div>
-						<EllipsisHorizontalIcon className="h-6 w-6 text-gray-400 cursor-pointer" />
-					</div>
-				</div>
-			</div>
-			<div className="flex flex-row flex-1 overflow-hidden">
+			<div className="flex flex-row w-full h-full  overflow-hidden">
 				<div className="flex flex-col w-[300px] bg-white border-r overflow-scroll scrollbar-none">
 					<div className="flex flex-col w-full py-3 px-3 sticky top-0 bg-white">
 						<div>
@@ -508,66 +428,105 @@ export default function Chat() {
 						<DirectMessage />
 					</div>
 				</div>
-
-				<div className="flex flex-col flex-1 h-full justify-between overflow-hidden">
-					<div className="flex flex-col flex-1 bg-white px-5 justify-end overflow-hidden">
-						<div className="flex flex-col w-full h-full  overflow-y-scroll overflow-x-hidden scrollbar-none py-3">
-							<Message />
-							<Message />
-							<Message />
-							<Message />
-							<Message />
-							<Message />
-							<Message />
-							<Message />
-							<Message />
-							<Message />
-							<Message />
-							<Message />
-							<Message />
-							<Message />
-							<Message />
-							<Message />
+				<div className="flex flex-col flex-1 h-full w-full overflow-hidden">
+					<div className="flex flex-row w-full justify-between items-center px-5 py-2 border-b bg-white">
+						<div className="flex flex-row items-center space-x-5 pb-1">
+							<div>
+								<img
+									className="inline-block h-10 w-10 rounded-full"
+									src="https://www.massmoments.org/assets/images/9/05_07.3_1958-cabd01ba.jpg"
+								/>
+							</div>
+							<div className="flex flex-col justify-center space-y-1 h-full">
+								<div className="font-semibold">Berkshire</div>
+								<div className="text-sm flex flex-row items-center space-x-2">
+									<div>
+										<Members />
+									</div>
+									<div className="flex flex-row items-center space-x-2">
+										<div className="text-gray-600">
+											8 members
+										</div>
+										<div className="h-1 w-1  bg-gray-600 rounded-full"></div>
+										<div className="text-green-500">
+											4 Online
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div className="flex flex-row space-x-5">
+							<div>
+								<MagnifyingGlassIcon className="h-6 w-6 text-gray-400 cursor-pointer" />
+							</div>
+							<div>
+								<EllipsisHorizontalIcon className="h-6 w-6 text-gray-400 cursor-pointer" />
+							</div>
 						</div>
 					</div>
-					<div className="flex flex-col w-full bg-white px-3 pb-3">
-						<div className="flex flex-row w-full h-full border p-2 rounded ">
-							<div className="flex flex-row flex-1 h-full items-end space-x-5 ">
-								<div>
-									<PaperClipIcon className="h-6 w-6 text-gray-400 cursor-pointer" />
+					<div className="flex flex-row h-full overflow-hidden">
+						<div className="flex flex-col flex-1 justify-between bg-green-100">
+							<div className="flex flex-col bg-white px-5 overflow-hidden">
+								<div className="flex flex-col w-full h-full overflow-y-scroll overflow-x-hidden scrollbar-none py-3">
+									<Message />
+									<Message />
+									<Message />
+									<Message />
+									<Message />
+									<Message />
+									<Message />
+									<Message />
+									<Message />
+									<Message />
+									<Message />
+									<Message />
+									<Message />
+									<Message />
+									<Message />
+									<Message />
+								</div>
+							</div>
+
+							<div className="flex flex-col w-full bg-white px-3 pb-3">
+								<div className="flex flex-row w-full h-full border p-2 rounded">
+									<div className="flex flex-row flex-1 h-full items-end space-x-5 ">
+										<div>
+											<PaperClipIcon className="h-6 w-6 text-gray-400 cursor-pointer" />
+										</div>
+										<div className="flex flex-col w-full">
+											<ChatTextArea />
+										</div>
+									</div>
+									<div className="flex flex-row  h-full">
+										<div className="flex flex-col justify-end h-full -mt-0.5 items-center w-full ">
+											<FaceSmileIcon className="h-6 w-6 text-gray-400 cursor-pointer " />
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div className="flex flex-col w-[300px] bg-white border-l">
+							<div className="flex flex-col w-full">
+								<div className="flex flex-row w-full border-b p-3 text-sm justify-between items-center">
+									<div>Members</div>
+									<div className="bg-gray-100 text-gray-600 h-6 w-6 flex flex-col items-center justify-center rounded-full pb-[2px] cursor-pointer">
+										+
+									</div>
 								</div>
 								<div className="flex flex-col w-full">
-									<ChatTextArea />
+									<Member />
+									<Member />
+									<Member />
 								</div>
-							</div>
-							<div className="flex flex-row  h-full">
-								<div className="flex flex-col justify-end h-full -mt-0.5 items-center w-full ">
-									<FaceSmileIcon className="h-6 w-6 text-gray-400 cursor-pointer " />
+								<div className="flex flex-row w-full border-b p-3 text-xs text-gray-400 cursor-pointer items-center">
+									<div className="flex flex-row space-x-[1px]">
+										<div>4</div>
+										<div className="-mt-[1px]">+</div>
+									</div>
+									<div className="flex flex-row ml-1">
+										<div>Members</div>
+									</div>
 								</div>
-							</div>
-						</div>
-					</div>
-				</div>
-				<div className="flex flex-col w-[300px] bg-white border-l">
-					<div className="flex flex-col w-full">
-						<div className="flex flex-row w-full border-b p-3 text-sm justify-between items-center">
-							<div>Members</div>
-							<div className="bg-gray-100 text-gray-600 h-6 w-6 flex flex-col items-center justify-center rounded-full pb-[2px] cursor-pointer">
-								+
-							</div>
-						</div>
-						<div className="flex flex-col w-full">
-							<Member />
-							<Member />
-							<Member />
-						</div>
-						<div className="flex flex-row w-full border-b p-3 text-xs text-gray-400 cursor-pointer items-center">
-							<div className="flex flex-row space-x-[1px]">
-								<div>4</div>
-								<div className="-mt-[1px]">+</div>
-							</div>
-							<div className="flex flex-row ml-1">
-								<div>Members</div>
 							</div>
 						</div>
 					</div>

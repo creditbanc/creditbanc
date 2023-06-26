@@ -227,7 +227,7 @@ const RolesNav = () => {
 			<ul role="list" className="space-y-3">
 				{pipe(
 					mapIndexed((role, role_idx) => (
-						<li key={role_idx} className="border rounded">
+						<li key={role_idx} className="border rounded-lg">
 							<div
 								className={classNames(
 									role.current
