@@ -413,6 +413,15 @@ const NewMessageInput = () => {
 
 const Messages = () => {
 	const { messages } = useLoaderData();
+	const messagesEndRef = useRef(null);
+
+	const scrollToBottom = () => {
+		messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+	};
+
+	useEffect(() => {
+		scrollToBottom();
+	}, [messages]);
 
 	return (
 		<div className="flex flex-col w-full h-full overflow-y-scroll overflow-x-hidden scrollbar-none py-3">
@@ -421,6 +430,7 @@ const Messages = () => {
 					<Message key={message.message_id} message={message} />
 				))
 			)(messages)}
+			<div ref={messagesEndRef}></div>
 		</div>
 	);
 };
