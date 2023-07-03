@@ -758,16 +758,20 @@ export default function Cashflow() {
 	return (
 		<div className="flex flex-col w-full h-full overflow-hidden">
 			<div className="flex flex-row h-full w-full p-5 space-x-5 ">
-				<div className="flex flex-col h-full w-[70%] rounded  gap-y-5 overflow-scroll scrollbar-none">
+				<div className="flex flex-col h-full w-[70%] rounded  gap-y-5 overflow-y-scroll scrollbar-none">
 					<div className="flex flex-col w-full max-h-[600px] bg-white rounded">
 						<CashflowChart />
 					</div>
-					<div className="flex flex-row w-full gap-x-5 h-full">
-						<div className="flex flex-col w-1/2 bg-white h-full rounded">
-							<RevenueChart />
+					<div className="flex flex-row w-full h-full">
+						<div className="flex flex-col w-1/2 h-full ">
+							<div className="mr-[10px] bg-white rounded">
+								<RevenueChart />
+							</div>
 						</div>
-						<div className="flex flex-col w-1/2 bg-white h-full rounded">
-							<ExpensesChart />
+						<div className="flex flex-col w-1/2 h-full rounded">
+							<div className="ml-[10px] bg-white rounded">
+								<ExpensesChart />
+							</div>
 						</div>
 					</div>
 					<div className="flex flex-col w-full bg-white rounded ">

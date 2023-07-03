@@ -13,7 +13,7 @@ import {
 } from "@heroicons/react/24/outline";
 import { v4 as uuidv4 } from "uuid";
 import { delete_doc, get_collection, set_doc } from "~/utils/firebase";
-import { map, pipe, prop, sortBy } from "ramda";
+import { defaultTo, map, pipe, prop, sortBy } from "ramda";
 import { get, mod, filter } from "shades";
 import { create } from "zustand";
 import { Fragment } from "react";
@@ -45,7 +45,7 @@ export const loader = async ({ request }) => {
 	// console.log("channels");
 	// console.log(channels);
 
-	channels = pipe(sortBy(prop("index")))(channels);
+	channels = pipe(defaultTo([]), sortBy(prop("index")))(channels);
 
 	return { entity_id, chat_id, channels };
 };
@@ -85,8 +85,8 @@ const ChannelActions = ({ channel_id }) => {
 	let set_chats_state = useChatsStore((state) => state.set_chats_state);
 
 	const onDeleteChannel = async () => {
-		console.log("onDeleteChannel");
-		console.log(channels);
+		// console.log("onDeleteChannel");
+		// console.log(channels);
 
 		delete_doc(["chats", channel_id]);
 
