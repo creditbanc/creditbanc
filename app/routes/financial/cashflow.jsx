@@ -1,6 +1,6 @@
 import { ArrowDownIcon, ArrowUpIcon } from "@heroicons/react/20/solid";
 
-import { classNames, currency } from "~/utils/helpers";
+import { classNames, currency, inspect } from "~/utils/helpers";
 import {
 	Chart as ChartJS,
 	CategoryScale,
@@ -18,9 +18,36 @@ import {
 	ArrowUpCircleIcon,
 } from "@heroicons/react/24/outline";
 import { get_collection, get_doc, set_doc } from "~/utils/firebase";
-import { defaultTo, head, pipe } from "ramda";
-import { filter, get } from "shades";
+import {
+	defaultTo,
+	head,
+	identity,
+	not,
+	pipe,
+	curry,
+	map,
+	last,
+	pick,
+	values,
+	sum,
+	flatten,
+} from "ramda";
+import { all, filter, get, mod } from "shades";
 import { redirect } from "@remix-run/node";
+import {
+	concatMap,
+	flatMap,
+	from,
+	mergeMap,
+	of,
+	filter as rxfilter,
+	switchMap,
+	toArray,
+	map as rxmap,
+	lastValueFrom,
+} from "rxjs";
+import moment from "moment";
+import { useLoaderData } from "@remix-run/react";
 
 ChartJS.register(
 	CategoryScale,
@@ -80,28 +107,148 @@ export const loader = async ({ request }) => {
 
 	// set_doc(["roles", role_id], test_role);
 
-	let role = await get_permissions(entity_id, group_id);
+	// let role = await get_permissions(entity_id, group_id);
 
-	console.log("role");
-	console.log(role);
+	// console.log("role");
+	// console.log(role);
 
-	let { permissions } = role;
+	// let { permissions } = role;
 
-	console.log("permissions");
-	console.log(permissions);
+	// console.log("permissions");
+	// console.log(permissions);
 
-	let has_permission = validate_permission("cashflow", "read", permissions);
+	// let has_permission = validate_permission("cashflow", "read", permissions);
 
-	console.log("has_permission");
-	console.log(has_permission);
+	// console.log("has_permission");
+	// console.log(has_permission);
 
-	if (!has_permission) {
-		return redirect("/");
-	}
+	// if (!has_permission) {
+	// 	return redirect("/");
+	// }
 
-	if (has_permission) {
-		return null;
-	}
+	// if (has_permission) {
+	// 	return null;
+	// }
+
+	let transactions = await get_collection({ path: ["transactions"] });
+
+	const is_expense = (transaction) => {
+		return transaction.amount >= 0;
+	};
+
+	const is_revenue = pipe(is_expense, not);
+
+	let $transactions = of(transactions);
+
+	let $expenses = (transactions) =>
+		of(transactions).pipe(
+			concatMap(identity),
+			rxfilter(is_expense),
+			toArray()
+		);
+
+	let $revenues = (transactions) =>
+		of(transactions).pipe(
+			concatMap(identity),
+			rxfilter(is_revenue),
+			toArray()
+		);
+
+	let transactions_by_date = curry((start_date, end_date, transactions) => {
+		return pipe(
+			filter({ date: (date) => date > start_date && date < end_date })
+		)(transactions);
+	});
+
+	let transactions_by_month = curry((year, month, transactions) => {
+		let days_in_month = moment(`${moment().year()}-${month}`).daysInMonth();
+
+		return pipe(
+			filter({
+				date: (date) =>
+					date > moment(`${year}-${month}-1`).format("YYYY-MM-DD") &&
+					date <
+						moment(`${year}-${month}-${days_in_month}`).format(
+							"YYYY-MM-DD"
+						),
+			})
+		)(transactions);
+	});
+
+	let start_date = "2023-01-01";
+	let end_date = "2023-04-30";
+
+	let num_of_months = (end_date, start_date) => {
+		let months = moment(end_date).diff(moment(start_date), "months", true);
+		return months % 1 == 0 ? months : Math.floor(months) + 1;
+	};
+
+	let start_date_of_months = (start_date, end_date) => {
+		let months = [];
+		start_date = moment(start_date);
+		end_date = moment(end_date);
+
+		while (start_date < end_date) {
+			months = [
+				...months,
+				start_date.startOf("month").format("YYYY-MM-DD"),
+			];
+
+			start_date.add(1, "month");
+		}
+
+		return months;
+	};
+
+	let $monthly_transactions = $transactions
+		.pipe(rxmap(transactions_by_date(start_date, end_date)))
+		.pipe(
+			concatMap((transactions) =>
+				of(
+					pipe(
+						map((date) =>
+							transactions_by_month(
+								moment(date).year(),
+								moment(date).month() + 1,
+								transactions
+							)
+						)
+					)(start_date_of_months(start_date, end_date))
+				)
+			)
+		);
+
+	let $monthly_revenues = $monthly_transactions.pipe(
+		concatMap(identity),
+		concatMap($revenues),
+		rxmap(pipe(mod(all)(pick(["amount"])))),
+		rxmap(pipe(map(values), flatten, sum)),
+		toArray()
+	);
+
+	let $monthly_expenses = $monthly_transactions.pipe(
+		concatMap(identity),
+		concatMap($expenses),
+		rxmap(pipe(mod(all)(pick(["amount"])))),
+		rxmap(pipe(map(values), flatten, sum)),
+		toArray()
+	);
+
+	let monthly_expenses = await lastValueFrom($monthly_expenses);
+	let monthly_revenues = await lastValueFrom($monthly_revenues);
+
+	let payload = {
+		monthly_expenses,
+		monthly_revenues,
+		month_labels: pipe(map((date) => moment(date).format("MMM")))(
+			start_date_of_months(start_date, end_date)
+		),
+	};
+
+	console.log("payload");
+	console.log(payload);
+
+	return payload;
 };
 
 const activity = [
@@ -327,6 +474,32 @@ export const data = {
 	],
 };
 
+export const income_chart_data = (labels, revenues, expenses) => {
+	console.log("labels", labels);
+	console.log("revenues", revenues);
+	console.log("expenses", expenses);
+
+	return {
+		labels,
+		datasets: [
+			{
+				label: "Dataset 1",
+				data: revenues,
+				backgroundColor: "rgb(13,98,254)",
+				stack: "Stack 0",
+				barThickness: 30,
+			},
+			{
+				label: "Dataset 2",
+				data: expenses,
+				backgroundColor: "rgb(234,238,241)",
+				stack: "Stack 0",
+				barThickness: 30,
+			},
+		],
+	};
+};
+
 export const revenue_data = {
 	labels,
 	datasets: [
@@ -372,6 +545,11 @@ export const expenses_data = {
 };
 
 const CashflowChart = () => {
+	let { monthly_expenses, monthly_revenues, month_labels } = useLoaderData();
+
+	// console.log("expenses");
+	// console.log(expenses);
+
 	return (
 		<div className="flex flex-col w-full h-full">
 			<div className="px-5 pt-5 text-base font-semibold leading-6 text-gray-900">
@@ -418,7 +596,14 @@ const CashflowChart = () => {
 					<IncomeStats />
 				</div>
 				<div className="flex flex-col flex-1 h-[350px] p-3 overflow-hidden">
-					<Bar options={options} data={data} />
+					<Bar
+						options={options}
+						data={income_chart_data(
+							month_labels,
+							monthly_revenues,
+							monthly_expenses
+						)}
+					/>
 				</div>
 			</div>
 		</div>

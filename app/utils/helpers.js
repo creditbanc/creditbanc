@@ -109,7 +109,7 @@ export const just = curry((filter_array, array) =>
 );
 
 export const inspect = curry((obj, label = "") => {
-	console.log(label);
+	// console.log(label);
 	console.log(util.inspect(obj, false, null, true));
 	return obj;
 });

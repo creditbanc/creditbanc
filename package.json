@@ -46,6 +46,7 @@
 		"react-dom": "^18.2.0",
 		"react-plaid-link": "^3.4.0",
 		"react-spring": "^9.6.1",
+		"rxjs": "^7.8.1",
 		"shades": "^2.2.0",
 		"ssn": "^1.0.3",
 		"stripe": "^12.4.0",
