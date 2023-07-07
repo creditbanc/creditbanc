@@ -580,6 +580,8 @@ const CashflowChart = () => {
 		useLoaderData();
 	let { search, pathname } = useLocation();
 
+	let net_income = sum(monthly_incomes);
+
 	let {
 		income = 12,
 		expenses = 12,
@@ -608,11 +610,9 @@ const CashflowChart = () => {
 				<div className="flex flex-row w-full">
 					<div className="flex flex-row justify-between w-[30%]">
 						<div className="flex flex-col mb-7 space-y-2 my-2">
-							<div className="text-gray-700">
-								Net income in June
-							</div>
+							<div className="text-gray-700">Net income</div>
 							<div className="text-4xl">
-								{currency.format(5144707.08)}
+								{currency.format(net_income)}
 							</div>
 						</div>
 					</div>
@@ -841,6 +841,8 @@ const RevenueChart = () => {
 	let { monthly_revenues, month_labels } = useLoaderData();
 	let { search, pathname } = useLocation();
 
+	let total_revenue = sum(monthly_revenues);
+
 	let {
 		income = 12,
 		expenses = 12,
@@ -868,9 +870,9 @@ const RevenueChart = () => {
 
 			<div className="flex flex-row justify-between px-5">
 				<div className="flex flex-col mb-3 space-y-2 my-2">
-					<div className="text-gray-700">Total revenue in June</div>
+					<div className="text-gray-700">Total revenue</div>
 					<div className="text-3xl">
-						{currency.format(5144707.08)}
+						{currency.format(total_revenue)}
 					</div>
 				</div>
 			</div>
@@ -941,6 +943,8 @@ const ExpensesChart = () => {
 	let { monthly_expenses, month_labels } = useLoaderData();
 	let { search, pathname } = useLocation();
 
+	let total_expenses = sum(monthly_expenses);
+
 	let {
 		income = 12,
 		expenses = 12,
@@ -968,9 +972,9 @@ const ExpensesChart = () => {
 
 			<div className="flex flex-row justify-between px-5">
 				<div className="flex flex-col mb-3 space-y-2 my-2">
-					<div className="text-gray-700">Total spending in June</div>
+					<div className="text-gray-700">Total spending</div>
 					<div className="text-3xl">
-						{currency.format(5144707.08)}
+						{currency.format(total_expenses)}
 					</div>
 				</div>
 			</div>
