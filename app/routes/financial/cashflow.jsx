@@ -31,6 +31,8 @@ import {
 	values,
 	sum,
 	flatten,
+	zip,
+	multiply,
 } from "ramda";
 import { all, filter, get, mod } from "shades";
 import { redirect } from "@remix-run/node";
@@ -45,6 +47,7 @@ import {
 	toArray,
 	map as rxmap,
 	lastValueFrom,
+	withLatestFrom,
 } from "rxjs";
 import moment from "moment";
 import { useLoaderData } from "@remix-run/react";
@@ -222,7 +225,7 @@ export const loader = async ({ request }) => {
 		concatMap(identity),
 		concatMap($revenues),
 		rxmap(pipe(mod(all)(pick(["amount"])))),
-		rxmap(pipe(map(values), flatten, sum)),
+		rxmap(pipe(map(values), flatten, sum, Math.abs)),
 		toArray()
 	);
 
@@ -230,16 +233,28 @@ export const loader = async ({ request }) => {
 		concatMap(identity),
 		concatMap($expenses),
 		rxmap(pipe(mod(all)(pick(["amount"])))),
-		rxmap(pipe(map(values), flatten, sum)),
+		rxmap(pipe(map(values), flatten, sum, multiply(-1))),
 		toArray()
+	);
+
+	let $monthly_incomes = from($monthly_revenues).pipe(
+		withLatestFrom($monthly_expenses),
+		rxmap((transactions) =>
+			pipe(
+				zip,
+				map(([revenues, expenses]) => revenues + expenses)
+			)(...transactions)
+		)
 	);
 
 	let monthly_expenses = await lastValueFrom($monthly_expenses);
 	let monthly_revenues = await lastValueFrom($monthly_revenues);
+	let monthly_incomes = await lastValueFrom($monthly_incomes);
 
 	let payload = {
 		monthly_expenses,
 		monthly_revenues,
+		monthly_incomes,
 		month_labels: pipe(map((date) => moment(date).format("MMM")))(
 			start_date_of_months(start_date, end_date)
 		),
@@ -474,7 +489,7 @@ export const data = {
 	],
 };
 
-export const income_chart_data = (labels, revenues, expenses) => {
+export const income_chart_data = (labels, revenues, expenses, incomes) => {
 	console.log("labels", labels);
 	console.log("revenues", revenues);
 	console.log("expenses", expenses);
@@ -483,11 +498,21 @@ export const income_chart_data = (labels, revenues, expenses) => {
 		labels,
 		datasets: [
 			{
+				label: "Dataset 3",
+				data: incomes,
+				borderColor: "#000",
+				backgroundColor: "#000",
+				borderWidth: 1,
+				type: "line",
+				order: 0,
+			},
+			{
 				label: "Dataset 1",
 				data: revenues,
 				backgroundColor: "rgb(13,98,254)",
 				stack: "Stack 0",
 				barThickness: 30,
+				order: 1,
 			},
 			{
 				label: "Dataset 2",
@@ -495,6 +520,7 @@ export const income_chart_data = (labels, revenues, expenses) => {
 				backgroundColor: "rgb(234,238,241)",
 				stack: "Stack 0",
 				barThickness: 30,
+				order: 1,
 			},
 		],
 	};
@@ -545,7 +571,8 @@ export const expenses_data = {
 };
 
 const CashflowChart = () => {
-	let { monthly_expenses, monthly_revenues, month_labels } = useLoaderData();
+	let { monthly_expenses, monthly_revenues, monthly_incomes, month_labels } =
+		useLoaderData();
 
 	// console.log("expenses");
 	// console.log(expenses);
@@ -601,7 +628,8 @@ const CashflowChart = () => {
 						data={income_chart_data(
 							month_labels,
 							monthly_revenues,
-							monthly_expenses
+							monthly_expenses,
+							monthly_incomes
 						)}
 					/>
 				</div>
