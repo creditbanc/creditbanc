@@ -547,48 +547,32 @@ export const income_chart_data = (labels, revenues, expenses, incomes) => {
 	};
 };
 
-export const revenue_data = {
-	labels,
-	datasets: [
-		{
-			label: "Dataset 1",
-			data: labels.map(() => faker.number.int({ min: 0, max: 1000 })),
-			backgroundColor: "rgb(13,98,254)",
-			// stack: "Stack 0",
-			barThickness: 30,
-		},
-		// {
-		// 	label: "Dataset 2",
-		// 	data: labels.map(() =>
-		// 		faker.datatype.number({ min: -1000, max: 0 })
-		// 	),
-		// 	backgroundColor: "rgb(234,238,241)",
-		// 	stack: "Stack 0",
-		// 	barThickness: 30,
-		// },
-	],
+export const revenue_data = (labels, revenues) => {
+	return {
+		labels,
+		datasets: [
+			{
+				label: "Revenues",
+				data: revenues,
+				backgroundColor: "rgb(13,98,254)",
+				barThickness: 30,
+			},
+		],
+	};
 };
 
-export const expenses_data = {
-	labels,
-	datasets: [
-		// {
-		// 	label: "Dataset 1",
-		// 	data: labels.map(() =>
-		// 		faker.datatype.number({ min: 0, max: 1000 })
-		// 	),
-		// 	backgroundColor: "rgb(13,98,254)",
-		// 	stack: "Stack 0",
-		// 	barThickness: 30,
-		// },
-		{
-			label: "Dataset 2",
-			data: labels.map(() => faker.number.int({ min: 0, max: 1000 })),
-			backgroundColor: "rgb(234,238,241)",
-			// stack: "Stack 0",
-			barThickness: 30,
-		},
-	],
+export const expenses_data = (labels, expenses) => {
+	return {
+		labels,
+		datasets: [
+			{
+				label: "Expenses",
+				data: expenses,
+				backgroundColor: "rgb(234,238,241)",
+				barThickness: 30,
+			},
+		],
+	};
 };
 
 const CashflowChart = () => {
@@ -854,6 +838,27 @@ const HealthStats = ({ type = "revenue" }) => {
 };
 
 const RevenueChart = () => {
+	let { monthly_revenues, month_labels } = useLoaderData();
+	let { search, pathname } = useLocation();
+
+	let {
+		income = 12,
+		expenses = 12,
+		revenues = 12,
+	} = use_client_search_params(search);
+
+	let use_chart_date_link = (key, value) => {
+		let search_params = { income, expenses, revenues };
+		let search = pipe(
+			mod(key)(() => value),
+			mapObjIndexed((value, key) => `${key}=${value}`),
+			values,
+			join("&")
+		)(search_params);
+
+		return `${pathname}?${search}`;
+	};
+
 	return (
 		<div className="flex flex-col w-full h-full">
 			<div className="px-5 pt-5 text-base font-semibold leading-6 text-gray-900">
@@ -871,22 +876,53 @@ const RevenueChart = () => {
 			</div>
 
 			<div className="flex flex-col w-full h-[250px] p-3 overflow-hidden">
-				<Bar options={options} data={revenue_data} />
+				<Bar
+					options={options}
+					data={revenue_data(month_labels, monthly_revenues)}
+				/>
 			</div>
 
 			<div className="flex flex-row justify-center gap-x-5 py-6 text-sm">
-				<div className="flex flex-col hover:bg-gray-100 text-gray-600 px-3 rounded-full cursor-pointer">
+				<Link
+					className={`flex flex-col  px-3 rounded-full cursor-pointer ${
+						income == 1
+							? "bg-blue-600 text-white"
+							: "hover:bg-gray-100 text-gray-600"
+					}`}
+					to={use_chart_date_link("income", 1)}
+				>
 					30D
-				</div>
-				<div className="flex flex-col hover:bg-gray-100 text-gray-600 px-3 rounded-full cursor-pointer">
+				</Link>
+				<Link
+					className={`flex flex-col  px-3 rounded-full cursor-pointer ${
+						income == 3
+							? "bg-blue-600 text-white"
+							: "hover:bg-gray-100 text-gray-600"
+					}`}
+					to={use_chart_date_link("income", 3)}
+				>
 					3M
-				</div>
-				<div className="flex flex-col hover:bg-gray-100 text-gray-600 px-3 rounded-full cursor-pointer">
+				</Link>
+				<Link
+					className={`flex flex-col  px-3 rounded-full cursor-pointer ${
+						income == 6
+							? "bg-blue-600 text-white"
+							: "hover:bg-gray-100 text-gray-600"
+					}`}
+					to={use_chart_date_link("income", 6)}
+				>
 					6M
-				</div>
-				<div className="flex flex-col bg-blue-600 text-white px-3 rounded-full cursor-pointer">
+				</Link>
+				<Link
+					className={`flex flex-col  px-3 rounded-full cursor-pointer ${
+						income == 12
+							? "bg-blue-600 text-white"
+							: "hover:bg-gray-100 text-gray-600"
+					}`}
+					to={use_chart_date_link("income", 12)}
+				>
 					12M
-				</div>
+				</Link>
 			</div>
 
 			<div>
@@ -902,6 +938,27 @@ const RevenueChart = () => {
 };
 
 const ExpensesChart = () => {
+	let { monthly_expenses, month_labels } = useLoaderData();
+	let { search, pathname } = useLocation();
+
+	let {
+		income = 12,
+		expenses = 12,
+		revenues = 12,
+	} = use_client_search_params(search);
+
+	let use_chart_date_link = (key, value) => {
+		let search_params = { income, expenses, revenues };
+		let search = pipe(
+			mod(key)(() => value),
+			mapObjIndexed((value, key) => `${key}=${value}`),
+			values,
+			join("&")
+		)(search_params);
+
+		return `${pathname}?${search}`;
+	};
+
 	return (
 		<div className="flex flex-col w-full h-full">
 			<div className="px-5 pt-5 text-base font-semibold leading-6 text-gray-900">
@@ -919,22 +976,53 @@ const ExpensesChart = () => {
 			</div>
 
 			<div className="flex flex-col w-full h-[250px] p-3 overflow-hidden">
-				<Bar options={options} data={expenses_data} />
+				<Bar
+					options={options}
+					data={expenses_data(month_labels, monthly_expenses)}
+				/>
 			</div>
 
 			<div className="flex flex-row justify-center gap-x-5 py-6 text-sm">
-				<div className="flex flex-col hover:bg-gray-100 text-gray-600 px-3 rounded-full cursor-pointer">
+				<Link
+					className={`flex flex-col  px-3 rounded-full cursor-pointer ${
+						income == 1
+							? "bg-blue-600 text-white"
+							: "hover:bg-gray-100 text-gray-600"
+					}`}
+					to={use_chart_date_link("income", 1)}
+				>
 					30D
-				</div>
-				<div className="flex flex-col hover:bg-gray-100 text-gray-600 px-3 rounded-full cursor-pointer">
+				</Link>
+				<Link
+					className={`flex flex-col  px-3 rounded-full cursor-pointer ${
+						income == 3
+							? "bg-blue-600 text-white"
+							: "hover:bg-gray-100 text-gray-600"
+					}`}
+					to={use_chart_date_link("income", 3)}
+				>
 					3M
-				</div>
-				<div className="flex flex-col hover:bg-gray-100 text-gray-600 px-3 rounded-full cursor-pointer">
+				</Link>
+				<Link
+					className={`flex flex-col  px-3 rounded-full cursor-pointer ${
+						income == 6
+							? "bg-blue-600 text-white"
+							: "hover:bg-gray-100 text-gray-600"
+					}`}
+					to={use_chart_date_link("income", 6)}
+				>
 					6M
-				</div>
-				<div className="flex flex-col bg-blue-600 text-white px-3 rounded-full cursor-pointer">
+				</Link>
+				<Link
+					className={`flex flex-col  px-3 rounded-full cursor-pointer ${
+						income == 12
+							? "bg-blue-600 text-white"
+							: "hover:bg-gray-100 text-gray-600"
+					}`}
+					to={use_chart_date_link("income", 12)}
+				>
 					12M
-				</div>
+				</Link>
 			</div>
 
 			<div>
