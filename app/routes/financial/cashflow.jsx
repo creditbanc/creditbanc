@@ -1,6 +1,12 @@
 import { ArrowDownIcon, ArrowUpIcon } from "@heroicons/react/20/solid";
 
-import { classNames, currency, inspect } from "~/utils/helpers";
+import {
+	classNames,
+	currency,
+	inspect,
+	use_client_search_params,
+	use_search_params,
+} from "~/utils/helpers";
 import {
 	Chart as ChartJS,
 	CategoryScale,
@@ -33,6 +39,8 @@ import {
 	flatten,
 	zip,
 	multiply,
+	mapObjIndexed,
+	join,
 } from "ramda";
 import { all, filter, get, mod } from "shades";
 import { redirect } from "@remix-run/node";
@@ -50,7 +58,7 @@ import {
 	withLatestFrom,
 } from "rxjs";
 import moment from "moment";
-import { useLoaderData } from "@remix-run/react";
+import { Link, useLoaderData, useLocation } from "@remix-run/react";
 
 ChartJS.register(
 	CategoryScale,
@@ -96,6 +104,11 @@ const validate_permission = (permission_id, action, permissions) => {
 
 export const loader = async ({ request }) => {
 	console.log("cashflow_loader");
+	let { income: income_start_month = 12 } = use_search_params(request);
+
+	console.log("params");
+	console.log(income_start_month);
+
 	const config_id = "db88508c-b4ea-4dee-8d60-43c5a847c172";
 	let group_id = "1";
 	let entity_id = "1";
@@ -178,8 +191,16 @@ export const loader = async ({ request }) => {
 		)(transactions);
 	});
 
-	let start_date = "2023-01-01";
-	let end_date = "2023-04-30";
+	let start_date = moment()
+		.subtract(income_start_month, "months")
+		.format("YYYY-MM-DD");
+
+	let end_date = moment().format("YYYY-MM-DD");
+	// console.log("start_date_2");
+	// console.log(start_date_2);
+
+	// let start_date = "2023-01-01";
+	// let end_date = "2023-04-30";
 
 	let num_of_months = (end_date, start_date) => {
 		let months = moment(end_date).diff(moment(start_date), "months", true);
@@ -260,8 +281,8 @@ export const loader = async ({ request }) => {
 		),
 	};
 
-	console.log("payload");
-	console.log(payload);
+	// console.log("payload");
+	// console.log(payload);
 
 	return payload;
 };
@@ -498,7 +519,7 @@ export const income_chart_data = (labels, revenues, expenses, incomes) => {
 		labels,
 		datasets: [
 			{
-				label: "Dataset 3",
+				label: "Income",
 				data: incomes,
 				borderColor: "#000",
 				backgroundColor: "#000",
@@ -507,7 +528,7 @@ export const income_chart_data = (labels, revenues, expenses, incomes) => {
 				order: 0,
 			},
 			{
-				label: "Dataset 1",
+				label: "Revenues",
 				data: revenues,
 				backgroundColor: "rgb(13,98,254)",
 				stack: "Stack 0",
@@ -515,7 +536,7 @@ export const income_chart_data = (labels, revenues, expenses, incomes) => {
 				order: 1,
 			},
 			{
-				label: "Dataset 2",
+				label: "Expenses",
 				data: expenses,
 				backgroundColor: "rgb(234,238,241)",
 				stack: "Stack 0",
@@ -573,9 +594,25 @@ export const expenses_data = {
 const CashflowChart = () => {
 	let { monthly_expenses, monthly_revenues, monthly_incomes, month_labels } =
 		useLoaderData();
+	let { search, pathname } = useLocation();
 
-	// console.log("expenses");
-	// console.log(expenses);
+	let {
+		income = 12,
+		expenses = 12,
+		revenues = 12,
+	} = use_client_search_params(search);
+
+	let use_chart_date_link = (key, value) => {
+		let search_params = { income, expenses, revenues };
+		let search = pipe(
+			mod(key)(() => value),
+			mapObjIndexed((value, key) => `${key}=${value}`),
+			values,
+			join("&")
+		)(search_params);
+
+		return `${pathname}?${search}`;
+	};
 
 	return (
 		<div className="flex flex-col w-full h-full">
@@ -597,18 +634,46 @@ const CashflowChart = () => {
 					</div>
 					<div className="flex flex-col flex-1 justify-end">
 						<div className="flex flex-row justify-center gap-x-5 py-6 text-sm">
-							<div className="flex flex-col hover:bg-gray-100 text-gray-600 px-3 rounded-full cursor-pointer">
+							<Link
+								className={`flex flex-col  px-3 rounded-full cursor-pointer ${
+									income == 1
+										? "bg-blue-600 text-white"
+										: "hover:bg-gray-100 text-gray-600"
+								}`}
+								to={use_chart_date_link("income", 1)}
+							>
 								30D
-							</div>
-							<div className="flex flex-col hover:bg-gray-100 text-gray-600 px-3 rounded-full cursor-pointer">
+							</Link>
+							<Link
+								className={`flex flex-col  px-3 rounded-full cursor-pointer ${
+									income == 3
+										? "bg-blue-600 text-white"
+										: "hover:bg-gray-100 text-gray-600"
+								}`}
+								to={use_chart_date_link("income", 3)}
+							>
 								3M
-							</div>
-							<div className="flex flex-col hover:bg-gray-100 text-gray-600 px-3 rounded-full cursor-pointer">
+							</Link>
+							<Link
+								className={`flex flex-col  px-3 rounded-full cursor-pointer ${
+									income == 6
+										? "bg-blue-600 text-white"
+										: "hover:bg-gray-100 text-gray-600"
+								}`}
+								to={use_chart_date_link("income", 6)}
+							>
 								6M
-							</div>
-							<div className="flex flex-col bg-blue-600 text-white px-3 rounded-full cursor-pointer">
+							</Link>
+							<Link
+								className={`flex flex-col  px-3 rounded-full cursor-pointer ${
+									income == 12
+										? "bg-blue-600 text-white"
+										: "hover:bg-gray-100 text-gray-600"
+								}`}
+								to={use_chart_date_link("income", 12)}
+							>
 								12M
-							</div>
+							</Link>
 						</div>
 					</div>
 				</div>

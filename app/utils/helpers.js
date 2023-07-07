@@ -76,6 +76,12 @@ export const search_params = (request) => {
 	return Object.fromEntries(new URLSearchParams(url.search));
 };
 
+export const use_search_params = search_params;
+
+export const use_client_search_params = (search) => {
+	return Object.fromEntries(new URLSearchParams(search));
+};
+
 export const is_applicant_p = (value) => {
 	return value == "true" ? true : false;
 };
