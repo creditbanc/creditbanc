@@ -41,6 +41,9 @@ import {
 	multiply,
 	mapObjIndexed,
 	join,
+	sortBy,
+	reverse,
+	take,
 } from "ramda";
 import { all, filter, get, mod } from "shades";
 import { redirect } from "@remix-run/node";
@@ -154,7 +157,21 @@ export const loader = async ({ request }) => {
 
 	const is_revenue = pipe(is_expense, not);
 
+	const with_transaction_type = (transaction) => {
+		return {
+			...transaction,
+			type: is_expense(transaction) ? "expense" : "revenue",
+		};
+	};
+
 	let $transactions = of(transactions);
+
+	let $recent_activity = $transactions.pipe(
+		concatMap(identity),
+		rxmap(pipe(pick(["name", "date", "amount"]), with_transaction_type)),
+		toArray(),
+		rxmap(pipe(sortBy(get("date")), reverse, take(20)))
+	);
 
 	let $expenses = (transactions) =>
 		of(transactions).pipe(
@@ -196,11 +213,6 @@ export const loader = async ({ request }) => {
 		.format("YYYY-MM-DD");
 
 	let end_date = moment().format("YYYY-MM-DD");
-	// console.log("start_date_2");
-	// console.log(start_date_2);
-
-	// let start_date = "2023-01-01";
-	// let end_date = "2023-04-30";
 
 	let num_of_months = (end_date, start_date) => {
 		let months = moment(end_date).diff(moment(start_date), "months", true);
@@ -271,8 +283,10 @@ export const loader = async ({ request }) => {
 	let monthly_expenses = await lastValueFrom($monthly_expenses);
 	let monthly_revenues = await lastValueFrom($monthly_revenues);
 	let monthly_incomes = await lastValueFrom($monthly_incomes);
+	let recent_activity = await lastValueFrom($recent_activity);
 
 	let payload = {
+		recent_activity,
 		monthly_expenses,
 		monthly_revenues,
 		monthly_incomes,
@@ -375,10 +389,12 @@ const activity = [
 ];
 
 const ActivityFeed = () => {
+	let { recent_activity = [] } = useLoaderData();
+
 	return (
 		<>
 			<ul role="list" className="space-y-3 scrollbar-none">
-				{activity.map((activityItem, activityItemIdx) => (
+				{recent_activity.map((activityItem, activityItemIdx) => (
 					<li key={activityItem.id} className="relative flex gap-x-4">
 						<div
 							className={classNames(
@@ -412,7 +428,7 @@ const ActivityFeed = () => {
 								<div className="flex flex-row w-full justify-between text-xs h-full">
 									<div className="space-y-1 flex flex-col h-full justify-between">
 										<div className="font-medium">
-											{activityItem.merchant_name}
+											{activityItem.name}
 										</div>
 										<div className="text-gray-400">
 											{activityItem.date}
@@ -432,7 +448,9 @@ const ActivityFeed = () => {
 												"revenue" && <div>+</div>}
 											<div>
 												{currency.format(
-													activityItem.amount
+													Math.abs(
+														activityItem.amount
+													)
 												)}
 											</div>
 										</div>
