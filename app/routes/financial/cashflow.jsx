@@ -4,6 +4,7 @@ import {
 	classNames,
 	currency,
 	inspect,
+	jsreduce,
 	use_client_search_params,
 	use_search_params,
 } from "~/utils/helpers";
@@ -45,7 +46,7 @@ import {
 	reverse,
 	take,
 } from "ramda";
-import { all, filter, get, mod } from "shades";
+import { all, filter, get, mod, reduce } from "shades";
 import { redirect } from "@remix-run/node";
 import {
 	concatMap,
@@ -62,6 +63,7 @@ import {
 } from "rxjs";
 import moment from "moment";
 import { Link, useLoaderData, useLocation } from "@remix-run/react";
+import { get_balances } from "~/api/plaid.server";
 
 ChartJS.register(
 	CategoryScale,
@@ -109,9 +111,6 @@ export const loader = async ({ request }) => {
 	console.log("cashflow_loader");
 	let { income: income_start_month = 12 } = use_search_params(request);
 
-	console.log("params");
-	console.log(income_start_month);
-
 	const config_id = "db88508c-b4ea-4dee-8d60-43c5a847c172";
 	let group_id = "1";
 	let entity_id = "1";
@@ -149,6 +148,13 @@ export const loader = async ({ request }) => {
 	// 	return null;
 	// }
 
+	let balances = await get_balances();
+
+	let account_balance = pipe(head, get("balances", "available"))(balances);
+
+	// console.log("account_balance");
+	// console.log(account_balance);
+
 	let transactions = await get_collection({ path: ["transactions"] });
 
 	const is_expense = (transaction) => {
@@ -166,11 +172,40 @@ export const loader = async ({ request }) => {
 
 	let $transactions = of(transactions);
 
+	// let plaid_num_inverse = (num) => {
+	// 	return num * -1;
+	// };
+
 	let $recent_activity = $transactions.pipe(
 		concatMap(identity),
 		rxmap(pipe(pick(["name", "date", "amount"]), with_transaction_type)),
 		toArray(),
-		rxmap(pipe(sortBy(get("date")), reverse, take(20)))
+		rxmap(
+			pipe(
+				sortBy(get("date")),
+				reverse,
+				take(20),
+				jsreduce((curr, next, index) => {
+					if (index === 1) {
+						curr.balance = account_balance;
+						next.balance = curr.balance + curr.amount;
+
+						let payload = [curr, next];
+
+						return payload;
+					}
+
+					let last_transaction = last(curr);
+
+					next.balance =
+						last_transaction.balance + last_transaction.amount;
+
+					let payload = [...curr, next];
+
+					return payload;
+				})
+			)
+		)
 	);
 
 	let $expenses = (transactions) =>
@@ -301,93 +336,6 @@ export const loader = async ({ request }) => {
 	return payload;
 };
 
-const activity = [
-	{
-		id: 1,
-		merchant_name: "Starbucks",
-		date: "03-16-2023",
-		amount: "59.00",
-		type: "expense",
-	},
-	{
-		id: 2,
-		merchant_name: "Chase",
-		amount: "1000",
-		date: "02-20-2022",
-		type: "revenue",
-	},
-	{
-		id: 1,
-		merchant_name: "Starbucks",
-		date: "03-16-2023",
-		amount: "59.00",
-		type: "expense",
-	},
-	{
-		id: 2,
-		merchant_name: "Chase",
-		amount: "1000",
-		date: "02-20-2022",
-		type: "revenue",
-	},
-	{
-		id: 1,
-		merchant_name: "Starbucks",
-		date: "03-16-2023",
-		amount: "59.00",
-		type: "expense",
-	},
-	{
-		id: 1,
-		merchant_name: "Starbucks",
-		date: "03-16-2023",
-		amount: "59.00",
-		type: "expense",
-	},
-	{
-		id: 1,
-		merchant_name: "Starbucks",
-		date: "03-16-2023",
-		amount: "59.00",
-		type: "expense",
-	},
-	{
-		id: 2,
-		merchant_name: "Chase",
-		amount: "1000",
-		date: "02-20-2022",
-		type: "revenue",
-	},
-	{
-		id: 1,
-		merchant_name: "Starbucks",
-		date: "03-16-2023",
-		amount: "59.00",
-		type: "expense",
-	},
-	{
-		id: 2,
-		merchant_name: "Chase",
-		amount: "1000",
-		date: "02-20-2022",
-		type: "revenue",
-	},
-	{
-		id: 1,
-		merchant_name: "Starbucks",
-		date: "03-16-2023",
-		amount: "59.00",
-		type: "expense",
-	},
-	{
-		id: 1,
-		merchant_name: "Starbucks",
-		date: "03-16-2023",
-		amount: "59.00",
-		type: "expense",
-	},
-];
-
 const ActivityFeed = () => {
 	let { recent_activity = [] } = useLoaderData();
 
@@ -395,10 +343,10 @@ const ActivityFeed = () => {
 		<>
 			<ul role="list" className="space-y-3 scrollbar-none">
 				{recent_activity.map((activityItem, activityItemIdx) => (
-					<li key={activityItem.id} className="relative flex gap-x-4">
+					<li key={activityItemIdx} className="relative flex gap-x-4">
 						<div
 							className={classNames(
-								activityItemIdx === activity.length - 1
+								activityItemIdx === recent_activity.length - 1
 									? "h-6"
 									: "-bottom-6",
 								"absolute left-0 top-0 flex w-6 justify-center"
@@ -455,7 +403,12 @@ const ActivityFeed = () => {
 											</div>
 										</div>
 										<div className="text-gray-400">
-											$45,000
+											{Number(
+												activityItem.balance
+											).toLocaleString("en-US", {
+												style: "currency",
+												currency: "USD",
+											})}
 										</div>
 									</div>
 								</div>
@@ -529,10 +482,6 @@ export const data = {
 };
 
 export const income_chart_data = (labels, revenues, expenses, incomes) => {
-	console.log("labels", labels);
-	console.log("revenues", revenues);
-	console.log("expenses", expenses);
-
 	return {
 		labels,
 		datasets: [

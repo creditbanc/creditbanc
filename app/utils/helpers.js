@@ -324,3 +324,11 @@ export const has_resource_url_p = (uri) => {
 // };
 export const sample = (array) =>
 	array[Math.floor(Math.random() * array.length)];
+
+export const jsreduce = curry((fn, array) => {
+	return array.reduce(fn);
+});
+
+export const jsreduce_with_initial = curry((fn, initial, array) => {
+	return array.reduce(fn, initial);
+});

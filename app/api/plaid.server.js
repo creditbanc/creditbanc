@@ -181,3 +181,23 @@ export const institutions = async () => {
 		// Handle error
 	}
 };
+export const get_balances = async () => {
+	const request = {
+		access_token,
+	};
+
+	try {
+		const response = await plaidClient.accountsBalanceGet(request);
+		const { data } = response;
+
+		if (data.accounts.length > 0) {
+			return data.accounts;
+		} else {
+			return [];
+		}
+	} catch (error) {
+		// handle error
+		console.log("error");
+		console.log(error);
+	}
+};
