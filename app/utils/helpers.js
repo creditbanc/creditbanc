@@ -110,6 +110,14 @@ export const currency = new Intl.NumberFormat("en-US", {
 	maximumFractionDigits: 0,
 });
 
+export const currency_precise = (precision) =>
+	new Intl.NumberFormat("en-US", {
+		style: "currency",
+		currency: "USD",
+		minimumFractionDigits: precision,
+		maximumFractionDigits: precision,
+	});
+
 export const just = curry((filter_array, array) =>
 	pipe(filter((value) => includes(value, filter_array)))(array)
 );

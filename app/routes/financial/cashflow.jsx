@@ -3,6 +3,7 @@ import { ArrowDownIcon, ArrowUpIcon } from "@heroicons/react/20/solid";
 import {
 	classNames,
 	currency,
+	currency_precise,
 	inspect,
 	jsreduce,
 	use_client_search_params,
@@ -351,7 +352,6 @@ export const loader = async ({ request }) => {
 			)
 		)
 	);
-	// .subscribe(console.log);
 
 	let $monthly_revenues = $monthly_transactions.pipe(
 		concatMap(identity),
@@ -419,7 +419,7 @@ export const loader = async ({ request }) => {
 
 				return {
 					name: "Month over month net income change",
-					stat: curr.toFixed(2),
+					stat: currency_precise(2).format(curr.toFixed(2)),
 					previousStat: prev.toFixed(2),
 					change: `${change.toFixed(2)}%`,
 					changeType: change_type(change),
@@ -435,7 +435,7 @@ export const loader = async ({ request }) => {
 
 				return {
 					name: "Month over month spending change",
-					stat: curr.toFixed(2),
+					stat: currency_precise(2).format(curr.toFixed(2)),
 					previousStat: prev.toFixed(2),
 					change: `${change.toFixed(2)}%`,
 					changeType: change_type(change),
@@ -451,7 +451,7 @@ export const loader = async ({ request }) => {
 
 				return {
 					name: "Month over month revenue change",
-					stat: curr.toFixed(2),
+					stat: currency_precise(2).format(curr.toFixed(2)),
 					previousStat: prev.toFixed(2),
 					change: `${change.toFixed(2)}%`,
 					changeType: change_type(change),
@@ -471,7 +471,7 @@ export const loader = async ({ request }) => {
 
 					return {
 						name: "Highest net income in last 6 months",
-						stat: curr.toFixed(2),
+						stat: currency_precise(2).format(curr.toFixed(2)),
 						previousStat: prev.toFixed(2),
 						change: `${change.toFixed(2)}%`,
 						changeType: change_type(change),
@@ -492,7 +492,7 @@ export const loader = async ({ request }) => {
 
 					return {
 						name: "Highest spending in last 6 months",
-						stat: curr.toFixed(2),
+						stat: currency_precise(2).format(curr.toFixed(2)),
 						previousStat: prev.toFixed(2),
 						change: `${change.toFixed(2)}%`,
 						changeType: change_type(change),
@@ -513,7 +513,7 @@ export const loader = async ({ request }) => {
 
 					return {
 						name: "Highest revenue in last 6 months",
-						stat: curr.toFixed(2),
+						stat: currency_precise(2).format(curr.toFixed(2)),
 						previousStat: prev.toFixed(2),
 						change: `${change.toFixed(2)}%`,
 						changeType: change_type(change),
