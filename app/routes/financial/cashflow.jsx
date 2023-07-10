@@ -244,16 +244,23 @@ export const loader = async ({ request }) => {
 	});
 
 	let transactions_by_month = curry((year, month, transactions) => {
-		let days_in_month = moment(`${moment().year()}-${month}`).daysInMonth();
+		let days_in_month = moment(
+			`${moment().year()}-${month}`,
+			"YYYY-MM"
+		).daysInMonth();
 
 		return pipe(
 			filter({
 				date: (date) =>
-					date > moment(`${year}-${month}-1`).format("YYYY-MM-DD") &&
-					date <
-						moment(`${year}-${month}-${days_in_month}`).format(
+					date >
+						moment(`${year}-${month}-01`, "YYYY-MM-DD").format(
 							"YYYY-MM-DD"
-						),
+						) &&
+					date <
+						moment(
+							`${year}-${month}-${days_in_month}`,
+							"YYYY-MM-DD"
+						).format("YYYY-MM-DD"),
 			})
 		)(transactions);
 	});
