@@ -49,6 +49,7 @@ import {
 	ascend,
 	sort,
 	descend,
+	length,
 } from "ramda";
 import { all, filter, get, mod, reduce } from "shades";
 import { redirect } from "@remix-run/node";
@@ -180,34 +181,43 @@ export const loader = async ({ request }) => {
 	// 	return num * -1;
 	// };
 
+	let with_daily_balance = curry((ending_balance, transactions) => {
+		return pipe(
+			jsreduce((curr, next, index) => {
+				if (index === 1) {
+					curr.balance = account_balance;
+					next.balance = curr.balance + curr.amount;
+
+					let payload = [curr, next];
+
+					return payload;
+				}
+
+				let last_transaction = last(curr);
+
+				next.balance =
+					last_transaction.balance + last_transaction.amount;
+
+				let payload = [...curr, next];
+
+				return payload;
+			})
+		)(transactions);
+	});
+
 	let $recent_activity = $transactions.pipe(
-		concatMap(identity),
-		rxmap(pipe(pick(["name", "date", "amount"]), with_transaction_type)),
-		toArray(),
 		rxmap(
 			pipe(
 				sortBy(get("date")),
 				reverse,
 				take(20),
-				jsreduce((curr, next, index) => {
-					if (index === 1) {
-						curr.balance = account_balance;
-						next.balance = curr.balance + curr.amount;
-
-						let payload = [curr, next];
-
-						return payload;
-					}
-
-					let last_transaction = last(curr);
-
-					next.balance =
-						last_transaction.balance + last_transaction.amount;
-
-					let payload = [...curr, next];
-
-					return payload;
-				})
+				mod(all)(
+					pipe(
+						pick(["name", "date", "amount"]),
+						with_transaction_type
+					)
+				),
+				with_daily_balance(account_balance)
 			)
 		)
 	);
@@ -292,6 +302,40 @@ export const loader = async ({ request }) => {
 				)
 			)
 		);
+
+	let average = (arr) => {
+		return sum(arr) / arr.length;
+	};
+
+	let $average_daily_balance = $transactions.pipe(
+		rxmap(
+			pipe(
+				transactions_by_date(start_date, end_date),
+				sortBy(get("date")),
+				reverse,
+				mod(all)(pipe(pick(["amount"]))),
+				with_daily_balance(account_balance),
+				get(all, "balance"),
+				average
+			)
+		)
+	);
+
+	let $num_of_negative_balance_days = $transactions.pipe(
+		rxmap(
+			pipe(
+				transactions_by_date(start_date, end_date),
+				sortBy(get("date")),
+				reverse,
+				mod(all)(pipe(pick(["amount"]))),
+				with_daily_balance(account_balance),
+				get(all, "balance"),
+				filter((balance) => balance < 0),
+				length
+			)
+		)
+	);
+	// .subscribe(console.log);
 
 	let $monthly_revenues = $monthly_transactions.pipe(
 		concatMap(identity),
@@ -450,8 +494,13 @@ export const loader = async ({ request }) => {
 	let highest_income = await lastValueFrom($highest_income);
 	let highest_expense = await lastValueFrom($highest_expense);
 	let highest_revenue = await lastValueFrom($highest_revenue);
+	let average_daily_balance = await lastValueFrom($average_daily_balance);
+	let num_of_negative_balance_days = await lastValueFrom(
+		$num_of_negative_balance_days
+	);
 
 	let payload = {
+		average_daily_balance,
 		stats_data: {
 			revenues: [highest_revenue, revenues_change],
 			expenses: [highest_expense, expenses_change],
