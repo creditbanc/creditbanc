@@ -178,10 +178,6 @@ export const loader = async ({ request }) => {
 
 	let $transactions = of(transactions);
 
-	// let plaid_num_inverse = (num) => {
-	// 	return num * -1;
-	// };
-
 	let with_daily_balance = curry((ending_balance, transactions) => {
 		return pipe(
 			jsreduce((curr, next, index) => {

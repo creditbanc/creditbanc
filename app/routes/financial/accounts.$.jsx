@@ -22,6 +22,7 @@ import {
 	capitalize,
 	truncate,
 	formatPhoneNumber,
+	jsreduce,
 } from "~/utils/helpers";
 import { useEffect, useState, Fragment } from "react";
 import { get_collection, set_doc } from "~/utils/firebase";
@@ -31,6 +32,7 @@ import {
 	get_auths,
 	get_identities,
 	get_transactions,
+	get_balances,
 } from "~/api/plaid.server";
 import {
 	prop,
@@ -46,6 +48,11 @@ import {
 	sum,
 	take,
 	keys,
+	curry,
+	pick,
+	not,
+	head,
+	last,
 } from "ramda";
 import { create } from "zustand";
 import { all, mod, get } from "shades";
@@ -54,6 +61,19 @@ import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
 import { Doughnut, Line } from "react-chartjs-2";
 import { faker } from "@faker-js/faker";
 import "chart.js/auto";
+import {
+	concatMap,
+	flatMap,
+	from,
+	mergeMap,
+	of,
+	filter as rxfilter,
+	switchMap,
+	toArray,
+	map as rxmap,
+	lastValueFrom,
+	withLatestFrom,
+} from "rxjs";
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
@@ -100,16 +120,82 @@ export const loader = async ({ request }) => {
 		path: ["transactions"],
 	});
 
-	transactions = pipe(
-		sortBy(prop("date")),
-		reverse,
-		take(20),
-		groupBy(prop("date")),
-		mod(all)((date) =>
-			pipe(get(all, "amount"), sum, (value) => randomNumber(30, 50))(date)
-		),
-		mod(all)((value) => (value < 0 ? 0 : value))
-	)(transactions);
+	let balances = await get_balances();
+
+	let account_balance = pipe(head, get("balances", "available"))(balances);
+
+	// transactions = pipe(
+	// 	sortBy(prop("date")),
+	// 	reverse,
+	// 	take(20),
+	// 	groupBy(prop("date")),
+	// 	mod(all)((date) =>
+	// 		pipe(get(all, "amount"), sum, (value) => randomNumber(30, 50))(date)
+	// 	),
+	// 	mod(all)((value) => (value < 0 ? 0 : value))
+	// )(transactions);
+
+	let $transactions = of(transactions);
+
+	const is_expense = (transaction) => {
+		return transaction.amount >= 0;
+	};
+
+	const is_revenue = pipe(is_expense, not);
+
+	let with_daily_balance = curry((ending_balance, transactions) => {
+		return pipe(
+			jsreduce((curr, next, index) => {
+				if (index === 1) {
+					curr.balance = account_balance;
+					next.balance = curr.balance + curr.amount;
+
+					let payload = [curr, next];
+
+					return payload;
+				}
+
+				let last_transaction = last(curr);
+
+				next.balance =
+					last_transaction.balance + last_transaction.amount;
+
+				let payload = [...curr, next];
+
+				return payload;
+			})
+		)(transactions);
+	});
+
+	const with_transaction_type = (transaction) => {
+		return {
+			...transaction,
+			type: is_expense(transaction) ? "expense" : "revenue",
+		};
+	};
+
+	let $recent_activity = $transactions.pipe(
+		rxmap(
+			pipe(
+				sortBy(get("date")),
+				reverse,
+				take(30),
+				mod(all)(
+					pipe(
+						pick(["name", "date", "amount"]),
+						with_transaction_type
+					)
+				),
+				with_daily_balance(account_balance)
+			)
+		)
+	);
+
+	let $balances = $recent_activity.pipe(
+		rxmap(pipe(mod(all)(pick(["balance", "date"])), reverse))
+	);
+
+	let daily_balances = await lastValueFrom($balances);
 
 	let accounts_payload = pipe(
 		groupBy(prop("account_id")),
@@ -124,7 +210,12 @@ export const loader = async ({ request }) => {
 		...international,
 	]);
 
-	return { link_token, accounts: accounts_payload, transactions };
+	return {
+		link_token,
+		accounts: accounts_payload,
+		transactions,
+		balances: daily_balances,
+	};
 };
 
 const AccountActionsDropdown = ({ document }) => {
@@ -268,11 +359,71 @@ const TableRow = ({ account }) => {
 	);
 };
 
+const options = {
+	responsive: true,
+	maintainAspectRatio: false,
+	layout: {
+		padding: -5,
+	},
+	scales: {
+		x: {
+			display: false,
+			offset: false,
+			grid: {
+				display: false,
+			},
+			ticks: {
+				display: false,
+			},
+		},
+		y: {
+			display: false,
+			beginAtZero: true,
+			ticks: {
+				display: false,
+			},
+			grid: {
+				display: false,
+			},
+		},
+	},
+	plugins: {
+		legend: {
+			display: false,
+		},
+		title: {
+			display: false,
+			// text: "Chart.js Line Chart",
+		},
+	},
+};
+
+const balances_data = (daily_balances) => ({
+	labels: pipe(get(all, "date"))(daily_balances),
+	datasets: [
+		{
+			fill: true,
+			lineTension: 0.5,
+			data: pipe(get(all, "balance"))(daily_balances),
+			borderColor: "#3b82f6",
+			backgroundColor: "#BFD7ED",
+			backgroundColor: (context) => {
+				const ctx = context.chart.ctx;
+				const gradient = ctx.createLinearGradient(0, 0, 0, 200);
+				gradient.addColorStop(0, "rgba(162,210,241,1)");
+				gradient.addColorStop(1, "rgba(162,210,241,0)");
+				return gradient;
+			},
+		},
+	],
+});
+
 export default function Accounts() {
 	const {
 		link_token = null,
 		accounts: accounts_data,
 		transactions,
+		balances,
 	} = useLoaderData();
 	const [location, setLocation] = useState(null);
 	const accounts = useAccounstStore((state) => state.accounts);
@@ -317,65 +468,6 @@ export default function Accounts() {
 	});
 
 	const labels = pipe(keys)(transactions);
-
-	const options = {
-		responsive: true,
-		maintainAspectRatio: false,
-		layout: {
-			padding: -5,
-		},
-		scales: {
-			x: {
-				display: false,
-				offset: false,
-				grid: {
-					display: false,
-				},
-				ticks: {
-					display: false,
-				},
-			},
-			y: {
-				display: false,
-				beginAtZero: true,
-				ticks: {
-					display: false,
-				},
-				grid: {
-					display: false,
-				},
-			},
-		},
-		plugins: {
-			legend: {
-				display: false,
-			},
-			title: {
-				display: false,
-				// text: "Chart.js Line Chart",
-			},
-		},
-	};
-
-	const data = {
-		labels,
-		datasets: [
-			{
-				fill: true,
-				lineTension: 0.5,
-				data: transactions,
-				borderColor: "#3b82f6",
-				backgroundColor: "#BFD7ED",
-				backgroundColor: (context) => {
-					const ctx = context.chart.ctx;
-					const gradient = ctx.createLinearGradient(0, 0, 0, 200);
-					gradient.addColorStop(0, "rgba(162,210,241,1)");
-					gradient.addColorStop(1, "rgba(162,210,241,0)");
-					return gradient;
-				},
-			},
-		],
-	};
 
 	return (
 		<div className="flex flex-row w-full h-full p-5 overflow-hiddens space-x-3">
@@ -491,7 +583,10 @@ export default function Accounts() {
 
 					{!isEmpty(account) && (
 						<div className="flex flex-col w-[calc(100%+11px)] h-[150px] -ml-[5px] -mb-[5px]">
-							<Line options={options} data={data} />
+							<Line
+								options={options}
+								data={balances_data(balances)}
+							/>
 						</div>
 					)}
 
