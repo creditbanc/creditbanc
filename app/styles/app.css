@@ -1158,6 +1158,10 @@ video {
   margin-top: 50px;
 }
 
+.-mt-px {
+  margin-top: -1px;
+}
+
 .block {
   display: block;
 }
@@ -3148,6 +3152,10 @@ video {
   padding-top: calc(23 / 318 * 100%);
 }
 
+.pb-0 {
+  padding-bottom: 0px;
+}
+
 .text-left {
   text-align: left;
 }
@@ -4552,6 +4560,10 @@ body {
 
   .md\:mt-2 {
     margin-top: 0.5rem;
+  }
+
+  .md\:-mt-px {
+    margin-top: -1px;
   }
 
   .md\:block {

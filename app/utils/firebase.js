@@ -1,7 +1,7 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
 import { getStorage } from "firebase/storage";
-import { getFirestore, updateDoc } from "firebase/firestore";
+import { getFirestore, orderBy, updateDoc } from "firebase/firestore";
 import {
 	doc,
 	setDoc,
@@ -11,7 +11,15 @@ import {
 	where,
 	getDocs,
 	deleteDoc,
+	limit as firelimit,
+	orderBy as fireorder,
+	startAt as fireStartAt,
+	startAfter as fireStartAfter,
+	endAt as fireEndAt,
+	endBefore as fireEndBefore,
 } from "firebase/firestore";
+import { isEmpty } from "ramda";
+import { inspect } from "./helpers";
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
@@ -28,20 +36,56 @@ const app = initializeApp(firebaseConfig);
 export const storage = getStorage(app);
 export const firestore = getFirestore(app);
 
-export const get_collection = async ({ path, queries = null }) => {
-	if (queries) {
-		let qs = queries.map((query) =>
-			where(query.param, query.predicate, query.value)
-		);
+let fire_cursors = {
+	startAt: fireStartAt,
+	startAfter: fireStartAfter,
+	endAt: fireEndAt,
+	endBefore: fireEndBefore,
+};
 
-		const q = query(collection(firestore, ...path), ...qs);
-		const querySnapshot = await getDocs(q);
-		return querySnapshot.docs.map((doc) => doc.data());
-	} else {
-		const q = query(collection(firestore, ...path));
-		const querySnapshot = await getDocs(q);
-		return querySnapshot.docs.map((doc) => doc.data());
-	}
+export const get_collection = async ({
+	path,
+	queries = [],
+	limit = [],
+	orderBy = [],
+	cursors = [],
+}) => {
+	let limit_args = limit.map((limit_amount) => firelimit(limit_amount));
+	let order_args = orderBy.map(({ field, direction = "desc" }) =>
+		fireorder(field, direction)
+	);
+
+	let query_args = queries.map((query) =>
+		where(query.param, query.predicate, query.value)
+	);
+
+	let cursor_args = cursors.map(async (cursor) => {
+		let { type, value, is_snapshot = false } = cursor;
+
+		if (is_snapshot) {
+			let docSnapshot = await get_doc_snapshot(value);
+			return fire_cursors[type](docSnapshot);
+		}
+
+		return fire_cursors[type](...value);
+	});
+
+	let args = [
+		...query_args,
+		...order_args,
+		...(await Promise.all(cursor_args)),
+		...limit_args,
+	];
+
+	const q = query(collection(firestore, ...path), ...args);
+	const querySnapshot = await getDocs(q);
+
+	return querySnapshot.docs.map((doc) => ({ doc_id: doc.id, ...doc.data() }));
+};
+
+export const get_doc_snapshot = async (path) => {
+	let docSnapshot = await getDoc(doc(firestore, ...path));
+	return docSnapshot;
 };
 
 export const get_doc = async (path) => {

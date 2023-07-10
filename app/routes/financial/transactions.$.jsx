@@ -1,4 +1,4 @@
-import { useLoaderData } from "@remix-run/react";
+import { Link, useLoaderData, useLocation } from "@remix-run/react";
 import { pipe, map, head, sortBy, prop, reverse, curry, last } from "ramda";
 import { get_collection } from "~/utils/firebase";
 import {
@@ -7,11 +7,18 @@ import {
 	currency,
 	mapIndexed,
 	sample,
+	use_search_params,
+	trim,
+	use_client_search_params,
 } from "~/utils/helpers";
 import { create } from "zustand";
 import { filter, get, mod } from "shades";
 import moment from "moment";
 import { useEffect, useRef } from "react";
+import {
+	ArrowLongLeftIcon,
+	ArrowLongRightIcon,
+} from "@heroicons/react/20/solid";
 
 const useTransactionsStore = create((set) => ({
 	transaction: null,
@@ -43,12 +50,32 @@ let date_x_time_ago = (time_range, time_period) => {
 };
 
 export const loader = async ({ request }) => {
-	// let queries = [{ param: "amount", predicate: "<", value: 12 }];
+	let search_params = use_search_params(request);
+	let { results = 5, cursor, cursor_id } = search_params;
+
+	let limit = [results];
+	let orderBy = [
+		{ field: "date", direction: "desc" },
+		{ field: "transaction_id" },
+	];
+
+	let to_cursor = (type, value) => {
+		return {
+			type,
+			is_snapshot: true,
+			value,
+		};
+	};
+
+	let start_cursor =
+		cursor_id && cursor && to_cursor(cursor, ["transactions", cursor_id]);
+
 	let transactions = await get_collection({
 		path: ["transactions"],
+		orderBy,
+		cursors: trim([start_cursor]),
+		limit,
 	});
-
-	transactions = pipe(sortBy(prop("date")), reverse)(transactions);
 
 	let last_transaction_date = pipe(last, get("date"))(transactions);
 	let difference = moment().diff(last_transaction_date, "days");
@@ -270,11 +297,51 @@ const TransactionsHeaderStats = () => {
 	);
 };
 
+const Pagination = () => {
+	let { transactions } = useLoaderData();
+	let { search } = useLocation();
+	let { prev_cursor_id } = use_client_search_params(search);
+
+	return (
+		<nav className="flex items-center justify-between border-t border-gray-200 px-4 sm:px-0">
+			<div className="-mt-px flex w-0 flex-1">
+				<Link
+					to={`/financial/transactions?cursor=startAt&cursor_id=${prev_cursor_id}`}
+					className="inline-flex items-center border-t-2 border-transparent pr-1 pt-4 text-sm font-medium text-gray-500 hover:text-gray-700"
+				>
+					<ArrowLongLeftIcon
+						className="mr-3 h-5 w-5 text-gray-400"
+						aria-hidden="true"
+					/>
+					Previous
+				</Link>
+			</div>
+
+			<div className="-mt-px flex w-0 flex-1 justify-end">
+				<Link
+					to={`/financial/transactions?cursor=startAfter&cursor_id=${pipe(
+						get("transaction_id")
+					)(last(transactions))}&prev_cursor_id=${pipe(
+						get("transaction_id")
+					)(head(transactions))}`}
+					className="inline-flex items-center border-t-2 border-transparent pl-1 pt-4 text-sm font-medium text-gray-500 hover:text-gray-700"
+				>
+					Next
+					<ArrowLongRightIcon
+						className="ml-3 h-5 w-5 text-gray-400"
+						aria-hidden="true"
+					/>
+				</Link>
+			</div>
+		</nav>
+	);
+};
+
 export default function Transactions() {
 	return (
 		<div className="flex flex-col w-full p-5 overflow-hidden">
 			<div className="flex flex-row w-full overflow-hidden">
-				<div className="flex flex-col w-[70%] overflow-y-scroll scrollbar-none bg-white px-5 pb-5 rounded">
+				<div className="flex flex-col w-[70%] overflow-y-scroll scrollbar-none bg-white px-5 pb-0 rounded">
 					<div className="border-b border-gray-200 pb-3 flex flex-row justify-between my-3">
 						<div>
 							<h3 className="mt-2 text-base font-semibold leading-6 text-gray-900">
@@ -295,6 +362,9 @@ export default function Transactions() {
 						<div className="flex flex-col">Date</div>
 					</div>
 					<TransactionsTable />
+					<div className="flex flex-col sticky bottom-0 bg-white pb-3">
+						<Pagination />
+					</div>
 				</div>
 				<div className="flex flex-col w-[30%] ml-5">
 					<TransactionDetails />
