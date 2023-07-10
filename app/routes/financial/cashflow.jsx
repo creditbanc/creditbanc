@@ -316,7 +316,15 @@ export const loader = async ({ request }) => {
 				mod(all)(pipe(pick(["amount"]))),
 				with_daily_balance(account_balance),
 				get(all, "balance"),
-				average
+				average,
+				(value) => {
+					return {
+						name: "Average daily balance",
+						value: currency.format(value),
+						change: "+54.02%",
+						changeType: "negative",
+					};
+				}
 			)
 		)
 	);
@@ -331,7 +339,15 @@ export const loader = async ({ request }) => {
 				with_daily_balance(account_balance),
 				get(all, "balance"),
 				filter((balance) => balance < 0),
-				length
+				length,
+				(value) => {
+					return {
+						name: "Number of negative balance days",
+						value,
+						change: "-1.39%",
+						changeType: "positive",
+					};
+				}
 			)
 		)
 	);
@@ -343,6 +359,29 @@ export const loader = async ({ request }) => {
 		rxmap(pipe(mod(all)(pick(["amount"])))),
 		rxmap(pipe(map(values), flatten, sum, Math.abs)),
 		toArray()
+	);
+
+	let $annual_revenue = $transactions.pipe(
+		rxmap(
+			pipe(
+				transactions_by_date(
+					moment().subtract(12, "months").format("YYYY-MM-DD"),
+					end_date
+				),
+				filter(is_revenue),
+				get(all, "amount"),
+				sum,
+				Math.abs,
+				(value) => {
+					return {
+						name: "Lender-recognized annual revenue",
+						value: currency.format(value),
+						change: "+4.75%",
+						changeType: "positive",
+					};
+				}
+			)
+		)
 	);
 
 	let $monthly_expenses = $monthly_transactions.pipe(
@@ -498,8 +537,11 @@ export const loader = async ({ request }) => {
 	let num_of_negative_balance_days = await lastValueFrom(
 		$num_of_negative_balance_days
 	);
+	let annual_revenue = await lastValueFrom($annual_revenue);
 
 	let payload = {
+		annual_revenue,
+		num_of_negative_balance_days,
 		average_daily_balance,
 		stats_data: {
 			revenues: [highest_revenue, revenues_change],
@@ -1181,6 +1223,18 @@ const stats = [
 ];
 
 const Stats = () => {
+	let {
+		annual_revenue,
+		average_daily_balance,
+		num_of_negative_balance_days,
+	} = useLoaderData();
+
+	let stats = [
+		annual_revenue,
+		average_daily_balance,
+		num_of_negative_balance_days,
+	];
+
 	return (
 		<div className="flex flex-wrap w-full rounded-lg gap-x-3 gap-y-3 justify-between">
 			{stats.map((stat) => (
