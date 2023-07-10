@@ -51,7 +51,7 @@ let date_x_time_ago = (time_range, time_period) => {
 
 export const loader = async ({ request }) => {
 	let search_params = use_search_params(request);
-	let { results = 5, cursor, cursor_id } = search_params;
+	let { results = 50, cursor, cursor_id } = search_params;
 
 	let limit = [results];
 	let orderBy = [

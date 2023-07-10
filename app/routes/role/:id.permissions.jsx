@@ -154,6 +154,21 @@ const SectionHeading = () => {
 	);
 };
 
+const RoleHeading = () => {
+	return (
+		<div className=" pb-2">
+			<div className="-ml-2 -mt-2 flex flex-wrap items-baseline">
+				<h3 className="ml-2 mt-2 text-base font-semibold leading-6 text-gray-900">
+					Role:
+				</h3>
+				<h3 className="ml-1 mt-1 truncate text-base text-gray-500">
+					test
+				</h3>
+			</div>
+		</div>
+	);
+};
+
 export default function Permissions() {
 	let { config } = useLoaderData();
 	let { permissions, set_permissions } = usePermissionsStore();
@@ -171,27 +186,32 @@ export default function Permissions() {
 	}, []);
 
 	return (
-		<div className="flex flex-col w-full h-full border px-3 pt-3 rounded">
-			<div className="flex flex-col my-3">
-				<SectionHeading />
+		<div className="flex flex-col w-full h-full">
+			<div className="mb-3">
+				<RoleHeading />
 			</div>
-			<div className="flex flex-row w-full justify-between my-3 text-sm text-gray-400">
-				<div className="flex-col flex-1">Page</div>
-				<div className="flex flex-col w-[100px]">Hidden</div>
-				<div className="flex flex-col w-[100px]">Read</div>
-				<div className="flex flex-col w-[100px]">Edit</div>
-			</div>
-			<div className="flex flex-col w-full border-b"></div>
-			<div className="flex flex-col w-full divide-y">
-				{pipe(
-					mapIndexed((permission, index) => (
-						<Permission
-							permission={permission}
-							index={index}
-							key={index}
-						/>
-					))
-				)(permissions)}
+			<div className="flex flex-col w-full h-full border px-3 pt-3 rounded">
+				<div className="flex flex-col my-3">
+					<SectionHeading />
+				</div>
+				<div className="flex flex-row w-full justify-between my-3 text-sm text-gray-400">
+					<div className="flex-col flex-1">Page</div>
+					<div className="flex flex-col w-[100px]">Hidden</div>
+					<div className="flex flex-col w-[100px]">Read</div>
+					<div className="flex flex-col w-[100px]">Edit</div>
+				</div>
+				<div className="flex flex-col w-full border-b"></div>
+				<div className="flex flex-col w-full divide-y">
+					{pipe(
+						mapIndexed((permission, index) => (
+							<Permission
+								permission={permission}
+								index={index}
+								key={index}
+							/>
+						))
+					)(permissions)}
+				</div>
 			</div>
 		</div>
 	);

@@ -1,15 +1,28 @@
-import { Fragment } from "react";
-import { Link } from "@remix-run/react";
+import { Fragment, useEffect } from "react";
+import { Link, useSearchParams } from "@remix-run/react";
 const cb_logo = "/images/logos/cb_logo_3.png";
 import UserAccountNavMenu from "./UserAccountNavMenu";
 import { classNames, mapIndexed } from "~/utils/helpers";
 import { Menu, Transition } from "@headlessui/react";
 import { ChevronDownIcon } from "@heroicons/react/20/solid";
-import { map, pipe } from "ramda";
+import { map, pipe, set } from "ramda";
 import {
 	ChatBubbleLeftEllipsisIcon,
+	Cog6ToothIcon,
+	EyeIcon,
+	LinkIcon,
+	PlusIcon,
 	UsersIcon,
 } from "@heroicons/react/24/outline";
+import { get_collection } from "~/utils/firebase";
+import { mod } from "shades";
+import { create } from "zustand";
+
+export const useRolesStore = create((set) => ({
+	roles: [],
+	set_roles: (path, value) =>
+		set((state) => pipe(mod(...path)(() => value))(state)),
+}));
 
 const Companies = () => {
 	return (
@@ -111,7 +124,114 @@ let navigation = [
 	{ name: "University", href: "/university/courses", current: false },
 ];
 
+const ShareDropdown = () => {
+	let roles = useRolesStore((state) => state.roles);
+
+	return (
+		<Menu as="div" className="relative inline-block text-left">
+			<div>
+				<Menu.Button className="flex flex-row items-center space-x-2 bg-blue-600 text-white rounded-full px-3 py-1.5 text-sm cursor-pointer">
+					<div>
+						<UsersIcon className="h-5 w-5 text-white" />
+					</div>
+					<div>Share</div>
+				</Menu.Button>
+			</div>
+
+			<Transition
+				as={Fragment}
+				enter="transition ease-out duration-100"
+				enterFrom="transform opacity-0 scale-95"
+				enterTo="transform opacity-100 scale-100"
+				leave="transition ease-in duration-75"
+				leaveFrom="transform opacity-100 scale-100"
+				leaveTo="transform opacity-0 scale-95"
+			>
+				<Menu.Items className="absolute right-0 z-10 mt-2 w-56 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+					<div className="py-1">
+						<Link
+							to={`/roles/e/1/g/1`}
+							className={classNames(
+								"hover:bg-gray-100 hover:text-gray-900 text-gray-700 block text-sm"
+							)}
+						>
+							<div className="flex flex-row justify-between items-center cursor-pointer border-b px-4 py-2">
+								<div>View Roles</div>
+								<div className="flex flex-row space-x-5">
+									<div>
+										<EyeIcon className="h-4 w-4 text-gray-400" />
+									</div>
+								</div>
+							</div>
+						</Link>
+
+						{pipe(
+							mapIndexed((role) => (
+								<Menu.Item key={role.id}>
+									{({ active }) => (
+										<div
+											className={classNames(
+												active
+													? "bg-gray-100 text-gray-900"
+													: "text-gray-700",
+												"block px-4 py-2 text-sm"
+											)}
+										>
+											<div className="flex flex-row justify-between items-center">
+												<div>{role.name}</div>
+												<div className="flex flex-row space-x-5">
+													<div className="cursor-pointer">
+														<LinkIcon
+															className={`h-4 w-4 hover:text-blue-600 text-gray-400`}
+														/>
+													</div>
+													<Link
+														to={`/role/1/permissions`}
+														className="cursor-pointer"
+													>
+														<Cog6ToothIcon
+															className={`h-4 w-4 hover:text-blue-600 text-gray-400`}
+														/>
+													</Link>
+												</div>
+											</div>
+										</div>
+									)}
+								</Menu.Item>
+							))
+						)(roles)}
+					</div>
+				</Menu.Items>
+			</Transition>
+		</Menu>
+	);
+};
+
 export default function Nav({ user_id }) {
+	let set_roles = useRolesStore((state) => state.set_roles);
+
+	useEffect(() => {
+		// let roles = get_collection({path: ['role_configs'], queries: [{where: ['user_id', '==', user_id]}]})
+
+		const get_roles = async () => {
+			console.log("get_roles");
+			let roles_response = await get_collection({
+				path: ["role_configs"],
+				queries: [
+					{ param: "entity_id", predicate: "==", value: user_id },
+					{ param: "group_id", predicate: "==", value: "1" },
+				],
+			});
+
+			console.log("roles_response");
+			console.log(roles_response);
+
+			set_roles(["roles"], roles_response);
+		};
+
+		get_roles();
+	}, []);
+
 	return (
 		<div className="flex flex-col w-full  h-[65px] justify-center px-5">
 			<div className="flex flex-row justify-between">
@@ -170,12 +290,13 @@ export default function Nav({ user_id }) {
 								/>
 							</div>
 						</div>
-						<div className="flex flex-row items-center space-x-2 bg-blue-600 text-white rounded-full px-3 py-1.5 text-sm cursor-pointer">
+						<ShareDropdown />
+						{/* <div className="flex flex-row items-center space-x-2 bg-blue-600 text-white rounded-full px-3 py-1.5 text-sm cursor-pointer">
 							<div>
 								<UsersIcon className="h-5 w-5 text-white" />
 							</div>
 							<div>Share</div>
-						</div>
+						</div> */}
 						<Link
 							to={`/chat`}
 							className=" bg-gray-100 flex flex-col items-center rounded-full p-2 cursor-pointer relative"

@@ -14,7 +14,7 @@ const configuration = new Configuration({
 });
 
 const plaidClient = new PlaidApi(configuration);
-let access_token = "access-sandbox-82a61619-29cb-4f47-a39f-ac187056412e";
+let access_token = "access-sandbox-0428200f-e7ff-4d9e-94c2-288d568b20a7";
 
 export const get_identities = async () => {
 	const request = {

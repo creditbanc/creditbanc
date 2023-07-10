@@ -92,6 +92,9 @@ const get_permissions = async (entity_id, group_id) => {
 		],
 	});
 
+	console.log("role_response");
+	console.log(role_response);
+
 	let role = pipe(head, defaultTo({}))(role_response);
 
 	if (role.config_id) {
