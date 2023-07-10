@@ -45,6 +45,10 @@ import {
 	sortBy,
 	reverse,
 	take,
+	takeLast,
+	ascend,
+	sort,
+	descend,
 } from "ramda";
 import { all, filter, get, mod, reduce } from "shades";
 import { redirect } from "@remix-run/node";
@@ -315,12 +319,145 @@ export const loader = async ({ request }) => {
 		)
 	);
 
+	const percentage_change = (prev, curr) => {
+		let change = ((curr - prev) / prev) * 100;
+		return isNaN(change) ? 0 : change;
+	};
+
+	const change_type = (change) => {
+		if (change === 0) return "no change";
+		return change > 0 ? "increase" : "decrease";
+	};
+
+	const $incomes_change = $monthly_incomes.pipe(
+		rxmap(
+			pipe(takeLast(2), ([prev, curr]) => {
+				let change = percentage_change(prev, curr);
+
+				return {
+					name: "Month over month net income change",
+					stat: curr.toFixed(2),
+					previousStat: prev.toFixed(2),
+					change: `${change.toFixed(2)}%`,
+					changeType: change_type(change),
+				};
+			})
+		)
+	);
+
+	const $expenses_change = $monthly_expenses.pipe(
+		rxmap(
+			pipe(takeLast(2), ([prev, curr]) => {
+				let change = percentage_change(prev, curr);
+
+				return {
+					name: "Month over month spending change",
+					stat: curr.toFixed(2),
+					previousStat: prev.toFixed(2),
+					change: `${change.toFixed(2)}%`,
+					changeType: change_type(change),
+				};
+			})
+		)
+	);
+
+	const $revenues_change = $monthly_revenues.pipe(
+		rxmap(
+			pipe(takeLast(2), ([prev, curr]) => {
+				let change = percentage_change(prev, curr);
+
+				return {
+					name: "Month over month revenue change",
+					stat: curr.toFixed(2),
+					previousStat: prev.toFixed(2),
+					change: `${change.toFixed(2)}%`,
+					changeType: change_type(change),
+				};
+			})
+		)
+	);
+
+	const $highest_income = $monthly_incomes.pipe(
+		rxmap(
+			pipe(
+				takeLast(6),
+				sort(descend(identity)),
+				take(2),
+				([curr, prev]) => {
+					let change = percentage_change(prev, curr);
+
+					return {
+						name: "Highest net income in last 6 months",
+						stat: curr.toFixed(2),
+						previousStat: prev.toFixed(2),
+						change: `${change.toFixed(2)}%`,
+						changeType: change_type(change),
+					};
+				}
+			)
+		)
+	);
+
+	const $highest_expense = $monthly_expenses.pipe(
+		rxmap(
+			pipe(
+				takeLast(6),
+				sort(ascend(identity)),
+				take(2),
+				([curr, prev]) => {
+					let change = percentage_change(prev, curr);
+
+					return {
+						name: "Highest spending in last 6 months",
+						stat: curr.toFixed(2),
+						previousStat: prev.toFixed(2),
+						change: `${change.toFixed(2)}%`,
+						changeType: change_type(change),
+					};
+				}
+			)
+		)
+	);
+
+	const $highest_revenue = $monthly_revenues.pipe(
+		rxmap(
+			pipe(
+				takeLast(6),
+				sort(descend(identity)),
+				take(2),
+				([curr, prev]) => {
+					let change = percentage_change(prev, curr);
+
+					return {
+						name: "Highest revenue in last 6 months",
+						stat: curr.toFixed(2),
+						previousStat: prev.toFixed(2),
+						change: `${change.toFixed(2)}%`,
+						changeType: change_type(change),
+					};
+				}
+			)
+		)
+	);
+
 	let monthly_expenses = await lastValueFrom($monthly_expenses);
 	let monthly_revenues = await lastValueFrom($monthly_revenues);
 	let monthly_incomes = await lastValueFrom($monthly_incomes);
 	let recent_activity = await lastValueFrom($recent_activity);
+	let incomes_change = await lastValueFrom($incomes_change);
+	let expenses_change = await lastValueFrom($expenses_change);
+	let revenues_change = await lastValueFrom($revenues_change);
+	let highest_income = await lastValueFrom($highest_income);
+	let highest_expense = await lastValueFrom($highest_expense);
+	let highest_revenue = await lastValueFrom($highest_revenue);
 
 	let payload = {
+		stats_data: {
+			revenues: [highest_revenue, revenues_change],
+			expenses: [highest_expense, expenses_change],
+		},
+		highest_income,
+		incomes_change,
 		recent_activity,
 		monthly_expenses,
 		monthly_revenues,
@@ -633,7 +770,7 @@ const CashflowChart = () => {
 				<div className="flex flex-col w-[30%]">
 					<div className="pb-3 px-3">
 						<h3 className="text-base font-semibold leading-6 text-gray-900">
-							How you’re doing in June
+							How you’re doing
 						</h3>
 					</div>
 					<IncomeStats />
@@ -654,66 +791,11 @@ const CashflowChart = () => {
 	);
 };
 
-const stats_data = {
-	expenses: [
-		{
-			name: "Month over month spending change",
-			stat: "71,897",
-			previousStat: "70,946",
-			change: "12%",
-			changeType: "increase",
-		},
-		{
-			name: "Highest spending in last 6 months",
-			stat: "58.16%",
-			previousStat: "56.14%",
-			change: "2.02%",
-			changeType: "increase",
-		},
-	],
-	revenue: [
-		{
-			name: "Month over month revenue change",
-			stat: "71,897",
-			previousStat: "70,946",
-			change: "12%",
-			changeType: "increase",
-		},
-		{
-			name: "Highest revenue in last 6 months",
-			stat: "58.16%",
-			previousStat: "56.14%",
-			change: "2.02%",
-			changeType: "increase",
-		},
-	],
-};
-
-const income_stats_data = [
-	{
-		name: "Projected monthly net income",
-		stat: "71,897",
-		previousStat: "70,946",
-		change: "12%",
-		changeType: "increase",
-	},
-	{
-		name: "Month over month net income change",
-		stat: "58.16%",
-		previousStat: "56.14%",
-		change: "2.02%",
-		changeType: "increase",
-	},
-	{
-		name: "Highest net income in last 6 months",
-		stat: "58.16%",
-		previousStat: "56.14%",
-		change: "2.02%",
-		changeType: "increase",
-	},
-];
-
 const IncomeStats = () => {
+	let { highest_income, incomes_change } = useLoaderData();
+
+	let income_stats_data = [highest_income, incomes_change];
+
 	return (
 		<div className="bg-white divide-y rounded">
 			{income_stats_data.map((item) => (
@@ -759,6 +841,8 @@ const IncomeStats = () => {
 };
 
 const HealthStats = ({ type = "revenue" }) => {
+	let { stats_data } = useLoaderData();
+
 	let stats = stats_data[type];
 	return (
 		<div className="bg-white divide-y rounded">
@@ -897,10 +981,10 @@ const RevenueChart = () => {
 			<div>
 				<div className="border-b border-gray-200 pb-3 px-5">
 					<h3 className="text-base font-semibold leading-6 text-gray-900">
-						How you’re doing in June
+						How you’re doing
 					</h3>
 				</div>
-				<HealthStats type={"revenue"} />
+				<HealthStats type={"revenues"} />
 			</div>
 		</div>
 	);
@@ -999,7 +1083,7 @@ const ExpensesChart = () => {
 			<div>
 				<div className="border-b border-gray-200 pb-3 px-5">
 					<h3 className="text-base font-semibold leading-6 text-gray-900">
-						How you’re doing in June
+						How you’re doing
 					</h3>
 				</div>
 				<HealthStats type={"expenses"} />
