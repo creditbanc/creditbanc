@@ -263,7 +263,7 @@ export default function Companies() {
 								</div>
 							</Link>
 						</div>
-						<div className="border-t "></div>
+						<div className="border-t"></div>
 						<div className="flex flex-col w-full p-5 space-y-3">
 							<div className="text-gray-400 text-sm">
 								Credit Scores
@@ -283,7 +283,7 @@ export default function Companies() {
 								</div>
 							</div>
 						</div>
-						<div className="border-t "></div>
+						<div className="border-t"></div>
 						<div className="flex flex-col p-5 text-sm space-y-3">
 							<div className=" text-gray-400">Quick Links</div>
 							<div className="flex flex-col ml-3">
