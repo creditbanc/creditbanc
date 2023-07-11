@@ -187,7 +187,7 @@ export default function CreditReport() {
 							)}
 
 							<div
-								className="flex flex-col h-full flex-1 overflow-y-scroll scrollbar-none"
+								className="flex flex-col h-full flex-1 overflow-y-scroll scrollbar-none rounded-lg"
 								ref={pageRef}
 							>
 								<div className="w-full">

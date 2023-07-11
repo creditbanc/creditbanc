@@ -155,7 +155,7 @@ export default function History() {
 	);
 
 	return (
-		<div className={`flex flex-col w-full h-fullpy-5`}>
+		<div className={`flex flex-col w-full h-full py-5`}>
 			<InfoCard />
 			<Accounts
 				trade_lines={trade_lines}

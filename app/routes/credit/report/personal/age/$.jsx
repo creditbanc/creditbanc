@@ -132,11 +132,7 @@ export default function Age() {
 	);
 
 	return (
-		<div
-			className={`flex flex-col w-full h-full scrollbar-none py-5 ${
-				coordinates.top < 145 ? "overflow-scroll" : "overflow-hidden"
-			}`}
-		>
+		<div className={`flex flex-col w-full h-full py-5`}>
 			<InfoCard />
 			<Accounts
 				trade_lines={trade_lines}
