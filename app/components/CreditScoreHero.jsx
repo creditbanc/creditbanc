@@ -27,9 +27,13 @@ const Single = ({ scores }) => {
 		setIndex(index);
 	};
 	return (
-		<div className="flex flex-col items-center -mt-[70px]">
-			<div className="flex flex-col w-full my-[10px]">
-				<Carousel ref={ref} dots={false} className="flex flex-col">
+		<div className="flex flex-col items-center -mt-[70px] mb-[20px]">
+			<div className="flex flex-col w-full my-[10px] mx-[50px]">
+				<Carousel
+					ref={ref}
+					dots={false}
+					className="flex flex-col w-full"
+				>
 					<div>
 						<CreditScoreDoughnut
 							bureau={"Equifax"}
@@ -59,7 +63,7 @@ const Single = ({ scores }) => {
 					</div>
 				</Carousel>
 
-				<div className="flex flex-row w-full justify-around -mt-[30px] z-[1]">
+				<div className="flex flex-row w-full justify-around mt-[30px] z-[1]">
 					<span
 						className={`inline-flex items-center rounded-full px-4 py-0.5 text-xs font-medium cursor-pointer ${
 							index === 0
@@ -166,15 +170,6 @@ export default function CreditScoreHero({ report, scores }) {
 
 	return (
 		<div className="overflow-hidden">
-			<div className="w-full">
-				<h1 className="text-5xl font-bold tracking-tight text-center">
-					{report.first_name}'s personal credit report
-				</h1>
-				<p className="mt-6 text-lg leading-6 text-gray-600 text-center">
-					View all three personal credit bureaus
-				</p>
-			</div>
-
 			{isMobile ? <Single scores={scores} /> : <Triple scores={scores} />}
 		</div>
 	);

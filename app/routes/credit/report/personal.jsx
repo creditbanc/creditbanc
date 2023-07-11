@@ -162,21 +162,18 @@ export default function CreditReport() {
 				</div>
 			)}
 
-			<div className="flex flex-col w-full bg-white border rounded overflow-hidden">
+			<div className="flex flex-col w-full overflow-y-scroll overflow-hidden">
 				<div
-					className="flex flex-col w-full max-w-5xl px-5 mx-auto overflow-hidden"
+					className="flex flex-col w-full mx-auto overflow-hidden"
 					ref={setTarget}
 				>
 					<div
-						className="flex flex-col w-full h-full overflow-y-scroll scrollbar-none"
+						className="flex flex-col w-full h-full overflow-hidden"
 						onScroll={onPageScroll}
 					>
-						<div className="mt-5">
-							<CreditScoreHero report={report} scores={scores} />
-						</div>
 						<div
-							className={`flex h-full sticky top-0 ${
-								isMobile ? "flex-col" : "flex-row"
+							className={`flex h-full overflow-hidden ${
+								isMobile ? "flex-col" : "flex-row gap-x-5"
 							}`}
 						>
 							{isMobile && (
@@ -189,8 +186,32 @@ export default function CreditReport() {
 								</div>
 							)}
 
+							<div
+								className="flex flex-col h-full flex-1 overflow-y-scroll scrollbar-none"
+								ref={pageRef}
+							>
+								<div className="w-full">
+									<p className="my-2 font-semibold text-lg leading-6 text-blue-600">
+										View all three personal credit bureaus
+									</p>
+									<h1 className="text-5xl font-bold tracking-tight">
+										{report.first_name}'s personal credit
+										report
+									</h1>
+								</div>
+
+								<div className="flex flex-col w-full">
+									<CreditScoreHero
+										report={report}
+										scores={scores}
+									/>
+								</div>
+
+								<Outlet />
+							</div>
+
 							{!isMobile && (
-								<div className="sm:flex flex-col w-1/5 mr-2 h-fit pt-5">
+								<div className="sm:flex flex-col w-[30%] mr-2 h-full bg-white border rounded">
 									<PersonalCreditTabsVertical
 										selected={get_route_endpoint(
 											location.pathname
@@ -198,13 +219,6 @@ export default function CreditReport() {
 									/>
 								</div>
 							)}
-
-							<div
-								className="flex flex-col h-full flex-1"
-								ref={pageRef}
-							>
-								<Outlet />
-							</div>
 						</div>
 					</div>
 				</div>

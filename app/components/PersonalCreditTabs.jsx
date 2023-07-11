@@ -148,7 +148,7 @@ export const PersonalCreditTabsVertical = ({ selected = "Personal" }) => {
 
 	return (
 		<nav
-			className="flex flex-col justify-start bg-white rounded border"
+			className="flex flex-col justify-start bg-white rounded"
 			aria-label="Tabs"
 		>
 			{tabs.map((tab) => (

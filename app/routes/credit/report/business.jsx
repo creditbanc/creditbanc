@@ -151,7 +151,7 @@ export default function BusinessReport() {
 
 			<div className="flex flex-col w-full overflow-hidden">
 				<div
-					className="flex flex-col w-full mx-auto overflow-hidden "
+					className="flex flex-col w-full mx-auto overfloy-hidden"
 					ref={setTarget}
 				>
 					<div

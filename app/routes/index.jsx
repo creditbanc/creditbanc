@@ -200,14 +200,15 @@ function PoweredBy() {
 
 const Single = () => {
 	return (
-		<div className="flex flex-col items-center">
+		<div className="flex flex-col items-center overflow-hidden">
 			<CreditScoreDoughnut
 				bureau={"Equifax"}
 				scoreClassNames="text-6xl"
 				bureauTitleClassNames="text-1xl"
 				score={750}
+				customChartStyles={{ width: 300, height: 280 }}
 			>
-				<div className="mt-[170px] font-bold text-5xl">750</div>
+				<div className="mt-[170px] font-bold text-5xl">780</div>
 			</CreditScoreDoughnut>
 		</div>
 	);
@@ -330,7 +331,7 @@ export default function LandingPage() {
 
 			<main className="isolate">
 				<div className="relative pt-24">
-					<div className="flex flex-col w-full items-center -mt-[50px] mb-[50px]">
+					<div className="flex flex-col w-full items-center -mt-[50px] mb-[10px]">
 						<div className="flex flex-col w-[300px] h-[200px]">
 							<Single />
 						</div>

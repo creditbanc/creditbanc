@@ -82,6 +82,7 @@ export default function CreditScoreDoughnut({
 	bureauTitleClassNames = "",
 	children,
 	score,
+	customChartStyles = undefined,
 }) {
 	const chartContainerRef = useRef(null);
 	const size = useWindowSize();
@@ -90,51 +91,64 @@ export default function CreditScoreDoughnut({
 	const doughnutRef = useRef(null);
 
 	useEffect(() => {
-		if (content_width < 640) {
+		if (!customChartStyles) {
+			if (content_width < 640) {
+				console.log("here");
+				setChartStyle({
+					width: content_width * 0.9,
+					height: content_width * 0.72,
+				});
+			} else {
+				setChartStyle({
+					width: content_width / 3,
+					height: content_width / 5.5,
+					marginBottom: 20,
+					marginTop: -30,
+				});
+			}
+		}
+
+		if (customChartStyles) {
 			setChartStyle({
-				width: content_width,
-				height: content_width * 0.7,
-				paddingBottom: content_width * 0.13,
-			});
-		} else {
-			setChartStyle({
-				width: content_width / 3.1,
-				height: content_width / 3.4,
-				paddingBottom: content_width * 0.13,
-				marginTop: 70,
+				width: customChartStyles.width * 0.9,
+				height: customChartStyles.height * 0.72,
+				// marginBottom: 20,
+				// marginTop: -30,
 			});
 		}
 	}, [content_width, size]);
 
 	return (
-		<div
-			className={`px-[5px] w-full relative flex flex-col items-center ${classNames}`}
-			ref={chartContainerRef}
-			style={{ height: chartStyle.height }}
-		>
-			<Doughnut
-				className="absolute"
-				data={data}
-				options={options}
-				ref={doughnutRef}
-			/>
-			<Doughnut
-				className="absolute"
-				data={data2(get_range_percentage(score, 300, 850))}
-				options={options}
-			/>
-			{children && children}
-			{!children && (
-				<div
-					className="absolute flex flex-col items-center justify-end"
-					style={chartStyle}
-				>
-					<div className={`font-bold ${scoreClassNames}`}>
-						{score}
+		<div className={`flex flex-col mx-auto relative`} style={chartStyle}>
+			<div className="relative flex flex-col w-full">
+				<Doughnut
+					className="absolute"
+					data={data}
+					options={options}
+					ref={doughnutRef}
+				/>
+				<Doughnut
+					className="absolute"
+					data={data2(get_range_percentage(score, 300, 850))}
+					options={options}
+				/>
+			</div>
+			<div
+				className={`flex flex-col w-full h-full items-center justify-end -mt-2 ${classNames}`}
+				ref={chartContainerRef}
+			>
+				{children && children}
+				{!children && (
+					<div className="flex flex-col h-full w-full absolute items-center justify-end">
+						<div className={`font-bold ${scoreClassNames}`}>
+							{score}
+						</div>
+						<div className={`${bureauTitleClassNames}`}>
+							{bureau}
+						</div>
 					</div>
-					<div className={`${bureauTitleClassNames}`}>{bureau}</div>
-				</div>
-			)}
+				)}
+			</div>
 		</div>
 	);
 }
