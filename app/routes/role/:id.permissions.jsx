@@ -106,6 +106,7 @@ const Toggle = ({ index, permission_key }) => {
 		if (permission_key === "edit" && !enabled == true) {
 			return set_permissions(["permissions", index], {
 				...permission,
+				hidden: false,
 				read: true,
 				edit: true,
 			});
