@@ -301,10 +301,6 @@ export default function Roles() {
 	let { entity_id, roles } = useLoaderData();
 	let set_modal = useModalStore((state) => state.set_modal);
 
-	const onCreateNewRoleModal = () => {
-		set_modal({ id: "new_role_modal", is_open: true });
-	};
-
 	return (
 		<div className="flex flex-col w-full h-full bg-gray-50">
 			<NewRoleModal />
@@ -312,7 +308,7 @@ export default function Roles() {
 				<SimpleNavSignedIn user_id={entity_id} />
 			</div>
 
-			<div className="flex flex-col w-full h-full p-5">
+			<div className="flex flex-col w-full h-full p-5 ">
 				<div className="flex flex-col w-full">
 					<Outlet />
 				</div>

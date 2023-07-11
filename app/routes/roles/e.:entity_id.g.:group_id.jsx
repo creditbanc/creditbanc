@@ -1,8 +1,8 @@
-import { Outlet, useLoaderData } from "@remix-run/react";
-import SimpleNavSignedIn from "~/components/SimpleNavSignedIn";
+import { Link, useLoaderData } from "@remix-run/react";
 import { get_user_id } from "~/utils/auth.server";
 import { classNames, mapIndexed } from "~/utils/helpers";
 import {
+	Cog6ToothIcon,
 	EllipsisHorizontalIcon,
 	LinkIcon,
 	PlusIcon,
@@ -12,7 +12,6 @@ import {
 	XMarkIcon,
 } from "@heroicons/react/24/outline";
 import { useModalStore } from "~/hooks/useModal";
-import Modal from "~/components/Modal";
 import { delete_doc, get_collection, set_doc } from "~/utils/firebase";
 import { isEmpty, pipe } from "ramda";
 import { create } from "zustand";
@@ -51,132 +50,6 @@ export const loader = async ({ request }) => {
 	return { entity_id, roles };
 };
 
-const people = [
-	{
-		name: "Leslie Alexander",
-		email: "leslie.alexander@example.com",
-		role: "Co-Founder / CEO",
-		imageUrl:
-			"https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
-		href: "#",
-		lastSeen: "3h ago",
-		lastSeenDateTime: "2023-01-23T13:23Z",
-	},
-	{
-		name: "Michael Foster",
-		email: "michael.foster@example.com",
-		role: "Co-Founder / CTO",
-		imageUrl:
-			"https://images.unsplash.com/photo-1519244703995-f4e0f30006d5?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
-		href: "#",
-		lastSeen: "3h ago",
-		lastSeenDateTime: "2023-01-23T13:23Z",
-	},
-	{
-		name: "Dries Vincent",
-		email: "dries.vincent@example.com",
-		role: "Business Relations",
-		imageUrl:
-			"https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
-		href: "#",
-		lastSeen: null,
-	},
-	{
-		name: "Lindsay Walton",
-		email: "lindsay.walton@example.com",
-		role: "Front-end Developer",
-		imageUrl:
-			"https://images.unsplash.com/photo-1517841905240-472988babdf9?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
-		href: "#",
-		lastSeen: "3h ago",
-		lastSeenDateTime: "2023-01-23T13:23Z",
-	},
-	{
-		name: "Courtney Henry",
-		email: "courtney.henry@example.com",
-		role: "Designer",
-		imageUrl:
-			"https://images.unsplash.com/photo-1438761681033-6461ffad8d80?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
-		href: "#",
-		lastSeen: "3h ago",
-		lastSeenDateTime: "2023-01-23T13:23Z",
-	},
-	{
-		name: "Tom Cook",
-		email: "tom.cook@example.com",
-		role: "Director of Product",
-		imageUrl:
-			"https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
-		href: "#",
-		lastSeen: null,
-	},
-];
-
-const RolesListTow = () => {
-	return (
-		<ul role="list" className="divide-y divide-gray-100">
-			{people.map((person) => (
-				<li
-					key={person.email}
-					className="relative flex justify-between gap-x-6 px-4 py-5 hover:bg-gray-50 sm:px-6 lg:px-8"
-				>
-					<div className="flex gap-x-4">
-						<img
-							className="h-12 w-12 flex-none rounded-full bg-gray-50"
-							src={person.imageUrl}
-							alt=""
-						/>
-						<div className="min-w-0 flex-auto">
-							<p className="text-sm font-semibold leading-6 text-gray-900">
-								<a href={person.href}>
-									<span className="absolute inset-x-0 -top-px bottom-0" />
-									{person.name}
-								</a>
-							</p>
-							<p className="mt-1 flex text-xs leading-5 text-gray-500">
-								<a
-									href={`mailto:${person.email}`}
-									className="relative truncate hover:underline"
-								>
-									{person.email}
-								</a>
-							</p>
-						</div>
-					</div>
-					<div className="flex items-center gap-x-4">
-						<div className="hidden sm:flex sm:flex-col sm:items-end">
-							<p className="text-sm leading-6 text-gray-900">
-								{person.role}
-							</p>
-							{person.lastSeen ? (
-								<p className="mt-1 text-xs leading-5 text-gray-500">
-									Last seen{" "}
-									<time dateTime={person.lastSeenDateTime}>
-										{person.lastSeen}
-									</time>
-								</p>
-							) : (
-								<div className="mt-1 flex items-center gap-x-1.5">
-									<div className="flex-none rounded-full bg-emerald-500/20 p-1">
-										<div className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
-									</div>
-									<p className="text-xs leading-5 text-gray-500">
-										Online
-									</p>
-								</div>
-							)}
-						</div>
-						<ChevronRightIcon
-							className="h-5 w-5 flex-none text-gray-400"
-							aria-hidden="true"
-						/>
-					</div>
-				</li>
-			))}
-		</ul>
-	);
-};
-
 const RoleActions = ({ role }) => {
 	const onDeleteRole = async () => {
 		console.log("onDeleteRole");
@@ -207,6 +80,26 @@ const RoleActions = ({ role }) => {
 			>
 				<Menu.Items className="absolute right-0 z-10 mt-2 w-56 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
 					<div className="py-1">
+						<Menu.Item>
+							{({ active }) => (
+								<Link
+									to={`/role/${role.id}/permissions`}
+									className={classNames(
+										active
+											? "bg-gray-100 text-gray-900"
+											: "text-gray-700",
+										"block px-4 py-2 text-sm"
+									)}
+								>
+									<div className="flex flex-row items-center space-x-2">
+										<div>
+											<Cog6ToothIcon className="h-4 w-4 text-gray-700" />
+										</div>
+										<div>Edit role</div>
+									</div>
+								</Link>
+							)}
+						</Menu.Item>
 						<Menu.Item>
 							{({ active }) => (
 								<div
@@ -271,7 +164,8 @@ const RolesList = () => {
 				{pipe(
 					mapIndexed((role, role_idx) => (
 						<li key={role_idx} className="border rounded-lg">
-							<div
+							<Link
+								to={`/role/1/permissions`}
 								className={classNames(
 									role.current
 										? "bg-gray-50 text-blue-600"
@@ -317,7 +211,7 @@ const RolesList = () => {
 										</div>
 									</div>
 								</div>
-							</div>
+							</Link>
 						</li>
 					))
 				)(roles)}
@@ -326,14 +220,41 @@ const RolesList = () => {
 	);
 };
 
+const SectionHeading = () => {
+	let set_modal = useModalStore((state) => state.set_modal);
+	const onCreateNewRoleModal = () => {
+		set_modal({ id: "new_role_modal", is_open: true });
+	};
+
+	return (
+		<div className="border-b border-gray-200 py-2 px-6">
+			<div className="flex flex-row w-full justify-between items-center">
+				<div>
+					<h3 className="text-base font-semibold leading-6 text-gray-900">
+						Roles
+					</h3>
+				</div>
+				<div
+					className="flex flex-row items-center gap-x-3 cursor-pointer"
+					onClick={onCreateNewRoleModal}
+				>
+					<div>New Role</div>
+					<div>
+						<PlusIcon className="h-5 w-5 text-gray-700 " />
+					</div>
+				</div>
+			</div>
+		</div>
+	);
+};
+
 export default function Roles() {
 	return (
 		<div className="flex flex-col w-full items-center ">
-			<div className="flex flex-col w-[800px] bg-white">
+			<div className="flex flex-col w-[800px] bg-white rounded">
+				<SectionHeading />
 				<div className="flex flex-col p-5 w-full">
-					<div className="border rounded">
-						<RolesList />
-					</div>
+					<RolesList />
 				</div>
 			</div>
 		</div>
