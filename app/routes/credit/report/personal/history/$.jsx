@@ -54,7 +54,7 @@ export const loader = async ({ request }) => {
 
 const InfoCard = () => {
 	return (
-		<div className="flex flex-col bg-white rounded-lg border">
+		<div className="flex flex-col h-fit bg-white rounded-lg border">
 			<div className="px-4 py-5 sm:px-6 flex flex-row items-center">
 				<div className="flex flex-col w-[25px] mr-3">
 					<BookOpenIcon />
@@ -144,6 +144,14 @@ export default function History() {
 	let { trade_lines, plan_id } = useLoaderData();
 	let { coordinates } = useReportPageLayoutStore();
 
+	useEffect(() => {
+		// console.log("coordinates");
+		// console.log(coordinates);
+	}, [coordinates]);
+
+	console.log("coordinates");
+	console.log(coordinates);
+
 	let experian = pipe(get(plan_id, "personal", "experian", "authorized"))(
 		plans
 	);
@@ -156,10 +164,9 @@ export default function History() {
 
 	return (
 		<div
-			className={`flex flex-col w-full h-full scrollbar-none pt-5 ${
+			className={`flex flex-col w-full h-full scrollbar-none py-5 ${
 				coordinates.top < 145 ? "overflow-scroll" : "overflow-hidden"
 			}`}
-			onScroll={() => console.log("scrolling")}
 		>
 			<InfoCard />
 			<Accounts

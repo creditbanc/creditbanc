@@ -15,6 +15,7 @@ import { all, get } from "shades";
 import { plans } from "~/data/plans";
 import { get_user_id } from "~/utils/auth.server";
 import { prisma } from "~/utils/prisma.server";
+import { useReportPageLayoutStore } from "~/stores/useReportPageLayoutStore";
 
 export const loader = async ({ request }) => {
 	let url = new URL(request.url);
@@ -49,7 +50,7 @@ export const loader = async ({ request }) => {
 
 const InfoCard = () => {
 	return (
-		<div className="overflow-hidden bg-white rounded-lg border">
+		<div className="flex flex-col h-fit bg-white rounded-lg border">
 			<div className="px-4 py-5 sm:px-6 flex flex-row items-center">
 				<div className="flex flex-col w-[25px] mr-3">
 					<ChartPieIcon />
@@ -85,6 +86,7 @@ const InfoCard = () => {
 
 export default function Mix() {
 	let { trade_lines, plan_id } = useLoaderData();
+	let { coordinates } = useReportPageLayoutStore();
 
 	let experian = pipe(get(plan_id, "personal", "experian", "authorized"))(
 		plans
@@ -99,7 +101,11 @@ export default function Mix() {
 	);
 
 	return (
-		<div className="flex flex-col w-full">
+		<div
+			className={`flex flex-col w-full h-full scrollbar-none py-5 ${
+				coordinates.top < 145 ? "overflow-scroll" : "overflow-hidden"
+			}`}
+		>
 			<InfoCard />
 			<Accounts
 				trade_lines={trade_lines}
