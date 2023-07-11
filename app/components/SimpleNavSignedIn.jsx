@@ -186,7 +186,7 @@ const ShareDropdown = () => {
 														/>
 													</div>
 													<Link
-														to={`/role/1/permissions`}
+														to={`/role/${role.id}/permissions`}
 														className="cursor-pointer"
 													>
 														<Cog6ToothIcon
@@ -285,12 +285,7 @@ export default function Nav({ user_id }) {
 							</div>
 						</div>
 						<ShareDropdown />
-						{/* <div className="flex flex-row items-center space-x-2 bg-blue-600 text-white rounded-full px-3 py-1.5 text-sm cursor-pointer">
-							<div>
-								<UsersIcon className="h-5 w-5 text-white" />
-							</div>
-							<div>Share</div>
-						</div> */}
+
 						<Link
 							to={`/chat`}
 							className=" bg-gray-100 flex flex-col items-center rounded-full p-2 cursor-pointer relative"

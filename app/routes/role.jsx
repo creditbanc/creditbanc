@@ -1,4 +1,4 @@
-import { Outlet, useLoaderData } from "@remix-run/react";
+import { Link, Outlet, useLoaderData } from "@remix-run/react";
 import SimpleNavSignedIn from "~/components/SimpleNavSignedIn";
 import { get_user_id } from "~/utils/auth.server";
 import { classNames, mapIndexed } from "~/utils/helpers";
@@ -252,7 +252,8 @@ const RolesNav = () => {
 				{pipe(
 					mapIndexed((role, role_idx) => (
 						<li key={role_idx} className="border rounded-lg">
-							<div
+							<Link
+								to={`/role/${role.id}/permissions`}
 								className={classNames(
 									role.current
 										? "bg-gray-50 text-blue-600"
@@ -298,7 +299,7 @@ const RolesNav = () => {
 										</div>
 									</div>
 								</div>
-							</div>
+							</Link>
 						</li>
 					))
 				)(roles)}
@@ -326,6 +327,7 @@ const NewRoleModal = () => {
 
 		let payload = {
 			id: role_config_id,
+			group_id: "1",
 			entity_id,
 			...role,
 		};

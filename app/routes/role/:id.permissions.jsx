@@ -50,8 +50,6 @@ const default_permissions = [
 	},
 ];
 
-const config_id = "db88508c-b4ea-4dee-8d60-43c5a847c172";
-
 const config_permissions_or_default = (config) => {
 	let permissions = pipe(
 		map((default_permission) => {
@@ -70,6 +68,9 @@ const config_permissions_or_default = (config) => {
 
 export const loader = async ({ request }) => {
 	// let entity_id = await get_user_id(request);
+
+	let { pathname } = new URL(request.url);
+	let config_id = get_config_id(pathname);
 
 	let config = await get_doc(["role_configs", config_id]);
 
@@ -161,6 +162,8 @@ const SectionHeading = () => {
 };
 
 const RoleHeading = () => {
+	let { config } = useLoaderData();
+
 	return (
 		<div className=" pb-2">
 			<div className="-ml-2 -mt-2 flex flex-wrap items-baseline">
@@ -168,7 +171,7 @@ const RoleHeading = () => {
 					Role:
 				</h3>
 				<h3 className="ml-1 mt-1 truncate text-base text-gray-500">
-					test
+					{config.name}
 				</h3>
 			</div>
 		</div>
