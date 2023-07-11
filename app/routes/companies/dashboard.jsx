@@ -18,8 +18,8 @@ import {
 	UserIcon,
 	UserCircleIcon,
 } from "@heroicons/react/24/outline";
-import { Link } from "@remix-run/react";
-import { pipe, prop, uniqBy } from "ramda";
+import { Link, useLoaderData } from "@remix-run/react";
+import { map, pipe, prop, uniqBy } from "ramda";
 import { get, all } from "shades";
 
 import { get_user_id } from "~/utils/auth.server";
@@ -67,8 +67,8 @@ export const loader = async ({ request }) => {
 		get(all, "group_id")
 	)(shared_companies);
 
-	console.log("shared_companies");
-	console.log(shared_companies);
+	// console.log("shared_companies");
+	// console.log(shared_companies);
 
 	return { owner_companies, shared_companies };
 };
@@ -194,6 +194,8 @@ const QuickLinks = () => {
 };
 
 export default function Companies() {
+	let { owner_companies, shared_companies } = useLoaderData();
+
 	return (
 		<div className="flex flex-row w-full h-full p-5 overflow-hiddens space-x-3 overflow-hidden">
 			<div className="flex flex-col w-[70%] h-full bg-white rounded px-5 overflow-y-scroll">
@@ -208,26 +210,9 @@ export default function Companies() {
 
 				<div className="flex flex-col w-full py-5  scrollbar-none">
 					<div className="flex flex-row w-full items-center flex-wrap gap-y-10 justify-between xl:justify-start xl:gap-x-5">
-						<Account />
-						<Account />
-						<Account />
-						<Account />
-						<Account />
-						<Account />
-						<Account />
-						<Account />
-						<Account />
-						<Account />
-						<Account />
-						<Account />
-						<Account />
-						<Account />
-						<Account />
-						<Account />
-						<Account />
-						<Account />
-						<Account />
-						<Account />
+						{pipe(map((group_id) => <Account key={group_id} />))(
+							owner_companies
+						)}
 					</div>
 				</div>
 
@@ -242,26 +227,9 @@ export default function Companies() {
 
 				<div className="flex flex-col w-full py-5 scrollbar-none">
 					<div className="flex flex-row w-full items-center flex-wrap gap-y-10 justify-between xl:justify-start xl:gap-x-5">
-						<Account />
-						<Account />
-						<Account />
-						<Account />
-						<Account />
-						<Account />
-						<Account />
-						<Account />
-						<Account />
-						<Account />
-						<Account />
-						<Account />
-						<Account />
-						<Account />
-						<Account />
-						<Account />
-						<Account />
-						<Account />
-						<Account />
-						<Account />
+						{pipe(map((group_id) => <Account key={group_id} />))(
+							shared_companies
+						)}
 					</div>
 				</div>
 			</div>
