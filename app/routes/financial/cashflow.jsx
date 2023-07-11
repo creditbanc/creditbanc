@@ -1265,7 +1265,7 @@ export default function Cashflow() {
 							</div>
 						</div>
 					</div>
-					<div className="flex flex-col w-full bg-white rounded ">
+					<div className="flex flex-col w-full bg-white rounded  mt-3">
 						<div className="flex flex-col py-4 px-5">
 							<FinancialHealthEvaluationHeading />
 						</div>

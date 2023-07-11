@@ -1,19 +1,11 @@
-import CreditNav from "~/components/CreditNav";
 import { get_group_id, get_report_endpoint, classNames } from "~/utils/helpers";
 import { get_user_id } from "~/utils/auth.server";
 import { get_docs as get_group_docs } from "~/utils/group.server";
 import { defaultTo, pipe } from "ramda";
 import { filter } from "shades";
 import { Outlet, useLoaderData, useLocation, Link } from "@remix-run/react";
-import LeftNav from "~/components/LeftNav";
-import Share from "~/routes/invites/new/$.jsx";
-import Modal from "~/components/Modal";
-import ReportTabs from "~/components/ReportTabs";
 import SimpleNavSignedIn from "~/components/SimpleNavSignedIn";
-import {
-	EllipsisHorizontalCircleIcon,
-	EllipsisHorizontalIcon,
-} from "@heroicons/react/24/outline";
+import { EllipsisHorizontalIcon } from "@heroicons/react/24/outline";
 
 export const loader = async ({ request }) => {
 	let url = new URL(request.url);
@@ -125,22 +117,10 @@ const SubNav = () => {
 };
 
 export default function Report() {
-	var { origin, user_id, reports } = useLoaderData();
-	let location = useLocation();
+	var { user_id } = useLoaderData();
 
 	return (
 		<div className="flex flex-col w-full h-full bg-gray-50">
-			{/* <Modal>
-				<Share />
-			</Modal> */}
-			{/* <div className="flex flex-col border-b">
-				<CreditNav
-					user_id={user_id}
-					origin={origin}
-					can_share={true}
-					reports={reports}
-				/>
-			</div> */}
 			<div className="flex flex-col w-full border-b bg-white">
 				<SimpleNavSignedIn user_id={user_id} />
 			</div>
@@ -149,16 +129,6 @@ export default function Report() {
 			</div>
 
 			<Outlet />
-
-			{/* <div className="flex flex-row h-full overflow-hidden">
-				{user_id && <LeftNav data={reports} can_manage_roles={false} />}
-				<div className="flex flex-col flex-1 overflow-y-scroll overflow-x-hidden">
-					<ReportTabs
-						selected={get_report_endpoint(location.pathname)}
-					/>
-					<Outlet />
-				</div>
-			</div> */}
 		</div>
 	);
 }

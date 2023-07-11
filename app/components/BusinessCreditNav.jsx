@@ -20,7 +20,10 @@ export const VerticalNav = ({
 	let business_bureau = get_business_report_bureau(location.pathname);
 
 	return (
-		<nav className="flex flex-col justify-star" aria-label="Tabs">
+		<nav
+			className="flex flex-col justify-star bg-white rounded"
+			aria-label="Tabs"
+		>
 			{pipe(
 				filter({ [business_bureau]: true }),
 				map((tab) => (

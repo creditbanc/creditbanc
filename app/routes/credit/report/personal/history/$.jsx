@@ -144,14 +144,6 @@ export default function History() {
 	let { trade_lines, plan_id } = useLoaderData();
 	let { coordinates } = useReportPageLayoutStore();
 
-	useEffect(() => {
-		// console.log("coordinates");
-		// console.log(coordinates);
-	}, [coordinates]);
-
-	console.log("coordinates");
-	console.log(coordinates);
-
 	let experian = pipe(get(plan_id, "personal", "experian", "authorized"))(
 		plans
 	);

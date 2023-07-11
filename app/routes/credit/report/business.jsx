@@ -132,7 +132,7 @@ export default function BusinessReport() {
 	}, [elmSize]);
 
 	return (
-		<div className="flex flex-col flex-1 overflow-scroll">
+		<div className="flex flex-col flex-1 overflow-y-scroll p-5 overflow-hidden">
 			{plan_id == "essential" && (
 				<div className="flex flex-col w-full items-center">
 					<div className="flex flex-col w-full max-w-5xl">
@@ -148,18 +148,23 @@ export default function BusinessReport() {
 					</div>
 				</div>
 			)}
-			<div className="flex flex-col w-full">
+
+			<div className="flex flex-col w-full overflow-hidden">
 				<div
-					className="flex flex-col w-full p-[10px] max-w-5xl mx-auto"
+					className="flex flex-col w-full mx-auto overflow-hidden "
 					ref={setTarget}
 				>
 					<div
-						className={`py-3 mb-10 flex ${
-							isMobile ? "flex-col" : "flex-row"
+						className={`flex overflow-hidden rounded ${
+							isMobile ? "flex-col" : "flex-row gap-x-5"
 						}`}
 					>
+						<div className="flex flex-col flex-1 overflow-y-scroll rounded-lg scrollbar-none">
+							<Outlet />
+						</div>
+
 						{!isMobile && (
-							<div className="sm:flex flex-col w-1/5 mr-2 border rounded-lg h-fit">
+							<div className="sm:flex flex-col w-[30%] h-full bg-white border rounded">
 								<VerticalNav
 									selected={get_route_endpoint(
 										location.pathname
@@ -168,9 +173,6 @@ export default function BusinessReport() {
 								/>
 							</div>
 						)}
-						<div className="flex flex-col flex-1">
-							<Outlet />
-						</div>
 					</div>
 				</div>
 			</div>
