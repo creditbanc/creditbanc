@@ -68,9 +68,9 @@ export default function Cashflow() {
 			<div className="flex flex-col w-full border-b bg-white">
 				<SimpleNavSignedIn user_id={entity_id} />
 			</div>
-			<div>
+			{/* <div>
 				<SubNav />
-			</div>
+			</div> */}
 
 			<Outlet />
 		</div>

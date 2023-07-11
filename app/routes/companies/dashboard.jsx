@@ -19,7 +19,59 @@ import {
 	UserCircleIcon,
 } from "@heroicons/react/24/outline";
 import { Link } from "@remix-run/react";
+import { pipe, prop, uniqBy } from "ramda";
+import { get, all } from "shades";
+
+import { get_user_id } from "~/utils/auth.server";
+import { get_collection } from "~/utils/firebase";
 import { classNames } from "~/utils/helpers";
+
+export const loader = async ({ request }) => {
+	let entity_id = await get_user_id(request);
+	console.log("loader");
+	console.log(entity_id);
+
+	let owner_queries = [
+		{
+			param: "entity_id",
+			predicate: "==",
+			value: entity_id,
+		},
+	];
+
+	let owner_companies = await get_collection({
+		path: ["role_configs"],
+		queries: owner_queries,
+	});
+
+	owner_companies = pipe(
+		uniqBy(prop("group_id")),
+		get(all, "group_id")
+	)(owner_companies);
+
+	let shared_queries = [
+		{
+			param: "entity_id",
+			predicate: "==",
+			value: entity_id,
+		},
+	];
+
+	let shared_companies = await get_collection({
+		path: ["roles"],
+		queries: owner_queries,
+	});
+
+	shared_companies = pipe(
+		uniqBy(prop("group_id")),
+		get(all, "group_id")
+	)(shared_companies);
+
+	console.log("shared_companies");
+	console.log(shared_companies);
+
+	return { owner_companies, shared_companies };
+};
 
 const Members = () => {
 	return (
@@ -144,8 +196,8 @@ const QuickLinks = () => {
 export default function Companies() {
 	return (
 		<div className="flex flex-row w-full h-full p-5 overflow-hiddens space-x-3 overflow-hidden">
-			<div className="flex flex-col w-[70%] h-full bg-white rounded px-5 pt-5">
-				<div className="border-b border-gray-200 pb-3 flex flex-row justify-between">
+			<div className="flex flex-col w-[70%] h-full bg-white rounded px-5 overflow-y-scroll">
+				<div className="border-b border-gray-200 pb-3 flex flex-row justify-between sticky top-0 bg-white pt-5 ">
 					<div>
 						<h3 className="mt-2 text-base font-semibold leading-6 text-gray-900">
 							Companies
@@ -154,7 +206,41 @@ export default function Companies() {
 					<div></div>
 				</div>
 
-				<div className="flex flex-col w-full py-5 overflow-y-scroll scrollbar-none">
+				<div className="flex flex-col w-full py-5  scrollbar-none">
+					<div className="flex flex-row w-full items-center flex-wrap gap-y-10 justify-between xl:justify-start xl:gap-x-5">
+						<Account />
+						<Account />
+						<Account />
+						<Account />
+						<Account />
+						<Account />
+						<Account />
+						<Account />
+						<Account />
+						<Account />
+						<Account />
+						<Account />
+						<Account />
+						<Account />
+						<Account />
+						<Account />
+						<Account />
+						<Account />
+						<Account />
+						<Account />
+					</div>
+				</div>
+
+				<div className="border-b border-gray-200 pb-3 flex flex-row justify-between sticky top-0 pt-5 bg-white ">
+					<div>
+						<h3 className="mt-2 text-base font-semibold leading-6 text-gray-900">
+							Shared Companies
+						</h3>
+					</div>
+					<div></div>
+				</div>
+
+				<div className="flex flex-col w-full py-5 scrollbar-none">
 					<div className="flex flex-row w-full items-center flex-wrap gap-y-10 justify-between xl:justify-start xl:gap-x-5">
 						<Account />
 						<Account />
