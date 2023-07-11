@@ -87,19 +87,35 @@ const Toggle = ({ index, permission_key }) => {
 
 	const set_enabled = async () => {
 		if (permission_key === "hidden" && !enabled == true) {
-			set_permissions(["permissions", index], {
+			return set_permissions(["permissions", index], {
 				...permissions[index],
 				hidden: true,
 				read: false,
 				edit: false,
 			});
-		} else {
-			set_permissions(["permissions", index], {
-				...permissions[index],
-				hidden: false,
-				[permission_key]: !enabled,
+		}
+
+		if (permission_key === "read" && !enabled == false) {
+			return set_permissions(["permissions", index], {
+				...permission,
+				read: false,
+				edit: false,
 			});
 		}
+
+		if (permission_key === "edit" && !enabled == true) {
+			return set_permissions(["permissions", index], {
+				...permission,
+				read: true,
+				edit: true,
+			});
+		}
+
+		return set_permissions(["permissions", index], {
+			...permission,
+			hidden: false,
+			[permission_key]: !enabled,
+		});
 	};
 
 	return (
