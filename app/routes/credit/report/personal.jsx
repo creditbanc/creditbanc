@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { Outlet, useLoaderData, useLocation } from "@remix-run/react";
 import { useLayoutStore } from "~/stores/useLayoutStore";
 import { useElmSize } from "~/hooks/useElmSize";
@@ -11,17 +11,20 @@ import {
 import { get_docs as get_group_docs } from "~/utils/group.server";
 import { head, pipe } from "ramda";
 import { filter } from "shades";
-import { PersonalCreditTabsVertical } from "~/components/PersonalCreditTabs";
+import {
+	PersonalCreditTabsVertical,
+	CreditTabsSelect,
+} from "~/components/PersonalCreditTabs";
 import CreditScoreHero from "~/components/CreditScoreHero";
 import { get_user_id } from "~/utils/auth.server";
 import { validate_action, is_resource_owner_p } from "~/utils/resource.server";
 import { redirect } from "@remix-run/node";
-import { CreditTabsSelect } from "~/components/PersonalCreditTabs";
 import { Array } from "~/data/array";
 import { prisma } from "~/utils/prisma.server";
 import UpgradeMembership from "~/components/UpgradeMembership";
 import UpdatePersonalReport from "~/components/UpdatePersonalReport";
 import { plans_index } from "~/data/plans_index";
+import { useReportPageLayoutStore } from "~/stores/useReportPageLayoutStore";
 
 const get_scores = (report) => {
 	let { plan_id } = report;
@@ -118,6 +121,8 @@ export default function CreditReport() {
 	let location = useLocation();
 	let content_width = useLayoutStore((state) => state.content_width);
 	let [isMobile, setIsMobile] = useState(true);
+	const pageRef = useRef(null);
+	let { set_coordinates } = useReportPageLayoutStore();
 
 	useEffect(() => {
 		if (content_width > 640) {
@@ -133,8 +138,14 @@ export default function CreditReport() {
 		}
 	}, [elmSize]);
 
+	const onPageScroll = () => {
+		console.log("scrolling");
+		const coordinates = pageRef.current?.getBoundingClientRect();
+		set_coordinates(["coordinates"], coordinates);
+	};
+
 	return (
-		<div className="flex flex-col flex-1 overflow-scroll">
+		<div className="flex flex-col flex-1 overflow-y-scroll p-5 overflow-hidden">
 			{plan_id == "essential" && (
 				<div className="flex flex-col w-full items-center">
 					<div className="flex flex-col w-full max-w-5xl">
@@ -151,38 +162,49 @@ export default function CreditReport() {
 				</div>
 			)}
 
-			<div className="flex flex-col w-full pt-5">
+			<div className="flex flex-col w-full bg-white border rounded overflow-hidden">
 				<div
-					className="flex flex-col w-full p-[10px] max-w-5xl mx-auto"
+					className="flex flex-col w-full max-w-5xl px-5 mx-auto overflow-hidden"
 					ref={setTarget}
 				>
-					<CreditScoreHero report={report} scores={scores} />
-
 					<div
-						className={`py-3 mb-10 flex ${
-							isMobile ? "flex-col" : "flex-row"
-						}`}
+						className="flex flex-col w-full h-full overflow-y-scroll scrollbar-none"
+						onScroll={onPageScroll}
 					>
-						{isMobile && (
-							<div className="flex flex-col my-4">
-								<CreditTabsSelect
-									selected={get_route_endpoint(
-										location.pathname
-									)}
-								/>
+						<div className="mt-5">
+							<CreditScoreHero report={report} scores={scores} />
+						</div>
+						<div
+							className={`flex h-full sticky top-0 ${
+								isMobile ? "flex-col" : "flex-row"
+							}`}
+						>
+							{isMobile && (
+								<div className="flex flex-col my-4">
+									<CreditTabsSelect
+										selected={get_route_endpoint(
+											location.pathname
+										)}
+									/>
+								</div>
+							)}
+
+							{!isMobile && (
+								<div className="sm:flex flex-col w-1/5 mr-2 h-fit pt-5">
+									<PersonalCreditTabsVertical
+										selected={get_route_endpoint(
+											location.pathname
+										)}
+									/>
+								</div>
+							)}
+
+							<div
+								className="flex flex-col h-full flex-1"
+								ref={pageRef}
+							>
+								<Outlet />
 							</div>
-						)}
-						{!isMobile && (
-							<div className="sm:flex flex-col w-1/5 mr-2 border rounded-lg h-fit">
-								<PersonalCreditTabsVertical
-									selected={get_route_endpoint(
-										location.pathname
-									)}
-								/>
-							</div>
-						)}
-						<div className="flex flex-col flex-1">
-							<Outlet />
 						</div>
 					</div>
 				</div>

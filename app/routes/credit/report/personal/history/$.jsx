@@ -15,6 +15,8 @@ import { all, get } from "shades";
 import { plans } from "~/data/plans";
 import { get_user_id } from "~/utils/auth.server";
 import { prisma } from "~/utils/prisma.server";
+import { useReportPageLayoutStore } from "~/stores/useReportPageLayoutStore";
+import { useEffect } from "react";
 
 export const loader = async ({ request }) => {
 	let url = new URL(request.url);
@@ -52,7 +54,7 @@ export const loader = async ({ request }) => {
 
 const InfoCard = () => {
 	return (
-		<div className="overflow-hidden bg-white rounded-lg border">
+		<div className="flex flex-col bg-white rounded-lg border">
 			<div className="px-4 py-5 sm:px-6 flex flex-row items-center">
 				<div className="flex flex-col w-[25px] mr-3">
 					<BookOpenIcon />
@@ -140,6 +142,15 @@ const InfoCard = () => {
 
 export default function History() {
 	let { trade_lines, plan_id } = useLoaderData();
+	let { coordinates } = useReportPageLayoutStore();
+
+	useEffect(() => {
+		// console.log("coordinates");
+		// console.log(coordinates);
+	}, [coordinates]);
+
+	console.log("coordinates");
+	console.log(coordinates);
 
 	let experian = pipe(get(plan_id, "personal", "experian", "authorized"))(
 		plans
@@ -152,7 +163,12 @@ export default function History() {
 	);
 
 	return (
-		<div className="flex flex-col w-full">
+		<div
+			className={`flex flex-col w-full h-full scrollbar-none pt-5 ${
+				coordinates.top < 145 ? "overflow-scroll" : "overflow-hidden"
+			}`}
+			onScroll={() => console.log("scrolling")}
+		>
 			<InfoCard />
 			<Accounts
 				trade_lines={trade_lines}

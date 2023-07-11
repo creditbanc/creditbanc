@@ -1189,45 +1189,6 @@ const ExpensesChart = () => {
 	);
 };
 
-const stats = [
-	{
-		name: "Lender-recognized annual revenue",
-		value: "$2,198,805.00",
-		change: "+4.75%",
-		changeType: "positive",
-	},
-	{
-		name: "Average daily balance",
-		value: "$12,787.00",
-		change: "+54.02%",
-		changeType: "negative",
-	},
-	{
-		name: "Number of negative balance days",
-		value: "0",
-		change: "-1.39%",
-		changeType: "positive",
-	},
-	{
-		name: "Personal credit utilization percentage",
-		value: "3%",
-		change: "+10.18%",
-		changeType: "negative",
-	},
-	{
-		name: "Time in business",
-		value: "7 years",
-		change: "-1.39%",
-		changeType: "positive",
-	},
-	{
-		name: "Personal credit",
-		value: "780",
-		change: "+10.18%",
-		changeType: "negative",
-	},
-];
-
 const Stats = () => {
 	let {
 		annual_revenue,

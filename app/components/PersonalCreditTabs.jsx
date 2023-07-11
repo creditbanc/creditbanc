@@ -27,7 +27,7 @@ export function CreditTabsSelect({ selected = "Personal" }) {
 			{({ open }) => (
 				<>
 					<div className="relative mt-2">
-						<Listbox.Button className="relative w-full cursor-default rounded-md bg-white py-1.5 pl-3 pr-10 text-left text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-600 sm:text-sm sm:leading-6">
+						<Listbox.Button className="relative w-full cursor-default rounded-md bg-white py-1.5 pl-3 pr-10 text-left text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-600 sm:text-sm sm:leading-6">
 							<span className="block truncate">
 								{selected.name}
 							</span>
@@ -53,7 +53,7 @@ export function CreditTabsSelect({ selected = "Personal" }) {
 										className={({ active }) =>
 											classNames(
 												active
-													? "bg-indigo-600 text-white"
+													? "bg-blue-600 text-white"
 													: "text-gray-900",
 												"relative cursor-default select-none py-2 pl-3 pr-9"
 											)
@@ -78,7 +78,7 @@ export function CreditTabsSelect({ selected = "Personal" }) {
 														className={classNames(
 															active
 																? "text-white"
-																: "text-indigo-600",
+																: "text-blue-600",
 															"absolute inset-y-0 right-0 flex items-center pr-4"
 														)}
 													>
@@ -120,7 +120,7 @@ export const PersonalCreditTabs = ({ selected = "Personal" }) => {
 						})}
 						className={classNames(
 							selected == tab.name
-								? "border-indigo-500 text-indigo-600"
+								? "border-blue-500 text-blue-600"
 								: "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300",
 							"group inline-flex items-center py-4 px-2 mr-2 border-b-2 font-medium text-sm"
 						)}
@@ -128,7 +128,7 @@ export const PersonalCreditTabs = ({ selected = "Personal" }) => {
 						<tab.icon
 							className={classNames(
 								selected == tab.name
-									? "text-indigo-500"
+									? "text-blue-500"
 									: "text-gray-400 group-hover:text-gray-500",
 								"-ml-0.5 mr-2 h-5 w-5"
 							)}
@@ -147,7 +147,10 @@ export const PersonalCreditTabsVertical = ({ selected = "Personal" }) => {
 	let search_params = location.search;
 
 	return (
-		<nav className="flex flex-col justify-start" aria-label="Tabs">
+		<nav
+			className="flex flex-col justify-start bg-white rounded border"
+			aria-label="Tabs"
+		>
 			{tabs.map((tab) => (
 				<Link
 					key={tab.name}
@@ -157,17 +160,17 @@ export const PersonalCreditTabsVertical = ({ selected = "Personal" }) => {
 					})}
 					className={classNames(
 						selected == tab.id
-							? " text-indigo-600"
+							? " text-blue-600"
 							: " text-gray-500 hover:border-gray-300",
-						"group inline-flex items-center py-4 px-2 border-b font-medium text-sm last-of-type:border-none pl-4 hover:text-indigo-600"
+						"group inline-flex items-center py-4 px-2 border-b font-medium text-sm last-of-type:border-none pl-4 hover:text-blue-600"
 					)}
 				>
 					<tab.icon
 						className={classNames(
 							selected == tab.id
-								? "text-indigo-500"
-								: "text-gray-500 group-hover:text-indigo-600",
-							"-ml-0.5 mr-3 h-5 w-5 hover:text-indigo-6"
+								? "text-blue-500"
+								: "text-gray-500 group-hover:text-blue-600",
+							"-ml-0.5 mr-3 h-5 w-5 hover:text-blue-6"
 						)}
 						aria-hidden="true"
 					/>
