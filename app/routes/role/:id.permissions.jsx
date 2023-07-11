@@ -1,11 +1,17 @@
 import { useEffect, useState } from "react";
 import { Switch } from "@headlessui/react";
-import { classNames, mapIndexed } from "~/utils/helpers";
-import { useLoaderData } from "react-router";
+import {
+	classNames,
+	get_config_id,
+	mapIndexed,
+	trim,
+	use_client_search_params,
+} from "~/utils/helpers";
 import { pipe, map, isEmpty } from "ramda";
 import { create } from "zustand";
 import { mod } from "shades";
 import { get_collection, get_doc, set_doc, update_doc } from "~/utils/firebase";
+import { useLoaderData, useLocation } from "@remix-run/react";
 
 export const usePermissionsStore = create((set) => ({
 	permissions: [],
@@ -172,6 +178,8 @@ const RoleHeading = () => {
 export default function Permissions() {
 	let { config } = useLoaderData();
 	let { permissions, set_permissions } = usePermissionsStore();
+	let { pathname } = useLocation();
+	let config_id = get_config_id(pathname);
 
 	useEffect(() => {
 		if (!isEmpty(permissions)) {

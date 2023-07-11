@@ -156,7 +156,7 @@ const ShareDropdown = () => {
 							)}
 						>
 							<div className="flex flex-row justify-between items-center cursor-pointer border-b px-4 py-2">
-								<div>View Roles</div>
+								<div>Manage Roles</div>
 								<div className="flex flex-row space-x-5">
 									<div>
 										<EyeIcon className="h-4 w-4 text-gray-400" />
@@ -211,10 +211,7 @@ export default function Nav({ user_id }) {
 	let set_roles = useRolesStore((state) => state.set_roles);
 
 	useEffect(() => {
-		// let roles = get_collection({path: ['role_configs'], queries: [{where: ['user_id', '==', user_id]}]})
-
 		const get_roles = async () => {
-			console.log("get_roles");
 			let roles_response = await get_collection({
 				path: ["role_configs"],
 				queries: [
@@ -222,9 +219,6 @@ export default function Nav({ user_id }) {
 					{ param: "group_id", predicate: "==", value: "1" },
 				],
 			});
-
-			console.log("roles_response");
-			console.log(roles_response);
 
 			set_roles(["roles"], roles_response);
 		};

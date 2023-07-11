@@ -340,3 +340,10 @@ export const jsreduce = curry((fn, array) => {
 export const jsreduce_with_initial = curry((fn, initial, array) => {
 	return array.reduce(fn, initial);
 });
+
+export const get_config_id = (pathname) => {
+	let path = trim(pathname.split("/"));
+
+	let config_id = path[1];
+	return config_id;
+};

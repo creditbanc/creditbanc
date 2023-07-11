@@ -18,12 +18,19 @@ import { isEmpty, pipe } from "ramda";
 import { create } from "zustand";
 import { mod } from "shades";
 import { v4 as uuidv4 } from "uuid";
-import { Fragment } from "react";
+import { Fragment, useEffect } from "react";
 import { Menu, Transition } from "@headlessui/react";
+import { redirect } from "react-router-dom";
 
 export const useRoleStore = create((set) => ({
 	role: {},
 	set_role: (path, value) =>
+		set((state) => pipe(mod(...path)(() => value))(state)),
+}));
+
+export const useRolesStore = create((set) => ({
+	roles: [],
+	set_roles: (path, value) =>
 		set((state) => pipe(mod(...path)(() => value))(state)),
 }));
 
@@ -135,11 +142,22 @@ const EmptyRolesState = () => {
 };
 
 const RoleActions = ({ role }) => {
-	const onDeleteRole = async () => {
+	let set_roles = useRolesStore((state) => state.set_roles);
+	let roles = useRolesStore((state) => state.roles);
+
+	const onDeleteRole = async (e) => {
+		e.preventDefault();
 		console.log("onDeleteRole");
 		console.log(role);
 
 		await delete_doc(["role_configs", role.id]);
+
+		let new_roles = roles.filter((r) => r.id !== role.id);
+		if (new_roles.length === 0) {
+			window.location = "/roles/e/1/g/1";
+		} else {
+			set_roles(["roles"], new_roles);
+		}
 	};
 
 	return (
@@ -212,7 +230,13 @@ const RoleActions = ({ role }) => {
 };
 
 const RolesNav = () => {
-	let { roles } = useLoaderData();
+	let { roles: db_roles } = useLoaderData();
+	let roles = useRolesStore((state) => state.roles);
+	let set_roles = useRolesStore((state) => state.set_roles);
+
+	useEffect(() => {
+		set_roles(["roles"], db_roles);
+	}, [db_roles]);
 
 	if (isEmpty(roles)) {
 		return (
@@ -288,6 +312,8 @@ const NewRoleModal = () => {
 	let set_modal = useModalStore((state) => state.set_modal);
 	let set_role = useRoleStore((state) => state.set_role);
 	let role = useRoleStore((state) => state.role);
+	let roles = useRolesStore((state) => state.roles);
+	let set_roles = useRolesStore((state) => state.set_roles);
 
 	const onCloseModal = () => {
 		set_modal({ id: "new_role_modal", is_open: false });
@@ -308,8 +334,9 @@ const NewRoleModal = () => {
 		console.log(payload);
 
 		await set_doc(["role_configs", role_config_id], payload);
-
+		set_roles(["roles"], [...roles, payload]);
 		set_modal({ id: "new_role_modal", is_open: false });
+		window.location = `/role/${role_config_id}/permissions`;
 	};
 
 	return (

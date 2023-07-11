@@ -13,17 +13,25 @@ import {
 } from "@heroicons/react/24/outline";
 import { useModalStore } from "~/hooks/useModal";
 import { delete_doc, get_collection, set_doc } from "~/utils/firebase";
-import { isEmpty, pipe } from "ramda";
+import { isEmpty, pipe, set } from "ramda";
 import { create } from "zustand";
 import { mod } from "shades";
 import { v4 as uuidv4 } from "uuid";
-import { Fragment } from "react";
+import { Fragment, useEffect } from "react";
 import { Menu, Transition } from "@headlessui/react";
 import { ChevronRightIcon } from "@heroicons/react/20/solid";
+import Modal from "~/components/Modal";
+import { redirect } from "react-router-dom";
 
 export const useRoleStore = create((set) => ({
 	role: {},
 	set_role: (path, value) =>
+		set((state) => pipe(mod(...path)(() => value))(state)),
+}));
+
+export const useRolesStore = create((set) => ({
+	roles: [],
+	set_roles: (path, value) =>
 		set((state) => pipe(mod(...path)(() => value))(state)),
 }));
 
@@ -51,11 +59,18 @@ export const loader = async ({ request }) => {
 };
 
 const RoleActions = ({ role }) => {
-	const onDeleteRole = async () => {
-		console.log("onDeleteRole");
-		console.log(role);
+	let set_roles = useRolesStore((state) => state.set_roles);
+	let roles = useRolesStore((state) => state.roles);
+
+	const onDeleteRole = async (e) => {
+		e.preventDefault();
 
 		await delete_doc(["role_configs", role.id]);
+
+		set_roles(
+			["roles"],
+			roles.filter((r) => r.id !== role.id)
+		);
 	};
 
 	return (
@@ -146,9 +161,47 @@ const RoleActions = ({ role }) => {
 		</Menu>
 	);
 };
+const EmptyRolesState = () => {
+	let set_modal = useModalStore((state) => state.set_modal);
+
+	const onCreateNewRoleModal = () => {
+		set_modal({ id: "new_role_modal", is_open: true });
+	};
+
+	return (
+		<div className="text-center border-dashed p-3 py-5 border-2 rounded">
+			<UserPlusIcon className="h-8 w-8 text-gray-400 mx-auto" />
+			<h3 className="mt-2 text-sm font-semibold text-gray-900">
+				No roles yet
+			</h3>
+			<p className="mt-1 text-sm text-gray-500">
+				Get started by creating a new role.
+			</p>
+			<div className="mt-6">
+				<button
+					type="button"
+					className="inline-flex items-center rounded-md bg-blue-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
+					onClick={onCreateNewRoleModal}
+				>
+					<PlusIcon
+						className="-ml-0.5 mr-1.5 h-5 w-5"
+						aria-hidden="true"
+					/>
+					New Role
+				</button>
+			</div>
+		</div>
+	);
+};
 
 const RolesList = () => {
-	let { roles } = useLoaderData();
+	let { roles: db_roles } = useLoaderData();
+	let roles = useRolesStore((state) => state.roles);
+	let set_roles = useRolesStore((state) => state.set_roles);
+
+	useEffect(() => {
+		set_roles(["roles"], db_roles);
+	}, [db_roles]);
 
 	if (isEmpty(roles)) {
 		return (
@@ -164,8 +217,8 @@ const RolesList = () => {
 				{pipe(
 					mapIndexed((role, role_idx) => (
 						<li key={role_idx} className="border rounded-lg">
-							<Link
-								to={`/role/1/permissions`}
+							<div
+								// to={`/role/1/permissions`}
 								className={classNames(
 									role.current
 										? "bg-gray-50 text-blue-600"
@@ -173,36 +226,40 @@ const RolesList = () => {
 									"flex flex-col px-2 py-1.5 text-sm cursor-pointer space-y-2"
 								)}
 							>
-								<div className="flex flex-row items-center justify-between">
-									<div className="flex flex-row items-center space-x-2 text-gray-700 font-semibold">
-										<div className="pl-1">{role.name}</div>
-									</div>
-								</div>
-
-								<div className="flex flex-row justify-between px-1">
-									<div className="flex flex-row items-center -space-x-1 overflow-hidden">
-										<img
-											className="inline-block h-5 w-5 rounded-full ring-2 ring-white"
-											src="https://images.unsplash.com/photo-1491528323818-fdd1faba62cc?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
-											alt=""
-										/>
-										<img
-											className="inline-block h-5 w-5 rounded-full ring-2 ring-white"
-											src="https://images.unsplash.com/photo-1550525811-e5869dd03032?ixlib=rb-1.2.1&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
-											alt=""
-										/>
-										<img
-											className="inline-block h-5 w-5 rounded-full ring-2 ring-white"
-											src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2.25&w=256&h=256&q=80"
-											alt=""
-										/>
-										<img
-											className="inline-block h-5 w-5 rounded-full ring-2 ring-white"
-											src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
-											alt=""
-										/>
-									</div>
-									<div className="flex flex-row items-center space-x-3">
+								<div className="flex flex-row items-center justify-between py-1">
+									<Link
+										to={`/role/${role.id}/permissions`}
+										className="flex flex-col space-y-3 flex-1"
+									>
+										<div className="flex flex-row items-center space-x-2 text-gray-700 font-semibold">
+											<div className="pl-1">
+												{role.name}
+											</div>
+										</div>
+										<div className="flex flex-row items-center -space-x-1 overflow-hidden">
+											<img
+												className="inline-block h-5 w-5 rounded-full ring-2 ring-white"
+												src="https://images.unsplash.com/photo-1491528323818-fdd1faba62cc?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
+												alt=""
+											/>
+											<img
+												className="inline-block h-5 w-5 rounded-full ring-2 ring-white"
+												src="https://images.unsplash.com/photo-1550525811-e5869dd03032?ixlib=rb-1.2.1&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
+												alt=""
+											/>
+											<img
+												className="inline-block h-5 w-5 rounded-full ring-2 ring-white"
+												src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2.25&w=256&h=256&q=80"
+												alt=""
+											/>
+											<img
+												className="inline-block h-5 w-5 rounded-full ring-2 ring-white"
+												src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
+												alt=""
+											/>
+										</div>
+									</Link>
+									<div className="flex flex-row h-full items-center space-x-3">
 										<div>
 											<LinkIcon className="h-4 w-4 text-blue-600 cursor-pointer" />
 										</div>
@@ -211,12 +268,81 @@ const RolesList = () => {
 										</div>
 									</div>
 								</div>
-							</Link>
+							</div>
 						</li>
 					))
 				)(roles)}
 			</ul>
 		</nav>
+	);
+};
+
+const NewRoleModal = () => {
+	let { entity_id } = useLoaderData();
+	let set_modal = useModalStore((state) => state.set_modal);
+	let set_role = useRoleStore((state) => state.set_role);
+	let role = useRoleStore((state) => state.role);
+	let set_roles = useRolesStore((state) => state.set_roles);
+	let roles = useRolesStore((state) => state.roles);
+
+	const onCloseModal = () => {
+		set_modal({ id: "new_role_modal", is_open: false });
+	};
+
+	const onCreateNewRoleClick = async () => {
+		console.log("onCreateNewRoleClick");
+
+		let role_config_id = uuidv4();
+
+		let payload = {
+			id: role_config_id,
+			entity_id,
+			group_id: "1",
+			...role,
+		};
+
+		console.log("payload");
+		console.log(payload);
+
+		await set_doc(["role_configs", role_config_id], payload);
+		set_roles(["roles"], [...roles, payload]);
+		set_modal({ id: "new_role_modal", is_open: false });
+		window.location = `/role/${role_config_id}/permissions`;
+	};
+
+	return (
+		<Modal id="new_role_modal" classes="min-w-[500px]">
+			<div className="flex flex-row w-full py-5 px-5 border-b text-2xl items-center">
+				<div className="flex flex-row w-full items-center space-x-3 text-gray-400">
+					<div className="">
+						<UserPlusIcon className="h-6 w-6 " />
+					</div>
+					<div>New Role</div>
+				</div>
+				<div onClick={onCloseModal}>
+					<XMarkIcon className="h-6 w-6 text-gray-400 cursor-pointer" />
+				</div>
+			</div>
+			<div className="flex flex-col p-5">
+				<input
+					type="text"
+					className="block w-full rounded-md border-0 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 outline-none px-3 py-3"
+					placeholder="Role name"
+					onChange={(e) => set_role(["role", "name"], e.target.value)}
+				/>
+			</div>
+
+			<div className="flex flex-col w-full border-b"></div>
+
+			<div className="flex flex-row w-full justify-end p-5">
+				<div
+					className="flex flex-col bg-blue-600 object-fit px-3 py-2 text-white rounded text-sm cursor-pointer"
+					onClick={onCreateNewRoleClick}
+				>
+					Create new role
+				</div>
+			</div>
+		</Modal>
 	);
 };
 
@@ -250,7 +376,8 @@ const SectionHeading = () => {
 
 export default function Roles() {
 	return (
-		<div className="flex flex-col w-full items-center ">
+		<div className="flex flex-col w-full items-center">
+			<NewRoleModal />
 			<div className="flex flex-col w-[800px] bg-white rounded">
 				<SectionHeading />
 				<div className="flex flex-col p-5 w-full">
