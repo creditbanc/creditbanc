@@ -6,6 +6,9 @@ import { filter } from "shades";
 import { Outlet, useLoaderData, useLocation, Link } from "@remix-run/react";
 import SimpleNavSignedIn from "~/components/SimpleNavSignedIn";
 import { EllipsisHorizontalIcon } from "@heroicons/react/24/outline";
+import { Fragment } from "react";
+import { Menu, Transition } from "@headlessui/react";
+import { ChevronDownIcon } from "@heroicons/react/20/solid";
 
 export const loader = async ({ request }) => {
 	let url = new URL(request.url);
@@ -70,8 +73,73 @@ export const loader = async ({ request }) => {
 
 const tabs = [
 	{ name: "Personal", href: "/financial/cashflow", current: true },
-	{ name: "Business", href: "/financial/accounts", current: false },
+	// { name: "Business", href: "/financial/accounts", current: false },
 ];
+
+const BusinessDropdown = () => {
+	return (
+		<Menu as="div" className="relative inline-block text-left">
+			<div>
+				<Menu.Button
+					className={classNames(
+						"flex flex-row items-center border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 border-b-2 py-2 px-1 text-center text-sm"
+					)}
+				>
+					Business
+					<ChevronDownIcon
+						className="-mr-1 h-5 w-5 text-gray-400"
+						aria-hidden="true"
+					/>
+				</Menu.Button>
+			</div>
+
+			<Transition
+				as={Fragment}
+				enter="transition ease-out duration-100"
+				enterFrom="transform opacity-0 scale-95"
+				enterTo="transform opacity-100 scale-100"
+				leave="transition ease-in duration-75"
+				leaveFrom="transform opacity-100 scale-100"
+				leaveTo="transform opacity-0 scale-95"
+			>
+				<Menu.Items className="absolute left-0 z-10 mt-2 w-56 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+					<div className="py-1">
+						<Menu.Item>
+							{({ active }) => (
+								<a
+									href="#"
+									className={classNames(
+										active
+											? "bg-gray-100 text-gray-900"
+											: "text-gray-700",
+										"block px-4 py-2 text-sm"
+									)}
+								>
+									Dun & Bradstreet
+								</a>
+							)}
+						</Menu.Item>
+						<Menu.Item>
+							{({ active }) => (
+								<a
+									href="#"
+									className={classNames(
+										active
+											? "bg-gray-100 text-gray-900"
+											: "text-gray-700",
+										"block px-4 py-2 text-sm"
+									)}
+								>
+									Experian
+								</a>
+							)}
+						</Menu.Item>
+					</div>
+				</Menu.Items>
+			</Transition>
+		</Menu>
+	);
+};
 
 const SubNav = () => {
 	return (
@@ -106,6 +174,7 @@ const SubNav = () => {
 								{tab.name}
 							</a>
 						))}
+						<BusinessDropdown />
 					</nav>
 					<div>
 						<EllipsisHorizontalIcon className="h-6 w-6 text-gray-400 cursor-pointer" />
