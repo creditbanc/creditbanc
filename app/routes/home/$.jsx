@@ -2,13 +2,16 @@ import {
 	ChevronRightIcon,
 	PlayIcon,
 	EllipsisVerticalIcon,
+	DocumentIcon,
+	ListBulletIcon,
+	PlayCircleIcon,
 } from "@heroicons/react/20/solid";
 import { Fragment } from "react";
 import { Menu, Transition } from "@headlessui/react";
-import { Link } from "@remix-run/react";
+import { Link, useLocation } from "@remix-run/react";
 import { get_user_id } from "~/utils/auth.server";
 import { get_docs as get_group_docs } from "~/utils/group.server";
-import { get_group_id } from "~/utils/helpers";
+import { get_entity_id, get_group_id } from "~/utils/helpers";
 import { head, isEmpty, pipe } from "ramda";
 import { filter, get } from "shades";
 import { prisma } from "~/utils/prisma.server";
@@ -19,6 +22,10 @@ import { plans } from "~/data/plans";
 import { redirect } from "@remix-run/node";
 import UpgradeBanner from "~/components/UpgradeMembership";
 var cookie = require("cookie");
+import CashflowChart from "~/components/CashflowChart";
+import axios from "axios";
+import { useCashflowStore } from "~/stores/useCashflowStore";
+import { useEffect } from "react";
 
 export const loader = async ({ request }) => {
 	let url = new URL(request.url);
@@ -191,18 +198,26 @@ export const loader = async ({ request }) => {
 	// console.log("plan_id");
 	// console.log(plan_id);
 
+	let cashflow_api_response = await axios({
+		method: "get",
+		url: `http://localhost:3000/financial/api/cashflow/resource/e/${entity_id}/g/${group_id}`,
+	});
+
+	let { data: financials } = cashflow_api_response;
+
 	return {
 		...personal_credit_report_payload,
 		...business_credit_report_payload,
 		entity_id,
 		plan_id,
+		financials,
 	};
 };
 
-function Heading() {
+function UniversityHeading() {
 	return (
 		<div className="border-b border-gray-200 pb-3">
-			<div className="sm:flex sm:items-baseline sm:justify-between">
+			<div className="sm:flex sm:items-baseline sm:justify-between px-5 pt-5">
 				<div className="sm:w-0 sm:flex-1">
 					<h1
 						id="message-heading"
@@ -264,7 +279,7 @@ const BusinessCredit = () => {
 	)(plans);
 
 	return (
-		<div className="flex flex-col border mx-2 shadow-sm rounded px-4">
+		<div className="flex flex-col border shadow-sm rounded px-4 bg-white min-h-[260px]">
 			<div className="border-b border-gray-200">
 				<h3 className="text-base font-semibold leading-6 text-gray-900 py-3">
 					Business Credit
@@ -368,7 +383,7 @@ const PersonalCredit = () => {
 	)(plans);
 
 	return (
-		<div className="flex flex-col border mx-2 shadow-sm rounded px-4">
+		<div className="flex flex-col rounded px-4 border shadow-sm bg-white min-h-[260px]">
 			<div className="border-b border-gray-200">
 				<h3 className="text-base font-semibold leading-6 text-gray-900 py-3">
 					Personal Credit
@@ -488,7 +503,7 @@ const PersonalCredit = () => {
 
 const HeadingTwo = () => {
 	return (
-		<div className="flex flex-col max-w-7xl w-full px-3 mt-3 mb-4">
+		<div className="flex flex-col max-w-7xl w-full px-3 py-2">
 			<div className="flex  flex-row items-center justify-between gap-x-8 lg:mx-0 w-full">
 				<div className="flex items-center gap-x-6">
 					<img
@@ -507,32 +522,231 @@ const HeadingTwo = () => {
 	);
 };
 
-export default function Home() {
-	const { plan_id } = useLoaderData();
+const posts = [
+	{
+		id: 1,
+		title: "Boost your conversion rate",
+		href: "#",
+		description:
+			"Illo sint voluptas. Error voluptates culpa eligendi. Hic vel totam vitae illo. Non aliquid explicabo necessitatibus unde. Sed exercitationem placeat consectetur nulla deserunt vel. Iusto corrupti dicta.",
+		imageUrl:
+			"https://images.unsplash.com/photo-1496128858413-b36217c2ce36?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=3603&q=80",
+		date: "Mar 16, 2020",
+		datetime: "2020-03-16",
+		category: { title: "Marketing", href: "#" },
+		author: {
+			name: "Michael Foster",
+			role: "Co-Founder / CTO",
+			href: "#",
+			imageUrl:
+				"https://images.unsplash.com/photo-1519244703995-f4e0f30006d5?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
+		},
+	},
+	{
+		id: 1,
+		title: "Boost your conversion rate",
+		href: "#",
+		description:
+			"Illo sint voluptas. Error voluptates culpa eligendi. Hic vel totam vitae illo. Non aliquid explicabo necessitatibus unde. Sed exercitationem placeat consectetur nulla deserunt vel. Iusto corrupti dicta.",
+		imageUrl:
+			"https://images.unsplash.com/photo-1547586696-ea22b4d4235d?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=3270&q=80",
+		date: "Mar 16, 2020",
+		datetime: "2020-03-16",
+		category: { title: "Marketing", href: "#" },
+		author: {
+			name: "Michael Foster",
+			role: "Co-Founder / CTO",
+			href: "#",
+			imageUrl:
+				"https://images.unsplash.com/photo-1519244703995-f4e0f30006d5?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
+		},
+	},
+	{
+		id: 1,
+		title: "Boost your conversion rate",
+		href: "#",
+		description:
+			"Illo sint voluptas. Error voluptates culpa eligendi. Hic vel totam vitae illo. Non aliquid explicabo necessitatibus unde. Sed exercitationem placeat consectetur nulla deserunt vel. Iusto corrupti dicta.",
+		imageUrl:
+			"https://images.unsplash.com/photo-1492724441997-5dc865305da7?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=3270&q=80",
+		date: "Mar 16, 2020",
+		datetime: "2020-03-16",
+		category: { title: "Marketing", href: "#" },
+		author: {
+			name: "Michael Foster",
+			role: "Co-Founder / CTO",
+			href: "#",
+			imageUrl:
+				"https://images.unsplash.com/photo-1519244703995-f4e0f30006d5?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
+		},
+	},
+];
+
+const Accounts = () => {
+	let { pathname } = useLocation();
+	let entity_id = get_entity_id(pathname);
+	let group_id = get_group_id(pathname);
 
 	return (
-		<div className="w-full h-full flex flex-col items-center mb-3 p-5">
-			<HeadingTwo />
-			<div className="flex flex-col h-full max-w-7xl">
-				<div className="mb-5">
-					{plan_id == "essential" && <UpgradeBanner />}
-				</div>
-
-				<div className="flex flex-col lg:flex-row space-y-3 lg:space-y-0">
-					<div className="flex flex-col w-full">
-						<BusinessCredit />
+		<div className="mx-auto  grid max-w-2xl grid-cols-1 gap-x-8 gap-y-20 lg:mx-0 lg:max-w-none lg:grid-cols-3">
+			{posts.map((post) => (
+				<article
+					key={post.id}
+					className="flex flex-col items-start justify-between"
+				>
+					<div className="relative w-full">
+						<img
+							src={post.imageUrl}
+							className="aspect-[16/9] w-full rounded-2xl bg-gray-100 object-cover sm:aspect-[2/1] lg:aspect-[3/2]"
+						/>
+						<div className="absolute inset-0 rounded-2xl ring-1 ring-inset ring-gray-900/10" />
 					</div>
-					<div className="flex flex-col w-full">
-						<PersonalCredit />
+
+					<div className="flex flex-col w-full my-3">
+						<Link
+							to={`/university/course/curriculum/1/resource/e/${entity_id}/g/${group_id}`}
+							className="flex flex-row w-full py-2 border border-gray-600 text-gray-600 rounded-lg justify-center items-center cursor-pointer gap-x-3"
+						>
+							<div>
+								<ListBulletIcon className="h-5 w-5 text-white" />
+							</div>
+							<div className="flex flex-col">Course Details</div>
+						</Link>
+					</div>
+					<div className="max-w-xl">
+						<div className="mt-2 flex items-center gap-x-4 text-xs">
+							<time
+								dateTime={post.datetime}
+								className="text-gray-500"
+							>
+								{post.date}
+							</time>
+							<a
+								href={post.category.href}
+								className="relative z-5 rounded-full bg-gray-50 px-3 py-1.5 font-medium text-gray-600 hover:bg-gray-100"
+							>
+								{post.category.title}
+							</a>
+						</div>
+						<div className="group relative">
+							<h3 className="mt-3 text-lg font-semibold leading-6 text-gray-900 group-hover:text-gray-600">
+								<a href={post.href}>
+									<span className="absolute inset-0" />
+									{post.title}
+								</a>
+							</h3>
+							<p className="mt-5 line-clamp-3 text-sm leading-6 text-gray-600">
+								{post.description}
+							</p>
+						</div>
+
+						<div className="my-2 flex flex-col w-full">
+							<div className="flex flex-row w-full justify-between my-2 text-sm text-gray-400">
+								<div>45%</div>
+								<div>4/20 lessons</div>
+							</div>
+							<div className="w-full bg-gray-200 rounded-full h-2.5 dark:bg-gray-700">
+								<div className="bg-blue-600 h-2.5 rounded-full w-[45%]"></div>
+							</div>
+						</div>
+
+						<div className="relative mt-6 flex items-center gap-x-4">
+							<img
+								src={post.author.imageUrl}
+								className="h-10 w-10 rounded-full bg-gray-100"
+							/>
+							<div className="text-sm leading-6">
+								<p className="font-semibold text-gray-900">
+									<a href={post.author.href}>
+										<span className="absolute inset-0" />
+										{post.author.name}
+									</a>
+								</p>
+								<p className="text-gray-600">
+									{post.author.role}
+								</p>
+							</div>
+						</div>
+					</div>
+				</article>
+			))}
+		</div>
+	);
+};
+
+export default function Home() {
+	const { plan_id, financials } = useLoaderData();
+	let set_financials = useCashflowStore((state) => state.set_state);
+
+	useEffect(() => {
+		set_financials(["financials"], financials);
+	}, []);
+
+	return (
+		<div className="w-full h-full flex flex-col overflow-hidden">
+			<div className="flex flex-row h-full w-full p-5 space-x-5">
+				<div className="flex flex-col h-full w-[70%] rounded overflow-y-scroll scrollbar-none ">
+					<div className="flex flex-col h-full max-w-7xl gap-y-5">
+						{plan_id == "essential" && (
+							<div className="mb-5">
+								<UpgradeBanner />
+							</div>
+						)}
+
+						<HeadingTwo />
+
+						<div className="flex flex-col lg:flex-row gap-x-5 gap-y-3 lg:space-y-0">
+							<div className="flex flex-col w-full">
+								<BusinessCredit />
+							</div>
+							<div className="flex flex-col w-full">
+								<PersonalCredit />
+							</div>
+						</div>
+
+						<div className="flex flex-col w-full max-h-[600px] bg-white rounded">
+							<CashflowChart />
+						</div>
+
+						<div className="flex flex-col w-full h-fit bg-white px-5 pt-5 border shadow-sm rounded">
+							<div className="border-b border-gray-200 pb-3 flex flex-col sticky top-0 bg-white z-10">
+								<div>
+									<h3 className="mt-2 text-base font-semibold leading-6 text-gray-900">
+										Courses
+									</h3>
+								</div>
+								{/* <div>
+									<HeaderFilters />
+								</div> */}
+							</div>
+
+							<div className="flex flex-col w-full py-5 scrollbar-none">
+								<Accounts />
+							</div>
+						</div>
+
+						{/* <div className="flex flex-col h-full bg-white border rounded">
+							<UniversityHeading />
+							<div className="my-1 px-5">
+								<VideoCard />
+								<VideoCard />
+								<VideoCard />
+							</div>
+						</div> */}
 					</div>
 				</div>
-
-				<div className="flex flex-col  h-full px-2 mt-8">
-					<Heading />
-					<div className="my-1">
-						<VideoCard />
-						<VideoCard />
-						<VideoCard />
+				<div className="flex flex-col w-[30%] rounded border">
+					<div className="flex flex-col w-full h-full rounded bg-white">
+						<div className="flex flex-row py-4 px-5 justify-between w-full items-center">
+							<div>Recent transactions</div>
+							<div className="text-blue-500 text-sm cursor-pointer">
+								See all
+							</div>
+						</div>
+						<div className="flex flex-col w-full border-t"></div>
+						<div className="flex flex-col p-5 overflow-scroll scrollbar-none">
+							{/* <ActivityFeed /> */}
+						</div>
 					</div>
 				</div>
 			</div>

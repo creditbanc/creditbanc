@@ -76,23 +76,12 @@ export default function Home() {
 	var { origin, user_id, reports } = useLoaderData();
 
 	return (
-		<div className="flex flex-col h-full w-full">
-			<div className="flex flex-col border-b">
-				{/* <SimpleNav user_id={user_id} /> */}
-				{/* <CreditNav
-					user_id={user_id}
-					origin={origin}
-					can_share={false}
-					reports={reports}
-				/> */}
+		<div className="flex flex-col h-full w-full bg-gray-50">
+			<div className="flex flex-col border-b w-full bg-white">
 				<SimpleNavSignedIn user_id={user_id} />
-			</div>
-			<div>
-				<SubNav />
 			</div>
 
 			<div className="flex flex-row h-full overflow-hidden">
-				{user_id && <LeftNav data={reports} can_manage_roles={false} />}
 				<div className="flex flex-col flex-1 overflow-scroll">
 					<Outlet />
 				</div>

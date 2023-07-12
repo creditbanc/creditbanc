@@ -7,10 +7,8 @@ import {
 	is_location,
 	get_entity_id,
 } from "~/utils/helpers";
-import {
-	EllipsisHorizontalCircleIcon,
-	EllipsisHorizontalIcon,
-} from "@heroicons/react/24/outline";
+import { EllipsisHorizontalIcon } from "@heroicons/react/24/outline";
+import { useEffect } from "react";
 
 export const loader = async ({ request }) => {
 	let entity_id = await get_user_id(request);
@@ -90,6 +88,7 @@ const SubNav = () => {
 
 export default function Cashflow() {
 	let { entity_id } = useLoaderData();
+
 	return (
 		<div className="flex flex-col w-full h-full bg-gray-50">
 			<div className="flex flex-col w-full border-b bg-white">
