@@ -25,50 +25,16 @@ import { get, all } from "shades";
 import { get_user_id } from "~/utils/auth.server";
 import { get_collection } from "~/utils/firebase";
 import { classNames } from "~/utils/helpers";
+import {
+	get_owner_companies_ids,
+	get_shared_companies_ids,
+} from "~/api/ui/companies";
 
 export const loader = async ({ request }) => {
 	let entity_id = await get_user_id(request);
-	console.log("loader");
-	console.log(entity_id);
 
-	let owner_queries = [
-		{
-			param: "entity_id",
-			predicate: "==",
-			value: entity_id,
-		},
-	];
-
-	let owner_companies = await get_collection({
-		path: ["role_configs"],
-		queries: owner_queries,
-	});
-
-	owner_companies = pipe(
-		uniqBy(prop("group_id")),
-		get(all, "group_id")
-	)(owner_companies);
-
-	let shared_queries = [
-		{
-			param: "entity_id",
-			predicate: "==",
-			value: entity_id,
-		},
-	];
-
-	let shared_companies = await get_collection({
-		path: ["roles"],
-		queries: owner_queries,
-	});
-
-	shared_companies = pipe(
-		uniqBy(prop("group_id")),
-		get(all, "group_id")
-	)(shared_companies);
-
-	// console.log("shared_companies");
-	// console.log(shared_companies);
+	let owner_companies = await get_owner_companies_ids(entity_id);
+	let shared_companies = await get_shared_companies_ids(entity_id);
 
 	return { owner_companies, shared_companies };
 };

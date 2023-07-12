@@ -17,6 +17,11 @@ import {
 import { get_collection } from "~/utils/firebase";
 import { mod } from "shades";
 import { create } from "zustand";
+import {
+	get_owner_companies_ids,
+	get_shared_companies_ids,
+} from "~/api/ui/companies";
+import { useCompaniesDropdownStore } from "~/stores/useCompaniesDropdownStore";
 
 export const useRolesStore = create((set) => ({
 	roles: [],
@@ -25,6 +30,8 @@ export const useRolesStore = create((set) => ({
 }));
 
 const Companies = () => {
+	let companies = useCompaniesDropdownStore((state) => state.companies);
+
 	return (
 		<Menu as="div" className="relative inline-block text-left z-50">
 			<div>
@@ -63,53 +70,25 @@ const Companies = () => {
 								</Link>
 							)}
 						</Menu.Item>
-						<Menu.Item>
-							{({ active }) => (
-								<a
-									href="#"
-									className={classNames(
-										active
-											? "bg-gray-100 text-gray-900"
-											: "text-gray-700",
-										"block px-4 py-2 text-sm"
+						{pipe(
+							map((company_id) => (
+								<Menu.Item key={company_id}>
+									{({ active }) => (
+										<Link
+											to={`/companies/dashboard`}
+											className={classNames(
+												active
+													? "bg-gray-100 text-gray-900"
+													: "text-gray-700",
+												"block px-4 py-2 text-sm"
+											)}
+										>
+											{company_id}
+										</Link>
 									)}
-								>
-									Support
-								</a>
-							)}
-						</Menu.Item>
-						<Menu.Item>
-							{({ active }) => (
-								<a
-									href="#"
-									className={classNames(
-										active
-											? "bg-gray-100 text-gray-900"
-											: "text-gray-700",
-										"block px-4 py-2 text-sm"
-									)}
-								>
-									License
-								</a>
-							)}
-						</Menu.Item>
-						<form method="POST" action="#">
-							<Menu.Item>
-								{({ active }) => (
-									<button
-										type="submit"
-										className={classNames(
-											active
-												? "bg-gray-100 text-gray-900"
-												: "text-gray-700",
-											"block w-full px-4 py-2 text-left text-sm"
-										)}
-									>
-										Sign out
-									</button>
-								)}
-							</Menu.Item>
-						</form>
+								</Menu.Item>
+							))
+						)(companies)}
 					</div>
 				</Menu.Items>
 			</Transition>
@@ -209,6 +188,7 @@ const ShareDropdown = () => {
 
 export default function Nav({ user_id }) {
 	let set_roles = useRolesStore((state) => state.set_roles);
+	let set_companies = useCompaniesDropdownStore((state) => state.set_state);
 
 	useEffect(() => {
 		const get_roles = async () => {
@@ -225,6 +205,22 @@ export default function Nav({ user_id }) {
 
 		get_roles();
 	}, []);
+
+	useEffect(() => {
+		const get_companies = async () => {
+			let owner_companies = await get_owner_companies_ids(user_id);
+			let shared_companies = await get_shared_companies_ids(user_id);
+
+			set_companies(
+				["companies"],
+				[...owner_companies, ...shared_companies]
+			);
+		};
+
+		if (user_id) {
+			get_companies();
+		}
+	}, [user_id]);
 
 	return (
 		<div className="flex flex-col w-full  h-[65px] justify-center px-5">

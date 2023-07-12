@@ -8,7 +8,7 @@ import { get_user_id } from "~/utils/auth.server";
 import { classNames } from "~/utils/helpers";
 
 export const loader = async ({ request }) => {
-	let entity_id = get_user_id(request);
+	let entity_id = await get_user_id(request);
 
 	return { entity_id };
 };
