@@ -67,7 +67,7 @@ const InfoCard = () => {
 
 				<FactorBar index={1} />
 
-				<div className="flex flex-col py-2 text-gray-700 text-sm">
+				<div className="flex flex-col py-2 text-gray-700 ">
 					<p>
 						Debt usage, also known as credit utilization, refers to
 						the percentage of your available credit that you're
@@ -78,7 +78,7 @@ const InfoCard = () => {
 					</p>
 				</div>
 
-				<div className="flex flex-col py-2 text-gray-700 text-sm">
+				<div className="flex flex-col py-2 text-gray-700 ">
 					<p>
 						For example, if you have a credit card with a $10,000
 						limit, aim to keep your balance below $1,000. Anything
@@ -89,7 +89,7 @@ const InfoCard = () => {
 					</p>
 				</div>
 
-				<div className="flex flex-col py-2 text-gray-700 text-sm">
+				<div className="flex flex-col py-2 text-gray-700 ">
 					<p>
 						When calculating debt usage, the Credit Fairies (or
 						whatever they are) analyze ALL your open accounts - even
@@ -98,7 +98,7 @@ const InfoCard = () => {
 					</p>
 				</div>
 
-				<div className="flex flex-col py-2 text-gray-700 text-sm">
+				<div className="flex flex-col py-2 text-gray-700 ">
 					<p>
 						Let’s say you have three credit cards. Each card has a
 						$10,000 limit and carries a balance of $5,000. Total
@@ -115,7 +115,7 @@ const InfoCard = () => {
 					</p>
 				</div>
 
-				<div className="flex flex-col py-2 text-gray-700 text-sm">
+				<div className="flex flex-col py-2 text-gray-700 ">
 					<p>
 						Pro tip: Keep your balances low and request regular
 						credit limit increases every 6-9 months.

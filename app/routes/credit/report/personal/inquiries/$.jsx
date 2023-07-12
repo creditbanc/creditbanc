@@ -24,7 +24,7 @@ const InfoCard = () => {
 
 				<FactorBar index={4} />
 
-				<div className="flex flex-col py-2 text-gray-700 text-sm">
+				<div className="flex flex-col py-2 text-gray-700 ">
 					<p>
 						Inquiries refer to the number of times lenders or
 						creditors have accessed your report to evaluate your
@@ -35,7 +35,7 @@ const InfoCard = () => {
 					</p>
 				</div>
 
-				<div className="flex flex-col py-2 text-gray-700 text-sm">
+				<div className="flex flex-col py-2 text-gray-700 ">
 					<p>
 						It’s important to note that not all inquiries are
 						created equal. Any time you apply for a new line of
@@ -49,7 +49,7 @@ const InfoCard = () => {
 					</p>
 				</div>
 
-				<div className="flex flex-col py-2 text-gray-700 text-sm">
+				<div className="flex flex-col py-2 text-gray-700 ">
 					<p>
 						Before you go: While inquiries remain on your credit
 						report for two years, they only directly impact your

@@ -72,14 +72,14 @@ const InfoCard = () => {
 
 				<FactorBar />
 
-				<div className="flex flex-col py-2 text-gray-700 text-sm">
+				<div className="flex flex-col py-2 text-gray-700 ">
 					<p>
 						It’s kind of a big deal, actually. We’re talking 35% of
 						your overall credit score.
 					</p>
 				</div>
 
-				<div className="flex flex-col py-2 text-gray-700 text-sm">
+				<div className="flex flex-col py-2 text-gray-700 ">
 					<p>
 						Payment history (your track record for paying bills and
 						debts on time) is one of the two most important factors
@@ -90,7 +90,7 @@ const InfoCard = () => {
 					</p>
 				</div>
 
-				<div className="flex flex-col py-2 text-gray-700 text-sm">
+				<div className="flex flex-col py-2 text-gray-700 ">
 					<p>
 						But if your report comes back with a history of late
 						payments, missed payments, or accounts sent to
@@ -101,7 +101,7 @@ const InfoCard = () => {
 					</p>
 				</div>
 
-				<div className="flex flex-col py-2 text-gray-700 text-sm">
+				<div className="flex flex-col py-2 text-gray-700 ">
 					<p>
 						(And not to add salt to the wound, but most negative
 						information on your payment history can stay on your
@@ -109,7 +109,7 @@ const InfoCard = () => {
 					</p>
 				</div>
 
-				<div className="flex flex-col py-2 text-gray-700 text-sm">
+				<div className="flex flex-col py-2 text-gray-700 ">
 					<p>
 						The good news is that the older the negative
 						information, the less it hurts your score. (Time heals
@@ -119,7 +119,7 @@ const InfoCard = () => {
 					</p>
 				</div>
 
-				<div className="flex flex-col py-2 text-gray-700 text-sm">
+				<div className="flex flex-col py-2 text-gray-700 ">
 					<p>
 						Regardless, it’s crucial to prioritize your payment
 						history and always strive to pay bills on time. Set up
@@ -128,7 +128,7 @@ const InfoCard = () => {
 					</p>
 				</div>
 
-				<div className="flex flex-col py-2 text-gray-700 text-sm">
+				<div className="flex flex-col py-2 text-gray-700">
 					<p>
 						Your Credit Banc report shows any late payments under
 						the Payment History box on the left of each credit

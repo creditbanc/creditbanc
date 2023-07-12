@@ -68,7 +68,7 @@ const InfoCard = () => {
 
 				<FactorBar index={2} />
 
-				<div className="flex flex-col py-2 text-gray-700 text-sm">
+				<div className="flex flex-col py-2 text-gray-700 ">
 					<p>
 						Your credit age refers to the length of time you have
 						had accounts open, such as credit cards, loans, or
@@ -78,7 +78,7 @@ const InfoCard = () => {
 					</p>
 				</div>
 
-				<div className="flex flex-col py-2 text-gray-700 text-sm">
+				<div className="flex flex-col py-2 text-gray-700 ">
 					<p>
 						In your case, your credit birthday is _____, and the
 						average age of your accounts is ________. And just like
@@ -87,7 +87,7 @@ const InfoCard = () => {
 					</p>
 				</div>
 
-				<div className="flex flex-col py-2 text-gray-700 text-sm">
+				<div className="flex flex-col py-2 text-gray-700 ">
 					<p>
 						This is why you should be careful about opening new
 						accounts and closing old accounts; both will affect your
@@ -98,7 +98,7 @@ const InfoCard = () => {
 					</p>
 				</div>
 
-				<div className="flex flex-col py-2 text-gray-700 text-sm">
+				<div className="flex flex-col py-2 text-gray-700 ">
 					<p>
 						Remember, when it comes to credit age, the older, the
 						better! A long track record of timely payments and

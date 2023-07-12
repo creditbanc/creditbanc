@@ -57,7 +57,7 @@ const InfoCard = () => {
 				</div>
 			</div>
 			<div className="border-t border-gray-200 px-6 py-2">
-				<div className="flex flex-col py-2 text-gray-700 text-sm">
+				<div className="flex flex-col py-2 text-gray-700 ">
 					<p>
 						Score factors, also called “Reason Codes,” are
 						statements on your credit report explaining why your
@@ -69,7 +69,7 @@ const InfoCard = () => {
 					</p>
 				</div>
 
-				<div className="flex flex-col py-2 text-gray-700 text-sm">
+				<div className="flex flex-col py-2 text-gray-700 ">
 					<p>
 						Even with excellent credit, you’ll still see 4-5 score
 						factors. This is because whenever your credit report
@@ -82,7 +82,7 @@ const InfoCard = () => {
 					</p>
 				</div>
 
-				<div className="flex flex-col py-2 text-gray-700 text-sm">
+				<div className="flex flex-col py-2 text-gray-700 ">
 					<p>
 						Don’t sleep on this! If you want to improve your credit
 						score, pay attention to your Score Factors! They explain

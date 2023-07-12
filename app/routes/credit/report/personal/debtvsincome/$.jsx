@@ -15,7 +15,7 @@ const InfoCard = () => {
 				</div>
 			</div>
 			<div className="border-t border-gray-200 px-6 py-2">
-				<div className="flex flex-col py-2 text-gray-700 text-sm">
+				<div className="flex flex-col py-2 text-gray-700 ">
 					<p>
 						In a word, yes. Your debt-to-income ratio is an
 						indicator of your overall financial well-being.

@@ -68,7 +68,7 @@ const InfoCard = () => {
 
 				<FactorBar index={3} />
 
-				<div className="flex flex-col py-2 text-gray-700 text-sm">
+				<div className="flex flex-col py-2 text-gray-700">
 					<p>
 						Just like you should diversify your investments, you
 						should diversify your debt; creditors like to see you’ve

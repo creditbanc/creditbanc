@@ -8,6 +8,8 @@ import {
 	ScaleIcon,
 	TrophyIcon,
 	Bars3Icon,
+	QuestionMarkCircleIcon,
+	ListBulletIcon,
 } from "@heroicons/react/24/outline";
 import { to_resource_pathname } from "~/utils/helpers";
 
@@ -78,7 +80,7 @@ export const tabs = [
 			"/credit/report/personal/inquiries" +
 			to_resource_pathname(pathname) +
 			search,
-		icon: ClipboardIcon,
+		icon: QuestionMarkCircleIcon,
 		current: false,
 		id: "inquiries",
 	},
@@ -98,7 +100,7 @@ export const tabs = [
 			"/credit/report/personal/factors" +
 			to_resource_pathname(pathname) +
 			search,
-		icon: TrophyIcon,
+		icon: ListBulletIcon,
 		current: false,
 		id: "factors",
 	},
