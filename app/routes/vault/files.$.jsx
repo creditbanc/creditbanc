@@ -18,6 +18,7 @@ import {
 	get_file_id,
 	mapIndexed,
 	truncate,
+	get_group_id,
 } from "~/utils/helpers";
 import { Disclosure, Menu, Transition } from "@headlessui/react";
 import Modal from "~/components/Modal";
@@ -51,7 +52,9 @@ import moment from "moment";
 import { create } from "zustand";
 import { v4 as uuidv4 } from "uuid";
 import { filter, matching, mod, get, all } from "shades";
-import { on } from "form-data";
+import { is_authorized_f } from "~/api/auth";
+import { get_user_id } from "~/utils/auth.server";
+import { redirect } from "@remix-run/node";
 
 export const useFileStore = create((set) => ({
 	file: {},
@@ -105,6 +108,20 @@ const category_styles = [
 ];
 
 export const loader = async ({ request }) => {
+	let entity_id = await get_user_id(request);
+	let group_id = get_group_id(request.url);
+
+	let is_authorized = await is_authorized_f(
+		entity_id,
+		group_id,
+		"vault",
+		"read"
+	);
+
+	if (!is_authorized) {
+		return redirect("/home");
+	}
+
 	let queries = [
 		{
 			param: "resource_id",

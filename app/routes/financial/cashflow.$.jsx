@@ -4,6 +4,8 @@ import {
 	classNames,
 	currency,
 	currency_precise,
+	get_entity_id,
+	get_group_id,
 	inspect,
 	jsreduce,
 	use_client_search_params,
@@ -70,6 +72,7 @@ import {
 import moment from "moment";
 import { Link, useLoaderData, useLocation } from "@remix-run/react";
 import { get_balances } from "~/api/plaid.server";
+import { is_authorized_f } from "~/api/auth";
 
 ChartJS.register(
 	CategoryScale,
@@ -80,49 +83,13 @@ ChartJS.register(
 	Legend
 );
 
-const get_permissions = async (entity_id, group_id) => {
-	// check if entity is the owner/creator of the resource
-
-	// if entity is not the owner get the config_id of the role
-	let role_response = await get_collection({
-		path: ["roles"],
-		queries: [
-			{ param: "entity_id", predicate: "==", value: entity_id },
-			{ param: "group_id", predicate: "==", value: group_id },
-		],
-	});
-
-	console.log("role_response");
-	console.log(role_response);
-
-	let role = pipe(head, defaultTo({}))(role_response);
-
-	if (role.config_id) {
-		let config_response = await get_doc(["role_configs", role.config_id]);
-
-		return config_response;
-	}
-
-	// if there is no role config id then get the default config for the group
-};
-
-const validate_permission = (permission_id, action, permissions) => {
-	let has_permission = pipe(
-		filter({ id: permission_id }),
-		head,
-		get(action)
-	)(permissions);
-
-	return has_permission;
-};
-
 export const loader = async ({ request }) => {
-	console.log("cashflow_loader");
 	let { income: income_start_month = 12 } = use_search_params(request);
 
 	const config_id = "db88508c-b4ea-4dee-8d60-43c5a847c172";
-	let group_id = "1";
-	let entity_id = "1";
+
+	let group_id = get_group_id(request.url);
+	let entity_id = get_entity_id(request.url);
 	let role_id = group_id + entity_id;
 
 	let test_role = {
@@ -134,35 +101,20 @@ export const loader = async ({ request }) => {
 
 	// set_doc(["roles", role_id], test_role);
 
-	// let role = await get_permissions(entity_id, group_id);
+	let is_authorized = await is_authorized_f(
+		entity_id,
+		group_id,
+		"cashflow",
+		"read"
+	);
 
-	// console.log("role");
-	// console.log(role);
-
-	// let { permissions } = role;
-
-	// console.log("permissions");
-	// console.log(permissions);
-
-	// let has_permission = validate_permission("cashflow", "read", permissions);
-
-	// console.log("has_permission");
-	// console.log(has_permission);
-
-	// if (!has_permission) {
-	// 	return redirect("/");
-	// }
-
-	// if (has_permission) {
-	// 	return null;
-	// }
+	if (!is_authorized) {
+		return redirect("/");
+	}
 
 	let balances = await get_balances();
 
 	let account_balance = pipe(head, get("balances", "available"))(balances);
-
-	// console.log("account_balance");
-	// console.log(account_balance);
 
 	let transactions = await get_collection({ path: ["transactions"] });
 

@@ -1,34 +1,29 @@
 import { FolderIcon } from "@heroicons/react/20/solid";
 import {
 	EllipsisHorizontalIcon,
-	EllipsisVerticalIcon,
 	LinkIcon,
-	ListBulletIcon,
-	ArrowRightIcon,
 	DocumentDuplicateIcon,
-	CalendarIcon,
-	ChartPieIcon,
-	FolderIcon as FolderIconOutline,
-	HomeIcon,
-	UsersIcon,
 	BriefcaseIcon,
-	DocumentIcon,
 	CurrencyDollarIcon,
 	FolderOpenIcon,
-	UserIcon,
 	UserCircleIcon,
 } from "@heroicons/react/24/outline";
 import { Link, useLoaderData } from "@remix-run/react";
-import { map, pipe, prop, uniqBy } from "ramda";
-import { get, all } from "shades";
-
+import { isEmpty, map, pipe, prop, uniqBy } from "ramda";
+import { get, all, mod } from "shades";
 import { get_user_id } from "~/utils/auth.server";
-import { get_collection } from "~/utils/firebase";
 import { classNames } from "~/utils/helpers";
 import {
 	get_owner_companies_ids,
 	get_shared_companies_ids,
 } from "~/api/ui/companies";
+import { create } from "zustand";
+
+export const useCompanyStore = create((set) => ({
+	company: {},
+	set_state: (path, value) =>
+		set((state) => pipe(mod(...path)(() => value))(state)),
+}));
 
 export const loader = async ({ request }) => {
 	let entity_id = await get_user_id(request);
@@ -36,7 +31,7 @@ export const loader = async ({ request }) => {
 	let owner_companies = await get_owner_companies_ids(entity_id);
 	let shared_companies = await get_shared_companies_ids(entity_id);
 
-	return { owner_companies, shared_companies };
+	return { owner_companies, shared_companies, entity_id };
 };
 
 const Members = () => {
@@ -66,12 +61,158 @@ const Members = () => {
 	);
 };
 
-const Account = ({ account }) => {
+const navigation = [
+	{
+		name: "Business Credit Report",
+		href: () => "#",
+		icon: BriefcaseIcon,
+		current: true,
+	},
+	{
+		name: "Personal Credit Report",
+		href: () => "#",
+		icon: UserCircleIcon,
+		current: false,
+	},
+	{
+		name: "Cashflow",
+		href: ({ entity_id, group_id }) =>
+			`/financial/cashflow/resource/e/${entity_id}/g/${group_id}`,
+		icon: CurrencyDollarIcon,
+		current: false,
+	},
+	{
+		name: "Vault",
+		href: ({ entity_id, group_id }) =>
+			`/vault/files/resource/e/${entity_id}/g/${group_id}`,
+		icon: FolderOpenIcon,
+		current: false,
+	},
+];
+
+const QuickLinks = () => {
+	let { entity_id } = useLoaderData();
+	let { group_id } = useCompanyStore((state) => state.company);
+
+	return (
+		<nav className="flex flex-1 flex-col" aria-label="Sidebar">
+			<ul role="list" className="-mx-2 space-y-1">
+				{navigation.map((item) => (
+					<li key={item.name}>
+						<Link
+							to={item.href({ entity_id, group_id })}
+							className={classNames(
+								item.current
+									? "bg-gray-50 text-blue-600"
+									: "text-gray-700 hover:text-blue-600 hover:bg-gray-50",
+								"group flex gap-x-2 rounded-md px-2 py-1 text-xs leading-6 font-semibold cursor-pointer"
+							)}
+						>
+							<item.icon
+								className={classNames(
+									item.current
+										? "text-blue-600"
+										: "text-gray-400 group-hover:text-blue-600",
+									"h-5 w-5 shrink-0"
+								)}
+								aria-hidden="true"
+							/>
+							{item.name}
+						</Link>
+					</li>
+				))}
+			</ul>
+		</nav>
+	);
+};
+
+const CompayInfo = () => {
+	return (
+		<div className="flex flex-col bg-white border rounded overflow-hidden">
+			<div className="p-5">
+				<div className="flex flex-row space-x-3 items-center">
+					<div>
+						<span className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-gray-500">
+							<span className="text-lg font-medium leading-none text-white">
+								C
+							</span>
+						</span>
+					</div>
+					<div>Credit Banc</div>
+				</div>
+			</div>
+
+			<div className="flex flex-col w-full overflow-scroll scrollbar-none">
+				<div className="flex flex-col py-2">
+					<Link
+						to={`/financial/transactions`}
+						className="px-5 mb-4 flex flex-row items-center space-x-3 text-blue-500 cursor-pointer text-sm"
+					>
+						<div>
+							<DocumentDuplicateIcon className="h-4 w-4 text-blue-500" />
+						</div>
+						<div>Copy copmany share link</div>
+						<div>
+							<LinkIcon className="h-4 w-4 text-blue-500" />
+						</div>
+					</Link>
+				</div>
+				<div className="border-t"></div>
+				<div className="flex flex-col w-full p-5 space-y-3">
+					<div className="text-gray-400 text-sm">Credit Scores</div>
+					<div className="flex flex-row">
+						<div className="flex flex-col w-1/2 text-sm space-y-1">
+							<div className="text-gray-400">Personal</div>
+							<div className="text-lg">780</div>
+						</div>
+						<div className="flex flex-col w-1/2 text-sm space-y-1">
+							<div className="text-gray-400">Business</div>
+							<div className="text-lg">80</div>
+						</div>
+					</div>
+				</div>
+				<div className="border-t"></div>
+				<div className="flex flex-col p-5 text-sm space-y-3">
+					<div className=" text-gray-400">Quick Links</div>
+					<div className="flex flex-col ml-3">
+						<QuickLinks />
+					</div>
+				</div>
+				<div className="border-t"></div>
+				<div className="flex flex-col p-5 text-sm space-y-2">
+					<div className="text-gray-400">Members</div>
+					<div className="flex flex-col space-y-2">
+						<Members />
+					</div>
+				</div>
+				<div className="border-t"></div>
+				<div className="flex flex-col p-5 text-sm space-y-2">
+					<div className="text-gray-400">Notes</div>
+					<div className="flex flex-col w-full">
+						<textarea
+							rows={4}
+							className="border rounded p-3"
+						></textarea>
+					</div>
+				</div>
+			</div>
+		</div>
+	);
+};
+
+const Company = ({ group_id }) => {
+	let set_company = useCompanyStore((state) => state.set_state);
+
+	const get_company = async (group_id) => {};
+
+	const onSelectCompany = () => {
+		set_company(["company"], { group_id });
+	};
+
 	return (
 		<div
 			className="flex flex-col min-w-full md:min-w-[47%] lg:min-w-[31%] xl:min-w-[23%]  h-[200px] bg-gray-50 p-5 justify-between rounded-lg shadow-sm border cursor-pointer"
-			onClick={() => console.log("single cick")}
-			onDoubleClick={() => console.log("double click")}
+			onClick={onSelectCompany}
 		>
 			<div className="flex flex-row justify-between items-center">
 				<div>
@@ -99,68 +240,9 @@ const Account = ({ account }) => {
 	);
 };
 
-const navigation = [
-	{
-		name: "Business Credit Report",
-		href: "#",
-		icon: BriefcaseIcon,
-		current: true,
-	},
-	{
-		name: "Personal Credit Report",
-		href: "#",
-		icon: UserCircleIcon,
-		current: false,
-	},
-	{
-		name: "Cashflow",
-		href: "/financial/cashflow",
-		icon: CurrencyDollarIcon,
-		current: false,
-	},
-	{
-		name: "Vault",
-		href: "/vault/files",
-		icon: FolderOpenIcon,
-		current: false,
-	},
-];
-
-const QuickLinks = () => {
-	return (
-		<nav className="flex flex-1 flex-col" aria-label="Sidebar">
-			<ul role="list" className="-mx-2 space-y-1">
-				{navigation.map((item) => (
-					<li key={item.name}>
-						<a
-							href={item.href}
-							className={classNames(
-								item.current
-									? "bg-gray-50 text-blue-600"
-									: "text-gray-700 hover:text-blue-600 hover:bg-gray-50",
-								"group flex gap-x-2 rounded-md px-2 py-1 text-xs leading-6 font-semibold"
-							)}
-						>
-							<item.icon
-								className={classNames(
-									item.current
-										? "text-blue-600"
-										: "text-gray-400 group-hover:text-blue-600",
-									"h-5 w-5 shrink-0"
-								)}
-								aria-hidden="true"
-							/>
-							{item.name}
-						</a>
-					</li>
-				))}
-			</ul>
-		</nav>
-	);
-};
-
 export default function Companies() {
 	let { owner_companies, shared_companies } = useLoaderData();
+	let company = useCompanyStore((state) => state.company);
 
 	return (
 		<div className="flex flex-row w-full h-full p-5 overflow-hiddens space-x-3 overflow-hidden">
@@ -176,9 +258,11 @@ export default function Companies() {
 
 				<div className="flex flex-col w-full py-5  scrollbar-none">
 					<div className="flex flex-row w-full items-center flex-wrap gap-y-10 justify-between xl:justify-start xl:gap-x-5">
-						{pipe(map((group_id) => <Account key={group_id} />))(
-							owner_companies
-						)}
+						{pipe(
+							map((group_id) => (
+								<Company key={group_id} group_id={group_id} />
+							))
+						)(owner_companies)}
 					</div>
 				</div>
 
@@ -193,88 +277,19 @@ export default function Companies() {
 
 				<div className="flex flex-col w-full py-5 scrollbar-none">
 					<div className="flex flex-row w-full items-center flex-wrap gap-y-10 justify-between xl:justify-start xl:gap-x-5">
-						{pipe(map((group_id) => <Account key={group_id} />))(
-							shared_companies
-						)}
+						{pipe(
+							map((group_id) => (
+								<Company key={group_id} group_id={group_id} />
+							))
+						)(shared_companies)}
 					</div>
 				</div>
 			</div>
 			<div className="flex flex-col w-[30%]">
-				<div className="flex flex-col bg-white border rounded overflow-hidden">
-					<div className="p-5">
-						<div className="flex flex-row space-x-3 items-center">
-							<div>
-								<span className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-gray-500">
-									<span className="text-lg font-medium leading-none text-white">
-										C
-									</span>
-								</span>
-							</div>
-							<div>Credit Banc</div>
-						</div>
-					</div>
-
-					<div className="flex flex-col w-full overflow-scroll scrollbar-none">
-						<div className="flex flex-col py-2">
-							<Link
-								to={`/financial/transactions`}
-								className="px-5 mb-4 flex flex-row items-center space-x-3 text-blue-500 cursor-pointer text-sm"
-							>
-								<div>
-									<DocumentDuplicateIcon className="h-4 w-4 text-blue-500" />
-								</div>
-								<div>Copy copmany share link</div>
-								<div>
-									<LinkIcon className="h-4 w-4 text-blue-500" />
-								</div>
-							</Link>
-						</div>
-						<div className="border-t"></div>
-						<div className="flex flex-col w-full p-5 space-y-3">
-							<div className="text-gray-400 text-sm">
-								Credit Scores
-							</div>
-							<div className="flex flex-row">
-								<div className="flex flex-col w-1/2 text-sm space-y-1">
-									<div className="text-gray-400">
-										Personal
-									</div>
-									<div className="text-lg">780</div>
-								</div>
-								<div className="flex flex-col w-1/2 text-sm space-y-1">
-									<div className="text-gray-400">
-										Business
-									</div>
-									<div className="text-lg">80</div>
-								</div>
-							</div>
-						</div>
-						<div className="border-t"></div>
-						<div className="flex flex-col p-5 text-sm space-y-3">
-							<div className=" text-gray-400">Quick Links</div>
-							<div className="flex flex-col ml-3">
-								<QuickLinks />
-							</div>
-						</div>
-						<div className="border-t"></div>
-						<div className="flex flex-col p-5 text-sm space-y-2">
-							<div className="text-gray-400">Members</div>
-							<div className="flex flex-col space-y-2">
-								<Members />
-							</div>
-						</div>
-						<div className="border-t"></div>
-						<div className="flex flex-col p-5 text-sm space-y-2">
-							<div className="text-gray-400">Notes</div>
-							<div className="flex flex-col w-full">
-								<textarea
-									rows={4}
-									className="border rounded p-3"
-								></textarea>
-							</div>
-						</div>
-					</div>
-				</div>
+				{isEmpty(company) && (
+					<div className="flex flex-col w-full h-full rounded border bg-white"></div>
+				)}
+				{!isEmpty(company) && <CompayInfo />}
 			</div>
 		</div>
 	);
