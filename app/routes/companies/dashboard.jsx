@@ -18,12 +18,21 @@ import {
 	get_shared_companies_ids,
 } from "~/api/ui/companies";
 import { create } from "zustand";
+import { getSession, commitSession } from "~/sessions/company_session";
 
 export const useCompanyStore = create((set) => ({
 	company: {},
 	set_state: (path, value) =>
 		set((state) => pipe(mod(...path)(() => value))(state)),
 }));
+
+export const action = async ({ request }) => {
+	console.log("dashboard_action");
+	// let session = await getSession(request.headers.get("Cookie"));
+	// session.set("company_session", JSON.stringify({ ...payload }));
+
+	return null;
+};
 
 export const loader = async ({ request }) => {
 	let entity_id = await get_user_id(request);

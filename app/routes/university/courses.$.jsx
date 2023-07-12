@@ -4,8 +4,8 @@ import {
 	ListBulletIcon,
 	PlayCircleIcon,
 } from "@heroicons/react/24/outline";
-import { Link } from "@remix-run/react";
-import { classNames } from "~/utils/helpers";
+import { Link, useLocation } from "@remix-run/react";
+import { classNames, get_entity_id, get_group_id } from "~/utils/helpers";
 import { Disclosure } from "@headlessui/react";
 
 const UniversityHeader = () => {
@@ -174,6 +174,10 @@ const posts = [
 ];
 
 const Accounts = () => {
+	let { pathname } = useLocation();
+	let entity_id = get_entity_id(pathname);
+	let group_id = get_group_id(pathname);
+
 	return (
 		<div className="mx-auto  grid max-w-2xl grid-cols-1 gap-x-8 gap-y-20 lg:mx-0 lg:max-w-none lg:grid-cols-3">
 			{posts.map((post) => (
@@ -191,7 +195,7 @@ const Accounts = () => {
 
 					<div className="flex flex-col w-full my-3">
 						<Link
-							to={`/university/courses/1/curriculum`}
+							to={`/university/course/curriculum/1/resource/e/${entity_id}/g/${group_id}`}
 							className="flex flex-row w-full py-2 border border-gray-600 text-gray-600 rounded-lg justify-center items-center cursor-pointer gap-x-3"
 						>
 							<div>

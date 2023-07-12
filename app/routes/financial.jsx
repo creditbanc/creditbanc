@@ -8,7 +8,7 @@ import {
 } from "@heroicons/react/24/outline";
 
 export const loader = async ({ request }) => {
-	let entity_id = get_user_id(request);
+	let entity_id = await get_user_id(request);
 
 	return { entity_id };
 };

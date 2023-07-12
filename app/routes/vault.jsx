@@ -3,7 +3,7 @@ import SimpleNavSignedIn from "~/components/SimpleNavSignedIn";
 import { get_user_id } from "~/utils/auth.server";
 
 export const loader = async ({ request }) => {
-	let entity_id = get_user_id(request);
+	let entity_id = await get_user_id(request);
 
 	return { entity_id };
 };

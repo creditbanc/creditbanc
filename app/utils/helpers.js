@@ -203,6 +203,10 @@ export const get_report_endpoint = (uri) => {
 	}
 };
 
+export const is_location = (location, pathname) => {
+	return pathname.includes(location);
+};
+
 export const to_group_pathname = (uri) => {
 	let pathname = get_pathname(uri);
 	return pipe(

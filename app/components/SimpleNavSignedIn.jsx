@@ -1,8 +1,13 @@
 import { Fragment, useEffect } from "react";
-import { Link, useSearchParams } from "@remix-run/react";
+import { Link, useLocation, useSearchParams } from "@remix-run/react";
 const cb_logo = "/images/logos/cb_logo_3.png";
 import UserAccountNavMenu from "./UserAccountNavMenu";
-import { classNames, mapIndexed } from "~/utils/helpers";
+import {
+	classNames,
+	get_group_id,
+	is_location,
+	mapIndexed,
+} from "~/utils/helpers";
 import { Menu, Transition } from "@headlessui/react";
 import { ChevronDownIcon } from "@heroicons/react/20/solid";
 import { map, pipe, set } from "ramda";
@@ -97,10 +102,29 @@ const Companies = () => {
 };
 
 let navigation = [
-	{ name: "Credit", href: "/home", current: true },
-	{ name: "Cashflow", href: "/financial/cashflow", current: false },
-	{ name: "Vault", href: "/vault/files", current: false },
-	{ name: "University", href: "/university/courses", current: false },
+	{
+		name: "Credit",
+		href: ({ entity_id, group_id }) => "/home",
+		current: (pathname) => is_location("/credit", pathname),
+	},
+	{
+		name: "Cashflow",
+		href: ({ entity_id, group_id }) =>
+			`/financial/cashflow/resource/e/${entity_id}/g/${group_id}`,
+		current: (pathname) => is_location("/financial", pathname),
+	},
+	{
+		name: "Vault",
+		href: ({ entity_id, group_id }) =>
+			`/vault/files/resource/e/${entity_id}/g/${group_id}`,
+		current: (pathname) => is_location("/vault", pathname),
+	},
+	{
+		name: "University",
+		href: ({ entity_id, group_id }) =>
+			`/university/courses/resource/e/${entity_id}/g/${group_id}`,
+		current: (pathname) => is_location("/university", pathname),
+	},
 ];
 
 const ShareDropdown = () => {
@@ -187,6 +211,14 @@ const ShareDropdown = () => {
 };
 
 export default function Nav({ user_id }) {
+	console.log("user_id");
+	console.log(user_id);
+
+	let location = useLocation();
+
+	let { pathname } = location;
+	let is_companies_dashboard = is_location("/companies/dashboard", pathname);
+
 	let set_roles = useRolesStore((state) => state.set_roles);
 	let set_companies = useCompaniesDropdownStore((state) => state.set_state);
 
@@ -239,21 +271,28 @@ export default function Nav({ user_id }) {
 						<Companies />
 					</div>
 					<div className="flex flex-col justify-center">
-						<div className="flex flex-row space-x-3 text-xs lg:text-sm">
-							{pipe(
-								mapIndexed((item, key) => (
-									<Link
-										to={item.href}
-										key={key}
-										className={`px-4 py-2 rounded-full cursor-pointer hover:bg-gray-100 ${
-											item.current && "bg-gray-100"
-										}`}
-									>
-										{item.name}
-									</Link>
-								))
-							)(navigation)}
-						</div>
+						{!is_companies_dashboard && (
+							<div className="flex flex-row space-x-3 text-xs lg:text-sm">
+								{pipe(
+									mapIndexed((item, key) => (
+										<Link
+											to={item.href({
+												entity_id: user_id,
+												group_id:
+													get_group_id(pathname),
+											})}
+											key={key}
+											className={`px-4 py-2 rounded-full cursor-pointer hover:bg-gray-100 ${
+												item.current(pathname) &&
+												"bg-gray-100"
+											}`}
+										>
+											{item.name}
+										</Link>
+									))
+								)(navigation)}
+							</div>
+						)}
 					</div>
 					<div className="flex flex-row items-center space-x-3">
 						<div>

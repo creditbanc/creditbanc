@@ -4,8 +4,8 @@ import {
 	ListBulletIcon,
 	PlayCircleIcon,
 } from "@heroicons/react/24/outline";
-import { Link } from "@remix-run/react";
-import { classNames } from "~/utils/helpers";
+import { Link, useLocation } from "@remix-run/react";
+import { classNames, get_entity_id, get_group_id } from "~/utils/helpers";
 import { Disclosure } from "@headlessui/react";
 
 const UniversityHeader = () => {
@@ -28,6 +28,10 @@ const UniversityHeader = () => {
 };
 
 const CurriculumAccordion = () => {
+	let { pathname } = useLocation();
+	let entity_id = get_entity_id(pathname);
+	let group_id = get_group_id(pathname);
+
 	return (
 		<div className="flex flex-col w-full rounded-2xl bg-white p-2 space-y-3 ">
 			<Disclosure defaultOpen={true}>
@@ -43,7 +47,7 @@ const CurriculumAccordion = () => {
 						</Disclosure.Button>
 						<Disclosure.Panel className="px-4  pb-2 text-gray-500 space-y-3 text-sm">
 							<Link
-								to={`/university/courses/1`}
+								to={`/university/course/1/resource/e/${entity_id}/g/${group_id}`}
 								className="flex flex-row w-full border p-2 rounded"
 							>
 								<div className="flex flex-row w-full space-x-2 items-center space-between cursor-pointer">
@@ -198,7 +202,7 @@ export default function Courses() {
 
 					<div className="flex flex-col w-full h-[90px] px-5 justify-center">
 						<Link
-							to={`/university/courses/1`}
+							to={`/university/course/1`}
 							className="flex flex-col w-full py-4 items-center justify-center bg-blue-600 text-white rounded cursor-pointer"
 						>
 							Resume
