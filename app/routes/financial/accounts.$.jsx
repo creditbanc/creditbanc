@@ -23,6 +23,8 @@ import {
 	truncate,
 	formatPhoneNumber,
 	jsreduce,
+	get_entity_id,
+	get_group_id,
 } from "~/utils/helpers";
 import { useEffect, useState, Fragment } from "react";
 import { get_collection, set_doc } from "~/utils/firebase";
@@ -74,6 +76,8 @@ import {
 	lastValueFrom,
 	withLatestFrom,
 } from "rxjs";
+import { is_authorized_f } from "~/api/auth";
+import { redirect } from "@remix-run/node";
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
@@ -94,6 +98,20 @@ function randomNumber(min, max) {
 }
 
 export const loader = async ({ request }) => {
+	let entity_id = get_entity_id(request.url);
+	let group_id = get_group_id(request.url);
+
+	let is_authorized = await is_authorized_f(
+		entity_id,
+		group_id,
+		"accounts",
+		"read"
+	);
+
+	if (!is_authorized) {
+		return redirect("/home");
+	}
+
 	let location = new URL(request.url);
 	let { origin } = location;
 

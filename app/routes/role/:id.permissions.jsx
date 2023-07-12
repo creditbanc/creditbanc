@@ -35,6 +35,20 @@ const default_permissions = [
 		edit: true,
 	},
 	{
+		id: "accounts",
+		name: "Accounts",
+		hidden: false,
+		read: true,
+		edit: true,
+	},
+	{
+		id: "transactions",
+		name: "Transactions",
+		hidden: false,
+		read: true,
+		edit: true,
+	},
+	{
 		id: "vault",
 		name: "Vault",
 		hidden: false,

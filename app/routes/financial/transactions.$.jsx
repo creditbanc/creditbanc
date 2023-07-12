@@ -10,6 +10,8 @@ import {
 	use_search_params,
 	trim,
 	use_client_search_params,
+	get_group_id,
+	get_entity_id,
 } from "~/utils/helpers";
 import { create } from "zustand";
 import { filter, get, mod } from "shades";
@@ -19,6 +21,8 @@ import {
 	ArrowLongLeftIcon,
 	ArrowLongRightIcon,
 } from "@heroicons/react/20/solid";
+import { is_authorized_f } from "~/api/auth";
+import { redirect } from "@remix-run/node";
 
 const useTransactionsStore = create((set) => ({
 	transaction: null,
@@ -50,6 +54,20 @@ let date_x_time_ago = (time_range, time_period) => {
 };
 
 export const loader = async ({ request }) => {
+	let entity_id = get_entity_id(request.url);
+	let group_id = get_group_id(request.url);
+
+	let is_authorized = await is_authorized_f(
+		entity_id,
+		group_id,
+		"transactions",
+		"read"
+	);
+
+	if (!is_authorized) {
+		return redirect("/home");
+	}
+
 	let search_params = use_search_params(request);
 	let { results = 50, cursor, cursor_id } = search_params;
 
