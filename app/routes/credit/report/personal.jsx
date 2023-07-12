@@ -1,5 +1,5 @@
 import { useEffect, useState, useRef } from "react";
-import { Outlet, useLoaderData, useLocation } from "@remix-run/react";
+import { Link, Outlet, useLoaderData, useLocation } from "@remix-run/react";
 import { useLayoutStore } from "~/stores/useLayoutStore";
 import { useElmSize } from "~/hooks/useElmSize";
 import {
@@ -25,6 +25,7 @@ import UpgradeMembership from "~/components/UpgradeMembership";
 import UpdatePersonalReport from "~/components/UpdatePersonalReport";
 import { plans_index } from "~/data/plans_index";
 import { useReportPageLayoutStore } from "~/stores/useReportPageLayoutStore";
+import { DocumentDuplicateIcon, LinkIcon } from "@heroicons/react/24/outline";
 
 const get_scores = (report) => {
 	let { plan_id } = report;
@@ -212,11 +213,77 @@ export default function CreditReport() {
 
 							{!isMobile && (
 								<div className="sm:flex flex-col w-[30%] mr-2 h-full bg-white border rounded">
-									<PersonalCreditTabsVertical
-										selected={get_route_endpoint(
-											location.pathname
-										)}
-									/>
+									<div className="p-5">
+										<div className="flex flex-row space-x-3 items-center">
+											<div>
+												<span className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-gray-500">
+													<span className="text-lg font-medium leading-none text-white">
+														C
+													</span>
+												</span>
+											</div>
+											<div>Credit Banc</div>
+										</div>
+									</div>
+									<div className="flex flex-col py-2">
+										<Link
+											to={`/financial/transactions`}
+											className="px-5 mb-4 flex flex-row items-center space-x-3 text-blue-500 cursor-pointer text-sm"
+										>
+											<div>
+												<DocumentDuplicateIcon className="h-4 w-4 text-blue-500" />
+											</div>
+											<div>Copy copmany share link</div>
+											<div>
+												<LinkIcon className="h-4 w-4 text-blue-500" />
+											</div>
+										</Link>
+									</div>
+									<div className="flex flex-col w-full overflow-scroll scrollbar-none">
+										<div className="border-t"></div>
+										<div className="flex flex-col w-full p-5 space-y-3">
+											<div className="text-gray-400 text-sm">
+												Credit Scores
+											</div>
+											<div className="flex flex-row">
+												<div className="flex flex-col w-1/2 text-sm space-y-1">
+													<div className="text-gray-400">
+														Experian
+													</div>
+													<div className="text-lg">
+														300
+													</div>
+												</div>
+												<div className="flex flex-col w-1/2 text-sm space-y-1">
+													<div className="text-gray-400">
+														Equifax
+													</div>
+													<div className="text-lg">
+														728
+													</div>
+												</div>
+												<div className="flex flex-col w-1/2 text-sm space-y-1">
+													<div className="text-gray-400">
+														Transunion
+													</div>
+													<div className="text-lg">
+														802
+													</div>
+												</div>
+											</div>
+										</div>
+										<div className="border-t"></div>
+										<div className="flex flex-col px-5 pt-5 text-sm space-y-3">
+											<div className=" text-gray-400">
+												Quick Links
+											</div>
+											<PersonalCreditTabsVertical
+												selected={get_route_endpoint(
+													location.pathname
+												)}
+											/>
+										</div>
+									</div>
 								</div>
 							)}
 						</div>

@@ -170,16 +170,16 @@ const QuickLinks = () => {
 							href={item.href}
 							className={classNames(
 								item.current
-									? "bg-gray-50 text-indigo-600"
-									: "text-gray-700 hover:text-indigo-600 hover:bg-gray-50",
+									? "bg-gray-50 text-blue-600"
+									: "text-gray-700 hover:text-blue-600 hover:bg-gray-50",
 								"group flex gap-x-2 rounded-md px-2 py-1 text-xs leading-6 font-semibold"
 							)}
 						>
 							<item.icon
 								className={classNames(
 									item.current
-										? "text-indigo-600"
-										: "text-gray-400 group-hover:text-indigo-600",
+										? "text-blue-600"
+										: "text-gray-400 group-hover:text-blue-600",
 									"h-5 w-5 shrink-0"
 								)}
 								aria-hidden="true"

@@ -11,6 +11,7 @@ import { filter } from "shades";
 import { json, redirect } from "@remix-run/node";
 import { Outlet, useLoaderData } from "@remix-run/react";
 import SimpleNav from "~/components/SimpleNav";
+import SimpleNavSignedIn from "~/components/SimpleNavSignedIn";
 
 export const loader = async ({ request }) => {
 	let url = new URL(request.url);
@@ -78,12 +79,13 @@ export default function Home() {
 		<div className="flex flex-col h-full w-full">
 			<div className="flex flex-col border-b">
 				{/* <SimpleNav user_id={user_id} /> */}
-				<CreditNav
+				{/* <CreditNav
 					user_id={user_id}
 					origin={origin}
 					can_share={false}
 					reports={reports}
-				/>
+				/> */}
+				<SimpleNavSignedIn user_id={user_id} />
 			</div>
 			<div>
 				<SubNav />

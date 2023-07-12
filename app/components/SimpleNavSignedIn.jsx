@@ -118,7 +118,7 @@ const Companies = () => {
 };
 
 let navigation = [
-	{ name: "Credit", href: "#", current: true },
+	{ name: "Credit", href: "/home", current: true },
 	{ name: "Cashflow", href: "/financial/cashflow", current: false },
 	{ name: "Vault", href: "/vault/files", current: false },
 	{ name: "University", href: "/university/courses", current: false },
