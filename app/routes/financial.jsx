@@ -1,7 +1,12 @@
-import { Outlet, useLoaderData } from "@remix-run/react";
+import { Link, Outlet, useLoaderData, useLocation } from "@remix-run/react";
 import SimpleNavSignedIn from "~/components/SimpleNavSignedIn";
 import { get_user_id } from "~/utils/auth.server";
-import { classNames } from "~/utils/helpers";
+import {
+	classNames,
+	get_group_id,
+	is_location,
+	get_entity_id,
+} from "~/utils/helpers";
 import {
 	EllipsisHorizontalCircleIcon,
 	EllipsisHorizontalIcon,
@@ -14,12 +19,31 @@ export const loader = async ({ request }) => {
 };
 
 const tabs = [
-	{ name: "Cashflow", href: "/financial/cashflow", current: true },
-	{ name: "Accounts", href: "/financial/accounts", current: false },
-	{ name: "Transactions", href: "/financial/transactions", current: false },
+	{
+		name: "Cashflow",
+		href: ({ entity_id, group_id }) =>
+			`/financial/cashflow/resource/e/${entity_id}/g/${group_id}`,
+		current: (pathname) => is_location("/financial/cashflow", pathname),
+	},
+	{
+		name: "Accounts",
+		href: ({ entity_id, group_id }) =>
+			`/financial/accounts/resource/e/${entity_id}/g/${group_id}`,
+		current: (pathname) => is_location("/financial/accounts", pathname),
+	},
+	{
+		name: "Transactions",
+		href: ({ entity_id, group_id }) =>
+			`/financial/transactions/resource/e/${entity_id}/g/${group_id}`,
+		current: (pathname) => is_location("/financial/transactions", pathname),
+	},
 ];
 
 const SubNav = () => {
+	let { pathname } = useLocation();
+	let entity_id = get_entity_id(pathname);
+	let group_id = get_group_id(pathname);
+
 	return (
 		<div>
 			<div className="sm:hidden bg-white">
@@ -38,19 +62,21 @@ const SubNav = () => {
 				<div className="flex flex-row justify-between w-full items-center">
 					<nav className="-mb-px flex space-x-5" aria-label="Tabs">
 						{tabs.map((tab) => (
-							<a
+							<Link
 								key={tab.name}
-								href={tab.href}
+								to={tab.href({ entity_id, group_id })}
 								className={classNames(
-									tab.current
+									tab.current(pathname)
 										? "border-blue-500 text-blue-600"
 										: "border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700",
-									" border-b-2 py-2 px-1 text-center text-sm "
+									"border-b-2 py-2 px-1 text-center text-sm cursor-pointer"
 								)}
-								aria-current={tab.current ? "page" : undefined}
+								aria-current={
+									tab.current(pathname) ? "page" : undefined
+								}
 							>
 								{tab.name}
-							</a>
+							</Link>
 						))}
 					</nav>
 					<div>
