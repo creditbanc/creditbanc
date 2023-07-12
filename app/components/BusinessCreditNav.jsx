@@ -35,9 +35,9 @@ export const VerticalNav = ({
 						})}
 						className={classNames(
 							selected == tab.id
-								? " text-indigo-600"
+								? " text-blue-600"
 								: " text-gray-500 hover:border-gray-300",
-							"group inline-flex items-center py-4 px-2 border-b font-medium text-sm last-of-type:border-none pl-4 hover:text-indigo-600"
+							"group inline-flex items-center py-4 px-2 border-b font-medium text-sm last-of-type:border-none pl-4 hover:text-blue-600"
 						)}
 					>
 						<div className="flex flex-row justify-between w-full">
@@ -45,9 +45,9 @@ export const VerticalNav = ({
 								<tab.icon
 									className={classNames(
 										selected == tab.id
-											? "text-indigo-500"
-											: "text-gray-500 group-hover:text-indigo-600",
-										"-ml-0.5 mr-3 h-5 w-5 hover:text-indigo-6"
+											? "text-blue-500"
+											: "text-gray-500 group-hover:text-blue-600",
+										"-ml-0.5 mr-3 h-5 w-5 hover:text-blue-6"
 									)}
 									aria-hidden="true"
 								/>

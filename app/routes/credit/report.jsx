@@ -82,7 +82,7 @@ const BusinessDropdown = () => {
 			<div>
 				<Menu.Button
 					className={classNames(
-						"flex flex-row items-center border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 border-b-2 py-2 px-1 text-center text-sm"
+						"flex flex-row items-center border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 border-b-2 py-2 px-1 text-center text-sm gap-x-1"
 					)}
 				>
 					Business
