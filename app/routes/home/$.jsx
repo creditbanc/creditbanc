@@ -704,7 +704,7 @@ export default function Home() {
 							</div>
 						</div>
 
-						<div className="flex flex-col w-full max-h-[600px] bg-white rounded">
+						<div className="flex flex-col w-full max-h-[600px] bg-white rounded border">
 							<CashflowChart />
 						</div>
 
