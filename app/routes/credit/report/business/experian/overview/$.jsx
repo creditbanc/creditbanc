@@ -52,7 +52,7 @@ export const loader = async ({ request }) => {
 
 	if (pipe(allPass(report_tests[plan_id]["experian"]), not)(report)) {
 		let lendflow_report = await get_lendflow_report(report.application_id);
-		set_doc(["credit_reports", report.id], {
+		report = await set_doc(["credit_reports", report.id], {
 			...report,
 			...lendflow_report,
 		});
