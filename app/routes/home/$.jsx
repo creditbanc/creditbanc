@@ -26,6 +26,9 @@ import CashflowChart from "~/components/CashflowChart";
 import axios from "axios";
 import { useCashflowStore } from "~/stores/useCashflowStore";
 import { useEffect } from "react";
+import { ChevronUpIcon } from "@heroicons/react/20/solid";
+import { Disclosure } from "@headlessui/react";
+import { CheckCircleIcon, XCircleIcon } from "@heroicons/react/24/outline";
 
 export const loader = async ({ request }) => {
 	let url = new URL(request.url);
@@ -279,7 +282,7 @@ const BusinessCredit = () => {
 	)(plans);
 
 	return (
-		<div className="flex flex-col border shadow-sm rounded px-4 bg-white min-h-[260px]">
+		<div className="flex flex-col border rounded px-4 bg-white min-h-[260px]">
 			<div className="border-b border-gray-200">
 				<h3 className="text-base font-semibold leading-6 text-gray-900 py-3">
 					Business Credit
@@ -383,7 +386,7 @@ const PersonalCredit = () => {
 	)(plans);
 
 	return (
-		<div className="flex flex-col rounded px-4 border shadow-sm bg-white min-h-[260px]">
+		<div className="flex flex-col rounded px-4 border bg-white min-h-[260px]">
 			<div className="border-b border-gray-200">
 				<h3 className="text-base font-semibold leading-6 text-gray-900 py-3">
 					Personal Credit
@@ -674,6 +677,140 @@ const Accounts = () => {
 	);
 };
 
+const CurriculumAccordion = () => {
+	return (
+		<div className="mx-auto w-full max-w-md rounded-2xl bg-white p-2 space-y-2">
+			<Disclosure defaultOpen={true}>
+				{({ open }) => (
+					<>
+						<Disclosure.Button className="flex w-full justify-between rounded-lg  px-4 py-2 text-left text-sm font-medium focus:outline-none focus-visible:ring  focus-visible:ring-opacity-75">
+							<span>CREDIT</span>
+							<ChevronUpIcon
+								className={`${
+									open ? "rotate-180 transform" : ""
+								} h-5 w-5 text-gray-500`}
+							/>
+						</Disclosure.Button>
+						<Disclosure.Panel className="px-4  pb-2 text-gray-500 space-y-3 text-sm">
+							<div className="flex flex-row w-full border p-2 rounded">
+								<div className="flex flex-row w-full space-x-2 items-center space-between cursor-pointer">
+									<div>
+										<XCircleIcon className="h-5 w-5 text-red-500" />
+									</div>
+									<div>Run a personal credit report</div>
+								</div>
+								<div></div>
+							</div>
+							<div className="flex flex-row w-full border p-2 rounded">
+								<div className="flex flex-row w-full space-x-2 items-center space-between cursor-pointer">
+									<div>
+										<CheckCircleIcon className="h-5 w-5 text-green-500" />
+									</div>
+									<div>Run a business credit report</div>
+								</div>
+								<div></div>
+							</div>
+						</Disclosure.Panel>
+					</>
+				)}
+			</Disclosure>
+			<Disclosure defaultOpen={true}>
+				{({ open }) => (
+					<>
+						<Disclosure.Button className="flex w-full justify-between rounded-lg  px-4 py-2 text-left text-sm font-medium   focus:outline-none focus-visible:ring  focus-visible:ring-opacity-75">
+							<span>CASHFLOW</span>
+							<ChevronUpIcon
+								className={`${
+									open ? "rotate-180 transform" : ""
+								} h-5 w-5 text-gray-500`}
+							/>
+						</Disclosure.Button>
+						<Disclosure.Panel className="px-4  pb-2 text-gray-500 space-y-3 text-sm">
+							<div className="flex flex-row w-full border p-2 rounded">
+								<div className="flex flex-row w-full space-x-2 items-center space-between cursor-pointer">
+									<div>
+										<XCircleIcon className="h-5 w-5 text-red-500" />
+									</div>
+									<div>Connect bank account</div>
+								</div>
+								<div></div>
+							</div>
+						</Disclosure.Panel>
+					</>
+				)}
+			</Disclosure>
+			<Disclosure defaultOpen={true}>
+				{({ open }) => (
+					<>
+						<Disclosure.Button className="flex w-full justify-between rounded-lg  px-4 py-2 text-left text-sm font-medium   focus:outline-none focus-visible:ring  focus-visible:ring-opacity-75">
+							<span>VAULT</span>
+							<ChevronUpIcon
+								className={`${
+									open ? "rotate-180 transform" : ""
+								} h-5 w-5 text-gray-500`}
+							/>
+						</Disclosure.Button>
+						<Disclosure.Panel className="px-4  pb-2 text-gray-500 space-y-3 text-sm">
+							<div className="flex flex-row w-full border p-2 rounded">
+								<div className="flex flex-row w-full space-x-2 items-center space-between cursor-pointer">
+									<div>
+										<XCircleIcon className="h-5 w-5 text-red-500" />
+									</div>
+									<div>Upload tax returns</div>
+								</div>
+								<div></div>
+							</div>
+							<div className="flex flex-row w-full border p-2 rounded">
+								<div className="flex flex-row w-full space-x-2 items-center space-between cursor-pointer">
+									<div>
+										<CheckCircleIcon className="h-5 w-5 text-green-500" />
+									</div>
+									<div>Upload drivers license</div>
+								</div>
+								<div></div>
+							</div>
+						</Disclosure.Panel>
+					</>
+				)}
+			</Disclosure>
+			<Disclosure defaultOpen={true}>
+				{({ open }) => (
+					<>
+						<Disclosure.Button className="flex w-full justify-between rounded-lg  px-4 py-2 text-left text-sm font-medium   focus:outline-none focus-visible:ring  focus-visible:ring-opacity-75">
+							<span>SOCIAL</span>
+							<ChevronUpIcon
+								className={`${
+									open ? "rotate-180 transform" : ""
+								} h-5 w-5 text-gray-500`}
+							/>
+						</Disclosure.Button>
+						<Disclosure.Panel className="px-4  pb-2 text-gray-500 space-y-3 text-sm">
+							<div className="flex flex-row w-full border p-2 rounded">
+								<div className="flex flex-row w-full space-x-2 items-center space-between cursor-pointer">
+									<div>
+										<CheckCircleIcon className="h-5 w-5 text-green-500" />
+									</div>
+									<div>Create a role</div>
+								</div>
+								<div></div>
+							</div>
+							<div className="flex flex-row w-full border p-2 rounded">
+								<div className="flex flex-row w-full space-x-2 items-center space-between cursor-pointer">
+									<div>
+										<XCircleIcon className="h-5 w-5 text-red-500" />
+									</div>
+									<div>Invite team members</div>
+								</div>
+								<div></div>
+							</div>
+						</Disclosure.Panel>
+					</>
+				)}
+			</Disclosure>
+		</div>
+	);
+};
+
 export default function Home() {
 	const { plan_id, financials } = useLoaderData();
 	let set_financials = useCashflowStore((state) => state.set_state);
@@ -708,7 +845,7 @@ export default function Home() {
 							<CashflowChart />
 						</div>
 
-						<div className="flex flex-col w-full h-fit bg-white px-5 pt-5 border shadow-sm rounded">
+						<div className="flex flex-col w-full h-fit bg-white px-5 pt-5 border rounded">
 							<div className="border-b border-gray-200 pb-3 flex flex-col sticky top-0 bg-white z-10">
 								<div>
 									<h3 className="mt-2 text-base font-semibold leading-6 text-gray-900">
@@ -724,28 +861,56 @@ export default function Home() {
 								<Accounts />
 							</div>
 						</div>
-
-						{/* <div className="flex flex-col h-full bg-white border rounded">
-							<UniversityHeading />
-							<div className="my-1 px-5">
-								<VideoCard />
-								<VideoCard />
-								<VideoCard />
-							</div>
-						</div> */}
 					</div>
 				</div>
 				<div className="flex flex-col w-[30%] rounded border">
 					<div className="flex flex-col w-full h-full rounded bg-white">
 						<div className="flex flex-row py-4 px-5 justify-between w-full items-center">
-							<div>Recent transactions</div>
-							<div className="text-blue-500 text-sm cursor-pointer">
+							<div>Notifications</div>
+							{/* <div className="text-blue-500 text-sm cursor-pointer">
 								See all
-							</div>
+							</div> */}
 						</div>
 						<div className="flex flex-col w-full border-t"></div>
-						<div className="flex flex-col p-5 overflow-scroll scrollbar-none">
-							{/* <ActivityFeed /> */}
+						<div className="flex flex-col overflow-scroll scrollbar-none">
+							{/* <div className="p-3">
+								<img
+									src="https://images.unsplash.com/photo-1496128858413-b36217c2ce36?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=3603&q=80"
+									className="w-full rounded"
+								/>
+							</div> */}
+
+							<div className="border-b border-gray-200 bg-white px-4 py-3 sm:px-6 sticky top-0 z-10">
+								<h3 className="text-base font-semibold leading-6 text-gray-900 my-2">
+									Complete Your Profile
+								</h3>
+
+								<div className="flex flex-col w-full space-y-5">
+									<p className="mt-1 text-sm text-gray-500">
+										Follow the steps below to complete your
+										CreditBanc profile
+									</p>
+
+									{/* <p className="mt-1 text-sm text-gray-500">
+										New content – discover our expert
+										interview with a wealth manager!
+									</p> */}
+								</div>
+
+								<div className="my-2 flex flex-col w-full">
+									<div className="flex flex-row w-full justify-between my-2 text-sm text-gray-400">
+										<div>45%</div>
+										<div>4/6 steps</div>
+									</div>
+									<div className="w-full bg-gray-200 rounded-full h-2.5 dark:bg-gray-700">
+										<div className="bg-blue-600 h-2.5 rounded-full w-[45%]"></div>
+									</div>
+								</div>
+							</div>
+
+							<div className="flex flex-col w-full my-3">
+								<CurriculumAccordion />
+							</div>
 						</div>
 					</div>
 				</div>
