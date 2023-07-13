@@ -102,11 +102,6 @@ const Companies = () => {
 };
 
 let navigation = [
-	// {
-	// 	name: "Credit",
-	// 	href: ({ entity_id, group_id }) => "/home",
-	// 	current: (pathname) => is_location("/credit", pathname),
-	// },
 	{
 		name: "Cashflow",
 		href: ({ entity_id, group_id }) =>
@@ -150,7 +145,7 @@ const ShareDropdown = () => {
 				leaveFrom="transform opacity-100 scale-100"
 				leaveTo="transform opacity-0 scale-95"
 			>
-				<Menu.Items className="absolute right-0 z-10 mt-2 w-56 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+				<Menu.Items className="absolute right-0 z-20 mt-2 w-56 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
 					<div className="py-1">
 						<Link
 							to={`/roles/e/1/g/1`}
@@ -238,7 +233,7 @@ const CreditDropdown = () => {
 				leaveFrom="transform opacity-100 scale-100"
 				leaveTo="transform opacity-0 scale-95"
 			>
-				<Menu.Items className="absolute left-[-50%] z-10 mt-[15px] w-56 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+				<Menu.Items className="absolute left-[-50%] z-20 mt-2 w-56 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
 					<div className="py-1">
 						<Menu.Item>
 							{({ active }) => (
@@ -278,9 +273,6 @@ const CreditDropdown = () => {
 };
 
 export default function Nav({ user_id }) {
-	console.log("user_id");
-	console.log(user_id);
-
 	let location = useLocation();
 
 	let { pathname } = location;
