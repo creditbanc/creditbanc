@@ -1,4 +1,4 @@
-import { defaultTo, pipe, tryCatch, always } from "ramda";
+import { pipe, tryCatch, always } from "ramda";
 import { get } from "shades";
 import { inspect } from "~/utils/helpers";
 

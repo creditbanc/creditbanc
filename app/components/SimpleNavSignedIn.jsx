@@ -4,6 +4,7 @@ const cb_logo = "/images/logos/cb_logo_3.png";
 import UserAccountNavMenu from "./UserAccountNavMenu";
 import {
 	classNames,
+	get_entity_id,
 	get_group_id,
 	is_location,
 	mapIndexed,
@@ -207,6 +208,8 @@ const ShareDropdown = () => {
 
 const CreditDropdown = () => {
 	let { pathname } = useLocation();
+	let entity_id = get_entity_id(pathname);
+	let group_id = get_group_id(pathname);
 
 	return (
 		<Menu as="div" className="relative inline-block text-left">
@@ -237,8 +240,8 @@ const CreditDropdown = () => {
 					<div className="py-1">
 						<Menu.Item>
 							{({ active }) => (
-								<a
-									href="#"
+								<Link
+									to={`/credit/report/personal/personal/resource/e/${entity_id}/g/${group_id}`}
 									className={classNames(
 										active
 											? "bg-gray-100 text-gray-900"
@@ -247,7 +250,7 @@ const CreditDropdown = () => {
 									)}
 								>
 									Personal
-								</a>
+								</Link>
 							)}
 						</Menu.Item>
 						<Menu.Item>

@@ -1,12 +1,13 @@
 import { useLoaderData } from "@remix-run/react";
 import { useEffect } from "react";
 import { Array } from "~/data/array";
-import { get_file_id, inspect } from "~/utils/helpers";
+import { get_file_id, get_group_id, inspect } from "~/utils/helpers";
 import { get_user_id } from "~/utils/auth.server";
 import { prisma } from "~/utils/prisma.server";
 import { plans } from "~/data/plans";
 import { all, get } from "shades";
-import { flatten, pipe, uniqBy } from "ramda";
+import { flatten, pipe, uniqBy, head } from "ramda";
+import { get_collection } from "~/utils/firebase";
 
 const get_personal_data = (report) => {
 	let { plan_id } = report;
@@ -59,14 +60,28 @@ const get_personal_data = (report) => {
 
 export const loader = async ({ request }) => {
 	let url = new URL(request.url);
-	let file_id = get_file_id(url.pathname);
 	let entity_id = await get_user_id(request);
+	let group_id = get_group_id(url.pathname);
 
-	let report = await prisma.personal_credit_report.findUnique({
-		where: {
-			id: file_id,
+	let personal_credit_report_queries = [
+		{
+			param: "group_id",
+			predicate: "==",
+			value: group_id,
 		},
+		{
+			param: "type",
+			predicate: "==",
+			value: "personal_credit_report",
+		},
+	];
+
+	let report_response = await get_collection({
+		path: ["credit_reports"],
+		queries: personal_credit_report_queries,
 	});
+
+	let report = pipe(head)(report_response);
 
 	let is_owner = report.entity_id == entity_id;
 

@@ -2,8 +2,8 @@ import { ClockIcon } from "@heroicons/react/24/outline";
 import { FactorBar } from "~/components/FactorBar";
 import { Accounts } from "~/components/TradeLines";
 import { useLoaderData } from "@remix-run/react";
-import { pipe, map, filter, includes, flatten } from "ramda";
-import { get_file_id, inspect } from "~/utils/helpers";
+import { pipe, map, filter, includes, flatten, head } from "ramda";
+import { get_file_id, get_group_id, inspect } from "~/utils/helpers";
 import {
 	TradeLine as Tradeline,
 	credit_report_data,
@@ -16,16 +16,38 @@ import { plans } from "~/data/plans";
 import { get_user_id } from "~/utils/auth.server";
 import { prisma } from "~/utils/prisma.server";
 import { useReportPageLayoutStore } from "~/stores/useReportPageLayoutStore";
+import { get_collection } from "~/utils/firebase";
 
 export const loader = async ({ request }) => {
 	let url = new URL(request.url);
 	let pathname = url.pathname;
 	let report_id = get_file_id(pathname);
 	let entity_id = await get_user_id(request);
+	let group_id = get_group_id(pathname);
 
-	let report = await get_credit_report({
-		resource_id: report_id,
+	let personal_credit_report_queries = [
+		{
+			param: "group_id",
+			predicate: "==",
+			value: group_id,
+		},
+		{
+			param: "type",
+			predicate: "==",
+			value: "personal_credit_report",
+		},
+	];
+
+	let report_response = await get_collection({
+		path: ["credit_reports"],
+		queries: personal_credit_report_queries,
 	});
+
+	let report = pipe(head)(report_response);
+
+	// let report = await get_credit_report({
+	// 	resource_id: report_id,
+	// });
 
 	let credit_report = CreditReport(report.data);
 	let liabilities = Liabilities(credit_report.liabilities());

@@ -26,6 +26,7 @@ import UpdatePersonalReport from "~/components/UpdatePersonalReport";
 import { plans_index } from "~/data/plans_index";
 import { useReportPageLayoutStore } from "~/stores/useReportPageLayoutStore";
 import { DocumentDuplicateIcon, LinkIcon } from "@heroicons/react/24/outline";
+import { get_collection, get_doc } from "~/utils/firebase";
 
 const get_scores = (report) => {
 	let { plan_id } = report;
@@ -69,38 +70,62 @@ export const loader = async ({ request }) => {
 
 	let user_id = await get_user_id(request);
 	let group_id = get_group_id(url.pathname);
-	let file_id = get_file_id(url.pathname);
+	// let file_id = get_file_id(url.pathname);
 
-	let is_resource_owner = await is_resource_owner_p({
-		entity_id: user_id,
-		group_id,
-		file_id,
-	});
+	// let is_resource_owner = await is_resource_owner_p({
+	// 	entity_id: user_id,
+	// 	group_id,
+	// 	file_id,
+	// });
 
-	let permissions = await validate_action({
-		entity_id: user_id,
-		group_resource_path_id: group_id,
-		resource_path_id: file_id,
-		is_owner: is_resource_owner,
-		request,
-	});
+	// let permissions = await validate_action({
+	// 	entity_id: user_id,
+	// 	group_resource_path_id: group_id,
+	// 	resource_path_id: file_id,
+	// 	is_owner: is_resource_owner,
+	// 	request,
+	// });
 
-	let { can_view = false } = permissions ?? {};
+	// let { can_view = false } = permissions ?? {};
 
-	if (!can_view) return redirect("/");
-
-	let group_docs = await get_group_docs({
-		resource_id: group_id,
-		entity_id: user_id,
-	});
-
-	let report = pipe(filter({ id: file_id }), head)(group_docs);
-
-	let report_response = await prisma.personal_credit_report.findUnique({
-		where: {
-			id: report.id,
+	// if (!can_view) return redirect("/");
+	let personal_credit_report_queries = [
+		{
+			param: "group_id",
+			predicate: "==",
+			value: group_id,
 		},
+		{
+			param: "type",
+			predicate: "==",
+			value: "personal_credit_report",
+		},
+	];
+
+	let report_response = await get_collection({
+		path: ["credit_reports"],
+		queries: personal_credit_report_queries,
 	});
+
+	let report = pipe(head)(report_response);
+	// console.log("report_response");
+	// console.log(report);
+
+	// let group_docs = await get_group_docs({
+	// 	resource_id: group_id,
+	// 	entity_id: user_id,
+	// });
+
+	// let report = pipe(filter({ id: file_id }), head)(group_docs);
+
+	// let report_response = await prisma.personal_credit_report.findUnique({
+	// 	where: {
+	// 		id: report.id,
+	// 	},
+	// });
+
+	// console.log("report_response");
+	// console.log(report);
 
 	let { plan_id } = await prisma.entity.findUnique({
 		where: { id: user_id },
@@ -109,9 +134,9 @@ export const loader = async ({ request }) => {
 		},
 	});
 
-	let scores = get_scores(report_response);
+	let scores = get_scores(report);
 
-	return { report, scores, plan_id, report_plan_id: report_response.plan_id };
+	return { report, scores, plan_id, report_plan_id: report.plan_id };
 };
 
 export default function CreditReport() {
@@ -146,7 +171,7 @@ export default function CreditReport() {
 	};
 
 	return (
-		<div className="flex flex-col flex-1 overflow-y-scroll p-5 overflow-hidden">
+		<div className="flex flex-col flex-1 overflow-y-scroll p-5 overflow-hidden h-full">
 			{plan_id == "essential" && (
 				<div className="flex flex-col w-full items-center">
 					<div className="flex flex-col w-full max-w-5xl">
@@ -163,9 +188,9 @@ export default function CreditReport() {
 				</div>
 			)}
 
-			<div className="flex flex-col w-full overflow-y-scroll overflow-hidden">
+			<div className="flex flex-col w-full overflow-y-scroll overflow-hidden h-full">
 				<div
-					className="flex flex-col w-full mx-auto overflow-hidden"
+					className="flex flex-col w-full mx-auto overflow-hidden h-full"
 					ref={setTarget}
 				>
 					<div
@@ -191,21 +216,24 @@ export default function CreditReport() {
 								className="flex flex-col h-full flex-1 overflow-y-scroll scrollbar-none rounded-lg"
 								ref={pageRef}
 							>
-								<div className="w-full">
-									<p className="my-2 font-semibold text-lg leading-6 text-blue-600">
-										View all three personal credit bureaus
-									</p>
-									<h1 className="text-5xl font-bold tracking-tight">
-										{report.first_name}'s personal credit
-										report
-									</h1>
-								</div>
+								<div className="flex flex-col w-full  px-5 pt-5  rounded-lg">
+									<div className="w-full text-center space-y-5 mt-5">
+										<h1 className="text-5xl font-bold tracking-tight">
+											{report.first_name}'s personal
+											credit report
+										</h1>
+										<p className="text-lg leading-6 ">
+											View all three personal credit
+											bureaus
+										</p>
+									</div>
 
-								<div className="flex flex-col w-full">
-									<CreditScoreHero
-										report={report}
-										scores={scores}
-									/>
+									<div className="flex flex-col w-full">
+										<CreditScoreHero
+											report={report}
+											scores={scores}
+										/>
+									</div>
 								</div>
 
 								<Outlet />

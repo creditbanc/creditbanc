@@ -1,4 +1,9 @@
-import { get_group_id, get_report_endpoint, classNames } from "~/utils/helpers";
+import {
+	get_group_id,
+	get_report_endpoint,
+	classNames,
+	get_entity_id,
+} from "~/utils/helpers";
 import { get_user_id } from "~/utils/auth.server";
 import { get_docs as get_group_docs } from "~/utils/group.server";
 import { defaultTo, pipe } from "ramda";
@@ -9,70 +14,23 @@ import { EllipsisHorizontalIcon } from "@heroicons/react/24/outline";
 import { Fragment } from "react";
 import { Menu, Transition } from "@headlessui/react";
 import { ChevronDownIcon } from "@heroicons/react/20/solid";
+import { get_collection, get_doc } from "~/utils/firebase";
 
 export const loader = async ({ request }) => {
-	let url = new URL(request.url);
-
-	// if (!has_valid_route_p("credit/personal/report", request.url))
-	// 	return redirect("/");
-
+	let { pathname } = new URL(request.url);
 	let user_id = await get_user_id(request);
-	let group_id = get_group_id(url.pathname);
-	// let file_id = get_file_id(url.pathname);
+	let group_id = get_group_id(pathname);
 
-	// let is_resource_owner = await is_resource_owner_p({
-	// 	entity_id: user_id,
-	// 	group_id,
-	// 	file_id,
-	// });
-
-	// let permissions = await validate_action({
-	// 	entity_id: user_id,
-	// 	group_resource_path_id: group_id,
-	// 	resource_path_id: file_id,
-	// 	is_owner: is_resource_owner,
-	// 	request,
-	// });
-
-	// console.log("permissions");
-	// console.log(permissions);
-
-	// console.log("is_resource_owner");
-	// console.log(is_resource_owner);
-
-	// let { can_view = false } = permissions ?? {};
-
-	// if (!can_view) return redirect("/");
-
-	let group_docs = await get_group_docs({
-		resource_id: group_id,
-		entity_id: user_id,
-	});
-
-	// let report = pipe(
-	// 	filter((report) => report.id == file_id),
-	// 	head
-	// )(group_docs);
-
-	// console.log("group_docs");
-	// console.log(report);
-
-	let reports = pipe((resources) => ({
-		personal_credit_reports: pipe(
-			filter({ model: "personal_credit_report" }),
-			defaultTo([])
-		)(resources),
-		business_credit_reports: pipe(
-			filter({ model: "business_credit_report" }),
-			defaultTo([])
-		)(resources),
-	}))(group_docs);
-
-	return { reports, origin: url.origin, user_id };
+	return { user_id };
 };
 
 const tabs = [
-	{ name: "Personal", href: "/financial/cashflow", current: true },
+	{
+		name: "Personal",
+		href: ({ entity_id, group_id }) =>
+			`/credit/report/personal/personal/resource/e/${entity_id}/g/${group_id}`,
+		current: true,
+	},
 	// { name: "Business", href: "/financial/accounts", current: false },
 ];
 
@@ -142,6 +100,10 @@ const BusinessDropdown = () => {
 };
 
 const SubNav = () => {
+	let { pathname } = useLocation();
+	let entity_id = get_entity_id(pathname);
+	let group_id = get_group_id(pathname);
+
 	return (
 		<div>
 			<div className="sm:hidden bg-white">
@@ -160,9 +122,9 @@ const SubNav = () => {
 				<div className="flex flex-row justify-between w-full items-center">
 					<nav className="-mb-px flex space-x-5" aria-label="Tabs">
 						{tabs.map((tab) => (
-							<a
+							<Link
 								key={tab.name}
-								href={tab.href}
+								to={tab.href({ entity_id, group_id })}
 								className={classNames(
 									tab.current
 										? "border-blue-500 text-blue-600"
@@ -172,7 +134,7 @@ const SubNav = () => {
 								aria-current={tab.current ? "page" : undefined}
 							>
 								{tab.name}
-							</a>
+							</Link>
 						))}
 						<BusinessDropdown />
 					</nav>
