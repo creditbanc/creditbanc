@@ -31,9 +31,6 @@ import { get_collection, get_doc } from "~/utils/firebase";
 const get_scores = (report) => {
 	let { plan_id } = report;
 
-	// console.log("plan_id");
-	// console.log(plan_id);
-
 	if (plan_id == "essential") {
 		let { data } = report;
 
@@ -58,37 +55,15 @@ const get_scores = (report) => {
 			transunion: transunion_score,
 		};
 
-		console.log("payload");
-		console.log(payload);
-
 		return payload;
 	}
 };
 
 export const loader = async ({ request }) => {
 	let url = new URL(request.url);
-
 	let user_id = await get_user_id(request);
 	let group_id = get_group_id(url.pathname);
-	// let file_id = get_file_id(url.pathname);
 
-	// let is_resource_owner = await is_resource_owner_p({
-	// 	entity_id: user_id,
-	// 	group_id,
-	// 	file_id,
-	// });
-
-	// let permissions = await validate_action({
-	// 	entity_id: user_id,
-	// 	group_resource_path_id: group_id,
-	// 	resource_path_id: file_id,
-	// 	is_owner: is_resource_owner,
-	// 	request,
-	// });
-
-	// let { can_view = false } = permissions ?? {};
-
-	// if (!can_view) return redirect("/");
 	let personal_credit_report_queries = [
 		{
 			param: "group_id",
@@ -108,24 +83,6 @@ export const loader = async ({ request }) => {
 	});
 
 	let report = pipe(head)(report_response);
-	// console.log("report_response");
-	// console.log(report);
-
-	// let group_docs = await get_group_docs({
-	// 	resource_id: group_id,
-	// 	entity_id: user_id,
-	// });
-
-	// let report = pipe(filter({ id: file_id }), head)(group_docs);
-
-	// let report_response = await prisma.personal_credit_report.findUnique({
-	// 	where: {
-	// 		id: report.id,
-	// 	},
-	// });
-
-	// console.log("report_response");
-	// console.log(report);
 
 	let { plan_id } = await prisma.entity.findUnique({
 		where: { id: user_id },
@@ -133,9 +90,6 @@ export const loader = async ({ request }) => {
 			plan_id: true,
 		},
 	});
-
-	console.log("plan_id");
-	console.log(plan_id);
 
 	let scores = get_scores(report);
 

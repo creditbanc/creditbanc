@@ -2,11 +2,9 @@ import { ChevronRightIcon, ListBulletIcon } from "@heroicons/react/20/solid";
 import { Link, useLocation } from "@remix-run/react";
 import { get_user_id } from "~/utils/auth.server";
 import { get_entity_id, get_group_id } from "~/utils/helpers";
-import { defaultTo, head, isEmpty, omit, pipe } from "ramda";
+import { pipe } from "ramda";
 import { get } from "shades";
 import { prisma } from "~/utils/prisma.server";
-import { Lendflow } from "~/data/lendflow";
-import { Array } from "~/data/array";
 import { useLoaderData } from "@remix-run/react";
 import { plans } from "~/data/plans";
 import { redirect } from "@remix-run/node";
@@ -19,7 +17,6 @@ import { useEffect } from "react";
 import { ChevronUpIcon } from "@heroicons/react/20/solid";
 import { Disclosure } from "@headlessui/react";
 import { CheckCircleIcon, XCircleIcon } from "@heroicons/react/24/outline";
-import { get_collection } from "~/utils/firebase";
 
 export const loader = async ({ request }) => {
 	let url = new URL(request.url);

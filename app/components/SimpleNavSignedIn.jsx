@@ -38,6 +38,7 @@ export const useRolesStore = create((set) => ({
 const Companies = () => {
 	let { pathname } = useLocation();
 	let entity_id = get_entity_id(pathname);
+	let group_id = get_group_id(pathname);
 	let companies = useCompaniesDropdownStore((state) => state.companies);
 
 	return (
@@ -66,7 +67,7 @@ const Companies = () => {
 						<Menu.Item>
 							{({ active }) => (
 								<Link
-									to={`/companies/dashboard`}
+									to={`/companies/dashboard/resource/e/${entity_id}/g/${group_id}`}
 									className={classNames(
 										active
 											? "bg-gray-100 text-gray-900"

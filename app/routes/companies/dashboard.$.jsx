@@ -9,17 +9,18 @@ import {
 	UserCircleIcon,
 	HomeIcon,
 } from "@heroicons/react/24/outline";
-import { Link, useLoaderData } from "@remix-run/react";
-import { isEmpty, map, pipe, prop, uniqBy } from "ramda";
+import { Link, useLoaderData, useLocation } from "@remix-run/react";
+import { isEmpty, map, max, pipe, prop, reduce, set, uniqBy } from "ramda";
 import { get, all, mod } from "shades";
 import { get_user_id } from "~/utils/auth.server";
-import { classNames } from "~/utils/helpers";
+import { classNames, get_entity_id, get_group_id } from "~/utils/helpers";
 import {
 	get_owner_companies_ids,
 	get_shared_companies_ids,
 } from "~/api/ui/companies";
 import { create } from "zustand";
-import { getSession, commitSession } from "~/sessions/company_session";
+import axios from "axios";
+import { useEffect } from "react";
 
 export const useCompanyStore = create((set) => ({
 	company: {},
@@ -27,21 +28,21 @@ export const useCompanyStore = create((set) => ({
 		set((state) => pipe(mod(...path)(() => value))(state)),
 }));
 
-export const action = async ({ request }) => {
-	console.log("dashboard_action");
-	// let session = await getSession(request.headers.get("Cookie"));
-	// session.set("company_session", JSON.stringify({ ...payload }));
-
-	return null;
-};
-
 export const loader = async ({ request }) => {
+	let { pathname, origin } = new URL(request.url);
 	let entity_id = await get_user_id(request);
-
+	let group_id = get_group_id(pathname);
 	let owner_companies = await get_owner_companies_ids(entity_id);
 	let shared_companies = await get_shared_companies_ids(entity_id);
 
-	return { owner_companies, shared_companies, entity_id };
+	let credit_scores_api_response = await axios({
+		method: "get",
+		url: `${origin}/credit/report/api/scores/resource/e/${entity_id}/g/${group_id}`,
+	});
+
+	let { data: scores } = credit_scores_api_response;
+
+	return { owner_companies, shared_companies, entity_id, scores };
 };
 
 const Members = () => {
@@ -138,6 +139,27 @@ const QuickLinks = () => {
 };
 
 const CompayInfo = () => {
+	let { scores = {} } = useLoaderData();
+
+	let {
+		experian_personal_score,
+		equifax_personal_score,
+		transunion_personal_score,
+		experian_business_score,
+		dnb_business_score,
+	} = scores;
+
+	let max_personal = pipe(reduce(max, -Infinity))([
+		experian_personal_score,
+		equifax_personal_score,
+		transunion_personal_score,
+	]);
+
+	let max_business = pipe(reduce(max, -Infinity))([
+		experian_business_score,
+		dnb_business_score,
+	]);
+
 	return (
 		<div className="flex flex-col bg-white border rounded overflow-hidden">
 			<div className="p-5">
@@ -174,11 +196,11 @@ const CompayInfo = () => {
 					<div className="flex flex-row">
 						<div className="flex flex-col w-1/2 text-sm space-y-1">
 							<div className="text-gray-400">Personal</div>
-							<div className="text-lg">780</div>
+							<div className="text-lg">{max_personal}</div>
 						</div>
 						<div className="flex flex-col w-1/2 text-sm space-y-1">
 							<div className="text-gray-400">Business</div>
-							<div className="text-lg">80</div>
+							<div className="text-lg">{max_business}</div>
 						</div>
 					</div>
 				</div>
@@ -252,8 +274,15 @@ const Company = ({ group_id }) => {
 };
 
 export default function Companies() {
+	let { pathname } = useLocation();
+	let group_id = get_group_id(pathname);
 	let { owner_companies, shared_companies } = useLoaderData();
 	let company = useCompanyStore((state) => state.company);
+	let set_company = useCompanyStore((state) => state.set_state);
+
+	useEffect(() => {
+		set_company(["company"], { group_id });
+	}, []);
 
 	return (
 		<div className="flex flex-row w-full h-full p-5 overflow-hiddens space-x-3 overflow-hidden">

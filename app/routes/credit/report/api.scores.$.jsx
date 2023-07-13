@@ -1,14 +1,11 @@
-import { get_user_id } from "~/utils/auth.server";
 import { get_group_id } from "~/utils/helpers";
-import { defaultTo, head, isEmpty, omit, pipe } from "ramda";
+import { defaultTo, head, pipe } from "ramda";
 import { Lendflow } from "~/data/lendflow";
 import { Array } from "~/data/array";
-import axios from "axios";
 import { get_collection } from "~/utils/firebase";
 
 export const loader = async ({ request }) => {
 	let url = new URL(request.url);
-	let entity_id = await get_user_id(request);
 	let group_id = get_group_id(url.pathname);
 
 	let personal_credit_report_queries = [
