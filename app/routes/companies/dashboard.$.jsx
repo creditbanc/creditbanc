@@ -274,6 +274,8 @@ const Company = ({ group_id }) => {
 
 			set_companies(["companies", group_id], {
 				...company,
+				entity_id,
+				group_id,
 				business,
 			});
 		};
