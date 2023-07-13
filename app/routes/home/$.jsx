@@ -1,13 +1,8 @@
 import {
 	ChevronRightIcon,
 	PlayIcon,
-	EllipsisVerticalIcon,
-	DocumentIcon,
 	ListBulletIcon,
-	PlayCircleIcon,
 } from "@heroicons/react/20/solid";
-import { Fragment } from "react";
-import { Menu, Transition } from "@headlessui/react";
 import { Link, useLocation } from "@remix-run/react";
 import { get_user_id } from "~/utils/auth.server";
 import { get_docs as get_group_docs } from "~/utils/group.server";
@@ -29,6 +24,7 @@ import { useEffect } from "react";
 import { ChevronUpIcon } from "@heroicons/react/20/solid";
 import { Disclosure } from "@headlessui/react";
 import { CheckCircleIcon, XCircleIcon } from "@heroicons/react/24/outline";
+import { get_collection } from "~/utils/firebase";
 
 export const loader = async ({ request }) => {
 	let url = new URL(request.url);
@@ -54,38 +50,78 @@ export const loader = async ({ request }) => {
 		},
 	});
 
-	let group_docs = await get_group_docs({
-		resource_id: group_id,
-		entity_id,
-	});
+	// let group_docs = await get_group_docs({
+	// 	resource_id: group_id,
+	// 	entity_id,
+	// });
 
 	// console.log("group_docs");
 	// console.log(group_docs);
 
-	if (isEmpty(group_docs) && !allow_empty)
-		return redirect(
-			`/credit/business/new/resource/e/${entity_id}/g/${group_id}`
-		);
+	// if (isEmpty(group_docs) && !allow_empty)
+	// 	return redirect(
+	// 		`/credit/business/new/resource/e/${entity_id}/g/${group_id}`
+	// 	);
 
-	let business_credit_report_response = pipe(
-		filter({ model: "business_credit_report" }),
-		head
-	)(group_docs);
+	let personal_credit_report_queries = [
+		{
+			param: "group_id",
+			predicate: "==",
+			value: group_id,
+		},
+		{
+			param: "type",
+			predicate: "==",
+			value: "personal_credit_report",
+		},
+	];
 
-	let personal_credit_report_response = pipe(
-		filter({ model: "personal_credit_report" }),
-		head
-	)(group_docs);
+	let personal_credit_report_response = await get_collection({
+		path: ["credit_reports"],
+		queries: personal_credit_report_queries,
+	});
+
+	let personal_credit_report = pipe(head)(personal_credit_report_response);
+
+	let business_credit_report_queries = [
+		{
+			param: "group_id",
+			predicate: "==",
+			value: group_id,
+		},
+		{
+			param: "type",
+			predicate: "==",
+			value: "business_credit_report",
+		},
+	];
+
+	let business_credit_report_response = await get_collection({
+		path: ["credit_reports"],
+		queries: business_credit_report_queries,
+	});
+
+	let business_credit_report = pipe(head)(business_credit_report_response);
+
+	// let business_credit_report_response = pipe(
+	// 	filter({ model: "business_credit_report" }),
+	// 	head
+	// )(group_docs);
+
+	// let personal_credit_report_response = pipe(
+	// 	filter({ model: "personal_credit_report" }),
+	// 	head
+	// )(group_docs);
 
 	let business_credit_report_payload = {};
 
-	if (business_credit_report_response) {
-		let business_credit_report =
-			await prisma.business_credit_report.findUnique({
-				where: {
-					id: business_credit_report_response.id,
-				},
-			});
+	if (business_credit_report) {
+		// let business_credit_report =
+		// 	await prisma.business_credit_report.findUnique({
+		// 		where: {
+		// 			id: business_credit_report_response.id,
+		// 		},
+		// 	});
 
 		let experian_business_score = Lendflow.experian.score(
 			business_credit_report
@@ -96,13 +132,13 @@ export const loader = async ({ request }) => {
 		let experian_business_report = {
 			score: experian_business_score,
 			id: business_credit_report.id,
-			href: `/credit/report/business/experian/overview/resource/e/${entity_id}/g/${group_id}/f/${business_credit_report.id}`,
+			href: `/credit/report/business/experian/overview/resource/e/${entity_id}/g/${group_id}`,
 		};
 
 		let dnb_business_report = {
 			score: dnb_business_score,
 			id: business_credit_report.id,
-			href: `/credit/report/business/dnb/overview/resource/e/${entity_id}/g/${group_id}/f/${business_credit_report.id}`,
+			href: `/credit/report/business/dnb/overview/resource/e/${entity_id}/g/${group_id}`,
 		};
 
 		business_credit_report_payload = {
@@ -111,7 +147,7 @@ export const loader = async ({ request }) => {
 		};
 	}
 
-	if (!business_credit_report_response) {
+	if (!business_credit_report) {
 		let experian_business_report = {
 			score: 0,
 			id: 0,
@@ -132,13 +168,13 @@ export const loader = async ({ request }) => {
 
 	let personal_credit_report_payload = {};
 
-	if (personal_credit_report_response) {
-		let personal_credit_report =
-			await prisma.personal_credit_report.findUnique({
-				where: {
-					id: personal_credit_report_response.id,
-				},
-			});
+	if (personal_credit_report) {
+		// let personal_credit_report =
+		// 	await prisma.personal_credit_report.findUnique({
+		// 		where: {
+		// 			id: personal_credit_report_response.id,
+		// 		},
+		// 	});
 
 		let experian_personal_score = Array.experian.score(credit_report_data);
 
@@ -172,7 +208,7 @@ export const loader = async ({ request }) => {
 		};
 	}
 
-	if (!personal_credit_report_response) {
+	if (!personal_credit_report) {
 		let experian_personal_report = {
 			score: 0,
 			id: 0,
@@ -215,56 +251,6 @@ export const loader = async ({ request }) => {
 		plan_id,
 		financials,
 	};
-};
-
-function UniversityHeading() {
-	return (
-		<div className="border-b border-gray-200 pb-3">
-			<div className="sm:flex sm:items-baseline sm:justify-between px-5 pt-5">
-				<div className="sm:w-0 sm:flex-1">
-					<h1
-						id="message-heading"
-						className="text-base font-semibold leading-6 text-gray-900"
-					>
-						Credit Banc University
-					</h1>
-					<p className="mt-1 truncate text-sm text-gray-500">
-						Learn how to build your credit and get funding
-					</p>
-				</div>
-
-				<div className="mt-4 flex items-center justify-between sm:ml-6 sm:mt-0 sm:flex-shrink-0 sm:justify-start">
-					<span className="inline-flex items-center rounded-full bg-green-50 px-2 py-1 text-xs font-medium text-green-700 ring-1 ring-inset ring-green-600/20">
-						18 Videos
-					</span>
-				</div>
-			</div>
-		</div>
-	);
-}
-
-const VideoCard = () => {
-	return (
-		<div className="border my-4 rounded flex flex-row">
-			<div className="flex flex-col w-[150px] border-r h-auto">
-				<div className="flex flex-col w-full h-full items-center justify-center">
-					<div className="w-[30px] text-[#55CF9E]">
-						<PlayIcon />
-					</div>
-				</div>
-			</div>
-			<div className="flex flex-col p-4 w-full h-full leading-6">
-				<div className="flex flex-col font-semibold">Video Title</div>
-				<div className="flex flex-col mt-1">
-					Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-					Etiam cursus enim sed rutrum dignissim. Proin vel tincidunt
-					libero, sed pharetra neque. Proin molestie tincidunt neque
-					sed hendrerit. Phasellus nec vulputate erat. Aliquam vitae
-					nunc consectetur, varius ex sed, finibus ante.
-				</div>
-			</div>
-		</div>
-	);
 };
 
 const BusinessCredit = () => {
@@ -867,19 +853,9 @@ export default function Home() {
 					<div className="flex flex-col w-full h-full rounded bg-white">
 						<div className="flex flex-row py-4 px-5 justify-between w-full items-center">
 							<div>Notifications</div>
-							{/* <div className="text-blue-500 text-sm cursor-pointer">
-								See all
-							</div> */}
 						</div>
 						<div className="flex flex-col w-full border-t"></div>
 						<div className="flex flex-col overflow-scroll scrollbar-none">
-							{/* <div className="p-3">
-								<img
-									src="https://images.unsplash.com/photo-1496128858413-b36217c2ce36?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=3603&q=80"
-									className="w-full rounded"
-								/>
-							</div> */}
-
 							<div className="border-b border-gray-200 bg-white px-4 py-3 sm:px-6 sticky top-0 z-10">
 								<h3 className="text-base font-semibold leading-6 text-gray-900 my-2">
 									Complete Your Profile
@@ -890,11 +866,6 @@ export default function Home() {
 										Follow the steps below to complete your
 										CreditBanc profile
 									</p>
-
-									{/* <p className="mt-1 text-sm text-gray-500">
-										New content – discover our expert
-										interview with a wealth manager!
-									</p> */}
 								</div>
 
 								<div className="my-2 flex flex-col w-full">
