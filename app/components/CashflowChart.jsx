@@ -242,14 +242,14 @@ export default function CashflowChart() {
 			<div className="px-3">
 				<div className="flex flex-row w-full">
 					<div className="flex flex-row justify-between w-[30%]">
-						<div className="flex flex-col mb-7 space-y-2 my-2">
+						<div className="flex flex-col mb-3 space-y-2 my-2">
 							<div className="text-gray-700">Net income</div>
 							<div className="text-4xl">
 								{currency.format(net_income)}
 							</div>
 						</div>
 					</div>
-					<div className="flex flex-col flex-1 justify-end">
+					<div className="flex flex-col flex-1 justify-start">
 						<div className="flex flex-row justify-center gap-x-5 py-6 text-sm">
 							<Link
 								className={`flex flex-col  px-3 rounded-full cursor-pointer ${
@@ -296,13 +296,16 @@ export default function CashflowChart() {
 				</div>
 			</div>
 			<div className="flex flex-row w-full">
-				<div className="flex flex-col w-[30%]">
-					<div className="pb-3 px-3">
-						<h3 className="text-base font-semibold leading-6 text-gray-900">
-							How you’re doing
-						</h3>
+				<div className="flex flex-col w-[30%] ">
+					<div className="flex flex-col h-full justify-center">
+						<div className="pb-3 px-3">
+							<h3 className="text-base font-semibold leading-6 text-gray-900">
+								How you’re doing
+							</h3>
+							{/* <div className="flex flex-col border-b pt-3"></div> */}
+						</div>
+						<IncomeStats />
 					</div>
-					<IncomeStats />
 				</div>
 				<div className="flex flex-col flex-1 h-[350px] p-3 overflow-hidden">
 					<Bar
