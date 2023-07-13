@@ -40,12 +40,6 @@ export const loader = async ({ request }) => {
 
 	let report = pipe(head)(report_response);
 
-	// let report = await prisma.business_credit_report.findUnique({
-	// 	where: {
-	// 		id: file_id,
-	// 	},
-	// });
-
 	let is_owner = report.entity_id == entity_id;
 
 	let { plan_id } = await prisma.entity.findUnique({
@@ -57,15 +51,17 @@ export const loader = async ({ request }) => {
 
 	if (pipe(allPass(report_tests[plan_id]["experian"]), not)(report)) {
 		let lendflow_report = await get_lendflow_report(report.application_id);
-		report = await update_business_report(report.id, lendflow_report);
+		report = await set_doc(["credit_reports", report.id], {
+			...report,
+			...lendflow_report,
+		});
 	}
 
 	let trade_payment_totals = Lendflow.experian.trade_payment_totals(report);
 	let trade_lines = Lendflow.experian.trade_lines(report);
 	let report_payload = { trade_payment_totals, trade_lines };
 	let report_plan_id = report?.plan_id || "essential";
-	// console.log("report_payload");
-	// console.log(report_payload);
+
 	return { ...report_payload, plan_id, report_plan_id };
 };
 

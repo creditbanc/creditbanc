@@ -40,19 +40,15 @@ export const loader = async ({ request }) => {
 	});
 
 	let report = pipe(head)(report_response);
-	let { plan_id } = report;
 
-	// console.log("report___");
-	// console.log(report);
+	let is_owner = report.entity_id == entity_id;
 
-	// let is_owner = report.entity_id == entity_id;
-
-	// let { plan_id } = await prisma.entity.findUnique({
-	// 	where: { id: is_owner ? entity_id : report.entity_id },
-	// 	select: {
-	// 		plan_id: true,
-	// 	},
-	// });
+	let { plan_id } = await prisma.entity.findUnique({
+		where: { id: is_owner ? entity_id : report.entity_id },
+		select: {
+			plan_id: true,
+		},
+	});
 
 	if (pipe(allPass(report_tests[plan_id]["experian"]), not)(report)) {
 		let lendflow_report = await get_lendflow_report(report.application_id);
