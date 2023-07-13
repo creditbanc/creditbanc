@@ -10,7 +10,7 @@ import {
 	HomeIcon,
 } from "@heroicons/react/24/outline";
 import { Link, useLoaderData, useLocation } from "@remix-run/react";
-import { isEmpty, map, max, o, pipe, prop, reduce, set, uniqBy } from "ramda";
+import { isEmpty, map, max, pipe, prop, reduce, set, uniqBy } from "ramda";
 import { get, all, mod, fill } from "shades";
 import { get_user_id } from "~/utils/auth.server";
 import {
@@ -26,6 +26,7 @@ import {
 import { create } from "zustand";
 import axios from "axios";
 import { useEffect } from "react";
+const cb_logo_3 = "/images/logos/cb_logo_3.png";
 
 export const useCompanyStore = create((set) => ({
 	company: {},
@@ -160,9 +161,8 @@ const QuickLinks = () => {
 };
 
 const CompayInfo = () => {
-	let { scores = {}, business = {} } = useCompanyStore(
-		(state) => state.company
-	);
+	let company = useCompanyStore((state) => state.company);
+	let { scores = {}, business = {} } = company;
 
 	let {
 		experian_personal_score,
@@ -308,6 +308,7 @@ const Company = ({ group_id }) => {
 			set_company(["company"], { ...company, scores, business });
 		};
 
+		set_company(["company"], {});
 		get_company_info();
 	};
 
@@ -338,6 +339,43 @@ const Company = ({ group_id }) => {
 					<div>
 						<LinkIcon className="w-5 h-5 text-blue-500" />
 					</div>
+				</div>
+			</div>
+		</div>
+	);
+};
+
+const Loading = () => {
+	return (
+		<div className="h-full w-full flex flex-col items-center justify-center">
+			<div className="w-1/2 flex flex-col">
+				<div className="flex flex-col items-center my-5">
+					<img src={cb_logo_3} />
+				</div>
+				<div className="flex flex-row items-center justify-center">
+					<div>
+						<svg
+							className="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
+							xmlns="http://www.w3.org/2000/svg"
+							fill="none"
+							viewBox="0 0 24 24"
+						>
+							<circle
+								className="opacity-25"
+								cx="12"
+								cy="12"
+								r="10"
+								stroke="green"
+								strokeWidth="4"
+							></circle>
+							<path
+								className="opacity-75"
+								fill="green"
+								d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+							></path>
+						</svg>
+					</div>
+					<div>Loading...</div>
 				</div>
 			</div>
 		</div>
@@ -403,7 +441,9 @@ export default function Companies() {
 			</div>
 			<div className="flex flex-col w-[30%]">
 				{isEmpty(company) && (
-					<div className="flex flex-col w-full h-full rounded border bg-white"></div>
+					<div className="flex flex-col w-full h-full rounded border bg-white items-center justify-center">
+						<Loading />
+					</div>
 				)}
 				{!isEmpty(company) && <CompayInfo />}
 			</div>
