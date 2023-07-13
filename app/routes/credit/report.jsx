@@ -3,6 +3,7 @@ import {
 	get_report_endpoint,
 	classNames,
 	get_entity_id,
+	is_location,
 } from "~/utils/helpers";
 import { get_user_id } from "~/utils/auth.server";
 import { get_docs as get_group_docs } from "~/utils/group.server";
@@ -29,7 +30,7 @@ const tabs = [
 		name: "Personal",
 		href: ({ entity_id, group_id }) =>
 			`/credit/report/personal/personal/resource/e/${entity_id}/g/${group_id}`,
-		current: true,
+		current: (pathname) => is_location("/credit/report/personal", pathname),
 	},
 	// { name: "Business", href: "/financial/accounts", current: false },
 ];
@@ -44,7 +45,10 @@ const BusinessDropdown = () => {
 			<div>
 				<Menu.Button
 					className={classNames(
-						"flex flex-row items-center border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 border-b-2 py-2 px-1 text-center text-sm gap-x-1"
+						is_location("/credit/report/business", pathname)
+							? "border-blue-500 text-blue-600"
+							: " border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700",
+						"flex flex-row items-center border-b-2 py-2 px-1 text-center text-sm gap-x-1"
 					)}
 				>
 					Business
@@ -130,12 +134,14 @@ const SubNav = () => {
 								key={tab.name}
 								to={tab.href({ entity_id, group_id })}
 								className={classNames(
-									tab.current
+									tab.current(pathname)
 										? "border-blue-500 text-blue-600"
 										: "border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700",
 									" border-b-2 py-2 px-1 text-center text-sm "
 								)}
-								aria-current={tab.current ? "page" : undefined}
+								aria-current={
+									tab.current(pathname) ? "page" : undefined
+								}
 							>
 								{tab.name}
 							</Link>
