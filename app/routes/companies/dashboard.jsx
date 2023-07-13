@@ -7,6 +7,7 @@ import {
 	CurrencyDollarIcon,
 	FolderOpenIcon,
 	UserCircleIcon,
+	HomeIcon,
 } from "@heroicons/react/24/outline";
 import { Link, useLoaderData } from "@remix-run/react";
 import { isEmpty, map, pipe, prop, uniqBy } from "ramda";
@@ -72,6 +73,13 @@ const Members = () => {
 
 const navigation = [
 	{
+		name: "Dashboard",
+		href: ({ entity_id, group_id }) =>
+			`/home/resource/e/${entity_id}/g/${group_id}`,
+		icon: HomeIcon,
+		current: true,
+	},
+	{
 		name: "Business Credit Report",
 		href: () => "#",
 		icon: BriefcaseIcon,
@@ -111,18 +119,12 @@ const QuickLinks = () => {
 						<Link
 							to={item.href({ entity_id, group_id })}
 							className={classNames(
-								item.current
-									? "bg-gray-50 text-blue-600"
-									: "text-gray-700 hover:text-blue-600 hover:bg-gray-50",
-								"group flex gap-x-2 rounded-md px-2 py-1 text-xs leading-6 font-semibold cursor-pointer"
+								"text-gray-700 hover:text-blue-600 hover:bg-gray-50 group flex gap-x-2 rounded-md px-2 py-1 text-xs leading-6 font-semibold cursor-pointer"
 							)}
 						>
 							<item.icon
 								className={classNames(
-									item.current
-										? "text-blue-600"
-										: "text-gray-400 group-hover:text-blue-600",
-									"h-5 w-5 shrink-0"
+									"text-gray-400 group-hover:text-blue-600 h-5 w-5 shrink-0"
 								)}
 								aria-hidden="true"
 							/>
