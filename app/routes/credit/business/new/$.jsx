@@ -18,6 +18,7 @@ import {
 	test_identity_five,
 	test_identity_six,
 	test_identity_seven,
+	mrm_credit_report,
 } from "~/data/lendflow";
 import { Listbox, Transition } from "@headlessui/react";
 import { CheckIcon, ChevronUpDownIcon } from "@heroicons/react/20/solid";
@@ -68,8 +69,7 @@ export const action = async ({ request }) => {
 	const bearer = process.env.LENDFLOW;
 	const group_id = get_group_id(request.url);
 	const form = await request.formData();
-
-	let entity_id = await get_user_id(request);
+	const entity_id = await get_user_id(request);
 
 	let { plan_id } = await prisma.entity.findUnique({
 		where: { id: entity_id },
@@ -77,12 +77,6 @@ export const action = async ({ request }) => {
 			plan_id: true,
 		},
 	});
-
-	// console.log("bearer");
-	// console.log(bearer);
-
-	// console.log("plan_id");
-	// console.log(plan_id);
 
 	let experian_requested_products = pipe(get(plan_id))(
 		plan_product_requests.experian
@@ -95,19 +89,10 @@ export const action = async ({ request }) => {
 		...dnb_requested_products,
 	];
 
-	// console.log("requested_products");
-	// console.log(requested_products);
-
-	// return null;
-
 	const payload = pipe(
 		mod("requested_products")((value) => requested_products)
 	)(JSON.parse(form.get("payload")));
 
-	// console.log("payload");
-	// console.log(payload);
-
-	// return null;
 	var options = {
 		method: "post",
 		maxBodyLength: Infinity,
@@ -117,42 +102,34 @@ export const action = async ({ request }) => {
 			"Content-Type": "application/json",
 		},
 		data: payload,
-		// data,
 	};
 
-	// console.log("options");
-	// console.log(options);
-	// return null;
+	let report = {
+		group_id,
+		entity_id,
+		plan_id,
+		type: "business_credit_report",
+		...mrm_credit_report,
+	};
 
-	// let credit_report_payload = mrm_credit_report;
+	await create_new_report(report);
 
-	// return null;
+	return redirect(
+		`/credit/report/business/experian/overview/resource/e/${entity_id}/g/${group_id}`
+	);
 
-	// console.log("credit_report_payload");
-	// console.log(credit_report_payload);
-
-	// let { file } = await create_new_report({
-	// 	group_id,
-	// 	entity_id,
-	// 	...credit_report_payload,
-	// });
-
-	// console.log("report");
-	// console.log(file);
-
-	// return redirect(
-	// 	`/credit/report/business/experian/overview/resource/e/${entity_id}/g/${group_id}/f/${file.id}`
-	// );
+	return null;
 
 	try {
+		console.log("request_report");
 		let response = await axios(options);
 		let { application_id } = response?.data?.data;
 
-		// console.log("application_id_response");
+		console.log("application_id_response");
 		// console.log(payload);
-		// console.log(application_id);
+		console.log(application_id);
 
-		// return null;
+		return null;
 
 		if (application_id) {
 			console.log("start");
@@ -160,22 +137,31 @@ export const action = async ({ request }) => {
 			console.log("end");
 
 			let report = await get_lendflow_report(application_id);
-			// console.log("report");
-			// inspect(report);
+			console.log("report_____");
+			inspect(report);
 
-			let { file } = await create_new_report({
+			let payload = {
 				group_id,
 				entity_id,
-				application_id,
 				plan_id,
+				application_id,
+				type: "business_credit_report",
 				...report,
-			});
+			};
+
+			// let { file } = await create_new_report({
+			// 	group_id,
+			// 	entity_id,
+			// 	plan_id,
+			// 	application_id,
+			// 	...report,
+			// });
 
 			// console.log("file");
 			// console.log(file.id);
 
 			return redirect(
-				`/credit/report/business/experian/overview/resource/e/${entity_id}/g/${group_id}/f/${file.id}`
+				`/credit/report/business/experian/overview/resource/e/${entity_id}/g/${group_id}`
 			);
 		}
 

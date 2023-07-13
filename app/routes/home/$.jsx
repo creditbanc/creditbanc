@@ -472,7 +472,11 @@ const Accounts = () => {
 	);
 };
 
-const CurriculumAccordion = () => {
+const Notifications = () => {
+	let { pathname } = useLocation();
+	let entity_id = get_entity_id(pathname);
+	let group_id = get_group_id(pathname);
+
 	return (
 		<div className="mx-auto w-full max-w-md rounded-2xl bg-white p-2 space-y-2">
 			<Disclosure defaultOpen={true}>
@@ -487,22 +491,28 @@ const CurriculumAccordion = () => {
 							/>
 						</Disclosure.Button>
 						<Disclosure.Panel className="px-4  pb-2 text-gray-500 space-y-3 text-sm">
-							<div className="flex flex-row w-full border p-2 rounded">
-								<div className="flex flex-row w-full space-x-2 items-center space-between cursor-pointer">
+							<Link
+								to={`/credit/personal/new/resource/e/${entity_id}/g/${group_id}`}
+								className="flex flex-row w-full border p-2 rounded cursor-pointer"
+							>
+								<div className="flex flex-row w-full space-x-2 items-center space-between">
 									<div>
 										<XCircleIcon className="h-5 w-5 text-red-500" />
 									</div>
 									<div>Run a personal credit report</div>
 								</div>
 								<div></div>
-							</div>
+							</Link>
 							<div className="flex flex-row w-full border p-2 rounded">
-								<div className="flex flex-row w-full space-x-2 items-center space-between cursor-pointer">
+								<Link
+									className="flex flex-row w-full space-x-2 items-center space-between cursor-pointer"
+									to={`/credit/business/new/resource/e/${entity_id}/g/${group_id}?cookie=monster`}
+								>
 									<div>
 										<CheckCircleIcon className="h-5 w-5 text-green-500" />
 									</div>
 									<div>Run a business credit report</div>
-								</div>
+								</Link>
 								<div></div>
 							</div>
 						</Disclosure.Panel>
@@ -689,7 +699,7 @@ export default function Home() {
 							</div>
 
 							<div className="flex flex-col w-full my-3">
-								<CurriculumAccordion />
+								<Notifications />
 							</div>
 						</div>
 					</div>

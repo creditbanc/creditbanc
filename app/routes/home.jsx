@@ -1,16 +1,11 @@
 import { get_group_id } from "~/utils/helpers";
 import { get_user_id } from "~/utils/auth.server";
-import LeftNav from "~/components/LeftNav";
-import CreditNav from "~/components/CreditNav";
 import {
 	get_docs as get_group_docs,
 	get_root_group_resource_path_id,
 } from "~/utils/group.server";
-import { defaultTo, pipe } from "ramda";
-import { filter } from "shades";
 import { json, redirect } from "@remix-run/node";
 import { Outlet, useLoaderData } from "@remix-run/react";
-import SimpleNav from "~/components/SimpleNav";
 import SimpleNavSignedIn from "~/components/SimpleNavSignedIn";
 
 export const loader = async ({ request }) => {

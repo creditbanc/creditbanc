@@ -31,7 +31,8 @@ import deepEqual from "deep-equal";
 import UpgradeBanner from "~/components/UpgradeMembership";
 import UpgradeCard from "~/components/UpgradeCard";
 import { DocumentDuplicateIcon, LinkIcon } from "@heroicons/react/24/outline";
-import { get_collection } from "~/utils/firebase";
+import { get_collection, set_doc } from "~/utils/firebase";
+import axios from "axios";
 
 export const action = async ({ request }) => {
 	var form = await request.formData();
@@ -76,6 +77,7 @@ export const action = async ({ request }) => {
 
 export const loader = async ({ request }) => {
 	let url = new URL(request.url);
+	let { origin } = url;
 	let file_id = get_file_id(url.pathname);
 	let entity_id = await get_user_id(request);
 	let group_id = get_group_id(url.pathname);
@@ -100,24 +102,15 @@ export const loader = async ({ request }) => {
 
 	let report = pipe(head)(report_response);
 
-	// let report = await prisma.business_credit_report.findUnique({
-	// 	where: {
-	// 		id: file_id,
-	// 	},
-	// });
-
 	let lendflow_report = await get_lendflow_report(report.application_id);
 	let is_latest_report = deepEqual(report.data, lendflow_report.data);
 
 	if (!is_latest_report) {
-		report = await prisma.business_credit_report.update({
-			where: {
-				id: report.id,
-			},
-			data: {
-				...lendflow_report,
-			},
+		await set_doc(["credit_reports", report.id], {
+			...report,
+			...lendflow_report,
 		});
+
 		return redirect(url);
 	}
 
@@ -128,12 +121,28 @@ export const loader = async ({ request }) => {
 		},
 	});
 
+	let credit_scores_api_response = await axios({
+		method: "get",
+		url: `${origin}/credit/report/api/scores/resource/e/${entity_id}/g/${group_id}`,
+	});
+
+	let { data: scores = {} } = credit_scores_api_response;
+
+	let business_info_response = await axios({
+		method: "get",
+		url: `${origin}/credit/report/business/api/company/resource/e/${entity_id}/g/${group_id}`,
+	});
+
+	let { data: business = {} } = business_info_response;
+
 	return {
 		entity_id,
 		plan_id,
 		report_id: file_id,
 		application_id: report?.application_id,
 		report_plan_id: report?.plan_id,
+		business,
+		scores,
 	};
 };
 
@@ -144,7 +153,9 @@ export default function BusinessReport() {
 	let setContentWidth = useLayoutStore((state) => state.set_content_width);
 	let content_width = useLayoutStore((state) => state.content_width);
 	let [isMobile, setIsMobile] = useState(true);
-	let { plan_id, report_plan_id } = useLoaderData();
+	let { plan_id, report_plan_id, business, scores } = useLoaderData();
+
+	let { experian_business_score = 0, dnb_business_score = 0 } = scores;
 
 	useEffect(() => {
 		if (content_width > 640) {
@@ -203,7 +214,7 @@ export default function BusinessReport() {
 												</span>
 											</span>
 										</div>
-										<div>Credit Banc</div>
+										<div>{business?.name}</div>
 									</div>
 								</div>
 								<div className="flex flex-col py-2">
@@ -232,7 +243,7 @@ export default function BusinessReport() {
 													Dun & Bradstreet
 												</div>
 												<div className="text-lg">
-													72
+													{dnb_business_score}
 												</div>
 											</div>
 											<div className="flex flex-col w-1/2 text-sm space-y-1">
@@ -240,7 +251,7 @@ export default function BusinessReport() {
 													Experian
 												</div>
 												<div className="text-lg">
-													728
+													{experian_business_score}
 												</div>
 											</div>
 										</div>

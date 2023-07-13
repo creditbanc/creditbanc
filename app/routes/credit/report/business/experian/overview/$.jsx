@@ -17,7 +17,7 @@ import { get_collection, set_doc } from "~/utils/firebase";
 
 export const loader = async ({ request }) => {
 	let url = new URL(request.url);
-	let file_id = get_file_id(url.pathname);
+	// let file_id = get_file_id(url.pathname);
 	let entity_id = await get_user_id(request);
 	let group_id = get_group_id(url.pathname);
 
@@ -40,20 +40,26 @@ export const loader = async ({ request }) => {
 	});
 
 	let report = pipe(head)(report_response);
+	let { plan_id } = report;
 
-	let is_owner = report.entity_id == entity_id;
+	// console.log("report___");
+	// console.log(report);
 
-	let { plan_id } = await prisma.entity.findUnique({
-		where: { id: is_owner ? entity_id : report.entity_id },
-		select: {
-			plan_id: true,
-		},
-	});
+	// let is_owner = report.entity_id == entity_id;
+
+	// let { plan_id } = await prisma.entity.findUnique({
+	// 	where: { id: is_owner ? entity_id : report.entity_id },
+	// 	select: {
+	// 		plan_id: true,
+	// 	},
+	// });
 
 	if (pipe(allPass(report_tests[plan_id]["experian"]), not)(report)) {
-		console.log("didnotpass");
 		let lendflow_report = await get_lendflow_report(report.application_id);
-		report = await update_business_report(report.id, lendflow_report);
+		set_doc(["credit_reports", report.id], {
+			...report,
+			...lendflow_report,
+		});
 	}
 
 	let score = Lendflow.experian.score(report);
