@@ -36,6 +36,8 @@ export const useRolesStore = create((set) => ({
 }));
 
 const Companies = () => {
+	let { pathname } = useLocation();
+	let entity_id = get_entity_id(pathname);
 	let companies = useCompaniesDropdownStore((state) => state.companies);
 
 	return (
@@ -81,7 +83,7 @@ const Companies = () => {
 								<Menu.Item key={company_id}>
 									{({ active }) => (
 										<Link
-											to={`/companies/dashboard`}
+											to={`/home/resource/e/${entity_id}/g/${company_id}`}
 											className={classNames(
 												active
 													? "bg-gray-100 text-gray-900"
@@ -292,6 +294,8 @@ const CreditDropdown = () => {
 
 export default function Nav({ user_id }) {
 	let location = useLocation();
+	let entity_id = get_entity_id(location.pathname);
+	let group_id = get_group_id(location.pathname);
 
 	let { pathname } = location;
 	let is_companies_dashboard = is_location("/companies/dashboard", pathname);
@@ -335,7 +339,7 @@ export default function Nav({ user_id }) {
 		<div className="flex flex-col w-full  h-[65px] justify-center px-5">
 			<div className="flex flex-row justify-between">
 				<div className="flex flex-col justify-center w-[150px]">
-					<Link href={`/`}>
+					<Link href={`/home/resource/e/${entity_id}/g/${group_id}`}>
 						<img
 							src={cb_logo}
 							className="hidden sm:block h-5 w-auto"
