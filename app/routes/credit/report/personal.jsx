@@ -108,8 +108,8 @@ export const loader = async ({ request }) => {
 	});
 
 	let report = pipe(head)(report_response);
-	// console.log("report_response");
-	// console.log(report);
+	console.log("report_response");
+	console.log(report);
 
 	// let group_docs = await get_group_docs({
 	// 	resource_id: group_id,
@@ -133,6 +133,9 @@ export const loader = async ({ request }) => {
 			plan_id: true,
 		},
 	});
+
+	console.log("plan_id");
+	console.log(plan_id);
 
 	let scores = get_scores(report);
 
