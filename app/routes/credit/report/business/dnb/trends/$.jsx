@@ -4,25 +4,48 @@ import {
 } from "@heroicons/react/24/outline";
 import { useLoaderData, Link } from "@remix-run/react";
 import { mrm_credit_report, Lendflow } from "~/data/lendflow";
-import { currency, mapIndexed } from "~/utils/helpers";
-import { pipe, map } from "ramda";
+import { currency, get_group_id, mapIndexed } from "~/utils/helpers";
+import { pipe, map, head } from "ramda";
 import { get_file_id } from "~/utils/helpers";
 import { get_user_id } from "~/utils/auth.server";
 import { prisma } from "~/utils/prisma.server";
 import { plans } from "~/data/plans";
 import { get } from "shades";
 import AccountCard from "~/components/AccountCard";
+import { get_collection } from "~/utils/firebase";
 
 export const loader = async ({ request }) => {
 	let url = new URL(request.url);
 	let file_id = get_file_id(url.pathname);
 	let entity_id = await get_user_id(request);
 
-	let report = await prisma.business_credit_report.findUnique({
-		where: {
-			id: file_id,
+	let group_id = get_group_id(url.pathname);
+
+	let business_credit_report_queries = [
+		{
+			param: "group_id",
+			predicate: "==",
+			value: group_id,
 		},
+		{
+			param: "type",
+			predicate: "==",
+			value: "business_credit_report",
+		},
+	];
+
+	let report_response = await get_collection({
+		path: ["credit_reports"],
+		queries: business_credit_report_queries,
 	});
+
+	let report = pipe(head)(report_response);
+
+	// let report = await prisma.business_credit_report.findUnique({
+	// 	where: {
+	// 		id: file_id,
+	// 	},
+	// });
 
 	let is_owner = report.entity_id == entity_id;
 

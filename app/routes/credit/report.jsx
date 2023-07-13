@@ -35,6 +35,10 @@ const tabs = [
 ];
 
 const BusinessDropdown = () => {
+	let { pathname } = useLocation();
+	let entity_id = get_entity_id(pathname);
+	let group_id = get_group_id(pathname);
+
 	return (
 		<Menu as="div" className="relative inline-block text-left">
 			<div>
@@ -64,8 +68,8 @@ const BusinessDropdown = () => {
 					<div className="py-1">
 						<Menu.Item>
 							{({ active }) => (
-								<a
-									href="#"
+								<Link
+									to={`/credit/report/business/dnb/overview/resource/e/${entity_id}/g/${group_id}`}
 									className={classNames(
 										active
 											? "bg-gray-100 text-gray-900"
@@ -74,13 +78,13 @@ const BusinessDropdown = () => {
 									)}
 								>
 									Dun & Bradstreet
-								</a>
+								</Link>
 							)}
 						</Menu.Item>
 						<Menu.Item>
 							{({ active }) => (
-								<a
-									href="#"
+								<Link
+									to={`/credit/report/business/experian/overview/resource/e/${entity_id}/g/${group_id}`}
 									className={classNames(
 										active
 											? "bg-gray-100 text-gray-900"
@@ -89,7 +93,7 @@ const BusinessDropdown = () => {
 									)}
 								>
 									Experian
-								</a>
+								</Link>
 							)}
 						</Menu.Item>
 					</div>

@@ -255,8 +255,8 @@ const CreditDropdown = () => {
 						</Menu.Item>
 						<Menu.Item>
 							{({ active }) => (
-								<a
-									href="#"
+								<Link
+									to={`/credit/report/business/experian/overview/resource/e/${entity_id}/g/${group_id}`}
 									className={classNames(
 										active
 											? "bg-gray-100 text-gray-900"
@@ -265,7 +265,7 @@ const CreditDropdown = () => {
 									)}
 								>
 									Business
-								</a>
+								</Link>
 							)}
 						</Menu.Item>
 					</div>

@@ -4,20 +4,43 @@ import {
 } from "@heroicons/react/24/outline";
 import { useLoaderData } from "@remix-run/react";
 import { mrm_credit_report, Lendflow } from "~/data/lendflow";
-import { get_file_id, inspect } from "~/utils/helpers";
+import { get_file_id, get_group_id, inspect } from "~/utils/helpers";
 import { get_user_id } from "~/utils/auth.server";
 import { prisma } from "~/utils/prisma.server";
+import { get_collection } from "~/utils/firebase";
+import { head, pipe } from "ramda";
 
 export const loader = async ({ request }) => {
 	let url = new URL(request.url);
 	let file_id = get_file_id(url.pathname);
 	let entity_id = await get_user_id(request);
+	let group_id = get_group_id(url.pathname);
 
-	let report = await prisma.business_credit_report.findUnique({
-		where: {
-			id: file_id,
+	let business_credit_report_queries = [
+		{
+			param: "group_id",
+			predicate: "==",
+			value: group_id,
 		},
+		{
+			param: "type",
+			predicate: "==",
+			value: "business_credit_report",
+		},
+	];
+
+	let report_response = await get_collection({
+		path: ["credit_reports"],
+		queries: business_credit_report_queries,
 	});
+
+	let report = pipe(head)(report_response);
+
+	// let report = await prisma.business_credit_report.findUnique({
+	// 	where: {
+	// 		id: file_id,
+	// 	},
+	// });
 
 	let score = Lendflow.dnb.score(report);
 	console.log("score");
