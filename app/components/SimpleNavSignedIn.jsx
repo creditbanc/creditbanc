@@ -40,7 +40,7 @@ const Companies = () => {
 	return (
 		<Menu as="div" className="relative inline-block text-left z-50">
 			<div>
-				<Menu.Button className="inline-flex w-full justify-center gap-x-1.5 rounded-md bg-white px-3 text-sm font-semibold text-gray-900  hover:bg-gray-50">
+				<Menu.Button className="inline-flex w-full justify-center gap-x-1.5 rounded-full bg-white px-4 py-2 text-sm font-semibold text-gray-900 hover:bg-gray-100">
 					Companies
 					<ChevronDownIcon
 						className="-mr-1 h-5 w-5 text-gray-400"
@@ -102,11 +102,11 @@ const Companies = () => {
 };
 
 let navigation = [
-	{
-		name: "Credit",
-		href: ({ entity_id, group_id }) => "/home",
-		current: (pathname) => is_location("/credit", pathname),
-	},
+	// {
+	// 	name: "Credit",
+	// 	href: ({ entity_id, group_id }) => "/home",
+	// 	current: (pathname) => is_location("/credit", pathname),
+	// },
 	{
 		name: "Cashflow",
 		href: ({ entity_id, group_id }) =>
@@ -210,6 +210,73 @@ const ShareDropdown = () => {
 	);
 };
 
+const CreditDropdown = () => {
+	let { pathname } = useLocation();
+
+	return (
+		<Menu as="div" className="relative inline-block text-left">
+			<div>
+				<Menu.Button
+					className={`flex flex-row px-4 py-2 rounded-full cursor-pointer hover:bg-gray-100 ${
+						is_location("credit", pathname) && "bg-gray-100"
+					}`}
+				>
+					Credit
+					<ChevronDownIcon
+						className="ml-2 h-5 w-5 text-gray-400"
+						aria-hidden="true"
+					/>
+				</Menu.Button>
+			</div>
+
+			<Transition
+				as={Fragment}
+				enter="transition ease-out duration-100"
+				enterFrom="transform opacity-0 scale-95"
+				enterTo="transform opacity-100 scale-100"
+				leave="transition ease-in duration-75"
+				leaveFrom="transform opacity-100 scale-100"
+				leaveTo="transform opacity-0 scale-95"
+			>
+				<Menu.Items className="absolute left-[-50%] z-10 mt-[15px] w-56 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+					<div className="py-1">
+						<Menu.Item>
+							{({ active }) => (
+								<a
+									href="#"
+									className={classNames(
+										active
+											? "bg-gray-100 text-gray-900"
+											: "text-gray-700",
+										"block px-4 py-2 text-sm"
+									)}
+								>
+									Personal
+								</a>
+							)}
+						</Menu.Item>
+						<Menu.Item>
+							{({ active }) => (
+								<a
+									href="#"
+									className={classNames(
+										active
+											? "bg-gray-100 text-gray-900"
+											: "text-gray-700",
+										"block px-4 py-2 text-sm"
+									)}
+								>
+									Business
+								</a>
+							)}
+						</Menu.Item>
+					</div>
+				</Menu.Items>
+			</Transition>
+		</Menu>
+	);
+};
+
 export default function Nav({ user_id }) {
 	console.log("user_id");
 	console.log(user_id);
@@ -273,6 +340,7 @@ export default function Nav({ user_id }) {
 					<div className="flex flex-col justify-center">
 						{!is_companies_dashboard && (
 							<div className="flex flex-row space-x-3 text-xs lg:text-sm">
+								<CreditDropdown />
 								{pipe(
 									mapIndexed((item, key) => (
 										<Link

@@ -692,6 +692,30 @@ video {
   top: calc(23 / 729 * 100%);
 }
 
+.right-\[50\%\] {
+  right: 50%;
+}
+
+.right-1\/2 {
+  right: 50%;
+}
+
+.right-\[50px\] {
+  right: 50px;
+}
+
+.right-\[0px\] {
+  right: 0px;
+}
+
+.left-\[50\%\] {
+  left: 50%;
+}
+
+.left-\[-50\%\] {
+  left: -50%;
+}
+
 .isolate {
   isolation: isolate;
 }
@@ -1165,6 +1189,14 @@ video {
 
 .mt-\[50px\] {
   margin-top: 50px;
+}
+
+.mt-0 {
+  margin-top: 0px;
+}
+
+.mt-\[15px\] {
+  margin-top: 15px;
 }
 
 .block {
