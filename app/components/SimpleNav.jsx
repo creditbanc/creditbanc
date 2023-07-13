@@ -15,15 +15,6 @@ export default function Nav({ user_id }) {
 					</Link>
 				</div>
 
-				{/* <div className="flex flex-col justify-center">
-					<div className="flex flex-row space-x-5">
-						<div>Credit</div>
-						<div>Cashflow</div>
-						<div>Vault</div>
-						<div>University</div>
-					</div>
-				</div> */}
-
 				{user_id && (
 					<div className="flex items-center">
 						<UserAccountNavMenu />

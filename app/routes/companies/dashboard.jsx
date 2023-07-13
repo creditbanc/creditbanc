@@ -255,7 +255,7 @@ export default function Companies() {
 
 	return (
 		<div className="flex flex-row w-full h-full p-5 overflow-hiddens space-x-3 overflow-hidden">
-			<div className="flex flex-col w-[70%] h-full bg-white rounded px-5 overflow-y-scroll">
+			<div className="flex flex-col w-[70%] h-full bg-white rounded px-5 overflow-y-scroll border">
 				<div className="border-b border-gray-200 pb-3 flex flex-row justify-between sticky top-0 bg-white pt-5 ">
 					<div>
 						<h3 className="mt-2 text-base font-semibold leading-6 text-gray-900">
