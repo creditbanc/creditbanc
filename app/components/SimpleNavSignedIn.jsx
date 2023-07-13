@@ -339,7 +339,7 @@ export default function Nav({ user_id }) {
 		<div className="flex flex-col w-full  h-[65px] justify-center px-5">
 			<div className="flex flex-row justify-between">
 				<div className="flex flex-col justify-center w-[150px]">
-					<Link href={`/home/resource/e/${entity_id}/g/${group_id}`}>
+					<Link to={`/home/resource/e/${entity_id}/g/${group_id}`}>
 						<img
 							src={cb_logo}
 							className="hidden sm:block h-5 w-auto"
