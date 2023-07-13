@@ -41,18 +41,6 @@ export const loader = async ({ request }) => {
 
 	let report = pipe(head)(report_response);
 
-	// let report = await prisma.business_credit_report.findUnique({
-	// 	where: {
-	// 		id: file_id,
-	// 	},
-	// });
-
-	// console.log("report");
-	// console.log(report);
-
-	// await set_doc(["credit_reports", file_id], { ...report, group_id });
-	// console.log("doc_saved");
-
 	let is_owner = report.entity_id == entity_id;
 
 	let { plan_id } = await prisma.entity.findUnique({
@@ -73,8 +61,6 @@ export const loader = async ({ request }) => {
 	let business = Lendflow.business(report);
 	let trade_summary = Lendflow.experian.trade_summary(report);
 	let report_payload = { score, risk_class, business, trade_summary };
-	// console.log("report_payload");
-	// console.log(report_payload);
 	return { ...report_payload, plan_id };
 };
 

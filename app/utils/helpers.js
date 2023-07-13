@@ -91,7 +91,7 @@ export const get_search_params_obj = (search) =>
 
 export const mapIndexed = addIndex(map);
 
-export const truncate = curry((length, str) => {
+export const truncate = curry((length, str = "") => {
 	return str.length > length ? `${str.substr(0, length)}...` : str;
 });
 

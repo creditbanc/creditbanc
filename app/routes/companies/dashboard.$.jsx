@@ -11,9 +11,14 @@ import {
 } from "@heroicons/react/24/outline";
 import { Link, useLoaderData, useLocation } from "@remix-run/react";
 import { isEmpty, map, max, o, pipe, prop, reduce, set, uniqBy } from "ramda";
-import { get, all, mod } from "shades";
+import { get, all, mod, fill } from "shades";
 import { get_user_id } from "~/utils/auth.server";
-import { classNames, get_entity_id, get_group_id } from "~/utils/helpers";
+import {
+	classNames,
+	get_entity_id,
+	get_group_id,
+	truncate,
+} from "~/utils/helpers";
 import {
 	get_owner_companies_ids,
 	get_shared_companies_ids,
@@ -28,10 +33,17 @@ export const useCompanyStore = create((set) => ({
 		set((state) => pipe(mod(...path)(() => value))(state)),
 }));
 
+export const useCompaniesStore = create((set) => ({
+	companies: {},
+	set_state: (path, value) =>
+		set((state) => pipe(mod(...path)(() => value))(state)),
+}));
+
 export const loader = async ({ request }) => {
 	let { pathname, origin } = new URL(request.url);
 	let entity_id = await get_user_id(request);
 	let group_id = get_group_id(pathname);
+
 	let owner_companies = await get_owner_companies_ids(entity_id);
 	let shared_companies = await get_shared_companies_ids(entity_id);
 
@@ -40,9 +52,16 @@ export const loader = async ({ request }) => {
 		url: `${origin}/credit/report/api/scores/resource/e/${entity_id}/g/${group_id}`,
 	});
 
-	let { data: scores } = credit_scores_api_response;
+	let { data: scores = {} } = credit_scores_api_response;
 
-	return { owner_companies, shared_companies, entity_id, scores };
+	let business_info_response = await axios({
+		method: "get",
+		url: `${origin}/credit/report/business/api/company/resource/e/${entity_id}/g/${group_id}`,
+	});
+
+	let { data: business = {} } = business_info_response;
+
+	return { owner_companies, shared_companies, entity_id, scores, business };
 };
 
 const Members = () => {
@@ -78,17 +97,19 @@ const navigation = [
 		href: ({ entity_id, group_id }) =>
 			`/home/resource/e/${entity_id}/g/${group_id}`,
 		icon: HomeIcon,
-		current: true,
+		current: false,
 	},
 	{
 		name: "Business Credit Report",
-		href: () => "#",
+		href: ({ entity_id, group_id }) =>
+			`/credit/report/business/experian/overview/resource/e/${entity_id}/g/${group_id}`,
 		icon: BriefcaseIcon,
-		current: true,
+		current: false,
 	},
 	{
 		name: "Personal Credit Report",
-		href: () => "#",
+		href: ({ entity_id, group_id }) =>
+			`/credit/report/personal/personal/resource/e/${entity_id}/g/${entity_id}`,
 		icon: UserCircleIcon,
 		current: false,
 	},
@@ -139,7 +160,9 @@ const QuickLinks = () => {
 };
 
 const CompayInfo = () => {
-	let { scores = {} } = useCompanyStore((state) => state.company);
+	let { scores = {}, business = {} } = useCompanyStore(
+		(state) => state.company
+	);
 
 	let {
 		experian_personal_score,
@@ -163,15 +186,15 @@ const CompayInfo = () => {
 	return (
 		<div className="flex flex-col bg-white border rounded overflow-hidden">
 			<div className="p-5">
-				<div className="flex flex-row space-x-3 items-center">
+				<div className="flex flex-row space-x-3 mt-1">
 					<div>
 						<span className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-gray-500">
 							<span className="text-lg font-medium leading-none text-white">
-								C
+								{business?.name?.charAt(0)?.toUpperCase()}
 							</span>
 						</span>
 					</div>
-					<div>Credit Banc</div>
+					<div>{business?.name}</div>
 				</div>
 			</div>
 
@@ -237,18 +260,55 @@ const Company = ({ group_id }) => {
 	let { pathname } = useLocation();
 	let entity_id = get_entity_id(pathname);
 	let set_company = useCompanyStore((state) => state.set_state);
+	let set_companies = useCompaniesStore((state) => state.set_state);
+	let company = useCompaniesStore((state) => state.companies[group_id]) ?? {};
+
+	useEffect(() => {
+		const get_company_info = async () => {
+			let business_info_response = await axios({
+				method: "get",
+				url: `${origin}/credit/report/business/api/company/resource/e/${entity_id}/g/${group_id}`,
+			});
+
+			let { data: business = {} } = business_info_response;
+
+			set_companies(["companies", group_id], {
+				...company,
+				business,
+			});
+		};
+
+		get_company_info();
+	}, []);
 
 	const onSelectCompany = async () => {
 		let { origin } = window.location;
 
-		let credit_scores_api_response = await axios({
-			method: "get",
-			url: `${origin}/credit/report/api/scores/resource/e/${entity_id}/g/${group_id}`,
-		});
+		const get_company_info = async () => {
+			let credit_scores_api_response = await axios({
+				method: "get",
+				url: `${origin}/credit/report/api/scores/resource/e/${entity_id}/g/${group_id}`,
+			});
 
-		let { data: scores } = credit_scores_api_response;
+			let { data: scores } = credit_scores_api_response;
 
-		set_company(["company"], { group_id, scores });
+			let business_info_response = await axios({
+				method: "get",
+				url: `${origin}/credit/report/business/api/company/resource/e/${entity_id}/g/${group_id}`,
+			});
+
+			let { data: business = {} } = business_info_response;
+
+			set_companies(["companies", group_id], {
+				...company,
+				business,
+				scores,
+			});
+
+			set_company(["company"], { ...company, scores, business });
+		};
+
+		get_company_info();
 	};
 
 	return (
@@ -265,7 +325,9 @@ const Company = ({ group_id }) => {
 				</div>
 			</div>
 			<div className="flex flex-col">
-				<div className="font-semibold text-gray-600">Credit Banc</div>
+				<div className="font-semibold text-gray-600">
+					{truncate(12, company?.business?.name) || "Untitled"}
+				</div>
 			</div>
 			<div className="flex flex-col">
 				<div className="flex flex-row justify-between items-center">
@@ -285,12 +347,17 @@ const Company = ({ group_id }) => {
 export default function Companies() {
 	let { pathname } = useLocation();
 	let group_id = get_group_id(pathname);
-	let { owner_companies, shared_companies, scores = {} } = useLoaderData();
+	let {
+		owner_companies,
+		shared_companies,
+		scores = {},
+		business = {},
+	} = useLoaderData();
 	let company = useCompanyStore((state) => state.company);
 	let set_company = useCompanyStore((state) => state.set_state);
 
 	useEffect(() => {
-		set_company(["company"], { group_id, scores });
+		set_company(["company"], { group_id, scores, business });
 	}, []);
 
 	return (

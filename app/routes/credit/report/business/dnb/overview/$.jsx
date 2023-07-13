@@ -36,21 +36,16 @@ export const loader = async ({ request }) => {
 
 	let report = pipe(head)(report_response);
 
-	// let report = await prisma.business_credit_report.findUnique({
-	// 	where: {
-	// 		id: file_id,
-	// 	},
-	// });
-
 	let score = Lendflow.dnb.score(report);
-	console.log("score");
-	console.log(score);
 
 	let delinquency_score = Lendflow.dnb.delinquency_score(report);
 	// console.log("delinquency_score");
 	// console.log(delinquency_score);
-	let business = Lendflow.business(mrm_credit_report);
-	// let trade_summary = Lendflow.experian.trade_summary(mrm_credit_report);
+	let business = Lendflow.business(report);
+
+	console.log("business");
+	console.log(business);
+
 	return { score, delinquency_score, business };
 };
 
