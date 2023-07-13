@@ -10,7 +10,7 @@ import {
 	HomeIcon,
 } from "@heroicons/react/24/outline";
 import { Link, useLoaderData, useLocation } from "@remix-run/react";
-import { isEmpty, map, max, pipe, prop, reduce, set, uniqBy } from "ramda";
+import { isEmpty, map, max, o, pipe, prop, reduce, set, uniqBy } from "ramda";
 import { get, all, mod } from "shades";
 import { get_user_id } from "~/utils/auth.server";
 import { classNames, get_entity_id, get_group_id } from "~/utils/helpers";
@@ -139,7 +139,7 @@ const QuickLinks = () => {
 };
 
 const CompayInfo = () => {
-	let { scores = {} } = useLoaderData();
+	let { scores = {} } = useCompanyStore((state) => state.company);
 
 	let {
 		experian_personal_score,
@@ -149,13 +149,13 @@ const CompayInfo = () => {
 		dnb_business_score,
 	} = scores;
 
-	let max_personal = pipe(reduce(max, -Infinity))([
+	let max_personal = pipe(reduce(max, 0))([
 		experian_personal_score,
 		equifax_personal_score,
 		transunion_personal_score,
 	]);
 
-	let max_business = pipe(reduce(max, -Infinity))([
+	let max_business = pipe(reduce(max, 0))([
 		experian_business_score,
 		dnb_business_score,
 	]);
@@ -234,12 +234,21 @@ const CompayInfo = () => {
 };
 
 const Company = ({ group_id }) => {
+	let { pathname } = useLocation();
+	let entity_id = get_entity_id(pathname);
 	let set_company = useCompanyStore((state) => state.set_state);
 
-	const get_company = async (group_id) => {};
+	const onSelectCompany = async () => {
+		let { origin } = window.location;
 
-	const onSelectCompany = () => {
-		set_company(["company"], { group_id });
+		let credit_scores_api_response = await axios({
+			method: "get",
+			url: `${origin}/credit/report/api/scores/resource/e/${entity_id}/g/${group_id}`,
+		});
+
+		let { data: scores } = credit_scores_api_response;
+
+		set_company(["company"], { group_id, scores });
 	};
 
 	return (
@@ -276,12 +285,12 @@ const Company = ({ group_id }) => {
 export default function Companies() {
 	let { pathname } = useLocation();
 	let group_id = get_group_id(pathname);
-	let { owner_companies, shared_companies } = useLoaderData();
+	let { owner_companies, shared_companies, scores = {} } = useLoaderData();
 	let company = useCompanyStore((state) => state.company);
 	let set_company = useCompanyStore((state) => state.set_state);
 
 	useEffect(() => {
-		set_company(["company"], { group_id });
+		set_company(["company"], { group_id, scores });
 	}, []);
 
 	return (
