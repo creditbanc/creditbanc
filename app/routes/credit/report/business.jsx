@@ -178,13 +178,13 @@ export default function BusinessReport() {
 				</div>
 			)}
 
-			<div className="flex flex-col w-full overflow-hidden">
+			<div className="flex flex-col w-full overflow-hidden h-full">
 				<div
-					className="flex flex-col w-full mx-auto overflow-hidden"
+					className="flex flex-col w-full mx-auto overflow-hidden h-full"
 					ref={setTarget}
 				>
 					<div
-						className={`flex overflow-hidden rounded ${
+						className={`flex overflow-hidden rounded h-full ${
 							isMobile ? "flex-col" : "flex-row gap-x-5"
 						}`}
 					>
