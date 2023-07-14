@@ -91,8 +91,8 @@ export const loader = async ({ request }) => {
 		"read"
 	);
 
-	console.log("is_authorized______");
-	console.log(is_authorized);
+	// console.log("is_authorized______");
+	// console.log(is_authorized);
 
 	if (!is_authorized) {
 		return redirect(`/home/resource/e/${entity_id}/g/${group_id}`);
@@ -118,6 +118,9 @@ export const loader = async ({ request }) => {
 
 	let report = pipe(head)(report_response);
 
+	// console.log("report");
+	// console.log(report);
+
 	if (!report) {
 		return redirect(
 			`/credit/business/new/resource/e/${entity_id}/g/${group_id}?cookie=monster`
@@ -133,7 +136,7 @@ export const loader = async ({ request }) => {
 			...lendflow_report,
 		});
 
-		return redirect(url);
+		// return redirect(url);
 	}
 
 	let { plan_id } = await prisma.entity.findUnique({

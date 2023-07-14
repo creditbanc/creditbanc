@@ -426,7 +426,7 @@ export default function Nav({ user_id }) {
 						<ShareDropdown />
 
 						<Link
-							to={`/chat`}
+							to={`/chat/resource/e/6461f488df5523110dece1ea/g/6461f489df5523110dece1ed/f/1`}
 							className=" bg-gray-100 flex flex-col items-center rounded-full p-2 cursor-pointer relative"
 						>
 							<div className="absolute -top-2 left-0 text-xs">

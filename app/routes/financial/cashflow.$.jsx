@@ -67,6 +67,9 @@ export const loader = async ({ request }) => {
 
 	let { data: financials } = cashflow_api_response;
 
+	// console.log("financials");
+	// console.log(financials);
+
 	return { financials };
 };
 

@@ -76,8 +76,8 @@ export const loader = async ({ request }) => {
 		"read"
 	);
 
-	console.log("is_authorized______");
-	console.log(is_authorized);
+	// console.log("is_authorized______");
+	// console.log(is_authorized);
 
 	if (!is_authorized) {
 		return redirect(`/home/resource/e/${entity_id}/g/${group_id}`);
