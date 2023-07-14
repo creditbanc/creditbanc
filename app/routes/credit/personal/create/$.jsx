@@ -20,6 +20,8 @@ import { get, all } from "shades";
 import { report_url, get_credit_report, is_sandbox } from "~/data/array";
 const cities = require("all-the-cities");
 import { prisma } from "~/utils/prisma.server";
+import { v4 as uuidv4 } from "uuid";
+import { get_doc } from "~/utils/firebase";
 
 const credit_user = (user) => {
 	if (is_sandbox) {
@@ -86,7 +88,7 @@ export const loader = async ({ request }) => {
 		productCode,
 		applicant,
 		entity_id,
-		plan_id,
+		// plan_id,
 	} = search_params(request);
 
 	let is_applicant = is_applicant_p(applicant);
@@ -109,7 +111,21 @@ export const loader = async ({ request }) => {
 	let { street, city, state, zip, first_name, last_name, ssn, dob } =
 		credit_user(JSON.parse(session.data.personal_credit_report));
 
-	let report = await get_credit_report(reportKey, displayToken);
+	let credit_report_request = credit_user(
+		JSON.parse(session.data.personal_credit_report)
+	);
+
+	// let report_id = uuidv4();
+	let report_id = "d316f6cc-8ee7-4037-a2f7-7272b59e5466";
+
+	// console.log("report_id____");
+	// console.log(report_id);
+
+	// let report = await get_credit_report(reportKey, displayToken);
+	let { data } = await get_doc([
+		"credit_reports",
+		"6481ff02f5d66ca522957d9f",
+	]);
 
 	let credit_report_payload = {
 		first_name,
@@ -120,6 +136,7 @@ export const loader = async ({ request }) => {
 		zip,
 		ssn,
 		dob,
+		request: credit_report_request,
 		entity_id,
 		group_id,
 		plan_id,
@@ -129,21 +146,27 @@ export const loader = async ({ request }) => {
 		displayToken,
 		reportKey,
 		productCode,
-		data: report,
+		data,
+		id: report_id,
+		type: "personal_credit_report",
 	};
+
+	// console.log("report_____");
+	// console.log(credit_report_payload);
+	// return null;
 
 	// console.log("credit_report_payload");
 	// console.log(credit_report_payload);
 
 	// return null;
 
-	let { file } = await create(credit_report_payload);
+	await create(credit_report_payload);
 
 	if (is_applicant) {
 		return redirect(`/credit/thankyou`);
 	} else {
 		return redirect(
-			`/credit/report/personal/personal/resource/e/${entity_id}/g/${group_id}/f/${file.id}`
+			`/credit/report/personal/personal/resource/e/${entity_id}/g/${group_id}`
 		);
 	}
 };

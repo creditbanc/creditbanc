@@ -93,7 +93,6 @@ export default function CreditScoreDoughnut({
 	useEffect(() => {
 		if (!customChartStyles) {
 			if (content_width < 640) {
-				console.log("here");
 				setChartStyle({
 					width: content_width * 0.9,
 					height: content_width * 0.72,

@@ -491,18 +491,18 @@ const Notifications = () => {
 							/>
 						</Disclosure.Button>
 						<Disclosure.Panel className="px-4  pb-2 text-gray-500 space-y-3 text-sm">
-							<Link
-								to={`/credit/personal/new/resource/e/${entity_id}/g/${group_id}`}
-								className="flex flex-row w-full border p-2 rounded cursor-pointer"
-							>
-								<div className="flex flex-row w-full space-x-2 items-center space-between">
+							<div className="flex flex-row w-full border p-2 rounded">
+								<Link
+									className="flex flex-row w-full space-x-2 items-center space-between cursor-pointer"
+									to={`/credit/personal/new/resource/e/${entity_id}/g/${group_id}`}
+								>
 									<div>
 										<XCircleIcon className="h-5 w-5 text-red-500" />
 									</div>
 									<div>Run a personal credit report</div>
-								</div>
+								</Link>
 								<div></div>
-							</Link>
+							</div>
 							<div className="flex flex-row w-full border p-2 rounded">
 								<Link
 									className="flex flex-row w-full space-x-2 items-center space-between cursor-pointer"

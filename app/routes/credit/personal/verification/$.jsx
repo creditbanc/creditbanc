@@ -19,14 +19,7 @@ import {
 	is_applicant_p,
 } from "~/utils/helpers";
 import { get_user_id } from "~/utils/auth.server";
-import {
-	appKey,
-	authenticate_url,
-	new_credit_report,
-	authenticate_user,
-	is_sandbox,
-	array_url,
-} from "~/data/array";
+import { appKey, new_credit_report, is_sandbox } from "~/data/array";
 import { prisma } from "~/utils/prisma.server";
 
 export const action = async ({ request }) => {

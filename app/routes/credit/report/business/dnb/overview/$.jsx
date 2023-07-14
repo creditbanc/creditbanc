@@ -43,9 +43,6 @@ export const loader = async ({ request }) => {
 	// console.log(delinquency_score);
 	let business = Lendflow.business(report);
 
-	console.log("business");
-	console.log(business);
-
 	return { score, delinquency_score, business };
 };
 

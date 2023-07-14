@@ -93,7 +93,13 @@ export const action = async ({ request }) => {
 			},
 		};
 
+		// console.log("payload");
+		// console.log(payload);
+
 		let response = await axios(config);
+
+		console.log("response______");
+		console.log(response);
 
 		let { clientKey, authToken } = response.data;
 

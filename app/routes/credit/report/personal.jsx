@@ -27,6 +27,7 @@ import { plans_index } from "~/data/plans_index";
 import { useReportPageLayoutStore } from "~/stores/useReportPageLayoutStore";
 import { DocumentDuplicateIcon, LinkIcon } from "@heroicons/react/24/outline";
 import { get_collection, get_doc } from "~/utils/firebase";
+import axios from "axios";
 
 const get_scores = (report) => {
 	let { plan_id } = report;
@@ -61,6 +62,7 @@ const get_scores = (report) => {
 
 export const loader = async ({ request }) => {
 	let url = new URL(request.url);
+	let { origin } = url;
 	let user_id = await get_user_id(request);
 	let group_id = get_group_id(url.pathname);
 
@@ -93,11 +95,25 @@ export const loader = async ({ request }) => {
 
 	let scores = get_scores(report);
 
-	return { report, scores, plan_id, report_plan_id: report.plan_id };
+	let business_info_response = await axios({
+		method: "get",
+		url: `${origin}/credit/report/business/api/company/resource/e/${user_id}/g/${group_id}`,
+	});
+
+	let { data: business = {} } = business_info_response;
+
+	return {
+		report,
+		scores,
+		plan_id,
+		report_plan_id: report.plan_id,
+		business,
+	};
 };
 
 export default function CreditReport() {
-	var { report, scores, plan_id, report_plan_id } = useLoaderData() ?? {};
+	var { report, scores, plan_id, report_plan_id, business } =
+		useLoaderData() ?? {};
 	const [target, setTarget] = useState();
 	const elmSize = useElmSize(target);
 	let setContentWidth = useLayoutStore((state) => state.set_content_width);
@@ -106,6 +122,8 @@ export default function CreditReport() {
 	let [isMobile, setIsMobile] = useState(true);
 	const pageRef = useRef(null);
 	let { set_coordinates } = useReportPageLayoutStore();
+
+	let { experian, equifax, transunion } = scores;
 
 	useEffect(() => {
 		if (content_width > 640) {
@@ -203,11 +221,13 @@ export default function CreditReport() {
 											<div>
 												<span className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-gray-500">
 													<span className="text-lg font-medium leading-none text-white">
-														C
+														{business?.name
+															.charAt(0)
+															.toUpperCase()}
 													</span>
 												</span>
 											</div>
-											<div>Credit Banc</div>
+											<div>{business?.name}</div>
 										</div>
 									</div>
 									<div className="flex flex-col py-2">
@@ -236,7 +256,7 @@ export default function CreditReport() {
 														Experian
 													</div>
 													<div className="text-lg">
-														300
+														{experian}
 													</div>
 												</div>
 												<div className="flex flex-col w-1/2 text-sm space-y-1">
@@ -244,7 +264,7 @@ export default function CreditReport() {
 														Equifax
 													</div>
 													<div className="text-lg">
-														728
+														{equifax}
 													</div>
 												</div>
 												<div className="flex flex-col w-1/2 text-sm space-y-1">
@@ -252,7 +272,7 @@ export default function CreditReport() {
 														Transunion
 													</div>
 													<div className="text-lg">
-														802
+														{transunion}
 													</div>
 												</div>
 											</div>
