@@ -1,6 +1,8 @@
 import {
 	currency,
 	currency_precise,
+	get_entity_id,
+	get_group_id,
 	jsreduce,
 	use_search_params,
 } from "~/utils/helpers";
@@ -44,15 +46,23 @@ import {
 import moment from "moment";
 
 import { get_balances } from "~/api/plaid.server";
+import axios from "axios";
 
 export const loader = async ({ request }) => {
+	let { origin } = new URL(request.url);
 	let { income: income_start_month = 12 } = use_search_params(request);
+	let entity_id = get_entity_id(request.url);
+	let group_id = get_group_id(request.url);
 
-	let balances = await get_balances();
+	let { data: accounts } = await axios({
+		method: "get",
+		url: `${origin}/financial/api/accounts/resource/e/${entity_id}/g/${group_id}`,
+	});
 
-	let account_balance = pipe(head, get("balances", "available"))(balances);
-
-	let transactions = await get_collection({ path: ["transactions"] });
+	let account_balance = pipe(
+		get(all, "balances", "available"),
+		sum
+	)(accounts);
 
 	const is_expense = (transaction) => {
 		return transaction.amount >= 0;
@@ -66,6 +76,27 @@ export const loader = async ({ request }) => {
 			type: is_expense(transaction) ? "expense" : "revenue",
 		};
 	};
+
+	let orderBy = [
+		{ field: "date", direction: "desc" },
+		{ field: "transaction_id" },
+	];
+
+	transactions_queries = [
+		{
+			param: "group_id",
+			predicate: "==",
+			value: group_id,
+		},
+	];
+
+	let transactions = await get_collection({
+		path: ["transactions"],
+		queries: transactions_queries,
+		orderBy,
+		// cursors: trim([start_cursor]),
+		// limit,
+	});
 
 	let $transactions = of(transactions);
 

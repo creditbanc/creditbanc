@@ -43,6 +43,7 @@ ChartJS.register(
 );
 
 export const loader = async ({ request }) => {
+	let { origin } = new URL(request.url);
 	let { income: income_start_month = 12 } = use_search_params(request);
 
 	const config_id = "db88508c-b4ea-4dee-8d60-43c5a847c172";
@@ -73,7 +74,7 @@ export const loader = async ({ request }) => {
 
 	let cashflow_api_response = await axios({
 		method: "get",
-		url: `http://localhost:3000/financial/api/cashflow/resource/e/${entity_id}/g/${group_id}`,
+		url: `${origin}/financial/api/cashflow/resource/e/${entity_id}/g/${group_id}`,
 	});
 
 	let { data: financials } = cashflow_api_response;

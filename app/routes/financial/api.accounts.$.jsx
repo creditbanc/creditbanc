@@ -36,7 +36,11 @@ const set_plaid_account = async (account) => {
 	return account;
 };
 
-const set_plaid_accounts = async ({ access_token, entity_id, group_id }) => {
+export const set_plaid_accounts = async ({
+	access_token,
+	entity_id,
+	group_id,
+}) => {
 	let accounts = await get_plaid_accounts({ access_token });
 
 	await Promise.all(
