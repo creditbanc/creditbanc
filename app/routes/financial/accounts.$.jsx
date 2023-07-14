@@ -122,13 +122,6 @@ export const loader = async ({ request }) => {
 	// 	return redirect("/home");
 	// }
 
-	// let account_id = "DQ4Xrpwq3MUbdEL8PkazUVl3vDZMoBt4N8AQE";
-
-	// let { data: transactions } = await axios({
-	// 	method: "get",
-	// 	url: `${origin}/financial/api/transactions/resource/e/${entity_id}/g/${group_id}?account_id=${account_id}`,
-	// });
-
 	let plaid_credentials = await get_doc(["plaid_credentials", group_id]);
 
 	if (isEmpty(plaid_credentials)) {
@@ -149,80 +142,8 @@ export const loader = async ({ request }) => {
 
 		return {
 			accounts,
-			// balances: daily_balances,
-			// transactions,
 		};
 	}
-
-	// let balances = await get_balances();
-
-	// let account_balance = pipe(head, get("balances", "available"))(balances);
-
-	// let transactions = await get_collection({
-	// 	path: ["transactions"],
-	// });
-
-	// let $transactions = of(transactions);
-
-	// const is_expense = (transaction) => {
-	// 	return transaction.amount >= 0;
-	// };
-
-	// const is_revenue = pipe(is_expense, not);
-
-	// let with_daily_balance = curry((ending_balance, transactions) => {
-	// 	return pipe(
-	// 		jsreduce((curr, next, index) => {
-	// 			if (index === 1) {
-	// 				curr.balance = account_balance;
-	// 				next.balance = curr.balance + curr.amount;
-
-	// 				let payload = [curr, next];
-
-	// 				return payload;
-	// 			}
-
-	// 			let last_transaction = last(curr);
-
-	// 			next.balance =
-	// 				last_transaction.balance + last_transaction.amount;
-
-	// 			let payload = [...curr, next];
-
-	// 			return payload;
-	// 		})
-	// 	)(transactions);
-	// });
-
-	// const with_transaction_type = (transaction) => {
-	// 	return {
-	// 		...transaction,
-	// 		type: is_expense(transaction) ? "expense" : "revenue",
-	// 	};
-	// };
-
-	// let $recent_activity = $transactions.pipe(
-	// 	rxmap(
-	// 		pipe(
-	// 			sortBy(get("date")),
-	// 			reverse,
-	// 			take(30),
-	// 			mod(all)(
-	// 				pipe(
-	// 					pick(["name", "date", "amount"]),
-	// 					with_transaction_type
-	// 				)
-	// 			),
-	// 			with_daily_balance(account_balance)
-	// 		)
-	// 	)
-	// );
-
-	// let $balances = $recent_activity.pipe(
-	// 	rxmap(pipe(mod(all)(pick(["balance", "date"])), reverse))
-	// );
-
-	// let daily_balances = await lastValueFrom($balances);
 };
 
 const AccountActionsDropdown = ({ document }) => {
@@ -290,14 +211,15 @@ const AccountActionsDropdown = ({ document }) => {
 };
 
 const TableRow = ({ account }) => {
+	let selected_account = useAccountStore((state) => state.account);
 	const set_account = useAccountStore((state) => state.set_account);
 	const [is_account_number_visible, set_is_account_number_visible] =
 		useState(false);
 
 	const onSelectAccount = () => {
-		console.log("onSelectAccount");
-		console.log(account);
-		set_account(["account"], account);
+		if (selected_account.account_id !== account.account_id) {
+			set_account(["account"], account);
+		}
 	};
 
 	const onToggleAccountNumberVisibility = () => {
@@ -458,9 +380,6 @@ export default function Accounts() {
 			url: `${origin}/financial/api/transactions/resource/e/${entity_id}/g/${group_id}?account_id=${account_id}`,
 		});
 
-		// console.log("transactions");
-		// console.log(transactions);
-
 		return transactions;
 	};
 
@@ -530,14 +449,11 @@ export default function Accounts() {
 
 		let daily_balances = await lastValueFrom($balances);
 
-		console.log("daily_balances");
-		console.log(daily_balances);
-		console.log(account);
 		set_account(["account", "daily_balances"], daily_balances);
 	};
 
 	useEffect(() => {
-		if (!isEmpty(account)) {
+		if (account !== undefined && !isEmpty(account)) {
 			get_account_daily_balances(account);
 		}
 	}, [account.account_id]);
