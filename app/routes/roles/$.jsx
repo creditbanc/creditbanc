@@ -28,6 +28,7 @@ import { ChevronRightIcon } from "@heroicons/react/20/solid";
 import Modal from "~/components/Modal";
 import { redirect } from "react-router-dom";
 import { create_role_config } from "~/api/authorization";
+import copy from "copy-to-clipboard";
 
 export const useRoleStore = create((set) => ({
 	role: {},
@@ -62,6 +63,10 @@ export const loader = async ({ request }) => {
 };
 
 const RoleActions = ({ role }) => {
+	let { pathname } = useLocation();
+	let entity_id = get_entity_id(pathname);
+	let group_id = get_group_id(pathname);
+
 	let set_roles = useRolesStore((state) => state.set_roles);
 	let roles = useRolesStore((state) => state.roles);
 
@@ -73,6 +78,14 @@ const RoleActions = ({ role }) => {
 		set_roles(
 			["roles"],
 			roles.filter((r) => r.id !== role.id)
+		);
+	};
+
+	const onCopyShareLink = () => {
+		let { origin } = window.location;
+
+		copy(
+			`${origin}/links/resource/e/${entity_id}/g/${group_id}?config_id=${role.id}`
 		);
 	};
 
@@ -121,7 +134,7 @@ const RoleActions = ({ role }) => {
 						<Menu.Item>
 							{({ active }) => (
 								<div
-									// onClick={onDeleteRole}
+									onClick={onCopyShareLink}
 									className={classNames(
 										active
 											? "bg-gray-100 text-gray-900"
@@ -217,6 +230,14 @@ const RolesList = () => {
 		);
 	}
 
+	const onCopyShareLink = (config_id) => {
+		let { origin } = window.location;
+
+		copy(
+			`${origin}/links/resource/e/${entity_id}/g/${group_id}?config_id=${config_id}`
+		);
+	};
+
 	return (
 		<nav className="flex flex-1 flex-col" aria-label="Sidebar">
 			<ul role="list" className="space-y-3">
@@ -266,7 +287,11 @@ const RolesList = () => {
 										</div>
 									</Link>
 									<div className="flex flex-row h-full items-center space-x-3">
-										<div>
+										<div
+											onClick={() =>
+												onCopyShareLink(role.id)
+											}
+										>
 											<LinkIcon className="h-4 w-4 text-blue-600 cursor-pointer" />
 										</div>
 										<div>

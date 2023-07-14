@@ -28,6 +28,7 @@ import {
 	get_shared_companies_ids,
 } from "~/api/ui/companies";
 import { useCompaniesDropdownStore } from "~/stores/useCompaniesDropdownStore";
+import copy from "copy-to-clipboard";
 
 export const useRolesStore = create((set) => ({
 	roles: [],
@@ -132,6 +133,13 @@ const ShareDropdown = () => {
 	let group_id = get_group_id(pathname);
 	let roles = useRolesStore((state) => state.roles);
 
+	const onCopyShareLink = (config_id) => {
+		let { origin } = window.location;
+		copy(
+			`${origin}/links/resource/e/${entity_id}/g/${group_id}?config_id=${config_id}`
+		);
+	};
+
 	return (
 		<Menu as="div" className="relative inline-block text-left">
 			<div>
@@ -188,7 +196,14 @@ const ShareDropdown = () => {
 											>
 												<div>{role.name}</div>
 												<div className="flex flex-row space-x-5">
-													<div className="cursor-pointer">
+													<div
+														className="cursor-pointer"
+														onClick={() =>
+															onCopyShareLink(
+																role.id
+															)
+														}
+													>
 														<LinkIcon
 															className={`h-4 w-4 hover:text-blue-600 text-gray-400`}
 														/>

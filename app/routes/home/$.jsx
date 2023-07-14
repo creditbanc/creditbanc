@@ -42,8 +42,8 @@ export const loader = async ({ request }) => {
 
 	let { data: business = {} } = business_info_response;
 
-	console.log("business");
-	console.log(business);
+	// console.log("business");
+	// console.log(business);
 
 	let credit_scores_api_response = await axios({
 		method: "get",

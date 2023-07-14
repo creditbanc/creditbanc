@@ -27,6 +27,7 @@ import { Fragment, useEffect } from "react";
 import { Menu, Transition } from "@headlessui/react";
 import { redirect } from "react-router-dom";
 import { create_role_config } from "~/api/authorization";
+import copy from "copy-to-clipboard";
 
 export const useRoleStore = create((set) => ({
 	role: {},
@@ -150,6 +151,9 @@ const EmptyRolesState = () => {
 const RoleActions = ({ role }) => {
 	let set_roles = useRolesStore((state) => state.set_roles);
 	let roles = useRolesStore((state) => state.roles);
+	let { pathname } = useLocation();
+	let entity_id = get_entity_id(pathname);
+	let group_id = get_group_id(pathname);
 
 	const onDeleteRole = async (e) => {
 		e.preventDefault();
@@ -164,6 +168,15 @@ const RoleActions = ({ role }) => {
 		} else {
 			set_roles(["roles"], new_roles);
 		}
+	};
+
+	const onCopyShareLink = (e) => {
+		e.preventDefault();
+		let { origin } = window.location;
+
+		copy(
+			`${origin}/links/resource/e/${entity_id}/g/${group_id}?config_id=${role.id}`
+		);
 	};
 
 	return (
@@ -199,7 +212,10 @@ const RoleActions = ({ role }) => {
 										"block px-4 py-2 text-sm"
 									)}
 								>
-									<div className="flex flex-row items-center space-x-2">
+									<div
+										className="flex flex-row items-center space-x-2"
+										onClick={onCopyShareLink}
+									>
 										<div>
 											<LinkIcon className="h-4 w-4 text-gray-700" />
 										</div>
@@ -257,6 +273,15 @@ const RolesNav = () => {
 		);
 	}
 
+	const onCopyShareLink = (config_id, event) => {
+		event.preventDefault();
+		let { origin } = window.location;
+
+		copy(
+			`${origin}/links/resource/e/${entity_id}/g/${group_id}?config_id=${config_id}`
+		);
+	};
+
 	return (
 		<nav className="flex flex-1 flex-col" aria-label="Sidebar">
 			<ul role="list" className="space-y-3">
@@ -302,7 +327,11 @@ const RolesNav = () => {
 										/>
 									</div>
 									<div className="flex flex-row items-center space-x-3">
-										<div>
+										<div
+											onClick={(e) =>
+												onCopyShareLink(role.id, e)
+											}
+										>
 											<LinkIcon className="h-4 w-4 text-blue-600 cursor-pointer" />
 										</div>
 										<div>
