@@ -69,7 +69,7 @@ export const loader = async ({ request }) => {
 	// }
 
 	let search_params = use_search_params(request);
-	let { results = 50, cursor, cursor_id } = search_params;
+	let { results = 50, cursor, cursor_id, account_id } = search_params;
 
 	let limit = [results];
 	let orderBy = [
@@ -88,21 +88,30 @@ export const loader = async ({ request }) => {
 	let start_cursor =
 		cursor_id && cursor && to_cursor(cursor, ["transactions", cursor_id]);
 
-	let transactions_queries = [
-		{
-			param: "group_id",
-			predicate: "==",
-			value: group_id,
-		},
-		// {
-		// 	param: "account_id",
-		// 	predicate: "==",
-		// 	value: account_id,
-		// },
-	];
+	let transactions_queries;
 
-	console.log("cursors");
-	console.log(trim([start_cursor]));
+	if (account_id) {
+		transactions_queries = [
+			{
+				param: "group_id",
+				predicate: "==",
+				value: group_id,
+			},
+			{
+				param: "account_id",
+				predicate: "==",
+				value: account_id,
+			},
+		];
+	} else {
+		transactions_queries = [
+			{
+				param: "group_id",
+				predicate: "==",
+				value: group_id,
+			},
+		];
+	}
 
 	let transactions = await get_collection({
 		path: ["transactions"],
@@ -335,7 +344,8 @@ const TransactionsHeaderStats = () => {
 const Pagination = () => {
 	let { transactions } = useLoaderData();
 	let { pathname, search } = useLocation();
-	let { prev_cursor_id } = use_client_search_params(search);
+	let { prev_cursor_id, account_id = undefined } =
+		use_client_search_params(search);
 	let entity_id = get_entity_id(pathname);
 	let group_id = get_group_id(pathname);
 
@@ -343,7 +353,9 @@ const Pagination = () => {
 		<nav className="flex items-center justify-between border-t border-gray-200 px-4 sm:px-0">
 			<div className="-mt-px flex w-0 flex-1">
 				<Link
-					to={`/financial/transactions/resource/e/${entity_id}/g/${group_id}??cursor=startAt&cursor_id=${prev_cursor_id}`}
+					to={`/financial/transactions/resource/e/${entity_id}/g/${group_id}?cursor=startAt&cursor_id=${prev_cursor_id}${
+						account_id && `&account_id=${account_id}`
+					}`}
 					className="inline-flex items-center border-t-2 border-transparent pr-1 pt-4 text-sm font-medium text-gray-500 hover:text-gray-700"
 				>
 					<ArrowLongLeftIcon
@@ -360,7 +372,9 @@ const Pagination = () => {
 						get("transaction_id")
 					)(last(transactions))}&prev_cursor_id=${pipe(
 						get("transaction_id")
-					)(head(transactions))}`}
+					)(head(transactions))}${
+						account_id && `&account_id=${account_id}`
+					}`}
 					className="inline-flex items-center border-t-2 border-transparent pl-1 pt-4 text-sm font-medium text-gray-500 hover:text-gray-700"
 				>
 					Next
