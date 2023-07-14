@@ -111,16 +111,16 @@ export const loader = async ({ request }) => {
 	let entity_id = await get_user_id(request);
 	let group_id = get_group_id(request.url);
 
-	let is_authorized = await is_authorized_f(
-		entity_id,
-		group_id,
-		"vault",
-		"read"
-	);
+	// let is_authorized = await is_authorized_f(
+	// 	entity_id,
+	// 	group_id,
+	// 	"vault",
+	// 	"read"
+	// );
 
-	if (!is_authorized) {
-		return redirect("/home");
-	}
+	// if (!is_authorized) {
+	// 	return redirect("/home");
+	// }
 
 	let queries = [
 		{
