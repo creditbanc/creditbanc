@@ -512,15 +512,15 @@ export default function Accounts() {
 						))
 					)(accounts)}
 				</div>
-				<div
+				<Link
+					to={`/plaid/oauth/resources/e/${entity_id}/g/${group_id}`}
 					className="flex flex-row items-center space-x-5 border-b pb-3 cursor-pointer pl-1.5"
-					onClick={() => open()}
 				>
 					<div>
 						<PlusCircleIcon className="h-7 w-7 text-gray-400" />
 					</div>
 					<div>Link Account</div>
-				</div>
+				</Link>
 			</div>
 			<div className="flex flex-col w-[30%] ">
 				<div className="flex flex-col bg-white border rounded">

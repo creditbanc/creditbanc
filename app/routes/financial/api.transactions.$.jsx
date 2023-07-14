@@ -60,10 +60,16 @@ export const loader = async ({ request }) => {
 	// console.log("params");
 	// console.log({ account_id, group_id, entity_id });
 
-	let transactions = await get_plaid_account_transactions_from_db({
-		group_id,
-		account_id,
-	});
+	let transactions;
+
+	if (account_id) {
+		transactions = await get_plaid_account_transactions_from_db({
+			group_id,
+			account_id,
+		});
+	} else {
+		transactions = await get_plaid_transactions_from_db({ group_id });
+	}
 
 	// console.log("transactions");
 	// console.log(transactions);
