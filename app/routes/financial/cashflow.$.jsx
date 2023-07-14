@@ -32,6 +32,7 @@ import CashflowChart from "~/components/CashflowChart";
 import axios from "axios";
 import { useCashflowStore } from "~/stores/useCashflowStore";
 import { useEffect } from "react";
+import { get_user_id } from "~/utils/auth.server";
 
 ChartJS.register(
 	CategoryScale,
@@ -45,21 +46,19 @@ ChartJS.register(
 export const loader = async ({ request }) => {
 	let { origin } = new URL(request.url);
 	let { income: income_start_month = 12 } = use_search_params(request);
-
 	let group_id = get_group_id(request.url);
-	let entity_id = get_entity_id(request.url);
-	let role_id = group_id + entity_id;
+	let entity_id = await get_user_id(request);
 
-	// let is_authorized = await is_authorized_f(
-	// 	entity_id,
-	// 	group_id,
-	// 	"cashflow",
-	// 	"read"
-	// );
+	let is_authorized = await is_authorized_f(
+		entity_id,
+		group_id,
+		"cashflow",
+		"read"
+	);
 
-	// if (!is_authorized) {
-	// 	return redirect("/");
-	// }
+	if (!is_authorized) {
+		return redirect(`/home/resource/e/${entity_id}/g/${group_id}`);
+	}
 
 	let cashflow_api_response = await axios({
 		method: "get",
@@ -546,9 +545,9 @@ const Stats = () => {
 
 	return (
 		<div className="flex flex-wrap w-full rounded-lg gap-x-3 gap-y-3 justify-between">
-			{stats.map((stat) => (
+			{stats.map((stat, index) => (
 				<div
-					key={stat.name}
+					key={index}
 					className="flex flex-col w-full md:w-[48%] lg:w-[32%] justify-between gap-x-4 gap-y-2 bg-white px-4 py-10 border rounded-lg"
 				>
 					<div className="text-sm font-medium leading-6 text-gray-500">

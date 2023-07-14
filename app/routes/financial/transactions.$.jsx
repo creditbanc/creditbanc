@@ -34,6 +34,7 @@ import {
 } from "@heroicons/react/20/solid";
 import { is_authorized_f } from "~/api/auth";
 import { redirect } from "@remix-run/node";
+import { get_user_id } from "~/utils/auth.server";
 
 const useTransactionsStore = create((set) => ({
 	transaction: null,
@@ -42,8 +43,8 @@ const useTransactionsStore = create((set) => ({
 }));
 
 let total_for_period = curry((start_date, end_date, transactions) => {
-	console.log("total_for_period");
-	console.log(transactions);
+	// console.log("total_for_period");
+	// console.log(transactions);
 
 	if (isEmpty(transactions)) {
 		return { income: 0, expense: 0 };
@@ -72,19 +73,19 @@ let date_x_time_ago = (time_range, time_period) => {
 };
 
 export const loader = async ({ request }) => {
-	let entity_id = get_entity_id(request.url);
+	let entity_id = await get_user_id(request);
 	let group_id = get_group_id(request.url);
 
-	// let is_authorized = await is_authorized_f(
-	// 	entity_id,
-	// 	group_id,
-	// 	"transactions",
-	// 	"read"
-	// );
+	let is_authorized = await is_authorized_f(
+		entity_id,
+		group_id,
+		"transactions",
+		"read"
+	);
 
-	// if (!is_authorized) {
-	// 	return redirect("/home");
-	// }
+	if (!is_authorized) {
+		return redirect(`/home/resource/e/${entity_id}/g/${group_id}`);
+	}
 
 	let search_params = use_search_params(request);
 	let { results = 50, cursor, cursor_id, account_id } = search_params;
@@ -181,9 +182,6 @@ export const loader = async ({ request }) => {
 			transactions
 		),
 	};
-
-	console.log("totals");
-	console.log(totals);
 
 	return { transactions, totals };
 };

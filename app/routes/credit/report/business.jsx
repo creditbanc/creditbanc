@@ -34,6 +34,7 @@ import UpgradeCard from "~/components/UpgradeCard";
 import { DocumentDuplicateIcon, LinkIcon } from "@heroicons/react/24/outline";
 import { get_collection, set_doc } from "~/utils/firebase";
 import axios from "axios";
+import { is_authorized_f } from "~/api/auth";
 
 export const action = async ({ request }) => {
 	var form = await request.formData();
@@ -80,8 +81,22 @@ export const loader = async ({ request }) => {
 	let url = new URL(request.url);
 	let { origin } = url;
 	let file_id = get_file_id(url.pathname);
-	let entity_id = get_entity_id(url.pathname);
+	let entity_id = await get_user_id(request);
 	let group_id = get_group_id(url.pathname);
+
+	let is_authorized = await is_authorized_f(
+		entity_id,
+		group_id,
+		"credit",
+		"read"
+	);
+
+	console.log("is_authorized______");
+	console.log(is_authorized);
+
+	if (!is_authorized) {
+		return redirect(`/home/resource/e/${entity_id}/g/${group_id}`);
+	}
 
 	let business_credit_report_queries = [
 		{

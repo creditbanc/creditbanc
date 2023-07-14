@@ -87,6 +87,7 @@ import {
 } from "rxjs";
 import { is_authorized_f } from "~/api/auth";
 import { redirect } from "@remix-run/node";
+import { get_user_id } from "~/utils/auth.server";
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
@@ -108,19 +109,19 @@ function randomNumber(min, max) {
 
 export const loader = async ({ request }) => {
 	let { pathname, origin } = new URL(request.url);
-	let entity_id = get_entity_id(request.url);
+	let entity_id = await get_user_id(request);
 	let group_id = get_group_id(request.url);
 
-	// let is_authorized = await is_authorized_f(
-	// 	entity_id,
-	// 	group_id,
-	// 	"accounts",
-	// 	"read"
-	// );
+	let is_authorized = await is_authorized_f(
+		entity_id,
+		group_id,
+		"accounts",
+		"read"
+	);
 
-	// if (!is_authorized) {
-	// 	return redirect("/home");
-	// }
+	if (!is_authorized) {
+		return redirect(`/home/resource/e/${entity_id}/g/${group_id}`);
+	}
 
 	let plaid_credentials = await get_doc(["plaid_credentials", group_id]);
 
