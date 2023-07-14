@@ -239,6 +239,9 @@ const TransactionsTable = () => {
 									))
 								)(transaction.category)}
 							</div>
+							<div className="flex flex-col w-[185px]">
+								{truncate(15, transaction.account_id)}
+							</div>
 							<div className="flex flex-col">
 								{transaction.date}
 							</div>
@@ -405,11 +408,7 @@ export default function Transactions() {
 						<div className="flex flex-col w-[175px]">Merchant</div>
 						<div className="flex flex-col w-[100px]">Amount</div>
 						<div className="flex flex-col w-[250px]">Category</div>
-						{/* 
-							<div className="flex flex-col w-[185px]">
-								Account
-							</div>
-						*/}
+						<div className="flex flex-col w-[185px]">Account</div>
 						<div className="flex flex-col">Date</div>
 					</div>
 					<TransactionsTable />
