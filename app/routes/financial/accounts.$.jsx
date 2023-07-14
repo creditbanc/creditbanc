@@ -361,6 +361,8 @@ export default function Accounts() {
 	let entity_id = get_entity_id(pathname);
 	let group_id = get_group_id(pathname);
 
+	let total_balance = pipe(get(all, "balances", "available"), sum)(accounts);
+
 	useEffect(() => {
 		if (!isEmpty(fetcher.data) && fetcher.type == "done") {
 			set_accounts(["accounts"], fetcher.data);
@@ -483,7 +485,7 @@ export default function Accounts() {
 					<div className="flex flex-col mb-7 space-y-2 my-2">
 						<div className="text-gray-700">Total Balance</div>
 						<div className="text-4xl">
-							{currency.format(5144707.08)}
+							{currency.format(total_balance)}
 						</div>
 					</div>
 				</div>
