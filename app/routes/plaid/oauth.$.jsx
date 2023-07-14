@@ -91,9 +91,6 @@ export default function PlaidOauth() {
 	return (
 		<div className="h-full w-full flex flex-col items-center justify-center">
 			{open()}
-			{/* <button onClick={() => open()} disabled={!ready}>
-				Connect a bank account
-			</button> */}
 		</div>
 	);
 }

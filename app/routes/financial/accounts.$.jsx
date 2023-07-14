@@ -467,7 +467,7 @@ export default function Accounts() {
 						</h3>
 					</div>
 					<div>
-						{has_credentials && (
+						{/* {has_credentials && (
 							<button
 								onClick={onAddAccounts}
 								type="button"
@@ -475,7 +475,7 @@ export default function Accounts() {
 							>
 								Add Account
 							</button>
-						)}
+						)} */}
 
 						{!has_credentials && (
 							<Link
