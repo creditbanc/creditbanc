@@ -25,10 +25,19 @@ import {
 	jsreduce,
 	get_entity_id,
 	get_group_id,
+	inspect,
 } from "~/utils/helpers";
 import { useEffect, useState, Fragment } from "react";
-import { get_collection, set_doc } from "~/utils/firebase";
-import { Link, useLoaderData } from "@remix-run/react";
+import { get_collection, get_doc, set_doc } from "~/utils/firebase";
+import {
+	Link,
+	useActionData,
+	useFetcher,
+	useLoaderData,
+	useLocation,
+	useNavigate,
+	useSubmit,
+} from "@remix-run/react";
 import {
 	get_accounts,
 	get_auths,
@@ -98,142 +107,116 @@ function randomNumber(min, max) {
 }
 
 export const loader = async ({ request }) => {
+	let { pathname, origin } = new URL(request.url);
 	let entity_id = get_entity_id(request.url);
 	let group_id = get_group_id(request.url);
 
-	let is_authorized = await is_authorized_f(
-		entity_id,
-		group_id,
-		"accounts",
-		"read"
-	);
+	// let is_authorized = await is_authorized_f(
+	// 	entity_id,
+	// 	group_id,
+	// 	"accounts",
+	// 	"read"
+	// );
 
-	if (!is_authorized) {
-		return redirect("/home");
-	}
-
-	let location = new URL(request.url);
-	let { origin } = location;
-
-	let plaid_create_link_token_url = `${origin}/plaid/create_link_token`;
+	// if (!is_authorized) {
+	// 	return redirect("/home");
+	// }
 
 	let config = {
 		method: "post",
 		maxBodyLength: Infinity,
-		url: plaid_create_link_token_url,
+		url: `${origin}/plaid/create_link_token`,
 	};
 
-	let response = await axios(config);
+	let plaid_credentials = await get_doc(["plaid_credentials", group_id]);
 
-	let { data } = response;
-	let { link_token } = data;
+	if (isEmpty(plaid_credentials)) {
+		let link_token_response = await axios(config);
+		let { data: link_token = "" } = link_token_response;
+		return { link_token };
+	} else {
+		let { data: accounts } = await axios({
+			method: "get",
+			url: `${origin}/financial/api/accounts/resource/e/${entity_id}/g/${group_id}`,
+		});
 
-	let { accounts } = await get_accounts();
-	let { accounts: identities_accounts } = await get_identities();
-	let {
-		numbers: { ach, bacs, eft, international },
-	} = await get_auths();
-
-	let transactions = await get_collection({
-		path: ["transactions"],
-	});
-
-	let balances = await get_balances();
-
-	let account_balance = pipe(head, get("balances", "available"))(balances);
-
-	// transactions = pipe(
-	// 	sortBy(prop("date")),
-	// 	reverse,
-	// 	take(20),
-	// 	groupBy(prop("date")),
-	// 	mod(all)((date) =>
-	// 		pipe(get(all, "amount"), sum, (value) => randomNumber(30, 50))(date)
-	// 	),
-	// 	mod(all)((value) => (value < 0 ? 0 : value))
-	// )(transactions);
-
-	let $transactions = of(transactions);
-
-	const is_expense = (transaction) => {
-		return transaction.amount >= 0;
-	};
-
-	const is_revenue = pipe(is_expense, not);
-
-	let with_daily_balance = curry((ending_balance, transactions) => {
-		return pipe(
-			jsreduce((curr, next, index) => {
-				if (index === 1) {
-					curr.balance = account_balance;
-					next.balance = curr.balance + curr.amount;
-
-					let payload = [curr, next];
-
-					return payload;
-				}
-
-				let last_transaction = last(curr);
-
-				next.balance =
-					last_transaction.balance + last_transaction.amount;
-
-				let payload = [...curr, next];
-
-				return payload;
-			})
-		)(transactions);
-	});
-
-	const with_transaction_type = (transaction) => {
 		return {
-			...transaction,
-			type: is_expense(transaction) ? "expense" : "revenue",
+			// link_token,
+			accounts,
+			// balances: daily_balances,
+			// transactions,
 		};
-	};
+	}
 
-	let $recent_activity = $transactions.pipe(
-		rxmap(
-			pipe(
-				sortBy(get("date")),
-				reverse,
-				take(30),
-				mod(all)(
-					pipe(
-						pick(["name", "date", "amount"]),
-						with_transaction_type
-					)
-				),
-				with_daily_balance(account_balance)
-			)
-		)
-	);
+	// let balances = await get_balances();
 
-	let $balances = $recent_activity.pipe(
-		rxmap(pipe(mod(all)(pick(["balance", "date"])), reverse))
-	);
+	// let account_balance = pipe(head, get("balances", "available"))(balances);
 
-	let daily_balances = await lastValueFrom($balances);
+	// let transactions = await get_collection({
+	// 	path: ["transactions"],
+	// });
 
-	let accounts_payload = pipe(
-		groupBy(prop("account_id")),
-		map(mergeAll),
-		values
-	)([
-		...accounts,
-		...identities_accounts,
-		...ach,
-		...bacs,
-		...eft,
-		...international,
-	]);
+	// let $transactions = of(transactions);
 
-	return {
-		link_token,
-		accounts: accounts_payload,
-		transactions,
-		balances: daily_balances,
-	};
+	// const is_expense = (transaction) => {
+	// 	return transaction.amount >= 0;
+	// };
+
+	// const is_revenue = pipe(is_expense, not);
+
+	// let with_daily_balance = curry((ending_balance, transactions) => {
+	// 	return pipe(
+	// 		jsreduce((curr, next, index) => {
+	// 			if (index === 1) {
+	// 				curr.balance = account_balance;
+	// 				next.balance = curr.balance + curr.amount;
+
+	// 				let payload = [curr, next];
+
+	// 				return payload;
+	// 			}
+
+	// 			let last_transaction = last(curr);
+
+	// 			next.balance =
+	// 				last_transaction.balance + last_transaction.amount;
+
+	// 			let payload = [...curr, next];
+
+	// 			return payload;
+	// 		})
+	// 	)(transactions);
+	// });
+
+	// const with_transaction_type = (transaction) => {
+	// 	return {
+	// 		...transaction,
+	// 		type: is_expense(transaction) ? "expense" : "revenue",
+	// 	};
+	// };
+
+	// let $recent_activity = $transactions.pipe(
+	// 	rxmap(
+	// 		pipe(
+	// 			sortBy(get("date")),
+	// 			reverse,
+	// 			take(30),
+	// 			mod(all)(
+	// 				pipe(
+	// 					pick(["name", "date", "amount"]),
+	// 					with_transaction_type
+	// 				)
+	// 			),
+	// 			with_daily_balance(account_balance)
+	// 		)
+	// 	)
+	// );
+
+	// let $balances = $recent_activity.pipe(
+	// 	rxmap(pipe(mod(all)(pick(["balance", "date"])), reverse))
+	// );
+
+	// let daily_balances = await lastValueFrom($balances);
 };
 
 const AccountActionsDropdown = ({ document }) => {
@@ -437,55 +420,42 @@ const balances_data = (daily_balances) => ({
 });
 
 export default function Accounts() {
-	const {
-		link_token = null,
-		accounts: accounts_data,
-		transactions,
-		balances,
-	} = useLoaderData();
-	const [location, setLocation] = useState(null);
+	let { pathname } = useLocation();
+	const { link_token, accounts: accounts_data, balances } = useLoaderData();
+	let has_credentials = link_token == null;
 	const accounts = useAccounstStore((state) => state.accounts);
 	const set_accounts = useAccounstStore((state) => state.set_accounts);
 	const account = useAccountStore((state) => state.account);
-
-	useEffect(() => setLocation(window.location), []);
+	let fetcher = useFetcher();
+	let entity_id = get_entity_id(pathname);
+	let group_id = get_group_id(pathname);
 
 	useEffect(() => {
-		set_accounts(["accounts"], accounts_data);
+		if (!isEmpty(fetcher.data) && fetcher.type == "done") {
+			set_accounts(["accounts"], fetcher.data);
+		}
+	}, [fetcher]);
+
+	useEffect(() => {
+		if (accounts_data && !isEmpty(accounts_data)) {
+			set_accounts(["accounts"], accounts_data);
+		}
 	}, []);
 
-	const { open, ready } = usePlaidLink({
-		token: link_token,
-		onSuccess: async (public_token, metadata) => {
-			set_plaid(["public_token"], public_token);
-			let plaid_exchange_public_token_url = `${location.origin}/plaid/exchange_public_token`;
-			let data = create_axios_form({ public_token });
+	const onAddAccounts = async () => {
+		let access_token =
+			"access-sandbox-0428200f-e7ff-4d9e-94c2-288d568b20a7";
+		let payload = {
+			access_token,
+		};
 
-			let config = {
-				method: "post",
-				maxBodyLength: Infinity,
-				headers: { "Content-Type": "multipart/form-data" },
-				url: plaid_exchange_public_token_url,
-				data,
-			};
+		let form = create_axios_form(payload);
 
-			let response = await axios(config);
-			let { access_token } = response.data;
-
-			if (access_token) {
-				console.log("plaid_exchange_public_token_response");
-				console.log(access_token);
-
-				let payload = {
-					access_token,
-				};
-
-				await set_doc(["bank_accounts", access_token], payload);
-			}
-		},
-	});
-
-	const labels = pipe(keys)(transactions);
+		fetcher.submit(form, {
+			method: "post",
+			action: `/financial/api/accounts/resource/e/${entity_id}/g/${group_id}`,
+		});
+	};
 
 	return (
 		<div className="flex flex-row w-full h-full p-5 overflow-hiddens space-x-3">
@@ -497,13 +467,24 @@ export default function Accounts() {
 						</h3>
 					</div>
 					<div>
-						<button
-							onClick={() => open()}
-							type="button"
-							className="rounded-md bg-gray-700 px-3 py-2 text-xs font-semibold text-white shadow-sm hover:bg-gray-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-						>
-							Add Account
-						</button>
+						{has_credentials && (
+							<button
+								onClick={onAddAccounts}
+								type="button"
+								className="rounded-md bg-gray-700 px-3 py-2 text-xs font-semibold text-white shadow-sm hover:bg-gray-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+							>
+								Add Account
+							</button>
+						)}
+
+						{!has_credentials && (
+							<Link
+								to={`/plaid/oauth/resources/e/${entity_id}/g/${group_id}`}
+								className="rounded-md bg-gray-700 px-3 py-2 text-xs font-semibold text-white shadow-sm hover:bg-gray-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+							>
+								Connect Bank Account
+							</Link>
+						)}
 					</div>
 				</div>
 

@@ -60,16 +60,16 @@ export const loader = async ({ request }) => {
 
 	// set_doc(["roles", role_id], test_role);
 
-	let is_authorized = await is_authorized_f(
-		entity_id,
-		group_id,
-		"cashflow",
-		"read"
-	);
+	// let is_authorized = await is_authorized_f(
+	// 	entity_id,
+	// 	group_id,
+	// 	"cashflow",
+	// 	"read"
+	// );
 
-	if (!is_authorized) {
-		return redirect("/");
-	}
+	// if (!is_authorized) {
+	// 	return redirect("/");
+	// }
 
 	let cashflow_api_response = await axios({
 		method: "get",
