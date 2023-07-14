@@ -171,7 +171,7 @@ export const signup = async ({
 	let role_config = await create_role_config({
 		group_id: root_group_resource.resource_path_id,
 		entity_id: entity.id,
-		name: "@administator",
+		name: "@administrator",
 	});
 
 	redirect_to = new_entity

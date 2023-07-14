@@ -26,6 +26,7 @@ import { v4 as uuidv4 } from "uuid";
 import { Fragment, useEffect } from "react";
 import { Menu, Transition } from "@headlessui/react";
 import { redirect } from "react-router-dom";
+import { create_role_config } from "~/api/authorization";
 
 export const useRoleStore = create((set) => ({
 	role: {},
@@ -207,26 +208,28 @@ const RoleActions = ({ role }) => {
 								</div>
 							)}
 						</Menu.Item>
-						<Menu.Item>
-							{({ active }) => (
-								<div
-									onClick={onDeleteRole}
-									className={classNames(
-										active
-											? "bg-gray-100 text-gray-900"
-											: "text-gray-700",
-										"block px-4 py-2 text-sm"
-									)}
-								>
-									<div className="flex flex-row items-center space-x-2">
-										<div>
-											<TrashIcon className="h-4 w-4 text-gray-700" />
+						{role.name !== "@administrator" && (
+							<Menu.Item>
+								{({ active }) => (
+									<div
+										onClick={onDeleteRole}
+										className={classNames(
+											active
+												? "bg-gray-100 text-gray-900"
+												: "text-gray-700",
+											"block px-4 py-2 text-sm"
+										)}
+									>
+										<div className="flex flex-row items-center space-x-2">
+											<div>
+												<TrashIcon className="h-4 w-4 text-gray-700" />
+											</div>
+											<div>Delete</div>
 										</div>
-										<div>Delete</div>
 									</div>
-								</div>
-							)}
-						</Menu.Item>
+								)}
+							</Menu.Item>
+						)}
 					</div>
 				</Menu.Items>
 			</Transition>
@@ -317,7 +320,10 @@ const RolesNav = () => {
 };
 
 const NewRoleModal = () => {
-	let { entity_id } = useLoaderData();
+	let { pathname } = useLocation();
+	let entity_id = get_entity_id(pathname);
+	let group_id = get_group_id(pathname);
+	// let { entity_id } = useLoaderData();
 	let set_modal = useModalStore((state) => state.set_modal);
 	let set_role = useRoleStore((state) => state.set_role);
 	let role = useRoleStore((state) => state.role);
@@ -329,24 +335,18 @@ const NewRoleModal = () => {
 	};
 
 	const onCreateNewRoleClick = async () => {
-		console.log("onCreateNewRoleClick");
-
-		let role_config_id = uuidv4();
-
 		let payload = {
-			id: role_config_id,
-			group_id: "1",
+			group_id,
 			entity_id,
 			...role,
 		};
 
-		console.log("payload");
-		console.log(payload);
+		let role_config = await create_role_config(payload);
+		let { id: role_config_id } = role_config;
 
-		await set_doc(["role_configs", role_config_id], payload);
-		set_roles(["roles"], [...roles, payload]);
+		set_roles(["roles"], [...roles, role_config]);
 		set_modal({ id: "new_role_modal", is_open: false });
-		window.location = `/role/${role_config_id}/permissions`;
+		window.location = `/role/${role_config_id}/permissions/resource/e/${entity_id}/g/${group_id}`;
 	};
 
 	return (
