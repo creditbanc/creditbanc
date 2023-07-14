@@ -30,8 +30,8 @@ export const useRoleStore = create((set) => ({
 export const loader = async ({ request }) => {
 	let entity_id = await get_user_id(request);
 
-	console.log("entity_id");
-	console.log(entity_id);
+	// console.log("entity_id");
+	// console.log(entity_id);
 
 	let roles = await get_collection({
 		path: ["role_configs"],

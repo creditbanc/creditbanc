@@ -194,7 +194,7 @@ const ShareDropdown = () => {
 														/>
 													</div>
 													<Link
-														to={`/role/${role.config_id}/permissions/resource/e/${entity_id}/g/${group_id}`}
+														to={`/role/${role.id}/permissions/resource/e/${entity_id}/g/${group_id}`}
 														className="cursor-pointer"
 													>
 														<Cog6ToothIcon
