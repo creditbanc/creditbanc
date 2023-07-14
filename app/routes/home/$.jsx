@@ -20,11 +20,11 @@ import { CheckCircleIcon, XCircleIcon } from "@heroicons/react/24/outline";
 
 export const loader = async ({ request }) => {
 	let url = new URL(request.url);
-	// let entity_id = await get_user_id(request);
+	let entity_id = await get_user_id(request);
 	let group_id = get_group_id(url.pathname);
 	let cookies = request.headers.get("Cookie");
 	var cookies_json = cookie.parse(cookies);
-	let entity_id = get_entity_id(url.pathname);
+	// let entity_id = get_entity_id(url.pathname);
 
 	let { allow_empty } = cookies_json;
 
@@ -34,6 +34,16 @@ export const loader = async ({ request }) => {
 			plan_id: true,
 		},
 	});
+
+	let business_info_response = await axios({
+		method: "get",
+		url: `${url.origin}/credit/report/business/api/company/resource/e/${entity_id}/g/${group_id}`,
+	});
+
+	let { data: business = {} } = business_info_response;
+
+	console.log("business");
+	console.log(business);
 
 	let credit_scores_api_response = await axios({
 		method: "get",
@@ -60,6 +70,7 @@ export const loader = async ({ request }) => {
 		entity_id,
 		plan_id,
 		financials,
+		business,
 	};
 
 	// console.log("payload");
@@ -310,6 +321,8 @@ const PersonalCredit = () => {
 };
 
 const HeadingTwo = () => {
+	let { business } = useLoaderData();
+
 	return (
 		<div className="flex flex-col max-w-7xl w-full px-3 py-2">
 			<div className="flex  flex-row items-center justify-between gap-x-8 lg:mx-0 w-full">
@@ -321,7 +334,7 @@ const HeadingTwo = () => {
 					/>
 					<h1>
 						<div className="mt-1 text-base font-semibold leading-6 text-gray-900">
-							Tuple, Inc
+							{business?.name || "Untitled Inc"}
 						</div>
 					</h1>
 				</div>
