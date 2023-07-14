@@ -71,7 +71,8 @@ export const loader = async ({ request }) => {
 };
 
 const ActivityFeed = () => {
-	let { recent_activity = [] } = useLoaderData();
+	let { financials } = useLoaderData();
+	let { recent_activity = [] } = financials;
 
 	return (
 		<>
@@ -336,7 +337,8 @@ const HealthStats = ({ type = "revenue" }) => {
 };
 
 const RevenueChart = () => {
-	let { monthly_revenues = [], month_labels = [] } = useLoaderData();
+	let { financials } = useLoaderData();
+	let { monthly_revenues = [], month_labels = [] } = financials;
 	let { search, pathname } = useLocation();
 
 	let total_revenue = sum(monthly_revenues);
@@ -433,7 +435,8 @@ const RevenueChart = () => {
 };
 
 const ExpensesChart = () => {
-	let { monthly_expenses = [], month_labels = [] } = useLoaderData();
+	let { financials } = useLoaderData();
+	let { monthly_expenses = [], month_labels = [] } = financials;
 	let { search, pathname } = useLocation();
 
 	let total_expenses = sum(monthly_expenses);
