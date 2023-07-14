@@ -16,7 +16,7 @@ const configuration = new Configuration({
 const plaidClient = new PlaidApi(configuration);
 let access_token = "access-sandbox-0428200f-e7ff-4d9e-94c2-288d568b20a7";
 
-export const get_identities = async () => {
+export const get_identities = async ({ access_token }) => {
 	const request = {
 		access_token,
 	};
@@ -36,7 +36,7 @@ export const get_identities = async () => {
 	}
 };
 
-export const get_accounts = async () => {
+export const get_accounts = async ({ access_token }) => {
 	const request = {
 		access_token,
 	};
@@ -56,7 +56,7 @@ export const get_accounts = async () => {
 	}
 };
 
-export const get_auths = async () => {
+export const get_auths = async ({ access_token }) => {
 	const request = {
 		access_token,
 	};
@@ -76,12 +76,18 @@ export const get_auths = async () => {
 	}
 };
 
-export const get_transactions = async () => {
+export const get_transactions = async ({
+	start_date,
+	end_date,
+	access_token,
+	account_ids,
+}) => {
 	const request = {
 		access_token,
-		start_date: "2020-01-01",
-		end_date: "2023-06-01",
+		start_date,
+		end_date,
 		options: {
+			account_ids,
 			include_personal_finance_category: true,
 			include_original_description: true,
 		},
@@ -95,9 +101,10 @@ export const get_transactions = async () => {
 		while (transactions.length < total_transactions) {
 			const paginatedRequest = {
 				access_token,
-				start_date: "2020-01-01",
-				end_date: "2023-06-01",
+				start_date,
+				end_date,
 				options: {
+					account_ids,
 					offset: transactions.length,
 					include_personal_finance_category: true,
 					include_original_description: true,

@@ -122,15 +122,22 @@ export const loader = async ({ request }) => {
 	// 	return redirect("/home");
 	// }
 
-	let config = {
-		method: "post",
-		maxBodyLength: Infinity,
-		url: `${origin}/plaid/create_link_token`,
-	};
+	// let account_id = "DQ4Xrpwq3MUbdEL8PkazUVl3vDZMoBt4N8AQE";
+
+	// let { data: transactions } = await axios({
+	// 	method: "get",
+	// 	url: `${origin}/financial/api/transactions/resource/e/${entity_id}/g/${group_id}?account_id=${account_id}`,
+	// });
 
 	let plaid_credentials = await get_doc(["plaid_credentials", group_id]);
 
 	if (isEmpty(plaid_credentials)) {
+		let config = {
+			method: "post",
+			maxBodyLength: Infinity,
+			url: `${origin}/plaid/create_link_token`,
+		};
+
 		let link_token_response = await axios(config);
 		let { data: link_token = "" } = link_token_response;
 		return { link_token };
@@ -141,7 +148,6 @@ export const loader = async ({ request }) => {
 		});
 
 		return {
-			// link_token,
 			accounts,
 			// balances: daily_balances,
 			// transactions,
@@ -289,6 +295,8 @@ const TableRow = ({ account }) => {
 		useState(false);
 
 	const onSelectAccount = () => {
+		console.log("onSelectAccount");
+		console.log(account);
 		set_account(["account"], account);
 	};
 
@@ -426,6 +434,7 @@ export default function Accounts() {
 	const accounts = useAccounstStore((state) => state.accounts);
 	const set_accounts = useAccounstStore((state) => state.set_accounts);
 	const account = useAccountStore((state) => state.account);
+	const set_account = useAccountStore((state) => state.set_account);
 	let fetcher = useFetcher();
 	let entity_id = get_entity_id(pathname);
 	let group_id = get_group_id(pathname);
@@ -442,20 +451,96 @@ export default function Accounts() {
 		}
 	}, []);
 
-	const onAddAccounts = async () => {
-		let access_token =
-			"access-sandbox-0428200f-e7ff-4d9e-94c2-288d568b20a7";
-		let payload = {
-			access_token,
+	let get_account_transactions = async (account_id) => {
+		let origin = window.location.origin;
+		let { data: transactions } = await axios({
+			method: "get",
+			url: `${origin}/financial/api/transactions/resource/e/${entity_id}/g/${group_id}?account_id=${account_id}`,
+		});
+
+		// console.log("transactions");
+		// console.log(transactions);
+
+		return transactions;
+	};
+
+	let get_account_daily_balances = async (account) => {
+		let transactions = await get_account_transactions(account.account_id);
+		let account_balance = pipe(get("balances", "available"))(account);
+
+		let $transactions = of(transactions);
+
+		const is_expense = (transaction) => {
+			return transaction.amount >= 0;
 		};
 
-		let form = create_axios_form(payload);
+		const is_revenue = pipe(is_expense, not);
 
-		fetcher.submit(form, {
-			method: "post",
-			action: `/financial/api/accounts/resource/e/${entity_id}/g/${group_id}`,
+		let with_daily_balance = curry((ending_balance, transactions) => {
+			return pipe(
+				jsreduce((curr, next, index) => {
+					if (index === 1) {
+						curr.balance = account_balance;
+						next.balance = curr.balance + curr.amount;
+
+						let payload = [curr, next];
+
+						return payload;
+					}
+
+					let last_transaction = last(curr);
+
+					next.balance =
+						last_transaction.balance + last_transaction.amount;
+
+					let payload = [...curr, next];
+
+					return payload;
+				})
+			)(transactions);
 		});
+
+		const with_transaction_type = (transaction) => {
+			return {
+				...transaction,
+				type: is_expense(transaction) ? "expense" : "revenue",
+			};
+		};
+
+		let $recent_activity = $transactions.pipe(
+			rxmap(
+				pipe(
+					sortBy(get("date")),
+					reverse,
+					take(30),
+					mod(all)(
+						pipe(
+							pick(["name", "date", "amount"]),
+							with_transaction_type
+						)
+					),
+					with_daily_balance(account_balance)
+				)
+			)
+		);
+
+		let $balances = $recent_activity.pipe(
+			rxmap(pipe(mod(all)(pick(["balance", "date"])), reverse))
+		);
+
+		let daily_balances = await lastValueFrom($balances);
+
+		console.log("daily_balances");
+		console.log(daily_balances);
+		console.log(account);
+		set_account(["account", "daily_balances"], daily_balances);
 	};
+
+	useEffect(() => {
+		if (!isEmpty(account)) {
+			get_account_daily_balances(account);
+		}
+	}, [account.account_id]);
 
 	return (
 		<div className="flex flex-row w-full h-full p-5 overflow-hiddens space-x-3">
@@ -467,16 +552,6 @@ export default function Accounts() {
 						</h3>
 					</div>
 					<div>
-						{/* {has_credentials && (
-							<button
-								onClick={onAddAccounts}
-								type="button"
-								className="rounded-md bg-gray-700 px-3 py-2 text-xs font-semibold text-white shadow-sm hover:bg-gray-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-							>
-								Add Account
-							</button>
-						)} */}
-
 						{!has_credentials && (
 							<Link
 								to={`/plaid/oauth/resources/e/${entity_id}/g/${group_id}`}
@@ -580,11 +655,11 @@ export default function Accounts() {
 						</div>
 					</div>
 
-					{!isEmpty(account) && (
+					{account?.daily_balances !== undefined && (
 						<div className="flex flex-col w-[calc(100%+11px)] h-[150px] -ml-[5px] -mb-[5px]">
 							<Line
 								options={options}
-								data={balances_data(balances)}
+								data={balances_data(account.daily_balances)}
 							/>
 						</div>
 					)}

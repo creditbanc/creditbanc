@@ -51,43 +51,27 @@ const set_plaid_accounts = async ({ access_token, entity_id, group_id }) => {
 	return accounts;
 };
 
-// export const action = async ({ request }) => {
-// 	console.log("plaid_action");
-// 	let { pathname } = new URL(request.url);
-// 	let entity_id = get_entity_id(pathname);
-// 	let group_id = get_group_id(pathname);
-// 	let form = await form_params(request);
-// 	let { access_token } = form;
-// 	let accounts = await set_plaid_accounts({
-// 		access_token,
-// 		entity_id,
-// 		group_id,
-// 	});
+let get_plaid_accounts_from_db = async (group_id) => {
+	let accounts_queries = [
+		{
+			param: "group_id",
+			predicate: "==",
+			value: group_id,
+		},
+	];
 
-// 	return accounts;
-// };
+	let accounts = await get_collection({
+		path: ["plaid_accounts"],
+		queries: accounts_queries,
+	});
+
+	return accounts;
+};
 
 export const loader = async ({ request }) => {
 	let { pathname } = new URL(request.url);
 	let entity_id = get_entity_id(pathname);
 	let group_id = get_group_id(pathname);
-
-	let get_plaid_accounts_from_db = async (group_id) => {
-		let accounts_queries = [
-			{
-				param: "group_id",
-				predicate: "==",
-				value: group_id,
-			},
-		];
-
-		let accounts = await get_collection({
-			path: ["plaid_accounts"],
-			queries: accounts_queries,
-		});
-
-		return accounts;
-	};
 
 	let accounts = await get_plaid_accounts_from_db(group_id);
 
