@@ -127,6 +127,9 @@ let navigation = [
 ];
 
 const ShareDropdown = () => {
+	let { pathname } = useLocation();
+	let entity_id = get_entity_id(pathname);
+	let group_id = get_group_id(pathname);
 	let roles = useRolesStore((state) => state.roles);
 
 	return (
@@ -152,7 +155,7 @@ const ShareDropdown = () => {
 				<Menu.Items className="absolute right-0 z-20 mt-2 w-56 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
 					<div className="py-1">
 						<Link
-							to={`/roles/e/1/g/1`}
+							to={`/roles/resource/e/${entity_id}/g/${group_id}`}
 							className={classNames(
 								"hover:bg-gray-100 hover:text-gray-900 text-gray-700 block text-sm"
 							)}
@@ -179,7 +182,10 @@ const ShareDropdown = () => {
 												"block px-4 py-2 text-sm"
 											)}
 										>
-											<div className="flex flex-row justify-between items-center">
+											<div
+												className="flex flex-row justify-between items-center"
+												// to={`/role/${role.id}/permissions/resource/e/${entity_id}/g/${group_id}`}
+											>
 												<div>{role.name}</div>
 												<div className="flex flex-row space-x-5">
 													<div className="cursor-pointer">
@@ -188,7 +194,7 @@ const ShareDropdown = () => {
 														/>
 													</div>
 													<Link
-														to={`/role/${role.id}/permissions`}
+														to={`/role/${role.config_id}/permissions/resource/e/${entity_id}/g/${group_id}`}
 														className="cursor-pointer"
 													>
 														<Cog6ToothIcon

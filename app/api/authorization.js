@@ -8,8 +8,8 @@ export const create_role_config = async ({ group_id, entity_id, name }) => {
 	let role = {
 		entity_id,
 		group_id,
-		config_id,
 		role_id,
+		id: config_id,
 		name,
 	};
 

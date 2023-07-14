@@ -1,7 +1,12 @@
-import { Link, Outlet, useLoaderData } from "@remix-run/react";
+import { Link, Outlet, useLoaderData, useLocation } from "@remix-run/react";
 import SimpleNavSignedIn from "~/components/SimpleNavSignedIn";
 import { get_user_id } from "~/utils/auth.server";
-import { classNames, mapIndexed } from "~/utils/helpers";
+import {
+	classNames,
+	get_entity_id,
+	get_group_id,
+	mapIndexed,
+} from "~/utils/helpers";
 import {
 	EllipsisHorizontalIcon,
 	LinkIcon,
@@ -233,6 +238,9 @@ const RolesNav = () => {
 	let { roles: db_roles } = useLoaderData();
 	let roles = useRolesStore((state) => state.roles);
 	let set_roles = useRolesStore((state) => state.set_roles);
+	let { pathname } = useLocation();
+	let entity_id = get_entity_id(pathname);
+	let group_id = get_group_id(pathname);
 
 	useEffect(() => {
 		set_roles(["roles"], db_roles);
@@ -253,7 +261,7 @@ const RolesNav = () => {
 					mapIndexed((role, role_idx) => (
 						<li key={role_idx} className="border rounded-lg">
 							<Link
-								to={`/role/${role.id}/permissions`}
+								to={`/role/${role.id}/permissions/resource/e/${entity_id}/g/${group_id}`}
 								className={classNames(
 									role.current
 										? "bg-gray-50 text-blue-600"

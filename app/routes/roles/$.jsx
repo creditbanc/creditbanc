@@ -1,6 +1,11 @@
-import { Link, useLoaderData } from "@remix-run/react";
+import { Link, useLoaderData, useLocation } from "@remix-run/react";
 import { get_user_id } from "~/utils/auth.server";
-import { classNames, mapIndexed } from "~/utils/helpers";
+import {
+	classNames,
+	get_entity_id,
+	get_group_id,
+	mapIndexed,
+} from "~/utils/helpers";
 import {
 	Cog6ToothIcon,
 	EllipsisHorizontalIcon,
@@ -37,9 +42,6 @@ export const useRolesStore = create((set) => ({
 
 export const loader = async ({ request }) => {
 	let entity_id = await get_user_id(request);
-
-	console.log("entity_id");
-	console.log(entity_id);
 
 	let roles = await get_collection({
 		path: ["role_configs"],
@@ -198,6 +200,9 @@ const RolesList = () => {
 	let { roles: db_roles } = useLoaderData();
 	let roles = useRolesStore((state) => state.roles);
 	let set_roles = useRolesStore((state) => state.set_roles);
+	let { pathname } = useLocation();
+	let entity_id = get_entity_id(pathname);
+	let group_id = get_group_id(pathname);
 
 	useEffect(() => {
 		set_roles(["roles"], db_roles);
@@ -228,7 +233,7 @@ const RolesList = () => {
 							>
 								<div className="flex flex-row items-center justify-between py-1">
 									<Link
-										to={`/role/${role.id}/permissions`}
+										to={`/role/${role.id}/permissions/resource/e/${entity_id}/g/${group_id}`}
 										className="flex flex-col space-y-3 flex-1"
 									>
 										<div className="flex flex-row items-center space-x-2 text-gray-700 font-semibold">
