@@ -5,6 +5,9 @@ import { create as create_user } from "./entity.server";
 import { create as create_roles } from "./role.server";
 import { create_root, create_group } from "./group.server";
 import { take } from "ramda";
+import { v4 as uuidv4 } from "uuid";
+import { set_doc } from "./firebase";
+import { create_role_config } from "~/api/authorization";
 
 let secret = process.env.SESSION_SECRET;
 
@@ -164,6 +167,12 @@ export const signup = async ({
 	// redirect_to = new_entity
 	// 	? redirect_to + `&group_id=${root_group_resource.resource_path_id}`
 	// 	: redirect_to;
+
+	let role_config = await create_role_config({
+		group_id: root_group_resource.resource_path_id,
+		entity_id: entity.id,
+		name: "@administator",
+	});
 
 	redirect_to = new_entity
 		? redirect_to +

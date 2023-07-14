@@ -309,8 +309,8 @@ export default function Nav({ user_id }) {
 			let roles_response = await get_collection({
 				path: ["role_configs"],
 				queries: [
-					{ param: "entity_id", predicate: "==", value: user_id },
-					{ param: "group_id", predicate: "==", value: "1" },
+					{ param: "entity_id", predicate: "==", value: entity_id },
+					{ param: "group_id", predicate: "==", value: group_id },
 				],
 			});
 
