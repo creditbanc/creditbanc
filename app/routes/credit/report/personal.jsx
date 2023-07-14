@@ -7,6 +7,7 @@ import {
 	get_route_endpoint,
 	get_file_id,
 	inspect,
+	get_entity_id,
 } from "~/utils/helpers";
 import { get_docs as get_group_docs } from "~/utils/group.server";
 import { head, pipe } from "ramda";
@@ -64,6 +65,7 @@ export const loader = async ({ request }) => {
 	let url = new URL(request.url);
 	let { origin } = url;
 	let user_id = await get_user_id(request);
+	let entity_id = get_entity_id(url.pathname);
 	let group_id = get_group_id(url.pathname);
 
 	let personal_credit_report_queries = [
@@ -85,6 +87,12 @@ export const loader = async ({ request }) => {
 	});
 
 	let report = pipe(head)(report_response);
+
+	if (!report) {
+		return redirect(
+			`/credit/personal/new/resource/e/${entity_id}/g/${group_id}`
+		);
+	}
 
 	let { plan_id } = await prisma.entity.findUnique({
 		where: { id: user_id },

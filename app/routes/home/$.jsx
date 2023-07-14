@@ -20,10 +20,11 @@ import { CheckCircleIcon, XCircleIcon } from "@heroicons/react/24/outline";
 
 export const loader = async ({ request }) => {
 	let url = new URL(request.url);
-	let entity_id = await get_user_id(request);
+	// let entity_id = await get_user_id(request);
 	let group_id = get_group_id(url.pathname);
 	let cookies = request.headers.get("Cookie");
 	var cookies_json = cookie.parse(cookies);
+	let entity_id = get_entity_id(url.pathname);
 
 	let { allow_empty } = cookies_json;
 
@@ -41,6 +42,9 @@ export const loader = async ({ request }) => {
 
 	let { data: scores } = credit_scores_api_response;
 
+	// console.log("scores");
+	// console.log(scores);
+
 	let cashflow_api_response = await axios({
 		method: "get",
 		url: `${url.origin}/financial/api/cashflow/resource/e/${entity_id}/g/${group_id}`,
@@ -48,12 +52,18 @@ export const loader = async ({ request }) => {
 
 	let { data: financials } = cashflow_api_response;
 
+	// console.log("financials");
+	// console.log(financials);
+
 	let payload = {
 		...scores,
 		entity_id,
 		plan_id,
 		financials,
 	};
+
+	// console.log("payload");
+	// console.log(payload);
 
 	return payload;
 };
@@ -387,9 +397,9 @@ const Accounts = () => {
 
 	return (
 		<div className="mx-auto  grid max-w-2xl grid-cols-1 gap-x-8 gap-y-20 lg:mx-0 lg:max-w-none lg:grid-cols-3">
-			{posts.map((post) => (
+			{posts.map((post, index) => (
 				<article
-					key={post.id}
+					key={index}
 					className="flex flex-col items-start justify-between"
 				>
 					<div className="relative w-full">
@@ -617,7 +627,7 @@ const Notifications = () => {
 };
 
 export default function Home() {
-	const { plan_id, financials } = useLoaderData();
+	const { plan_id = "essential", financials = {} } = useLoaderData();
 	let set_financials = useCashflowStore((state) => state.set_state);
 
 	useEffect(() => {

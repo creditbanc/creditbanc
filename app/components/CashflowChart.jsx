@@ -159,8 +159,8 @@ const IncomeStats = () => {
 
 	return (
 		<div className="bg-white divide-y rounded">
-			{income_stats_data.map((item) => (
-				<div key={item.name} className="py-5 px-3">
+			{income_stats_data.map((item, index) => (
+				<div key={index} className="py-5 px-3">
 					<div className="text-sm font-normal text-gray-900">
 						{item.name}
 					</div>
@@ -231,7 +231,7 @@ export default function CashflowChart() {
 		return `${pathname}?${search}`;
 	};
 
-	if (isEmpty(financials)) return null;
+	// if (isEmpty(financials)) return null;
 
 	return (
 		<div className="flex flex-col w-full h-full">

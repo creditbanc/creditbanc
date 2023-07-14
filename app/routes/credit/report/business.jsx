@@ -13,6 +13,7 @@ import {
 	get_file_id,
 	inspect,
 	get_group_id,
+	get_entity_id,
 } from "~/utils/helpers";
 import { get_user_id } from "~/utils/auth.server";
 import { redirect } from "@remix-run/node";
@@ -79,7 +80,7 @@ export const loader = async ({ request }) => {
 	let url = new URL(request.url);
 	let { origin } = url;
 	let file_id = get_file_id(url.pathname);
-	let entity_id = await get_user_id(request);
+	let entity_id = get_entity_id(url.pathname);
 	let group_id = get_group_id(url.pathname);
 
 	let business_credit_report_queries = [
@@ -101,6 +102,12 @@ export const loader = async ({ request }) => {
 	});
 
 	let report = pipe(head)(report_response);
+
+	if (!report) {
+		return redirect(
+			`/credit/business/new/resource/e/${entity_id}/g/${group_id}?cookie=monster`
+		);
+	}
 
 	let lendflow_report = await get_lendflow_report(report.application_id);
 	let is_latest_report = deepEqual(report.data, lendflow_report.data);

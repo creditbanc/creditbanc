@@ -82,6 +82,9 @@ export const loader = async ({ request }) => {
 	if (isEmpty(accounts)) {
 		let plaid_credentials = await get_doc(["plaid_credentials", group_id]);
 		let { access_token } = plaid_credentials;
+
+		if (!access_token) return [];
+
 		let accounts = await set_plaid_accounts({
 			access_token,
 			entity_id,

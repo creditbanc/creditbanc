@@ -1,5 +1,16 @@
 import { Link, useLoaderData, useLocation } from "@remix-run/react";
-import { pipe, map, head, sortBy, prop, reverse, curry, last } from "ramda";
+import {
+	pipe,
+	map,
+	head,
+	sortBy,
+	prop,
+	reverse,
+	curry,
+	last,
+	isEmpty,
+	defaultTo,
+} from "ramda";
 import { get_collection } from "~/utils/firebase";
 import {
 	inspect,
@@ -31,6 +42,13 @@ const useTransactionsStore = create((set) => ({
 }));
 
 let total_for_period = curry((start_date, end_date, transactions) => {
+	console.log("total_for_period");
+	console.log(transactions);
+
+	if (isEmpty(transactions)) {
+		return { income: 0, expense: 0 };
+	}
+
 	let filtered_transactions = pipe(
 		filter(({ date }) => date >= start_date && date <= end_date)
 	)(transactions);
@@ -121,7 +139,14 @@ export const loader = async ({ request }) => {
 		limit,
 	});
 
-	let last_transaction_date = pipe(last, get("date"))(transactions);
+	// console.log("transactions");
+	// console.log(transactions);
+
+	let last_transaction_date = pipe(
+		last,
+		defaultTo({}),
+		get("date")
+	)(transactions);
 	let difference = moment().diff(last_transaction_date, "days");
 
 	let totals = {
@@ -156,6 +181,9 @@ export const loader = async ({ request }) => {
 			transactions
 		),
 	};
+
+	console.log("totals");
+	console.log(totals);
 
 	return { transactions, totals };
 };
@@ -212,7 +240,7 @@ const TransactionsTable = () => {
 	};
 
 	return (
-		<div className="flex flex-col ">
+		<div className="flex flex-col h-full">
 			<div className="flex flex-col w-full">
 				{pipe(
 					mapIndexed((transaction, transaction_idx) => (
@@ -392,9 +420,11 @@ const Pagination = () => {
 };
 
 export default function Transactions() {
+	let { transactions = [] } = useLoaderData();
+
 	return (
-		<div className="flex flex-col w-full p-5 overflow-hidden">
-			<div className="flex flex-row w-full overflow-hidden">
+		<div className="flex flex-col w-full p-5 overflow-hidden h-full">
+			<div className="flex flex-row w-full overflow-hidden h-full">
 				<div className="flex flex-col w-[70%] overflow-y-scroll scrollbar-none bg-white px-5 pb-0 rounded">
 					<div className="border-b border-gray-200 pb-3 flex flex-row justify-between my-3">
 						<div>
@@ -411,9 +441,11 @@ export default function Transactions() {
 						<div className="flex flex-col w-[185px]">Account</div>
 						<div className="flex flex-col">Date</div>
 					</div>
-					<TransactionsTable />
+					<div className="flex flex-col w-full">
+						<TransactionsTable />
+					</div>
 					<div className="flex flex-col sticky bottom-0 bg-white pb-3">
-						<Pagination />
+						{!isEmpty(transactions) && <Pagination />}
 					</div>
 				</div>
 				<div className="flex flex-col w-[30%] ml-5">

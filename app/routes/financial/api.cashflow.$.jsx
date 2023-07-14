@@ -31,6 +31,7 @@ import {
 	sort,
 	descend,
 	length,
+	isEmpty,
 } from "ramda";
 import { all, filter, get, mod } from "shades";
 import {
@@ -58,6 +59,10 @@ export const loader = async ({ request }) => {
 		method: "get",
 		url: `${origin}/financial/api/accounts/resource/e/${entity_id}/g/${group_id}`,
 	});
+
+	if (isEmpty(accounts)) {
+		return {};
+	}
 
 	let account_balance = pipe(
 		get(all, "balances", "available"),
