@@ -65,8 +65,8 @@ const get_scores = (report) => {
 export const loader = async ({ request }) => {
 	let url = new URL(request.url);
 	let { origin } = url;
-	let user_id = await get_session_entity_id(request);
-	let entity_id = get_entity_id(url.pathname);
+	let entity_id = await get_session_entity_id(request);
+	// let entity_id = get_entity_id(url.pathname);
 	let group_id = get_group_id(url.pathname);
 
 	let is_authorized = await is_authorized_f(
@@ -109,18 +109,13 @@ export const loader = async ({ request }) => {
 		);
 	}
 
-	let { plan_id } = await prisma.entity.findUnique({
-		where: { id: user_id },
-		select: {
-			plan_id: true,
-		},
-	});
+	let { plan_id } = await get_doc(["entity", entity_id]);
 
 	let scores = get_scores(report);
 
 	let business_info_response = await axios({
 		method: "get",
-		url: `${origin}/credit/report/business/api/company/resource/e/${user_id}/g/${group_id}`,
+		url: `${origin}/credit/report/business/api/company/resource/e/${entity_id}/g/${group_id}`,
 	});
 
 	let { data: business = {} } = business_info_response;

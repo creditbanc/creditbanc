@@ -1,6 +1,6 @@
 import CreditNav from "~/components/CreditNav";
 import SimpleNav from "~/components/SimpleNav";
-import { isEmpty, join, equals, tryCatch } from "ramda";
+import { isEmpty, join, equals, tryCatch, is } from "ramda";
 import axios from "axios";
 import { useLoaderData, useFetcher, useLocation } from "@remix-run/react";
 import { useSearchParams } from "react-router-dom";
@@ -21,6 +21,7 @@ import {
 import { get_session_entity_id, get_user_id } from "~/utils/auth.server";
 import { appKey, new_credit_report, is_sandbox } from "~/data/array";
 import { prisma } from "~/utils/prisma.server";
+import { get_doc } from "~/utils/firebase";
 
 export const action = async ({ request }) => {
 	let { payload: form } = await form_params(request);
@@ -30,12 +31,8 @@ export const action = async ({ request }) => {
 
 	if (!is_applicant) {
 		let entity_id = await get_session_entity_id(request);
-		let entity = await prisma.entity.findUnique({
-			where: { id: entity_id },
-			select: {
-				plan_id: true,
-			},
-		});
+
+		let entity = await get_doc(["entity", entity_id]);
 
 		plan_id = entity.plan_id;
 	}
@@ -82,6 +79,12 @@ export const action = async ({ request }) => {
 
 	if (displayToken && reportKey) {
 		return redirect(`/credit/personal/create?${redirect_search_params}`);
+	} else {
+		if (is_sandbox) {
+			return redirect(
+				`/credit/personal/create?${redirect_search_params}`
+			);
+		}
 	}
 };
 
@@ -138,15 +141,26 @@ export default function Verification() {
 				<Heading />
 			</div>
 			<div className="-mt-[30px] sm:-mt-[80px]">
-				<array-authentication-kba
-					appKey={appKey}
-					sandbox={is_sandbox}
-					userId={clientKey}
-					showResultPages="true"
-					tui={true}
-					exp={is_sandbox ? false : true}
-					efx={is_sandbox ? false : true}
-				></array-authentication-kba>
+				{is_sandbox && (
+					<array-authentication-kba
+						apiurl="https://mock.array.io"
+						appkey="3F03D20E-5311-43D8-8A76-E4B5D77793BD"
+						sandbox="true"
+						userid="1rRBvKI3tCPIEg09hGP0CRAIDB1"
+						showresultpages="true"
+					></array-authentication-kba>
+				)}
+
+				{!is_sandbox && (
+					<array-authentication-kba
+						appKey={appKey}
+						userId={clientKey}
+						showResultPages="true"
+						tui={true}
+						exp={true}
+						efx={true}
+					></array-authentication-kba>
+				)}
 			</div>
 		</div>
 	);

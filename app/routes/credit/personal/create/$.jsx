@@ -97,12 +97,7 @@ export const loader = async ({ request }) => {
 		console.log("not_applicant");
 		entity_id = await get_session_entity_id(request);
 
-		let entity = await prisma.entity.findUnique({
-			where: { id: entity_id },
-			select: {
-				plan_id: true,
-			},
-		});
+		let entity = await get_doc(["entity", entity_id]);
 
 		plan_id = entity.plan_id;
 	}
