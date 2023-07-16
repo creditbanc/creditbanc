@@ -1,7 +1,11 @@
 import { ChevronRightIcon, ListBulletIcon } from "@heroicons/react/20/solid";
 import { Link, useLocation } from "@remix-run/react";
 import { get_session_entity_id, get_user_id } from "~/utils/auth.server";
-import { get_entity_id, get_group_id } from "~/utils/helpers";
+import {
+	get_entity_id,
+	get_group_id,
+	use_search_params,
+} from "~/utils/helpers";
 import { length, map, pipe } from "ramda";
 import { all, filter, get } from "shades";
 import { prisma } from "~/utils/prisma.server";
@@ -26,6 +30,8 @@ export const loader = async ({ request }) => {
 	let group_id = get_group_id(url.pathname);
 	let cookies = request.headers.get("Cookie");
 	var cookies_json = cookie.parse(cookies);
+	let { income: income_start_month = 12 } = use_search_params(request);
+
 	// let entity_id = get_entity_id(url.pathname);
 
 	let { allow_empty } = cookies_json;
@@ -61,7 +67,7 @@ export const loader = async ({ request }) => {
 
 	let cashflow_api_response = await axios({
 		method: "get",
-		url: `${url.origin}/financial/api/cashflow/resource/e/${entity_id}/g/${group_id}`,
+		url: `${url.origin}/financial/api/cashflow/resource/e/${entity_id}/g/${group_id}?income=${income_start_month}`,
 	});
 
 	let { data: financials } = cashflow_api_response;
@@ -714,9 +720,6 @@ export default function Home() {
 
 	let onboard_percent_completed =
 		(onboard_steps_completed / onboard_num_of_steps) * 100;
-
-	console.log("onboard_percent_completed");
-	console.log(onboard_percent_completed);
 
 	useEffect(() => {
 		set_financials(["financials"], financials);

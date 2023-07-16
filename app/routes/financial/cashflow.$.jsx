@@ -62,7 +62,7 @@ export const loader = async ({ request }) => {
 
 	let cashflow_api_response = await axios({
 		method: "get",
-		url: `${origin}/financial/api/cashflow/resource/e/${entity_id}/g/${group_id}`,
+		url: `${origin}/financial/api/cashflow/resource/e/${entity_id}/g/${group_id}?income=${income_start_month}`,
 	});
 
 	let { data: financials } = cashflow_api_response;
