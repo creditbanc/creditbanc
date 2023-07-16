@@ -2,7 +2,7 @@ import { ChevronRightIcon, ListBulletIcon } from "@heroicons/react/20/solid";
 import { Link, useLocation } from "@remix-run/react";
 import { get_session_entity_id, get_user_id } from "~/utils/auth.server";
 import { get_entity_id, get_group_id } from "~/utils/helpers";
-import { map, pipe } from "ramda";
+import { length, map, pipe } from "ramda";
 import { all, filter, get } from "shades";
 import { prisma } from "~/utils/prisma.server";
 import { useLoaderData } from "@remix-run/react";
@@ -703,6 +703,17 @@ const Notifications = () => {
 export default function Home() {
 	const { plan_id = "essential", financials = {} } = useLoaderData();
 	let set_financials = useCashflowStore((state) => state.set_state);
+	let onboard = useOnboardingStore((state) => state.onboarding);
+
+	let onboard_num_of_steps = pipe(length)(onboard);
+	let onboard_steps_completed = pipe(
+		get(all, "completed"),
+		filter((value) => value == true),
+		length
+	)(onboard);
+
+	let onboard_percent_completed =
+		(onboard_steps_completed / onboard_num_of_steps) * 100;
 
 	useEffect(() => {
 		set_financials(["financials"], financials);
@@ -773,11 +784,18 @@ export default function Home() {
 
 								<div className="my-2 flex flex-col w-full">
 									<div className="flex flex-row w-full justify-between my-2 text-sm text-gray-400">
-										<div>45%</div>
-										<div>4/6 steps</div>
+										<div>{onboard_percent_completed}%</div>
+										<div>
+											{onboard_steps_completed}/
+											{onboard_num_of_steps} steps
+										</div>
 									</div>
 									<div className="w-full bg-gray-200 rounded-full h-2.5 dark:bg-gray-700">
-										<div className="bg-blue-600 h-2.5 rounded-full w-[45%]"></div>
+										<div
+											className={`bg-blue-600 h-2.5 rounded-full w-[${parseInt(
+												onboard_percent_completed
+											)}%]`}
+										></div>
 									</div>
 								</div>
 							</div>
