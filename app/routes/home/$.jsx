@@ -1,6 +1,6 @@
 import { ChevronRightIcon, ListBulletIcon } from "@heroicons/react/20/solid";
 import { Link, useLocation } from "@remix-run/react";
-import { get_user_id } from "~/utils/auth.server";
+import { get_session_entity_id, get_user_id } from "~/utils/auth.server";
 import { get_entity_id, get_group_id } from "~/utils/helpers";
 import { pipe } from "ramda";
 import { get } from "shades";
@@ -17,10 +17,11 @@ import { useEffect } from "react";
 import { ChevronUpIcon } from "@heroicons/react/20/solid";
 import { Disclosure } from "@headlessui/react";
 import { CheckCircleIcon, XCircleIcon } from "@heroicons/react/24/outline";
+import { get_doc } from "~/utils/firebase";
 
 export const loader = async ({ request }) => {
 	let url = new URL(request.url);
-	let entity_id = await get_user_id(request);
+	let entity_id = await get_session_entity_id(request);
 	let group_id = get_group_id(url.pathname);
 	let cookies = request.headers.get("Cookie");
 	var cookies_json = cookie.parse(cookies);
@@ -28,12 +29,14 @@ export const loader = async ({ request }) => {
 
 	let { allow_empty } = cookies_json;
 
-	let { plan_id } = await prisma.entity.findUnique({
-		where: { id: entity_id },
-		select: {
-			plan_id: true,
-		},
-	});
+	let { plan_id } = await get_doc(["entity", entity_id]);
+
+	// let { plan_id } = await prisma.entity.findUnique({
+	// 	where: { id: entity_id },
+	// 	select: {
+	// 		plan_id: true,
+	// 	},
+	// });
 
 	let business_info_response = await axios({
 		method: "get",

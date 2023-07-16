@@ -17,13 +17,31 @@ import {
 	get as get_resource,
 } from "./resource.server";
 import { inspect, trim } from "./helpers";
-
 import { create as create_role } from "./role.server";
+import { get_collection, get_doc, set_doc } from "./firebase";
+import { v4 as uuidv4 } from "uuid";
 
 // const inspect = (obj) => {
 // 	console.log(util.inspect(obj, false, null, true));
 // 	return obj;
 // };
+
+export const create_partition = async ({ entity_id }) => {
+	console.log("create_partition");
+
+	let partition_id = uuidv4();
+
+	let payload = {
+		id: partition_id,
+		entity_id,
+		type: "partition",
+		model: "group",
+	};
+
+	await set_doc(["group", partition_id], payload);
+
+	return payload;
+};
 
 export const create_root = async (data = {}) => {
 	console.log("create_partition");
@@ -203,16 +221,40 @@ export const create_directory = async (data = {}) => {
 	return { type: "directory", directory, resource };
 };
 
-export const get_root_group_resource_path_id = async ({ entity_id }) => {
+export const get_partition_id = async ({ entity_id }) => {
 	console.log("get_root_group_resource_path_id");
-	let entity = await prisma.entity.findFirst({
-		where: { id: entity_id },
+
+	let partion_queries = [
+		{
+			param: "entity_id",
+			predicate: "==",
+			value: entity_id,
+		},
+		{
+			param: "type",
+			predicate: "==",
+			value: "partition",
+		},
+	];
+
+	let partition_response = await get_collection({
+		path: ["group"],
+		queries: partion_queries,
 	});
+
+	let partition = pipe(head)(partition_response);
+
+	let { id } = partition;
+	return id;
+
+	// let entity = await prisma.entity.findFirst({
+	// 	where: { id: entity_id },
+	// });
 
 	// console.log("entity");
 	// console.log(entity);
 
-	return entity.root_group_resource_path_id;
+	// return entity.root_group_resource_path_id;
 
 	// let root_group_resource = await prisma.resource.findFirst({
 	// 	where: { resource_path_id: entity.root_group_resource_path_id },

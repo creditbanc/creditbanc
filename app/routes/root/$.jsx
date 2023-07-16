@@ -2,11 +2,12 @@ import { pipe, reject } from "ramda";
 import { useLoaderData } from "@remix-run/react";
 import { json, redirect } from "@remix-run/node";
 import Directory from "~/components/Directory";
+import { get_partition_id, get_root_docs } from "~/utils/group.server";
 import {
-	get_root_docs,
-	get_root_group_resource_path_id,
-} from "~/utils/group.server";
-import { get_user, get_user_id } from "~/utils/auth.server";
+	get_session_entity_id,
+	get_user,
+	get_user_id,
+} from "~/utils/auth.server";
 import { has_resource_url_p } from "~/utils/helpers";
 
 const is_root_resource = (resource) => resource.name === "root";
@@ -20,18 +21,16 @@ export const load_root = async ({ entity_id }) => {
 
 export const loader = async ({ request }) => {
 	console.log("root_loader");
-	let entity_id = await get_user_id(request);
+	let entity_id = await get_session_entity_id(request);
 	let has_resource = has_resource_url_p(request.url);
 	if (!entity_id) return redirect(`/`);
-	let root_gruop_resource_path_id = await get_root_group_resource_path_id({
+	let partition_id = await get_partition_id({
 		entity_id,
 	});
 	console.log("root_gruop_id");
 	// console.log(root_gruop_id);
 	if (!has_resource)
-		return redirect(
-			`/group/resource/e/${entity_id}/g/${root_gruop_resource_path_id}`
-		);
+		return redirect(`/group/resource/e/${entity_id}/g/${partition_id}`);
 	const resources = await load_root({ entity_id });
 	return json({ data: resources, entity_id });
 };

@@ -7,12 +7,18 @@ import {
 import { Popover, Transition } from "@headlessui/react";
 const cb_logo = "/images/logos/cb_logo_3.png";
 import { Link, useLoaderData, useSubmit } from "@remix-run/react";
-import { get_user_id, get_user } from "~/utils/auth.server";
+import {
+	get_user_id,
+	get_user,
+	get_entity,
+	get_session_entity_id,
+} from "~/utils/auth.server";
 import { hasPath, head, length, pipe } from "ramda";
 import { filter, get, has } from "shades";
 import { prisma } from "~/utils/prisma.server";
 import { redirect } from "@remix-run/node";
 import { plans } from "~/data/upgrade_plans";
+import { update_doc } from "~/utils/firebase";
 var stripe = require("stripe");
 
 const steps = [
@@ -21,9 +27,9 @@ const steps = [
 ];
 
 export const action = async ({ request }) => {
-	console.log("action");
+	console.log("action____");
 	stripe = stripe(process.env.STRIPE);
-	let entity_id = await get_user_id(request);
+	let entity_id = await get_session_entity_id(request);
 	var form = await request.formData();
 
 	const email = form.get("email");
@@ -88,14 +94,16 @@ export const action = async ({ request }) => {
 		// console.log("subscription");
 		// console.log(subscription);
 
-		await prisma.entity.update({
-			where: {
-				id: entity_id,
-			},
-			data: {
-				plan_id: "builder",
-			},
-		});
+		await update_doc(["entity", entity_id], { plan_id: "builder" });
+
+		// await prisma.entity.update({
+		// 	where: {
+		// 		id: entity_id,
+		// 	},
+		// 	data: {
+		// 		plan_id: "builder",
+		// 	},
+		// });
 
 		return redirect("/home");
 	}
@@ -104,16 +112,22 @@ export const action = async ({ request }) => {
 	let { id: customer_id } = customer;
 	let subscription = await subscribe_customer(customer_id);
 
-	await prisma.entity.update({
-		where: {
-			id: entity_id,
-		},
-		data: {
-			plan_id: "builder",
-			stripe_customer_id: customer_id,
-			stripe_subscription_id: subscription.id,
-		},
+	await update_doc(["entity", entity_id], {
+		plan_id: "builder",
+		stripe_customer_id: customer_id,
+		stripe_subscription_id: subscription.id,
 	});
+
+	// await prisma.entity.update({
+	// 	where: {
+	// 		id: entity_id,
+	// 	},
+	// 	data: {
+	// 		plan_id: "builder",
+	// 		stripe_customer_id: customer_id,
+	// 		stripe_subscription_id: subscription.id,
+	// 	},
+	// });
 
 	return redirect("/home");
 
@@ -122,10 +136,10 @@ export const action = async ({ request }) => {
 };
 
 export const loader = async ({ request }) => {
-	let entity = await get_user(request);
+	let entity = await get_entity(request);
 
-	// console.log("entity");
-	// console.log(entity);
+	console.log("entity");
+	console.log(entity);
 
 	let { stripe_subscription_id } = entity;
 
