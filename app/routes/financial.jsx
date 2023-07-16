@@ -24,7 +24,7 @@ export const useAccountsStore = create((set) => ({
 
 export const loader = async ({ request }) => {
 	let { origin, pathname } = new URL(request.url);
-	let entity_id = get_session_entity_id(request);
+	let entity_id = await get_session_entity_id(request);
 	let group_id = get_group_id(pathname);
 
 	let { data: accounts = [] } = await axios({

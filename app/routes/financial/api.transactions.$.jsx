@@ -54,7 +54,7 @@ let get_plaid_transactions_from_db = async ({ group_id }) => {
 
 export const loader = async ({ request }) => {
 	let { pathname } = new URL(request.url);
-	let entity_id = get_session_entity_id(request);
+	let entity_id = await get_session_entity_id(request);
 	let group_id = get_group_id(pathname);
 	let { account_id } = use_search_params(request);
 

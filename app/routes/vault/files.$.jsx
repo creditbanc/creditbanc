@@ -53,7 +53,7 @@ import { create } from "zustand";
 import { v4 as uuidv4 } from "uuid";
 import { filter, matching, mod, get, all } from "shades";
 import { is_authorized_f } from "~/api/auth";
-import { get_user_id } from "~/utils/auth.server";
+import { get_session_entity_id, get_user_id } from "~/utils/auth.server";
 import { redirect } from "@remix-run/node";
 
 export const useFileStore = create((set) => ({
@@ -108,7 +108,7 @@ const category_styles = [
 ];
 
 export const loader = async ({ request }) => {
-	let entity_id = await get_user_id(request);
+	let entity_id = await get_session_entity_id(request);
 	let group_id = get_group_id(request.url);
 
 	let is_authorized = await is_authorized_f(

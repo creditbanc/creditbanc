@@ -1,5 +1,5 @@
 import { Link, useLoaderData, useLocation } from "@remix-run/react";
-import { get_user_id } from "~/utils/auth.server";
+import { get_session_entity_id, get_user_id } from "~/utils/auth.server";
 import {
 	classNames,
 	get_entity_id,
@@ -43,7 +43,7 @@ export const useRolesStore = create((set) => ({
 }));
 
 export const loader = async ({ request }) => {
-	let entity_id = await get_user_id(request);
+	let entity_id = await get_session_entity_id(request);
 
 	let roles = await get_collection({
 		path: ["role_configs"],

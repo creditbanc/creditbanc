@@ -75,7 +75,7 @@ let get_plaid_accounts_from_db = async (group_id) => {
 
 export const loader = async ({ request }) => {
 	let { pathname } = new URL(request.url);
-	let entity_id = get_session_entity_id(request);
+	let entity_id = await get_session_entity_id(request);
 	let group_id = get_group_id(pathname);
 
 	let accounts = await get_plaid_accounts_from_db(group_id);
