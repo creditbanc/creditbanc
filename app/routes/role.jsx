@@ -46,9 +46,6 @@ export const useRolesStore = create((set) => ({
 export const loader = async ({ request }) => {
 	let entity_id = await get_session_entity_id(request);
 
-	// console.log("entity_id");
-	// console.log(entity_id);
-
 	let roles = await get_collection({
 		path: ["role_configs"],
 		queries: [
@@ -59,9 +56,6 @@ export const loader = async ({ request }) => {
 			},
 		],
 	});
-
-	// console.log("roles");
-	// console.log(roles);
 
 	return { entity_id, roles };
 };

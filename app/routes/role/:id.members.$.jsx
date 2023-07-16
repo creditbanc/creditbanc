@@ -2,6 +2,9 @@ import { Fragment } from "react";
 import { Menu, Transition } from "@headlessui/react";
 import { ChevronDownIcon } from "@heroicons/react/20/solid";
 import { classNames } from "~/utils/helpers";
+import { useState } from "react";
+import { CheckIcon, ChevronUpDownIcon } from "@heroicons/react/20/solid";
+import { Combobox } from "@headlessui/react";
 
 const people = [
 	{
@@ -88,8 +91,8 @@ const MemberActionsDropdown = () => {
 	return (
 		<Menu as="div" className="relative inline-block text-left">
 			<div>
-				<Menu.Button className="inline-flex w-full justify-center gap-x-1.5 rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50">
-					Options
+				<Menu.Button className="inline-flex w-full justify-center gap-x-1.5 rounded-full bg-white px-3 py-2 text-sm font-semibold text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50">
+					Actions
 					<ChevronDownIcon
 						className="-mr-1 h-5 w-5 text-gray-400"
 						aria-hidden="true"
@@ -119,7 +122,7 @@ const MemberActionsDropdown = () => {
 										"block px-4 py-2 text-sm"
 									)}
 								>
-									Account settings
+									Block
 								</a>
 							)}
 						</Menu.Item>
@@ -134,42 +137,10 @@ const MemberActionsDropdown = () => {
 										"block px-4 py-2 text-sm"
 									)}
 								>
-									Support
+									Change role
 								</a>
 							)}
 						</Menu.Item>
-						<Menu.Item>
-							{({ active }) => (
-								<a
-									href="#"
-									className={classNames(
-										active
-											? "bg-gray-100 text-gray-900"
-											: "text-gray-700",
-										"block px-4 py-2 text-sm"
-									)}
-								>
-									License
-								</a>
-							)}
-						</Menu.Item>
-						<form method="POST" action="#">
-							<Menu.Item>
-								{({ active }) => (
-									<button
-										type="submit"
-										className={classNames(
-											active
-												? "bg-gray-100 text-gray-900"
-												: "text-gray-700",
-											"block w-full px-4 py-2 text-left text-sm"
-										)}
-									>
-										Sign out
-									</button>
-								)}
-							</Menu.Item>
-						</form>
 					</div>
 				</Menu.Items>
 			</Transition>
@@ -231,12 +202,97 @@ const MembersList = () => {
 	);
 };
 
+const MemberSearch = () => {
+	const [query, setQuery] = useState("");
+	const [selectedPerson, setSelectedPerson] = useState(null);
+
+	const filteredPeople =
+		query === ""
+			? people
+			: people.filter((person) => {
+					return person.name
+						.toLowerCase()
+						.includes(query.toLowerCase());
+			  });
+
+	return (
+		<Combobox as="div" value={selectedPerson} onChange={setSelectedPerson}>
+			<div className="relative w-[500px]">
+				<Combobox.Input
+					className="w-full rounded-md bg-white py-1.5 pl-3 pr-10 text-gray-900 border sm:text-sm sm:leading-6 outline-none"
+					onChange={(event) => setQuery(event.target.value)}
+					displayValue={(person) => person?.name}
+					placeholder="Search members"
+				/>
+				<Combobox.Button className="absolute inset-y-0 right-0 flex items-center rounded-r-md px-2 focus:outline-none">
+					<ChevronUpDownIcon
+						className="h-5 w-5 text-gray-400"
+						aria-hidden="true"
+					/>
+				</Combobox.Button>
+
+				{filteredPeople.length > 0 && (
+					<Combobox.Options className="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
+						{filteredPeople.map((person) => (
+							<Combobox.Option
+								key={person.id}
+								value={person}
+								className={({ active }) =>
+									classNames(
+										"relative cursor-default select-none py-2 pl-3 pr-9",
+										active
+											? "bg-indigo-600 text-white"
+											: "text-gray-900"
+									)
+								}
+							>
+								{({ active, selected }) => (
+									<>
+										<span
+											className={classNames(
+												"block truncate",
+												selected && "font-semibold"
+											)}
+										>
+											{person.name}
+										</span>
+
+										{selected && (
+											<span
+												className={classNames(
+													"absolute inset-y-0 right-0 flex items-center pr-4",
+													active
+														? "text-white"
+														: "text-indigo-600"
+												)}
+											>
+												<CheckIcon
+													className="h-5 w-5"
+													aria-hidden="true"
+												/>
+											</span>
+										)}
+									</>
+								)}
+							</Combobox.Option>
+						))}
+					</Combobox.Options>
+				)}
+			</div>
+		</Combobox>
+	);
+};
+
 const PageHeading = () => {
 	return (
-		<div className="border-b border-gray-200 pb-5">
+		<div className="flex flex-row w-full justify-between items-center border-b border-gray-200 pb-5">
 			<h3 className="text-base font-semibold leading-6 text-gray-900">
 				Members
 			</h3>
+
+			<div>
+				<MemberSearch />
+			</div>
 		</div>
 	);
 };
@@ -244,7 +300,7 @@ const PageHeading = () => {
 export default function Members() {
 	return (
 		<div className="flex flex-col w-full h-full overflow-y-scroll scrollbar-none">
-			<div className="flex flex-col b-3 sticky top-0 bg-white z-20">
+			<div className="flex flex-row b-3 sticky top-0 bg-white z-20 w-full">
 				<PageHeading />
 			</div>
 			<div className="flex flex-col px-4">
