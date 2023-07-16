@@ -1,6 +1,6 @@
 import { useState } from "react";
 import InputField from "~/components/InputField";
-import { signin } from "../../utils/auth.server";
+import { get_entity, signin } from "../../utils/auth.server";
 import { useSubmit, useActionData } from "@remix-run/react";
 import { json, redirect } from "@remix-run/node";
 import { get_user } from "../../utils/auth.server";
@@ -8,7 +8,7 @@ const cb_logo = "/images/logos/cb_logo_3.png";
 const bg = "/images/credit_banc_auth_bg.png";
 
 export const loader = async ({ request }) => {
-	return (await get_user(request)) ? redirect("/root") : null;
+	return (await get_entity(request)) ? redirect("/root") : null;
 };
 
 export const action = async ({ request }) => {

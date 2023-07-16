@@ -4,9 +4,9 @@ import bcrypt from "bcryptjs";
 import { create_entity, create as create_user } from "./entity.server";
 import { create as create_roles } from "./role.server";
 import { create_root, create_group, create_partition } from "./group.server";
-import { take } from "ramda";
+import { head, pipe, take } from "ramda";
 import { v4 as uuidv4 } from "uuid";
-import { get_doc, set_doc } from "./firebase";
+import { get_collection, get_doc, set_doc } from "./firebase";
 import { create_role_config } from "~/api/authorization";
 
 let secret = process.env.SESSION_SECRET;
@@ -202,43 +202,70 @@ export const signup = async ({
 
 export const signin = async (form) => {
 	let { email, password } = form;
-	console.log("form_____");
-	console.log(form);
+	// console.log("form_____");
+	// console.log(form);
 
-	const user = await prisma.entity.findFirst({
-		where: { email },
+	let entity_queries = [
+		{
+			param: "email",
+			predicate: "==",
+			value: email,
+		},
+	];
+
+	const entity_response = await get_collection({
+		path: ["entity"],
+		queries: entity_queries,
 	});
 
-	console.log("user");
-	console.log(user);
+	let entity = pipe(head)(entity_response);
 
-	let root_group = await prisma.resource.findFirst({
-		where: {
-			resource_path_id: user.root_group_resource_path_id,
-		},
-		include: {
-			subscriptions: {
-				where: {
-					type: "file",
-				},
-				take: 1,
-			},
-		},
-	});
+	// const user = await prisma.entity.findFirst({
+	// 	where: { email },
+	// });
 
-	let file = root_group.subscriptions[0];
+	console.log("entity");
+	console.log(entity);
 
-	let file_map = {
-		personal_credit_report: "personal",
-		business_credit_report: "business",
-	};
+	// let partition_queries = [
+	// 	{ param: "entity_id", predicate: "==", value: entity.id },
+	// 	{ param: "type", predicate: "==", value: "partition" },
+	// ];
+
+	// let partition_response = await get_collection({
+	// 	path: ["group"],
+	// 	queries: partition_queries,
+	// });
+
+	// let partition = pipe(head)(partition_response);
+
+	// let root_group = await prisma.resource.findFirst({
+	// 	where: {
+	// 		resource_path_id: user.root_group_resource_path_id,
+	// 	},
+	// 	include: {
+	// 		subscriptions: {
+	// 			where: {
+	// 				type: "file",
+	// 			},
+	// 			take: 1,
+	// 		},
+	// 	},
+	// });
+
+	// let file = root_group.subscriptions[0];
+
+	// let file_map = {
+	// 	personal_credit_report: "personal",
+	// 	business_credit_report: "business",
+	// };
 
 	let redirect_url = `/home`;
 
-	console.log("redirect_url");
-	console.log(redirect_url);
+	// console.log("redirect_url");
+	// console.log(redirect_url);
 
-	if (!user || !(await bcrypt.compare(password, user.password))) {
+	if (!entity || !(await bcrypt.compare(password, entity.password))) {
 		return json(
 			{
 				error: "Incorrect login",
@@ -247,7 +274,7 @@ export const signin = async (form) => {
 		);
 	}
 
-	return create_user_session(user.id, redirect_url);
+	return create_user_session(entity.id, redirect_url);
 };
 
 const create_user_session = async (entity_id, redirect_to) => {

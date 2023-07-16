@@ -1,17 +1,18 @@
 import { useState } from "react";
 import { Switch } from "@headlessui/react";
-import { get_user_id, get_user } from "~/utils/auth.server";
+import {
+	get_user_id,
+	get_user,
+	get_session_entity_id,
+	get_entity,
+} from "~/utils/auth.server";
 import { useLoaderData } from "@remix-run/react";
 
-function classNames(...classes) {
-	return classes.filter(Boolean).join(" ");
-}
-
 export const loader = async ({ request }) => {
-	let entity_id = await get_user_id(request);
-	let entity = await get_user(request);
+	let entity_id = await get_session_entity_id(request);
+	let entity = await get_entity(request);
 
-	return { entity_id, entity };
+	return { entity };
 };
 
 const BankAccounts = () => {
@@ -103,6 +104,7 @@ const Integrations = () => {
 
 const Profile = () => {
 	const { entity } = useLoaderData();
+
 	return (
 		<div>
 			<h2 className="text-base font-semibold leading-7 text-gray-900">
