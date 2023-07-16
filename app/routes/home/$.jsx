@@ -2,8 +2,8 @@ import { ChevronRightIcon, ListBulletIcon } from "@heroicons/react/20/solid";
 import { Link, useLocation } from "@remix-run/react";
 import { get_session_entity_id, get_user_id } from "~/utils/auth.server";
 import { get_entity_id, get_group_id } from "~/utils/helpers";
-import { pipe } from "ramda";
-import { get } from "shades";
+import { map, pipe } from "ramda";
+import { all, filter, get } from "shades";
 import { prisma } from "~/utils/prisma.server";
 import { useLoaderData } from "@remix-run/react";
 import { plans } from "~/data/plans";
@@ -18,6 +18,7 @@ import { ChevronUpIcon } from "@heroicons/react/20/solid";
 import { Disclosure } from "@headlessui/react";
 import { CheckCircleIcon, XCircleIcon } from "@heroicons/react/24/outline";
 import { get_doc } from "~/utils/firebase";
+import { useOnboardingStore } from "~/stores/useOnboardingStore";
 
 export const loader = async ({ request }) => {
 	let url = new URL(request.url);
@@ -502,6 +503,7 @@ const Notifications = () => {
 	let { pathname } = useLocation();
 	let entity_id = get_entity_id(pathname);
 	let group_id = get_group_id(pathname);
+	let onboard = useOnboardingStore((state) => state.onboarding);
 
 	return (
 		<div className="mx-auto w-full max-w-md rounded-2xl bg-white p-2 space-y-2">
@@ -516,30 +518,35 @@ const Notifications = () => {
 								} h-5 w-5 text-gray-500`}
 							/>
 						</Disclosure.Button>
+
 						<Disclosure.Panel className="px-4  pb-2 text-gray-500 space-y-3 text-sm">
-							<div className="flex flex-row w-full border p-2 rounded">
-								<Link
-									className="flex flex-row w-full space-x-2 items-center space-between cursor-pointer"
-									to={`/credit/personal/new/resource/e/${entity_id}/g/${group_id}`}
-								>
-									<div>
-										<XCircleIcon className="h-5 w-5 text-red-500" />
-									</div>
-									<div>Run a personal credit report</div>
-								</Link>
-								<div></div>
-							</div>
-							<div className="flex flex-row w-full border p-2 rounded">
-								<Link
-									className="flex flex-row w-full space-x-2 items-center space-between cursor-pointer"
-									to={`/credit/business/new/resource/e/${entity_id}/g/${group_id}?cookie=monster`}
-								>
-									<div>
-										<CheckCircleIcon className="h-5 w-5 text-green-500" />
-									</div>
-									<div>Run a business credit report</div>
-								</Link>
-								<div></div>
+							<div className="flex flex-col gap-y-3">
+								{pipe(
+									filter({ category: "credit" }),
+									map((step) => (
+										<div className="flex flex-row w-full border p-2 rounded">
+											<Link
+												className="flex flex-row w-full space-x-2 items-center space-between cursor-pointer"
+												to={step.href({
+													entity_id,
+													group_id,
+												})}
+											>
+												<div>
+													{step.completed && (
+														<CheckCircleIcon className="h-5 w-5 text-green-500" />
+													)}
+
+													{!step.completed && (
+														<XCircleIcon className="h-5 w-5 text-red-500" />
+													)}
+												</div>
+												<div>{step.text}</div>
+											</Link>
+											<div></div>
+										</div>
+									))
+								)(onboard)}
 							</div>
 						</Disclosure.Panel>
 					</>
@@ -557,14 +564,33 @@ const Notifications = () => {
 							/>
 						</Disclosure.Button>
 						<Disclosure.Panel className="px-4  pb-2 text-gray-500 space-y-3 text-sm">
-							<div className="flex flex-row w-full border p-2 rounded">
-								<div className="flex flex-row w-full space-x-2 items-center space-between cursor-pointer">
-									<div>
-										<XCircleIcon className="h-5 w-5 text-red-500" />
-									</div>
-									<div>Connect bank account</div>
-								</div>
-								<div></div>
+							<div className="flex flex-col gap-y-3">
+								{pipe(
+									filter({ category: "financial" }),
+									map((step) => (
+										<div className="flex flex-row w-full border p-2 rounded">
+											<Link
+												className="flex flex-row w-full space-x-2 items-center space-between cursor-pointer"
+												to={step.href({
+													entity_id,
+													group_id,
+												})}
+											>
+												<div>
+													{step.completed && (
+														<CheckCircleIcon className="h-5 w-5 text-green-500" />
+													)}
+
+													{!step.completed && (
+														<XCircleIcon className="h-5 w-5 text-red-500" />
+													)}
+												</div>
+												<div>{step.text}</div>
+											</Link>
+											<div></div>
+										</div>
+									))
+								)(onboard)}
 							</div>
 						</Disclosure.Panel>
 					</>
@@ -582,23 +608,33 @@ const Notifications = () => {
 							/>
 						</Disclosure.Button>
 						<Disclosure.Panel className="px-4  pb-2 text-gray-500 space-y-3 text-sm">
-							<div className="flex flex-row w-full border p-2 rounded">
-								<div className="flex flex-row w-full space-x-2 items-center space-between cursor-pointer">
-									<div>
-										<XCircleIcon className="h-5 w-5 text-red-500" />
-									</div>
-									<div>Upload tax returns</div>
-								</div>
-								<div></div>
-							</div>
-							<div className="flex flex-row w-full border p-2 rounded">
-								<div className="flex flex-row w-full space-x-2 items-center space-between cursor-pointer">
-									<div>
-										<CheckCircleIcon className="h-5 w-5 text-green-500" />
-									</div>
-									<div>Upload drivers license</div>
-								</div>
-								<div></div>
+							<div className="flex flex-col gap-y-3">
+								{pipe(
+									filter({ category: "vault" }),
+									map((step) => (
+										<div className="flex flex-row w-full border p-2 rounded">
+											<Link
+												className="flex flex-row w-full space-x-2 items-center space-between cursor-pointer"
+												to={step.href({
+													entity_id,
+													group_id,
+												})}
+											>
+												<div>
+													{step.completed && (
+														<CheckCircleIcon className="h-5 w-5 text-green-500" />
+													)}
+
+													{!step.completed && (
+														<XCircleIcon className="h-5 w-5 text-red-500" />
+													)}
+												</div>
+												<div>{step.text}</div>
+											</Link>
+											<div></div>
+										</div>
+									))
+								)(onboard)}
 							</div>
 						</Disclosure.Panel>
 					</>
@@ -616,23 +652,33 @@ const Notifications = () => {
 							/>
 						</Disclosure.Button>
 						<Disclosure.Panel className="px-4  pb-2 text-gray-500 space-y-3 text-sm">
-							<div className="flex flex-row w-full border p-2 rounded">
-								<div className="flex flex-row w-full space-x-2 items-center space-between cursor-pointer">
-									<div>
-										<CheckCircleIcon className="h-5 w-5 text-green-500" />
-									</div>
-									<div>Create a role</div>
-								</div>
-								<div></div>
-							</div>
-							<div className="flex flex-row w-full border p-2 rounded">
-								<div className="flex flex-row w-full space-x-2 items-center space-between cursor-pointer">
-									<div>
-										<XCircleIcon className="h-5 w-5 text-red-500" />
-									</div>
-									<div>Invite team members</div>
-								</div>
-								<div></div>
+							<div className="flex flex-col gap-y-3">
+								{pipe(
+									filter({ category: "social" }),
+									map((step) => (
+										<div className="flex flex-row w-full border p-2 rounded">
+											<Link
+												className="flex flex-row w-full space-x-2 items-center space-between cursor-pointer"
+												to={step.href({
+													entity_id,
+													group_id,
+												})}
+											>
+												<div>
+													{step.completed && (
+														<CheckCircleIcon className="h-5 w-5 text-green-500" />
+													)}
+
+													{!step.completed && (
+														<XCircleIcon className="h-5 w-5 text-red-500" />
+													)}
+												</div>
+												<div>{step.text}</div>
+											</Link>
+											<div></div>
+										</div>
+									))
+								)(onboard)}
 							</div>
 						</Disclosure.Panel>
 					</>
