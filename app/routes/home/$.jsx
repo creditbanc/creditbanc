@@ -715,6 +715,9 @@ export default function Home() {
 	let onboard_percent_completed =
 		(onboard_steps_completed / onboard_num_of_steps) * 100;
 
+	console.log("onboard_percent_completed");
+	console.log(onboard_percent_completed);
+
 	useEffect(() => {
 		set_financials(["financials"], financials);
 	}, []);
@@ -792,7 +795,7 @@ export default function Home() {
 									</div>
 									<div className="w-full bg-gray-200 rounded-full h-2.5 dark:bg-gray-700">
 										<div
-											className={`bg-blue-600 h-2.5 rounded-full w-[${parseInt(
+											className={`flex flex-col bg-blue-600 h-2.5 rounded-full w-[${parseInt(
 												onboard_percent_completed
 											)}%]`}
 										></div>
