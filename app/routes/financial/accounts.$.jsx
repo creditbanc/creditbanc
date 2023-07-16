@@ -87,7 +87,7 @@ import {
 } from "rxjs";
 import { is_authorized_f } from "~/api/auth";
 import { redirect } from "@remix-run/node";
-import { get_user_id } from "~/utils/auth.server";
+import { get_session_entity_id, get_user_id } from "~/utils/auth.server";
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
@@ -109,7 +109,7 @@ function randomNumber(min, max) {
 
 export const loader = async ({ request }) => {
 	let { pathname, origin } = new URL(request.url);
-	let entity_id = await get_user_id(request);
+	let entity_id = await get_session_entity_id(request);
 	let group_id = get_group_id(request.url);
 
 	let is_authorized = await is_authorized_f(

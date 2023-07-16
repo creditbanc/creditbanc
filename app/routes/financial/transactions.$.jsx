@@ -34,7 +34,7 @@ import {
 } from "@heroicons/react/20/solid";
 import { is_authorized_f } from "~/api/auth";
 import { redirect } from "@remix-run/node";
-import { get_user_id } from "~/utils/auth.server";
+import { get_session_entity_id, get_user_id } from "~/utils/auth.server";
 
 const useTransactionsStore = create((set) => ({
 	transaction: null,
@@ -73,7 +73,7 @@ let date_x_time_ago = (time_range, time_period) => {
 };
 
 export const loader = async ({ request }) => {
-	let entity_id = await get_user_id(request);
+	let entity_id = await get_session_entity_id(request);
 	let group_id = get_group_id(request.url);
 
 	let is_authorized = await is_authorized_f(

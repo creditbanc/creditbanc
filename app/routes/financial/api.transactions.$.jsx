@@ -2,6 +2,7 @@ import moment from "moment";
 import { isEmpty, pipe } from "ramda";
 import { mod, all } from "shades";
 import { get_transactions } from "~/api/plaid.server";
+import { get_session_entity_id } from "~/utils/auth.server";
 import { get_collection, get_doc, set_doc } from "~/utils/firebase";
 import {
 	get_entity_id,
@@ -53,7 +54,7 @@ let get_plaid_transactions_from_db = async ({ group_id }) => {
 
 export const loader = async ({ request }) => {
 	let { pathname } = new URL(request.url);
-	let entity_id = get_entity_id(pathname);
+	let entity_id = get_session_entity_id(request);
 	let group_id = get_group_id(pathname);
 	let { account_id } = use_search_params(request);
 

@@ -2,6 +2,7 @@ import { get_collection, get_doc, set_doc } from "~/utils/firebase";
 import { form_params, get_entity_id, get_group_id } from "~/utils/helpers";
 import { get_auths, get_identities } from "~/api/plaid.server";
 import { groupBy, isEmpty, map, mergeAll, pipe, prop, values } from "ramda";
+import { get_session_entity_id } from "~/utils/auth.server";
 
 const get_plaid_accounts = async ({ access_token }) => {
 	let { accounts: identities } = await get_identities({ access_token });
@@ -74,7 +75,7 @@ let get_plaid_accounts_from_db = async (group_id) => {
 
 export const loader = async ({ request }) => {
 	let { pathname } = new URL(request.url);
-	let entity_id = get_entity_id(pathname);
+	let entity_id = get_session_entity_id(request);
 	let group_id = get_group_id(pathname);
 
 	let accounts = await get_plaid_accounts_from_db(group_id);

@@ -32,7 +32,7 @@ import CashflowChart from "~/components/CashflowChart";
 import axios from "axios";
 import { useCashflowStore } from "~/stores/useCashflowStore";
 import { useEffect } from "react";
-import { get_user_id } from "~/utils/auth.server";
+import { get_session_entity_id, get_user_id } from "~/utils/auth.server";
 
 ChartJS.register(
 	CategoryScale,
@@ -47,7 +47,7 @@ export const loader = async ({ request }) => {
 	let { origin } = new URL(request.url);
 	let { income: income_start_month = 12 } = use_search_params(request);
 	let group_id = get_group_id(request.url);
-	let entity_id = await get_user_id(request);
+	let entity_id = await get_session_entity_id(request);
 
 	let is_authorized = await is_authorized_f(
 		entity_id,

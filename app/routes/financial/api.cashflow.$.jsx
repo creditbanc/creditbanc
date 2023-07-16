@@ -48,11 +48,12 @@ import moment from "moment";
 
 import { get_balances } from "~/api/plaid.server";
 import axios from "axios";
+import { get_session_entity_id } from "~/utils/auth.server";
 
 export const loader = async ({ request }) => {
 	let { origin } = new URL(request.url);
 	let { income: income_start_month = 12 } = use_search_params(request);
-	let entity_id = get_entity_id(request.url);
+	let entity_id = get_session_entity_id(request);
 	let group_id = get_group_id(request.url);
 
 	let { data: accounts } = await axios({

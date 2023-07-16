@@ -1,6 +1,6 @@
 import { Link, Outlet, useLoaderData, useLocation } from "@remix-run/react";
 import SimpleNavSignedIn from "~/components/SimpleNavSignedIn";
-import { get_user_id } from "~/utils/auth.server";
+import { get_session_entity_id, get_user_id } from "~/utils/auth.server";
 import {
 	classNames,
 	get_group_id,
@@ -24,7 +24,7 @@ export const useAccountsStore = create((set) => ({
 
 export const loader = async ({ request }) => {
 	let { origin, pathname } = new URL(request.url);
-	let entity_id = get_entity_id(pathname);
+	let entity_id = get_session_entity_id(request);
 	let group_id = get_group_id(pathname);
 
 	let { data: accounts = [] } = await axios({
