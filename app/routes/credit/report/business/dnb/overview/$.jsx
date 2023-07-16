@@ -5,15 +5,13 @@ import {
 import { useLoaderData } from "@remix-run/react";
 import { mrm_credit_report, Lendflow } from "~/data/lendflow";
 import { get_file_id, get_group_id, inspect } from "~/utils/helpers";
-import { get_user_id } from "~/utils/auth.server";
+import { get_session_entity_id, get_user_id } from "~/utils/auth.server";
 import { prisma } from "~/utils/prisma.server";
 import { get_collection } from "~/utils/firebase";
 import { head, pipe } from "ramda";
 
 export const loader = async ({ request }) => {
 	let url = new URL(request.url);
-	let file_id = get_file_id(url.pathname);
-	let entity_id = await get_user_id(request);
 	let group_id = get_group_id(url.pathname);
 
 	let business_credit_report_queries = [

@@ -2,12 +2,12 @@ import { useLoaderData } from "@remix-run/react";
 import { useEffect } from "react";
 import { Array } from "~/data/array";
 import { get_file_id, get_group_id, inspect } from "~/utils/helpers";
-import { get_user_id } from "~/utils/auth.server";
+import { get_session_entity_id, get_user_id } from "~/utils/auth.server";
 import { prisma } from "~/utils/prisma.server";
 import { plans } from "~/data/plans";
 import { all, get } from "shades";
 import { flatten, pipe, uniqBy, head } from "ramda";
-import { get_collection } from "~/utils/firebase";
+import { get_collection, get_doc } from "~/utils/firebase";
 
 const get_personal_data = (report) => {
 	let { plan_id } = report;
@@ -60,7 +60,7 @@ const get_personal_data = (report) => {
 
 export const loader = async ({ request }) => {
 	let url = new URL(request.url);
-	let entity_id = await get_user_id(request);
+	let entity_id = await get_session_entity_id(request);
 	let group_id = get_group_id(url.pathname);
 
 	let personal_credit_report_queries = [
@@ -85,12 +85,7 @@ export const loader = async ({ request }) => {
 
 	let is_owner = report.entity_id == entity_id;
 
-	let { plan_id } = await prisma.entity.findUnique({
-		where: { id: is_owner ? entity_id : report.entity_id },
-		select: {
-			plan_id: true,
-		},
-	});
+	let { plan_id } = await get_doc(["entity", entity_id]);
 
 	let personal_data = get_personal_data(report);
 

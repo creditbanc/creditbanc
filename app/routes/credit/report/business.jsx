@@ -15,7 +15,7 @@ import {
 	get_group_id,
 	get_entity_id,
 } from "~/utils/helpers";
-import { get_user_id } from "~/utils/auth.server";
+import { get_session_entity_id, get_user_id } from "~/utils/auth.server";
 import { redirect } from "@remix-run/node";
 import { VerticalNav } from "~/components/BusinessCreditNav";
 import { prisma } from "~/utils/prisma.server";
@@ -32,7 +32,7 @@ import deepEqual from "deep-equal";
 import UpgradeBanner from "~/components/UpgradeMembership";
 import UpgradeCard from "~/components/UpgradeCard";
 import { DocumentDuplicateIcon, LinkIcon } from "@heroicons/react/24/outline";
-import { get_collection, set_doc } from "~/utils/firebase";
+import { get_collection, get_doc, set_doc } from "~/utils/firebase";
 import axios from "axios";
 import { is_authorized_f } from "~/api/auth";
 
@@ -81,7 +81,7 @@ export const loader = async ({ request }) => {
 	let url = new URL(request.url);
 	let { origin } = url;
 	let file_id = get_file_id(url.pathname);
-	let entity_id = await get_user_id(request);
+	let entity_id = await get_session_entity_id(request);
 	let group_id = get_group_id(url.pathname);
 
 	let is_authorized = await is_authorized_f(
@@ -139,12 +139,14 @@ export const loader = async ({ request }) => {
 		// return redirect(url);
 	}
 
-	let { plan_id } = await prisma.entity.findUnique({
-		where: { id: entity_id },
-		select: {
-			plan_id: true,
-		},
-	});
+	// let { plan_id } = await prisma.entity.findUnique({
+	// 	where: { id: entity_id },
+	// 	select: {
+	// 		plan_id: true,
+	// 	},
+	// });
+
+	let { plan_id } = await get_doc(["entity", entity_id]);
 
 	let credit_scores_api_response = await axios({
 		method: "get",

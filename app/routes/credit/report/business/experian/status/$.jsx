@@ -3,7 +3,7 @@ import { Lendflow } from "~/data/lendflow";
 import { currency, get_group_id, mapIndexed } from "~/utils/helpers";
 import { allPass, pipe, not, head } from "ramda";
 import { get_file_id } from "~/utils/helpers";
-import { get_user_id } from "~/utils/auth.server";
+import { get_session_entity_id, get_user_id } from "~/utils/auth.server";
 import { prisma } from "~/utils/prisma.server";
 import { plans } from "~/data/plans";
 import { get } from "shades";
@@ -12,12 +12,12 @@ import { report_tests } from "~/data/report_tests";
 import { get_lendflow_report } from "~/utils/lendflow.server";
 import { update_business_report } from "~/utils/business_credit_report.server";
 import DoughnutChart from "~/components/DoughnutChart";
-import { get_collection } from "~/utils/firebase";
+import { get_collection, get_doc } from "~/utils/firebase";
 
 export const loader = async ({ request }) => {
 	let url = new URL(request.url);
 	let file_id = get_file_id(url.pathname);
-	let entity_id = await get_user_id(request);
+	let entity_id = await get_session_entity_id(request);
 	let group_id = get_group_id(url.pathname);
 
 	let business_credit_report_queries = [
@@ -42,12 +42,7 @@ export const loader = async ({ request }) => {
 
 	let is_owner = report.entity_id == entity_id;
 
-	let { plan_id } = await prisma.entity.findUnique({
-		where: { id: is_owner ? entity_id : report.entity_id },
-		select: {
-			plan_id: true,
-		},
-	});
+	let { plan_id } = await get_doc(["entity", entity_id]);
 
 	if (pipe(allPass(report_tests[plan_id]["experian"]), not)(report)) {
 		let lendflow_report = await get_lendflow_report(report.application_id);

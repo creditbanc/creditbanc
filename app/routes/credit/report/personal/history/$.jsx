@@ -13,7 +13,7 @@ import {
 import { get_doc as get_credit_report } from "~/utils/personal_credit_report.server";
 import { all, get } from "shades";
 import { plans } from "~/data/plans";
-import { get_user_id } from "~/utils/auth.server";
+import { get_session_entity_id, get_user_id } from "~/utils/auth.server";
 import { prisma } from "~/utils/prisma.server";
 import { useReportPageLayoutStore } from "~/stores/useReportPageLayoutStore";
 
@@ -22,8 +22,7 @@ import { get_collection, get_doc, set_doc } from "~/utils/firebase";
 export const loader = async ({ request }) => {
 	let url = new URL(request.url);
 	let pathname = url.pathname;
-	// let report_id = get_file_id(pathname);
-	let entity_id = await get_user_id(request);
+	let entity_id = await get_session_entity_id(request);
 	let group_id = get_group_id(pathname);
 
 	// let report = await get_credit_report({
@@ -61,12 +60,7 @@ export const loader = async ({ request }) => {
 
 	let is_owner = report.entity_id == entity_id;
 
-	let { plan_id } = await prisma.entity.findUnique({
-		where: { id: is_owner ? entity_id : report.entity_id },
-		select: {
-			plan_id: true,
-		},
-	});
+	let { plan_id } = await get_doc(["entity", entity_id]);
 
 	let trade_lines = pipe(
 		map((value) => Tradeline(flatten([value]))),

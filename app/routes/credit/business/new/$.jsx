@@ -22,12 +22,13 @@ import {
 } from "~/data/lendflow";
 import { Listbox, Transition } from "@headlessui/react";
 import { CheckIcon, ChevronUpDownIcon } from "@heroicons/react/20/solid";
-import { get_user_id } from "~/utils/auth.server";
+import { get_session_entity_id, get_user_id } from "~/utils/auth.server";
 import { create as create_new_report } from "~/utils/business_credit_report.server";
 import Cookies from "js-cookie";
 import { plan_product_requests } from "~/data/plan_product_requests";
 import { prisma } from "~/utils/prisma.server";
 import { get_lendflow_report } from "~/utils/lendflow.server";
+import { get_doc } from "~/utils/firebase";
 
 const useReportStore = create((set) => ({
 	form: {
@@ -69,14 +70,16 @@ export const action = async ({ request }) => {
 	const bearer = process.env.LENDFLOW;
 	const group_id = get_group_id(request.url);
 	const form = await request.formData();
-	const entity_id = await get_user_id(request);
+	const entity_id = await get_session_entity_id(request);
 
-	let { plan_id } = await prisma.entity.findUnique({
-		where: { id: entity_id },
-		select: {
-			plan_id: true,
-		},
-	});
+	let { plan_id } = await get_doc(["entity", entity_id]);
+
+	// let { plan_id } = await prisma.entity.findUnique({
+	// 	where: { id: entity_id },
+	// 	select: {
+	// 		plan_id: true,
+	// 	},
+	// });
 
 	let experian_requested_products = pipe(get(plan_id))(
 		plan_product_requests.experian
