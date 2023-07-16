@@ -79,6 +79,12 @@ const role_tabs = [
 			`/role/${role_id}/members/resource/e/${entity_id}/g/${group_id}`,
 		current: false,
 	},
+	{
+		name: "Requests",
+		href: ({ entity_id, group_id, role_id }) =>
+			`/role/${role_id}/requests/resource/e/${entity_id}/g/${group_id}`,
+		current: false,
+	},
 ];
 
 const RoleNav = () => {
