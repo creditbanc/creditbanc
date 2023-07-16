@@ -351,3 +351,8 @@ export const get_config_id = (pathname) => {
 	let config_id = path[1];
 	return config_id;
 };
+
+export const get_role_id = (pathname) => {
+	let path = trim(pathname.split("/"));
+	return path[1];
+};

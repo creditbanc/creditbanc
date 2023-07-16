@@ -224,8 +224,8 @@ export const signin = async (form) => {
 	// 	where: { email },
 	// });
 
-	console.log("entity");
-	console.log(entity);
+	// console.log("entity");
+	// console.log(entity);
 
 	// let partition_queries = [
 	// 	{ param: "entity_id", predicate: "==", value: entity.id },

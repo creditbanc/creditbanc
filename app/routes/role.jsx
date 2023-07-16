@@ -5,7 +5,9 @@ import {
 	classNames,
 	get_entity_id,
 	get_group_id,
+	get_role_id,
 	mapIndexed,
+	trim,
 } from "~/utils/helpers";
 import {
 	EllipsisHorizontalIcon,
@@ -65,11 +67,26 @@ export const loader = async ({ request }) => {
 };
 
 const role_tabs = [
-	{ name: "Config", href: "/roles/permissions", current: true },
-	{ name: "Members", href: "#", current: false },
+	{
+		name: "Permissions",
+		href: ({ entity_id, group_id, role_id }) =>
+			`/role/${role_id}/permissions/resource/e/${entity_id}/g/${group_id}`,
+		current: true,
+	},
+	{
+		name: "Members",
+		href: ({ entity_id, group_id, role_id }) =>
+			`/role/${role_id}/members/resource/e/${entity_id}/g/${group_id}`,
+		current: false,
+	},
 ];
 
 const RoleNav = () => {
+	let { pathname } = useLocation();
+	let entity_id = get_entity_id(pathname);
+	let group_id = get_group_id(pathname);
+	let role_id = get_role_id(pathname);
+
 	return (
 		<div>
 			<div className="sm:hidden bg-white">
@@ -79,18 +96,23 @@ const RoleNav = () => {
 					className="block w-full rounded-md border-gray-300 focus:border-indigo-500 focus:ring-indigo-500"
 					defaultValue={role_tabs.find((tab) => tab.current).name}
 				>
-					{role_tabs.map((tab) => (
-						<option key={tab.name}>{tab.name}</option>
+					{role_tabs.map((tab, index) => (
+						<Link
+							key={index}
+							to={tab.href({ entity_id, group_id })}
+						>
+							{tab.name}
+						</Link>
 					))}
 				</select>
 			</div>
-			<div className="hidden sm:flex sm:flex-row bg-white px-5 border-b border-gray-200">
+			<div className="hidden sm:flex sm:flex-row px-5 border-b rounded-t border-gray-200">
 				<div className="flex flex-row justify-between w-full items-center">
 					<nav className="-mb-px flex space-x-5" aria-label="Tabs">
-						{role_tabs.map((tab) => (
-							<a
+						{role_tabs.map((tab, index) => (
+							<Link
 								key={tab.name}
-								href={tab.href}
+								to={tab.href({ entity_id, group_id, role_id })}
 								className={classNames(
 									tab.current
 										? "border-blue-500 text-blue-600"
@@ -100,7 +122,7 @@ const RoleNav = () => {
 								aria-current={tab.current ? "page" : undefined}
 							>
 								{tab.name}
-							</a>
+							</Link>
 						))}
 					</nav>
 					<div className="flex flex-row text-sm items-center space-x-3 text-blue-600 cursor-pointer">
@@ -157,8 +179,8 @@ const RoleActions = ({ role }) => {
 
 	const onDeleteRole = async (e) => {
 		e.preventDefault();
-		console.log("onDeleteRole");
-		console.log(role);
+		// console.log("onDeleteRole");
+		// console.log(role);
 
 		await delete_doc(["role_configs", role.id]);
 
@@ -283,7 +305,7 @@ const RolesNav = () => {
 	};
 
 	return (
-		<nav className="flex flex-1 flex-col" aria-label="Sidebar">
+		<nav className="flex flex-1 flex-col " aria-label="Sidebar">
 			<ul role="list" className="space-y-3">
 				{pipe(
 					mapIndexed((role, role_idx) => (
@@ -423,13 +445,13 @@ export default function Roles() {
 	};
 
 	return (
-		<div className="flex flex-col w-full h-full bg-gray-50">
+		<div className="flex flex-col w-full h-full bg-gray-50 overflow-hidden">
 			<NewRoleModal />
 			<div className="flex flex-col w-full border-b bg-white">
 				<SimpleNavSignedIn user_id={entity_id} />
 			</div>
 
-			<div className="flex flex-row w-full h-full gap-x-5 p-5">
+			<div className="flex flex-row w-full h-full gap-x-5 p-5 overflow-hidden">
 				<div className="flex flex-col w-[25%] bg-white rounded border">
 					<div className="flex flex-row justify-between w-full text-base px-5 items-center h-[37px]">
 						<div className="font-semibold">Roles</div>
@@ -444,7 +466,7 @@ export default function Roles() {
 				</div>
 				<div className="flex flex-col w-[75%] bg-white rounded">
 					<RoleNav />
-					<div className="flex flex-col w-full p-5">
+					<div className="flex flex-col w-full p-5 h-full overflow-hidden">
 						<Outlet />
 					</div>
 				</div>
