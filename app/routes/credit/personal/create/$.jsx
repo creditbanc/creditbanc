@@ -10,7 +10,7 @@ import { create } from "~/utils/personal_credit_report.server";
 import axios from "axios";
 import { is, isEmpty, pipe } from "ramda";
 import { redirect } from "react-router";
-import { get_user_id } from "~/utils/auth.server";
+import { get_session_entity_id, get_user_id } from "~/utils/auth.server";
 import { getSession } from "~/sessions/personal_credit_report_session";
 import { UsaStates } from "usa-states";
 import random from "random-name";
@@ -95,7 +95,7 @@ export const loader = async ({ request }) => {
 
 	if (!is_applicant) {
 		console.log("not_applicant");
-		entity_id = await get_user_id(request);
+		entity_id = await get_session_entity_id(request);
 
 		let entity = await prisma.entity.findUnique({
 			where: { id: entity_id },

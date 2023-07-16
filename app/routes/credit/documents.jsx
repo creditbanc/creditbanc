@@ -4,7 +4,7 @@ import {
 	get_route_endpoint,
 	get_report_endpoint,
 } from "~/utils/helpers";
-import { get_user_id } from "~/utils/auth.server";
+import { get_session_entity_id, get_user_id } from "~/utils/auth.server";
 import { get_docs as get_group_docs } from "~/utils/group.server";
 import { defaultTo, pipe } from "ramda";
 import { filter } from "shades";
@@ -16,7 +16,7 @@ import ReportTabs from "~/components/ReportTabs";
 
 export const loader = async ({ request }) => {
 	let url = new URL(request.url);
-	let user_id = await get_user_id(request);
+	let user_id = await get_session_entity_id(request);
 	let group_id = get_group_id(url.pathname);
 
 	let group_docs = await get_group_docs({

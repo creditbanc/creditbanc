@@ -24,7 +24,7 @@ import { mod, all, filter } from "shades";
 // import PersonalCreditTabs from "~/components/PersonalCreditTabs";
 import CreditScoreHero from "~/components/CreditScoreHero";
 import CreditHeroGradient from "~/components/CreditHeroGradient";
-import { get_user_id } from "~/utils/auth.server";
+import { get_session_entity_id, get_user_id } from "~/utils/auth.server";
 import { validate_action, is_resource_owner_p } from "~/utils/resource.server";
 import { redirect } from "@remix-run/node";
 import { prisma } from "~/utils/prisma.server";
@@ -39,7 +39,7 @@ export const loader = async ({ request }) => {
 	if (!has_valid_route_p("credit/personal/report", request.url))
 		return redirect("/");
 
-	let user_id = await get_user_id(request);
+	let user_id = await get_session_entity_id(request);
 	let group_id = get_group_id(url.pathname);
 	let file_id = get_file_id(url.pathname);
 

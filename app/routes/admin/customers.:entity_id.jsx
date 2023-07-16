@@ -6,7 +6,7 @@ import { inspect } from "~/utils/helpers";
 import { Fragment } from "react";
 import { Menu, Transition } from "@headlessui/react";
 import { ChevronDownIcon } from "@heroicons/react/20/solid";
-import { get_user_id } from "~/utils/auth.server";
+import { get_session_entity_id, get_user_id } from "~/utils/auth.server";
 var stripe = require("stripe");
 
 function classNames(...classes) {
@@ -36,7 +36,7 @@ export const loader = async ({ params }) => {
 export const action = async ({ request }) => {
 	console.log("update_subscription");
 	stripe = stripe(process.env.STRIPE);
-	let entity_id = await get_user_id(request);
+	let entity_id = await get_session_entity_id(request);
 	var form = await request.formData();
 	const price_id = form.get("price_id");
 	const subscription_id = form.get("subscription_id");

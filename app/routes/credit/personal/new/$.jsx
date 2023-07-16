@@ -34,7 +34,7 @@ import {
 import Cookies from "js-cookie";
 import ApplicantNav from "~/components/ApplicantNav";
 import SimpleNav from "~/components/SimpleNav";
-import { get_user_id } from "~/utils/auth.server";
+import { get_session_entity_id, get_user_id } from "~/utils/auth.server";
 import { UsaStates } from "usa-states";
 import { Fragment, useEffect, useState } from "react";
 import { Listbox, Transition } from "@headlessui/react";
@@ -141,7 +141,7 @@ export const action = async ({ request }) => {
 };
 
 export const loader = async ({ request }) => {
-	let entity_id = await get_user_id(request);
+	let entity_id = await get_session_entity_id(request);
 	return { entity_id };
 };
 

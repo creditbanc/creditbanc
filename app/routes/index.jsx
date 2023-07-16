@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link } from "@remix-run/react";
-import { get_user_id } from "~/utils/auth.server";
+import { get_session_entity_id, get_user_id } from "~/utils/auth.server";
 import { Dialog } from "@headlessui/react";
 import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
 import CreditScoreDoughnut from "~/components/CreditScoreDoughnut";
@@ -215,7 +215,7 @@ const Single = () => {
 };
 
 export const loader = async ({ request }) => {
-	let entity_id = await get_user_id(request);
+	let entity_id = await get_session_entity_id(request);
 	if (entity_id) return redirect("/home");
 	return null;
 };

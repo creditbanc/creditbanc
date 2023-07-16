@@ -1,6 +1,6 @@
 import { useState, Fragment, useEffect } from "react";
 import { Switch, Listbox, Transition } from "@headlessui/react";
-import { get_user_id } from "~/utils/auth.server";
+import { get_session_entity_id, get_user_id } from "~/utils/auth.server";
 import { useLoaderData, useSubmit } from "@remix-run/react";
 import { CheckIcon, ChevronUpDownIcon } from "@heroicons/react/20/solid";
 import { create } from "zustand";
@@ -41,7 +41,7 @@ export const action = async ({ request }) => {
 };
 
 export const loader = async ({ request }) => {
-	let entity_id = await get_user_id(request);
+	let entity_id = await get_session_entity_id(request);
 
 	let { plan_id } = await prisma.entity.findUnique({
 		where: { id: entity_id },

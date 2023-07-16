@@ -5,7 +5,7 @@ import {
 	get_entity_id,
 	is_location,
 } from "~/utils/helpers";
-import { get_user_id } from "~/utils/auth.server";
+import { get_session_entity_id, get_user_id } from "~/utils/auth.server";
 import { get_docs as get_group_docs } from "~/utils/group.server";
 import { defaultTo, pipe } from "ramda";
 import { filter } from "shades";
@@ -19,7 +19,7 @@ import { get_collection, get_doc } from "~/utils/firebase";
 
 export const loader = async ({ request }) => {
 	let { pathname } = new URL(request.url);
-	let user_id = await get_user_id(request);
+	let user_id = await get_session_entity_id(request);
 	let group_id = get_group_id(pathname);
 
 	return { user_id };

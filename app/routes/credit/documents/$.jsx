@@ -9,7 +9,7 @@ import { useLoaderData, useLocation } from "@remix-run/react";
 import { json, redirect } from "@remix-run/node";
 import Directory from "~/components/Directory";
 import { get_root_docs } from "~/utils/group.server";
-import { get_user_id } from "~/utils/auth.server";
+import { get_session_entity_id, get_user_id } from "~/utils/auth.server";
 import { storage } from "~/utils/firebase";
 import {
 	ref,
@@ -35,7 +35,7 @@ export const load_root = async ({ entity_id }) => {
 };
 
 export const loader = async ({ request }) => {
-	let entity_id = await get_user_id(request);
+	let entity_id = await get_session_entity_id(request);
 	if (!entity_id) return redirect(`/`);
 	const resources = await load_root({ entity_id });
 	return json({ data: resources, entity_id });

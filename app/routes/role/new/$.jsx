@@ -8,7 +8,7 @@ import {
 import { to_resource_pathname, get_group_id, inspect } from "~/utils/helpers";
 import { create_group_role, get_resource_roles } from "~/utils/role.server";
 import { json, redirect } from "@remix-run/node";
-import { get_user_id } from "~/utils/auth.server";
+import { get_session_entity_id, get_user_id } from "~/utils/auth.server";
 import { includes, map } from "ramda";
 import GroupSettingsTabs from "~/components/GroupSettingsTabs";
 
@@ -57,7 +57,7 @@ export const action = async ({ request }) => {
 };
 
 export const loader = async ({ request }) => {
-	const entity_id = await get_user_id(request);
+	const entity_id = await get_session_entity_id(request);
 	const group_id = get_group_id(request.url);
 	let roles = await get_resource_roles({ resource_id: group_id });
 	return { entity_id, group_id, roles };

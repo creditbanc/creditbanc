@@ -7,7 +7,11 @@ import {
 import { Popover, Transition } from "@headlessui/react";
 const cb_logo = "/images/logos/cb_logo_3.png";
 import { Link, useLoaderData, useSubmit } from "@remix-run/react";
-import { get_user_id, get_user } from "~/utils/auth.server";
+import {
+	get_user_id,
+	get_user,
+	get_session_entity_id,
+} from "~/utils/auth.server";
 import { hasPath, head, length, pipe } from "ramda";
 import { filter, get, has } from "shades";
 import { prisma } from "~/utils/prisma.server";
@@ -24,7 +28,7 @@ const steps = [
 export const action = async ({ request }) => {
 	console.log("action");
 	stripe = stripe(process.env.STRIPE);
-	let entity_id = await get_user_id(request);
+	let entity_id = await get_session_entity_id(request);
 	var form = await request.formData();
 
 	const email = form.get("email");

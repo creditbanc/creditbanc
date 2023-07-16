@@ -5,11 +5,11 @@ import {
 	new_credit_report,
 	authenticate_user,
 } from "~/data/array";
-import { get_user_id } from "~/utils/auth.server";
+import { get_session_entity_id, get_user_id } from "~/utils/auth.server";
 
 export const action = async ({ request }) => {
 	console.log("update");
-	let entity_id = await get_user_id(request);
+	let entity_id = await get_session_entity_id(request);
 	const form = await request.formData();
 	const request_payload = JSON.parse(form.get("payload"));
 	let { report_id, redirect_to } = request_payload;

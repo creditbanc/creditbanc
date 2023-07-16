@@ -17,7 +17,7 @@ import {
 	CreditTabsSelect,
 } from "~/components/PersonalCreditTabs";
 import CreditScoreHero from "~/components/CreditScoreHero";
-import { get_user_id } from "~/utils/auth.server";
+import { get_session_entity_id, get_user_id } from "~/utils/auth.server";
 import { validate_action, is_resource_owner_p } from "~/utils/resource.server";
 import { redirect } from "@remix-run/node";
 import { Array } from "~/data/array";
@@ -65,7 +65,7 @@ const get_scores = (report) => {
 export const loader = async ({ request }) => {
 	let url = new URL(request.url);
 	let { origin } = url;
-	let user_id = await get_user_id(request);
+	let user_id = await get_session_entity_id(request);
 	let entity_id = get_entity_id(url.pathname);
 	let group_id = get_group_id(url.pathname);
 

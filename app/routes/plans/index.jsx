@@ -5,7 +5,7 @@ import { XMarkIcon, CheckIcon } from "@heroicons/react/24/outline";
 import { useState } from "react";
 import { RadioGroup } from "@headlessui/react";
 import { Plans as SubscriptionPlans } from "~/components/UpdatePricingPlans";
-import { get_user_id } from "~/utils/auth.server";
+import { get_session_entity_id, get_user_id } from "~/utils/auth.server";
 import { prisma } from "~/utils/prisma.server";
 import { get } from "shades";
 import { pipe } from "ramda";
@@ -16,7 +16,7 @@ const frequencies = [
 ];
 
 export const loader = async ({ request }) => {
-	let entity_id = await get_user_id(request);
+	let entity_id = await get_session_entity_id(request);
 
 	let { plan_id } = await prisma.entity.findUnique({
 		where: { id: entity_id },

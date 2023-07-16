@@ -1,5 +1,5 @@
 import { get_group_id, get_file_id } from "~/utils/helpers";
-import { get_user_id } from "~/utils/auth.server";
+import { get_session_entity_id, get_user_id } from "~/utils/auth.server";
 import { get_entity_roles, get_link_role } from "~/utils/resource.server";
 import { redirect } from "@remix-run/node";
 import { prisma } from "~/utils/prisma.server";
@@ -137,7 +137,7 @@ const get_entity_group = async ({ entity_id }) => {
 export const loader = async ({ request }) => {
 	console.log("report_user_id");
 	let url = new URL(request.url);
-	let entity_id = await get_user_id(request);
+	let entity_id = await get_session_entity_id(request);
 	let resource_url = url.pathname.replace("/links/", "/");
 	// console.log("entity_id");
 	// console.log(entity_id);

@@ -18,7 +18,7 @@ import {
 	search_params,
 	is_applicant_p,
 } from "~/utils/helpers";
-import { get_user_id } from "~/utils/auth.server";
+import { get_session_entity_id, get_user_id } from "~/utils/auth.server";
 import { appKey, new_credit_report, is_sandbox } from "~/data/array";
 import { prisma } from "~/utils/prisma.server";
 
@@ -29,7 +29,7 @@ export const action = async ({ request }) => {
 	let is_applicant = is_applicant_p(applicant);
 
 	if (!is_applicant) {
-		let entity_id = await get_user_id(request);
+		let entity_id = await get_session_entity_id(request);
 		let entity = await prisma.entity.findUnique({
 			where: { id: entity_id },
 			select: {

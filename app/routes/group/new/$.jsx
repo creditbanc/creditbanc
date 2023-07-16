@@ -6,7 +6,7 @@ import { pipe } from "ramda";
 import { mod } from "shades";
 import { create_group } from "~/utils/group.server";
 import { to_resource_pathname } from "~/utils/helpers";
-import { get_user_id } from "~/utils/auth.server";
+import { get_session_entity_id, get_user_id } from "~/utils/auth.server";
 import { redirect } from "@remix-run/node";
 
 const useGroupStore = create((set) => ({
@@ -18,7 +18,7 @@ const useGroupStore = create((set) => ({
 }));
 
 export const action = async ({ request }) => {
-	const entity_id = await get_user_id(request);
+	const entity_id = await get_session_entity_id(request);
 	let form = await request.formData();
 	const payload = JSON.parse(form.get("payload"));
 	let { name } = payload;

@@ -6,7 +6,7 @@ import {
 	PaperClipIcon,
 } from "@heroicons/react/24/outline";
 import { useLoaderData } from "@remix-run/react";
-import { get_user_id } from "~/utils/auth.server";
+import { get_session_entity_id, get_user_id } from "~/utils/auth.server";
 import { classNames, get_resource_id, mapIndexed } from "~/utils/helpers";
 import { Menu, Transition } from "@headlessui/react";
 import { create } from "zustand";
@@ -41,7 +41,7 @@ const useChatStore = create((set) => ({
 }));
 
 export const loader = async ({ request }) => {
-	let entity_id = get_user_id(request);
+	let entity_id = get_session_entity_id(request);
 	let chat_id = get_resource_id(request.url);
 
 	// console.log("chat_id");

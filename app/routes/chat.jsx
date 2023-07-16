@@ -1,6 +1,6 @@
 import { Link, Outlet, useLoaderData, useLocation } from "@remix-run/react";
 import SimpleNavSignedIn from "~/components/SimpleNavSignedIn";
-import { get_user_id } from "~/utils/auth.server";
+import { get_session_entity_id, get_user_id } from "~/utils/auth.server";
 import { get_group_id, get_resource_id } from "~/utils/helpers";
 import { useModalStore } from "~/hooks/useModal";
 import Modal from "~/components/Modal";
@@ -27,7 +27,7 @@ const useChatsStore = create((set) => ({
 }));
 
 export const loader = async ({ request }) => {
-	let entity_id = get_user_id(request);
+	let entity_id = await get_session_entity_id(request);
 	let chat_id = get_resource_id(request.url);
 	let group_id = get_group_id(request.url);
 

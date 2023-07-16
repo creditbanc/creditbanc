@@ -9,7 +9,7 @@ import {
 	inspect,
 	to_resource_pathname,
 } from "~/utils/helpers";
-import { get_user_id } from "~/utils/auth.server";
+import { get_session_entity_id, get_user_id } from "~/utils/auth.server";
 import { get_docs as get_group_docs } from "~/utils/group.server";
 import { defaultTo, head, isEmpty, pick, pipe } from "ramda";
 import { mod, all, filter } from "shades";
@@ -30,7 +30,7 @@ export const loader = async ({ request }) => {
 	// if (!has_valid_route_p("credit/personal/report", request.url))
 	// 	return redirect("/");
 
-	let user_id = await get_user_id(request);
+	let user_id = await get_session_entity_id(request);
 	let group_id = get_group_id(url.pathname);
 	// let file_id = get_file_id(url.pathname);
 

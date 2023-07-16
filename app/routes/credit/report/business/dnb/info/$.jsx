@@ -7,7 +7,7 @@ import { mrm_credit_report, Lendflow } from "~/data/lendflow";
 import { currency, mapIndexed } from "~/utils/helpers";
 import { pipe, map } from "ramda";
 import { get_file_id } from "~/utils/helpers";
-import { get_user_id } from "~/utils/auth.server";
+import { get_session_entity_id, get_user_id } from "~/utils/auth.server";
 import { prisma } from "~/utils/prisma.server";
 import { plans } from "~/data/plans";
 import { get } from "shades";
@@ -16,7 +16,7 @@ import AccountCard from "~/components/AccountCard";
 export const loader = async ({ request }) => {
 	let url = new URL(request.url);
 	let file_id = get_file_id(url.pathname);
-	let entity_id = await get_user_id(request);
+	let entity_id = await get_session_entity_id(request);
 
 	let report = await prisma.business_credit_report.findUnique({
 		where: {

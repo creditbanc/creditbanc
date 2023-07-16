@@ -1,6 +1,6 @@
 import { Link, Outlet, useLoaderData, useLocation } from "@remix-run/react";
 import SimpleNavSignedIn from "~/components/SimpleNavSignedIn";
-import { get_user_id } from "~/utils/auth.server";
+import { get_session_entity_id, get_user_id } from "~/utils/auth.server";
 import {
 	classNames,
 	get_entity_id,
@@ -42,7 +42,7 @@ export const useRolesStore = create((set) => ({
 }));
 
 export const loader = async ({ request }) => {
-	let entity_id = await get_user_id(request);
+	let entity_id = await get_session_entity_id(request);
 
 	// console.log("entity_id");
 	// console.log(entity_id);

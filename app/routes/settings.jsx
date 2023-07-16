@@ -2,7 +2,7 @@ import { Link, Outlet, useLocation } from "@remix-run/react";
 import { useEffect, useState } from "react";
 import { FingerPrintIcon, UserCircleIcon } from "@heroicons/react/24/outline";
 import Nav from "~/components/TopNavNoSharing";
-import { get_user_id } from "~/utils/auth.server";
+import { get_session_entity_id, get_user_id } from "~/utils/auth.server";
 import { useLoaderData } from "@remix-run/react";
 import { redirect } from "@remix-run/node";
 import { create } from "zustand";
@@ -34,7 +34,7 @@ export const loader = async ({ request }) => {
 
 	if (url.pathname == "/settings") return redirect("/settings/account");
 
-	let entity_id = await get_user_id(request);
+	let entity_id = await get_session_entity_id(request);
 	return { entity_id };
 };
 

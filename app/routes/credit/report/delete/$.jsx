@@ -3,13 +3,13 @@ import {
 	unsubscribe_entity_from_shared_resource,
 	unsubscribe_entity_from_resource,
 } from "~/utils/resource.server";
-import { get_user_id } from "~/utils/auth.server";
+import { get_session_entity_id, get_user_id } from "~/utils/auth.server";
 import { prisma } from "~/utils/prisma.server";
 import { redirect } from "@remix-run/node";
 
 export const action = async ({ request }) => {
 	console.log("delete_personal_report");
-	const entity_id = await get_user_id(request);
+	const entity_id = await get_session_entity_id(request);
 	const form = await request.formData();
 	const file_id = form.get("file_id");
 	const group_id = form.get("group_id");
