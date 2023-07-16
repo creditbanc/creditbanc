@@ -524,7 +524,10 @@ const Notifications = () => {
 								{pipe(
 									filter({ category: "credit" }),
 									map((step) => (
-										<div className="flex flex-row w-full border p-2 rounded">
+										<div
+											className="flex flex-row w-full border p-2 rounded"
+											key={step.id}
+										>
 											<Link
 												className="flex flex-row w-full space-x-2 items-center space-between cursor-pointer"
 												to={step.href({
@@ -568,7 +571,10 @@ const Notifications = () => {
 								{pipe(
 									filter({ category: "financial" }),
 									map((step) => (
-										<div className="flex flex-row w-full border p-2 rounded">
+										<div
+											className="flex flex-row w-full border p-2 rounded"
+											key={step.id}
+										>
 											<Link
 												className="flex flex-row w-full space-x-2 items-center space-between cursor-pointer"
 												to={step.href({
@@ -612,7 +618,10 @@ const Notifications = () => {
 								{pipe(
 									filter({ category: "vault" }),
 									map((step) => (
-										<div className="flex flex-row w-full border p-2 rounded">
+										<div
+											className="flex flex-row w-full border p-2 rounded"
+											key={step.id}
+										>
 											<Link
 												className="flex flex-row w-full space-x-2 items-center space-between cursor-pointer"
 												to={step.href({
@@ -656,7 +665,10 @@ const Notifications = () => {
 								{pipe(
 									filter({ category: "social" }),
 									map((step) => (
-										<div className="flex flex-row w-full border p-2 rounded">
+										<div
+											className="flex flex-row w-full border p-2 rounded"
+											key={step.id}
+										>
 											<Link
 												className="flex flex-row w-full space-x-2 items-center space-between cursor-pointer"
 												to={step.href({
