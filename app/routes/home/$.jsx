@@ -795,9 +795,10 @@ export default function Home() {
 									</div>
 									<div className="w-full bg-gray-200 rounded-full h-2.5 dark:bg-gray-700">
 										<div
-											className={`flex flex-col bg-blue-600 h-2.5 rounded-full w-[${parseInt(
-												onboard_percent_completed
-											)}%]`}
+											className={`flex flex-col bg-blue-600 h-2.5 rounded-full`}
+											style={{
+												width: `${onboard_percent_completed}%`,
+											}}
 										></div>
 									</div>
 								</div>
