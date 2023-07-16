@@ -198,13 +198,13 @@ const MembersList = () => {
 						</div>
 					</div>
 
-					<div className="flex flex-col w-[150px]">a</div>
-
-					<div className="hidden sm:flex sm:flex-col sm:items-end flex-1">
+					<div className="flex flex-col w-[150px]">
 						<p className="text-sm leading-6 text-gray-900">
 							{person.role}
 						</p>
+					</div>
 
+					<div className="hidden sm:flex sm:flex-col sm:items-end flex-1">
 						<MemberActionsDropdown />
 
 						{/* {person.lastSeen ? (
