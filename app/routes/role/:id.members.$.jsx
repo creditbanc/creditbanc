@@ -5,6 +5,7 @@ import { classNames } from "~/utils/helpers";
 import { useState } from "react";
 import { CheckIcon, ChevronUpDownIcon } from "@heroicons/react/20/solid";
 import { Combobox } from "@headlessui/react";
+import { NoSymbolIcon, UserIcon } from "@heroicons/react/24/outline";
 
 const people = [
 	{
@@ -109,7 +110,7 @@ const MemberActionsDropdown = () => {
 				leaveFrom="transform opacity-100 scale-100"
 				leaveTo="transform opacity-0 scale-95"
 			>
-				<Menu.Items className="absolute right-0 z-10 mt-2 w-56 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+				<Menu.Items className="absolute right-0 z-10 mt-2 w-56 origin-top-right rounded-md bg-white shadow ring-1 ring-black ring-opacity-5 focus:outline-none">
 					<div className="py-1">
 						<Menu.Item>
 							{({ active }) => (
@@ -122,7 +123,12 @@ const MemberActionsDropdown = () => {
 										"block px-4 py-2 text-sm"
 									)}
 								>
-									Block
+									<div className="flex flex-row gap-x-2">
+										<div>
+											<NoSymbolIcon className="h-5 w-5 text-gray-400" />
+										</div>
+										<div>Block</div>
+									</div>
 								</a>
 							)}
 						</Menu.Item>
@@ -137,7 +143,12 @@ const MemberActionsDropdown = () => {
 										"block px-4 py-2 text-sm"
 									)}
 								>
-									Change role
+									<div className="flex flex-row gap-x-2">
+										<div>
+											<UserIcon className="h-5 w-5 text-gray-400" />
+										</div>
+										<div>Change role</div>
+									</div>
 								</a>
 							)}
 						</Menu.Item>
@@ -303,7 +314,7 @@ export default function Members() {
 			<div className="flex flex-row b-3 sticky top-0 bg-white z-20 w-full">
 				<PageHeading />
 			</div>
-			<div className="flex flex-col px-4">
+			<div className="flex flex-col px-4 mb-[70px]">
 				<MembersList />
 			</div>
 		</div>
