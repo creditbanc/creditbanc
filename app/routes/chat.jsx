@@ -1,7 +1,12 @@
 import { Link, Outlet, useLoaderData, useLocation } from "@remix-run/react";
 import SimpleNavSignedIn from "~/components/SimpleNavSignedIn";
 import { get_session_entity_id, get_user_id } from "~/utils/auth.server";
-import { get_group_id, get_resource_id, is_location } from "~/utils/helpers";
+import {
+	get_entity_id,
+	get_group_id,
+	get_resource_id,
+	is_location,
+} from "~/utils/helpers";
 import { useModalStore } from "~/hooks/useModal";
 import Modal from "~/components/Modal";
 import { useEffect, useState } from "react";
@@ -195,6 +200,10 @@ const ChannelActions = ({ channel_id }) => {
 };
 
 const Channel = ({ selected = false, title, unread = 0, id = 0 }) => {
+	let { pathname } = useLocation();
+	let entity_id = get_entity_id(pathname);
+	let group_id = get_group_id(pathname);
+
 	return (
 		<div
 			className={`flex flex-row w-full text-sm px-2 justify-between rounded ${
@@ -203,7 +212,7 @@ const Channel = ({ selected = false, title, unread = 0, id = 0 }) => {
 		>
 			<Link
 				className="flex flex-row space-x-1 w-full cursor-pointer py-2"
-				to={`/chat/resource/e/6461f488df5523110dece1ea/g/6461f489df5523110dece1ed/f/${id}?rand=${Math.random()}`}
+				to={`/chat/resource/e/${entity_id}/g/${group_id}/f/${id}?rand=${Math.random()}`}
 			>
 				<div>#</div>
 				<div>{title}</div>
