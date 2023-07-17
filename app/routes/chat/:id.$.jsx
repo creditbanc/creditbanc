@@ -7,7 +7,12 @@ import {
 } from "@heroicons/react/24/outline";
 import { useLoaderData } from "@remix-run/react";
 import { get_session_entity_id, get_user_id } from "~/utils/auth.server";
-import { classNames, get_resource_id, mapIndexed } from "~/utils/helpers";
+import {
+	classNames,
+	get_group_id,
+	get_resource_id,
+	mapIndexed,
+} from "~/utils/helpers";
 import { Menu, Transition } from "@headlessui/react";
 import { create } from "zustand";
 import {
@@ -25,7 +30,7 @@ import {
 } from "ramda";
 import { get, mod } from "shades";
 import { v4 as uuidv4 } from "uuid";
-import { get_collection, get_doc, set_doc } from "~/utils/firebase";
+import { get_collection, get_doc, set_doc, update_doc } from "~/utils/firebase";
 import moment from "moment";
 
 const useMessageStore = create((set) => ({
@@ -41,11 +46,16 @@ const useChatStore = create((set) => ({
 }));
 
 export const loader = async ({ request }) => {
-	let entity_id = get_session_entity_id(request);
+	let url = new URL(request.url);
+	let entity_id = await get_session_entity_id(request);
+	let group_id = get_group_id(request.url);
 	let chat_id = get_resource_id(request.url);
+	let chat_state_id = `${entity_id}${group_id}`;
+	console.log("url______");
 
-	// console.log("chat_id");
-	// console.log(chat_id);
+	await update_doc(["chat_state", chat_state_id], {
+		current_chat_id: chat_id,
+	});
 
 	let messages = await get_collection({
 		path: ["messages"],

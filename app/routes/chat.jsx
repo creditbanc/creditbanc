@@ -1,7 +1,7 @@
 import { Link, Outlet, useLoaderData, useLocation } from "@remix-run/react";
 import SimpleNavSignedIn from "~/components/SimpleNavSignedIn";
 import { get_session_entity_id, get_user_id } from "~/utils/auth.server";
-import { get_group_id, get_resource_id } from "~/utils/helpers";
+import { get_group_id, get_resource_id, is_location } from "~/utils/helpers";
 import { useModalStore } from "~/hooks/useModal";
 import Modal from "~/components/Modal";
 import { useEffect, useState } from "react";
@@ -12,13 +12,14 @@ import {
 	XMarkIcon,
 } from "@heroicons/react/24/outline";
 import { v4 as uuidv4 } from "uuid";
-import { delete_doc, get_collection, set_doc } from "~/utils/firebase";
+import { delete_doc, get_collection, get_doc, set_doc } from "~/utils/firebase";
 import { defaultTo, map, pipe, prop, sortBy } from "ramda";
 import { get, mod, filter } from "shades";
 import { create } from "zustand";
 import { Fragment } from "react";
 import { Menu, Transition } from "@headlessui/react";
 import { classNames } from "~/utils/helpers";
+import { redirect } from "@remix-run/node";
 
 const useChatsStore = create((set) => ({
 	channels: [],
@@ -26,10 +27,39 @@ const useChatsStore = create((set) => ({
 		set((state) => pipe(mod(...path)(() => value))(state)),
 }));
 
+let create_default_channel = async ({ group_id }) => {
+	let default_chat_id = uuidv4();
+
+	let default_chat_payload = {
+		group_id,
+		id: default_chat_id,
+		index: 0,
+		title: "General",
+		type: "channel",
+	};
+
+	await set_doc(["chats", default_chat_id], default_chat_payload);
+	return default_chat_payload;
+};
+
 export const loader = async ({ request }) => {
 	let entity_id = await get_session_entity_id(request);
 	let chat_id = get_resource_id(request.url);
 	let group_id = get_group_id(request.url);
+	let chat_state_id = `${entity_id}${group_id}`;
+
+	// let default_channel = { id: "c8e2b492-46dc-4da3-8d76-3741565284b2" };
+
+	// await set_doc(["chat_state", chat_state_id], {
+	// 	id: chat_state_id,
+	// 	current_chat_id: default_channel.id,
+	// });
+
+	// console.log("chat_state_saved_______");
+
+	// return null;
+
+	let chat_state = await get_doc(["chat_state", chat_state_id]);
 
 	let channels = await get_collection({
 		path: ["chats"],
@@ -42,12 +72,31 @@ export const loader = async ({ request }) => {
 		],
 	});
 
-	// console.log("channels");
-	// console.log(channels);
+	if (channels.length === 0) {
+		let default_channel = await create_default_channel({ group_id });
+
+		await set_doc(["chat_state", chat_state_id], {
+			id: chat_state_id,
+			current_chat_id: default_channel.id,
+		});
+
+		return redirect(
+			`/chat/resource/e/${entity_id}/g/${group_id}/f${default_channel.id}`
+		);
+	}
+
+	// console.log("chat_id_______");
+	// console.log(chat_id);
+
+	if (!chat_id && channels.length > 0) {
+		return redirect(
+			`/chat/resource/e/${entity_id}/g/${group_id}/f/${chat_state.current_chat_id}`
+		);
+	}
 
 	channels = pipe(defaultTo([]), sortBy(prop("index")))(channels);
 
-	return { entity_id, chat_id, channels };
+	return { entity_id, chat_id, channels, chat_state };
 };
 
 const DirectMessage = ({ unread = 0 }) => {
