@@ -13,10 +13,7 @@ export const loader = async ({ request }) => {
 	let { config_id } = use_search_params(request);
 	let group_entity_id = get_entity_id(request.url);
 
-	let { email, first_name, last_name } = await get_doc([
-		"entity",
-		group_entity_id,
-	]);
+	let { email, first_name, last_name } = await get_doc(["entity", entity_id]);
 
 	let role_id = entity_id + group_id;
 
@@ -30,6 +27,9 @@ export const loader = async ({ request }) => {
 		first_name,
 		last_name,
 	};
+
+	// console.log("role_____");
+	// console.log(role);
 
 	await set_doc(["roles", role_id], role);
 
