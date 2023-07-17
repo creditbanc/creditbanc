@@ -6,6 +6,7 @@ import {
 	get_entity_id,
 	get_group_id,
 	get_role_id,
+	is_location,
 	mapIndexed,
 	trim,
 } from "~/utils/helpers";
@@ -65,19 +66,19 @@ const role_tabs = [
 		name: "Permissions",
 		href: ({ entity_id, group_id, role_id }) =>
 			`/role/${role_id}/permissions/resource/e/${entity_id}/g/${group_id}`,
-		current: true,
+		current: (pathname) => is_location("/permissions", pathname),
 	},
 	{
 		name: "Members",
 		href: ({ entity_id, group_id, role_id }) =>
 			`/role/${role_id}/members/resource/e/${entity_id}/g/${group_id}`,
-		current: false,
+		current: (pathname) => is_location("/members", pathname),
 	},
 	{
 		name: "Requests",
 		href: ({ entity_id, group_id, role_id }) =>
 			`/role/${role_id}/requests/resource/e/${entity_id}/g/${group_id}`,
-		current: false,
+		current: (pathname) => is_location("/requests", pathname),
 	},
 ];
 
@@ -114,12 +115,14 @@ const RoleNav = () => {
 								key={tab.name}
 								to={tab.href({ entity_id, group_id, role_id })}
 								className={classNames(
-									tab.current
+									tab.current(pathname)
 										? "border-blue-500 text-blue-600"
 										: "border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700",
 									" border-b-2 py-2 px-1 text-center text-sm "
 								)}
-								aria-current={tab.current ? "page" : undefined}
+								aria-current={
+									tab.current(pathname) ? "page" : undefined
+								}
 							>
 								{tab.name}
 							</Link>
