@@ -151,8 +151,8 @@ const MemberActionsDropdown = () => {
 const MembersList = () => {
 	return (
 		<ul role="list" className="divide-y divide-gray-100">
-			{people.map((person) => (
-				<li key={person.email} className="flex py-5">
+			{people.map((person, index) => (
+				<li key={index} className="flex py-5">
 					<div className="flex flex-row w-[400px] gap-x-5 overflow-hidden">
 						<img
 							className="h-12 w-12 flex-none rounded-full bg-gray-50"
@@ -233,9 +233,9 @@ const MemberSearch = () => {
 
 				{filteredPeople.length > 0 && (
 					<Combobox.Options className="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
-						{filteredPeople.map((person) => (
+						{filteredPeople.map((person, index) => (
 							<Combobox.Option
-								key={person.id}
+								key={index}
 								value={person}
 								className={({ active }) =>
 									classNames(
