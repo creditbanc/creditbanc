@@ -8,7 +8,7 @@ import {
 	MagnifyingGlassIcon,
 	PaperClipIcon,
 } from "@heroicons/react/24/outline";
-import { useLoaderData } from "@remix-run/react";
+import { useLoaderData, useLocation } from "@remix-run/react";
 import { get_session_entity_id, get_user_id } from "~/utils/auth.server";
 import {
 	classNames,
@@ -36,6 +36,7 @@ import { v4 as uuidv4 } from "uuid";
 import { get_collection, get_doc, set_doc, update_doc } from "~/utils/firebase";
 import moment from "moment";
 import avatars from "~/data/avatars";
+import axios from "axios";
 
 const useMessageStore = create((set) => ({
 	message: "",
@@ -95,9 +96,6 @@ export const loader = async ({ request }) => {
 		path: ["roles"],
 		queries: members_queries,
 	});
-
-	console.log("members_____");
-	console.log(members);
 
 	return { entity_id, messages, chat_id, channel, members };
 };
@@ -263,12 +261,33 @@ const Members = () => {
 };
 
 const MessageTextArea = () => {
-	let { chat_id } = useLoaderData();
+	let { entity_id } = useLoaderData();
+	let [entity, set_entity] = useState({});
+	let { pathname } = useLocation();
+	let chat_id = get_resource_id(pathname);
 	let text_area_ref = useRef(null);
 	let [num_of_rows, set_num_of_rows] = useState(1);
 	let { message, set_message } = useMessageStore();
 	let set_chat_state = useChatStore((state) => state.set_chat_state);
 	let messages = useChatStore((state) => state.messages);
+
+	let get_entity = async ({ entity_id }) => {
+		let entity_response = await axios.request({
+			method: "GET",
+			url: `/entity/api/identity`,
+		});
+
+		let { data: entity_data = {} } = entity_response;
+		let { id = undefined } = entity_data;
+
+		if (id) {
+			set_entity(entity_data);
+		}
+	};
+
+	useEffect(() => {
+		get_entity({ entity_id });
+	}, []);
 
 	const onKeyDown = async (event) => {
 		var key = event.keyCode;
@@ -279,8 +298,8 @@ const MessageTextArea = () => {
 		}
 
 		if (key === 13 && !event.shiftKey) {
-			// console.log("submit now");
-			// console.log(message);
+			let { first_name, last_name, id, email } = entity;
+			let name = `${first_name} ${last_name}`;
 
 			let message_id = uuidv4();
 
@@ -289,8 +308,9 @@ const MessageTextArea = () => {
 				message,
 				chat_id,
 				user: {
-					id: "6461f488df5523110dece1ea",
-					name: "Talan Rosser",
+					id,
+					name,
+					email,
 				},
 				created_at: new Date().toISOString(),
 			};
@@ -578,7 +598,8 @@ const ClosedMembersPanel = () => {
 };
 
 export default function Chat() {
-	let { channel, messages = [] } = useLoaderData();
+	let { channel } = useLoaderData();
+	const messages = useChatStore((state) => state.messages);
 	let chat_ui = useChatUIStore((state) => state.ui);
 
 	return (
