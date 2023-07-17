@@ -1,5 +1,6 @@
 import { Fragment, useEffect, useRef, useState } from "react";
 import {
+	ChevronRightIcon,
 	EllipsisHorizontalIcon,
 	FaceSmileIcon,
 	MagnifyingGlassIcon,
@@ -525,12 +526,12 @@ export default function Chat() {
 						<NewMessageInput />
 					</div>
 				</div>
-				{/* <div className="flex flex-col w-[300px] bg-white border-l">
+				<div className="flex flex-col w-[300px] bg-white border-l">
 					<div className="flex flex-col w-full">
 						<div className="flex flex-row w-full border-b p-3 text-sm justify-between items-center">
 							<div>Members</div>
-							<div className="bg-gray-100 text-gray-600 h-6 w-6 flex flex-col items-center justify-center rounded-full pb-[2px] cursor-pointer">
-								+
+							<div className=" text-gray-600 h-6 w-6 flex flex-col items-center justify-center pb-[2px] cursor-pointer">
+								<ChevronRightIcon className="h-4 w-4 text-gray-400" />
 							</div>
 						</div>
 						<div className="flex flex-col w-full">
@@ -548,7 +549,7 @@ export default function Chat() {
 							</div>
 						</div>
 					</div>
-				</div> */}
+				</div>
 			</div>
 		</div>
 	);
