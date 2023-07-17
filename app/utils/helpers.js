@@ -244,9 +244,9 @@ export const get_resource_id = (uri) => {
 	let path = pipe(to_resource_path_array)(uri);
 	let index_of_f = pipe(indexOf("f"))(path);
 
-	console.log("get_resource_id____");
-	console.log(path);
-	console.log(index_of_f);
+	// console.log("get_resource_id____");
+	// console.log(path);
+	// console.log(index_of_f);
 
 	if (index_of_f === -1) return undefined;
 	return pipe((index) => path[index + 1])(index_of_f);

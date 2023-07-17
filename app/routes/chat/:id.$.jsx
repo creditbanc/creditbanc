@@ -51,7 +51,7 @@ export const loader = async ({ request }) => {
 	let group_id = get_group_id(request.url);
 	let chat_id = get_resource_id(request.url);
 	let chat_state_id = `${entity_id}${group_id}`;
-	console.log("url______");
+	// console.log("url______");
 
 	await update_doc(["chat_state", chat_state_id], {
 		current_chat_id: chat_id,
