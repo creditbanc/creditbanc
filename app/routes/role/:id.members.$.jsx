@@ -107,9 +107,6 @@ export const loader = async ({ request }) => {
 		queries: roles_queries,
 	});
 
-	console.log("roles_____");
-	console.log(roles);
-
 	return { roles };
 };
 
@@ -192,14 +189,15 @@ const MembersList = () => {
 			{roles.map((person, index) => (
 				<li key={index} className="flex py-5">
 					<div className="flex flex-row w-[400px] gap-x-5 overflow-hidden">
-						<img
-							className="h-12 w-12 flex-none rounded-full bg-gray-50"
-							src={person.imageUrl}
-							alt=""
-						/>
+						<span className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-gray-500">
+							<span className="font-medium leading-none text-white">
+								{person.first_name.charAt(0).toUpperCase()}
+							</span>
+						</span>
+
 						<div className="min-w-0 flex-auto">
 							<p className="text-sm font-semibold leading-6 text-gray-900">
-								{person.entity_id}
+								{person.first_name} {person.last_name}
 							</p>
 							<p className="mt-1 truncate text-xs leading-5 text-gray-500">
 								{person.email}
