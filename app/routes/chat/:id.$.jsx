@@ -35,6 +35,7 @@ import { get, mod } from "shades";
 import { v4 as uuidv4 } from "uuid";
 import { get_collection, get_doc, set_doc, update_doc } from "~/utils/firebase";
 import moment from "moment";
+import avatars from "~/data/avatars";
 
 const useMessageStore = create((set) => ({
 	message: "",
@@ -50,19 +51,18 @@ const useChatStore = create((set) => ({
 
 const useChatUIStore = create((set) => ({
 	ui: {
-		members_panel_open: false,
+		members_panel_open: true,
 	},
 	set_state: (path, value) =>
 		set((state) => pipe(mod(...path)(() => value))(state)),
 }));
 
 export const loader = async ({ request }) => {
-	let url = new URL(request.url);
+	let { pathname } = new URL(request.url);
 	let entity_id = await get_session_entity_id(request);
-	let group_id = get_group_id(request.url);
-	let chat_id = get_resource_id(request.url);
+	let group_id = get_group_id(pathname);
+	let chat_id = get_resource_id(pathname);
 	let chat_state_id = `${entity_id}${group_id}`;
-	// console.log("url______");
 
 	await update_doc(["chat_state", chat_state_id], {
 		current_chat_id: chat_id,
@@ -81,12 +81,25 @@ export const loader = async ({ request }) => {
 
 	messages = pipe(sortBy(prop("created_at")))(messages);
 
-	// console.log("messages");
-	// console.log(messages);
-
 	let channel = await get_doc(["chats", chat_id]);
 
-	return { entity_id, messages, chat_id, channel };
+	let members_queries = [
+		{
+			param: "group_id",
+			predicate: "==",
+			value: group_id,
+		},
+	];
+
+	let members = await get_collection({
+		path: ["roles"],
+		queries: members_queries,
+	});
+
+	console.log("members_____");
+	console.log(members);
+
+	return { entity_id, messages, chat_id, channel, members };
 };
 
 const MessageActions = () => {
@@ -407,22 +420,21 @@ const MemberActionsDropdown = () => {
 	);
 };
 
-const Member = () => {
+const Member = ({ member }) => {
+	let member_name = `${member.first_name} ${member.last_name}`;
+	let avatar = avatars(member_name, { size: 35 });
+
 	return (
 		<div className="flex flex-row text-sm items-center justify-between border-b cursor-pointer">
 			<div className="flex flex-row flex-1 space-x-3 items-center px-2 py-3">
 				<div>
-					<img
-						className="inline-block h-8 w-8 rounded-full"
-						src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
-						alt=""
-					/>
+					<div dangerouslySetInnerHTML={{ __html: avatar }} />
 				</div>
 				<div>
-					<div className="font-semibold">Darrell Steward</div>
-					<div className="text-xs text-gray-400">
-						darrell.s@gmail.com
+					<div className="font-semibold">
+						{member.first_name} {member.last_name}
 					</div>
+					<div className="text-xs text-gray-400">{member.email}</div>
 				</div>
 			</div>
 			<div className="flex flex-col w-[50px]">
@@ -510,7 +522,7 @@ const ChannelWelcomeMessage = () => {
 };
 
 const MembersPanel = () => {
-	let chat_ui = useChatUIStore((state) => state.chat_ui);
+	let { members = [] } = useLoaderData();
 	let set_state = useChatUIStore((state) => state.set_state);
 
 	const onCloseMemberPanel = () => {
@@ -529,9 +541,11 @@ const MembersPanel = () => {
 				</div>
 			</div>
 			<div className="flex flex-col w-full">
-				<Member />
-				<Member />
-				<Member />
+				{pipe(
+					map((member) => (
+						<Member key={member.entity_id} member={member} />
+					))
+				)(members)}
 			</div>
 			<div className="flex flex-row w-full border-b p-3 text-xs text-gray-400 cursor-pointer items-center">
 				<div className="flex flex-row space-x-[1px]">
