@@ -481,8 +481,27 @@ const Messages = () => {
 	);
 };
 
-export default function Chat() {
+const ChannelWelcomeMessage = () => {
 	let { channel } = useLoaderData();
+	return (
+		<div className="flex flex-col h-full justify-end absolute bottom-[20px]">
+			<div className="flex flex-col gap-y-2">
+				<div className="flex flex-col bg-gray-400 rounded-full p-3 w-fit">
+					<HashtagIcon className="h-8 w-8 text-white" />
+				</div>
+				<div className="flex flex-col text-2xl font-semibold">
+					<div>Welcome to #{channel.title}!</div>
+				</div>
+				<div className="flex flex-col text-gray-600">
+					<div>This is the start of the {channel.title} channel.</div>
+				</div>
+			</div>
+		</div>
+	);
+};
+
+export default function Chat() {
+	let { channel, messages = [] } = useLoaderData();
 
 	return (
 		<div className="flex flex-col flex-1 h-full w-full overflow-hidden">
@@ -520,22 +539,7 @@ export default function Chat() {
 			<div className="flex flex-row h-full overflow-hidden">
 				<div className="flex flex-col flex-1 justify-between bg-white">
 					<div className="flex flex-col bg-white px-5 overflow-hidden h-full relative">
-						<div className="flex flex-col h-full justify-end absolute bottom-[20px]">
-							<div className="flex flex-col gap-y-2">
-								<div className="flex flex-col bg-gray-400 rounded-full p-3 w-fit">
-									<HashtagIcon className="h-8 w-8 text-white" />
-								</div>
-								<div className="flex flex-col text-2xl font-semibold">
-									<div>Welcome to #{channel.title}!</div>
-								</div>
-								<div className="flex flex-col text-gray-600">
-									<div>
-										This is the start of the {channel.title}{" "}
-										channel.
-									</div>
-								</div>
-							</div>
-						</div>
+						{messages.length == 0 && <ChannelWelcomeMessage />}
 						<Messages />
 					</div>
 
