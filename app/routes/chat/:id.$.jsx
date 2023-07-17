@@ -1,5 +1,6 @@
 import { Fragment, useEffect, useRef, useState } from "react";
 import {
+	ChevronLeftIcon,
 	ChevronRightIcon,
 	EllipsisHorizontalIcon,
 	FaceSmileIcon,
@@ -44,6 +45,14 @@ const useMessageStore = create((set) => ({
 const useChatStore = create((set) => ({
 	messages: [],
 	set_chat_state: (path, value) =>
+		set((state) => pipe(mod(...path)(() => value))(state)),
+}));
+
+const useChatUIStore = create((set) => ({
+	ui: {
+		members_panel_open: false,
+	},
+	set_state: (path, value) =>
 		set((state) => pipe(mod(...path)(() => value))(state)),
 }));
 
@@ -500,8 +509,63 @@ const ChannelWelcomeMessage = () => {
 	);
 };
 
+const MembersPanel = () => {
+	let chat_ui = useChatUIStore((state) => state.chat_ui);
+	let set_state = useChatUIStore((state) => state.set_state);
+
+	const onCloseMemberPanel = () => {
+		set_state(["ui", "members_panel_open"], false);
+	};
+
+	return (
+		<div className="flex flex-col w-full">
+			<div className="flex flex-row w-full border-b p-3 text-sm justify-between items-center">
+				<div>Members</div>
+				<div
+					className=" text-gray-600 h-6 w-6 flex flex-col items-center justify-center pb-[2px] cursor-pointer"
+					onClick={onCloseMemberPanel}
+				>
+					<ChevronRightIcon className="h-4 w-4 text-gray-400" />
+				</div>
+			</div>
+			<div className="flex flex-col w-full">
+				<Member />
+				<Member />
+				<Member />
+			</div>
+			<div className="flex flex-row w-full border-b p-3 text-xs text-gray-400 cursor-pointer items-center">
+				<div className="flex flex-row space-x-[1px]">
+					<div>4</div>
+					<div className="-mt-[1px]">+</div>
+				</div>
+				<div className="flex flex-row ml-1">
+					<div>Members</div>
+				</div>
+			</div>
+		</div>
+	);
+};
+
+const ClosedMembersPanel = () => {
+	let set_state = useChatUIStore((state) => state.set_state);
+
+	const onOpenMemberPanel = () => {
+		set_state(["ui", "members_panel_open"], true);
+	};
+
+	return (
+		<div
+			className="flex flex-col w-full items-center pt-5 cursor-pointer h-[50px]"
+			onClick={onOpenMemberPanel}
+		>
+			<ChevronLeftIcon className="h-4 w-4 text-gray-400" />
+		</div>
+	);
+};
+
 export default function Chat() {
 	let { channel, messages = [] } = useLoaderData();
+	let chat_ui = useChatUIStore((state) => state.ui);
 
 	return (
 		<div className="flex flex-col flex-1 h-full w-full overflow-hidden">
@@ -547,29 +611,13 @@ export default function Chat() {
 						<NewMessageInput />
 					</div>
 				</div>
-				<div className="flex flex-col w-[300px] bg-white border-l">
-					<div className="flex flex-col w-full">
-						<div className="flex flex-row w-full border-b p-3 text-sm justify-between items-center">
-							<div>Members</div>
-							<div className=" text-gray-600 h-6 w-6 flex flex-col items-center justify-center pb-[2px] cursor-pointer">
-								<ChevronRightIcon className="h-4 w-4 text-gray-400" />
-							</div>
-						</div>
-						<div className="flex flex-col w-full">
-							<Member />
-							<Member />
-							<Member />
-						</div>
-						<div className="flex flex-row w-full border-b p-3 text-xs text-gray-400 cursor-pointer items-center">
-							<div className="flex flex-row space-x-[1px]">
-								<div>4</div>
-								<div className="-mt-[1px]">+</div>
-							</div>
-							<div className="flex flex-row ml-1">
-								<div>Members</div>
-							</div>
-						</div>
-					</div>
+
+				<div
+					className="flex flex-col bg-white border-l"
+					style={{ width: chat_ui.members_panel_open ? 300 : 60 }}
+				>
+					{!chat_ui.members_panel_open && <ClosedMembersPanel />}
+					{chat_ui.members_panel_open && <MembersPanel />}
 				</div>
 			</div>
 		</div>
