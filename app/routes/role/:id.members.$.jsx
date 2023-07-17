@@ -1,11 +1,13 @@
 import { Fragment } from "react";
 import { Menu, Transition } from "@headlessui/react";
 import { ChevronDownIcon } from "@heroicons/react/20/solid";
-import { classNames } from "~/utils/helpers";
+import { classNames, get_role_id } from "~/utils/helpers";
 import { useState } from "react";
 import { CheckIcon, ChevronUpDownIcon } from "@heroicons/react/20/solid";
 import { Combobox } from "@headlessui/react";
 import { NoSymbolIcon, UserIcon } from "@heroicons/react/24/outline";
+import { get_collection } from "~/utils/firebase";
+import { useLoaderData } from "@remix-run/react";
 
 const people = [
 	{
@@ -88,6 +90,29 @@ const people = [
 	},
 ];
 
+export const loader = async ({ request }) => {
+	let { pathname } = new URL(request.url);
+	let config_id = get_role_id(pathname);
+
+	let roles_queries = [
+		{
+			param: "config_id",
+			predicate: "==",
+			value: config_id,
+		},
+	];
+
+	let roles = await get_collection({
+		path: ["roles"],
+		queries: roles_queries,
+	});
+
+	console.log("roles_____");
+	console.log(roles);
+
+	return { roles };
+};
+
 const MemberActionsDropdown = () => {
 	return (
 		<Menu as="div" className="relative inline-block text-left">
@@ -160,9 +185,11 @@ const MemberActionsDropdown = () => {
 };
 
 const MembersList = () => {
+	let { roles = [] } = useLoaderData();
+
 	return (
 		<ul role="list" className="divide-y divide-gray-100">
-			{people.map((person, index) => (
+			{roles.map((person, index) => (
 				<li key={index} className="flex py-5">
 					<div className="flex flex-row w-[400px] gap-x-5 overflow-hidden">
 						<img
@@ -172,7 +199,7 @@ const MembersList = () => {
 						/>
 						<div className="min-w-0 flex-auto">
 							<p className="text-sm font-semibold leading-6 text-gray-900">
-								{person.name}
+								{person.entity_id}
 							</p>
 							<p className="mt-1 truncate text-xs leading-5 text-gray-500">
 								{person.email}

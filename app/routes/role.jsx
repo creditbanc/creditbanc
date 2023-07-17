@@ -88,6 +88,15 @@ const RoleNav = () => {
 	let group_id = get_group_id(pathname);
 	let role_id = get_role_id(pathname);
 
+	const onCopyShareLink = (e) => {
+		e.preventDefault();
+		let { origin } = window.location;
+
+		copy(
+			`${origin}/links/resource/e/${entity_id}/g/${group_id}?config_id=${role_id}`
+		);
+	};
+
 	return (
 		<div>
 			<div className="sm:hidden bg-white">
@@ -128,7 +137,10 @@ const RoleNav = () => {
 							</Link>
 						))}
 					</nav>
-					<div className="flex flex-row text-sm items-center space-x-3 text-blue-600 cursor-pointer">
+					<div
+						className="flex flex-row text-sm items-center space-x-3 text-blue-600 cursor-pointer"
+						onClick={onCopyShareLink}
+					>
 						<div>Copy share link</div>
 						<div>
 							<LinkIcon className="h-4 w-4 text-blue-600" />

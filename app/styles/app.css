@@ -1011,6 +1011,10 @@ video {
   margin-bottom: 50px;
 }
 
+.mb-\[70px\] {
+  margin-bottom: 70px;
+}
+
 .ml-1 {
   margin-left: 0.25rem;
 }
@@ -1173,18 +1177,6 @@ video {
 
 .mt-\[50px\] {
   margin-top: 50px;
-}
-
-.mb-\[200px\] {
-  margin-bottom: 200px;
-}
-
-.mb-\[60px\] {
-  margin-bottom: 60px;
-}
-
-.mb-\[70px\] {
-  margin-bottom: 70px;
 }
 
 .block {

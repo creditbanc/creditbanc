@@ -133,7 +133,8 @@ const ShareDropdown = () => {
 	let group_id = get_group_id(pathname);
 	let roles = useRolesStore((state) => state.roles);
 
-	const onCopyShareLink = (config_id) => {
+	const onCopyShareLink = (config_id, e) => {
+		e.preventDefault();
 		let { origin } = window.location;
 		copy(
 			`${origin}/links/resource/e/${entity_id}/g/${group_id}?config_id=${config_id}`
@@ -198,9 +199,10 @@ const ShareDropdown = () => {
 												<div className="flex flex-row space-x-5">
 													<div
 														className="cursor-pointer"
-														onClick={() =>
+														onClick={(e) =>
 															onCopyShareLink(
-																role.id
+																role.id,
+																e
 															)
 														}
 													>
