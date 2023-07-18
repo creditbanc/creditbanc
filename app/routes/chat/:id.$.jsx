@@ -39,7 +39,6 @@ import { get_collection, get_doc, set_doc, update_doc } from "~/utils/firebase";
 import moment from "moment";
 import avatars from "~/data/avatars";
 import axios from "axios";
-import { en } from "@faker-js/faker";
 
 const useMessageStore = create((set) => ({
 	message: "",
@@ -202,6 +201,8 @@ const MessageActions = () => {
 };
 
 const Message = ({ message }) => {
+	let avatar = avatars(message.user.email, { size: 35 });
+
 	let message_text = pipe(
 		get("message"),
 		split("\n"),
@@ -211,10 +212,11 @@ const Message = ({ message }) => {
 	return (
 		<div className="flex flex-row w-full py-3">
 			<div className="flex flex-col w-[50px] pt-1">
-				<img
+				{/* <img
 					className="inline-block h-8 w-8 rounded-full"
 					src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
-				/>
+				/> */}
+				<div dangerouslySetInnerHTML={{ __html: avatar }} />
 			</div>
 			<div className="text-sm flex flex-col flex-1 space-y-1">
 				<div className="font-semibold">{message.user.name}</div>
@@ -495,8 +497,7 @@ const MemberActionsDropdown = ({ member }) => {
 };
 
 const Member = ({ member }) => {
-	let member_name = `${member.first_name} ${member.last_name}`;
-	let avatar = avatars(member_name, { size: 35 });
+	let avatar = avatars(member.email, { size: 35 });
 
 	return (
 		<div className="flex flex-row text-sm items-center justify-between border-b cursor-pointer">

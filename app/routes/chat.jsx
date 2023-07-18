@@ -25,6 +25,7 @@ import { Fragment } from "react";
 import { Menu, Transition } from "@headlessui/react";
 import { classNames } from "~/utils/helpers";
 import { redirect } from "@remix-run/node";
+import avatars from "~/data/avatars";
 
 const useChatsStore = create((set) => ({
 	channels: [],
@@ -135,6 +136,8 @@ const DirectMessage = ({ unread = 0, id, selected = false, chat }) => {
 		head
 	)(chat.members);
 
+	let avatar = avatars(member.email, { size: 35 });
+
 	return (
 		<Link
 			className="flex flex-row text-sm items-center justify-between border-b cursor-pointer pr-4 pl-1 hover:bg-gray-100"
@@ -142,12 +145,11 @@ const DirectMessage = ({ unread = 0, id, selected = false, chat }) => {
 		>
 			<div className="flex flex-row flex-1 space-x-3 items-center px-2 py-3">
 				<div>
-					<img
-						className={`inline-block h-8 w-8 rounded-full border-blue-500 ${
+					<div
+						className={`inline-block rounded-full border-blue-500 ${
 							selected && "border-4 shadow-sm"
 						}`}
-						src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
-						alt=""
+						dangerouslySetInnerHTML={{ __html: avatar }}
 					/>
 				</div>
 				<div>
