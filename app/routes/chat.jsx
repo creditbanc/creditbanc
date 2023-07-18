@@ -18,7 +18,7 @@ import {
 } from "@heroicons/react/24/outline";
 import { v4 as uuidv4 } from "uuid";
 import { delete_doc, get_collection, get_doc, set_doc } from "~/utils/firebase";
-import { defaultTo, map, pipe, prop, sortBy } from "ramda";
+import { defaultTo, head, map, pipe, prop, sortBy } from "ramda";
 import { get, mod, filter } from "shades";
 import { create } from "zustand";
 import { Fragment } from "react";
@@ -125,10 +125,15 @@ export const loader = async ({ request }) => {
 	return { entity_id, chat_id, channels, direct_messages, chat_state };
 };
 
-const DirectMessage = ({ unread = 0, id, selected = false }) => {
+const DirectMessage = ({ unread = 0, id, selected = false, chat }) => {
 	let { pathname } = useLocation();
 	let entity_id = get_entity_id(pathname);
 	let group_id = get_group_id(pathname);
+
+	let member = pipe(
+		filter({ entity_id: (member_id) => entity_id !== member_id }),
+		head
+	)(chat.members);
 
 	return (
 		<Link
@@ -146,10 +151,8 @@ const DirectMessage = ({ unread = 0, id, selected = false }) => {
 					/>
 				</div>
 				<div>
-					<div className="font-semibold">Darrell Steward</div>
-					<div className="text-xs text-gray-400">
-						darrell.s@gmail.com
-					</div>
+					<div className="font-semibold">{`${member.first_name} ${member.last_name}`}</div>
+					<div className="text-xs text-gray-400">{member.email}</div>
 				</div>
 			</div>
 			<div className="flex flex-col items-end text-xs space-y-2">
@@ -408,12 +411,13 @@ export default function Chat() {
 					</div>
 					<div className="flex flex-col w-full">
 						{pipe(
-							map((direct_message) => (
+							map((chat) => (
 								<DirectMessage
 									unread={5}
-									id={direct_message.id}
-									key={direct_message.id}
-									selected={chat_id == direct_message.id}
+									id={chat.id}
+									key={chat.id}
+									selected={chat_id == chat.id}
+									chat={chat}
 								/>
 							))
 						)(direct_messages)}
