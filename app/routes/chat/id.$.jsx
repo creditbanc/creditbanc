@@ -377,11 +377,11 @@ const MemberActionsDropdown = ({ member }) => {
 	};
 
 	const onDirectMessage = async () => {
-		console.log("onDirectMessage");
-		console.log(member);
+		// console.log("onDirectMessage");
+		// console.log(member);
 		let entity = await get_entity();
-		console.log("entity");
-		console.log(entity);
+		// console.log("entity");
+		// console.log(entity);
 
 		// check if a direct message chat already exists and if it does, redirect to it
 
@@ -398,21 +398,21 @@ const MemberActionsDropdown = ({ member }) => {
 			},
 		];
 
-		console.log("direct_messages_queries");
-		console.log(direct_messages_queries);
+		// console.log("direct_messages_queries");
+		// console.log(direct_messages_queries);
 
 		let direct_messages = await get_collection({
 			path: ["chats"],
 			queries: direct_messages_queries,
 		});
 
-		console.log("direct_messages");
-		console.log(direct_messages);
+		// console.log("direct_messages");
+		// console.log(direct_messages);
 
 		if (direct_messages.length > 0) {
 			let chat = pipe(head)(direct_messages);
-			console.log("chat");
-			console.log(chat);
+			// console.log("chat");
+			// console.log(chat);
 
 			navigate(
 				`/chat/id/resource/e/${entity_id}/g/${group_id}/f/${chat.id}`
@@ -444,8 +444,8 @@ const MemberActionsDropdown = ({ member }) => {
 				],
 			};
 
-			console.log("dm_payload");
-			console.log(payload);
+			// console.log("dm_payload");
+			// console.log(payload);
 
 			await set_doc(["chats", direct_message_chat_id], payload);
 		}

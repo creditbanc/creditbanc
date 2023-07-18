@@ -71,18 +71,18 @@ export const loader = async ({ request }) => {
 		],
 	});
 
-	if (channels.length === 0) {
-		let default_channel = await create_default_channel({ group_id });
+	// if (channels.length === 0) {
+	// 	let default_channel = await create_default_channel({ group_id });
 
-		await set_doc(["chat_state", chat_state_id], {
-			id: chat_state_id,
-			current_chat_id: default_channel.id,
-		});
+	// 	await set_doc(["chat_state", chat_state_id], {
+	// 		id: chat_state_id,
+	// 		current_chat_id: default_channel.id,
+	// 	});
 
-		return redirect(
-			`/chat/id/resource/e/${entity_id}/g/${group_id}/f/${default_channel.id}`
-		);
-	}
+	// 	return redirect(
+	// 		`/chat/id/resource/e/${entity_id}/g/${group_id}/f/${default_channel.id}`
+	// 	);
+	// }
 
 	channels = pipe(defaultTo([]), sortBy(prop("index")))(channels);
 

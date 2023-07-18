@@ -1,7 +1,12 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
 import { getStorage } from "firebase/storage";
-import { getFirestore, orderBy, updateDoc } from "firebase/firestore";
+import {
+	getCountFromServer,
+	getFirestore,
+	orderBy,
+	updateDoc,
+} from "firebase/firestore";
 import {
 	doc,
 	setDoc,
@@ -81,6 +86,49 @@ export const get_collection = async ({
 	const querySnapshot = await getDocs(q);
 
 	return querySnapshot.docs.map((doc) => ({ doc_id: doc.id, ...doc.data() }));
+};
+
+export const get_count = async ({
+	path,
+	queries = [],
+	limit = [],
+	orderBy = [],
+	cursors = [],
+}) => {
+	let limit_args = limit.map((limit_amount) => firelimit(limit_amount));
+	let order_args = orderBy.map(({ field, direction = "desc" }) =>
+		fireorder(field, direction)
+	);
+
+	let query_args = queries.map((query) =>
+		where(query.param, query.predicate, query.value)
+	);
+
+	let cursor_args = await Promise.all(
+		cursors.map(async (cursor) => {
+			let { type, value, is_snapshot = false } = cursor;
+
+			if (is_snapshot) {
+				let docSnapshot = await get_doc_snapshot(value);
+				return fire_cursors[type](docSnapshot);
+			}
+
+			return fire_cursors[type](...value);
+		})
+	);
+
+	let args = [...query_args, ...order_args, ...cursor_args, ...limit_args];
+
+	// console.log("args");
+	// inspect([...query_args, ...order_args, limit_args, cursors]);
+
+	const q = query(collection(firestore, ...path), ...args);
+	const querySnapshot = await getCountFromServer(q);
+
+	console.log("count_______");
+	console.log(querySnapshot.data());
+
+	return querySnapshot.data().count;
 };
 
 export const get_doc_snapshot = async (path) => {
