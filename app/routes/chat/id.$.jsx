@@ -74,9 +74,6 @@ export const loader = async ({ request }) => {
 	let chat_id = get_resource_id(pathname);
 	let chat_state_id = `${entity_id}${group_id}`;
 
-	console.log("chat_state_id");
-	console.log(chat_state_id);
-
 	await update_doc(["chat_state", chat_state_id], {
 		current_chat_id: chat_id,
 	});
@@ -418,7 +415,7 @@ const MemberActionsDropdown = ({ member }) => {
 			console.log(chat);
 
 			navigate(
-				`/chat/resource/e/${entity_id}/g/${group_id}/f/${chat.id}`
+				`/chat/id/resource/e/${entity_id}/g/${group_id}/f/${chat.id}`
 			);
 		}
 
