@@ -701,13 +701,15 @@ export default function Chat() {
 					</div>
 				</div>
 
-				<div
-					className="flex flex-col bg-white border-l"
-					style={{ width: chat_ui.members_panel_open ? 300 : 60 }}
-				>
-					{!chat_ui.members_panel_open && <ClosedMembersPanel />}
-					{chat_ui.members_panel_open && <MembersPanel />}
-				</div>
+				{channel.type == "channel" && (
+					<div
+						className="flex flex-col bg-white border-l"
+						style={{ width: chat_ui.members_panel_open ? 300 : 60 }}
+					>
+						{!chat_ui.members_panel_open && <ClosedMembersPanel />}
+						{chat_ui.members_panel_open && <MembersPanel />}
+					</div>
+				)}
 			</div>
 		</div>
 	);

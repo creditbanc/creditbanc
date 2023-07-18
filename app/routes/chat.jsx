@@ -132,13 +132,15 @@ const DirectMessage = ({ unread = 0, id, selected = false }) => {
 
 	return (
 		<Link
-			className="flex flex-row text-sm items-center justify-between border-b cursor-pointer pr-4 pl-1"
+			className="flex flex-row text-sm items-center justify-between border-b cursor-pointer pr-4 pl-1 hover:bg-gray-100"
 			to={`/chat/resource/e/${entity_id}/g/${group_id}/f/${id}?rand=${Math.random()}`}
 		>
 			<div className="flex flex-row flex-1 space-x-3 items-center px-2 py-3">
 				<div>
 					<img
-						className="inline-block h-8 w-8 rounded-full"
+						className={`inline-block h-8 w-8 rounded-full border-blue-500 ${
+							selected && "border-4 shadow-sm"
+						}`}
 						src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
 						alt=""
 					/>
