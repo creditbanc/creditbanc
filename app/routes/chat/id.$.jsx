@@ -26,16 +26,24 @@ import {
 	ifElse,
 	init,
 	last,
+	length,
 	map,
 	pipe,
 	prop,
 	sortBy,
 	split,
 	tail,
+	uniqBy,
 } from "ramda";
 import { get, mod } from "shades";
 import { v4 as uuidv4 } from "uuid";
-import { get_collection, get_doc, set_doc, update_doc } from "~/utils/firebase";
+import {
+	get_collection,
+	get_collection_listener,
+	get_doc,
+	set_doc,
+	update_doc,
+} from "~/utils/firebase";
 import moment from "moment";
 import avatars from "~/data/avatars";
 import axios from "axios";
@@ -331,7 +339,7 @@ const MessageTextArea = () => {
 
 			set_message(["message"], "");
 
-			set_chat_state(["messages"], [...messages, payload]);
+			// set_chat_state(["messages"], [...messages, payload]);
 		}
 
 		if (key === 8) {
@@ -541,10 +549,15 @@ const NewMessageInput = () => {
 };
 
 const Messages = () => {
+	let { pathname } = useLocation();
 	const { messages: server_messages } = useLoaderData();
 	const set_chat_state = useChatStore((state) => state.set_chat_state);
+	let [new_message_queue, set_new_message_queue] = useState({});
 	const messages = useChatStore((state) => state.messages);
 	const messagesEndRef = useRef(null);
+	let chat_id = get_resource_id(pathname);
+	let [is_listening_to_messages, set_is_listening_to_messages] =
+		useState(false);
 
 	const scrollToBottom = () => {
 		messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -553,6 +566,56 @@ const Messages = () => {
 	useEffect(() => {
 		set_chat_state(["messages"], []);
 	}, []);
+
+	useEffect(() => {
+		set_chat_state(
+			["messages"],
+			uniqBy(prop("message_id"), [...messages, new_message_queue])
+		);
+	}, [new_message_queue]);
+
+	useEffect(() => {
+		let messages_queries = [
+			{
+				param: "chat_id",
+				predicate: "==",
+				value: chat_id,
+			},
+		];
+
+		if (messages.length > 0 && is_listening_to_messages === false) {
+			set_is_listening_to_messages(true);
+			let last_message = pipe(last)(messages);
+
+			let orderBy = [{ field: "created_at", direction: "desc" }];
+
+			get_collection_listener(
+				{
+					path: ["messages"],
+					queries: messages_queries,
+					cursors: [
+						{
+							type: "startAfter",
+							value: last_message.message_id,
+						},
+					],
+					orderBy,
+					limit: [1],
+				},
+				(snapshot) => {
+					return pipe(
+						map((change) => {
+							if (change.type === "added") {
+								let message = change.doc.data();
+
+								set_new_message_queue(message);
+							}
+						})
+					)(snapshot.docChanges());
+				}
+			);
+		}
+	}, [messages, is_listening_to_messages]);
 
 	useEffect(() => {
 		if (server_messages.length > 0) {

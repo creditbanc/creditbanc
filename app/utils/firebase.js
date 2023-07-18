@@ -4,6 +4,7 @@ import { getStorage } from "firebase/storage";
 import {
 	getCountFromServer,
 	getFirestore,
+	onSnapshot,
 	orderBy,
 	updateDoc,
 } from "firebase/firestore";
@@ -46,6 +47,49 @@ let fire_cursors = {
 	startAfter: fireStartAfter,
 	endAt: fireEndAt,
 	endBefore: fireEndBefore,
+};
+
+export const get_collection_listener = async (
+	{ path, queries = [], limit = [], orderBy = [], cursors = [] },
+	callback
+) => {
+	let limit_args = limit.map((limit_amount) => firelimit(limit_amount));
+	let order_args = orderBy.map(({ field, direction = "desc" }) =>
+		fireorder(field, direction)
+	);
+
+	let query_args = queries.map((query) =>
+		where(query.param, query.predicate, query.value)
+	);
+
+	// console.log("cursors");
+	// console.log(cursors);
+
+	let cursor_args = await Promise.all(
+		cursors.map(async (cursor) => {
+			// console.log("cursor");
+			// console.log(cursor);
+
+			let { type, value, is_snapshot = false } = cursor;
+
+			if (is_snapshot) {
+				let docSnapshot = await get_doc_snapshot(value);
+				return fire_cursors[type](docSnapshot);
+			}
+
+			// return fire_cursors[type](...value);
+			return fire_cursors[type](value);
+		})
+	);
+
+	let args = [...query_args, ...order_args, ...cursor_args, ...limit_args];
+
+	// console.log("args");
+	// inspect([...query_args, ...order_args, limit_args, cursors]);
+
+	const q = query(collection(firestore, ...path), ...args);
+	const unsubscribe = onSnapshot(q, callback);
+	return unsubscribe;
 };
 
 export const get_collection = async ({
