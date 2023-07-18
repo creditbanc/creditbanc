@@ -74,6 +74,11 @@ export const loader = async ({ request }) => {
 				predicate: "==",
 				value: group_id,
 			},
+			{
+				param: "type",
+				predicate: "==",
+				value: "channel",
+			},
 		],
 	});
 
@@ -101,12 +106,35 @@ export const loader = async ({ request }) => {
 
 	channels = pipe(defaultTo([]), sortBy(prop("index")))(channels);
 
-	return { entity_id, chat_id, channels, chat_state };
+	let direct_messages = await get_collection({
+		path: ["chats"],
+		queries: [
+			{
+				param: entity_id,
+				predicate: "==",
+				value: 1,
+			},
+			{
+				param: "type",
+				predicate: "==",
+				value: "direct_message",
+			},
+		],
+	});
+
+	return { entity_id, chat_id, channels, direct_messages, chat_state };
 };
 
-const DirectMessage = ({ unread = 0 }) => {
+const DirectMessage = ({ unread = 0, id, selected = false }) => {
+	let { pathname } = useLocation();
+	let entity_id = get_entity_id(pathname);
+	let group_id = get_group_id(pathname);
+
 	return (
-		<div className="flex flex-row text-sm items-center justify-between border-b cursor-pointer pr-4 pl-1">
+		<Link
+			className="flex flex-row text-sm items-center justify-between border-b cursor-pointer pr-4 pl-1"
+			to={`/chat/resource/e/${entity_id}/g/${group_id}/f/${id}?rand=${Math.random()}`}
+		>
 			<div className="flex flex-row flex-1 space-x-3 items-center px-2 py-3">
 				<div>
 					<img
@@ -130,7 +158,7 @@ const DirectMessage = ({ unread = 0 }) => {
 					</div>
 				)}
 			</div>
-		</div>
+		</Link>
 	);
 };
 
@@ -310,7 +338,12 @@ const NewChannelModal = () => {
 };
 
 export default function Chat() {
-	let { entity_id, chat_id, channels: server_channels } = useLoaderData();
+	let {
+		entity_id,
+		chat_id,
+		channels: server_channels,
+		direct_messages = [],
+	} = useLoaderData();
 	let set_modal = useModalStore((state) => state.set_modal);
 	let channels = useChatsStore((state) => state.channels);
 	let set_chats_state = useChatsStore((state) => state.set_chats_state);
@@ -372,16 +405,16 @@ export default function Chat() {
 						</div>
 					</div>
 					<div className="flex flex-col w-full">
-						<DirectMessage unread={5} />
-						<DirectMessage />
-						<DirectMessage />
-						<DirectMessage />
-						<DirectMessage unread={100} />
-						<DirectMessage />
-						<DirectMessage />
-						<DirectMessage />
-						<DirectMessage />
-						<DirectMessage />
+						{pipe(
+							map((direct_message) => (
+								<DirectMessage
+									unread={5}
+									id={direct_message.id}
+									key={direct_message.id}
+									selected={chat_id == direct_message.id}
+								/>
+							))
+						)(direct_messages)}
 					</div>
 				</div>
 

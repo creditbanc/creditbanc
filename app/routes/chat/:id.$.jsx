@@ -8,10 +8,11 @@ import {
 	MagnifyingGlassIcon,
 	PaperClipIcon,
 } from "@heroicons/react/24/outline";
-import { useLoaderData, useLocation } from "@remix-run/react";
+import { useLoaderData, useLocation, useNavigate } from "@remix-run/react";
 import { get_session_entity_id, get_user_id } from "~/utils/auth.server";
 import {
 	classNames,
+	get_entity_id,
 	get_group_id,
 	get_resource_id,
 	mapIndexed,
@@ -20,6 +21,7 @@ import { Menu, Transition } from "@headlessui/react";
 import { create } from "zustand";
 import {
 	equals,
+	head,
 	identity,
 	ifElse,
 	init,
@@ -37,6 +39,7 @@ import { get_collection, get_doc, set_doc, update_doc } from "~/utils/firebase";
 import moment from "moment";
 import avatars from "~/data/avatars";
 import axios from "axios";
+import { en } from "@faker-js/faker";
 
 const useMessageStore = create((set) => ({
 	message: "",
@@ -54,6 +57,12 @@ const useChatUIStore = create((set) => ({
 	ui: {
 		members_panel_open: true,
 	},
+	set_state: (path, value) =>
+		set((state) => pipe(mod(...path)(() => value))(state)),
+}));
+
+const useEntityStore = create((set) => ({
+	entity: {},
 	set_state: (path, value) =>
 		set((state) => pipe(mod(...path)(() => value))(state)),
 }));
@@ -271,7 +280,7 @@ const MessageTextArea = () => {
 	let set_chat_state = useChatStore((state) => state.set_chat_state);
 	let messages = useChatStore((state) => state.messages);
 
-	let get_entity = async ({ entity_id }) => {
+	let get_set_entity = async () => {
 		let entity_response = await axios.request({
 			method: "GET",
 			url: `/entity/api/identity`,
@@ -286,7 +295,7 @@ const MessageTextArea = () => {
 	};
 
 	useEffect(() => {
-		get_entity({ entity_id });
+		get_set_entity({ entity_id });
 	}, []);
 
 	const onKeyDown = async (event) => {
@@ -348,7 +357,99 @@ const MessageTextArea = () => {
 	);
 };
 
-const MemberActionsDropdown = () => {
+const MemberActionsDropdown = ({ member }) => {
+	let { pathname } = useLocation();
+	let entity_id = get_entity_id(pathname);
+	let group_id = get_group_id(pathname);
+	let navigate = useNavigate();
+
+	let get_entity = async () => {
+		let entity_response = await axios.request({
+			method: "GET",
+			url: `/entity/api/identity`,
+		});
+
+		let { data: entity_data = {} } = entity_response;
+		return entity_data;
+	};
+
+	const onDirectMessage = async () => {
+		console.log("onDirectMessage");
+		console.log(member);
+		let entity = await get_entity();
+		console.log("entity");
+		console.log(entity);
+
+		// check if a direct message chat already exists and if it does, redirect to it
+
+		let direct_messages_queries = [
+			{
+				param: member.entity_id,
+				predicate: "==",
+				value: 1,
+			},
+			{
+				param: entity.id,
+				predicate: "==",
+				value: 1,
+			},
+		];
+
+		console.log("direct_messages_queries");
+		console.log(direct_messages_queries);
+
+		let direct_messages = await get_collection({
+			path: ["chats"],
+			queries: direct_messages_queries,
+		});
+
+		console.log("direct_messages");
+		console.log(direct_messages);
+
+		if (direct_messages.length > 0) {
+			let chat = pipe(head)(direct_messages);
+			console.log("chat");
+			console.log(chat);
+
+			navigate(
+				`/chat/resource/e/${entity_id}/g/${group_id}/f/${chat.id}`
+			);
+		}
+
+		if (direct_messages.length == 0) {
+			let direct_message_chat_id = uuidv4();
+
+			let payload = {
+				[member.entity_id]: 1,
+				[entity.id]: 1,
+				group_id,
+				id: direct_message_chat_id,
+				type: "direct_message",
+				members: [
+					{
+						email: member.email,
+						entity_id: member.entity_id,
+						first_name: member.first_name,
+						last_name: member.last_name,
+					},
+					{
+						email: entity.email,
+						entity_id: entity.id,
+						first_name: entity.first_name,
+						last_name: entity.last_name,
+					},
+				],
+			};
+
+			console.log("dm_payload");
+			console.log(payload);
+
+			await set_doc(["chats", direct_message_chat_id], payload);
+		}
+
+		// if it doesn't exist, create a new direct message chat and redirect to it
+	};
+
 	return (
 		<Menu as="div" className="relative inline-block text-left">
 			<div>
@@ -373,8 +474,8 @@ const MemberActionsDropdown = () => {
 					<div className="py-1">
 						<Menu.Item>
 							{({ active }) => (
-								<a
-									href="#"
+								<div
+									onClick={onDirectMessage}
 									className={classNames(
 										active
 											? "bg-gray-100 text-gray-900"
@@ -382,57 +483,10 @@ const MemberActionsDropdown = () => {
 										"block px-4 py-2 text-sm"
 									)}
 								>
-									Account settings
-								</a>
+									Direct message
+								</div>
 							)}
 						</Menu.Item>
-						<Menu.Item>
-							{({ active }) => (
-								<a
-									href="#"
-									className={classNames(
-										active
-											? "bg-gray-100 text-gray-900"
-											: "text-gray-700",
-										"block px-4 py-2 text-sm"
-									)}
-								>
-									Support
-								</a>
-							)}
-						</Menu.Item>
-						<Menu.Item>
-							{({ active }) => (
-								<a
-									href="#"
-									className={classNames(
-										active
-											? "bg-gray-100 text-gray-900"
-											: "text-gray-700",
-										"block px-4 py-2 text-sm"
-									)}
-								>
-									License
-								</a>
-							)}
-						</Menu.Item>
-						<form method="POST" action="#">
-							<Menu.Item>
-								{({ active }) => (
-									<button
-										type="submit"
-										className={classNames(
-											active
-												? "bg-gray-100 text-gray-900"
-												: "text-gray-700",
-											"block w-full px-4 py-2 text-left text-sm"
-										)}
-									>
-										Sign out
-									</button>
-								)}
-							</Menu.Item>
-						</form>
 					</div>
 				</Menu.Items>
 			</Transition>
@@ -458,7 +512,7 @@ const Member = ({ member }) => {
 				</div>
 			</div>
 			<div className="flex flex-col w-[50px]">
-				<MemberActionsDropdown />
+				<MemberActionsDropdown member={member} />
 			</div>
 		</div>
 	);
