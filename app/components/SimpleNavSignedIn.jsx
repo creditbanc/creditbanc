@@ -428,7 +428,7 @@ export default function Nav({ user_id }) {
 						<ShareDropdown />
 
 						<Link
-							to={`/chat/resource/e/${entity_id}/g/${group_id}`}
+							to={`/chat/resource/e/${entity_id}/g/${group_id}?rand=${Math.random()}`}
 							className=" bg-gray-100 flex flex-col items-center rounded-full p-2 cursor-pointer relative"
 						>
 							<div className="absolute -top-2 left-0 text-xs">

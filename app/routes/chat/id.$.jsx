@@ -39,6 +39,7 @@ import { get_collection, get_doc, set_doc, update_doc } from "~/utils/firebase";
 import moment from "moment";
 import avatars from "~/data/avatars";
 import axios from "axios";
+import { redirect } from "@remix-run/node";
 
 const useMessageStore = create((set) => ({
 	message: "",
@@ -72,6 +73,9 @@ export const loader = async ({ request }) => {
 	let group_id = get_group_id(pathname);
 	let chat_id = get_resource_id(pathname);
 	let chat_state_id = `${entity_id}${group_id}`;
+
+	console.log("chat_state_id");
+	console.log(chat_state_id);
 
 	await update_doc(["chat_state", chat_state_id], {
 		current_chat_id: chat_id,

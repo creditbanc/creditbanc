@@ -50,20 +50,8 @@ let create_default_channel = async ({ group_id }) => {
 
 export const loader = async ({ request }) => {
 	let entity_id = await get_session_entity_id(request);
-	let chat_id = get_resource_id(request.url);
 	let group_id = get_group_id(request.url);
 	let chat_state_id = `${entity_id}${group_id}`;
-
-	// let default_channel = { id: "c8e2b492-46dc-4da3-8d76-3741565284b2" };
-
-	// await set_doc(["chat_state", chat_state_id], {
-	// 	id: chat_state_id,
-	// 	current_chat_id: default_channel.id,
-	// });
-
-	// console.log("chat_state_saved_______");
-
-	// return null;
 
 	let chat_state = await get_doc(["chat_state", chat_state_id]);
 
@@ -92,16 +80,7 @@ export const loader = async ({ request }) => {
 		});
 
 		return redirect(
-			`/chat/resource/e/${entity_id}/g/${group_id}/f${default_channel.id}`
-		);
-	}
-
-	// console.log("chat_id_______");
-	// console.log(chat_id);
-
-	if (!chat_id && channels.length > 0) {
-		return redirect(
-			`/chat/resource/e/${entity_id}/g/${group_id}/f/${chat_state.current_chat_id}`
+			`/chat/id/resource/e/${entity_id}/g/${group_id}/f/${default_channel.id}`
 		);
 	}
 
@@ -123,7 +102,7 @@ export const loader = async ({ request }) => {
 		],
 	});
 
-	return { entity_id, chat_id, channels, direct_messages, chat_state };
+	return { entity_id, channels, direct_messages, chat_state };
 };
 
 const DirectMessage = ({ unread = 0, id, selected = false, chat }) => {
@@ -141,7 +120,7 @@ const DirectMessage = ({ unread = 0, id, selected = false, chat }) => {
 	return (
 		<Link
 			className="flex flex-row text-sm items-center justify-between border-b cursor-pointer pr-4 pl-1 hover:bg-gray-100"
-			to={`/chat/resource/e/${entity_id}/g/${group_id}/f/${id}?rand=${Math.random()}`}
+			to={`/chat/id/resource/e/${entity_id}/g/${group_id}/f/${id}?rand=${Math.random()}`}
 		>
 			<div className="flex flex-row flex-1 space-x-3 items-center px-2 py-3">
 				<div>
@@ -247,7 +226,7 @@ const Channel = ({ selected = false, title, unread = 0, id = 0 }) => {
 		>
 			<Link
 				className="flex flex-row space-x-1 w-full cursor-pointer py-2"
-				to={`/chat/resource/e/${entity_id}/g/${group_id}/f/${id}?rand=${Math.random()}`}
+				to={`/chat/id/resource/e/${entity_id}/g/${group_id}/f/${id}?rand=${Math.random()}`}
 			>
 				<div>#</div>
 				<div>{title}</div>
@@ -345,15 +324,17 @@ const NewChannelModal = () => {
 };
 
 export default function Chat() {
+	let { pathname } = useLocation();
+
 	let {
 		entity_id,
-		chat_id,
 		channels: server_channels,
 		direct_messages = [],
 	} = useLoaderData();
 	let set_modal = useModalStore((state) => state.set_modal);
 	let channels = useChatsStore((state) => state.channels);
 	let set_chats_state = useChatsStore((state) => state.set_chats_state);
+	let chat_id = get_resource_id(pathname);
 
 	useEffect(() => {
 		if (server_channels.length > 0) {
