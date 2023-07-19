@@ -114,7 +114,7 @@ const RoleActions = ({ role }) => {
 						<Menu.Item>
 							{({ active }) => (
 								<Link
-									to={`/role/${role.id}/permissions`}
+									to={`/role/${role.id}/permissions/resource/e/${entity_id}/g/${group_id}`}
 									className={classNames(
 										active
 											? "bg-gray-100 text-gray-900"
