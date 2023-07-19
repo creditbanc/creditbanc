@@ -29,6 +29,9 @@ import {
 } from "~/api/ui/companies";
 import { useCompaniesDropdownStore } from "~/stores/useCompaniesDropdownStore";
 import copy from "copy-to-clipboard";
+import Share from "~/routes/invites/new/$.jsx";
+import Modal from "~/components/Modal";
+import { useModalStore } from "~/hooks/useModal";
 
 export const useRolesStore = create((set) => ({
 	roles: [],
@@ -132,6 +135,7 @@ const ShareDropdown = () => {
 	let entity_id = get_entity_id(pathname);
 	let group_id = get_group_id(pathname);
 	let roles = useRolesStore((state) => state.roles);
+	let set_modal = useModalStore((state) => state.set_modal);
 
 	const onCopyShareLink = (config_id, e) => {
 		e.preventDefault();
@@ -141,10 +145,21 @@ const ShareDropdown = () => {
 		);
 	};
 
+	const onShare = (e) => {
+		console.log("onShare", e);
+		set_modal({
+			is_open: true,
+			id: "share_modal",
+		});
+	};
+
 	return (
 		<Menu as="div" className="relative inline-block text-left">
 			<div>
-				<Menu.Button className="flex flex-row items-center space-x-2 bg-blue-600 text-white rounded-full px-3 py-1.5 text-sm cursor-pointer">
+				<Menu.Button
+					className="flex flex-row items-center space-x-2 bg-blue-600 text-white rounded-full px-3 py-1.5 text-sm cursor-pointer"
+					onClick={onShare}
+				>
 					<div>
 						<UsersIcon className="h-5 w-5 text-white" />
 					</div>
@@ -361,6 +376,9 @@ export default function Nav({ user_id }) {
 
 	return (
 		<div className="flex flex-col w-full  h-[65px] justify-center px-5">
+			<Modal id="share_modal">
+				<Share />
+			</Modal>
 			<div className="flex flex-row justify-between">
 				<div className="flex flex-col justify-center w-[150px]">
 					<Link to={`/home/resource/e/${entity_id}/g/${group_id}`}>

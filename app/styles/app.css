@@ -2340,6 +2340,10 @@ video {
   overflow-x: hidden;
 }
 
+.overflow-x-scroll {
+  overflow-x: scroll;
+}
+
 .overflow-y-scroll {
   overflow-y: scroll;
 }
@@ -3145,6 +3149,10 @@ video {
 
 .pr-9 {
   padding-right: 2.25rem;
+}
+
+.pr-\[30px\] {
+  padding-right: 30px;
 }
 
 .pt-1 {

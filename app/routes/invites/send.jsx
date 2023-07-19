@@ -1,12 +1,12 @@
 import { json } from "@remix-run/node";
 import sendgrid from "@sendgrid/mail";
-import { get_user } from "~/utils/auth.server";
+import { get_session_entity_id, get_user } from "~/utils/auth.server";
 const cb_logo = "/images/logos/cb_logo_3.png";
 
 sendgrid.setApiKey(process.env.SENDGRID);
 
 export const action = async ({ request }) => {
-	const entity = await get_user(request);
+	const entity = await get_session_entity_id(request);
 	// console.log("send_invite");
 	// console.log(entity);
 	// return null;

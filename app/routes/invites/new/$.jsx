@@ -7,13 +7,34 @@ import {
 } from "@remix-run/react";
 import ResourceSettingsTabs from "~/components/ResourceSettingsTabs";
 import { get_resource_permissions } from "~/utils/role.server";
-import { get_group_id, to_resource_pathname } from "~/utils/helpers";
-import { keys, head, pipe, defaultTo, map } from "ramda";
-import { Listbox, Transition } from "@headlessui/react";
-import { ChevronUpDownIcon } from "@heroicons/react/20/solid";
+import {
+	classNames,
+	get_entity_id,
+	get_group_id,
+	to_resource_pathname,
+} from "~/utils/helpers";
+import { keys, head, pipe, defaultTo, map, isEmpty } from "ramda";
+import { Listbox, Transition, Menu } from "@headlessui/react";
+import { ChevronUpDownIcon, ChevronDownIcon } from "@heroicons/react/20/solid";
 import copy from "copy-to-clipboard";
 import { json } from "@remix-run/node";
 import { useModalStore } from "~/hooks/useModal";
+import { get_session_entity_id } from "~/utils/auth.server";
+import { get_collection } from "~/utils/firebase";
+import { filter, mod } from "shades";
+import { create } from "zustand";
+
+export const useRolesStore = create((set) => ({
+	roles: [],
+	set_roles: (path, value) =>
+		set((state) => pipe(mod(...path)(() => value))(state)),
+}));
+
+export const useRoleStore = create((set) => ({
+	role: {},
+	set_state: (path, value) =>
+		set((state) => pipe(mod(...path)(() => value))(state)),
+}));
 
 const LinkIcon = () => {
 	return (
@@ -34,164 +55,149 @@ const LinkIcon = () => {
 	);
 };
 
-function classNames(...classes) {
-	return classes.filter(Boolean).join(" ");
-}
+const RolesDropdown = () => {
+	let roles = useRolesStore((state) => state.roles);
+	let set_role = useRoleStore((state) => state.set_state);
+	let role = useRoleStore((state) => state.role);
 
-const SelectComponent = ({ roles = [], onSelectRole, selected_role }) => {
+	const onSelectRole = (role_id) => {
+		set_role(["role"], pipe(filter({ id: role_id }), head)(roles));
+	};
+
 	return (
-		<div className="flex flex-row justify-between">
-			<Listbox
-				value={selected_role}
-				onChange={onSelectRole}
-				className="w-[100%]"
+		<Menu as="div" className="relative inline-block text-left">
+			<div>
+				<Menu.Button className="inline-flex w-full justify-center gap-x-1.5 rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm hover:bg-gray-50 outline-none border">
+					{!isEmpty(role) ? (
+						<div className="flex flex-row items-center gap-x-2">
+							{role.name}
+							<ChevronDownIcon
+								className="-mr-1 h-5 w-5 text-gray-400"
+								aria-hidden="true"
+							/>
+						</div>
+					) : (
+						<div className="flex flex-row gap-x-2">
+							Roles
+							<ChevronDownIcon
+								className="-mr-1 h-5 w-5 text-gray-400"
+								aria-hidden="true"
+							/>
+						</div>
+					)}
+				</Menu.Button>
+			</div>
+
+			<Transition
+				as={Fragment}
+				enter="transition ease-out duration-100"
+				enterFrom="transform opacity-0 scale-95"
+				enterTo="transform opacity-100 scale-100"
+				leave="transition ease-in duration-75"
+				leaveFrom="transform opacity-100 scale-100"
+				leaveTo="transform opacity-0 scale-95"
 			>
-				{({ open }) => (
-					<div className="relative mt-1">
-						<Listbox.Button className="relative w-full cursor-default rounded-md border border-gray-300 bg-white py-2 pl-3 pr-10 text-left shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 sm:text-sm min-h-[40px]">
-							<span className="block truncate">
-								{selected_role}
-							</span>
-							<span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
-								<ChevronUpDownIcon
-									className="h-5 w-5 text-gray-400"
-									aria-hidden="true"
-								/>
-							</span>
-						</Listbox.Button>
-
-						<Transition
-							show={open}
-							as={Fragment}
-							leave="transition ease-in duration-100"
-							leaveFrom="opacity-100"
-							leaveTo="opacity-0"
-						>
-							<Listbox.Options className="absolute z-10 mt-1 max-h-60 w-full rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
-								{map(
-									(option) => (
-										<Listbox.Option
-											key={option}
-											className={({ active }) =>
-												classNames(
-													active
-														? "text-white bg-indigo-600"
-														: "text-gray-900",
-													"relative cursor-default select-none py-2 pl-3 pr-9"
-												)
+				<Menu.Items className="absolute left-0 z-10 mt-2 w-full origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+					<div className="py-1">
+						{pipe(
+							map((role) => (
+								<Menu.Item key={role.id}>
+									{({ active }) => (
+										<div
+											onClick={() =>
+												onSelectRole(role.id)
 											}
-											value={option}
-										>
-											{({ selected, active }) => (
-												<>
-													<span
-														className={classNames(
-															selected
-																? "font-semibold"
-																: "font-normal",
-															"block truncate"
-														)}
-													>
-														{option}
-													</span>
-
-													{option == selected_role ? (
-														<span
-															className={classNames(
-																active
-																	? "text-white"
-																	: "text-indigo-600",
-																"absolute inset-y-0 right-0 flex items-center pr-4"
-															)}
-														>
-															<svg
-																xmlns="http://www.w3.org/2000/svg"
-																viewBox="0 0 24 24"
-																fill="currentColor"
-																className="w-6 h-6"
-															>
-																<path
-																	fillRule="evenodd"
-																	d="M19.916 4.626a.75.75 0 01.208 1.04l-9 13.5a.75.75 0 01-1.154.114l-6-6a.75.75 0 011.06-1.06l5.353 5.353 8.493-12.739a.75.75 0 011.04-.208z"
-																	clipRule="evenodd"
-																/>
-															</svg>
-														</span>
-													) : null}
-												</>
+											className={classNames(
+												active
+													? "bg-gray-100 text-gray-900"
+													: "text-gray-700",
+												"block px-4 py-2 text-sm"
 											)}
-										</Listbox.Option>
-									),
-									roles
-								)}
-							</Listbox.Options>
-						</Transition>
+										>
+											{role.name}
+										</div>
+									)}
+								</Menu.Item>
+							))
+						)(roles)}
 					</div>
-				)}
-			</Listbox>
-		</div>
+				</Menu.Items>
+			</Transition>
+		</Menu>
 	);
 };
 
-export const action = async ({ request }) => {
-	const form = await request.formData();
-	const group_id = form.get("group_id");
-	const permissions = await get_resource_permissions({ group_id });
-	const roles = keys(permissions);
-	return json({ roles });
-};
-
 export default function Invite() {
-	const fetcher = useFetcher();
 	const location = useLocation();
-	const [roles, setRoles] = useState([]);
-	const [selectedRole, setSelectedRole] = useState("");
+	let fetcher = useFetcher();
+	// const [roles, setRoles] = useState([]);
+	// const [selectedRole, setSelectedRole] = useState({});
 	const set_open = useModalStore((state) => state.set_open);
 	const [member_email, set_member_email] = useState("");
+	let [share_link, set_share_link] = useState("");
+	let { pathname } = location;
+	let entity_id = get_entity_id(pathname);
+	let group_id = get_group_id(pathname);
+	let set_roles = useRolesStore((state) => state.set_roles);
+	let roles = useRolesStore((state) => state.roles);
+	let role = useRoleStore((state) => state.role);
+	let set_role = useRoleStore((state) => state.set_state);
 
-	const shareLink =
-		origin +
-		"/links/credit/report/personal/personal" +
-		to_resource_pathname(location.pathname);
-
-	const onSelectRole = (role_id) => {
-		setSelectedRole(role_id);
-	};
+	// const onSelectRole = (role_id) => {
+	// 	setSelectedRole(pipe(filter({ id: role_id }), head)(roles));
+	// };
 
 	const onCopyLink = () => {
-		copy(shareLink + "?role=" + selectedRole);
+		// copy(shareLink + "?role=" + selectedRole);
+		let { origin } = window.location;
+		copy(
+			`${origin}/links/resource/e/${entity_id}/g/${group_id}?config_id=${role.id}`
+		);
+	};
+
+	const get_roles = async () => {
+		let roles = await get_collection({
+			path: ["role_configs"],
+			queries: [
+				{
+					param: "entity_id",
+					predicate: "==",
+					value: entity_id,
+				},
+			],
+		});
+
+		if (!isEmpty(roles)) {
+			set_roles(["roles"], roles);
+		}
 	};
 
 	useEffect(() => {
-		setSelectedRole(head(roles));
+		set_share_link(
+			`${origin}/links/resource/e/${entity_id}/g/${group_id}?config_id=${role.id}`
+		);
+	}, [role]);
+
+	useEffect(() => {
+		if (!isEmpty(roles)) {
+			let role = head(roles);
+			set_role(["role"], role);
+		}
 	}, [roles]);
 
 	useEffect(() => {
-		let roles = fetcher?.data?.roles;
-		if (roles) {
-			setRoles(roles);
-		}
-	}, [fetcher]);
-
-	useEffect(() => {
-		let group_id = get_group_id(location.pathname);
-		fetcher.submit(
-			{ group_id },
-			{ method: "post", action: "/invites/new" }
-		);
+		get_roles();
 	}, []);
 
 	const onInvite = async () => {
-		// console.log("onInvite");
-
+		console.log("onInvite");
 		fetcher.submit(
 			{
-				share_link: shareLink + "?role=" + selectedRole,
+				share_link,
 				member_email,
 			},
 			{ method: "post", action: "/invites/send" }
 		);
-
 		set_open(false);
 	};
 
@@ -210,6 +216,15 @@ export default function Invite() {
 					<p className="mt-1 text-sm text-gray-500">
 						Use links to share and invite people.
 					</p>
+				</div>
+
+				<div className="mt-[10px] mb-[15px] flex flex-col relative">
+					<div className="text-gray-400 text-sm mb-[10px]">
+						Select Role
+					</div>
+					<div className="flex flex-col">
+						<RolesDropdown />
+					</div>
 				</div>
 
 				<div className="mt-[10px] mb-[15px] flex flex-col relative">
@@ -242,11 +257,16 @@ export default function Invite() {
 					</div>
 					<div className="flex flex-col">
 						<div
-							className="flex flex-col justify-center h-[45px] w-full rounded-md border pl-[10px] border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+							className="flex flex-col justify-center  w-full rounded-md border pl-[10px] border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm overflow-hidden"
 							placeholder="Role name"
 						>
-							<div className="overflow-scroll w-[calc(100%-35px)] scrollbar-none text-gray-400 text-sm">
-								{shareLink}
+							<div className="flex flex-col overflow-hidden pr-[30px] bg-wite py-2">
+								<div
+									className="flex flex-col overflow-x-scroll scrollbar-none text-gray-400 text-sm"
+									style={{ textWrap: "nowrap" }}
+								>
+									{share_link}
+								</div>
 							</div>
 						</div>
 
