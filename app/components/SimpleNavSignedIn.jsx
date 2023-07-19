@@ -145,8 +145,7 @@ const ShareDropdown = () => {
 		);
 	};
 
-	const onShare = (e) => {
-		console.log("onShare", e);
+	const onShareModal = (e) => {
 		set_modal({
 			is_open: true,
 			id: "share_modal",
@@ -155,16 +154,21 @@ const ShareDropdown = () => {
 
 	return (
 		<Menu as="div" className="relative inline-block text-left">
-			<div>
-				<Menu.Button
-					className="flex flex-row items-center space-x-2 bg-blue-600 text-white rounded-full px-3 py-1.5 text-sm cursor-pointer"
-					onClick={onShare}
-				>
-					<div>
-						<UsersIcon className="h-5 w-5 text-white" />
+			<div className="flex flex-row divide-x bg-blue-600 text-white rounded-full px-3 py-1.5 text-sm cursor-pointer space-x-3">
+				<Menu.Button className="flex flex-row items-center  ">
+					<div className="flex flex-row space-x-2">
+						<div>
+							<UsersIcon className="h-5 w-5 text-white" />
+						</div>
+						<div>Share</div>
 					</div>
-					<div>Share</div>
 				</Menu.Button>
+				<div
+					className="flex flex-col w-full items-center pl-1"
+					onClick={onShareModal}
+				>
+					<ChevronDownIcon className="h-5 w-5 text-white" />
+				</div>
 			</div>
 
 			<Transition
