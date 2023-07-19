@@ -169,8 +169,8 @@ export const get_count = async ({
 	const q = query(collection(firestore, ...path), ...args);
 	const querySnapshot = await getCountFromServer(q);
 
-	console.log("count_______");
-	console.log(querySnapshot.data());
+	// console.log("count_______");
+	// console.log(querySnapshot.data());
 
 	return querySnapshot.data().count;
 };
@@ -183,6 +183,11 @@ export const get_doc_snapshot = async (path) => {
 export const get_doc = async (path) => {
 	let docSnapshot = await getDoc(doc(firestore, ...path));
 	return docSnapshot.data() ?? {};
+};
+
+export const get_doc_listener = (path, callback) => {
+	let unsubscribe = onSnapshot(doc(firestore, ...path), callback);
+	return unsubscribe;
 };
 
 export const set_doc = async (path, data) => {

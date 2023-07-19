@@ -17,8 +17,25 @@ import {
 	XMarkIcon,
 } from "@heroicons/react/24/outline";
 import { v4 as uuidv4 } from "uuid";
-import { delete_doc, get_collection, get_doc, set_doc } from "~/utils/firebase";
-import { defaultTo, head, map, pipe, prop, sortBy } from "ramda";
+import {
+	delete_doc,
+	get_collection,
+	get_collection_listener,
+	get_doc,
+	get_doc_listener,
+	set_doc,
+} from "~/utils/firebase";
+import {
+	defaultTo,
+	findIndex,
+	head,
+	isEmpty,
+	map,
+	pipe,
+	prop,
+	propEq,
+	sortBy,
+} from "ramda";
 import { get, mod, filter } from "shades";
 import { create } from "zustand";
 import { Fragment } from "react";
@@ -29,24 +46,25 @@ import avatars from "~/data/avatars";
 
 const useChatsStore = create((set) => ({
 	channels: [],
+	direct_messages: [],
 	set_chats_state: (path, value) =>
 		set((state) => pipe(mod(...path)(() => value))(state)),
 }));
 
-let create_default_channel = async ({ group_id }) => {
-	let default_chat_id = uuidv4();
+// let create_default_channel = async ({ group_id }) => {
+// 	let default_chat_id = uuidv4();
 
-	let default_chat_payload = {
-		group_id,
-		id: default_chat_id,
-		index: 0,
-		title: "General",
-		type: "channel",
-	};
+// 	let default_chat_payload = {
+// 		group_id,
+// 		id: default_chat_id,
+// 		index: 0,
+// 		title: "General",
+// 		type: "channel",
+// 	};
 
-	await set_doc(["chats", default_chat_id], default_chat_payload);
-	return default_chat_payload;
-};
+// 	await set_doc(["chats", default_chat_id], default_chat_payload);
+// 	return default_chat_payload;
+// };
 
 export const loader = async ({ request }) => {
 	let entity_id = await get_session_entity_id(request);
@@ -70,6 +88,32 @@ export const loader = async ({ request }) => {
 			},
 		],
 	});
+
+	channels = await Promise.all(
+		pipe(
+			map(async (channel) => {
+				let channel_state = await get_doc([
+					"channel_state",
+					channel.id,
+				]);
+				let entity_channel_state = await get_doc([
+					"entity_channel_state",
+					channel.id + entity_id,
+				]);
+
+				let unread =
+					channel_state.num_of_messages -
+					entity_channel_state.num_of_messages;
+
+				return {
+					...channel,
+					unread,
+					entity_channel_messages:
+						entity_channel_state.num_of_messages,
+				};
+			})
+		)(channels)
+	);
 
 	// if (channels.length === 0) {
 	// 	let default_channel = await create_default_channel({ group_id });
@@ -101,6 +145,32 @@ export const loader = async ({ request }) => {
 			},
 		],
 	});
+
+	direct_messages = await Promise.all(
+		pipe(
+			map(async (channel) => {
+				let channel_state = await get_doc([
+					"channel_state",
+					channel.id,
+				]);
+				let entity_channel_state = await get_doc([
+					"entity_channel_state",
+					channel.id + entity_id,
+				]);
+
+				let unread =
+					channel_state.num_of_messages -
+					entity_channel_state.num_of_messages;
+
+				return {
+					...channel,
+					unread,
+					entity_channel_messages:
+						entity_channel_state.num_of_messages,
+				};
+			})
+		)(direct_messages)
+	);
 
 	return { entity_id, channels, direct_messages, chat_state };
 };
@@ -325,16 +395,23 @@ const NewChannelModal = () => {
 
 export default function Chat() {
 	let { pathname } = useLocation();
-
 	let {
 		entity_id,
 		channels: server_channels,
-		direct_messages = [],
+		direct_messages: server_direct_messages,
 	} = useLoaderData();
 	let set_modal = useModalStore((state) => state.set_modal);
 	let channels = useChatsStore((state) => state.channels);
+	let direct_messages = useChatsStore((state) => state.direct_messages);
 	let set_chats_state = useChatsStore((state) => state.set_chats_state);
 	let chat_id = get_resource_id(pathname);
+	let group_id = get_group_id(pathname);
+	const [is_listening_to_channels, set_is_listening_to_channels] =
+		useState(false);
+	const [
+		is_listening_to_direct_messages,
+		set_is_listening_to_direct_messages,
+	] = useState(false);
 
 	useEffect(() => {
 		if (server_channels.length > 0) {
@@ -342,9 +419,123 @@ export default function Chat() {
 		}
 	}, [server_channels]);
 
+	useEffect(() => {
+		if (server_channels.length > 0) {
+			set_chats_state(["direct_messages"], server_direct_messages);
+		}
+	}, [server_direct_messages]);
+
 	const onNewChannelClick = () => {
 		set_modal({ id: "new_channel_modal", is_open: true });
 	};
+
+	const init_channel_state_listener = async () => {
+		get_collection_listener(
+			{
+				path: ["channel_state"],
+				queries: [
+					{
+						param: "group_id",
+						predicate: "==",
+						value: group_id,
+					},
+				],
+			},
+			(snapshot) => {
+				return pipe(
+					map(async (change) => {
+						let channel_state = change.doc.data();
+
+						let { chat_id, num_of_messages, group_id } =
+							channel_state;
+
+						let channel_index = channels.findIndex(
+							(channel) => channel.id === chat_id
+						);
+
+						let channel = channels[channel_index];
+
+						if (channel) {
+							let unread =
+								num_of_messages -
+								channel?.entity_channel_messages;
+
+							set_chats_state(
+								["channels"],
+								pipe(
+									mod(channel_index)((channel) => ({
+										...channel,
+										unread,
+									}))
+								)(channels)
+							);
+						}
+					})
+				)(snapshot.docChanges());
+			}
+		);
+	};
+
+	const init_direct_messages_state_listener = async () => {
+		get_collection_listener(
+			{
+				path: ["channel_state"],
+				queries: [
+					{
+						param: "group_id",
+						predicate: "==",
+						value: group_id,
+					},
+				],
+			},
+			(snapshot) => {
+				return pipe(
+					map(async (change) => {
+						let channel_state = change.doc.data();
+
+						let { chat_id, num_of_messages, group_id } =
+							channel_state;
+
+						let channel_index = direct_messages.findIndex(
+							(channel) => channel.id === chat_id
+						);
+
+						let channel = direct_messages[channel_index];
+
+						if (channel) {
+							let unread =
+								num_of_messages -
+								channel?.entity_channel_messages;
+
+							set_chats_state(
+								["direct_messages"],
+								pipe(
+									mod(channel_index)((channel) => ({
+										...channel,
+										unread,
+									}))
+								)(direct_messages)
+							);
+						}
+					})
+				)(snapshot.docChanges());
+			}
+		);
+	};
+
+	useEffect(() => {
+		if (!isEmpty(channels) && !is_listening_to_channels) {
+			set_is_listening_to_channels(true);
+			init_channel_state_listener();
+		}
+	}, [channels, is_listening_to_channels]);
+
+	useEffect(() => {
+		if (!isEmpty(direct_messages) && !is_listening_to_direct_messages) {
+			set_is_listening_to_direct_messages(true);
+			init_direct_messages_state_listener();
+		}
+	}, [direct_messages, is_listening_to_direct_messages]);
 
 	return (
 		<div className="flex flex-col w-full h-full bg-gray-50 overflow-hidden">
@@ -378,7 +569,7 @@ export default function Chat() {
 							map((channel) => (
 								<Channel
 									title={channel.title}
-									unread={2}
+									unread={channel.unread}
 									id={channel.id}
 									selected={chat_id == channel.id}
 									key={channel.id}
@@ -396,7 +587,7 @@ export default function Chat() {
 						{pipe(
 							map((chat) => (
 								<DirectMessage
-									unread={5}
+									unread={chat.unread}
 									id={chat.id}
 									key={chat.id}
 									selected={chat_id == chat.id}

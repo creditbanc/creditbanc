@@ -25,6 +25,7 @@ import {
 	identity,
 	ifElse,
 	init,
+	isEmpty,
 	last,
 	length,
 	map,
@@ -40,6 +41,7 @@ import { v4 as uuidv4 } from "uuid";
 import {
 	get_collection,
 	get_collection_listener,
+	get_count,
 	get_doc,
 	set_doc,
 	update_doc,
@@ -281,15 +283,14 @@ const Members = () => {
 };
 
 const MessageTextArea = () => {
-	let { entity_id } = useLoaderData();
-	let [entity, set_entity] = useState({});
 	let { pathname } = useLocation();
+	let { entity_id } = useLoaderData();
+	let group_id = get_group_id(pathname);
+	let [entity, set_entity] = useState({});
 	let chat_id = get_resource_id(pathname);
 	let text_area_ref = useRef(null);
 	let [num_of_rows, set_num_of_rows] = useState(1);
 	let { message, set_message } = useMessageStore();
-	let set_chat_state = useChatStore((state) => state.set_chat_state);
-	let messages = useChatStore((state) => state.messages);
 
 	let get_set_entity = async () => {
 		let entity_response = await axios.request({
@@ -337,9 +338,36 @@ const MessageTextArea = () => {
 
 			set_doc(["messages", message_id], payload);
 
-			set_message(["message"], "");
+			let messages_queries = [
+				{
+					param: "chat_id",
+					predicate: "==",
+					value: chat_id,
+				},
+			];
 
-			// set_chat_state(["messages"], [...messages, payload]);
+			let messages_count = await get_count({
+				path: ["messages"],
+				queries: messages_queries,
+			});
+
+			// console.log("messages_count____");
+			// console.log(messages_count);
+
+			await set_doc(["channel_state", chat_id], {
+				num_of_messages: messages_count,
+				group_id,
+				chat_id,
+			});
+
+			await set_doc(["entity_channel_state", chat_id + entity_id], {
+				num_of_messages: messages_count,
+				entity_id,
+				chat_id,
+				group_id,
+			});
+
+			set_message(["message"], "");
 		}
 
 		if (key === 8) {
@@ -550,6 +578,8 @@ const NewMessageInput = () => {
 
 const Messages = () => {
 	let { pathname } = useLocation();
+	let entity_id = get_entity_id(pathname);
+	let group_id = get_group_id(pathname);
 	const { messages: server_messages } = useLoaderData();
 	const set_chat_state = useChatStore((state) => state.set_chat_state);
 	let [new_message_queue, set_new_message_queue] = useState({});
@@ -573,6 +603,38 @@ const Messages = () => {
 			uniqBy(prop("message_id"), [...messages, new_message_queue])
 		);
 	}, [new_message_queue]);
+
+	const update_entity_chat_message_count = async () => {
+		// console.log("update_entity_chat_message_count");
+		let messages_queries = [
+			{
+				param: "chat_id",
+				predicate: "==",
+				value: chat_id,
+			},
+		];
+
+		let messages_count = await get_count({
+			path: ["messages"],
+			queries: messages_queries,
+		});
+
+		// console.log("messages_count_____");
+		// console.log(messages_count);
+
+		await set_doc(["entity_channel_state", chat_id + entity_id], {
+			num_of_messages: messages_count,
+			entity_id,
+			chat_id,
+			group_id,
+		});
+	};
+
+	useEffect(() => {
+		if (!isEmpty(messages)) {
+			update_entity_chat_message_count();
+		}
+	}, [messages]);
 
 	useEffect(() => {
 		let messages_queries = [
