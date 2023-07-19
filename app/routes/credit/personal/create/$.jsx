@@ -16,12 +16,12 @@ import { UsaStates } from "usa-states";
 import random from "random-name";
 import { sample } from "~/utils/helpers";
 import { ParseSSN, RandomSSN } from "ssn";
-import { get, all } from "shades";
+import { get, all, mod } from "shades";
 import { report_url, get_credit_report, is_sandbox } from "~/data/array";
 const cities = require("all-the-cities");
 import { prisma } from "~/utils/prisma.server";
 import { v4 as uuidv4 } from "uuid";
-import { get_doc } from "~/utils/firebase";
+import { get_doc, set_doc, update_doc } from "~/utils/firebase";
 
 const credit_user = (user) => {
 	if (is_sandbox) {
@@ -152,6 +152,19 @@ export const loader = async ({ request }) => {
 
 	// console.log("credit_report_payload");
 	// console.log(credit_report_payload);
+
+	await set_doc(
+		["onboard", entity_id],
+		{
+			personal_credit_report: {
+				id: "personal_credit_report",
+				completed: true,
+			},
+			entity_id,
+			group_id,
+		},
+		true
+	);
 
 	// return null;
 

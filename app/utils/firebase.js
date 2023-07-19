@@ -180,9 +180,9 @@ export const get_doc_snapshot = async (path) => {
 	return docSnapshot;
 };
 
-export const get_doc = async (path) => {
+export const get_doc = async (path, is_empty_return = {}) => {
 	let docSnapshot = await getDoc(doc(firestore, ...path));
-	return docSnapshot.data() ?? {};
+	return docSnapshot.data() ?? is_empty_return;
 };
 
 export const get_doc_listener = (path, callback) => {
@@ -190,8 +190,12 @@ export const get_doc_listener = (path, callback) => {
 	return unsubscribe;
 };
 
-export const set_doc = async (path, data) => {
-	return await setDoc(doc(firestore, ...path), data);
+export const set_doc = async (path, data, merge = false) => {
+	if (merge) {
+		return await setDoc(doc(firestore, ...path), data, { merge: true });
+	} else {
+		return await setDoc(doc(firestore, ...path), data);
+	}
 };
 
 export const update_doc = async (path, data) => {

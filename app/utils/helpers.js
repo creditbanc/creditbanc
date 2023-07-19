@@ -362,3 +362,8 @@ export const get_role_id = (pathname) => {
 	let path = trim(pathname.split("/"));
 	return path[1];
 };
+
+export const array_index_of = (field, value, array) => {
+	let index = array.findIndex((item) => item[field] === value);
+	return index;
+};

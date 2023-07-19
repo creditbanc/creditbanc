@@ -6,7 +6,17 @@ import {
 	get_group_id,
 	use_search_params,
 } from "~/utils/helpers";
-import { length, map, pipe } from "ramda";
+import {
+	__,
+	defaultTo,
+	head,
+	length,
+	map,
+	mergeDeepRight,
+	omit,
+	pipe,
+	values,
+} from "ramda";
 import { all, filter, get } from "shades";
 import { prisma } from "~/utils/prisma.server";
 import { useLoaderData } from "@remix-run/react";
@@ -22,7 +32,10 @@ import { ChevronUpIcon } from "@heroicons/react/20/solid";
 import { Disclosure } from "@headlessui/react";
 import { CheckCircleIcon, XCircleIcon } from "@heroicons/react/24/outline";
 import { get_doc } from "~/utils/firebase";
-import { useOnboardingStore } from "~/stores/useOnboardingStore";
+import {
+	useOnboardingStore,
+	default_onboard_state,
+} from "~/stores/useOnboardingStore";
 
 export const loader = async ({ request }) => {
 	let url = new URL(request.url);
@@ -36,14 +49,13 @@ export const loader = async ({ request }) => {
 
 	let { allow_empty } = cookies_json;
 
-	let { plan_id } = await get_doc(["entity", entity_id]);
+	let onboard_state = await get_doc(["onboard", entity_id]);
+	onboard_state = pipe(
+		omit(["group_id", "entity_id"]),
+		values
+	)(onboard_state);
 
-	// let { plan_id } = await prisma.entity.findUnique({
-	// 	where: { id: entity_id },
-	// 	select: {
-	// 		plan_id: true,
-	// 	},
-	// });
+	let { plan_id } = await get_doc(["entity", entity_id]);
 
 	let business_info_response = await axios({
 		method: "get",
@@ -81,6 +93,7 @@ export const loader = async ({ request }) => {
 		plan_id,
 		financials,
 		business,
+		onboard: onboard_state,
 	};
 
 	// console.log("payload");
@@ -509,7 +522,7 @@ const Notifications = () => {
 	let { pathname } = useLocation();
 	let entity_id = get_entity_id(pathname);
 	let group_id = get_group_id(pathname);
-	let onboard = useOnboardingStore((state) => state.onboarding);
+	let onboard = useOnboardingStore((state) => state.onboard);
 
 	return (
 		<div className="mx-auto w-full max-w-md rounded-2xl bg-white p-2 space-y-2">
@@ -528,7 +541,10 @@ const Notifications = () => {
 						<Disclosure.Panel className="px-4  pb-2 text-gray-500 space-y-3 text-sm">
 							<div className="flex flex-col gap-y-3">
 								{pipe(
-									filter({ category: "credit" }),
+									filter({
+										category: "credit",
+										completed: false,
+									}),
 									map((step) => (
 										<div
 											className="flex flex-row w-full border p-2 rounded"
@@ -575,7 +591,10 @@ const Notifications = () => {
 						<Disclosure.Panel className="px-4  pb-2 text-gray-500 space-y-3 text-sm">
 							<div className="flex flex-col gap-y-3">
 								{pipe(
-									filter({ category: "financial" }),
+									filter({
+										category: "financial",
+										completed: false,
+									}),
 									map((step) => (
 										<div
 											className="flex flex-row w-full border p-2 rounded"
@@ -622,7 +641,10 @@ const Notifications = () => {
 						<Disclosure.Panel className="px-4  pb-2 text-gray-500 space-y-3 text-sm">
 							<div className="flex flex-col gap-y-3">
 								{pipe(
-									filter({ category: "vault" }),
+									filter({
+										category: "vault",
+										completed: false,
+									}),
 									map((step) => (
 										<div
 											className="flex flex-row w-full border p-2 rounded"
@@ -669,7 +691,10 @@ const Notifications = () => {
 						<Disclosure.Panel className="px-4  pb-2 text-gray-500 space-y-3 text-sm">
 							<div className="flex flex-col gap-y-3">
 								{pipe(
-									filter({ category: "social" }),
+									filter({
+										category: "social",
+										completed: false,
+									}),
 									map((step) => (
 										<div
 											className="flex flex-row w-full border p-2 rounded"
@@ -707,9 +732,14 @@ const Notifications = () => {
 };
 
 export default function Home() {
-	const { plan_id = "essential", financials = {} } = useLoaderData();
+	const {
+		plan_id = "essential",
+		financials = {},
+		onboard: onboard_db,
+	} = useLoaderData();
 	let set_financials = useCashflowStore((state) => state.set_state);
-	let onboard = useOnboardingStore((state) => state.onboarding);
+	let onboard = useOnboardingStore((state) => state.onboard);
+	let set_onboard = useOnboardingStore((state) => state.set_state);
 
 	let onboard_num_of_steps = pipe(length)(onboard);
 	let onboard_steps_completed = pipe(
@@ -717,6 +747,23 @@ export default function Home() {
 		filter((value) => value == true),
 		length
 	)(onboard);
+
+	useEffect(() => {
+		onboard = pipe(
+			map((step) =>
+				mergeDeepRight(
+					step,
+					pipe(
+						filter({ id: step.id }),
+						head,
+						defaultTo({})
+					)(onboard_db)
+				)
+			)
+		)(onboard);
+
+		set_onboard(["onboard"], onboard);
+	}, [onboard_db]);
 
 	let onboard_percent_completed =
 		(onboard_steps_completed / onboard_num_of_steps) * 100;

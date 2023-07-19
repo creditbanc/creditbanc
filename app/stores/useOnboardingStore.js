@@ -2,7 +2,7 @@ import { create } from "zustand";
 import { pipe } from "ramda";
 import { mod } from "shades";
 
-let default_state = [
+export const default_onboard_state = [
 	{
 		id: "welcome_video",
 		text: "Watch the welcome video",
@@ -68,7 +68,7 @@ let default_state = [
 ];
 
 export const useOnboardingStore = create((set) => ({
-	onboarding: default_state,
+	onboard: default_onboard_state,
 	set_state: (path, value) =>
 		set((state) => pipe(mod(...path)(() => value))(state)),
 }));

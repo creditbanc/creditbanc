@@ -28,7 +28,7 @@ import Cookies from "js-cookie";
 import { plan_product_requests } from "~/data/plan_product_requests";
 import { prisma } from "~/utils/prisma.server";
 import { get_lendflow_report } from "~/utils/lendflow.server";
-import { get_doc } from "~/utils/firebase";
+import { get_doc, set_doc } from "~/utils/firebase";
 
 const useReportStore = create((set) => ({
 	form: {
@@ -116,6 +116,19 @@ export const action = async ({ request }) => {
 	};
 
 	await create_new_report(report);
+
+	await set_doc(
+		["onboard", entity_id],
+		{
+			business_credit_report: {
+				id: "business_credit_report",
+				completed: true,
+			},
+			entity_id,
+			group_id,
+		},
+		true
+	);
 
 	return redirect(
 		`/credit/report/business/experian/overview/resource/e/${entity_id}/g/${group_id}`
@@ -342,8 +355,6 @@ const Form = () => {
 			business_start_date: business_start_date_string,
 			...rest,
 		};
-
-		console.log(payload);
 
 		submit(
 			{ payload: JSON.stringify(payload) },
@@ -820,9 +831,6 @@ const PreFills = () => {
 export default function NewBusinessReport() {
 	let location = useLocation();
 	let search_obj = get_search_params_obj(location.search);
-
-	console.log("location");
-	console.log(search_obj);
 
 	return (
 		<div className="flex flex-col w-full">
