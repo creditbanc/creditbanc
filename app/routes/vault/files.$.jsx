@@ -28,7 +28,7 @@ import { useModalStore } from "~/hooks/useModal";
 import { useEffect, Fragment, useState } from "react";
 import { Link, useLoaderData, useLocation } from "@remix-run/react";
 import { useFilesStore } from "~/hooks/useFiles";
-import { delete_doc, get_collection, storage } from "~/utils/firebase";
+import { delete_doc, get_collection, get_doc, storage } from "~/utils/firebase";
 import {
 	ref,
 	getDownloadURL,
@@ -50,6 +50,8 @@ import {
 	prop,
 	flatten,
 	filter as rfilter,
+	omit,
+	values,
 } from "ramda";
 import { set_doc } from "~/utils/firebase";
 import moment from "moment";
@@ -129,6 +131,15 @@ export const loader = async ({ request }) => {
 	if (!is_authorized) {
 		return redirect(`/home/resource/e/${entity_id}/g/${group_id}`);
 	}
+
+	let onboard_state = await get_doc(["onboard", entity_id]);
+	onboard_state = pipe(
+		omit(["group_id", "entity_id"]),
+		values
+	)(onboard_state);
+
+	console.log("onboard_state_____");
+	console.log(onboard_state);
 
 	let queries = [
 		{

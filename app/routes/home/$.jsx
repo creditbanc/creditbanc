@@ -543,7 +543,7 @@ const Notifications = () => {
 								{pipe(
 									filter({
 										category: "credit",
-										completed: false,
+										// completed: false,
 									}),
 									map((step) => (
 										<div
@@ -593,7 +593,7 @@ const Notifications = () => {
 								{pipe(
 									filter({
 										category: "financial",
-										completed: false,
+										// completed: false,
 									}),
 									map((step) => (
 										<div
@@ -643,7 +643,7 @@ const Notifications = () => {
 								{pipe(
 									filter({
 										category: "vault",
-										completed: false,
+										// completed: false,
 									}),
 									map((step) => (
 										<div
@@ -693,7 +693,7 @@ const Notifications = () => {
 								{pipe(
 									filter({
 										category: "social",
-										completed: false,
+										// completed: false,
 									}),
 									map((step) => (
 										<div
