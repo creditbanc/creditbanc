@@ -30,12 +30,12 @@ const Integrations = () => {
 				className="mt-6 divide-y divide-gray-100 border-t border-gray-200 text-sm leading-6"
 			>
 				<li className="flex justify-between gap-x-6 py-6">
-					<div className="font-medium text-gray-900">QuickBooks</div>
+					<div className="font-medium text-gray-900">Plaid</div>
 					<button
 						type="button"
 						className="font-semibold text-indigo-600 hover:text-indigo-500"
 					>
-						Update
+						Connect
 					</button>
 				</li>
 			</ul>
@@ -104,7 +104,7 @@ export default function Account() {
 			<div className="mx-auto max-w-4xl space-y-16 sm:space-y-20 lg:mx-0 lg:max-w-none">
 				<Profile />
 				{/* <BankAccounts /> */}
-				{/* <Integrations /> */}
+				<Integrations />
 			</div>
 		</main>
 	);
