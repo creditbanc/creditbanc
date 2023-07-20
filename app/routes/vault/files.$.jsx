@@ -80,9 +80,9 @@ const navigation = [
 		current: false,
 		icon: ListBulletIcon,
 		children: [
-			{ name: "Form 1040", href: "#" },
-			{ name: "Form W-2", href: "#" },
-			{ name: "Form 1099", href: "#" },
+			// { name: "Form 1040", href: "#" },
+			// { name: "Form W-2", href: "#" },
+			// { name: "Form 1099", href: "#" },
 		],
 	},
 ];
@@ -177,23 +177,24 @@ const Heading = () => {
 };
 
 const HeaderFilters = () => {
-	let files = useFilesStore((state) => state.files);
+	let { documents } = useLoaderData();
+	// let files = useFilesStore((state) => state.files);
 	let set_files = useFilesStore((state) => state.set_files);
 
 	const onFilterFiles = (tag_id) => {
 		set_files(
 			["files"],
 			pipe(
-				mod(all, "visible")(() => true),
-				mod(matching({ tags: pipe(filter({ id: tag_id }), isEmpty) }))(
-					(value) => ({ ...value, visible: false })
-				)
-			)(files)
+				filter({
+					tags: (tags) =>
+						pipe(filter({ id: tag_id }), isEmpty, not)(tags),
+				})
+			)(documents)
 		);
 	};
 
 	const onShowAllFiles = () => {
-		set_files(["files"], pipe(mod(all, "visible")(() => true))(files));
+		set_files(["files"], documents);
 	};
 
 	return (
@@ -929,12 +930,6 @@ export default function Files() {
 	const files = useFilesStore((state) => state.files);
 	const set_files = useFilesStore((state) => state.set_files);
 	const selected_nav = useSideNavStore((state) => state.selected);
-
-	// console.log("selected_nav");
-	// console.log(selected_nav);
-
-	// console.log("files");
-	// console.log(files);
 
 	useEffect(() => {
 		set_files(["files"], documents);
