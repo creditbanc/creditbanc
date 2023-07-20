@@ -38,13 +38,7 @@ import {
 	useNavigate,
 	useSubmit,
 } from "@remix-run/react";
-import {
-	get_accounts,
-	get_auths,
-	get_identities,
-	get_transactions,
-	get_balances,
-} from "~/api/plaid.server";
+
 import {
 	prop,
 	pipe,
@@ -72,19 +66,7 @@ import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
 import { Doughnut, Line } from "react-chartjs-2";
 import { faker } from "@faker-js/faker";
 import "chart.js/auto";
-import {
-	concatMap,
-	flatMap,
-	from,
-	mergeMap,
-	of,
-	filter as rxfilter,
-	switchMap,
-	toArray,
-	map as rxmap,
-	lastValueFrom,
-	withLatestFrom,
-} from "rxjs";
+import { of, filter as rxfilter, map as rxmap, lastValueFrom } from "rxjs";
 import { is_authorized_f } from "~/api/auth";
 import { redirect } from "@remix-run/node";
 import { get_session_entity_id, get_user_id } from "~/utils/auth.server";
