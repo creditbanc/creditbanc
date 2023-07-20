@@ -16,8 +16,9 @@ import {
 	get_group_id,
 	is_location,
 } from "~/utils/helpers";
+import SimpleNavSignedIn from "~/components/SimpleNavSignedIn";
 
-const secondaryNavigation = [
+const navigation = [
 	{
 		name: "Account",
 		href: ({ entity_id, group_id }) =>
@@ -33,7 +34,7 @@ const secondaryNavigation = [
 		selected: (pathname) => is_location("/settings/plan", pathname),
 	},
 	{
-		name: "Plaid",
+		name: "Bank Accounts",
 		href: ({ entity_id, group_id }) =>
 			`/settings/plaid/resource/e/${entity_id}/g/${group_id}`,
 		icon: BuildingLibraryIcon,
@@ -61,23 +62,23 @@ export default function Account() {
 	return (
 		<div>
 			<div className="flex flex-col w-full border-b">
-				<Nav entity_id={entity_id} />
+				<SimpleNavSignedIn user_id={entity_id} />
 			</div>
 
 			<div className="flex flex-col items-center w-full pt-8">
-				<div className="flex flex-col max-w-7xl w-full lg:px-8">
+				<div className="flex flex-col w-full lg:px-8">
 					<Heading />
 				</div>
 			</div>
 
-			<div className="mx-auto max-w-7xl lg:flex lg:gap-x-16 lg:px-8">
+			<div className="mx-auto lg:flex lg:gap-x-16 lg:px-8">
 				<aside className="flex overflow-x-auto border-b border-gray-900/5 py-4 lg:block lg:w-64 lg:flex-none lg:border-0 lg:py-20">
 					<nav className="flex-none px-4 sm:px-6 lg:px-0">
 						<ul
 							role="list"
-							className="flex gap-x-3 gap-y-1 whitespace-nowrap lg:flex-col"
+							className="flex gap-x-3 gap-y-3 whitespace-nowrap lg:flex-col"
 						>
-							{secondaryNavigation.map((item) => (
+							{navigation.map((item) => (
 								<li key={item.name}>
 									<Link
 										to={item.href({ entity_id, group_id })}

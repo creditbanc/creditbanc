@@ -32,6 +32,7 @@ import copy from "copy-to-clipboard";
 import Share from "~/routes/invites/new/$.jsx";
 import Modal from "~/components/Modal";
 import { useModalStore } from "~/hooks/useModal";
+import avatars from "~/data/avatars";
 
 export const useRolesStore = create((set) => ({
 	roles: [],
