@@ -550,24 +550,38 @@ const Notifications = () => {
 											className="flex flex-row w-full border p-2 rounded"
 											key={step.id}
 										>
-											<Link
-												className="flex flex-row w-full space-x-2 items-center space-between cursor-pointer"
-												to={step.href({
-													entity_id,
-													group_id,
-												})}
-											>
-												<div>
-													{step.completed && (
-														<CheckCircleIcon className="h-5 w-5 text-green-500" />
-													)}
-
-													{!step.completed && (
+											{!step.completed && (
+												<Link
+													className="flex flex-row w-full space-x-2 items-center space-between cursor-pointer"
+													to={step.completed_href({
+														entity_id,
+														group_id,
+													})}
+												>
+													<div>
 														<XCircleIcon className="h-5 w-5 text-red-500" />
-													)}
-												</div>
-												<div>{step.text}</div>
-											</Link>
+													</div>
+													<div>{step.text}</div>
+												</Link>
+											)}
+
+											{step.completed && (
+												<Link
+													className="flex flex-row w-full space-x-2 items-center space-between cursor-pointer"
+													to={step.completed_href({
+														entity_id,
+														group_id,
+													})}
+												>
+													<div>
+														<CheckCircleIcon className="h-5 w-5 text-green-500" />
+													</div>
+													<div>
+														{step.completed_text}
+													</div>
+												</Link>
+											)}
+
 											<div></div>
 										</div>
 									))

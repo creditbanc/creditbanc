@@ -12,18 +12,24 @@ export const default_onboard_state = [
 	{
 		id: "personal_credit_report",
 		text: "Run a personal credit report",
+		completed_text: "View personal credit report",
 		completed: false,
 		category: "credit",
 		href: ({ entity_id, group_id }) =>
 			`/credit/personal/new/resource/e/${entity_id}/g/${group_id}`,
+		completed_href: ({ entity_id, group_id }) =>
+			`/credit/report/personal/personal/resource/e/${entity_id}/g/${group_id}`,
 	},
 	{
 		id: "business_credit_report",
 		text: "Run a business credit report",
+		completed_text: "View business credit report",
 		completed: false,
 		category: "credit",
 		href: ({ entity_id, group_id }) =>
 			`/credit/business/new/resource/e/${entity_id}/g/${group_id}?cookie=monster`,
+		completed_href: ({ entity_id, group_id }) =>
+			`/credit/report/business/experian/overview/resource/e/${entity_id}/g/${group_id}`,
 	},
 	{
 		id: "connect_bank_account",
