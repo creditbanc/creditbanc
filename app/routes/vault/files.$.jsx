@@ -19,6 +19,8 @@ import {
 	mapIndexed,
 	truncate,
 	get_group_id,
+	get_entity_id,
+	use_client_search_params,
 } from "~/utils/helpers";
 import { Disclosure, Menu, Transition } from "@headlessui/react";
 import Modal from "~/components/Modal";
@@ -46,6 +48,8 @@ import {
 	not,
 	uniqBy,
 	prop,
+	flatten,
+	filter as rfilter,
 } from "ramda";
 import { set_doc } from "~/utils/firebase";
 import moment from "moment";
@@ -62,11 +66,15 @@ export const useFileStore = create((set) => ({
 		set((state) => pipe(mod(...path)(() => value))(state)),
 }));
 
-let file_id = "6449c89888b2aa8dd68202a8"; // this needs to be changed to the actual resource id
+export const useSideNavStore = create((set) => ({
+	selected: "all",
+	set_state: (path, value) =>
+		set((state) => pipe(mod(...path)(() => value))(state)),
+}));
 
 const navigation = [
-	{ name: "All", href: "#", current: true, icon: ListBulletIcon },
-	{ name: "Untagged", href: "#", current: false, icon: TagIcon },
+	{ name: "All", id: "all", current: true, icon: ListBulletIcon },
+	{ name: "Untagged", id: "untagged", current: false, icon: TagIcon },
 	{
 		name: "Tags",
 		current: false,
@@ -124,13 +132,15 @@ export const loader = async ({ request }) => {
 
 	let queries = [
 		{
-			param: "resource_id",
+			param: "group_id",
 			predicate: "==",
-			value: file_id,
+			value: group_id,
 		},
 	];
 
-	let documents = await get_collection({ queries, path: ["vault"] });
+	let documents = await get_collection({ path: ["vault"], queries });
+
+	return { documents };
 
 	return {
 		documents: pipe(map((doc) => ({ ...doc, visible: true })))(documents),
@@ -346,23 +356,35 @@ const NavIcon = ({ icon: Icon }) => {
 };
 
 const SideNav = () => {
+	let { pathname } = useLocation();
+	let { documents } = useLoaderData();
+
+	let params = use_client_search_params(pathname);
+	let set_nav = useSideNavStore((state) => state.set_state);
+
+	const onsNavSelect = (param) => {
+		set_nav(["selected"], param);
+	};
+
+	let tags = pipe(get(all, "tags"), flatten, uniqBy(prop("id")))(documents);
+
 	return (
 		<ul role="list" className="flex flex-1 flex-col px-2 mt-2">
 			{navigation.map((item) => (
 				<li key={item.name}>
 					{!item.children ? (
-						<a
-							href={item.href}
+						<div
+							onClick={() => onsNavSelect(item.id)}
 							className={classNames(
 								item.current
 									? "bg-gray-50"
 									: "hover:bg-gray-50",
-								"flex items-center w-full text-left rounded-md gap-x-3 text-sm leading-6 font-semibold text-gray-700 px-2 my-1 py-2"
+								"flex items-center w-full text-left rounded-md gap-x-3 text-sm leading-6 font-semibold text-gray-700 px-2 my-1 py-2 cursor-pointer"
 							)}
 						>
 							<NavIcon icon={item.icon} />
 							{item.name}
-						</a>
+						</div>
 					) : (
 						<Disclosure as="div" defaultOpen={true}>
 							{({ open }) => (
@@ -389,16 +411,17 @@ const SideNav = () => {
 										as="ul"
 										className="mt-1 px-2"
 									>
-										{item.children.map((subItem) => (
-											<li key={subItem.name}>
-												<Disclosure.Button
-													as="a"
-													href={subItem.href}
+										{tags.map((tag, index) => (
+											<li key={index}>
+												<div
+													onClick={() =>
+														onsNavSelect(tag.id)
+													}
 													className={classNames(
-														subItem.current
+														tag
 															? "bg-gray-50"
 															: "hover:bg-gray-50",
-														"flex flex-row items-center rounded-md py-2 pr-2 pl-4 text-sm leading-6 text-gray-700"
+														"flex flex-row items-center rounded-md py-2 pr-2 pl-4 text-sm leading-6 text-gray-700 cursor-pointer"
 													)}
 												>
 													<div className="mr-2">
@@ -406,8 +429,8 @@ const SideNav = () => {
 															icon={DocumentIcon}
 														/>
 													</div>
-													{subItem.name}
-												</Disclosure.Button>
+													{tag.label}
+												</div>
 											</li>
 										))}
 									</Disclosure.Panel>
@@ -719,8 +742,9 @@ const EditFileModal = () => {
 };
 
 const UploadForm = () => {
-	const location = useLocation();
-	// const file_id = get_file_id(location.pathname);
+	const { pathname } = useLocation();
+	let group_id = get_group_id(pathname);
+	let entity_id = get_entity_id(pathname);
 	const [file_name, set_file_name] = useState("");
 	const [progress, set_progress] = useState(0);
 	const set_modal = useModalStore((state) => state.set_modal);
@@ -747,7 +771,7 @@ const UploadForm = () => {
 
 		let id = uuidv4();
 
-		const storageRef = ref(storage, `files/${file_id}/${id}`);
+		const storageRef = ref(storage, `files/${group_id}`);
 		const uploadTask = uploadBytesResumable(storageRef, file);
 
 		const next = (snapshot) => {
@@ -774,7 +798,8 @@ const UploadForm = () => {
 				download_url,
 				tags: [],
 				created_at: new Date().toISOString(),
-				resource_id: file_id,
+				group_id,
+				entity_id,
 				id,
 			};
 
@@ -903,35 +928,68 @@ export default function Files() {
 	let { documents = [] } = useLoaderData();
 	const files = useFilesStore((state) => state.files);
 	const set_files = useFilesStore((state) => state.set_files);
+	const selected_nav = useSideNavStore((state) => state.selected);
+
+	// console.log("selected_nav");
+	// console.log(selected_nav);
+
+	// console.log("files");
+	// console.log(files);
 
 	useEffect(() => {
 		set_files(["files"], documents);
 	}, [documents]);
 
+	useEffect(() => {
+		if (selected_nav == "all") {
+			return set_files(["files"], documents);
+		}
+
+		if (selected_nav == "untagged") {
+			return set_files(
+				["files"],
+				filter({ tags: (tags) => isEmpty(tags) })(documents)
+			);
+		}
+
+		set_files(
+			["files"],
+			pipe(
+				filter({
+					tags: (tags) =>
+						pipe(filter({ id: selected_nav }), isEmpty, not)(tags),
+				})
+			)(documents)
+		);
+	}, [selected_nav]);
+
 	return (
 		<div className="flex flex-col w-full h-full p-5">
 			<EditFileModal />
 			<UploadFileModal />
-			<div className="flex flex-row w-full border rounded h-full bg-white">
-				<div className="flex flex-col w-[250px] border-r">
-					<SideNav />
-				</div>
-				<div className="flex flex-col flex-1 p-5">
-					<Heading />
-					<HeaderFilters />
-					<FilesTableHeader />
-					<div className="flex flex-col w-full">
-						{pipe(
-							filter({ visible: true }),
-							mapIndexed((document, document_index) => (
-								<TableRow
-									key={document_index}
-									document={document}
-								/>
-							))
-						)(files)}
+			<div className="flex flex-row h-full space-x-4">
+				<div className="flex flex-row w-full border rounded h-full bg-white flex-1">
+					<div className="flex flex-col w-[250px] border-r">
+						<SideNav />
+					</div>
+					<div className="flex flex-col flex-1 p-5">
+						<Heading />
+						<HeaderFilters />
+						<FilesTableHeader />
+						<div className="flex flex-col w-full">
+							{pipe(
+								// filter({ visible: true }),
+								mapIndexed((document, document_index) => (
+									<TableRow
+										key={document_index}
+										document={document}
+									/>
+								))
+							)(files)}
+						</div>
 					</div>
 				</div>
+				<div className="flex flex-col w-[25%] border h-full rounded bg-white"></div>
 			</div>
 		</div>
 	);
