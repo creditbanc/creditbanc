@@ -14,8 +14,8 @@ export const loader = async ({ request }) => {
 	console.log("finch_oauth_loader");
 	let { origin } = new URL(request.url);
 	let params = use_search_params(request);
-	console.log("params");
-	console.log(params);
+	// console.log("params");
+	// console.log(params);
 
 	let { code = undefined } = params;
 
