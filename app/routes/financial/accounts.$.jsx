@@ -64,7 +64,6 @@ import { all, mod, get } from "shades";
 import { isEmpty } from "ramda";
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
 import { Doughnut, Line } from "react-chartjs-2";
-import { faker } from "@faker-js/faker";
 import "chart.js/auto";
 import { of, filter as rxfilter, map as rxmap, lastValueFrom } from "rxjs";
 import { is_authorized_f } from "~/api/auth";
@@ -133,7 +132,7 @@ const AccountActionsDropdown = ({ document }) => {
 	return (
 		<Menu as="div" className="relative inline-block text-left">
 			<div>
-				<Menu.Button className="flex items-center rounded-full bg-gray-100 text-gray-400 hover:text-gray-600 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-gray-100">
+				<Menu.Button className="flex items-center rounded-full bg-gray-100 text-gray-400 hover:text-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-gray-100">
 					<EllipsisHorizontalIcon className="h-5 w-5" />
 				</Menu.Button>
 			</div>
@@ -456,7 +455,7 @@ export default function Accounts() {
 						{!has_credentials && (
 							<Link
 								to={`/plaid/oauth/resources/e/${entity_id}/g/${group_id}`}
-								className="rounded-md bg-gray-700 px-3 py-2 text-xs font-semibold text-white shadow-sm hover:bg-gray-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+								className="rounded-md bg-gray-700 px-3 py-2 text-xs font-semibold text-white shadow-sm hover:bg-gray-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
 							>
 								Connect Bank Account
 							</Link>

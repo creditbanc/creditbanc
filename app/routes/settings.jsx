@@ -84,16 +84,16 @@ export default function Account() {
 										to={item.href({ entity_id, group_id })}
 										className={classNames(
 											item.selected(pathname)
-												? "bg-gray-50 text-indigo-600"
-												: "text-gray-700 hover:text-indigo-600 hover:bg-gray-50",
+												? "bg-gray-50 text-blue-600"
+												: "text-gray-700 hover:text-blue-600 hover:bg-gray-50",
 											"group flex gap-x-3 rounded-md py-2 pl-2 pr-3 text-sm leading-6 font-semibold"
 										)}
 									>
 										<item.icon
 											className={classNames(
 												item.href === current_tab
-													? "text-indigo-600"
-													: "text-gray-400 group-hover:text-indigo-600",
+													? "text-blue-600"
+													: "text-gray-400 group-hover:text-blue-600",
 												"h-6 w-6 shrink-0"
 											)}
 											aria-hidden="true"

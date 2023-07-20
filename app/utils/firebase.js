@@ -24,7 +24,7 @@ import {
 	endAt as fireEndAt,
 	endBefore as fireEndBefore,
 } from "firebase/firestore";
-import { isEmpty } from "ramda";
+import { isEmpty, map, pipe } from "ramda";
 import { inspect } from "./helpers";
 
 // Your web app's Firebase configuration
@@ -203,5 +203,21 @@ export const update_doc = async (path, data) => {
 };
 
 export const delete_doc = async (path) => {
-	await deleteDoc(doc(firestore, ...path));
+	return await deleteDoc(doc(firestore, ...path));
+};
+
+export const delete_collection = async ({ path, queries }) => {
+	let collection = await get_collection({ path, queries });
+
+	if (!isEmpty(collection)) {
+		await Promise.all(
+			pipe(
+				map(async (document) => {
+					return await delete_doc([...path, document.doc_id]);
+				})
+			)(collection)
+		);
+	}
+
+	return { num_of_documents_dleted: collection.length };
 };

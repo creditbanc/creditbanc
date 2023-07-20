@@ -1,5 +1,5 @@
 import { get_session_entity_id } from "~/utils/auth.server";
-import { get_doc } from "~/utils/firebase";
+import { delete_collection, delete_doc, get_doc } from "~/utils/firebase";
 import {
 	capitalize,
 	classNames,
@@ -8,12 +8,13 @@ import {
 } from "~/utils/helpers";
 import { isEmpty, map, pipe } from "ramda";
 import axios from "axios";
-import { Link, useLoaderData } from "@remix-run/react";
+import { Link, useLoaderData, useLocation } from "@remix-run/react";
 import { Fragment, useState } from "react";
 import {
 	BuildingLibraryIcon,
 	EllipsisHorizontalIcon,
 	EyeIcon,
+	EyeSlashIcon,
 	LinkIcon,
 	ListBulletIcon,
 } from "@heroicons/react/24/outline";
@@ -41,14 +42,47 @@ export const loader = async ({ request }) => {
 };
 
 const Heading = () => {
+	let { pathname } = useLocation();
+	let group_id = get_group_id(pathname);
+
+	const onDisconnectPlaid = async () => {
+		await delete_doc(["plaid_credentials", group_id]);
+
+		let accounts_queries = [
+			{
+				param: "group_id",
+				predicate: "==",
+				value: group_id,
+			},
+		];
+
+		await delete_collection({
+			path: ["plaid_accounts"],
+			queries: accounts_queries,
+		});
+
+		console.log("plaid credentials deleted");
+		console.log("plaid accounts deleted");
+	};
+
 	return (
-		<div>
-			<h2 className="text-base font-semibold leading-7 text-gray-900">
-				Bank accounts
-			</h2>
-			<p className="mt-1 text-sm leading-6 text-gray-500">
-				Connect & edit your bank accounts.
-			</p>
+		<div className="flex flex-row w-full justify-between">
+			<div>
+				<h2 className="text-base font-semibold leading-7 text-gray-900">
+					Bank accounts
+				</h2>
+				<p className="mt-1 text-sm leading-6 text-gray-500">
+					Connect & edit your bank accounts.
+				</p>
+			</div>
+			<div>
+				<div
+					className="flex flex-col px-3 py-1 bg-gray-200 text-gray-600 rounded text-sm cursor-pointer"
+					onClick={onDisconnectPlaid}
+				>
+					Disconnect all bank accounts
+				</div>
+			</div>
 		</div>
 	);
 };
@@ -57,7 +91,7 @@ const AccountActionsDropdown = ({ document }) => {
 	return (
 		<Menu as="div" className="relative inline-block text-left">
 			<div>
-				<Menu.Button className="flex items-center rounded-full bg-gray-100 text-gray-400 hover:text-gray-600 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-gray-100">
+				<Menu.Button className="flex items-center rounded-full bg-gray-100 text-gray-400 hover:text-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-gray-100">
 					<EllipsisHorizontalIcon className="h-5 w-5" />
 				</Menu.Button>
 			</div>
@@ -200,9 +234,6 @@ const AccountRow = ({ account }) => {
 const BankAccounts = () => {
 	let { accounts = [] } = useLoaderData();
 
-	console.log("accounts");
-	console.log(accounts);
-
 	return (
 		<div>
 			<ul
@@ -217,7 +248,7 @@ const BankAccounts = () => {
 			<div className="flex border-t border-gray-100 pt-6">
 				<button
 					type="button"
-					className="text-sm font-semibold leading-6 text-indigo-600 hover:text-indigo-500"
+					className="text-sm font-semibold leading-6 text-blue-600 hover:text-blue-500"
 				>
 					<span aria-hidden="true">+</span> Add another bank
 				</button>
