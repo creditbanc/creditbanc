@@ -1,42 +1,45 @@
 import { Link, Outlet, useLocation } from "@remix-run/react";
 import { useEffect, useState } from "react";
-import { FingerPrintIcon, UserCircleIcon } from "@heroicons/react/24/outline";
+import {
+	BuildingLibraryIcon,
+	FingerPrintIcon,
+	UserCircleIcon,
+} from "@heroicons/react/24/outline";
 import Nav from "~/components/TopNavNoSharing";
 import { get_session_entity_id, get_user_id } from "~/utils/auth.server";
 import { useLoaderData } from "@remix-run/react";
 import { redirect } from "@remix-run/node";
 import { create } from "zustand";
-
-const useSettingsNavStore = create((set) => ({
-	current: "/settings/plan",
-	set_current_tab: (current) => set({ current }),
-}));
+import {
+	classNames,
+	get_entity_id,
+	get_group_id,
+	is_location,
+} from "~/utils/helpers";
 
 const secondaryNavigation = [
 	{
 		name: "Account",
-		href: "/settings/account",
+		href: ({ entity_id, group_id }) =>
+			`/settings/account/resource/e/${entity_id}/g/${group_id}`,
 		icon: UserCircleIcon,
+		selected: (pathname) => is_location("/settings/account", pathname),
 	},
 	{
 		name: "Plan",
-		href: "/settings/plan",
+		href: ({ entity_id, group_id }) =>
+			`/settings/plan/resource/e/${entity_id}/g/${group_id}`,
 		icon: FingerPrintIcon,
+		selected: (pathname) => is_location("/settings/plan", pathname),
+	},
+	{
+		name: "Plaid",
+		href: ({ entity_id, group_id }) =>
+			`/settings/plaid/resource/e/${entity_id}/g/${group_id}`,
+		icon: BuildingLibraryIcon,
+		selected: (pathname) => is_location("/settings/plaid", pathname),
 	},
 ];
-
-function classNames(...classes) {
-	return classes.filter(Boolean).join(" ");
-}
-
-export const loader = async ({ request }) => {
-	let url = new URL(request.url);
-
-	if (url.pathname == "/settings") return redirect("/settings/account");
-
-	let entity_id = await get_session_entity_id(request);
-	return { entity_id };
-};
 
 function Heading() {
 	return (
@@ -49,7 +52,9 @@ function Heading() {
 }
 
 export default function Account() {
-	var { entity_id } = useLoaderData();
+	let { pathname } = useLocation();
+	let entity_id = get_entity_id(pathname);
+	let group_id = get_group_id(pathname);
 	let location = useLocation();
 	let current_tab = location.pathname;
 
@@ -75,9 +80,9 @@ export default function Account() {
 							{secondaryNavigation.map((item) => (
 								<li key={item.name}>
 									<Link
-										to={item.href}
+										to={item.href({ entity_id, group_id })}
 										className={classNames(
-											item.href === current_tab
+											item.selected(pathname)
 												? "bg-gray-50 text-indigo-600"
 												: "text-gray-700 hover:text-indigo-600 hover:bg-gray-50",
 											"group flex gap-x-3 rounded-md py-2 pl-2 pr-3 text-sm leading-6 font-semibold"

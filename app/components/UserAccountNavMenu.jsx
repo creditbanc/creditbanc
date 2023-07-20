@@ -1,12 +1,13 @@
 import { Fragment } from "react";
 import { Menu, Transition } from "@headlessui/react";
-import { Link } from "@remix-run/react";
-
-function classNames(...classes) {
-	return classes.filter(Boolean).join(" ");
-}
+import { Link, useLocation } from "@remix-run/react";
+import { classNames, get_entity_id, get_group_id } from "~/utils/helpers";
 
 export default function UserAccountNavMenu() {
+	let { pathname } = useLocation();
+	let entity_id = get_entity_id(pathname);
+	let group_id = get_group_id(pathname);
+
 	return (
 		<Menu as="div" className="relative ml-3">
 			<div>
@@ -31,7 +32,7 @@ export default function UserAccountNavMenu() {
 					<Menu.Item>
 						{({ active }) => (
 							<Link
-								to={`/roles/resource/e/1/g/1`}
+								to={`/roles/resource/e/${entity_id}/g/${group_id}`}
 								className={classNames(
 									active ? "bg-gray-100" : "",
 									"block px-4 py-2 text-sm text-gray-700"
@@ -44,7 +45,7 @@ export default function UserAccountNavMenu() {
 					<Menu.Item>
 						{({ active }) => (
 							<Link
-								to="/settings/account"
+								to={`/settings/account/resource/e/${entity_id}/g/${group_id}`}
 								className={classNames(
 									active ? "bg-gray-100" : "",
 									"block px-4 py-2 text-sm text-gray-700"

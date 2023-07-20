@@ -34,6 +34,7 @@ export const default_onboard_state = [
 	{
 		id: "connect_bank_account",
 		text: "Connect your bank account",
+		completed_text: "View your financial accounts",
 		completed: false,
 		category: "financial",
 		href: ({ entity_id, group_id }) =>
