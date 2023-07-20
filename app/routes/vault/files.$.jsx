@@ -362,6 +362,7 @@ const SideNav = () => {
 
 	let params = use_client_search_params(pathname);
 	let set_nav = useSideNavStore((state) => state.set_state);
+	let selected = useSideNavStore((state) => state.selected);
 
 	const onsNavSelect = (param) => {
 		set_nav(["selected"], param);
@@ -410,7 +411,7 @@ const SideNav = () => {
 									</Disclosure.Button>
 									<Disclosure.Panel
 										as="ul"
-										className="mt-1 px-2"
+										className="mt-1 px-2 space-y-2"
 									>
 										{tags.map((tag, index) => (
 											<li key={index}>
@@ -419,7 +420,7 @@ const SideNav = () => {
 														onsNavSelect(tag.id)
 													}
 													className={classNames(
-														tag
+														selected == tag.id
 															? "bg-gray-50"
 															: "hover:bg-gray-50",
 														"flex flex-row items-center rounded-md py-2 pr-2 pl-4 text-sm leading-6 text-gray-700 cursor-pointer"
