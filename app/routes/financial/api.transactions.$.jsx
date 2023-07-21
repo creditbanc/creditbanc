@@ -72,8 +72,8 @@ export const loader = async ({ request }) => {
 		transactions = await get_plaid_transactions_from_db({ group_id });
 	}
 
-	// console.log("transactions");
-	// console.log(transactions);
+	console.log("transactions1______");
+	console.log(transactions.length);
 
 	if (isEmpty(transactions)) {
 		let plaid_credentials = await get_doc(["plaid_credentials", group_id]);
@@ -82,15 +82,28 @@ export const loader = async ({ request }) => {
 		let end_date = moment().format("YYYY-MM-DD");
 		let start_date = moment().subtract(12, "months").format("YYYY-MM-DD");
 
-		let transactions = await get_transactions({
+		let {
+			transactions,
+			is_error = false,
+			error = undefined,
+		} = await get_transactions({
 			start_date,
 			end_date,
 			access_token,
 			account_ids: [account_id],
 		});
 
-		// console.log("transactions");
-		// console.log(transactions);
+		console.log("transactions2______");
+
+		if (error) {
+			console.log("transactions_error2______");
+			// throw new Error({ test: "hi" });
+			return { error };
+		}
+
+		// console.log(is_error);
+		// console.log(error);
+		// console.log(transactions.length);
 
 		transactions = await Promise.all(
 			pipe(

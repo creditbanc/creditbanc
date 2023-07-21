@@ -60,12 +60,27 @@ import {
 	last,
 } from "ramda";
 import { create } from "zustand";
-import { all, mod, get } from "shades";
+import { all, mod, get, cons } from "shades";
 import { isEmpty } from "ramda";
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
 import { Doughnut, Line } from "react-chartjs-2";
 import "chart.js/auto";
-import { of, filter as rxfilter, map as rxmap, lastValueFrom } from "rxjs";
+import {
+	of,
+	filter as rxfilter,
+	map as rxmap,
+	lastValueFrom,
+	from,
+	retry,
+	catchError,
+	timer,
+	switchMap,
+	throwError,
+	repeat,
+	take as rxtake,
+	delay,
+	delayWhen,
+} from "rxjs";
 import { is_authorized_f } from "~/api/auth";
 import { redirect } from "@remix-run/node";
 import { get_session_entity_id, get_user_id } from "~/utils/auth.server";
@@ -346,6 +361,10 @@ export default function Accounts() {
 	let total_balance = pipe(get(all, "balances", "available"), sum)(accounts);
 
 	useEffect(() => {
+		set_accounts(["accounts"], []);
+	}, []);
+
+	useEffect(() => {
 		if (!isEmpty(fetcher.data) && fetcher.type == "done") {
 			set_accounts(["accounts"], fetcher.data);
 		}
@@ -358,20 +377,77 @@ export default function Accounts() {
 	}, []);
 
 	let get_account_transactions = async (account_id) => {
-		let origin = window.location.origin;
+		console.log("get_account_transactions");
+		console.log(account_id);
+
+		let { origin } = window.location;
+
 		let { data: transactions } = await axios({
 			method: "get",
 			url: `${origin}/financial/api/transactions/resource/e/${entity_id}/g/${group_id}?account_id=${account_id}`,
 		});
 
+		console.log("transactions5______");
+		console.log(transactions);
+
+		if (transactions?.error || transactions?.length == 0) {
+			console.log("transactions_error1______");
+			console.log("is_error");
+
+			// let { error } = transactions;
+			// console.log(error);
+
+			return "four";
+		}
+
+		console.log("transactions4______");
+		console.log(transactions);
+
 		return transactions;
 	};
 
 	let get_account_daily_balances = async (account) => {
-		let transactions = await get_account_transactions(account.account_id);
+		console.log("get_account_daily_balances");
+		// let transactions = await get_account_transactions(account.account_id);
+
+		// console.log("transactionstop");
+		// console.log(transactions);
+
+		// if (transactions?.error || transactions?.length == 0) {
+		// 	transactions = await new Promise((resolve) =>
+		// 		setTimeout(() => {
+		// 			console.log("call after 2 seconds");
+		// 			get_account_transactions(account.account_id);
+		// 		}, 5000)
+		// 	);
+		// }
+
 		let account_balance = pipe(get("balances", "available"))(account);
 
-		let $transactions = of(transactions);
+		let $transactions = from(
+			get_account_transactions(account.account_id)
+		).pipe(
+			rxmap((value) => {
+				console.log("rxmap");
+				if (value == "four") {
+					throw new Error("error");
+				} else {
+					return value;
+				}
+			}),
+			retry({ delay: 3000, count: 1 }),
+			catchError((value) => {
+				console.log("catchError");
+				console.log(value);
+				return get_account_daily_balances(account);
+			})
+			// rxfilter((res) => {
+			// 	console.log("rxfilter");
+			// 	console.log(res);
+			// 	return res !== "four";
+			// }),
+			// rxtake(1)
+		);
 
 		const is_expense = (transaction) => {
 			return transaction.amount >= 0;
@@ -380,6 +456,10 @@ export default function Accounts() {
 		const is_revenue = pipe(is_expense, not);
 
 		let with_daily_balance = curry((ending_balance, transactions) => {
+			if (transactions.length == 0) {
+				return [];
+			}
+
 			return pipe(
 				jsreduce((curr, next, index) => {
 					if (index === 1) {
@@ -433,14 +513,23 @@ export default function Accounts() {
 
 		let daily_balances = await lastValueFrom($balances);
 
+		console.log("daily_balances");
+		console.log(daily_balances);
+
 		set_account(["account", "daily_balances"], daily_balances);
 	};
 
-	useEffect(() => {
-		if (account !== undefined && !isEmpty(account)) {
-			get_account_daily_balances(account);
-		}
-	}, [account.account_id]);
+	const on_account_click = (account, e) => {
+		e.preventDefault();
+		console.log("on_account_click");
+		get_account_daily_balances(account);
+	};
+
+	// useEffect(() => {
+	// 	if (account !== undefined && !isEmpty(account)) {
+	// 		get_account_daily_balances(account);
+	// 	}
+	// }, [account.account_id]);
 
 	return (
 		<div className="flex flex-row w-full h-full p-5 overflow-hiddens space-x-3">
@@ -455,7 +544,7 @@ export default function Accounts() {
 						{!has_credentials && (
 							<Link
 								to={`/plaid/oauth/resources/e/${entity_id}/g/${group_id}`}
-								className="rounded-md bg-gray-700 px-3 py-2 text-xs font-semibold text-white shadow-sm hover:bg-gray-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
+								className="rounded-md bg-gray-700 px-3 py-2 text-xs font-semibold text-white shadow-sm"
 							>
 								Connect Bank Account
 							</Link>
@@ -487,10 +576,12 @@ export default function Accounts() {
 				<div className="flex flex-col w-full pb-3">
 					{pipe(
 						mapIndexed((account) => (
-							<TableRow
-								key={account.account_id}
-								account={account}
-							/>
+							<div onClick={(e) => on_account_click(account, e)}>
+								<TableRow
+									key={account.account_id}
+									account={account}
+								/>
+							</div>
 						))
 					)(accounts)}
 				</div>

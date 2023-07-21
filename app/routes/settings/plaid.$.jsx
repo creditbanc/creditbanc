@@ -9,7 +9,7 @@ import {
 import { isEmpty, map, pipe } from "ramda";
 import axios from "axios";
 import { Link, useLoaderData, useLocation } from "@remix-run/react";
-import { Fragment, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
 import {
 	BuildingLibraryIcon,
 	EllipsisHorizontalIcon,
@@ -19,6 +19,14 @@ import {
 	ListBulletIcon,
 } from "@heroicons/react/24/outline";
 import { Menu, Transition } from "@headlessui/react";
+import { create } from "zustand";
+import { mod } from "shades";
+
+export const useAccountsStore = create((set) => ({
+	accounts: [],
+	set_accounts: (path, value) =>
+		set((state) => pipe(mod(...path)(() => value))(state)),
+}));
 
 export const loader = async ({ request }) => {
 	let entity_id = await get_session_entity_id(request);
@@ -44,6 +52,7 @@ export const loader = async ({ request }) => {
 const Heading = () => {
 	let { pathname } = useLocation();
 	let group_id = get_group_id(pathname);
+	let set_accounts = useAccountsStore((state) => state.set_accounts);
 
 	const onDisconnectPlaid = async () => {
 		await delete_doc(["plaid_credentials", group_id]);
@@ -63,6 +72,8 @@ const Heading = () => {
 
 		console.log("plaid credentials deleted");
 		console.log("plaid accounts deleted");
+
+		set_accounts(["accounts"], []);
 	};
 
 	return (
@@ -232,7 +243,15 @@ const AccountRow = ({ account }) => {
 };
 
 const BankAccounts = () => {
-	let { accounts = [] } = useLoaderData();
+	let { accounts: db_accounts = [] } = useLoaderData();
+	const accounts = useAccountsStore((state) => state.accounts);
+	const set_accounts = useAccountsStore((state) => state.set_accounts);
+
+	useEffect(() => {
+		if (!isEmpty(db_accounts)) {
+			set_accounts(["accounts"], db_accounts);
+		}
+	}, [db_accounts]);
 
 	return (
 		<div>

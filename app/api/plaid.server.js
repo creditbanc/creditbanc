@@ -1,7 +1,7 @@
 import { Configuration, PlaidApi, PlaidEnvironments } from "plaid";
 import "dotenv/config";
 import { inspect } from "~/utils/helpers";
-import { curry, map, pipe, prop, sortBy } from "ramda";
+import { curry, keys, map, pipe, prop, sortBy } from "ramda";
 
 const configuration = new Configuration({
 	basePath: PlaidEnvironments.sandbox,
@@ -82,6 +82,12 @@ export const get_transactions = async ({
 	access_token,
 	account_ids,
 }) => {
+	console.log("get_transactions");
+	console.log(start_date);
+	console.log(end_date);
+	console.log(access_token);
+	console.log(account_ids);
+
 	const request = {
 		access_token,
 		start_date,
@@ -96,6 +102,7 @@ export const get_transactions = async ({
 	try {
 		const response = await plaidClient.transactionsGet(request);
 		let transactions = response.data.transactions;
+
 		const total_transactions = response.data.total_transactions;
 
 		while (transactions.length < total_transactions) {
@@ -120,11 +127,21 @@ export const get_transactions = async ({
 			);
 		}
 
-		return pipe(sortBy(prop("date")))(transactions);
+		console.log("response____");
+		console.log(transactions.length);
+
+		return { transactions: pipe(sortBy(prop("date")))(transactions) };
 	} catch (error) {
 		// handle error
-		console.log("error");
-		console.log(error);
+		console.log("error_________");
+		// console.log(error);
+
+		// let { data } = error;
+
+		// console.log(keys(error));
+		console.log(error.response.data);
+
+		return { is_error: true, error: error.response.data };
 	}
 };
 
