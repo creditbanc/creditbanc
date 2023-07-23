@@ -58,6 +58,8 @@ import {
 	not,
 	head,
 	last,
+	isNil,
+	filter,
 } from "ramda";
 import { create } from "zustand";
 import { all, mod, get, cons } from "shades";
@@ -435,6 +437,11 @@ export default function Accounts() {
 					return value;
 				}
 			}),
+			rxfilter((value) => {
+				console.log("rxfilter________");
+				console.log(value);
+				return pipe(isNil, not)(value);
+			}),
 			retry({ delay: 3000, count: 1 }),
 			catchError((value) => {
 				console.log("catchError");
@@ -493,7 +500,12 @@ export default function Accounts() {
 		let $recent_activity = $transactions.pipe(
 			rxmap(
 				pipe(
-					sortBy(get("date")),
+					filter((value) => {
+						console.log("filtervalue_______");
+						console.log(value);
+						return pipe(isNil, not)(value);
+					}),
+					sortBy(prop("date")),
 					reverse,
 					take(30),
 					mod(all)(

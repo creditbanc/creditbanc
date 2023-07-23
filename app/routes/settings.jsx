@@ -61,9 +61,9 @@ export default function Account() {
 
 	return (
 		<div>
-			<div className="flex flex-col w-full border-b">
+			{/* <div className="flex flex-col w-full border-b">
 				<SimpleNavSignedIn user_id={entity_id} />
-			</div>
+			</div> */}
 
 			<div className="flex flex-col items-center w-full pt-8">
 				<div className="flex flex-col w-full lg:px-8">

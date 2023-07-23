@@ -33,6 +33,7 @@ import Share from "~/routes/invites/new/$.jsx";
 import Modal from "~/components/Modal";
 import { useModalStore } from "~/hooks/useModal";
 import avatars from "~/data/avatars";
+import { get_partition_id } from "~/utils/group.server";
 
 export const useRolesStore = create((set) => ({
 	roles: [],
@@ -336,9 +337,8 @@ const CreditDropdown = () => {
 	);
 };
 
-export default function Nav({ user_id }) {
+export default function Nav({ entity_id }) {
 	let location = useLocation();
-	let entity_id = get_entity_id(location.pathname);
 	let group_id = get_group_id(location.pathname);
 
 	let { pathname } = location;
@@ -365,8 +365,8 @@ export default function Nav({ user_id }) {
 
 	useEffect(() => {
 		const get_companies = async () => {
-			let owner_companies = await get_owner_companies_ids(user_id);
-			let shared_companies = await get_shared_companies_ids(user_id);
+			let owner_companies = await get_owner_companies_ids(entity_id);
+			let shared_companies = await get_shared_companies_ids(entity_id);
 
 			set_companies(
 				["companies"],
@@ -374,10 +374,10 @@ export default function Nav({ user_id }) {
 			);
 		};
 
-		if (user_id) {
+		if (entity_id) {
 			get_companies();
 		}
-	}, [user_id]);
+	}, [entity_id]);
 
 	return (
 		<div className="flex flex-col w-full  h-[65px] justify-center px-5">
@@ -394,7 +394,7 @@ export default function Nav({ user_id }) {
 					</Link>
 				</div>
 
-				<div className="flex flex-row flex-1 justify-between  items-center mt-1 pr-5">
+				<div className="flex flex-row flex-1 justify-between  items-center mt-1">
 					<div className="">
 						<Companies />
 					</div>
@@ -406,7 +406,7 @@ export default function Nav({ user_id }) {
 									mapIndexed((item, key) => (
 										<Link
 											to={item.href({
-												entity_id: user_id,
+												entity_id: entity_id,
 												group_id:
 													get_group_id(pathname),
 											})}
@@ -464,7 +464,7 @@ export default function Nav({ user_id }) {
 					</div>
 				</div>
 
-				{user_id && (
+				{entity_id && (
 					<div className="flex flex-col items-center w-[50px] justify-center">
 						<UserAccountNavMenu />
 					</div>

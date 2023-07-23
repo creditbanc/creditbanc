@@ -56,9 +56,9 @@ export default function Roles() {
 
 	return (
 		<div className="flex flex-col w-full h-full bg-gray-50">
-			<div className="flex flex-col w-full border-b bg-white">
+			{/* <div className="flex flex-col w-full border-b bg-white">
 				<SimpleNavSignedIn user_id={entity_id} />
-			</div>
+			</div> */}
 
 			<div className="flex flex-col w-full h-full p-5 ">
 				<div className="flex flex-col w-full">

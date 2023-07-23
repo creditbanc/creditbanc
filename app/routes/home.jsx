@@ -34,9 +34,9 @@ export default function Home() {
 
 	return (
 		<div className="flex flex-col h-full w-full bg-gray-50">
-			<div className="flex flex-col border-b w-full bg-white">
+			{/* <div className="flex flex-col border-b w-full bg-white">
 				<SimpleNavSignedIn user_id={entity_id} />
-			</div>
+			</div> */}
 
 			<div className="flex flex-row h-full overflow-hidden">
 				<div className="flex flex-col flex-1 overflow-scroll">

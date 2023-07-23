@@ -540,9 +540,9 @@ export default function Chat() {
 	return (
 		<div className="flex flex-col w-full h-full bg-gray-50 overflow-hidden">
 			<NewChannelModal />
-			<div className="flex flex-col w-full border-b bg-white">
+			{/* <div className="flex flex-col w-full border-b bg-white">
 				<SimpleNavSignedIn user_id={entity_id} />
-			</div>
+			</div> */}
 			<div className="flex flex-row w-full h-full  overflow-hidden">
 				<div className="flex flex-col w-[300px] bg-white border-r overflow-scroll scrollbar-none">
 					<div className="flex flex-col w-full py-3 px-3 sticky top-0 bg-white">

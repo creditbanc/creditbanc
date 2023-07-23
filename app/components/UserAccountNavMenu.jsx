@@ -1,21 +1,24 @@
 import { Fragment } from "react";
 import { Menu, Transition } from "@headlessui/react";
-import { Link, useLocation } from "@remix-run/react";
+import { Link, useLoaderData, useLocation } from "@remix-run/react";
 import { classNames, get_entity_id, get_group_id } from "~/utils/helpers";
+import avatars from "~/data/avatars";
 
 export default function UserAccountNavMenu() {
+	let { entity } = useLoaderData();
 	let { pathname } = useLocation();
 	let entity_id = get_entity_id(pathname);
 	let group_id = get_group_id(pathname);
 
+	let avatar = avatars(entity.email, { size: 35 });
+
 	return (
 		<Menu as="div" className="relative ml-3">
 			<div>
-				<Menu.Button className="flex rounded-full bg-white text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
-					<img
-						className="h-8 w-8 rounded-full"
-						src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
-						alt=""
+				<Menu.Button className="flex rounded-full bg-white text-sm focus:outline-none">
+					<div
+						className={`inline-block rounded-full border-blue-500`}
+						dangerouslySetInnerHTML={{ __html: avatar }}
 					/>
 				</Menu.Button>
 			</div>
