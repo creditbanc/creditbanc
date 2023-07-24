@@ -100,32 +100,32 @@ export const action = async ({ request }) => {
 		data: payload,
 	};
 
-	let report = {
-		group_id,
-		entity_id,
-		plan_id,
-		type: "business_credit_report",
-		...mrm_credit_report,
-	};
+	// let report = {
+	// 	group_id,
+	// 	entity_id,
+	// 	plan_id,
+	// 	type: "business_credit_report",
+	// 	...mrm_credit_report,
+	// };
 
-	await create_new_report(report);
+	// await create_new_report(report);
 
-	await set_doc(
-		["onboard", entity_id],
-		{
-			business_credit_report: {
-				id: "business_credit_report",
-				completed: true,
-			},
-			entity_id,
-			group_id,
-		},
-		true
-	);
+	// await set_doc(
+	// 	["onboard", entity_id],
+	// 	{
+	// 		business_credit_report: {
+	// 			id: "business_credit_report",
+	// 			completed: true,
+	// 		},
+	// 		entity_id,
+	// 		group_id,
+	// 	},
+	// 	true
+	// );
 
-	return redirect(
-		`/credit/report/business/experian/overview/resource/e/${entity_id}/g/${group_id}`
-	);
+	// return redirect(
+	// 	`/credit/report/business/experian/overview/resource/e/${entity_id}/g/${group_id}`
+	// );
 
 	// return null;
 
