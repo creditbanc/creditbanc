@@ -126,7 +126,14 @@ const BusinessCredit = () => {
 				</h3>
 			</div>
 			<div className="flex flex-col w-full py-3 border-b border-gray-200">
-				<div className="flex flex-row w-full">
+				<Link
+					className="flex flex-row w-full"
+					to={
+						can_view_experian_business_score
+							? `/credit/report/business/experian/overview/resource/e/${entity_id}/g/${group_id}`
+							: `/plans`
+					}
+				>
 					<div className="flex flex-col w-2/3">
 						<div className="font-semibold">Experian ®</div>
 						<div className="text-gray-400 text-sm">
@@ -135,10 +142,7 @@ const BusinessCredit = () => {
 					</div>
 
 					{can_view_experian_business_score && (
-						<Link
-							to={`/credit/report/business/experian/overview/resource/e/${entity_id}/g/${group_id}`}
-							className="flex flex-col w-1/3 text-2xl font-bold justify-center"
-						>
+						<div className="flex flex-col w-1/3 text-2xl font-bold justify-center">
 							<div className="flex flex-row w-full justify-end items-center cursor-pointer">
 								<div className="flex flex-col">
 									{experian_business_score}
@@ -147,22 +151,26 @@ const BusinessCredit = () => {
 									<ChevronRightIcon />
 								</div>
 							</div>
-						</Link>
+						</div>
 					)}
 
 					{!can_view_experian_business_score && (
-						<Link
-							to="/plans"
-							className="flex flex-col w-1/3 font-semibold text-blue-700 text-sm cursor-pointer items-end mr-2 justify-center"
-						>
+						<div className="flex flex-col w-1/3 font-semibold text-blue-700 text-sm cursor-pointer items-end mr-2 justify-center">
 							Upgrade Account
-						</Link>
+						</div>
 					)}
-				</div>
+				</Link>
 			</div>
 
 			<div className="flex flex-col w-full py-3 ">
-				<div className="flex flex-row w-full">
+				<Link
+					className="flex flex-row w-full"
+					to={
+						can_view_dnb_business_score
+							? `/credit/report/business/dnb/overview/resource/e/${entity_id}/g/${group_id}`
+							: `/plans`
+					}
+				>
 					<div className="flex flex-col w-2/3">
 						<div className="font-semibold">Dun & Bradstreet ®</div>
 						<div className="text-gray-400 text-sm">
@@ -171,10 +179,7 @@ const BusinessCredit = () => {
 					</div>
 
 					{can_view_dnb_business_score && (
-						<Link
-							to={`/credit/report/business/dnb/overview/resource/e/${entity_id}/g/${group_id}`}
-							className="flex flex-col w-1/3 text-2xl font-bold justify-center"
-						>
+						<div className="flex flex-col w-1/3 text-2xl font-bold justify-center">
 							<div className="flex flex-row w-full justify-end items-center cursor-pointer">
 								<div className="flex flex-col">
 									{dnb_business_score}
@@ -183,18 +188,15 @@ const BusinessCredit = () => {
 									<ChevronRightIcon />
 								</div>
 							</div>
-						</Link>
+						</div>
 					)}
 
 					{!can_view_dnb_business_score && (
-						<Link
-							to="/plans"
-							className="flex flex-col w-1/3 font-semibold text-blue-700 text-sm cursor-pointer items-end mr-2 justify-center"
-						>
+						<div className="flex flex-col w-1/3 font-semibold text-blue-700 text-sm cursor-pointer items-end mr-2 justify-center">
 							Upgrade Account
-						</Link>
+						</div>
 					)}
-				</div>
+				</Link>
 			</div>
 		</div>
 	);
@@ -233,7 +235,14 @@ const PersonalCredit = () => {
 			</div>
 
 			<div className="flex flex-col w-full py-3 border-b border-gray-200">
-				<div className="flex flex-row w-full">
+				<Link
+					className="flex flex-row w-full"
+					to={
+						can_view_experian_personal_score
+							? `credit/report/personal/personal/resource/e/${entity_id}/g/${group_id}`
+							: `/plans`
+					}
+				>
 					<div className="flex flex-col w-2/3">
 						<div className="font-semibold">Experian Personal ®</div>
 						<div className="text-gray-400 text-sm">
@@ -242,10 +251,7 @@ const PersonalCredit = () => {
 					</div>
 
 					{can_view_experian_personal_score && (
-						<Link
-							to={`/credit/report/personal/personal/resource/e/${entity_id}/g/${group_id}`}
-							className="flex flex-col w-1/3 text-2xl font-bold justify-center"
-						>
+						<div className="flex flex-col w-1/3 text-2xl font-bold justify-center">
 							<div className="flex flex-row w-full justify-end items-center cursor-pointer">
 								<div className="flex flex-col">
 									{experian_personal_score}
@@ -254,22 +260,26 @@ const PersonalCredit = () => {
 									<ChevronRightIcon />
 								</div>
 							</div>
-						</Link>
+						</div>
 					)}
 
 					{!can_view_experian_personal_score && (
-						<Link
-							to="/plans"
-							className="flex flex-col w-1/3 font-semibold text-blue-700 text-sm cursor-pointer"
-						>
+						<div className="flex flex-col w-1/3 font-semibold text-blue-700 text-sm cursor-pointer">
 							Upgrade Account
-						</Link>
+						</div>
 					)}
-				</div>
+				</Link>
 			</div>
 
 			<div className="flex flex-col w-full py-3 border-b border-gray-200">
-				<div className="flex flex-row w-full">
+				<Link
+					className="flex flex-row w-full"
+					to={
+						can_view_transunion_personal_score
+							? `/credit/report/personal/personal/resource/e/${entity_id}/g/${group_id}`
+							: `/plans`
+					}
+				>
 					<div className="flex flex-col w-2/3">
 						<div className="font-semibold">TransUnion ®</div>
 						<div className="text-gray-400 text-sm">
@@ -278,10 +288,7 @@ const PersonalCredit = () => {
 					</div>
 
 					{can_view_transunion_personal_score && (
-						<Link
-							to={`/credit/report/personal/personal/resource/e/${entity_id}/g/${group_id}`}
-							className="flex flex-col w-1/3 text-2xl font-bold justify-center"
-						>
+						<div className="flex flex-col w-1/3 text-2xl font-bold justify-center">
 							<div className="flex flex-row w-full justify-end items-center cursor-pointer">
 								<div className="flex flex-col">
 									{transunion_personal_score}
@@ -290,22 +297,26 @@ const PersonalCredit = () => {
 									<ChevronRightIcon />
 								</div>
 							</div>
-						</Link>
+						</div>
 					)}
 
 					{!can_view_transunion_personal_score && (
-						<Link
-							to="/plans"
-							className="flex flex-col w-1/3 font-semibold text-blue-700 text-sm cursor-pointer items-end mr-2 justify-center"
-						>
+						<Link className="flex flex-col w-1/3 font-semibold text-blue-700 text-sm cursor-pointer items-end mr-2 justify-center">
 							Upgrade Account
 						</Link>
 					)}
-				</div>
+				</Link>
 			</div>
 
 			<div className="flex flex-col w-full py-3">
-				<div className="flex flex-row w-full">
+				<Link
+					className="flex flex-row w-full"
+					to={
+						can_view_equifax_personal_score
+							? `/credit/report/personal/personal/resource/e/${entity_id}/g/${group_id}`
+							: `/plans`
+					}
+				>
 					<div className="flex flex-col w-2/3">
 						<div className="font-semibold">Equifax ®</div>
 						<div className="text-gray-400 text-sm">
@@ -314,10 +325,7 @@ const PersonalCredit = () => {
 					</div>
 
 					{can_view_equifax_personal_score && (
-						<Link
-							to={`/credit/report/personal/personal/resource/e/${entity_id}/g/${group_id}`}
-							className="flex flex-col w-1/3 text-2xl font-bold justify-center"
-						>
+						<div className="flex flex-col w-1/3 text-2xl font-bold justify-center">
 							<div className="flex flex-row w-full justify-end items-center cursor-pointer">
 								<div className="flex flex-col">
 									{equifax_personal_score}
@@ -326,18 +334,15 @@ const PersonalCredit = () => {
 									<ChevronRightIcon />
 								</div>
 							</div>
-						</Link>
+						</div>
 					)}
 
 					{!can_view_equifax_personal_score && (
-						<Link
-							to="/plans"
-							className="flex flex-col w-1/3 font-semibold text-blue-700 text-sm cursor-pointer items-end mr-2 justify-center"
-						>
+						<div className="flex flex-col w-1/3 font-semibold text-blue-700 text-sm cursor-pointer items-end mr-2 justify-center">
 							Upgrade Account
-						</Link>
+						</div>
 					)}
-				</div>
+				</Link>
 			</div>
 		</div>
 	);
