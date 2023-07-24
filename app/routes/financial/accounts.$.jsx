@@ -38,7 +38,6 @@ import {
 	useNavigate,
 	useSubmit,
 } from "@remix-run/react";
-
 import {
 	prop,
 	pipe,
@@ -86,11 +85,13 @@ import {
 import { is_authorized_f } from "~/api/auth";
 import { redirect } from "@remix-run/node";
 import { get_session_entity_id, get_user_id } from "~/utils/auth.server";
+import LoadingSpinner from "~/components/LoadingSpinner";
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
 export const useAccountStore = create((set) => ({
 	account: {},
+	is_loading: false,
 	set_account: (path, value) =>
 		set((state) => pipe(mod(...path)(() => value))(state)),
 }));
@@ -528,12 +529,14 @@ export default function Accounts() {
 		console.log("daily_balances");
 		console.log(daily_balances);
 
+		set_account(["account", "is_loading"], false);
 		set_account(["account", "daily_balances"], daily_balances);
 	};
 
 	const on_account_click = (account, e) => {
 		e.preventDefault();
 		console.log("on_account_click");
+		set_account(["account", "is_loading"], true);
 		get_account_daily_balances(account);
 	};
 
@@ -607,113 +610,122 @@ export default function Accounts() {
 					<div>Link Account</div>
 				</Link>
 			</div>
-			<div className="flex flex-col w-[30%] ">
-				<div className="flex flex-col bg-white border rounded">
-					<div className="p-5">
-						<div className="flex flex-row space-x-3 items-center">
-							<div>
-								<span className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-gray-500">
-									<span className="text-lg font-medium leading-none text-white">
-										{account?.official_name
-											?.charAt(0)
-											.toUpperCase()}
+			<div className="flex flex-col w-[30%]">
+				{account.is_loading && (
+					<div className="flex flex-col bg-white border rounded h-full">
+						<LoadingSpinner />
+					</div>
+				)}
+				{!account.is_loading && (
+					<div className="flex flex-col bg-white border rounded">
+						<div className="p-5">
+							<div className="flex flex-row space-x-3 items-center">
+								<div>
+									<span className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-gray-500">
+										<span className="text-lg font-medium leading-none text-white">
+											{account?.official_name
+												?.charAt(0)
+												.toUpperCase()}
+										</span>
 									</span>
-								</span>
-							</div>
-							<div>{account.official_name}</div>
-						</div>
-					</div>
-
-					{!isEmpty(account) && (
-						<Link
-							to={`/financial/transactions`}
-							className="px-5 mb-4 flex flex-row items-center space-x-3 text-blue-500 cursor-pointer text-sm"
-						>
-							<div>
-								<ListBulletIcon className="h-4 w-4 text-blue-500" />
-							</div>
-							<div>Show transactions for this account</div>
-							<div>
-								<ArrowRightIcon className="h-4 w-4 text-blue-500" />
-							</div>
-						</Link>
-					)}
-
-					<div className="flex flex-row px-5 pb-5">
-						<div className="flex flex-col w-1/2 text-sm space-y-1">
-							<div className="text-gray-400">Available</div>
-							<div className="text-lg">
-								{currency.format(
-									account?.balances?.available || 0
-								)}
+								</div>
+								<div>{account.official_name}</div>
 							</div>
 						</div>
-						<div className="flex flex-col w-1/2 text-sm space-y-1">
-							<div className="text-gray-400">Current</div>
-							<div className="text-lg">
-								{currency.format(
-									account?.balances?.current || 0
-								)}
+
+						{!isEmpty(account) && (
+							<Link
+								to={`/financial/transactions`}
+								className="px-5 mb-4 flex flex-row items-center space-x-3 text-blue-500 cursor-pointer text-sm"
+							>
+								<div>
+									<ListBulletIcon className="h-4 w-4 text-blue-500" />
+								</div>
+								<div>Show transactions for this account</div>
+								<div>
+									<ArrowRightIcon className="h-4 w-4 text-blue-500" />
+								</div>
+							</Link>
+						)}
+
+						<div className="flex flex-row px-5 pb-5">
+							<div className="flex flex-col w-1/2 text-sm space-y-1">
+								<div className="text-gray-400">Available</div>
+								<div className="text-lg">
+									{currency.format(
+										account?.balances?.available || 0
+									)}
+								</div>
+							</div>
+							<div className="flex flex-col w-1/2 text-sm space-y-1">
+								<div className="text-gray-400">Current</div>
+								<div className="text-lg">
+									{currency.format(
+										account?.balances?.current || 0
+									)}
+								</div>
 							</div>
 						</div>
-					</div>
 
-					{account?.daily_balances !== undefined && (
-						<div className="flex flex-col w-[calc(100%+11px)] h-[150px] -ml-[5px] -mb-[5px]">
-							<Line
-								options={options}
-								data={balances_data(account.daily_balances)}
-							/>
-						</div>
-					)}
+						{account?.daily_balances !== undefined && (
+							<div className="flex flex-col w-[calc(100%+11px)] h-[150px] -ml-[5px] -mb-[5px]">
+								<Line
+									options={options}
+									data={balances_data(account.daily_balances)}
+								/>
+							</div>
+						)}
 
-					<div className="border-t "></div>
-					<div className="flex flex-col p-5 text-sm space-y-2">
-						<div className=" text-gray-400">Phone numbers</div>
-						<div className="flex flex-col space-y-3">
-							{pipe(
-								get("owners", all, "phone_numbers"),
-								defaultTo([]),
-								flatten,
-								mapIndexed((phone, index) => (
-									<div
-										className="flex flex-row items-center space-x-2"
-										key={index}
-									>
-										<div>
-											<PhoneIcon className="h-4 w-4 text-gray-400" />
+						<div className="border-t "></div>
+						<div className="flex flex-col p-5 text-sm space-y-2">
+							<div className=" text-gray-400">Phone numbers</div>
+							<div className="flex flex-col space-y-3">
+								{pipe(
+									get("owners", all, "phone_numbers"),
+									defaultTo([]),
+									flatten,
+									mapIndexed((phone, index) => (
+										<div
+											className="flex flex-row items-center space-x-2"
+											key={index}
+										>
+											<div>
+												<PhoneIcon className="h-4 w-4 text-gray-400" />
+											</div>
+											<div>
+												{formatPhoneNumber(phone.data)}
+											</div>
 										</div>
-										<div>
-											{formatPhoneNumber(phone.data)}
+									))
+								)(account)}
+							</div>
+						</div>
+						<div className="border-t "></div>
+						<div className="flex flex-col p-5 text-sm space-y-2">
+							<div className=" text-gray-400">Emails</div>
+							<div className="flex flex-col space-y-2">
+								{pipe(
+									get("owners", all, "emails"),
+									defaultTo([]),
+									flatten,
+									mapIndexed((email, index) => (
+										<div
+											className="flex flex-row items-center space-x-2"
+											key={index}
+										>
+											<div>
+												<AtSymbolIcon className="h-4 w-4 text-gray-400" />
+											</div>
+											<div>
+												{truncate(30, email.data)}
+											</div>
 										</div>
-									</div>
-								))
-							)(account)}
+									))
+								)(account)}
+							</div>
 						</div>
 					</div>
-					<div className="border-t "></div>
-					<div className="flex flex-col p-5 text-sm space-y-2">
-						<div className=" text-gray-400">Emails</div>
-						<div className="flex flex-col space-y-2">
-							{pipe(
-								get("owners", all, "emails"),
-								defaultTo([]),
-								flatten,
-								mapIndexed((email, index) => (
-									<div
-										className="flex flex-row items-center space-x-2"
-										key={index}
-									>
-										<div>
-											<AtSymbolIcon className="h-4 w-4 text-gray-400" />
-										</div>
-										<div>{truncate(30, email.data)}</div>
-									</div>
-								))
-							)(account)}
-						</div>
-					</div>
-				</div>
+				)}
 			</div>
 		</div>
 	);
