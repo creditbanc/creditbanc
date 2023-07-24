@@ -80,7 +80,7 @@ export const action = async ({ request }) => {
 export const loader = async ({ request }) => {
 	let url = new URL(request.url);
 	let { origin } = url;
-	let file_id = get_file_id(url.pathname);
+	// let file_id = get_file_id(url.pathname);
 	let entity_id = await get_session_entity_id(request);
 	let group_id = get_group_id(url.pathname);
 
@@ -128,23 +128,14 @@ export const loader = async ({ request }) => {
 	}
 
 	let lendflow_report = await get_lendflow_report(report.application_id);
-	let is_latest_report = deepEqual(report.data, lendflow_report.data);
+	// let is_latest_report = deepEqual(report.data, lendflow_report.data);
 
-	if (!is_latest_report) {
-		await set_doc(["credit_reports", report.id], {
-			...report,
-			...lendflow_report,
-		});
+	let payload = {
+		...report,
+		...lendflow_report,
+	};
 
-		// return redirect(url);
-	}
-
-	// let { plan_id } = await prisma.entity.findUnique({
-	// 	where: { id: entity_id },
-	// 	select: {
-	// 		plan_id: true,
-	// 	},
-	// });
+	await set_doc(["credit_reports", report.doc_id], payload);
 
 	let { plan_id } = await get_doc(["entity", entity_id]);
 
@@ -165,7 +156,7 @@ export const loader = async ({ request }) => {
 	return {
 		entity_id,
 		plan_id,
-		report_id: file_id,
+		// report_id: file_id,
 		application_id: report?.application_id,
 		report_plan_id: report?.plan_id,
 		business,
@@ -180,7 +171,12 @@ export default function BusinessReport() {
 	let setContentWidth = useLayoutStore((state) => state.set_content_width);
 	let content_width = useLayoutStore((state) => state.content_width);
 	let [isMobile, setIsMobile] = useState(true);
-	let { plan_id, report_plan_id, business, scores } = useLoaderData();
+	let {
+		plan_id = undefined,
+		report_plan_id = undefined,
+		business = undefined,
+		scores = undefined,
+	} = useLoaderData();
 
 	let { experian_business_score = 0, dnb_business_score = 0 } = scores;
 
