@@ -192,15 +192,13 @@ export default function Financial() {
 	}, [db_accounts]);
 
 	return (
-		<div className="flex flex-col w-full h-full bg-gray-50">
-			{/* <div className="flex flex-col w-full border-b bg-white">
-				<SimpleNavSignedIn user_id={entity_id} />
-			</div> */}
+		<div className="flex flex-col w-full h-full bg-gray-50 overflow-hidden">
 			<div>
 				<SubNav />
 			</div>
-
-			<Outlet />
+			<div className="flex flex-col w-full h-full overflow-hidden p-5">
+				<Outlet />
+			</div>
 		</div>
 	);
 }

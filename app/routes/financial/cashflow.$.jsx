@@ -601,48 +601,46 @@ export default function Cashflow() {
 	}, []);
 
 	return (
-		<div className="flex flex-col w-full h-full overflow-hidden">
-			<div className="flex flex-row h-full w-full p-5 space-x-5">
-				<div className="flex flex-col h-full w-[70%] rounded  gap-y-5 overflow-y-scroll scrollbar-none">
-					<div className="flex flex-col w-full max-h-[600px] bg-white rounded">
-						<CashflowChart />
-					</div>
-					<div className="flex flex-row w-full h-full">
-						<div className="flex flex-col w-1/2 h-full ">
-							<div className="mr-[10px] bg-white rounded">
-								<RevenueChart />
-							</div>
-						</div>
-						<div className="flex flex-col w-1/2 h-full rounded">
-							<div className="ml-[10px] bg-white rounded">
-								<ExpensesChart />
-							</div>
+		<div className="flex flex-row h-full w-full space-x-5">
+			<div className="flex flex-col h-full w-[70%] rounded  gap-y-5 overflow-y-scroll scrollbar-none">
+				<div className="flex flex-col w-full max-h-[600px] bg-white rounded">
+					<CashflowChart />
+				</div>
+				<div className="flex flex-row w-full h-full">
+					<div className="flex flex-col w-1/2 h-full ">
+						<div className="mr-[10px] bg-white rounded">
+							<RevenueChart />
 						</div>
 					</div>
-					<div className="flex flex-col w-full bg-white rounded">
-						<div className="flex flex-col py-4 px-5">
-							<FinancialHealthEvaluationHeading />
-						</div>
-						<div className="flex flex-col w-full border-t"></div>
-						<div className="flex flex-col w-full p-3">
-							<div className="flex flex-col w-full rounded-lg">
-								<Stats />
-							</div>
+					<div className="flex flex-col w-1/2 h-full rounded">
+						<div className="ml-[10px] bg-white rounded">
+							<ExpensesChart />
 						</div>
 					</div>
 				</div>
-				<div className="flex flex-col w-[30%] rounded border">
-					<div className="flex flex-col w-full h-full rounded bg-white">
-						<div className="flex flex-row py-4 px-5 justify-between w-full items-center">
-							<div>Recent transactions</div>
-							<div className="text-blue-500 text-sm cursor-pointer">
-								See all
-							</div>
+				<div className="flex flex-col w-full bg-white rounded">
+					<div className="flex flex-col py-4 px-5">
+						<FinancialHealthEvaluationHeading />
+					</div>
+					<div className="flex flex-col w-full border-t"></div>
+					<div className="flex flex-col w-full p-3">
+						<div className="flex flex-col w-full rounded-lg">
+							<Stats />
 						</div>
-						<div className="flex flex-col w-full border-t"></div>
-						<div className="flex flex-col p-5 overflow-scroll scrollbar-none">
-							<ActivityFeed />
+					</div>
+				</div>
+			</div>
+			<div className="flex flex-col w-[30%] rounded border">
+				<div className="flex flex-col w-full h-full rounded bg-white">
+					<div className="flex flex-row py-4 px-5 justify-between w-full items-center">
+						<div>Recent transactions</div>
+						<div className="text-blue-500 text-sm cursor-pointer">
+							See all
 						</div>
+					</div>
+					<div className="flex flex-col w-full border-t"></div>
+					<div className="flex flex-col p-5 overflow-scroll scrollbar-none">
+						<ActivityFeed />
 					</div>
 				</div>
 			</div>

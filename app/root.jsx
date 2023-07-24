@@ -110,9 +110,9 @@ export default function App() {
 			<body className="flex flex-col relative">
 				{show_spinner && <Spinner />}
 				{!show_spinner && (
-					<div className="flex flex-col w-full h-full">
+					<div className="flex flex-col w-full h-full relative overflow-hidden">
 						{is_resource_path && (
-							<div className="flex flex-col w-full border-b bg-white ">
+							<div className="flex flex-col w-full border-b bg-white sticky top-0 z-[99]">
 								<SimpleNavSignedIn entity_id={entity_id} />
 							</div>
 						)}

@@ -3,6 +3,7 @@ import { Menu, Transition } from "@headlessui/react";
 import { Link, useLoaderData, useLocation } from "@remix-run/react";
 import { classNames, get_entity_id, get_group_id } from "~/utils/helpers";
 import avatars from "~/data/avatars";
+import { Cog8ToothIcon, UserCircleIcon } from "@heroicons/react/24/outline";
 
 export default function UserAccountNavMenu() {
 	let { entity } = useLoaderData();

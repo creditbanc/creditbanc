@@ -68,7 +68,7 @@ const Companies = () => {
 				leaveFrom="transform opacity-100 scale-100"
 				leaveTo="transform opacity-0 scale-95"
 			>
-				<Menu.Items className="absolute left-0 z-10 mt-2 w-56 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+				<Menu.Items className="absolute left-0 z-50 mt-2 w-56 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none ">
 					<div className="py-1">
 						<Menu.Item>
 							{({ active }) => (
@@ -380,7 +380,7 @@ export default function Nav({ entity_id }) {
 	}, [entity_id]);
 
 	return (
-		<div className="flex flex-col w-full  h-[65px] justify-center px-5">
+		<div className="flex flex-col w-full h-[65px] justify-center px-5">
 			<Modal id="share_modal">
 				<Share />
 			</Modal>
