@@ -122,9 +122,6 @@ export const loader = async ({ request }) => {
 	// console.log(report);
 
 	if (!report) {
-		// return redirect(
-		// 	`/credit/business/new/resource/e/${entity_id}/g/${group_id}?cookie=monster`
-		// );
 		return redirect(
 			`/credit/business/new/resource/e/${entity_id}/g/${group_id}`
 		);
@@ -137,8 +134,6 @@ export const loader = async ({ request }) => {
 		...report,
 		...lendflow_report,
 	};
-
-	report = payload;
 
 	await set_doc(["credit_reports", report.doc_id], payload);
 

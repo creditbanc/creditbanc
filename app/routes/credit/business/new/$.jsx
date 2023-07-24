@@ -137,20 +137,9 @@ export const action = async ({ request }) => {
 		let response = await axios(options);
 		let { application_id } = response?.data?.data;
 
-		console.log("application_id_response");
-		// console.log(payload);
-		console.log(application_id);
-
-		// return null;
-
 		if (application_id) {
-			console.log("start");
-			await new Promise((resolve) => setTimeout(resolve, 10000));
-			console.log("end");
-
+			await new Promise((resolve) => setTimeout(resolve, 15000));
 			let report = await get_lendflow_report(application_id);
-			console.log("report_____");
-			inspect(report);
 
 			let payload = {
 				group_id,
@@ -176,8 +165,6 @@ export const action = async ({ request }) => {
 				},
 				true
 			);
-
-			await new Promise((resolve) => setTimeout(resolve, 10000));
 
 			return redirect(
 				`/credit/report/business/experian/overview/resource/e/${entity_id}/g/${group_id}`
