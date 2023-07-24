@@ -841,9 +841,9 @@ export default function NewBusinessReport() {
 	let search_obj = get_search_params_obj(location.search);
 
 	return (
-		<div className="flex flex-col w-full">
+		<div className="flex flex-col w-full overflow-y-scroll">
 			{search_obj.cookie == "monster" && <PreFills />}
-			<CreditNav />
+			{/* <CreditNav /> */}
 			<div className="flex flex-col w-full p-[20px] max-w-2xl mx-auto">
 				<Heading />
 				<Form />
