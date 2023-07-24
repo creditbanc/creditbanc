@@ -118,7 +118,7 @@ export const loader = async ({ request }) => {
 
 	let report = pipe(head)(report_response);
 
-	// console.log("report");
+	// console.log("dbreport");
 	// console.log(report);
 
 	if (!report) {
@@ -134,6 +134,8 @@ export const loader = async ({ request }) => {
 		...report,
 		...lendflow_report,
 	};
+
+	report = payload;
 
 	await set_doc(["credit_reports", report.doc_id], payload);
 
@@ -175,7 +177,7 @@ export default function BusinessReport() {
 		plan_id = undefined,
 		report_plan_id = undefined,
 		business = undefined,
-		scores = undefined,
+		scores = {},
 	} = useLoaderData();
 
 	let { experian_business_score = 0, dnb_business_score = 0 } = scores;

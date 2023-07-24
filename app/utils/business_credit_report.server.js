@@ -3,10 +3,10 @@ import { prisma } from "./prisma.server";
 import { create as create_resource } from "./resource.server";
 
 export const create = async (payload) => {
-	let { group_id } = payload;
+	let { group_id, id } = payload;
 	if (!group_id) throw new Error("group_id is required");
 
-	let id = group_id + "business_credit_report";
+	// let id = group_id + "business_credit_report";
 
 	await set_doc(["credit_reports", id], payload);
 	console.log("credit report created");

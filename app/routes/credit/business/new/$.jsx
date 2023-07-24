@@ -29,6 +29,7 @@ import { plan_product_requests } from "~/data/plan_product_requests";
 import { prisma } from "~/utils/prisma.server";
 import { get_lendflow_report } from "~/utils/lendflow.server";
 import { get_doc, set_doc } from "~/utils/firebase";
+import { v4 as uuidv4 } from "uuid";
 
 const useReportStore = create((set) => ({
 	form: {
@@ -100,6 +101,8 @@ export const action = async ({ request }) => {
 		data: payload,
 	};
 
+	let report_id = uuidv4();
+
 	// let report = {
 	// 	group_id,
 	// 	entity_id,
@@ -155,6 +158,7 @@ export const action = async ({ request }) => {
 				plan_id,
 				application_id,
 				type: "business_credit_report",
+				id: report_id,
 				...report,
 			};
 
@@ -173,16 +177,7 @@ export const action = async ({ request }) => {
 				true
 			);
 
-			// let { file } = await create_new_report({
-			// 	group_id,
-			// 	entity_id,
-			// 	plan_id,
-			// 	application_id,
-			// 	...report,
-			// });
-
-			// console.log("file");
-			// console.log(file.id);
+			await new Promise((resolve) => setTimeout(resolve, 10000));
 
 			return redirect(
 				`/credit/report/business/experian/overview/resource/e/${entity_id}/g/${group_id}`

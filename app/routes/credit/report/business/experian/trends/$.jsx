@@ -42,14 +42,14 @@ export const loader = async ({ request }) => {
 
 	let { plan_id } = await get_doc(["entity", entity_id]);
 
-	if (pipe(allPass(report_tests[plan_id]["experian"]), not)(report)) {
-		console.log("didnotpass");
-		let lendflow_report = await get_lendflow_report(report.application_id);
-		report = await set_doc(["credit_reports", report.id], {
-			...report,
-			...lendflow_report,
-		});
-	}
+	// if (pipe(allPass(report_tests[plan_id]["experian"]), not)(report)) {
+	// 	console.log("didnotpass");
+	// 	let lendflow_report = await get_lendflow_report(report.application_id);
+	// 	report = await set_doc(["credit_reports", report.id], {
+	// 		...report,
+	// 		...lendflow_report,
+	// 	});
+	// }
 
 	let payment_trends = Lendflow.experian.payment_trends(report);
 	let trade_lines = Lendflow.experian.trade_lines(report);

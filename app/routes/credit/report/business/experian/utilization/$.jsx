@@ -12,7 +12,7 @@ import { report_tests } from "~/data/report_tests";
 import { get_lendflow_report } from "~/utils/lendflow.server";
 import { update_business_report } from "~/utils/business_credit_report.server";
 import DoughnutChart from "~/components/DoughnutChart";
-import { get_collection, get_doc } from "~/utils/firebase";
+import { get_collection, get_doc, set_doc } from "~/utils/firebase";
 
 export const loader = async ({ request }) => {
 	let url = new URL(request.url);
@@ -44,14 +44,15 @@ export const loader = async ({ request }) => {
 
 	let { plan_id } = await get_doc(["entity", entity_id]);
 
-	if (pipe(allPass(report_tests[plan_id]["experian"]), not)(report)) {
-		console.log("didnotpass");
-		let lendflow_report = await get_lendflow_report(report.application_id);
-		report = await set_doc(["credit_reports", report.id], {
-			...report,
-			...lendflow_report,
-		});
-	}
+	// if (pipe(allPass(report_tests[plan_id]["experian"]), not)(report)) {
+	// 	console.log("didnotpass");
+
+	// 	let lendflow_report = await get_lendflow_report(report.application_id);
+	// 	report = await set_doc(["credit_reports", report.id], {
+	// 		...report,
+	// 		...lendflow_report,
+	// 	});
+	// }
 
 	let trade_payment_totals = Lendflow.experian.trade_payment_totals(report);
 	let trade_lines = Lendflow.experian.trade_lines(report);
