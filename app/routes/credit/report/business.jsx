@@ -122,8 +122,11 @@ export const loader = async ({ request }) => {
 	// console.log(report);
 
 	if (!report) {
+		// return redirect(
+		// 	`/credit/business/new/resource/e/${entity_id}/g/${group_id}?cookie=monster`
+		// );
 		return redirect(
-			`/credit/business/new/resource/e/${entity_id}/g/${group_id}?cookie=monster`
+			`/credit/business/new/resource/e/${entity_id}/g/${group_id}`
 		);
 	}
 
