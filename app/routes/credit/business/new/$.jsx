@@ -74,13 +74,6 @@ export const action = async ({ request }) => {
 
 	let { plan_id } = await get_doc(["entity", entity_id]);
 
-	// let { plan_id } = await prisma.entity.findUnique({
-	// 	where: { id: entity_id },
-	// 	select: {
-	// 		plan_id: true,
-	// 	},
-	// });
-
 	let experian_requested_products = pipe(get(plan_id))(
 		plan_product_requests.experian
 	);
@@ -107,17 +100,32 @@ export const action = async ({ request }) => {
 		data: payload,
 	};
 
-	// let report = {
-	// 	group_id,
-	// 	entity_id,
-	// 	plan_id,
-	// 	type: "business_credit_report",
-	// 	...mrm_credit_report,
-	// };
+	let report = {
+		group_id,
+		entity_id,
+		plan_id,
+		type: "business_credit_report",
+		...mrm_credit_report,
+	};
 
-	// return redirect(
-	// 	`/credit/report/business/experian/overview/resource/e/${entity_id}/g/${group_id}`
-	// );
+	await create_new_report(report);
+
+	await set_doc(
+		["onboard", entity_id],
+		{
+			business_credit_report: {
+				id: "business_credit_report",
+				completed: true,
+			},
+			entity_id,
+			group_id,
+		},
+		true
+	);
+
+	return redirect(
+		`/credit/report/business/experian/overview/resource/e/${entity_id}/g/${group_id}`
+	);
 
 	// return null;
 
