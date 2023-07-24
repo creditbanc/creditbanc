@@ -224,8 +224,8 @@ export default function LandingPage() {
 	const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
 	return (
-		<div className="bg-white">
-			<header className="absolute inset-x-0 top-0 z-50">
+		<div className="bg-white overflow-y-scroll">
+			<header className="absolute inset-x-0 top-0 z-50 bg-white border-b">
 				<nav
 					className="flex items-center justify-between p-6 lg:px-8"
 					aria-label="Global"
