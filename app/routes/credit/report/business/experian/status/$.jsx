@@ -64,12 +64,16 @@ const PaymentStatus = () => {
 	let { trade_payment_totals, plan_id, report_plan_id } = useLoaderData();
 	let { trade_lines: trade_lines_payment_totals } = trade_payment_totals;
 
-	let plan = pipe(get("essential", "business", "experian"))(plans);
+	let plan = pipe(get(plan_id, "business", "experian"))(plans);
 
 	let trade_count = trade_lines_payment_totals?.tradelineCount || 0;
 	let delinquent_count = trade_lines_payment_totals?.dbt30 || 0;
 	let delinquent_ratio = (delinquent_count / trade_count) * 100;
 	delinquent_ratio = isNaN(delinquent_ratio) ? 0 : delinquent_ratio;
+	let doughnut_dataset =
+		delinquent_ratio > 100
+			? [100, 0]
+			: [delinquent_ratio, 100 - delinquent_ratio];
 
 	return (
 		<div className="overflow-hidden bg-white rounded-lg border">
@@ -90,11 +94,9 @@ const PaymentStatus = () => {
 			<div className="border-t border-gray-200 space-y-8 p-6">
 				<div className="flex flex-row w-full">
 					<div className="flex flex-col w-1/2">
-						<DoughnutChart
-							dataset={[delinquent_ratio, 100 - delinquent_ratio]}
-						>
+						<DoughnutChart dataset={doughnut_dataset}>
 							<div className="absolute w-full h-full flex flex-col items-center justify-center text-5xl font-semibold">
-								{delinquent_ratio}%
+								{delinquent_ratio.toFixed(0)}%
 							</div>
 						</DoughnutChart>
 					</div>
