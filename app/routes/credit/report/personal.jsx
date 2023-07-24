@@ -164,7 +164,7 @@ export default function CreditReport() {
 	};
 
 	return (
-		<div className="flex flex-col flex-1 overflow-y-scroll p-5 overflow-hidden h-full">
+		<div className="flex flex-col flex-1 overflow-y-scroll overflow-hidden h-full">
 			{plan_id == "essential" && (
 				<div className="flex flex-col w-full items-center">
 					<div className="flex flex-col w-full max-w-5xl">

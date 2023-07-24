@@ -199,7 +199,7 @@ export default function BusinessReport() {
 	}, [elmSize]);
 
 	return (
-		<div className="flex flex-col flex-1 overflow-y-scroll p-5 overflow-hidden">
+		<div className="flex flex-col flex-1 overflow-y-scroll overflow-hidden">
 			{plan_id == "essential" && (
 				<div className="flex flex-col w-full items-center">
 					<div className="flex flex-col w-full max-w-5xl">

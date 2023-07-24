@@ -544,7 +544,7 @@ export default function Accounts() {
 	// }, [account.account_id]);
 
 	return (
-		<div className="flex flex-row w-full h-full p-5 overflow-hiddens space-x-3">
+		<div className="flex flex-row w-full h-full overflow-hiddens space-x-3">
 			<div className="flex flex-col w-[70%] h-full bg-white rounded p-5">
 				<div className="border-b border-gray-200 pb-3 flex flex-row justify-between mb-3">
 					<div>

@@ -254,8 +254,8 @@ const CourseDescription = () => {
 
 export default function Course() {
 	return (
-		<div className="flex flex-row w-full h-full p-5 overflow-hiddens space-x-3 overflow-hidden">
-			<div className="flex flex-col w-[70%] h-full rounded px-5  overflow-scroll scrollbar-none">
+		<div className="flex flex-row w-full h-full overflow-hiddens gap-x-5 overflow-hidden">
+			<div className="flex flex-col w-[70%] h-full rounded overflow-scroll scrollbar-none">
 				<div className="flex flex-col w-full h-fit bg-white rounded px-5">
 					<div className="flex flex-row justify-between items-center border-b border-gray-200 bg-white py-4 sticky top-0 z-10">
 						<h3 className="text-base font-semibold leading-6 text-gray-900 my-2">

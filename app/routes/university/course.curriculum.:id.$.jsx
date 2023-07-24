@@ -172,8 +172,8 @@ const CurriculumAccordion = () => {
 
 export default function Courses() {
 	return (
-		<div className="flex flex-row w-full h-full p-5 overflow-hiddens space-x-3 overflow-hidden">
-			<div className="flex flex-col w-[70%] h-full rounded px-5  overflow-scroll scrollbar-none">
+		<div className="flex flex-row w-full h-full overflow-hiddens gap-x-5 overflow-hidden">
+			<div className="flex flex-col w-[70%] h-full rounded overflow-scroll scrollbar-none">
 				<UniversityHeader />
 				<div className="flex flex-col w-full h-fit bg-white rounded pt-5">
 					<CurriculumAccordion />

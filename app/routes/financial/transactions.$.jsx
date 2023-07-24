@@ -421,7 +421,7 @@ export default function Transactions() {
 	let { transactions = [] } = useLoaderData();
 
 	return (
-		<div className="flex flex-col w-full p-5 overflow-hidden h-full">
+		<div className="flex flex-col w-full overflow-hidden h-full">
 			<div className="flex flex-row w-full overflow-hidden h-full">
 				<div className="flex flex-col w-[70%] overflow-y-scroll scrollbar-none bg-white px-5 pb-0 rounded">
 					<div className="border-b border-gray-200 pb-3 flex flex-row justify-between my-3">
