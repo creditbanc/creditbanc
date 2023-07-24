@@ -110,17 +110,23 @@ export const loader = async ({ request }) => {
 		JSON.parse(session.data.personal_credit_report)
 	);
 
-	// let report_id = uuidv4();
-	let report_id = "d316f6cc-8ee7-4037-a2f7-7272b59e5466";
+	let report_id = uuidv4();
+	// let report_id = "d316f6cc-8ee7-4037-a2f7-7272b59e5466";
 
 	// console.log("report_id____");
 	// console.log(report_id);
 
-	// let report = await get_credit_report(reportKey, displayToken);
-	let { data } = await get_doc([
-		"credit_reports",
-		"6481ff02f5d66ca522957d9f",
-	]);
+	let data = await get_credit_report(reportKey, displayToken);
+
+	console.log("report________");
+	console.log(data);
+
+	// return;
+
+	// let { data } = await get_doc([
+	// 	"credit_reports",
+	// 	"6481ff02f5d66ca522957d9f",
+	// ]);
 
 	let credit_report_payload = {
 		first_name,
@@ -153,6 +159,10 @@ export const loader = async ({ request }) => {
 	// console.log("credit_report_payload");
 	// console.log(credit_report_payload);
 
+	// return null;
+
+	await create(credit_report_payload);
+
 	await set_doc(
 		["onboard", entity_id],
 		{
@@ -165,10 +175,6 @@ export const loader = async ({ request }) => {
 		},
 		true
 	);
-
-	// return null;
-
-	await create(credit_report_payload);
 
 	if (is_applicant) {
 		return redirect(`/credit/thankyou`);

@@ -9,8 +9,9 @@ import {
 	CreditReport,
 	Liabilities,
 	credit_report_data,
+	get_credit_report,
 } from "~/data/array";
-import { get_doc as get_credit_report } from "~/utils/personal_credit_report.server";
+
 import { all, get } from "shades";
 import { plans } from "~/data/plans";
 import { get_session_entity_id, get_user_id } from "~/utils/auth.server";
@@ -52,8 +53,7 @@ export const loader = async ({ request }) => {
 	// console.log("report");
 	// console.log(report);
 
-	// await set_doc(["credit_reports", report_id], { ...report, group_id });
-	// console.log("report_saved");
+	// let data = await get_credit_report(report.reportKey, report.displayToken);
 
 	let credit_report = CreditReport(report.data);
 	let liabilities = Liabilities(credit_report.liabilities());

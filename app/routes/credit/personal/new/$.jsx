@@ -140,11 +140,6 @@ export const action = async ({ request }) => {
 	}
 };
 
-export const loader = async ({ request }) => {
-	let entity_id = await get_session_entity_id(request);
-	return { entity_id };
-};
-
 const StatesSelect = () => {
 	var usStates = new UsaStates();
 	let states = pipe(map(get("abbreviation")))(usStates.states);
@@ -549,17 +544,11 @@ const Heading = () => {
 	);
 };
 
-export default function New() {
-	let { entity_id } = useLoaderData();
-
+export default function NewPersonalCreditReport() {
 	return (
-		<div className="flex flex-col w-full">
-			{entity_id && <ApplicantNav />}
-			{!entity_id && <SimpleNav />}
-			<div className="flex flex-col w-full p-[20px] max-w-2xl mx-auto">
-				<Heading />
-				<Form />
-			</div>
+		<div className="flex flex-col w-full h-full max-w-2xl mx-auto overflow-y-scroll scrollbar-none">
+			<Heading />
+			<Form />
 		</div>
 	);
 }

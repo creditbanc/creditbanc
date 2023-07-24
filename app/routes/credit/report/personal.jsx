@@ -20,7 +20,7 @@ import CreditScoreHero from "~/components/CreditScoreHero";
 import { get_session_entity_id, get_user_id } from "~/utils/auth.server";
 import { validate_action, is_resource_owner_p } from "~/utils/resource.server";
 import { redirect } from "@remix-run/node";
-import { Array } from "~/data/array";
+import { Array, get_credit_report } from "~/data/array";
 import { prisma } from "~/utils/prisma.server";
 import UpgradeMembership from "~/components/UpgradeMembership";
 import UpdatePersonalReport from "~/components/UpdatePersonalReport";
@@ -143,6 +143,8 @@ export default function CreditReport() {
 
 	let { experian, equifax, transunion } = scores;
 
+	// return null;
+
 	useEffect(() => {
 		if (content_width > 640) {
 			setIsMobile(false);
@@ -240,7 +242,7 @@ export default function CreditReport() {
 												<span className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-gray-500">
 													<span className="text-lg font-medium leading-none text-white">
 														{business?.name
-															.charAt(0)
+															?.charAt(0)
 															.toUpperCase()}
 													</span>
 												</span>

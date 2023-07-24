@@ -14,7 +14,7 @@ import { inspect, currency } from "~/utils/helpers";
 import axios from "axios";
 import { mapIndexed } from "~/utils/helpers";
 
-export const is_sandbox = true;
+export const is_sandbox = false;
 
 export const appKey = is_sandbox
 	? "3F03D20E-5311-43D8-8A76-E4B5D77793BD"
@@ -17586,6 +17586,9 @@ export const get_credit_report = async (reportKey, displayToken) => {
 	};
 
 	let response = await axios(options);
+
+	console.log("response");
+	console.log(response);
 
 	let retry = async (delay_time_in_milliseconds) => {
 		return new Promise((resolve, reject) => {

@@ -5,10 +5,7 @@ import { CheckIcon, ChevronUpDownIcon } from "@heroicons/react/20/solid";
 import { tabs } from "~/data/personal_tabs";
 import { pipe, head } from "ramda";
 import { filter } from "shades";
-
-function classNames(...classes) {
-	return classes.filter(Boolean).join(" ");
-}
+import { classNames } from "~/utils/helpers";
 
 export function CreditTabsSelect({ selected = "Personal" }) {
 	selected = pipe(filter({ id: selected }), head)(tabs);

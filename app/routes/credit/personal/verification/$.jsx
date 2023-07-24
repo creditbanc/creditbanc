@@ -134,7 +134,7 @@ export default function Verification() {
 	}, []);
 
 	return (
-		<div className="flex flex-col w-full">
+		<div className="flex flex-col w-full overflow-y-scroll">
 			<SimpleNav />
 
 			<div className="flex flex-col w-full  max-w-2xl mx-auto">
