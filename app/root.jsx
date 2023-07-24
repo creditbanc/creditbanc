@@ -44,6 +44,8 @@ export const loader = async ({ request }) => {
 	if (entity_id) {
 		return { entity_id, entity };
 	}
+
+	return {};
 };
 
 export default function App() {
@@ -51,7 +53,7 @@ export default function App() {
 	const transition = useTransition();
 	const show_spinner = useSpinner((state) => state.show_spinner);
 	const setSpinner = useSpinner((state) => state.setSpinner);
-	let { entity_id } = useLoaderData();
+	let { entity_id = undefined } = useLoaderData();
 
 	useEffect(() => {
 		if (transition.state !== "idle") {
