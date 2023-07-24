@@ -33,15 +33,9 @@ export default function Home() {
 	var { entity_id } = useLoaderData();
 
 	return (
-		<div className="flex flex-col h-full w-full bg-gray-50">
-			{/* <div className="flex flex-col border-b w-full bg-white">
-				<SimpleNavSignedIn user_id={entity_id} />
-			</div> */}
-
-			<div className="flex flex-row h-full overflow-hidden">
-				<div className="flex flex-col flex-1 overflow-scroll">
-					<Outlet />
-				</div>
+		<div className="flex flex-col h-full w-full bg-gray-50 overflow-hidden">
+			<div className="flex flex-col w-full h-full">
+				<Outlet />
 			</div>
 		</div>
 	);
