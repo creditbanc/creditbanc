@@ -32,101 +32,90 @@ export const action = async ({ request }) => {
 	let entity_id = await get_session_entity_id(request);
 	var form = await request.formData();
 
-	const email = form.get("email");
-	const password = form.get("password");
+	// const email = form.get("email");
+	// const password = form.get("password");
 
-	const customer_search_response = await stripe.customers.search({
-		query: `metadata["entity_id"]: "${entity_id}"`,
-	});
+	// const customer_search_response = await stripe.customers.search({
+	// 	query: `metadata["entity_id"]: "${entity_id}"`,
+	// });
 
-	let has_customer = pipe(has({ data: (data) => length(data) > 0 }))(
-		customer_search_response
-	);
+	// let has_customer = pipe(has({ data: (data) => length(data) > 0 }))(
+	// 	customer_search_response
+	// );
 
-	// console.log("has_customer");
-	// console.log(has_customer);
+	// // console.log("has_customer");
+	// // console.log(has_customer);
 
-	const create_token = async () => {
-		const token = await stripe.tokens.create({
-			card: {
-				number: "4242424242424242",
-				exp_month: 5,
-				exp_year: 2024,
-				cvc: "314",
-			},
-		});
+	// const create_token = async () => {
+	// 	const token = await stripe.tokens.create({
+	// 		card: {
+	// 			number: "4242424242424242",
+	// 			exp_month: 5,
+	// 			exp_year: 2024,
+	// 			cvc: "314",
+	// 		},
+	// 	});
 
-		return token;
-	};
+	// 	return token;
+	// };
 
-	const create_customer = async (entity_id) => {
-		let token = await create_token();
-		let { id: token_id } = token;
+	// const create_customer = async (entity_id) => {
+	// 	let token = await create_token();
+	// 	let { id: token_id } = token;
 
-		const customer = await stripe.customers.create({
-			name: entity_id,
-			metadata: {
-				entity_id,
-			},
-			source: token_id,
-		});
+	// 	const customer = await stripe.customers.create({
+	// 		name: entity_id,
+	// 		metadata: {
+	// 			entity_id,
+	// 		},
+	// 		source: token_id,
+	// 	});
 
-		return customer;
-	};
+	// 	return customer;
+	// };
 
-	const subscribe_customer = async (customer_id) => {
-		const subscription = await stripe.subscriptions.create({
-			customer: customer_id,
-			items: [{ price: "price_1N61DjJlRXkfyebsWDaUadR0" }],
-			metadata: {
-				entity_id,
-				customer_id,
-			},
-		});
-		return subscription;
-	};
+	// const subscribe_customer = async (customer_id) => {
+	// 	const subscription = await stripe.subscriptions.create({
+	// 		customer: customer_id,
+	// 		items: [{ price: "price_1N61DjJlRXkfyebsWDaUadR0" }],
+	// 		metadata: {
+	// 			entity_id,
+	// 			customer_id,
+	// 		},
+	// 	});
+	// 	return subscription;
+	// };
 
-	if (has_customer) {
-		let customer = pipe(get("data", 0))(customer_search_response);
-		let { id: customer_id } = customer;
-		let subscription = await subscribe_customer(customer_id);
+	// if (has_customer) {
+	// 	let customer = pipe(get("data", 0))(customer_search_response);
+	// 	let { id: customer_id } = customer;
+	// 	let subscription = await subscribe_customer(customer_id);
 
-		// console.log("subscription");
-		// console.log(subscription);
+	// 	// console.log("subscription");
+	// 	// console.log(subscription);
 
-		await update_doc(["entity", entity_id], { plan_id: "builder" });
+	// 	await update_doc(["entity", entity_id], { plan_id: "builder" });
 
-		// await prisma.entity.update({
-		// 	where: {
-		// 		id: entity_id,
-		// 	},
-		// 	data: {
-		// 		plan_id: "builder",
-		// 	},
-		// });
+	// 	// await prisma.entity.update({
+	// 	// 	where: {
+	// 	// 		id: entity_id,
+	// 	// 	},
+	// 	// 	data: {
+	// 	// 		plan_id: "builder",
+	// 	// 	},
+	// 	// });
 
-		return redirect("/home");
-	}
+	// 	return redirect("/home");
+	// }
 
-	let customer = await create_customer(entity_id);
-	let { id: customer_id } = customer;
-	let subscription = await subscribe_customer(customer_id);
+	// let customer = await create_customer(entity_id);
+	// let { id: customer_id } = customer;
+	// let subscription = await subscribe_customer(customer_id);
 
-	await update_doc(["entity", entity_id], {
-		plan_id: "builder",
-		stripe_customer_id: customer_id,
-		stripe_subscription_id: subscription.id,
-	});
-
-	// await prisma.entity.update({
-	// 	where: {
-	// 		id: entity_id,
-	// 	},
-	// 	data: {
-	// 		plan_id: "builder",
-	// 		stripe_customer_id: customer_id,
-	// 		stripe_subscription_id: subscription.id,
-	// 	},
+	// await update_doc(["entity", entity_id], {
+	// 	plan_id: "builder",
+	// 	stripe_customer_id: customer_id,
+	// 	stripe_subscription_id: subscription.id,
 	// });
 
 	return redirect("/home");
