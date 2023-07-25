@@ -1,19 +1,11 @@
-import { Configuration, PlaidApi, PlaidEnvironments } from "plaid";
+import { PlaidApi } from "plaid";
 import { form_params } from "~/utils/helpers";
-
-const configuration = new Configuration({
-	basePath: PlaidEnvironments.sandbox,
-	baseOptions: {
-		headers: {
-			"PLAID-CLIENT-ID": "5e5a8afbd52ab60013b29008",
-			"PLAID-SECRET": "e0f302dca329fa6db6e485c12e16be",
-		},
-	},
-});
+import { configuration } from "~/api/client/plaid";
 
 const PlaidClient = new PlaidApi(configuration);
 
 export const action = async ({ request }) => {
+	console.log("exchange_public_token_action");
 	let { public_token } = await form_params(request);
 
 	try {

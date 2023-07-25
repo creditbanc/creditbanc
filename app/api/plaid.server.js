@@ -205,6 +205,7 @@ export const institutions = async () => {
 		// Handle error
 	}
 };
+
 export const get_balances = async () => {
 	const request = {
 		access_token,

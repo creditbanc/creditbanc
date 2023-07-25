@@ -17,7 +17,7 @@ import { mapIndexed } from "~/utils/helpers";
 export const is_sandbox = false;
 
 export const appKey = is_sandbox
-	? "3F03D20E-5311-43D8-8A76-E4B5D77793BD"
+	? "F5C7226A-4F96-43BF-B748-09278FFE0E36"
 	: "F5C7226A-4F96-43BF-B748-09278FFE0E36";
 
 export const user_url = is_sandbox
@@ -17505,11 +17505,13 @@ Array.transunion.score = tryCatch(
 	always(0)
 );
 
-export const new_credit_report = async ({
-	clientKey,
-	productCode,
-	userToken,
-}) => {
+export const new_credit_report = async (payload) => {
+	console.log("new_credit_report");
+	let { clientKey, productCode, userToken } = payload;
+
+	console.log("payload");
+	console.log(payload);
+
 	var data = JSON.stringify({
 		clientKey,
 		productCode,
@@ -17540,6 +17542,7 @@ export const new_credit_report = async ({
 		return { displayToken, reportKey };
 	} catch (error) {
 		console.log("error");
+		console.log(error);
 		return { error };
 	}
 };

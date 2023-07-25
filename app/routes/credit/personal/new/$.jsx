@@ -99,7 +99,7 @@ export const action = async ({ request }) => {
 		let response = await axios(config);
 
 		console.log("response______");
-		console.log(response);
+		console.log(response.data);
 
 		let { clientKey, authToken } = response.data;
 

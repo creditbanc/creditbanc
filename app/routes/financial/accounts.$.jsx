@@ -86,6 +86,7 @@ import { is_authorized_f } from "~/api/auth";
 import { redirect } from "@remix-run/node";
 import { get_session_entity_id, get_user_id } from "~/utils/auth.server";
 import LoadingSpinner from "~/components/LoadingSpinner";
+import { disconnect_plaid } from "~/api/client/plaid";
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
@@ -101,10 +102,6 @@ export const useAccounstStore = create((set) => ({
 	set_accounts: (path, value) =>
 		set((state) => pipe(mod(...path)(() => value))(state)),
 }));
-
-function randomNumber(min, max) {
-	return Math.random() * (max - min) + min;
-}
 
 export const loader = async ({ request }) => {
 	let { pathname, origin } = new URL(request.url);
@@ -125,6 +122,8 @@ export const loader = async ({ request }) => {
 	let plaid_credentials = await get_doc(["plaid_credentials", group_id]);
 
 	if (isEmpty(plaid_credentials)) {
+		console.log("origin");
+		console.log(origin);
 		let config = {
 			method: "post",
 			maxBodyLength: Infinity,
@@ -526,11 +525,11 @@ export default function Accounts() {
 
 		let daily_balances = await lastValueFrom($balances);
 
-		console.log("daily_balances");
-		console.log(daily_balances);
+		// console.log("daily_balances");
+		// console.log(daily_balances);
 
 		set_account(["account", "is_loading"], false);
-		set_account(["account", "daily_balances"], daily_balances);
+		// set_account(["account", "daily_balances"], daily_balances);
 	};
 
 	const on_account_click = (account, e) => {
@@ -545,6 +544,16 @@ export default function Accounts() {
 	// 		get_account_daily_balances(account);
 	// 	}
 	// }, [account.account_id]);
+
+	const onDisconnectPlaid = async () => {
+		await disconnect_plaid({ group_id });
+
+		set_account(["account"], {});
+		set_accounts(["accounts"], []);
+
+		console.log("plaid credentials deleted");
+		console.log("plaid bank accounts deleted");
+	};
 
 	return (
 		<div className="flex flex-row w-full h-full overflow-hiddens space-x-3">
@@ -563,6 +572,15 @@ export default function Accounts() {
 							>
 								Connect Bank Account
 							</Link>
+						)}
+
+						{has_credentials && (
+							<div
+								onClick={onDisconnectPlaid}
+								className="rounded-md bg-gray-700 px-3 py-2 text-xs font-semibold text-white shadow-sm"
+							>
+								Disconnect Bank Account
+							</div>
 						)}
 					</div>
 				</div>

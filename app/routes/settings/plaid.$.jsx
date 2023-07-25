@@ -21,6 +21,7 @@ import {
 import { Menu, Transition } from "@headlessui/react";
 import { create } from "zustand";
 import { mod } from "shades";
+import { disconnect_plaid } from "~/api/client/plaid";
 
 export const useAccountsStore = create((set) => ({
 	accounts: [],
@@ -55,20 +56,7 @@ const Heading = () => {
 	let set_accounts = useAccountsStore((state) => state.set_accounts);
 
 	const onDisconnectPlaid = async () => {
-		await delete_doc(["plaid_credentials", group_id]);
-
-		let accounts_queries = [
-			{
-				param: "group_id",
-				predicate: "==",
-				value: group_id,
-			},
-		];
-
-		await delete_collection({
-			path: ["plaid_accounts"],
-			queries: accounts_queries,
-		});
+		await disconnect_plaid({ group_id });
 
 		console.log("plaid credentials deleted");
 		console.log("plaid accounts deleted");

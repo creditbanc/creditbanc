@@ -1,6 +1,6 @@
 import CreditNav from "~/components/CreditNav";
 import SimpleNav from "~/components/SimpleNav";
-import { isEmpty, join, equals, tryCatch, is } from "ramda";
+import { isEmpty, join, equals, tryCatch, is, has } from "ramda";
 import axios from "axios";
 import { useLoaderData, useFetcher, useLocation } from "@remix-run/react";
 import { useSearchParams } from "react-router-dom";
@@ -20,10 +20,14 @@ import {
 } from "~/utils/helpers";
 import { get_session_entity_id, get_user_id } from "~/utils/auth.server";
 import { appKey, new_credit_report, is_sandbox } from "~/data/array";
-import { prisma } from "~/utils/prisma.server";
 import { get_doc } from "~/utils/firebase";
+import { getSession } from "~/sessions/personal_credit_report_session";
+import { credit_user } from "~/api/client/array";
+import { v4 as uuidv4 } from "uuid";
+import { create as new_personal_credit_report } from "~/utils/personal_credit_report.server";
 
 export const action = async ({ request }) => {
+	let { origin } = new URL(request.url);
 	let { payload: form } = await form_params(request);
 	let { clientKey, authToken, userToken } = JSON.parse(form);
 	let { group_id, applicant, plan_id, entity_id } = search_params(request);
@@ -46,9 +50,67 @@ export const action = async ({ request }) => {
 		userToken,
 	};
 
+	console.log("report_payload");
+	console.log(report_payload);
+
 	let { displayToken, reportKey, error } = await new_credit_report(
 		report_payload
 	);
+
+	let { data: credit_report_api_response } = await axios({
+		method: "get",
+		url: `${origin}/credit/personal/api/report?reportKey=${reportKey}&displayToken=${displayToken}`,
+	});
+
+	console.log("credit_report_api_response");
+	console.log(credit_report_api_response);
+	if (has("CREDIT_RESPONSE")) {
+		let entity_id = await get_session_entity_id(request);
+		console.log("joy_________");
+
+		let session = await getSession(request.headers.get("Cookie"));
+		let { street, city, state, zip, first_name, last_name, ssn, dob } =
+			credit_user(JSON.parse(session.data.personal_credit_report));
+
+		let credit_report_request = credit_user(
+			JSON.parse(session.data.personal_credit_report)
+		);
+
+		let report_id = uuidv4();
+
+		let credit_report_payload = {
+			first_name,
+			last_name,
+			street,
+			city,
+			state,
+			zip,
+			ssn,
+			dob,
+			request: credit_report_request,
+			entity_id,
+			group_id,
+			plan_id,
+			clientKey,
+			userToken,
+			authToken,
+			displayToken,
+			reportKey,
+			productCode,
+			data: credit_report_api_response,
+			id: report_id,
+			type: "personal_credit_report",
+		};
+
+		console.log("credit_report_payload");
+		console.log(credit_report_payload);
+
+		await new_personal_credit_report(credit_report_payload);
+
+		return redirect(
+			`/credit/report/personal/personal/resource/e/${entity_id}/g/${group_id}`
+		);
+	}
 
 	let params = [
 		`displayToken=${displayToken}`,
@@ -77,7 +139,10 @@ export const action = async ({ request }) => {
 		? applicant_params.join("&")
 		: params.join("&");
 
+	return null;
+
 	if (displayToken && reportKey) {
+		return null;
 		return redirect(`/credit/personal/create?${redirect_search_params}`);
 	} else {
 		if (is_sandbox) {
@@ -87,6 +152,15 @@ export const action = async ({ request }) => {
 		}
 	}
 };
+
+// export const loader = async ({ request }) => {
+// 	let reportKey = `2415b741-c062-4574-82ba-fc1015bf3984`;
+// 	let displayToken = `32C2FC0C-CAD8-47C8-AA18-1D1CDD419FA9`;
+
+// 	return redirect(
+// 		`/credit/personal/api/report?reportKey=${reportKey}&displayToken=${displayToken}`
+// 	);
+// };
 
 const Heading = () => {
 	return (
@@ -143,11 +217,10 @@ export default function Verification() {
 			<div className="-mt-[30px] sm:-mt-[80px]">
 				{is_sandbox && (
 					<array-authentication-kba
-						apiurl="https://mock.array.io"
-						appkey="3F03D20E-5311-43D8-8A76-E4B5D77793BD"
+						appKey={appKey}
 						sandbox="true"
-						userid="1rRBvKI3tCPIEg09hGP0CRAIDB1"
-						showresultpages="true"
+						userId={clientKey}
+						showResultPages="true"
 					></array-authentication-kba>
 				)}
 
