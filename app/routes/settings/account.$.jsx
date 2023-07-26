@@ -33,7 +33,7 @@ const Integrations = () => {
 					<div className="font-medium text-gray-900">Plaid</div>
 					<button
 						type="button"
-						className="font-semibold text-indigo-600 hover:text-indigo-500"
+						className="font-semibold text-blue-600 hover:text-blue-500"
 					>
 						Connect
 					</button>
@@ -43,7 +43,7 @@ const Integrations = () => {
 			<div className="flex border-t border-gray-100 pt-6">
 				<button
 					type="button"
-					className="text-sm font-semibold leading-6 text-indigo-600 hover:text-indigo-500"
+					className="text-sm font-semibold leading-6 text-blue-600 hover:text-blue-500"
 				>
 					<span aria-hidden="true">+</span> Add another application
 				</button>
@@ -73,7 +73,7 @@ const Profile = () => {
 						<div className="text-gray-900">Tom Cook</div>
 						<button
 							type="button"
-							className="font-semibold text-indigo-600 hover:text-indigo-500"
+							className="font-semibold text-blue-600 hover:text-blue-500"
 						>
 							Update
 						</button>
@@ -87,7 +87,7 @@ const Profile = () => {
 						<div className="text-gray-900">{entity.email}</div>
 						<button
 							type="button"
-							className="font-semibold text-indigo-600 hover:text-indigo-500"
+							className="font-semibold text-blue-600 hover:text-blue-500"
 						>
 							Update
 						</button>

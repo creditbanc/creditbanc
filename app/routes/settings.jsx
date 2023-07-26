@@ -61,19 +61,15 @@ export default function Account() {
 
 	return (
 		<div>
-			{/* <div className="flex flex-col w-full border-b">
-				<SimpleNavSignedIn user_id={entity_id} />
-			</div> */}
-
-			<div className="flex flex-col items-center w-full pt-8">
+			<div className="flex flex-col items-center w-full pt-8 overflow-hidden">
 				<div className="flex flex-col w-full lg:px-8">
 					<Heading />
 				</div>
 			</div>
 
-			<div className="mx-auto lg:flex lg:gap-x-16 lg:px-8">
-				<aside className="flex overflow-x-auto border-b border-gray-900/5 py-4 lg:block lg:w-64 lg:flex-none lg:border-0 lg:py-20">
-					<nav className="flex-none px-4 sm:px-6 lg:px-0">
+			<div className="flex flex-col lg:flex-row w-full gap-y-5 px-8 lg:py-8 lg:gap-x-5">
+				<aside className="flex flex-col flex-1 py-4">
+					<nav className="">
 						<ul
 							role="list"
 							className="flex gap-x-3 gap-y-3 whitespace-nowrap lg:flex-col"
@@ -106,7 +102,7 @@ export default function Account() {
 					</nav>
 				</aside>
 
-				<main className="px-4 py-8 sm:px-6 lg:flex-auto lg:px-0 lg:py-20">
+				<main className="flex flex-col w-full lg:w-[75%]">
 					<Outlet />
 				</main>
 			</div>

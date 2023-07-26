@@ -1019,6 +1019,10 @@ video {
   margin-bottom: 50px;
 }
 
+.mb-\[60px\] {
+  margin-bottom: 60px;
+}
+
 .mb-\[70px\] {
   margin-bottom: 70px;
 }
@@ -1185,14 +1189,6 @@ video {
 
 .mt-\[50px\] {
   margin-top: 50px;
-}
-
-.mb-\[100px\] {
-  margin-bottom: 100px;
-}
-
-.mb-\[60px\] {
-  margin-bottom: 60px;
 }
 
 .block {
@@ -1686,10 +1682,6 @@ video {
 
 .w-\[60px\] {
   width: 60px;
-}
-
-.w-\[70\%\] {
-  width: 70%;
 }
 
 .w-\[80\%\] {
@@ -4821,6 +4813,10 @@ body {
     width: 100%;
   }
 
+  .lg\:w-\[80\%\] {
+    width: 80%;
+  }
+
   .lg\:min-w-\[31\%\] {
     min-width: 31%;
   }
@@ -4904,6 +4900,11 @@ body {
     row-gap: 5rem;
   }
 
+  .lg\:gap-x-5 {
+    -moz-column-gap: 1.25rem;
+         column-gap: 1.25rem;
+  }
+
   .lg\:space-x-0 > :not([hidden]) ~ :not([hidden]) {
     --tw-space-x-reverse: 0;
     margin-right: calc(0px * var(--tw-space-x-reverse));
@@ -4984,6 +4985,11 @@ body {
   .lg\:py-20 {
     padding-top: 5rem;
     padding-bottom: 5rem;
+  }
+
+  .lg\:py-8 {
+    padding-top: 2rem;
+    padding-bottom: 2rem;
   }
 
   .lg\:pb-0 {
@@ -5086,18 +5092,9 @@ body {
     max-width: 42rem;
   }
 
-  .xl\:justify-start {
-    justify-content: flex-start;
-  }
-
   .xl\:gap-x-48 {
     -moz-column-gap: 12rem;
          column-gap: 12rem;
-  }
-
-  .xl\:gap-x-5 {
-    -moz-column-gap: 1.25rem;
-         column-gap: 1.25rem;
   }
 
   .xl\:p-10 {
