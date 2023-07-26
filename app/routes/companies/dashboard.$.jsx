@@ -402,8 +402,8 @@ export default function Companies() {
 	}, []);
 
 	return (
-		<div className="flex flex-row w-full h-full p-5 overflow-hiddens space-x-3 overflow-hidden">
-			<div className="flex flex-col w-[70%] h-full bg-white rounded px-5 overflow-y-scroll border">
+		<div className="flex flex-row w-full h-full p-5 overflow-hiddens space-x-3 overflow-hidden mb-[60px]">
+			<div className="flex flex-col w-full lg:w-[70%] h-full bg-white rounded px-5 overflow-y-scroll border scrollbar-none ">
 				<div className="border-b border-gray-200 pb-3 flex flex-row justify-between sticky top-0 bg-white pt-5 ">
 					<div>
 						<h3 className="mt-2 text-base font-semibold leading-6 text-gray-900">
@@ -414,7 +414,7 @@ export default function Companies() {
 				</div>
 
 				<div className="flex flex-col w-full py-5  scrollbar-none">
-					<div className="flex flex-row w-full items-center flex-wrap gap-y-10 justify-between xl:justify-start xl:gap-x-5">
+					<div className="flex flex-row w-full items-center flex-wrap gap-y-10 justify-start gap-x-5">
 						{pipe(
 							map((group_id) => (
 								<Company key={group_id} group_id={group_id} />
@@ -433,7 +433,7 @@ export default function Companies() {
 				</div>
 
 				<div className="flex flex-col w-full py-5 scrollbar-none">
-					<div className="flex flex-row w-full items-center flex-wrap gap-y-10 justify-between xl:justify-start xl:gap-x-5">
+					<div className="flex flex-row w-full items-center flex-wrap gap-y-10 justify-start gap-x-5">
 						{pipe(
 							map((group_id) => (
 								<Company key={group_id} group_id={group_id} />
@@ -442,7 +442,7 @@ export default function Companies() {
 					</div>
 				</div>
 			</div>
-			<div className="flex flex-col w-[30%]">
+			<div className="hidden lg:flex flex-col w-[30%]">
 				{isEmpty(company) && (
 					<div className="flex flex-col w-full h-full rounded border bg-white items-center justify-center">
 						<Loading />
