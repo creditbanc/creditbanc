@@ -302,7 +302,7 @@ const HealthStats = ({ type = "revenue" }) => {
 					<div className="text-sm font-normal text-gray-900">
 						{item.name}
 					</div>
-					<div className="mt-1 flex items-baseline justify-between md:block lg:flex">
+					<div className="mt-1 flex flex-row justify-between">
 						<div className="flex items-baseline text-xl font-semibold text-blue-600">
 							{item.stat}
 							<span className="ml-2 text-sm font-medium text-gray-500">
@@ -315,7 +315,7 @@ const HealthStats = ({ type = "revenue" }) => {
 								item.changeType === "increase"
 									? "bg-green-100 text-green-800"
 									: "bg-red-100 text-red-800",
-								"inline-flex items-baseline rounded-full px-2.5 py-0.5 text-xs font-medium md:mt-2 lg:mt-0"
+								"flex flex-row items-center h-[25px] rounded-full px-2.5 py-0.5 text-xs font-medium md:mt-2 lg:mt-0"
 							)}
 						>
 							{item.changeType === "increase" ? (
@@ -602,23 +602,23 @@ export default function Cashflow() {
 
 	return (
 		<div className="flex flex-row h-full w-full space-x-5">
-			<div className="flex flex-col h-full w-[70%] rounded  gap-y-5 overflow-y-scroll scrollbar-none">
+			<div className="flex flex-col h-full w-full lg:w-[70%] rounded  gap-y-5 overflow-y-scroll scrollbar-none overflow-x-hidden">
 				<div className="flex flex-col w-full max-h-[600px] bg-white rounded">
 					<CashflowChart />
 				</div>
-				<div className="flex flex-row w-full h-full">
-					<div className="flex flex-col w-1/2 h-full ">
-						<div className="mr-[10px] bg-white rounded">
+				<div className="table lg:flex flex-col lg:flex-row w-full h-full space-y-5 lg:space-y-0 lg:space-x-5">
+					<div className="flex flex-col w-full lg:w-1/2 h-full ">
+						<div className=" bg-white rounded">
 							<RevenueChart />
 						</div>
 					</div>
-					<div className="flex flex-col w-1/2 h-full rounded">
-						<div className="ml-[10px] bg-white rounded">
+					<div className="flex flex-col w-full lg:w-1/2 h-full ">
+						<div className="bg-white rounded">
 							<ExpensesChart />
 						</div>
 					</div>
 				</div>
-				<div className="flex flex-col w-full bg-white rounded">
+				<div className="lg:flex flex-col w-full h-full bg-white rounded">
 					<div className="flex flex-col py-4 px-5">
 						<FinancialHealthEvaluationHeading />
 					</div>
@@ -630,7 +630,7 @@ export default function Cashflow() {
 					</div>
 				</div>
 			</div>
-			<div className="flex flex-col w-[30%] rounded border">
+			<div className="hidden lg:flex flex-col lg:w-[30%] rounded border">
 				<div className="flex flex-col w-full h-full rounded bg-white">
 					<div className="flex flex-row py-4 px-5 justify-between w-full items-center">
 						<div>Recent transactions</div>
