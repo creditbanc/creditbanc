@@ -2332,10 +2332,6 @@ video {
   overflow: scroll;
 }
 
-.overflow-x-auto {
-  overflow-x: auto;
-}
-
 .overflow-y-auto {
   overflow-y: auto;
 }
@@ -2534,10 +2530,6 @@ video {
 
 .border-gray-900\/10 {
   border-color: rgb(17 24 39 / 0.1);
-}
-
-.border-gray-900\/5 {
-  border-color: rgb(17 24 39 / 0.05);
 }
 
 .border-green-200 {
@@ -4765,10 +4757,6 @@ body {
     width: 33.333333%;
   }
 
-  .lg\:w-64 {
-    width: 16rem;
-  }
-
   .lg\:w-96 {
     width: 24rem;
   }
@@ -4811,10 +4799,6 @@ body {
 
   .lg\:w-full {
     width: 100%;
-  }
-
-  .lg\:w-\[80\%\] {
-    width: 80%;
   }
 
   .lg\:min-w-\[31\%\] {
@@ -4882,9 +4866,9 @@ body {
          column-gap: 3rem;
   }
 
-  .lg\:gap-x-16 {
-    -moz-column-gap: 4rem;
-         column-gap: 4rem;
+  .lg\:gap-x-5 {
+    -moz-column-gap: 1.25rem;
+         column-gap: 1.25rem;
   }
 
   .lg\:gap-x-8 {
@@ -4898,11 +4882,6 @@ body {
 
   .lg\:gap-y-20 {
     row-gap: 5rem;
-  }
-
-  .lg\:gap-x-5 {
-    -moz-column-gap: 1.25rem;
-         column-gap: 1.25rem;
   }
 
   .lg\:space-x-0 > :not([hidden]) ~ :not([hidden]) {
@@ -4950,10 +4929,6 @@ body {
     border-bottom-right-radius: 0px;
   }
 
-  .lg\:border-0 {
-    border-width: 0px;
-  }
-
   .lg\:border-none {
     border-style: none;
   }
@@ -4980,11 +4955,6 @@ body {
   .lg\:px-8 {
     padding-left: 2rem;
     padding-right: 2rem;
-  }
-
-  .lg\:py-20 {
-    padding-top: 5rem;
-    padding-bottom: 5rem;
   }
 
   .lg\:py-8 {

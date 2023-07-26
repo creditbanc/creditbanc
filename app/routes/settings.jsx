@@ -61,7 +61,7 @@ export default function Account() {
 
 	return (
 		<div>
-			<div className="flex flex-col items-center w-full pt-8 overflow-hidden">
+			<div className="flex flex-col items-center w-full pt-8">
 				<div className="flex flex-col w-full lg:px-8">
 					<Heading />
 				</div>
