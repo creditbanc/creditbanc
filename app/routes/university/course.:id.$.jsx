@@ -255,7 +255,7 @@ const CourseDescription = () => {
 export default function Course() {
 	return (
 		<div className="flex flex-row w-full h-full overflow-hiddens gap-x-5 overflow-hidden">
-			<div className="flex flex-col w-[70%] h-full rounded overflow-scroll scrollbar-none">
+			<div className="flex flex-col w-full lg:w-[70%] h-full rounded overflow-scroll scrollbar-none">
 				<div className="flex flex-col w-full h-fit bg-white rounded px-5">
 					<div className="flex flex-row justify-between items-center border-b border-gray-200 bg-white py-4 sticky top-0 z-10">
 						<h3 className="text-base font-semibold leading-6 text-gray-900 my-2">
@@ -297,7 +297,7 @@ export default function Course() {
 					</div>
 				</div>
 			</div>
-			<div className="flex flex-col w-[30%]">
+			<div className="hidden lg:flex flex-col w-[30%]">
 				<div className="flex flex-col bg-white border rounded overflow-scroll scrollbar-none">
 					<div className="border-b border-gray-200 bg-white px-4 py-5 sm:px-6 sticky top-0 z-10">
 						<h3 className="text-base font-semibold leading-6 text-gray-900 my-2">

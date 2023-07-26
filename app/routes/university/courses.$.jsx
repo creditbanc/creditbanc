@@ -404,7 +404,7 @@ const CurriculumAccordion = () => {
 export default function Courses() {
 	return (
 		<div className="flex flex-row w-full h-full overflow-hiddens gap-x-5 overflow-hidden">
-			<div className="flex flex-col w-[70%] h-full rounded overflow-scroll scrollbar-none">
+			<div className="flex flex-col w-full lg:w-[70%] h-full rounded overflow-scroll scrollbar-none">
 				<UniversityHeader />
 				<div className="flex flex-col w-full h-fit bg-white rounded px-5 pt-5">
 					<div className="border-b border-gray-200 pb-3 flex flex-col sticky top-0 bg-white z-10">
@@ -423,7 +423,7 @@ export default function Courses() {
 					</div>
 				</div>
 			</div>
-			<div className="flex flex-col w-[30%]">
+			<div className="hidden lg:flex flex-col w-[30%]">
 				<div className="flex flex-col bg-white border rounded overflow-scroll scrollbar-none">
 					<div className="p-3">
 						<img
