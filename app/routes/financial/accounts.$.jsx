@@ -613,7 +613,7 @@ export default function Accounts() {
 						<div className="flex flex-col w-[50px]"></div>
 					</div>
 				</div>
-				<div className="flex flex-col w-full pb-3 gap-y-5 lg:gap-y-0 lg:last-of-type:border-b">
+				<div className="flex flex-col w-full pb-3 lg:pb-0 gap-y-5 lg:gap-y-0 lg:last-of-type:border-b">
 					{pipe(
 						mapIndexed((account, index) => (
 							<div
