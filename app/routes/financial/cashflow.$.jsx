@@ -607,15 +607,11 @@ export default function Cashflow() {
 					<CashflowChart />
 				</div>
 				<div className="table lg:flex flex-col lg:flex-row w-full h-full space-y-5 lg:space-y-0 lg:space-x-5">
-					<div className="flex flex-col w-full lg:w-1/2 h-full ">
-						<div className=" bg-white rounded">
-							<RevenueChart />
-						</div>
+					<div className="flex flex-col w-full lg:w-1/2 h-full bg-white rounded">
+						<RevenueChart />
 					</div>
-					<div className="flex flex-col w-full lg:w-1/2 h-full ">
-						<div className="bg-white rounded">
-							<ExpensesChart />
-						</div>
+					<div className="flex flex-col w-full lg:w-1/2 h-full bg-white rounded">
+						<ExpensesChart />
 					</div>
 				</div>
 				<div className="lg:flex flex-col w-full h-full bg-white rounded">

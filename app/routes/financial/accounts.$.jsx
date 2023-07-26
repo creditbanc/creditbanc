@@ -227,11 +227,11 @@ const TableRow = ({ account }) => {
 
 	return (
 		<div
-			className="flex flex-row w-full text-gray-700 border-b py-3 hover:bg-gray-50 cursor-pointer text-sm space-x-2"
+			className="flex flex-col lg:flex-row w-full text-gray-700 border-b py-3 hover:bg-gray-50 cursor-pointer text-sm space-x-2 lg:space-x-0 gap-y-3 lg:gap-y-0 divide-y lg:divide-y-0 border rounded px-3 lg:px-0 lg:border-none"
 			onClick={onSelectAccount}
 		>
-			<div className="flex flex-row space-x-3 w-[300px]">
-				<div className="flex flex-col justify-center">
+			<div className="flex flex-row lg:w-[298px]">
+				<div className="hidden lg:flex flex-col justify-center">
 					<span className="inline-flex h-10 w-10 items-center justify-center rounded-full ">
 						<BuildingLibraryIcon className="h-5 w-5 text-gray-400" />
 					</span>
@@ -246,43 +246,50 @@ const TableRow = ({ account }) => {
 					</div>
 				</div>
 			</div>
-			<div className="flex flex-row w-[250px] items-center space-x-3">
-				{!is_account_number_visible && (
-					<input
-						type="password"
-						value={account.account}
-						readOnly={true}
-						className="bg-transparent w-[130px] border-none p-0 cursor-default focus:ring-0 outline-none"
-					></input>
-				)}
-				{is_account_number_visible && (
-					<div className="w-[130px]">{account.account}</div>
-				)}
-				<div>
-					{is_account_number_visible && (
-						<EyeSlashIcon
-							className="h-5 w-5 text-gray-400"
-							onClick={onToggleAccountNumberVisibility}
-						/>
-					)}
-
+			<div className="flex flex-row lg:w-[250px] items-center justify-between pt-2 lg:pt-2">
+				<div className="lg:hidden">Account number:</div>
+				<div className="flex flex-row items-center">
 					{!is_account_number_visible && (
-						<EyeIcon
-							className="h-5 w-5 text-gray-400"
-							onClick={onToggleAccountNumberVisibility}
-						/>
+						<input
+							type="password"
+							value={account.account}
+							readOnly={true}
+							className="bg-transparent w-[130px] border-none p-0 cursor-default focus:ring-0 outline-none"
+						></input>
 					)}
+					{is_account_number_visible && (
+						<div className="w-[130px]">{account.account}</div>
+					)}
+					<div>
+						{is_account_number_visible && (
+							<EyeSlashIcon
+								className="h-5 w-5 text-gray-400"
+								onClick={onToggleAccountNumberVisibility}
+							/>
+						)}
+
+						{!is_account_number_visible && (
+							<EyeIcon
+								className="h-5 w-5 text-gray-400"
+								onClick={onToggleAccountNumberVisibility}
+							/>
+						)}
+					</div>
 				</div>
 			</div>
-			<div className="flex flex-row w-[200px] items-center space-x-3">
+			<div className="flex flex-row lg:w-[200px] items-center justify-between pt-2 lg:pt-2">
+				<div className="lg:hidden">Routing number:</div>
 				<div>{account.routing}</div>
 			</div>
-			<div className="flex flex-row flex-1 justify-end items-center">
-				<div className="flex flex-col w-[200px]">
-					{currency.format(account.balances.available)}
-				</div>
-				<div className="flex flex-col w-[50px]">
-					<AccountActionsDropdown />
+			<div className="flex flex-row lg:flex-1 items-center justify-between pt-2 lg:pt-2">
+				<div className="lg:hidden">Balance:</div>
+				<div className="flex flex-row">
+					<div className="flex flex-col lg:w-[200px]">
+						{currency.format(account.balances.available)}
+					</div>
+					<div className="hidden lg:flex flex-col w-[50px] ">
+						<AccountActionsDropdown />
+					</div>
 				</div>
 			</div>
 		</div>
@@ -556,8 +563,8 @@ export default function Accounts() {
 	};
 
 	return (
-		<div className="flex flex-row w-full h-full overflow-hiddens space-x-3">
-			<div className="flex flex-col w-[70%] h-full bg-white rounded p-5">
+		<div className="flex flex-row w-full h-full overflow-hidden space-x-3">
+			<div className="flex flex-col w-full lg:w-[70%] h-full bg-white rounded p-5 overflow-y-scroll scrollbar-none">
 				<div className="border-b border-gray-200 pb-3 flex flex-row justify-between mb-3">
 					<div>
 						<h3 className="mt-2 text-base font-semibold leading-6 text-gray-900">
@@ -593,7 +600,7 @@ export default function Accounts() {
 						</div>
 					</div>
 				</div>
-				<div className="flex flex-row text-sm border-b pb-3 text-gray-400 space-x-2">
+				<div className="hidden lg:flex flex-row text-sm border-b pb-3 text-gray-400">
 					<div className="flex flex-col w-[300px]">Account</div>
 					<div className="flex flex-col w-[250px]">
 						Account number
@@ -606,10 +613,13 @@ export default function Accounts() {
 						<div className="flex flex-col w-[50px]"></div>
 					</div>
 				</div>
-				<div className="flex flex-col w-full pb-3">
+				<div className="flex flex-col w-full pb-3 gap-y-5 lg:gap-y-0 lg:last-of-type:border-b">
 					{pipe(
-						mapIndexed((account) => (
-							<div onClick={(e) => on_account_click(account, e)}>
+						mapIndexed((account, index) => (
+							<div
+								key={index}
+								onClick={(e) => on_account_click(account, e)}
+							>
 								<TableRow
 									key={account.account_id}
 									account={account}
@@ -620,7 +630,7 @@ export default function Accounts() {
 				</div>
 				<Link
 					to={`/plaid/oauth/resources/e/${entity_id}/g/${group_id}`}
-					className="flex flex-row items-center space-x-5 border-b pb-3 cursor-pointer pl-1.5"
+					className="flex flex-row items-center space-x-5 border-b border py-3 rounded cursor-pointer pl-1.5 lg:mt-5"
 				>
 					<div>
 						<PlusCircleIcon className="h-7 w-7 text-gray-400" />
@@ -628,7 +638,7 @@ export default function Accounts() {
 					<div>Link Account</div>
 				</Link>
 			</div>
-			<div className="flex flex-col w-[30%]">
+			<div className="hidden lg:flex flex-col lg:w-[30%]">
 				{account.is_loading && (
 					<div className="flex flex-col bg-white border rounded h-full">
 						<LoadingSpinner />
