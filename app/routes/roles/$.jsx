@@ -412,7 +412,7 @@ export default function Roles() {
 	return (
 		<div className="flex flex-col w-full items-center">
 			<NewRoleModal />
-			<div className="flex flex-col w-[800px] bg-white rounded">
+			<div className="flex flex-col w-full lg:w-[800px] bg-white rounded">
 				<SectionHeading />
 				<div className="flex flex-col p-5 w-full">
 					<RolesList />

@@ -253,7 +253,7 @@ const MemberSearch = () => {
 
 	return (
 		<Combobox as="div" value={selectedPerson} onChange={setSelectedPerson}>
-			<div className="relative w-[500px]">
+			<div className="relative">
 				<Combobox.Input
 					className="w-full rounded-md bg-white py-1.5 pl-3 pr-10 text-gray-900 border sm:text-sm sm:leading-6 outline-none"
 					onChange={(event) => setQuery(event.target.value)}
@@ -322,11 +322,13 @@ const MemberSearch = () => {
 const PageHeading = () => {
 	return (
 		<div className="flex flex-row w-full justify-between items-center border-b border-gray-200 pb-5">
-			<h3 className="text-base font-semibold leading-6 text-gray-900">
-				Members
-			</h3>
+			<div className="flex flex-col w-[150px]">
+				<h3 className="text-base font-semibold leading-6 text-gray-900">
+					Members
+				</h3>
+			</div>
 
-			<div>
+			<div className="flex flex-col flex-1">
 				<MemberSearch />
 			</div>
 		</div>

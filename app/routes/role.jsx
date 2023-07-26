@@ -99,24 +99,7 @@ const RoleNav = () => {
 
 	return (
 		<div>
-			<div className="sm:hidden bg-white">
-				<select
-					id="tabs"
-					name="tabs"
-					className="block w-full rounded-md border-gray-300 focus:border-indigo-500 focus:ring-indigo-500"
-					defaultValue={role_tabs.find((tab) => tab.current).name}
-				>
-					{role_tabs.map((tab, index) => (
-						<Link
-							key={index}
-							to={tab.href({ entity_id, group_id })}
-						>
-							{tab.name}
-						</Link>
-					))}
-				</select>
-			</div>
-			<div className="hidden sm:flex sm:flex-row px-5 border-b rounded-t border-gray-200">
+			<div className="flex flex-row px-5 border-b rounded-t border-gray-200">
 				<div className="flex flex-row justify-between w-full items-center">
 					<nav className="-mb-px flex space-x-5" aria-label="Tabs">
 						{role_tabs.map((tab, index) => (
@@ -451,7 +434,7 @@ const NewRoleModal = () => {
 	);
 };
 
-export default function Roles() {
+export default function Role() {
 	let { entity_id, roles } = useLoaderData();
 	let set_modal = useModalStore((state) => state.set_modal);
 
@@ -467,7 +450,7 @@ export default function Roles() {
 			</div> */}
 
 			<div className="flex flex-row w-full h-full gap-x-5 p-5 overflow-hidden">
-				<div className="flex flex-col w-[25%] bg-white rounded border">
+				<div className="hidden lg:flex flex-col w-[25%] bg-white rounded border">
 					<div className="flex flex-row justify-between w-full text-base px-5 items-center h-[37px]">
 						<div className="font-semibold">Roles</div>
 						<div onClick={onCreateNewRoleModal}>
@@ -479,7 +462,7 @@ export default function Roles() {
 						<RolesNav />
 					</div>
 				</div>
-				<div className="flex flex-col w-[75%] bg-white rounded">
+				<div className="flex flex-col w-full lg:w-[75%] bg-white rounded">
 					<RoleNav />
 					<div className="flex flex-col w-full p-5 h-full overflow-hidden">
 						<Outlet />

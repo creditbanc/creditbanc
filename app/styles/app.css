@@ -4813,6 +4813,14 @@ body {
     width: 100%;
   }
 
+  .lg\:w-\[800px\] {
+    width: 800px;
+  }
+
+  .lg\:w-\[75\%\] {
+    width: 75%;
+  }
+
   .lg\:min-w-\[31\%\] {
     min-width: 31%;
   }
