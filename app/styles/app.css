@@ -4809,6 +4809,10 @@ body {
     width: 100%;
   }
 
+  .lg\:w-\[175px\] {
+    width: 175px;
+  }
+
   .lg\:min-w-\[31\%\] {
     min-width: 31%;
   }
@@ -4974,6 +4978,10 @@ body {
     padding-bottom: 5rem;
   }
 
+  .lg\:pb-0 {
+    padding-bottom: 0px;
+  }
+
   .lg\:pb-16 {
     padding-bottom: 4rem;
   }
@@ -5004,10 +5012,6 @@ body {
 
   .lg\:pt-6 {
     padding-top: 1.5rem;
-  }
-
-  .lg\:pb-0 {
-    padding-bottom: 0px;
   }
 
   .lg\:text-left {
@@ -5060,6 +5064,10 @@ body {
 
   .xl\:block {
     display: block;
+  }
+
+  .xl\:flex {
+    display: flex;
   }
 
   .xl\:min-w-\[23\%\] {

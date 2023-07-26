@@ -249,13 +249,16 @@ const TransactionsTable = () => {
 								onSelectTransaction(transaction.transaction_id)
 							}
 						>
-							<div className="flex flex-col w-[175px]">
+							<div className="flex flex-col w-[250px] lg:hidden">
+								{truncate(25, transaction.name)}
+							</div>
+							<div className="hidden lg:flex flex-col lg:w-[175px]">
 								{truncate(15, transaction.name)}
 							</div>
 							<div className="flex flex-col w-[100px]">
 								{currency.format(transaction.amount)}
 							</div>
-							<div className="flex flex-row w-[250px]">
+							<div className="hidden lg:flex flex-row w-[250px]">
 								{pipe(
 									mapIndexed((category, category_idx) => (
 										<Category
@@ -265,7 +268,7 @@ const TransactionsTable = () => {
 									))
 								)(transaction.category)}
 							</div>
-							<div className="flex flex-col w-[185px]">
+							<div className="hidden xl:flex flex-col w-[185px]">
 								{truncate(15, transaction.account_id)}
 							</div>
 							<div className="flex flex-col">
@@ -423,7 +426,7 @@ export default function Transactions() {
 	return (
 		<div className="flex flex-col w-full overflow-hidden h-full">
 			<div className="flex flex-row w-full overflow-hidden h-full">
-				<div className="flex flex-col w-[70%] overflow-y-scroll scrollbar-none bg-white px-5 pb-0 rounded">
+				<div className="flex flex-col w-full lg:w-[70%] overflow-y-scroll scrollbar-none bg-white px-5 pb-0 rounded">
 					<div className="border-b border-gray-200 pb-3 flex flex-row justify-between my-3">
 						<div>
 							<h3 className="mt-2 text-base font-semibold leading-6 text-gray-900">
@@ -433,10 +436,16 @@ export default function Transactions() {
 					</div>
 					<TransactionsHeaderStats />
 					<div className="transactions_table_header flex flex-row py-3 border-b text-sm sticky top-0 bg-white text-gray-500">
-						<div className="flex flex-col w-[175px]">Merchant</div>
+						<div className="flex flex-col w-[250px] lg:w-[175px]">
+							Merchant
+						</div>
 						<div className="flex flex-col w-[100px]">Amount</div>
-						<div className="flex flex-col w-[250px]">Category</div>
-						<div className="flex flex-col w-[185px]">Account</div>
+						<div className="hidden lg:flex flex-col w-[250px]">
+							Category
+						</div>
+						<div className="hidden xl:flex flex-col w-[185px]">
+							Account
+						</div>
 						<div className="flex flex-col">Date</div>
 					</div>
 					<div className="flex flex-col w-full">
@@ -446,7 +455,7 @@ export default function Transactions() {
 						{!isEmpty(transactions) && <Pagination />}
 					</div>
 				</div>
-				<div className="flex flex-col w-[30%] ml-5">
+				<div className="hidden lg:flex flex-col w-[30%] ml-5">
 					<TransactionDetails />
 				</div>
 			</div>
