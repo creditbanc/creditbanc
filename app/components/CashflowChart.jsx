@@ -158,16 +158,19 @@ const IncomeStats = () => {
 	let income_stats_data = [highest_income, incomes_change];
 
 	return (
-		<div className="bg-white divide-y rounded">
+		<div className="flex flex-row lg:flex-col w-full justify-between bg-white lg:divide-y rounded px-5 lg:px-0 gap-x-5 mb-5">
 			{income_stats_data.map((item, index) => (
-				<div key={index} className="py-5 px-3">
-					<div className="text-sm font-normal text-gray-900">
+				<div
+					key={index}
+					className="py-5 px-3 border rounded w-[50%] flex flex-col items-center lg:border-none lg:w-full gap-y-3"
+				>
+					<div className="text-sm font-normal text-gray-900 self-start border-b pb-3 w-full">
 						{item.name}
 					</div>
-					<div className="mt-1 flex items-baseline justify-between md:block lg:flex">
-						<div className="flex items-baseline text-xl font-semibold text-blue-600">
+					<div className="mt-1 flex flex-row justify-between w-full">
+						<div className="flex flex-col items-baseline text-xl font-semibold text-blue-600">
 							{item.stat}
-							<span className="ml-2 text-sm font-medium text-gray-500">
+							<span className="ml-2 text-sm font-medium text-gray-500 w-full">
 								from {item.previousStat}
 							</span>
 						</div>
@@ -177,7 +180,7 @@ const IncomeStats = () => {
 								item.changeType === "increase"
 									? "bg-green-100 text-green-800"
 									: "bg-red-100 text-red-800",
-								"inline-flex items-baseline rounded-full px-2.5 py-0.5 text-xs font-medium md:mt-2 lg:mt-0"
+								"flex flex-row overflow-hidden h-[25px] items-center rounded-full px-2.5 py-0.5 text-xs font-medium md:mt-2 lg:mt-0"
 							)}
 						>
 							{item.changeType === "increase" ? (
@@ -230,8 +233,6 @@ export default function CashflowChart() {
 
 		return `${pathname}?${search}`;
 	};
-
-	// if (isEmpty(financials)) return null;
 
 	return (
 		<div className="flex flex-col w-full h-full">
@@ -295,19 +296,18 @@ export default function CashflowChart() {
 					</div>
 				</div>
 			</div>
-			<div className="flex flex-row w-full">
-				<div className="flex flex-col w-[30%] ">
+			<div className="flex flex-col-reverse lg:flex-row w-full overflow-hidden">
+				<div className="lg:flex lg:flex-col w-full lg:w-[30%]">
 					<div className="flex flex-col h-full justify-center">
-						<div className="pb-3 px-3">
+						<div className="pb-3 px-5 lg:px-3">
 							<h3 className="text-base font-semibold leading-6 text-gray-900">
 								How you’re doing
 							</h3>
-							{/* <div className="flex flex-col border-b pt-3"></div> */}
 						</div>
 						<IncomeStats />
 					</div>
 				</div>
-				<div className="flex flex-col flex-1 h-[350px] p-3 overflow-hidden">
+				<div className="flex flex-col lg:flex-1 h-[350px] p-3 overflow-hidden">
 					<Bar
 						options={options}
 						data={income_chart_data(

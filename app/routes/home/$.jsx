@@ -794,7 +794,7 @@ export default function Home() {
 	return (
 		<div className="w-full h-full flex flex-col overflow-hidden">
 			<div className="flex flex-row h-full w-full p-5 space-x-5">
-				<div className="flex flex-col h-full w-[70%] rounded overflow-y-scroll scrollbar-none ">
+				<div className="flex flex-col h-full w-full lg:w-[70%] rounded overflow-y-scroll scrollbar-none ">
 					<div className="flex flex-col h-full max-w-7xl gap-y-5">
 						{plan_id == "essential" && (
 							<div className="mb-5">
@@ -835,7 +835,7 @@ export default function Home() {
 						</div>
 					</div>
 				</div>
-				<div className="flex flex-col w-[30%] rounded border">
+				<div className="hidden lg:flex flex-col lg:w-[30%] rounded border">
 					<div className="flex flex-col w-full h-full rounded bg-white">
 						<div className="flex flex-row py-4 px-5 justify-between w-full items-center">
 							<div>Notifications</div>
