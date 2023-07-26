@@ -279,8 +279,8 @@ const FilesTableHeader = () => {
 					/> */}
 				</div>
 				<div className="flex flex-col w-[250px]">Name</div>
-				<div className="flex flex-col flex-1">Tags</div>
-				<div className="flex flex-col w-[80px]">Year</div>
+				<div className="hidden md:flex flex-col flex-1">Tags</div>
+				<div className="hidden lg:flex flex-col w-[80px]">Year</div>
 				<div className="flex flex-col w-[100px]">Uploaded</div>
 				<div className="flex flex-col w-[50px]"></div>
 			</div>
@@ -339,7 +339,7 @@ const TableRow = ({ document }) => {
 					<div className="flex flex-col">{truncate(20, name)}</div>
 				</Link>
 			</div>
-			<div className="flex flex-col flex-1">
+			<div className="hidden md:flex flex-col flex-1">
 				<div className="flex flex-row w-full">
 					{pipe(
 						mapIndexed((tag, tag_index) => (
@@ -348,7 +348,7 @@ const TableRow = ({ document }) => {
 					)(tags)}
 				</div>
 			</div>
-			<div className="flex flex-col w-[80px]">
+			<div className="hidden lg:flex flex-col w-[80px]">
 				<div className="flex flex-col px-3 py-1 border rounded-full text-gray-500 bg-gray-50 cursor-pointer items-center w-[60px]">
 					2022
 				</div>
@@ -976,7 +976,7 @@ export default function Files() {
 			<UploadFileModal />
 			<div className="flex flex-row h-full space-x-4">
 				<div className="flex flex-row w-full border rounded h-full bg-white flex-1">
-					<div className="flex flex-col w-[250px] border-r">
+					<div className="hidden lg:flex flex-col w-[250px] border-r">
 						<SideNav />
 					</div>
 					<div className="flex flex-col flex-1 p-5">
@@ -996,7 +996,7 @@ export default function Files() {
 						</div>
 					</div>
 				</div>
-				<div className="flex flex-col w-[25%] border h-full rounded bg-white"></div>
+				{/* <div className="flex flex-col w-[25%] border h-full rounded bg-white"></div> */}
 			</div>
 		</div>
 	);
