@@ -751,6 +751,7 @@ const Notifications = () => {
 };
 
 export default function Home() {
+	console.log("home");
 	const {
 		plan_id = "essential",
 		financials = {},

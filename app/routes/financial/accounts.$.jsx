@@ -584,7 +584,7 @@ export default function Accounts() {
 						{has_credentials && (
 							<div
 								onClick={onDisconnectPlaid}
-								className="rounded-md bg-gray-700 px-3 py-2 text-xs font-semibold text-white shadow-sm"
+								className="rounded-md bg-gray-700 px-3 py-2 text-xs font-semibold text-white shadow-sm cursor-pointer"
 							>
 								Disconnect Bank Account
 							</div>
@@ -613,21 +613,25 @@ export default function Accounts() {
 						<div className="flex flex-col w-[50px]"></div>
 					</div>
 				</div>
-				<div className="flex flex-col w-full pb-3 lg:pb-0 gap-y-5 lg:gap-y-0 lg:last-of-type:border-b">
-					{pipe(
-						mapIndexed((account, index) => (
-							<div
-								key={index}
-								onClick={(e) => on_account_click(account, e)}
-							>
-								<TableRow
-									key={account.account_id}
-									account={account}
-								/>
-							</div>
-						))
-					)(accounts)}
-				</div>
+				{accounts.length > 0 && (
+					<div className="flex flex-col w-full pb-3 lg:pb-0 gap-y-5 lg:gap-y-0 lg:last-of-type:border-b">
+						{pipe(
+							mapIndexed((account, index) => (
+								<div
+									key={index}
+									onClick={(e) =>
+										on_account_click(account, e)
+									}
+								>
+									<TableRow
+										key={account.account_id}
+										account={account}
+									/>
+								</div>
+							))
+						)(accounts)}
+					</div>
+				)}
 				<Link
 					to={`/plaid/oauth/resources/e/${entity_id}/g/${group_id}`}
 					className="flex flex-row items-center space-x-5 border-b border py-3 rounded cursor-pointer pl-1.5 lg:mt-5"

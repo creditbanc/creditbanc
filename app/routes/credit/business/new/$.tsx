@@ -1,15 +1,16 @@
 import { useState, Fragment } from "react";
 import CreditNav from "~/components/CreditNav";
 import axios from "axios";
-import { head, pipe } from "ramda";
-import { filter, get, mod, set } from "shades";
+import { head, identity, pipe, tryCatch, of, takeLast } from "ramda";
+import { filter, get, mod, set, sub } from "shades";
 import { create } from "zustand";
-import { useLocation, useSubmit } from "@remix-run/react";
+import { useActionData, useLocation, useSubmit } from "@remix-run/react";
 import {
 	inspect,
 	to_resource_pathname,
 	get_group_id,
 	get_search_params_obj,
+	classNames,
 } from "~/utils/helpers";
 import { json, redirect } from "@remix-run/node";
 import {
@@ -27,9 +28,39 @@ import { create as create_new_report } from "~/utils/business_credit_report.serv
 import Cookies from "js-cookie";
 import { plan_product_requests } from "~/data/plan_product_requests";
 import { prisma } from "~/utils/prisma.server";
-import { get_lendflow_report } from "~/utils/lendflow.server";
+import {
+	get_lendflow_report,
+	LendflowExternal,
+	LendflowInternal,
+} from "~/utils/lendflow.server";
 import { get_doc, set_doc } from "~/utils/firebase";
 import { v4 as uuidv4 } from "uuid";
+import {
+	catchError,
+	partition,
+	map as rxmap,
+	tap,
+	skip,
+	filter as rxfilter,
+	mergeMap,
+	switchMap,
+	concatMap,
+	mapTo,
+	take,
+} from "rxjs/operators";
+import {
+	from,
+	of as rxof,
+	BehaviorSubject,
+	Subject,
+	ReplaySubject,
+	zip,
+	lastValueFrom,
+	Observable,
+	takeLast,
+	firstValueFrom,
+} from "rxjs";
+import Entity from "~/api/internal/entity";
 
 const useReportStore = create((set) => ({
 	form: {
@@ -65,123 +96,136 @@ const useReportStore = create((set) => ({
 		set((state) => pipe(mod("form", ...path)(() => value))(state)),
 }));
 
+const formData = async (request) => {
+	const form = await request.formData();
+
+	let obj = {};
+
+	for (const [key, value] of form) {
+		obj[key] = pipe(tryCatch(JSON.parse, identity))(value);
+	}
+
+	return obj;
+};
+
+interface CBEvent {
+	id: string;
+	args: {
+		request: any;
+	};
+}
+
+const json_response = (data) => {
+	return new Response(JSON.stringify(data), {
+		headers: {
+			"Content-Type": "application/json; charset=utf-8",
+		},
+	});
+};
+
+const subject = new Subject();
+
+function fold(successFn, errorFn) {
+	return function (source) {
+		return new Observable((subscriber) => {
+			source.subscribe({
+				next(value) {
+					subscriber.next(successFn(value));
+				},
+				error(error) {
+					subscriber.next(errorFn(error));
+				},
+				complete() {
+					subscriber.complete();
+				},
+			});
+		});
+	};
+}
+
+const new_lendflow_application = subject.pipe(
+	rxfilter((event: any) => event.id === "new_application_start"),
+	concatMap(({ args: { request } }: CBEvent) => {
+		let $formData = from(formData(request)).pipe(
+			rxmap((form) => form.payload)
+		);
+
+		let $entity_id = from(get_session_entity_id(request)).pipe(
+			rxmap((entity_id) => (entity_id ? entity_id : ""))
+		);
+
+		let $plan_id = $entity_id.pipe(
+			rxmap((entity_id) => new Entity(entity_id)),
+			concatMap((entity) => entity.plan_id())
+		);
+
+		let $group_id = rxof(get_group_id(request.url));
+
+		let fake_response = {
+			data: {
+				data: {
+					application_id: "8ff74aef-4a97-49ea-b0a2-7798c466a27b",
+				},
+			},
+		};
+
+		return zip($plan_id, $formData).pipe(
+			rxmap(([plan_id, form]) =>
+				LendflowExternal.new_application_request_creator({
+					...form,
+					requested_products:
+						LendflowExternal.plan_request_products(plan_id),
+				})
+			),
+			// concatMap((request) => from(axios(request))),
+			rxmap(() => fake_response),
+			rxmap(pipe(get("data", "data", "application_id"))),
+			concatMap((application_id) =>
+				zip($group_id, $entity_id, $plan_id, rxof(application_id))
+			),
+			concatMap(([group_id, entity_id, plan_id, application_id]) =>
+				LendflowInternal.save_application({
+					group_id,
+					entity_id,
+					plan_id,
+					application_id,
+					type: "business_credit_report",
+					id: application_id,
+				})
+			)
+		);
+	})
+);
+
 export const action = async ({ request }) => {
 	console.log("new_business_credit_action");
 
-	const bearer = process.env.LENDFLOW;
-	const group_id = get_group_id(request.url);
-	const form = await request.formData();
-	const entity_id = await get_session_entity_id(request);
-
-	let { plan_id } = await get_doc(["entity", entity_id]);
-
-	let experian_requested_products = pipe(get(plan_id))(
-		plan_product_requests.experian
-	);
-
-	let dnb_requested_products = pipe(get(plan_id))(plan_product_requests.dnb);
-
-	let requested_products = [
-		...experian_requested_products,
-		...dnb_requested_products,
-	];
-
-	const payload = pipe(
-		mod("requested_products")((value) => requested_products)
-	)(JSON.parse(form.get("payload")));
-
-	var options = {
-		method: "post",
-		maxBodyLength: Infinity,
-		url: "https://api.lendflow.com/api/v1/applications/business_credit",
-		headers: {
-			Authorization: `Bearer ${bearer}`,
-			"Content-Type": "application/json",
-		},
-		data: payload,
+	const successFn = (value) => {
+		subject.next({
+			id: "new_application_response",
+			next: () => Response.redirect("https://www.google.com"),
+		});
 	};
 
-	let report_id = uuidv4();
+	const errorFn = (error) => {
+		subject.next({
+			id: "new_application_response",
+			next: () => json_response({ test: "hi" }),
+		});
+	};
 
-	// let report = {
-	// 	group_id,
-	// 	entity_id,
-	// 	plan_id,
-	// 	type: "business_credit_report",
-	// 	...mrm_credit_report,
-	// };
+	const complete_when = (value) => value.id === "new_application_response";
 
-	// await create_new_report(report);
+	new_lendflow_application.pipe(fold(successFn, errorFn)).subscribe();
 
-	// await set_doc(
-	// 	["onboard", entity_id],
-	// 	{
-	// 		business_credit_report: {
-	// 			id: "business_credit_report",
-	// 			completed: true,
-	// 		},
-	// 		entity_id,
-	// 		group_id,
-	// 	},
-	// 	true
-	// );
+	subject.next({ id: "new_application_start", args: { request } });
 
-	// return redirect(
-	// 	`/credit/report/business/experian/overview/resource/e/${entity_id}/g/${group_id}`
-	// );
+	let response = await lastValueFrom(
+		subject.pipe(rxfilter(complete_when), take(1))
+	);
 
-	// return null;
-
-	try {
-		console.log("request_report");
-		let response = await axios(options);
-		let { application_id } = response?.data?.data;
-
-		if (application_id) {
-			await new Promise((resolve) => setTimeout(resolve, 15000));
-			let report = await get_lendflow_report(application_id);
-
-			let payload = {
-				group_id,
-				entity_id,
-				plan_id,
-				application_id,
-				type: "business_credit_report",
-				id: report_id,
-				...report,
-			};
-
-			await create_new_report(payload);
-
-			await set_doc(
-				["onboard", entity_id],
-				{
-					business_credit_report: {
-						id: "business_credit_report",
-						completed: true,
-					},
-					entity_id,
-					group_id,
-				},
-				true
-			);
-
-			return redirect(
-				`/credit/report/business/experian/overview/resource/e/${entity_id}/g/${group_id}`
-			);
-		}
-
-		return json({ error: "No application_id" }, { status: 500 });
-	} catch (error) {
-		console.log("error");
-		console.log(error.response.data);
-		return json({ error: error.message }, { status: 500 });
-	}
+	return response.next();
 };
-
-function classNames(...classes) {
-	return classes.filter(Boolean).join(" ");
-}
 
 const business_entities = [
 	{ id: "business_entity_type_1", name: "LLC" },
@@ -821,6 +865,7 @@ const PreFills = () => {
 export default function NewBusinessReport() {
 	let location = useLocation();
 	let search_obj = get_search_params_obj(location.search);
+	let errors = useActionData();
 
 	return (
 		<div className="flex flex-col w-full overflow-y-scroll">
