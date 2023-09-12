@@ -1,7 +1,21 @@
 import { useState, Fragment } from "react";
 import CreditNav from "~/components/CreditNav";
 import axios from "axios";
-import { head, identity, pipe, tryCatch, of, takeLast } from "ramda";
+import {
+	head,
+	identity,
+	pipe,
+	tryCatch,
+	evolve,
+	isNil,
+	allPass,
+	isEmpty,
+	of,
+	values,
+	any,
+	includes,
+	not,
+} from "ramda";
 import { filter, get, mod, set, sub } from "shades";
 import { create } from "zustand";
 import { useActionData, useLocation, useSubmit } from "@remix-run/react";
@@ -27,7 +41,7 @@ import { get_session_entity_id, get_user_id } from "~/utils/auth.server";
 import { create as create_new_report } from "~/utils/business_credit_report.server";
 import Cookies from "js-cookie";
 import { plan_product_requests } from "~/data/plan_product_requests";
-import { prisma } from "~/utils/prisma.server";
+
 import {
 	get_lendflow_report,
 	LendflowExternal,
@@ -59,8 +73,12 @@ import {
 	Observable,
 	takeLast,
 	firstValueFrom,
+	iif,
+	throwError,
 } from "rxjs";
 import Entity from "~/api/internal/entity";
+import { fold } from "~/utils/operators";
+import flatten from "flat";
 
 const useReportStore = create((set) => ({
 	form: {
@@ -123,25 +141,48 @@ const json_response = (data) => {
 	});
 };
 
-const subject = new Subject();
+const isNotEmpty = (value) => !isEmpty(value);
+const isNotNil = (value) => !isNil(value);
 
-function fold(successFn, errorFn) {
-	return function (source) {
-		return new Observable((subscriber) => {
-			source.subscribe({
-				next(value) {
-					subscriber.next(successFn(value));
-				},
-				error(error) {
-					subscriber.next(errorFn(error));
-				},
-				complete() {
-					subscriber.complete();
-				},
-			});
-		});
-	};
-}
+let lendflow_validator = {
+	business_start_date: pipe(allPass([isNotEmpty, isNotNil])),
+	basic_info: {
+		first_name: pipe(allPass([isNotEmpty, isNotNil])),
+		last_name: pipe(allPass([isNotEmpty, isNotNil])),
+		email_address: pipe(allPass([isNotEmpty, isNotNil])),
+		telephone: pipe(allPass([isNotEmpty, isNotNil])),
+	},
+	business_address: {
+		address_line: pipe(allPass([isNotEmpty, isNotNil])),
+		city: pipe(allPass([isNotEmpty, isNotNil])),
+		state: pipe(allPass([isNotEmpty, isNotNil])),
+		country: pipe(allPass([isNotEmpty, isNotNil])),
+		zip: pipe(allPass([isNotEmpty, isNotNil])),
+	},
+	business_entity: pipe(allPass([isNotEmpty, isNotNil])),
+	business_legal_name: pipe(allPass([isNotEmpty, isNotNil])),
+	employee_identification_number: pipe(allPass([isNotEmpty, isNotNil])),
+};
+
+const validate_form = (validator, to_validate) => {
+	console.log("validate_form");
+	return evolve(validator, to_validate);
+};
+
+const is_valid = (validations) => {
+	console.log("is_valid");
+	let res = pipe(flatten, values, includes(false), not)(validations);
+	return res;
+};
+
+let from_validations = (validations) =>
+	iif(
+		() => is_valid(validations),
+		rxof(validations),
+		throwError(validations)
+	);
+
+const subject = new Subject();
 
 const new_lendflow_application = subject.pipe(
 	rxfilter((event: any) => event.id === "new_application_start"),
@@ -169,7 +210,11 @@ const new_lendflow_application = subject.pipe(
 			},
 		};
 
-		return zip($plan_id, $formData).pipe(
+		return from($formData).pipe(
+			concatMap((form) =>
+				from_validations(validate_form(lendflow_validator, form))
+			),
+			concatMap(() => zip($plan_id, $formData)),
 			rxmap(([plan_id, form]) =>
 				LendflowExternal.new_application_request_creator({
 					...form,
@@ -200,28 +245,30 @@ const new_lendflow_application = subject.pipe(
 export const action = async ({ request }) => {
 	console.log("new_business_credit_action");
 
-	const successFn = (value) => {
+	const on_success = (value) => {
 		subject.next({
 			id: "new_application_response",
 			next: () => Response.redirect("https://www.google.com"),
 		});
 	};
 
-	const errorFn = (error) => {
+	const on_error = (error) => {
+		// console.log("___error___");
+		// console.log(error);
 		subject.next({
 			id: "new_application_response",
-			next: () => json_response({ test: "hi" }),
+			next: () => json_response(error),
 		});
 	};
 
-	const complete_when = (value) => value.id === "new_application_response";
+	const on_complete = (value) => value.id === "new_application_response";
 
-	new_lendflow_application.pipe(fold(successFn, errorFn)).subscribe();
+	new_lendflow_application.pipe(fold(on_success, on_error)).subscribe();
 
 	subject.next({ id: "new_application_start", args: { request } });
 
 	let response = await lastValueFrom(
-		subject.pipe(rxfilter(complete_when), take(1))
+		subject.pipe(rxfilter(on_complete), take(1))
 	);
 
 	return response.next();
@@ -329,6 +376,7 @@ const BusinessEntity = () => {
 };
 
 const Form = () => {
+	let error = useActionData();
 	const form = useReportStore((state) => state.form);
 	const setForm = useReportStore((state) => state.setForm);
 	const first_name = useReportStore(
@@ -438,6 +486,11 @@ const Form = () => {
 							}
 						/>
 					</div>
+					{error?.basic_info?.first_name && (
+						<div className="text-xs text-red-500 py-1">
+							First name is required
+						</div>
+					)}
 				</div>
 
 				<div className="sm:col-span-3">
@@ -463,6 +516,11 @@ const Form = () => {
 							}
 						/>
 					</div>
+					{error?.basic_info?.last_name && (
+						<div className="text-xs text-red-500 py-1">
+							Last name is required
+						</div>
+					)}
 				</div>
 
 				<div className="sm:col-span-6">
@@ -488,6 +546,12 @@ const Form = () => {
 							}
 						/>
 					</div>
+
+					{error?.basic_info?.email_address && (
+						<div className="text-xs text-red-500 py-1">
+							Email is required
+						</div>
+					)}
 				</div>
 
 				<div className="sm:col-span-6">
@@ -513,6 +577,12 @@ const Form = () => {
 							}
 						/>
 					</div>
+
+					{error?.basic_info?.telephone && (
+						<div className="text-xs text-red-500 py-1">
+							Telephone is required
+						</div>
+					)}
 				</div>
 
 				<div className="border-b border-gray-300 sm:col-span-6">
@@ -541,6 +611,12 @@ const Form = () => {
 							}
 						/>
 					</div>
+
+					{error?.business_legal_name && (
+						<div className="text-xs text-red-500 py-1">
+							Business name is required
+						</div>
+					)}
 				</div>
 
 				<div className="sm:col-span-6">
@@ -578,6 +654,12 @@ const Form = () => {
 					<div className="mt-1">
 						<BusinessEntity />
 					</div>
+
+					{error?.business_entity && (
+						<div className="text-xs text-red-500 py-1">
+							Business type is required
+						</div>
+					)}
 				</div>
 
 				<div className="sm:col-span-6">
@@ -603,6 +685,12 @@ const Form = () => {
 							}
 						/>
 					</div>
+
+					{error?.employee_identification_number && (
+						<div className="text-xs text-red-500 py-1">
+							Employee identification number is required
+						</div>
+					)}
 				</div>
 
 				<div className=" sm:col-span-6">
@@ -629,6 +717,9 @@ const Form = () => {
 							}
 						/>
 					</div>
+					<div className="text-xs text-red-500 py-1">
+						Month is required
+					</div>
 				</div>
 
 				<div className="sm:col-span-2">
@@ -649,6 +740,9 @@ const Form = () => {
 							}
 						/>
 					</div>
+					<div className="text-xs text-red-500 py-1">
+						Day is required
+					</div>
 				</div>
 
 				<div className="sm:col-span-2">
@@ -668,6 +762,9 @@ const Form = () => {
 								)
 							}
 						/>
+					</div>
+					<div className="text-xs text-red-500 py-1">
+						Year is required
 					</div>
 				</div>
 
@@ -700,6 +797,12 @@ const Form = () => {
 							}
 						/>
 					</div>
+
+					{error?.business_address?.address_line && (
+						<div className="text-xs text-red-500 py-1">
+							Street address is required
+						</div>
+					)}
 				</div>
 
 				<div className="sm:col-span-2">
@@ -725,6 +828,12 @@ const Form = () => {
 							}
 						/>
 					</div>
+
+					{error?.business_address?.city && (
+						<div className="text-xs text-red-500 py-1">
+							City is required
+						</div>
+					)}
 				</div>
 
 				<div className="sm:col-span-2">
@@ -750,6 +859,12 @@ const Form = () => {
 							}
 						/>
 					</div>
+
+					{error?.business_address?.state && (
+						<div className="text-xs text-red-500 py-1">
+							State / Province is required
+						</div>
+					)}
 				</div>
 
 				<div className="sm:col-span-2">
@@ -775,6 +890,12 @@ const Form = () => {
 							}
 						/>
 					</div>
+
+					{error?.business_address?.zip && (
+						<div className="text-xs text-red-500 py-1">
+							Zip / Postal code is required
+						</div>
+					)}
 				</div>
 			</div>
 			<div className="flex flex-row w-full justify-end pt-3">
@@ -865,7 +986,6 @@ const PreFills = () => {
 export default function NewBusinessReport() {
 	let location = useLocation();
 	let search_obj = get_search_params_obj(location.search);
-	let errors = useActionData();
 
 	return (
 		<div className="flex flex-col w-full overflow-y-scroll">

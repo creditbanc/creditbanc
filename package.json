@@ -32,6 +32,7 @@
 		"deep-equal": "^2.2.1",
 		"faker": "^6.6.6",
 		"firebase": "^9.19.1",
+		"flat": "^5.0.2",
 		"form-data": "^4.0.0",
 		"framer-motion": "^8.5.5",
 		"immer": "^9.0.19",
