@@ -42,11 +42,7 @@ import { create as create_new_report } from "~/utils/business_credit_report.serv
 import Cookies from "js-cookie";
 import { plan_product_requests } from "~/data/plan_product_requests";
 
-import {
-	get_lendflow_report,
-	LendflowExternal,
-	LendflowInternal,
-} from "~/utils/lendflow.server";
+import { LendflowExternal, LendflowInternal } from "~/utils/lendflow.server";
 import { get_doc, set_doc } from "~/utils/firebase";
 import { v4 as uuidv4 } from "uuid";
 import {
@@ -245,10 +241,21 @@ const new_lendflow_application = subject.pipe(
 export const action = async ({ request }) => {
 	console.log("new_business_credit_action");
 
-	const on_success = (value) => {
+	const on_success = async () => {
+		console.log("___success___");
+		let { origin } = new URL(request.url);
+
+		let entity_id = await get_session_entity_id(request);
+		let group_id = get_group_id(request.url);
+
+		let redirect_url = `${origin}/credit/report/business/experian/overview/resource/e/${entity_id}/g/${group_id}`;
+
+		console.log("redirect_url");
+		console.log(redirect_url);
+
 		subject.next({
 			id: "new_application_response",
-			next: () => Response.redirect("https://www.google.com"),
+			next: () => Response.redirect(redirect_url),
 		});
 	};
 
