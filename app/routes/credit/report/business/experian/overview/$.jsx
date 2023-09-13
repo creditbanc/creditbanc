@@ -136,11 +136,11 @@ const report = async (request) => {
 	);
 
 	return forkJoin({
-		// experian_score,
-		// experian_risk_class,
-		// business_info,
+		experian_score,
+		experian_risk_class,
+		business_info,
 		// experian_trade_payment_totals,
-		// experian_trade_summary,
+		experian_trade_summary,
 		// experian_trade_lines,
 		// experian_sic_codes,
 		// experian_years_on_file,
@@ -151,7 +151,7 @@ const report = async (request) => {
 		// experian_derogatories,
 		// experian_payment_trends,
 		// dnb_score,
-		dnb_company_info,
+		// dnb_company_info,
 	}).pipe(
 		tap((value) => {
 			console.log("___tap___");
