@@ -50,107 +50,17 @@ const report = async (request) => {
 		rxmap((report) => new LendflowInternal(report))
 	);
 
-	let experian_score = $report.pipe(
-		rxmap((report) => report.experian_score())
-	);
-
-	let experian_risk_class = $report.pipe(
-		rxmap((report) => report.experian_risk_class())
-	);
-
-	let business_info = $report.pipe(rxmap((report) => report.business_info()));
-
 	let experian_trade_payment_totals = $report.pipe(
 		rxmap((report) => report.experian_trade_payment_totals())
-	);
-
-	let experian_trade_summary = $report.pipe(
-		rxmap((report) => report.experian_trade_summary())
 	);
 
 	let experian_trade_lines = $report.pipe(
 		rxmap((report) => report.experian_trade_lines())
 	);
 
-	let experian_sic_codes = $report.pipe(
-		rxmap((report) => report.experian_sic_codes())
-	);
-
-	let experian_years_on_file = $report.pipe(
-		rxmap((report) => report.experian_years_on_file())
-	);
-
-	let experian_employee_size = $report.pipe(
-		rxmap((report) => report.experian_employee_size())
-	);
-
-	let experian_naics_codes = $report.pipe(
-		rxmap((report) => report.experian_naics_codes())
-	);
-
-	let experian_sales_revenue = $report.pipe(
-		rxmap((report) => report.experian_sales_revenue())
-	);
-
-	let experian_factors = $report.pipe(
-		rxmap((report) => report.experian_factors())
-	);
-
-	let experian_derogatories = $report.pipe(
-		rxmap((report) => report.experian_derogatories())
-	);
-
-	let experian_payment_trends = $report.pipe(
-		rxmap((report) => report.experian_payment_trends())
-	);
-
-	let dnb_score = $report.pipe(rxmap((report) => report.dnb_score()));
-
-	let dnb_delinquency_score = $report.pipe(
-		rxmap((report) => report.dnb_delinquency_score())
-	);
-
-	let dnb_total_balance_high = $report.pipe(
-		rxmap((report) => report.dnb_total_balance_high())
-	);
-
-	let dnb_duns_number = $report.pipe(
-		rxmap((report) => report.dnb_duns_number())
-	);
-
-	let dnb_payment_status = $report.pipe(
-		rxmap((report) => report.dnb_payment_status())
-	);
-
-	let dnb_credit_utilization = $report.pipe(
-		rxmap((report) => report.dnb_credit_utilization())
-	);
-
-	let dnb_payment_trends = $report.pipe(
-		rxmap((report) => report.dnb_payment_trends())
-	);
-
-	let dnb_company_info = $report.pipe(
-		rxmap((report) => report.dnb_company_info())
-	);
-
 	return forkJoin({
-		// experian_score,
-		// experian_risk_class,
-		// business_info,
 		experian_trade_payment_totals,
 		experian_trade_lines,
-		// experian_trade_summary,
-		// experian_sic_codes,
-		// experian_years_on_file,
-		// experian_employee_size,
-		// experian_naics_codes,
-		// experian_sales_revenue,
-		// experian_factors,
-		// experian_derogatories,
-		// experian_payment_trends,
-		// dnb_score,
-		// dnb_company_info,
 	}).pipe(
 		tap((value) => {
 			console.log("___tap___");

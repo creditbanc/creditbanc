@@ -7,10 +7,14 @@ import { mrm_credit_report, Lendflow } from "~/data/lendflow";
 import { get_file_id, get_group_id, inspect } from "~/utils/helpers";
 import { get_session_entity_id, get_user_id } from "~/utils/auth.server";
 import { prisma } from "~/utils/prisma.server";
-import { get_collection } from "~/utils/firebase";
-import { head, pipe } from "ramda";
+import { get_collection, get_doc, set_doc } from "~/utils/firebase";
+import { head, pipe, identity } from "ramda";
+import { map as rxmap, concatMap, tap } from "rxjs/operators";
+import { from, lastValueFrom, forkJoin } from "rxjs";
+import { LendflowExternal, LendflowInternal } from "~/utils/lendflow.server";
+import { get } from "shades";
 
-export const loader = async ({ request }) => {
+const report = async (request) => {
 	let url = new URL(request.url);
 	let group_id = get_group_id(url.pathname);
 
@@ -27,25 +31,94 @@ export const loader = async ({ request }) => {
 		},
 	];
 
-	let report_response = await get_collection({
-		path: ["credit_reports"],
-		queries: business_credit_report_queries,
-	});
+	let application_id = from(
+		get_collection({
+			path: ["credit_reports"],
+			queries: business_credit_report_queries,
+		})
+	).pipe(
+		rxmap(pipe(head, get("application_id"))),
+		rxmap(() => "d6d6cb45-0818-4f43-a8cd-29208f0cf7b2")
+	);
 
-	let report = pipe(head)(report_response);
+	let $report = application_id.pipe(
+		concatMap(LendflowExternal.get_lendflow_report),
+		rxmap(pipe(get("data", "data"))),
+		rxmap((report) => new LendflowInternal(report))
+	);
 
-	let score = Lendflow.dnb.score(report);
+	let business_info = $report.pipe(rxmap((report) => report.business_info()));
 
-	let delinquency_score = Lendflow.dnb.delinquency_score(report);
-	// console.log("delinquency_score");
-	// console.log(delinquency_score);
-	let business = Lendflow.business(report);
+	let dnb_score = $report.pipe(rxmap((report) => report.dnb_score()));
 
-	return { score, delinquency_score, business };
+	let dnb_delinquency_score = $report.pipe(
+		rxmap((report) => report.dnb_delinquency_score())
+	);
+
+	return forkJoin({
+		business_info,
+		dnb_score,
+		dnb_delinquency_score,
+	}).pipe(
+		tap((value) => {
+			console.log("___tap___");
+			console.log(value);
+		})
+	);
+};
+
+export const loader = async ({ request }) => {
+	let entity_id = await get_session_entity_id(request);
+
+	let { plan_id } = await get_doc(["entity", entity_id]);
+
+	let response = await lastValueFrom(
+		from(report(request)).pipe(concatMap(identity))
+	);
+
+	return { ...response, plan_id };
+
+	let is_owner = report.entity_id == entity_id;
+
+	// let url = new URL(request.url);
+	// let group_id = get_group_id(url.pathname);
+
+	// let business_credit_report_queries = [
+	// 	{
+	// 		param: "group_id",
+	// 		predicate: "==",
+	// 		value: group_id,
+	// 	},
+	// 	{
+	// 		param: "type",
+	// 		predicate: "==",
+	// 		value: "business_credit_report",
+	// 	},
+	// ];
+
+	// let report_response = await get_collection({
+	// 	path: ["credit_reports"],
+	// 	queries: business_credit_report_queries,
+	// });
+
+	// let report = pipe(head)(report_response);
+
+	// let score = Lendflow.dnb.score(report);
+
+	// let delinquency_score = Lendflow.dnb.delinquency_score(report);
+	// // console.log("delinquency_score");
+	// // console.log(delinquency_score);
+	// let business = Lendflow.business(report);
+
+	// return { score, delinquency_score, business };
 };
 
 const ScoreCard = () => {
-	let { score, delinquency_score, business } = useLoaderData();
+	let {
+		dnb_score: score,
+		dnb_delinquency_score: delinquency_score,
+		business_info: business,
+	} = useLoaderData();
 
 	return (
 		<div className="overflow-hidden bg-white rounded-lg border">

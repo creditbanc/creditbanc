@@ -5,7 +5,7 @@ import {
 import { useLoaderData, Link } from "@remix-run/react";
 import { mrm_credit_report, Lendflow } from "~/data/lendflow";
 import { currency, get_group_id, mapIndexed } from "~/utils/helpers";
-import { pipe, map, head } from "ramda";
+import { pipe, map, head, identity } from "ramda";
 import { get_file_id } from "~/utils/helpers";
 import { get_session_entity_id, get_user_id } from "~/utils/auth.server";
 import { prisma } from "~/utils/prisma.server";
@@ -13,11 +13,12 @@ import { plans } from "~/data/plans";
 import { get } from "shades";
 import AccountCard from "~/components/AccountCard";
 import { get_collection, get_doc } from "~/utils/firebase";
+import { map as rxmap, concatMap, tap } from "rxjs/operators";
+import { from, lastValueFrom, forkJoin } from "rxjs";
+import { LendflowExternal, LendflowInternal } from "~/utils/lendflow.server";
 
-export const loader = async ({ request }) => {
+const report = async (request) => {
 	let url = new URL(request.url);
-	let entity_id = await get_session_entity_id(request);
-
 	let group_id = get_group_id(url.pathname);
 
 	let business_credit_report_queries = [
@@ -33,25 +34,87 @@ export const loader = async ({ request }) => {
 		},
 	];
 
-	let report_response = await get_collection({
-		path: ["credit_reports"],
-		queries: business_credit_report_queries,
-	});
+	let application_id = from(
+		get_collection({
+			path: ["credit_reports"],
+			queries: business_credit_report_queries,
+		})
+	).pipe(
+		rxmap(pipe(head, get("application_id"))),
+		rxmap(() => "d6d6cb45-0818-4f43-a8cd-29208f0cf7b2")
+	);
 
-	let report = pipe(head)(report_response);
+	let $report = application_id.pipe(
+		concatMap(LendflowExternal.get_lendflow_report),
+		rxmap(pipe(get("data", "data"))),
+		rxmap((report) => new LendflowInternal(report))
+	);
 
-	let is_owner = report.entity_id == entity_id;
+	let dnb_payment_status = $report.pipe(
+		rxmap((report) => report.dnb_payment_status())
+	);
+
+	return forkJoin({
+		dnb_payment_status,
+	}).pipe(
+		tap((value) => {
+			console.log("___tap___");
+			console.log(value);
+		})
+	);
+};
+
+export const loader = async ({ request }) => {
+	let entity_id = await get_session_entity_id(request);
 
 	let { plan_id } = await get_doc(["entity", entity_id]);
 
-	let payment_status = Lendflow.dnb.payment_status(report);
-	let report_plan_id = report?.plan_id || "essential";
+	let response = await lastValueFrom(
+		from(report(request)).pipe(concatMap(identity))
+	);
 
-	return { payment_status, plan_id, report_plan_id };
+	return { ...response, plan_id };
+
+	let is_owner = report.entity_id == entity_id;
+
+	// let url = new URL(request.url);
+	// let entity_id = await get_session_entity_id(request);
+
+	// let group_id = get_group_id(url.pathname);
+
+	// let business_credit_report_queries = [
+	// 	{
+	// 		param: "group_id",
+	// 		predicate: "==",
+	// 		value: group_id,
+	// 	},
+	// 	{
+	// 		param: "type",
+	// 		predicate: "==",
+	// 		value: "business_credit_report",
+	// 	},
+	// ];
+
+	// let report_response = await get_collection({
+	// 	path: ["credit_reports"],
+	// 	queries: business_credit_report_queries,
+	// });
+
+	// let report = pipe(head)(report_response);
+
+	// let is_owner = report.entity_id == entity_id;
+
+	// let { plan_id } = await get_doc(["entity", entity_id]);
+
+	// let payment_status = Lendflow.dnb.payment_status(report);
+	// let report_plan_id = report?.plan_id || "essential";
+
+	// return { payment_status, plan_id, report_plan_id };
 };
 
 const PaymentStatus = () => {
-	let { payment_status, report_plan_id } = useLoaderData();
+	let { dnb_payment_status: payment_status, report_plan_id = "builder" } =
+		useLoaderData();
 	let plan = pipe(get(report_plan_id, "business", "dnb"))(plans);
 
 	return (
@@ -267,8 +330,6 @@ const ExplanationCard = () => {
 };
 
 export default function Container() {
-	let { plan_id } = useLoaderData();
-
 	return (
 		<div className="flex flex-col w-full space-y-5">
 			<div>
