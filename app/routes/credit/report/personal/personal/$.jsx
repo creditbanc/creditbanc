@@ -9,6 +9,76 @@ import { all, get } from "shades";
 import { flatten, pipe, uniqBy, head } from "ramda";
 import { get_collection, get_doc } from "~/utils/firebase";
 
+import {
+	map as rxmap,
+	filter as rxfilter,
+	concatMap,
+	tap,
+	take,
+} from "rxjs/operators";
+import {
+	from,
+	lastValueFrom,
+	forkJoin,
+	Subject,
+	of as rxof,
+	iif,
+	throwError,
+} from "rxjs";
+import { fold } from "~/utils/operators";
+import { is_authorized_f } from "~/api/auth";
+
+const subject = new Subject();
+
+const credit_report = subject.pipe(
+	rxfilter((message) => message.id == "get_credit_report"),
+	concatMap(({ args: { request } }) => {
+		let entity_id = from(get_session_entity_id(request));
+		let url = new URL(request.url);
+		let group_id = get_group_id(url.pathname);
+
+		let personal_credit_report_queries = [
+			{
+				param: "group_id",
+				predicate: "==",
+				value: group_id,
+			},
+			{
+				param: "type",
+				predicate: "==",
+				value: "personal_credit_report",
+			},
+		];
+
+		let is_authorized = forkJoin({
+			entity_id,
+			group_id: rxof(group_id),
+		}).pipe(
+			concatMap(({ entity_id, group_id }) =>
+				is_authorized_f(entity_id, group_id, "credit", "read")
+			),
+			concatMap((is_authorized) =>
+				iif(() => is_authorized, rxof(true), throwError("unauthorized"))
+			)
+		);
+
+		let report = from(
+			get_collection({
+				path: ["credit_reports"],
+				queries: personal_credit_report_queries,
+			})
+		).pipe(rxmap(pipe(head, get_personal_data)));
+
+		return is_authorized.pipe(
+			concatMap(() => report),
+			tap((value) => {
+				console.log("___tap___");
+				console.log(value);
+			})
+		);
+	})
+);
+
 const get_personal_data = (report) => {
 	let { plan_id } = report;
 
@@ -59,37 +129,72 @@ const get_personal_data = (report) => {
 };
 
 export const loader = async ({ request }) => {
-	let url = new URL(request.url);
-	let entity_id = await get_session_entity_id(request);
-	let group_id = get_group_id(url.pathname);
+	const on_success = async (response) => {
+		console.log("___success___");
+		let entity_id = await get_session_entity_id(request);
+		let { plan_id } = await get_doc(["entity", entity_id]);
 
-	let personal_credit_report_queries = [
-		{
-			param: "group_id",
-			predicate: "==",
-			value: group_id,
-		},
-		{
-			param: "type",
-			predicate: "==",
-			value: "personal_credit_report",
-		},
-	];
+		let payload = { ...response, plan_id };
 
-	let report_response = await get_collection({
-		path: ["credit_reports"],
-		queries: personal_credit_report_queries,
-	});
+		subject.next({
+			id: "credit_report_response",
+			next: () => payload,
+		});
+	};
 
-	let report = pipe(head)(report_response);
+	const on_error = (error) => {
+		console.log("___error___");
+		console.log(error);
 
-	let is_owner = report.entity_id == entity_id;
+		subject.next({
+			id: "credit_report_response",
+			next: () => error,
+		});
+	};
 
-	let { plan_id } = await get_doc(["entity", entity_id]);
+	const on_complete = (value) => value.id === "credit_report_response";
 
-	let personal_data = get_personal_data(report);
+	credit_report.pipe(fold(on_success, on_error)).subscribe();
 
-	return { plan_id, ...personal_data };
+	subject.next({ id: "get_credit_report", args: { request } });
+
+	let response = await lastValueFrom(
+		subject.pipe(rxfilter(on_complete), take(1))
+	);
+
+	return response.next();
+
+	// let url = new URL(request.url);
+	// let entity_id = await get_session_entity_id(request);
+	// let group_id = get_group_id(url.pathname);
+
+	// let personal_credit_report_queries = [
+	// 	{
+	// 		param: "group_id",
+	// 		predicate: "==",
+	// 		value: group_id,
+	// 	},
+	// 	{
+	// 		param: "type",
+	// 		predicate: "==",
+	// 		value: "personal_credit_report",
+	// 	},
+	// ];
+
+	// let report_response = await get_collection({
+	// 	path: ["credit_reports"],
+	// 	queries: personal_credit_report_queries,
+	// });
+
+	// let report = pipe(head)(report_response);
+
+	// let is_owner = report.entity_id == entity_id;
+
+	// let { plan_id } = await get_doc(["entity", entity_id]);
+
+	// let personal_data = get_personal_data(report);
+
+	// return { plan_id, ...personal_data };
 };
 
 const PersonalInfoCard = () => {
