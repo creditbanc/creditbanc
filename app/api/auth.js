@@ -1,6 +1,7 @@
 import { get_collection, get_doc } from "~/utils/firebase";
 import { defaultTo, head, isEmpty, pipe } from "ramda";
 import { filter, get } from "shades";
+import { inspect } from "~/utils/helpers";
 
 export const get_permissions = async (entity_id, group_id) => {
 	// check if entity is the owner/creator of the resource
@@ -14,7 +15,7 @@ export const get_permissions = async (entity_id, group_id) => {
 	});
 
 	// console.log("role_config_response");
-	// console.log(role_config_response);
+	// inspect(role_config_response);
 
 	if (!isEmpty(role_config_response)) {
 		return Infinity;
@@ -60,6 +61,9 @@ export const is_authorized_f = async (
 	action
 ) => {
 	let role = await get_permissions(entity_id, group_id);
+
+	// console.log("role");
+	// console.log(role);
 
 	if (role == Infinity) {
 		return true;

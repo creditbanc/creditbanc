@@ -21,9 +21,18 @@ import {
 	tap,
 	take,
 } from "rxjs/operators";
-import { from, lastValueFrom, forkJoin, Subject } from "rxjs";
+import {
+	from,
+	lastValueFrom,
+	forkJoin,
+	Subject,
+	of as rxof,
+	iif,
+	throwError,
+} from "rxjs";
 import { LendflowExternal, LendflowInternal } from "~/utils/lendflow.server";
 import { fold } from "~/utils/operators";
+import { is_authorized_f } from "~/api/auth";
 
 const subject = new Subject();
 
@@ -37,6 +46,7 @@ const subject = new Subject();
 const credit_report = subject.pipe(
 	rxfilter((message) => message.id == "get_credit_report"),
 	concatMap(({ args: { request } }) => {
+		let entity_id = from(get_session_entity_id(request));
 		let url = new URL(request.url);
 		let group_id = get_group_id(url.pathname);
 
@@ -52,6 +62,18 @@ const credit_report = subject.pipe(
 				value: "business_credit_report",
 			},
 		];
+
+		let is_authorized = forkJoin({
+			entity_id,
+			group_id: rxof(group_id),
+		}).pipe(
+			concatMap(({ entity_id, group_id }) =>
+				is_authorized_f(entity_id, group_id, "credit", "read")
+			),
+			concatMap((is_authorized) =>
+				iif(() => is_authorized, rxof(true), throwError("unauthorized"))
+			)
+		);
 
 		let application_id = from(
 			get_collection({
@@ -85,12 +107,15 @@ const credit_report = subject.pipe(
 			rxmap((report) => report.experian_trade_summary())
 		);
 
-		return forkJoin({
-			experian_score,
-			experian_risk_class,
-			business_info,
-			experian_trade_summary,
-		}).pipe(
+		return is_authorized.pipe(
+			concatMap(() =>
+				forkJoin({
+					experian_score,
+					experian_risk_class,
+					business_info,
+					experian_trade_summary,
+				})
+			),
 			tap((value) => {
 				console.log("___tap___");
 				console.log(value);
@@ -113,10 +138,11 @@ export const loader = async ({ request }) => {
 
 	const on_error = (error) => {
 		console.log("___error___");
-		// console.log(error);
+		console.log(error);
+
 		subject.next({
 			id: "credit_report_response",
-			next: () => json_response(error),
+			next: () => error,
 		});
 	};
 
@@ -131,8 +157,6 @@ export const loader = async ({ request }) => {
 	);
 
 	return response.next();
-
-	// let is_owner = report.entity_id == entity_id;
 };
 
 const ScoreCard = () => {
