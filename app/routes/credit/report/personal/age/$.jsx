@@ -2,7 +2,7 @@ import { ClockIcon } from "@heroicons/react/24/outline";
 import { FactorBar } from "~/components/FactorBar";
 import { Accounts } from "~/components/TradeLines";
 import { useLoaderData } from "@remix-run/react";
-import { pipe, map, filter, includes, flatten, head } from "ramda";
+import { pipe, map, filter, includes, flatten, head, pick } from "ramda";
 import { get_file_id, get_group_id, inspect } from "~/utils/helpers";
 import {
 	TradeLine as Tradeline,
@@ -17,12 +17,14 @@ import { get_session_entity_id, get_user_id } from "~/utils/auth.server";
 import { prisma } from "~/utils/prisma.server";
 import { useReportPageLayoutStore } from "~/stores/useReportPageLayoutStore";
 import { get_collection, get_doc } from "~/utils/firebase";
+import { map as rxmap, concatMap, tap } from "rxjs/operators";
+import { from, lastValueFrom, forkJoin } from "rxjs";
+import { ArrayExternal } from "~/api/external/Array";
+import { ArrayInternal } from "~/api/internal/Array";
 
-export const loader = async ({ request }) => {
+const creditreport = (request) => {
 	let url = new URL(request.url);
-	let pathname = url.pathname;
-	let entity_id = await get_session_entity_id(request);
-	let group_id = get_group_id(pathname);
+	let group_id = get_group_id(url.pathname);
 
 	let personal_credit_report_queries = [
 		{
@@ -37,31 +39,103 @@ export const loader = async ({ request }) => {
 		},
 	];
 
-	let report_response = await get_collection({
-		path: ["credit_reports"],
-		queries: personal_credit_report_queries,
-	});
+	let report = from(
+		get_collection({
+			path: ["credit_reports"],
+			queries: personal_credit_report_queries,
+		})
+	).pipe(
+		rxmap(
+			pipe(
+				head,
+				pick(["reportKey", "clientKey", "userToken", "displayToken"])
+			)
+		),
+		rxmap(() => ({
+			reportKey: "a0240c5e-c332-4f36-a5a0-1f518c0acf04",
+			displayToken: "0B272113-1EDB-42EB-9B85-8C08DD02EBE3",
+			clientKey: "95ae56d4-0786-4625-bc34-be90041fc246",
+			userToken: "0340F883-4DCE-4EF2-8908-EA79C5FA5123",
+		})),
+		concatMap(() =>
+			from(
+				get_collection({
+					path: ["credit_reports"],
+					queries: personal_credit_report_queries,
+				})
+			).pipe(rxmap(pipe(head, get("data"))))
+		),
+		// concatMap(({ reportKey, displayToken }) =>
+		// 	ArrayExternal.get_credit_report(reportKey, displayToken)
+		// ),
+		// concatMap(({ clientKey, reportKey, userToken }) =>
+		// 	ArrayExternal.refreshDisplayToken(clientKey, reportKey, userToken)
+		// ),
+		rxmap((array_response) => new ArrayInternal(array_response)),
+		rxmap((report) => report.trade_lines()),
+		tap((value) => {
+			console.log("___tap___");
+			console.log(value);
+		})
+	);
 
-	let report = pipe(head)(report_response);
+	return report;
+};
 
-	// let report = await get_credit_report({
-	// 	resource_id: report_id,
-	// });
-
-	let credit_report = CreditReport(report.data);
-	let liabilities = Liabilities(credit_report.liabilities());
-
-	let trade_lines = pipe(
-		map((value) => Tradeline(flatten([value]))),
-		map((tl) => tl.values())
-		// filter((tl) => pipe(get(all, "value"), includes("Closed"))(tl.status))
-	)(liabilities.trade_lines());
-
-	let is_owner = report.entity_id == entity_id;
-
+export const loader = async ({ request }) => {
+	let entity_id = await get_session_entity_id(request);
 	let { plan_id } = await get_doc(["entity", entity_id]);
 
-	return { trade_lines, plan_id };
+	let response = await lastValueFrom(creditreport(request));
+
+	// console.log("response");
+	// console.log(response);
+
+	return { trade_lines: response, plan_id };
+
+	// let url = new URL(request.url);
+	// let pathname = url.pathname;
+	// let entity_id = await get_session_entity_id(request);
+	// let group_id = get_group_id(pathname);
+
+	// let personal_credit_report_queries = [
+	// 	{
+	// 		param: "group_id",
+	// 		predicate: "==",
+	// 		value: group_id,
+	// 	},
+	// 	{
+	// 		param: "type",
+	// 		predicate: "==",
+	// 		value: "personal_credit_report",
+	// 	},
+	// ];
+
+	// let report_response = await get_collection({
+	// 	path: ["credit_reports"],
+	// 	queries: personal_credit_report_queries,
+	// });
+
+	// let report = pipe(head)(report_response);
+
+	// // let report = await get_credit_report({
+	// // 	resource_id: report_id,
+	// // });
+
+	// let credit_report = CreditReport(report.data);
+	// let liabilities = Liabilities(credit_report.liabilities());
+
+	// let trade_lines = pipe(
+	// 	map((value) => Tradeline(flatten([value]))),
+	// 	map((tl) => tl.values())
+	// 	// filter((tl) => pipe(get(all, "value"), includes("Closed"))(tl.status))
+	// )(liabilities.trade_lines());
+
+	// let is_owner = report.entity_id == entity_id;
+
+	// let { plan_id } = await get_doc(["entity", entity_id]);
+
+	// return { trade_lines, plan_id };
 };
 
 const InfoCard = () => {

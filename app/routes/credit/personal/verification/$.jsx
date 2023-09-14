@@ -105,11 +105,11 @@ export const action = async ({ request }) => {
 		console.log("credit_report_payload");
 		console.log(credit_report_payload);
 
-		await new_personal_credit_report(credit_report_payload);
+		// await new_personal_credit_report(credit_report_payload);
 
-		return redirect(
-			`/credit/report/personal/personal/resource/e/${entity_id}/g/${group_id}`
-		);
+		// return redirect(
+		// 	`/credit/report/personal/personal/resource/e/${entity_id}/g/${group_id}`
+		// );
 	}
 
 	let params = [

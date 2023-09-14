@@ -152,14 +152,14 @@ export const loader = async ({ request }) => {
 		type: "personal_credit_report",
 	};
 
-	// console.log("report_____");
-	// console.log(credit_report_payload);
-	// return null;
+	console.log("report_____");
+	console.log(credit_report_payload);
+	return null;
 
-	// console.log("credit_report_payload");
-	// console.log(credit_report_payload);
+	console.log("credit_report_payload");
+	console.log(credit_report_payload);
 
-	// return null;
+	return null;
 
 	await create(credit_report_payload);
 

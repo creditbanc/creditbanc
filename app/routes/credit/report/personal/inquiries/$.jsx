@@ -1,6 +1,5 @@
 import { ClipboardIcon } from "@heroicons/react/24/outline";
 import { FactorBar } from "~/components/FactorBar";
-import { useReportPageLayoutStore } from "~/stores/useReportPageLayoutStore";
 
 const InfoCard = () => {
 	return (
@@ -63,7 +62,6 @@ const InfoCard = () => {
 };
 
 export default function Inquiries() {
-	let { coordinates } = useReportPageLayoutStore();
 	return (
 		<div className={`flex flex-col w-full h-full py-5 `}>
 			<InfoCard />
