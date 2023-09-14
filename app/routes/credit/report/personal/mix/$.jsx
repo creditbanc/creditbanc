@@ -16,7 +16,7 @@ import { plans } from "~/data/plans";
 import { get_session_entity_id, get_user_id } from "~/utils/auth.server";
 import { prisma } from "~/utils/prisma.server";
 import { useReportPageLayoutStore } from "~/stores/useReportPageLayoutStore";
-import { get_collection, get_doc } from "~/utils/firebase";
+import { get_collection, get_doc, update_doc } from "~/utils/firebase";
 import { ArrayExternal } from "~/api/external/Array";
 import { ArrayInternal } from "~/api/internal/Array";
 import {
@@ -25,6 +25,7 @@ import {
 	concatMap,
 	tap,
 	take,
+	catchError,
 } from "rxjs/operators";
 import {
 	from,
@@ -72,6 +73,22 @@ const credit_report = subject.pipe(
 			)
 		);
 
+		const update_display_token = ({ clientKey, reportKey, report_id }) => {
+			console.log("___update_display_token___");
+			return rxof({ clientKey, reportKey, report_id }).pipe(
+				concatMap(() =>
+					ArrayExternal.refreshDisplayToken(clientKey, reportKey)
+				),
+				tap((value) => console.log(value)),
+				rxfilter((value) => value.displayToken),
+				concatMap(({ displayToken }) =>
+					update_doc(["credit_reports", report_id], {
+						displayToken,
+					})
+				)
+			);
+		};
+
 		let report = from(
 			get_collection({
 				path: ["credit_reports"],
@@ -81,34 +98,37 @@ const credit_report = subject.pipe(
 			rxmap(
 				pipe(
 					head,
-					pick([
-						"reportKey",
-						"clientKey",
-						"userToken",
-						"displayToken",
-					])
+					pick(["reportKey", "clientKey", "displayToken", "id"])
 				)
 			),
-			rxmap(() => ({
-				reportKey: "a0240c5e-c332-4f36-a5a0-1f518c0acf04",
-				displayToken: "0B272113-1EDB-42EB-9B85-8C08DD02EBE3",
-				clientKey: "95ae56d4-0786-4625-bc34-be90041fc246",
-				userToken: "0340F883-4DCE-4EF2-8908-EA79C5FA5123",
-			})),
-			concatMap(() =>
+			concatMap(({ reportKey, displayToken, clientKey, id: report_id }) =>
 				from(
-					get_collection({
-						path: ["credit_reports"],
-						queries: personal_credit_report_queries,
+					ArrayExternal.get_credit_report(reportKey, displayToken)
+				).pipe(
+					rxfilter((report) => report.CREDIT_RESPONSE),
+					catchError((error) => {
+						let status = pipe(get("response", "status"))(error);
+
+						return rxof(status).pipe(
+							// rxfilter((status) => status == 401),
+							concatMap(() =>
+								update_display_token({
+									clientKey,
+									reportKey,
+									report_id,
+								})
+							),
+							tap(() =>
+								subject.next({
+									id: "get_credit_report",
+									args: { request },
+								})
+							),
+							rxfilter((value) => value !== undefined)
+						);
 					})
-				).pipe(rxmap(pipe(head, get("data"))))
+				)
 			),
-			// concatMap(({ reportKey, displayToken }) =>
-			// 	ArrayExternal.get_credit_report(reportKey, displayToken)
-			// ),
-			// concatMap(({ clientKey, reportKey, userToken }) =>
-			// 	ArrayExternal.refreshDisplayToken(clientKey, reportKey, userToken)
-			// ),
 			rxmap((array_response) => new ArrayInternal(array_response)),
 			rxmap((report) => report.trade_lines())
 		);

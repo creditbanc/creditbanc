@@ -8,7 +8,7 @@ import { get_file_id, get_group_id, inspect } from "~/utils/helpers";
 import { get_session_entity_id, get_user_id } from "~/utils/auth.server";
 import { prisma } from "~/utils/prisma.server";
 import { get_collection, get_doc, set_doc } from "~/utils/firebase";
-import { head, pipe, identity } from "ramda";
+import { head, pipe, identity, curry } from "ramda";
 import { LendflowExternal, LendflowInternal } from "~/utils/lendflow.server";
 import { get } from "shades";
 import {
@@ -27,7 +27,7 @@ import {
 	iif,
 	throwError,
 } from "rxjs";
-import { fold } from "~/utils/operators";
+import { fold, ifFalse } from "~/utils/operators";
 import { is_authorized_f } from "~/api/auth";
 
 const subject = new Subject();
@@ -57,10 +57,19 @@ const credit_report = subject.pipe(
 			group_id: rxof(group_id),
 		}).pipe(
 			concatMap(({ entity_id, group_id }) =>
-				is_authorized_f(entity_id, group_id, "credit", "read")
-			),
-			concatMap((is_authorized) =>
-				iif(() => is_authorized, rxof(true), throwError("unauthorized"))
+				from(
+					is_authorized_f(entity_id, group_id, "credit", "read")
+				).pipe(
+					concatMap(
+						ifFalse(
+							throwError(() =>
+								Response.redirect(
+									`${url.origin}/home/resource/e/${entity_id}/g/${group_id}`
+								)
+							)
+						)
+					)
+				)
 			)
 		);
 

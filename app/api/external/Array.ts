@@ -25,27 +25,29 @@ export const report_url = is_sandbox
 	: "https://array.io/api/report/v2";
 
 export class ArrayExternal {
-	static refreshDisplayToken = async (clientKey, reportKey, userToken) => {
+	static refreshDisplayToken = async (clientKey, reportKey) => {
 		console.log("refreshDisplayToken");
 		const options = {
 			method: "PUT",
 			maxBodyLength: Infinity,
 			url: "https://array.io/api/report/v2",
 			headers: {
+				accept: "application/json",
 				"Content-Type": "application/json",
-				"x-credmo-user-token": userToken,
+				"x-credmo-client-token": "8241960C-7A8B-4389-BB6C-1AAF99E7873C",
 			},
 			data: { clientKey, reportKey },
 		};
 
-		axios
-			.request(options)
-			.then(function (response) {
-				console.log(response.data);
-			})
-			.catch(function (error) {
-				console.error(error);
-			});
+		let resposne = await axios.request(options);
+		return resposne?.data;
+		// .then(function (response) {
+		// 	console.log("refreshDisplayToken___response___");
+		// 	console.log(response.data);
+		// })
+		// .catch(function (error) {
+		// 	console.error(error);
+		// });
 	};
 
 	static get_credit_report = async (reportKey, displayToken) => {
