@@ -9,76 +9,148 @@ import { get_session_entity_id, get_user_id } from "~/utils/auth.server";
 import { prisma } from "~/utils/prisma.server";
 import { get_collection, get_doc, set_doc } from "~/utils/firebase";
 import { head, pipe, identity } from "ramda";
-import { map as rxmap, concatMap, tap } from "rxjs/operators";
-import { from, lastValueFrom, forkJoin } from "rxjs";
 import { LendflowExternal, LendflowInternal } from "~/utils/lendflow.server";
 import { get } from "shades";
+import {
+	map as rxmap,
+	filter as rxfilter,
+	concatMap,
+	tap,
+	take,
+} from "rxjs/operators";
+import {
+	from,
+	lastValueFrom,
+	forkJoin,
+	Subject,
+	of as rxof,
+	iif,
+	throwError,
+} from "rxjs";
+import { fold } from "~/utils/operators";
+import { is_authorized_f } from "~/api/auth";
 
-const report = async (request) => {
-	let url = new URL(request.url);
-	let group_id = get_group_id(url.pathname);
+const subject = new Subject();
 
-	let business_credit_report_queries = [
-		{
-			param: "group_id",
-			predicate: "==",
-			value: group_id,
-		},
-		{
-			param: "type",
-			predicate: "==",
-			value: "business_credit_report",
-		},
-	];
+const credit_report = subject.pipe(
+	rxfilter((message) => message.id == "get_credit_report"),
+	concatMap(({ args: { request } }) => {
+		let entity_id = from(get_session_entity_id(request));
+		let url = new URL(request.url);
+		let group_id = get_group_id(url.pathname);
 
-	let application_id = from(
-		get_collection({
-			path: ["credit_reports"],
-			queries: business_credit_report_queries,
-		})
-	).pipe(
-		rxmap(pipe(head, get("application_id"))),
-		rxmap(() => "d6d6cb45-0818-4f43-a8cd-29208f0cf7b2")
-	);
+		let business_credit_report_queries = [
+			{
+				param: "group_id",
+				predicate: "==",
+				value: group_id,
+			},
+			{
+				param: "type",
+				predicate: "==",
+				value: "business_credit_report",
+			},
+		];
 
-	let $report = application_id.pipe(
-		concatMap(LendflowExternal.get_lendflow_report),
-		rxmap(pipe(get("data", "data"))),
-		rxmap((report) => new LendflowInternal(report))
-	);
+		let is_authorized = forkJoin({
+			entity_id,
+			group_id: rxof(group_id),
+		}).pipe(
+			concatMap(({ entity_id, group_id }) =>
+				is_authorized_f(entity_id, group_id, "credit", "read")
+			),
+			concatMap((is_authorized) =>
+				iif(() => is_authorized, rxof(true), throwError("unauthorized"))
+			)
+		);
 
-	let business_info = $report.pipe(rxmap((report) => report.business_info()));
+		let application_id = from(
+			get_collection({
+				path: ["credit_reports"],
+				queries: business_credit_report_queries,
+			})
+		).pipe(
+			rxmap(pipe(head, get("application_id"))),
+			rxmap(() => "d6d6cb45-0818-4f43-a8cd-29208f0cf7b2")
+		);
 
-	let dnb_score = $report.pipe(rxmap((report) => report.dnb_score()));
+		let $report = application_id.pipe(
+			concatMap(LendflowExternal.get_lendflow_report),
+			rxmap(pipe(get("data", "data"))),
+			rxmap((report) => new LendflowInternal(report))
+		);
 
-	let dnb_delinquency_score = $report.pipe(
-		rxmap((report) => report.dnb_delinquency_score())
-	);
+		let business_info = $report.pipe(
+			rxmap((report) => report.business_info())
+		);
 
-	return forkJoin({
-		business_info,
-		dnb_score,
-		dnb_delinquency_score,
-	}).pipe(
-		tap((value) => {
-			console.log("___tap___");
-			console.log(value);
-		})
-	);
-};
+		let dnb_score = $report.pipe(rxmap((report) => report.dnb_score()));
+
+		let dnb_delinquency_score = $report.pipe(
+			rxmap((report) => report.dnb_delinquency_score())
+		);
+
+		return is_authorized.pipe(
+			concatMap(() =>
+				forkJoin({
+					business_info,
+					dnb_score,
+					dnb_delinquency_score,
+				})
+			),
+			tap((value) => {
+				console.log("___tap___");
+				console.log(value);
+			})
+		);
+	})
+);
 
 export const loader = async ({ request }) => {
-	let entity_id = await get_session_entity_id(request);
+	const on_success = async (response) => {
+		console.log("___success___");
+		let entity_id = await get_session_entity_id(request);
+		let { plan_id } = await get_doc(["entity", entity_id]);
 
-	let { plan_id } = await get_doc(["entity", entity_id]);
+		subject.next({
+			id: "credit_report_response",
+			next: () => ({ ...response, plan_id }),
+		});
+	};
+
+	const on_error = (error) => {
+		console.log("___error___");
+		console.log(error);
+
+		subject.next({
+			id: "credit_report_response",
+			next: () => error,
+		});
+	};
+
+	const on_complete = (value) => value.id === "credit_report_response";
+
+	credit_report.pipe(fold(on_success, on_error)).subscribe();
+
+	subject.next({ id: "get_credit_report", args: { request } });
 
 	let response = await lastValueFrom(
-		from(report(request)).pipe(concatMap(identity))
+		subject.pipe(rxfilter(on_complete), take(1))
 	);
 
-	return { ...response, plan_id };
+	return response.next();
 
-	let is_owner = report.entity_id == entity_id;
+	// let entity_id = await get_session_entity_id(request);
+
+	// let { plan_id } = await get_doc(["entity", entity_id]);
+
+	// let response = await lastValueFrom(
+	// 	from(report(request)).pipe(concatMap(identity))
+	// );
+
+	// return { ...response, plan_id };
+
+	// let is_owner = report.entity_id == entity_id;
 
 	// let url = new URL(request.url);
 	// let group_id = get_group_id(url.pathname);
@@ -165,360 +237,6 @@ const ScoreCard = () => {
 						to meet its credit obligations and make its payments
 						promptly or within payment terms. A D&B PAYDEX® between
 						71-100 is considered Low risk.
-					</div>
-				</div>
-			</div>
-		</div>
-	);
-};
-
-const PersonalInfoCard = () => {
-	return (
-		<div className="overflow-hidden bg-white rounded-lg border">
-			<div className="px-4 py-5 sm:px-6">
-				<h3 className="text-lg font-medium leading-6 text-gray-900">
-					Personal Information
-				</h3>
-				<p className="mt-1 max-w-2xl text-sm text-gray-500">
-					Below is your personal information as it appears in your
-					credit file. This information includes your legal name,
-					current and previous addresses, employment information and
-					other details.
-				</p>
-			</div>
-			<div className="border-t border-gray-200 px-4 py-1">
-				<dl className="divide-y divide-gray-200">
-					<div className="py-4 flex flex-col sm:flex-row sm:py-5 sm:px-6">
-						<dt className="text-sm font-medium text-gray-500 w-[200px]">
-							Name
-						</dt>
-						<dd className="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0">
-							Margot Foster
-						</dd>
-					</div>
-					<div className="py-4 flex flex-col sm:flex-row sm:py-5 sm:px-6">
-						<dt className="text-sm font-medium text-gray-500 w-[200px]">
-							Aliases
-						</dt>
-						<dd className="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0">
-							Date of birth
-						</dd>
-					</div>
-					<div className="py-4 flex flex-col sm:flex-row sm:py-5 sm:px-6">
-						<dt className="text-sm font-medium text-gray-500 w-[200px]">
-							Address
-						</dt>
-						<dd className="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0">
-							margotfoster@example.com
-						</dd>
-					</div>
-					<div className="py-4 flex flex-col sm:flex-row sm:py-5 sm:px-6">
-						<dt className="text-sm font-medium text-gray-500 w-[200px]">
-							Employers
-						</dt>
-						<dd className="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0">
-							$120,000
-						</dd>
-					</div>
-				</dl>
-			</div>
-		</div>
-	);
-};
-
-const SummaryCard = () => {
-	return (
-		<div className="overflow-hidden bg-white rounded-lg border">
-			<div className="px-4 py-5 sm:px-6">
-				<h3 className="text-lg font-medium leading-6 text-gray-900">
-					Summary
-				</h3>
-			</div>
-			<div className="border-t border-gray-200 p-5">
-				<div className="flex flex-col w-full [&>*:nth-child(odd)]:bg-gray-50 border rounded">
-					<div className="flex flex-row py-2 px-3">
-						<div className="flex flex-col w-3/4">
-							First Credit Account
-						</div>
-						<div>N/A</div>
-					</div>
-					<div className="flex flex-row py-2 px-3">
-						<div className="flex flex-col w-3/4">
-							First Credit Account
-						</div>
-						<div>N/A</div>
-					</div>
-					<div className="flex flex-row py-2 px-3">
-						<div className="flex flex-col w-3/4">
-							First Credit Account
-						</div>
-						<div>N/A</div>
-					</div>
-				</div>
-			</div>
-		</div>
-	);
-};
-
-const DaysBeyondTerms = () => {
-	let { trade_summary } = useLoaderData();
-
-	return (
-		<div className="overflow-hidden bg-white rounded-lg border">
-			<div className="px-4 py-5 sm:px-6">
-				<h3 className="text-lg font-medium leading-6 text-gray-900">
-					Days Beyond Terms
-				</h3>
-			</div>
-			<div className="border-t border-gray-200 p-5">
-				<div className="flex flex-row w-full">
-					<div className="flex flex-col items-center w-1/3 space-y-2">
-						<div>Current DBT</div>
-						<div className="flex flex-col w-[90%] h-[1px] bg-gray-200"></div>
-						<div className="font-semibold">
-							{trade_summary.currentDbt}
-						</div>
-					</div>
-					<div className="flex flex-col items-center w-1/3 space-y-2">
-						<div>Average DBT</div>
-						<div className="flex flex-col w-[90%] h-[1px] bg-gray-200"></div>
-						<div className="font-semibold">
-							{trade_summary.monthlyAverageDbt}
-						</div>
-					</div>
-					<div className="flex flex-col items-center w-1/3 space-y-2">
-						<div>Highest DBT</div>
-						<div className="flex flex-col w-[90%] h-[1px] bg-gray-200"></div>
-						<div className="font-semibold">
-							{trade_summary.highestDbt5Quarters}
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-	);
-};
-
-const PaymentStatus = () => {
-	return (
-		<div className="overflow-hidden bg-white rounded-lg border">
-			<div className="px-4 py-5 sm:px-6">
-				<h3 className="text-lg font-medium leading-6 text-gray-900">
-					Payment Status
-				</h3>
-			</div>
-			<div className="border-t border-gray-200 space-y-8 p-6">
-				<div className="flex flex-row w-full">
-					<div className="flex flex-col w-1/2">a</div>
-					<div className="flex flex-col w-1/2 space-y-5">
-						<div className="flex flex-col space-y-1">
-							<div>Active Accounts</div>
-							<div className="flex flex-col h-[1px] bg-gray-200 w-[90%]"></div>
-							<div className="font-semibold">4</div>
-						</div>
-
-						<div className="flex flex-col space-y-1">
-							<div>Active Accounts</div>
-							<div className="flex flex-col h-[1px] bg-gray-200 w-[90%]"></div>
-							<div className="font-semibold">4</div>
-						</div>
-
-						<div className="flex flex-col space-y-1">
-							<div>Active Accounts</div>
-							<div className="flex flex-col h-[1px] bg-gray-200 w-[90%]"></div>
-							<div className="font-semibold">4</div>
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-	);
-};
-
-const ExplanationCard = () => {
-	return (
-		<div className="overflow-hidden bg-white rounded-lg border">
-			<div className="px-4 py-5 sm:px-6">
-				<h3 className="text-lg font-medium leading-6 text-gray-900">
-					How is Payment Status Important?
-				</h3>
-			</div>
-			<div className="border-t border-gray-200 space-y-8 p-6">
-				<div className="flex flex-col w-full">
-					Payment status on commercial accounts is treated much
-					differently than personal accounts. On the personal side, a
-					consumer has 30 days after a payment is due to pay before a
-					late payment can be reported on their credit. It's not the
-					same with business credit. A creditor can report a late or
-					slow payment the day after it's due. So if your business is
-					only 1 day late making a payment, it can be reported as late
-					or slow on your business credit. The more promptly you make
-					your payments, the better your business credit score can be.
-				</div>
-			</div>
-		</div>
-	);
-};
-
-const AccountCard = () => {
-	return (
-		<div className="overflow-hidden bg-white rounded-lg border">
-			<div className="px-4 py-5 sm:px-6">
-				<h3 className="text-lg font-medium leading-6 text-gray-900">
-					Packaging
-				</h3>
-			</div>
-			<div className="border-t border-gray-200 p-5 pt-1">
-				<div className="flex flex-row space-x-3 px-2 py-2 bg-green-100 rounded my-3">
-					<div className="flex flex-col h-full justify-center w-[20px] mt-[2px]">
-						<HandThumbUpIcon />
-					</div>
-					<div>This account is current</div>
-				</div>
-				<div className="flex flex-col w-full [&>*:nth-child(odd)]:bg-gray-50 border rounded">
-					<div className="flex flex-row py-2 px-3">
-						<div className="flex flex-col w-3/4">
-							First Credit Account
-						</div>
-						<div>N/A</div>
-					</div>
-					<div className="flex flex-row py-2 px-3">
-						<div className="flex flex-col w-3/4">
-							First Credit Account
-						</div>
-						<div>N/A</div>
-					</div>
-					<div className="flex flex-row py-2 px-3">
-						<div className="flex flex-col w-3/4">
-							First Credit Account
-						</div>
-						<div>N/A</div>
-					</div>
-				</div>
-				<div className="flex flex-col w-full my-4">
-					<div className="flex flex-col w-full space-y-2 mb-5">
-						<div className="font-semibold">Payment History</div>
-						<div className="flex flex-col h-[1px] bg-gray-200"></div>
-						<div className="pt-3">
-							This is the history of how many of your payments
-							within this account were made within the terms and
-							how many were not.
-						</div>
-					</div>
-					<div className="flex flex-row w-full">
-						<div className="flex flex-col items-center w-1/4 space-y-1">
-							<div>High credit</div>
-							<div className="flex flex-col w-[90%] h-[1px] bg-gray-200"></div>
-							<div className="font-semibold">$0</div>
-						</div>
-						<div className="flex flex-col items-center w-1/4 space-y-1">
-							<div>High credit</div>
-							<div className="flex flex-col w-[90%] h-[1px] bg-gray-200"></div>
-							<div className="font-semibold">$0</div>
-						</div>
-						<div className="flex flex-col w-1/2 items-end space-y-1">
-							<div className="flex flex-col items-center w-1/2">
-								<div>High credit</div>
-								<div className="flex flex-col w-[90%] h-[1px] bg-gray-200"></div>
-								<div className="font-semibold">$0</div>
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-	);
-};
-
-const ScoreFactors = () => {
-	return (
-		<div className="overflow-hidden bg-white rounded-lg border">
-			<div className="px-4 py-5 sm:px-6">
-				<h3 className="text-lg font-medium leading-6 text-gray-900">
-					Here are the factors influencing your score
-				</h3>
-			</div>
-			<div className="border-t border-gray-200 p-6">
-				<div className="flex flex-col w-full space-y-6">
-					<div className="flex flex-row items-center space-x-2">
-						<div className="w-[20px]">
-							<ChevronDoubleRightIcon />
-						</div>
-						<div>
-							Pct of new commercial accts to total nbr of accts
-						</div>
-					</div>
-					<div className="flex flex-row items-center space-x-2">
-						<div className="w-[20px]">
-							<ChevronDoubleRightIcon />
-						</div>
-						<div>
-							Pct of new commercial accts to total nbr of accts
-						</div>
-					</div>
-					<div className="flex flex-row items-center space-x-2">
-						<div className="w-[20px]">
-							<ChevronDoubleRightIcon />
-						</div>
-						<div>
-							Pct of new commercial accts to total nbr of accts
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-	);
-};
-
-const Derogatories = () => {
-	return (
-		<div className="overflow-hidden bg-white rounded-lg border">
-			<div className="px-4 py-5 sm:px-6">
-				<h3 className="text-lg font-medium leading-6 text-gray-900">
-					Derogatories
-				</h3>
-			</div>
-			<div className="border-t border-gray-200 p-5 space-y-5">
-				<div className="flex flex-col w-full [&>*:nth-child(odd)]:bg-gray-50 border rounded">
-					<div className="flex flex-row py-2 px-3">
-						<div className="flex flex-col w-3/4">
-							First Credit Account
-						</div>
-						<div>N/A</div>
-					</div>
-					<div className="flex flex-row py-2 px-3">
-						<div className="flex flex-col w-3/4">
-							First Credit Account
-						</div>
-						<div>N/A</div>
-					</div>
-					<div className="flex flex-row py-2 px-3">
-						<div className="flex flex-col w-3/4">
-							First Credit Account
-						</div>
-						<div>N/A</div>
-					</div>
-				</div>
-				<div className="flex flex-row w-full">
-					<div className="flex flex-col items-center w-1/4 space-y-1">
-						<div>Collections</div>
-						<div className="flex flex-col w-[90%] h-[1px] bg-gray-200"></div>
-						<div>0</div>
-					</div>
-					<div className="flex flex-col items-center w-1/4 space-y-1">
-						<div>Collections</div>
-						<div className="flex flex-col w-[90%] h-[1px] bg-gray-200"></div>
-						<div>0</div>
-					</div>
-					<div className="flex flex-col items-center w-1/4 space-y-1">
-						<div>Collections</div>
-						<div className="flex flex-col w-[90%] h-[1px] bg-gray-200"></div>
-						<div>0</div>
-					</div>
-					<div className="flex flex-col items-center w-1/4 space-y-1">
-						<div>Collections</div>
-						<div className="flex flex-col w-[90%] h-[1px] bg-gray-200"></div>
-						<div>0</div>
 					</div>
 				</div>
 			</div>

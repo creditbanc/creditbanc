@@ -17,81 +17,157 @@ import { get_session_entity_id, get_user_id } from "~/utils/auth.server";
 import { prisma } from "~/utils/prisma.server";
 import { useReportPageLayoutStore } from "~/stores/useReportPageLayoutStore";
 import { get_collection, get_doc } from "~/utils/firebase";
-import { map as rxmap, concatMap, tap } from "rxjs/operators";
-import { from, lastValueFrom, forkJoin } from "rxjs";
 import { ArrayExternal } from "~/api/external/Array";
 import { ArrayInternal } from "~/api/internal/Array";
+import {
+	map as rxmap,
+	filter as rxfilter,
+	concatMap,
+	tap,
+	take,
+} from "rxjs/operators";
+import {
+	from,
+	lastValueFrom,
+	forkJoin,
+	Subject,
+	of as rxof,
+	iif,
+	throwError,
+} from "rxjs";
+import { fold } from "~/utils/operators";
+import { is_authorized_f } from "~/api/auth";
 
-const creditreport = (request) => {
-	let url = new URL(request.url);
-	let group_id = get_group_id(url.pathname);
+const subject = new Subject();
 
-	let personal_credit_report_queries = [
-		{
-			param: "group_id",
-			predicate: "==",
-			value: group_id,
-		},
-		{
-			param: "type",
-			predicate: "==",
-			value: "personal_credit_report",
-		},
-	];
+const credit_report = subject.pipe(
+	rxfilter((message) => message.id == "get_credit_report"),
+	concatMap(({ args: { request } }) => {
+		let entity_id = from(get_session_entity_id(request));
+		let url = new URL(request.url);
+		let group_id = get_group_id(url.pathname);
 
-	let report = from(
-		get_collection({
-			path: ["credit_reports"],
-			queries: personal_credit_report_queries,
-		})
-	).pipe(
-		rxmap(
-			pipe(
-				head,
-				pick(["reportKey", "clientKey", "userToken", "displayToken"])
+		let personal_credit_report_queries = [
+			{
+				param: "group_id",
+				predicate: "==",
+				value: group_id,
+			},
+			{
+				param: "type",
+				predicate: "==",
+				value: "personal_credit_report",
+			},
+		];
+
+		let is_authorized = forkJoin({
+			entity_id,
+			group_id: rxof(group_id),
+		}).pipe(
+			concatMap(({ entity_id, group_id }) =>
+				is_authorized_f(entity_id, group_id, "credit", "read")
+			),
+			concatMap((is_authorized) =>
+				iif(() => is_authorized, rxof(true), throwError("unauthorized"))
 			)
-		),
-		rxmap(() => ({
-			reportKey: "a0240c5e-c332-4f36-a5a0-1f518c0acf04",
-			displayToken: "0B272113-1EDB-42EB-9B85-8C08DD02EBE3",
-			clientKey: "95ae56d4-0786-4625-bc34-be90041fc246",
-			userToken: "0340F883-4DCE-4EF2-8908-EA79C5FA5123",
-		})),
-		concatMap(() =>
-			from(
-				get_collection({
-					path: ["credit_reports"],
-					queries: personal_credit_report_queries,
-				})
-			).pipe(rxmap(pipe(head, get("data"))))
-		),
-		// concatMap(({ reportKey, displayToken }) =>
-		// 	ArrayExternal.get_credit_report(reportKey, displayToken)
-		// ),
-		// concatMap(({ clientKey, reportKey, userToken }) =>
-		// 	ArrayExternal.refreshDisplayToken(clientKey, reportKey, userToken)
-		// ),
-		rxmap((array_response) => new ArrayInternal(array_response)),
-		rxmap((report) => report.trade_lines()),
-		tap((value) => {
-			console.log("___tap___");
-			console.log(value);
-		})
-	);
+		);
 
-	return report;
-};
+		let report = from(
+			get_collection({
+				path: ["credit_reports"],
+				queries: personal_credit_report_queries,
+			})
+		).pipe(
+			rxmap(
+				pipe(
+					head,
+					pick([
+						"reportKey",
+						"clientKey",
+						"userToken",
+						"displayToken",
+					])
+				)
+			),
+			rxmap(() => ({
+				reportKey: "a0240c5e-c332-4f36-a5a0-1f518c0acf04",
+				displayToken: "0B272113-1EDB-42EB-9B85-8C08DD02EBE3",
+				clientKey: "95ae56d4-0786-4625-bc34-be90041fc246",
+				userToken: "0340F883-4DCE-4EF2-8908-EA79C5FA5123",
+			})),
+			concatMap(() =>
+				from(
+					get_collection({
+						path: ["credit_reports"],
+						queries: personal_credit_report_queries,
+					})
+				).pipe(rxmap(pipe(head, get("data"))))
+			),
+			// concatMap(({ reportKey, displayToken }) =>
+			// 	ArrayExternal.get_credit_report(reportKey, displayToken)
+			// ),
+			// concatMap(({ clientKey, reportKey, userToken }) =>
+			// 	ArrayExternal.refreshDisplayToken(clientKey, reportKey, userToken)
+			// ),
+			rxmap((array_response) => new ArrayInternal(array_response)),
+			rxmap((report) => report.trade_lines())
+		);
+
+		return is_authorized.pipe(
+			concatMap(() => report),
+			tap((value) => {
+				console.log("___tap___");
+				console.log(value);
+			})
+		);
+	})
+);
 
 export const loader = async ({ request }) => {
-	let entity_id = await get_session_entity_id(request);
-	let { plan_id } = await get_doc(["entity", entity_id]);
+	const on_success = async (response) => {
+		console.log("___success___");
+		let entity_id = await get_session_entity_id(request);
+		let { plan_id } = await get_doc(["entity", entity_id]);
 
-	let response = await lastValueFrom(creditreport(request));
+		let payload = { trade_lines: response, plan_id };
 
-	// console.log("response");
-	// console.log(response);
+		subject.next({
+			id: "credit_report_response",
+			next: () => payload,
+		});
+	};
 
-	return { trade_lines: response, plan_id };
+	const on_error = (error) => {
+		console.log("___error___");
+		console.log(error);
+
+		subject.next({
+			id: "credit_report_response",
+			next: () => error,
+		});
+	};
+
+	const on_complete = (value) => value.id === "credit_report_response";
+
+	credit_report.pipe(fold(on_success, on_error)).subscribe();
+
+	subject.next({ id: "get_credit_report", args: { request } });
+
+	let response = await lastValueFrom(
+		subject.pipe(rxfilter(on_complete), take(1))
+	);
+
+	return response.next();
+
+	// let entity_id = await get_session_entity_id(request);
+	// let { plan_id } = await get_doc(["entity", entity_id]);
+
+	// let response = await lastValueFrom(creditreport(request));
+
+	// // console.log("response");
+	// // console.log(response);
+
+	// return { trade_lines: response, plan_id };
 
 	// let url = new URL(request.url);
 	// let pathname = url.pathname;

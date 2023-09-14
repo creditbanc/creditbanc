@@ -13,74 +13,144 @@ import { get_lendflow_report } from "~/utils/lendflow.server";
 import { update_business_report } from "~/utils/business_credit_report.server";
 import DoughnutChart from "~/components/DoughnutChart";
 import { get_collection, get_doc, set_doc } from "~/utils/firebase";
-import { map as rxmap, concatMap, tap } from "rxjs/operators";
-import { from, lastValueFrom, forkJoin } from "rxjs";
 import { LendflowExternal, LendflowInternal } from "~/utils/lendflow.server";
+import {
+	map as rxmap,
+	concatMap,
+	tap,
+	filter as rxfilter,
+	take,
+} from "rxjs/operators";
+import {
+	from,
+	lastValueFrom,
+	forkJoin,
+	of as rxof,
+	Subject,
+	iif,
+	throwError,
+} from "rxjs";
+import { fold } from "~/utils/operators";
+import { is_authorized_f } from "~/api/auth";
 
-const report = async (request) => {
-	let url = new URL(request.url);
-	let group_id = get_group_id(url.pathname);
+const subject = new Subject();
 
-	let business_credit_report_queries = [
-		{
-			param: "group_id",
-			predicate: "==",
-			value: group_id,
-		},
-		{
-			param: "type",
-			predicate: "==",
-			value: "business_credit_report",
-		},
-	];
+const credit_report = subject.pipe(
+	rxfilter((message) => message.id == "get_credit_report"),
+	concatMap(({ args: { request } }) => {
+		let entity_id = from(get_session_entity_id(request));
+		let url = new URL(request.url);
+		let group_id = get_group_id(url.pathname);
 
-	let application_id = from(
-		get_collection({
-			path: ["credit_reports"],
-			queries: business_credit_report_queries,
-		})
-	).pipe(
-		rxmap(pipe(head, get("application_id"))),
-		rxmap(() => "d6d6cb45-0818-4f43-a8cd-29208f0cf7b2")
-	);
+		let business_credit_report_queries = [
+			{
+				param: "group_id",
+				predicate: "==",
+				value: group_id,
+			},
+			{
+				param: "type",
+				predicate: "==",
+				value: "business_credit_report",
+			},
+		];
 
-	let $report = application_id.pipe(
-		concatMap(LendflowExternal.get_lendflow_report),
-		rxmap(pipe(get("data", "data"))),
-		rxmap((report) => new LendflowInternal(report))
-	);
+		let is_authorized = forkJoin({
+			entity_id,
+			group_id: rxof(group_id),
+		}).pipe(
+			concatMap(({ entity_id, group_id }) =>
+				is_authorized_f(entity_id, group_id, "credit", "read")
+			),
+			concatMap((is_authorized) =>
+				iif(() => is_authorized, rxof(true), throwError("unauthorized"))
+			)
+		);
 
-	let experian_trade_payment_totals = $report.pipe(
-		rxmap((report) => report.experian_trade_payment_totals())
-	);
+		let application_id = from(
+			get_collection({
+				path: ["credit_reports"],
+				queries: business_credit_report_queries,
+			})
+		).pipe(
+			rxmap(pipe(head, get("application_id"))),
+			rxmap(() => "d6d6cb45-0818-4f43-a8cd-29208f0cf7b2")
+		);
 
-	let experian_trade_lines = $report.pipe(
-		rxmap((report) => report.experian_trade_lines())
-	);
+		let $report = application_id.pipe(
+			concatMap(LendflowExternal.get_lendflow_report),
+			rxmap(pipe(get("data", "data"))),
+			rxmap((report) => new LendflowInternal(report))
+		);
 
-	return forkJoin({
-		experian_trade_payment_totals,
-		experian_trade_lines,
-	}).pipe(
-		tap((value) => {
-			console.log("___tap___");
-			console.log(value);
-		})
-	);
-};
+		let experian_trade_payment_totals = $report.pipe(
+			rxmap((report) => report.experian_trade_payment_totals())
+		);
+
+		let experian_trade_lines = $report.pipe(
+			rxmap((report) => report.experian_trade_lines())
+		);
+
+		return is_authorized.pipe(
+			concatMap(() =>
+				forkJoin({
+					experian_trade_payment_totals,
+					experian_trade_lines,
+				})
+			),
+			tap((value) => {
+				console.log("___tap___");
+				console.log(value);
+			})
+		);
+	})
+);
 
 export const loader = async ({ request }) => {
-	let entity_id = await get_session_entity_id(request);
+	const on_success = async (response) => {
+		console.log("___success___");
+		let entity_id = await get_session_entity_id(request);
+		let { plan_id } = await get_doc(["entity", entity_id]);
 
-	let { plan_id } = await get_doc(["entity", entity_id]);
+		subject.next({
+			id: "credit_report_response",
+			next: () => ({ ...response, plan_id }),
+		});
+	};
+
+	const on_error = (error) => {
+		console.log("___error___");
+		console.log(error);
+
+		subject.next({
+			id: "credit_report_response",
+			next: () => error,
+		});
+	};
+
+	const on_complete = (value) => value.id === "credit_report_response";
+
+	credit_report.pipe(fold(on_success, on_error)).subscribe();
+
+	subject.next({ id: "get_credit_report", args: { request } });
 
 	let response = await lastValueFrom(
-		from(report(request)).pipe(concatMap(identity))
+		subject.pipe(rxfilter(on_complete), take(1))
 	);
 
-	return { ...response, plan_id };
+	return response.next();
 
-	let is_owner = report.entity_id == entity_id;
+	// let entity_id = await get_session_entity_id(request);
+
+	// let { plan_id } = await get_doc(["entity", entity_id]);
+
+	// let response = await lastValueFrom(
+	// 	from(report(request)).pipe(concatMap(identity))
+	// );
+
+	// return { ...response, plan_id };
+
+	// let is_owner = report.entity_id == entity_id;
 
 	// let url = new URL(request.url);
 	// let file_id = get_file_id(url.pathname);
