@@ -9,8 +9,9 @@ import {
 	pick,
 	of,
 	uniqBy,
+	head,
 } from "ramda";
-import { get, mod, all } from "shades";
+import { get, mod, all, filter } from "shades";
 
 const falsyTryCatch = curry((successFn, errorFn, data) => {
 	let result = tryCatch(successFn, errorFn)(data);
@@ -273,6 +274,63 @@ class TradeLine {
 
 export class ArrayInternal {
 	constructor(public report: ArrayReport) {}
+
+	first_name = () => {
+		return falsyTryCatch(
+			pipe(get("CREDIT_RESPONSE", "BORROWER", "@_FirstName")),
+			always("")
+		)(this.report);
+	};
+
+	last_name = () => {
+		return falsyTryCatch(
+			pipe(get("CREDIT_RESPONSE", "BORROWER", "@_LastName")),
+			always("")
+		)(this.report);
+	};
+
+	residence = () => {
+		return falsyTryCatch(
+			pipe(
+				get("CREDIT_RESPONSE", "BORROWER", "_RESIDENCE"),
+				filter({ "@BorrowerResidencyType": "Current" }),
+				head
+			),
+			always({})
+		)(this.report);
+	};
+
+	street = () => {
+		return falsyTryCatch(
+			pipe(get("@_StreetAddress")),
+			always("")
+		)(this.residence());
+	};
+
+	city = () => {
+		return falsyTryCatch(pipe(get("@_City")), always(""))(this.residence());
+	};
+
+	state = () => {
+		return falsyTryCatch(
+			pipe(get("@_State")),
+			always("")
+		)(this.residence());
+	};
+
+	zip = () => {
+		return falsyTryCatch(
+			pipe(get("@_PostalCode")),
+			always("")
+		)(this.residence());
+	};
+
+	dob = () => {
+		return falsyTryCatch(
+			pipe(get("CREDIT_RESPONSE", "BORROWER", "@_BirthDate")),
+			always("")
+		)(this.report);
+	};
 
 	trade_lines = () => {
 		return falsyTryCatch(

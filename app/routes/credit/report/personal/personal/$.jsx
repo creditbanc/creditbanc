@@ -6,7 +6,7 @@ import { get_session_entity_id, get_user_id } from "~/utils/auth.server";
 import { prisma } from "~/utils/prisma.server";
 import { plans } from "~/data/plans";
 import { all, get } from "shades";
-import { flatten, pipe, uniqBy, head } from "ramda";
+import { flatten, pipe, uniqBy, head, pick } from "ramda";
 import { get_collection, get_doc } from "~/utils/firebase";
 
 import {
@@ -15,6 +15,7 @@ import {
 	concatMap,
 	tap,
 	take,
+	catchError,
 } from "rxjs/operators";
 import {
 	from,
@@ -25,19 +26,19 @@ import {
 	iif,
 	throwError,
 } from "rxjs";
-import { fold } from "~/utils/operators";
+import { fold, ifFalse } from "~/utils/operators";
 import { is_authorized_f } from "~/api/auth";
+import { ArrayExternal } from "~/api/external/Array";
+import { ArrayInternal } from "~/api/internal/Array";
 
 const subject = new Subject();
 
 const credit_report = subject.pipe(
 	rxfilter((message) => message.id == "get_credit_report"),
 	concatMap(({ args: { request } }) => {
-		let entity_id = from(get_session_entity_id(request));
 		let url = new URL(request.url);
-		let group_id = get_group_id(url.pathname);
 
-		let personal_credit_report_queries = [
+		let personal_credit_report_queries = (group_id) => [
 			{
 				param: "group_id",
 				predicate: "==",
@@ -50,27 +51,114 @@ const credit_report = subject.pipe(
 			},
 		];
 
-		let is_authorized = forkJoin({
+		let get_credit_report = (group_id) =>
+			from(
+				get_collection({
+					path: ["credit_reports"],
+					queries: personal_credit_report_queries(group_id),
+				})
+			);
+
+		let group_id = rxof(get_group_id(url.pathname));
+		let entity_id = from(get_session_entity_id(request));
+
+		let entity_group_id = forkJoin({
 			entity_id,
-			group_id: rxof(group_id),
-		}).pipe(
+			group_id,
+		});
+
+		let redirect_home = entity_group_id.pipe(
 			concatMap(({ entity_id, group_id }) =>
-				is_authorized_f(entity_id, group_id, "credit", "read")
-			),
-			concatMap((is_authorized) =>
-				iif(() => is_authorized, rxof(true), throwError("unauthorized"))
+				throwError(() =>
+					Response.redirect(
+						`${url.origin}/home/resource/e/${entity_id}/g/${group_id}`
+					)
+				)
 			)
 		);
 
-		let report = from(
-			get_collection({
-				path: ["credit_reports"],
-				queries: personal_credit_report_queries,
-			})
-		).pipe(rxmap(pipe(head, get_personal_data)));
+		let is_authorized = entity_group_id.pipe(
+			concatMap(({ entity_id, group_id }) =>
+				is_authorized_f(entity_id, group_id, "credit", "read")
+			),
+			concatMap(ifFalse(redirect_home))
+		);
+
+		const update_display_token = ({ clientKey, reportKey, report_id }) => {
+			console.log("___update_display_token___");
+			return rxof({ clientKey, reportKey, report_id }).pipe(
+				concatMap(() =>
+					ArrayExternal.refreshDisplayToken(clientKey, reportKey)
+				),
+				tap((value) => console.log(value)),
+				rxfilter((value) => value.displayToken),
+				concatMap(({ displayToken }) =>
+					update_doc(["credit_reports", report_id], {
+						displayToken,
+					})
+				)
+			);
+		};
+
+		let report = group_id.pipe(
+			concatMap(get_credit_report),
+			rxmap(
+				pipe(
+					head,
+					pick(["reportKey", "clientKey", "displayToken", "id"])
+				)
+			),
+			concatMap(({ reportKey, displayToken, clientKey, id: report_id }) =>
+				from(
+					ArrayExternal.get_credit_report(reportKey, displayToken)
+				).pipe(
+					rxfilter((report) => report.CREDIT_RESPONSE),
+					catchError((error) => {
+						let status = pipe(get("response", "status"))(error);
+
+						return rxof(status).pipe(
+							// rxfilter((status) => status == 401),
+							concatMap(() =>
+								update_display_token({
+									clientKey,
+									reportKey,
+									report_id,
+								})
+							),
+							tap(() =>
+								subject.next({
+									id: "get_credit_report",
+									args: { request },
+								})
+							),
+							rxfilter((value) => value !== undefined)
+						);
+					})
+				)
+			),
+			rxmap((array_response) => new ArrayInternal(array_response))
+		);
+
+		let first_name = report.pipe(rxmap((report) => report.first_name()));
+		let last_name = report.pipe(rxmap((report) => report.last_name()));
+		let street = report.pipe(rxmap((report) => report.street()));
+		let city = report.pipe(rxmap((report) => report.city()));
+		let state = report.pipe(rxmap((report) => report.state()));
+		let zip = report.pipe(rxmap((report) => report.zip()));
+		let dob = report.pipe(rxmap((report) => report.dob()));
 
 		return is_authorized.pipe(
-			concatMap(() => report),
+			concatMap(() =>
+				forkJoin({
+					first_name,
+					last_name,
+					street,
+					city,
+					state,
+					zip,
+					dob,
+				})
+			),
 			tap((value) => {
 				console.log("___tap___");
 				console.log(value);
@@ -78,55 +166,6 @@ const credit_report = subject.pipe(
 		);
 	})
 );
-
-const get_personal_data = (report) => {
-	let { plan_id } = report;
-
-	if (plan_id == "essential") {
-		let { first_name, last_name, street, city, state, zip, dob } = report;
-
-		let payload = {
-			first_name,
-			last_name,
-			street,
-			city,
-			state,
-			zip,
-			dob,
-		};
-
-		return payload;
-	}
-
-	if (plan_id !== "essential") {
-		let { data } = report;
-
-		// console.log("data");
-		// console.log(data);
-
-		let first_name = Array.first_name(data);
-		let last_name = Array.last_name(data);
-		let residence = Array.residence(data);
-		let dob = Array.dob(data);
-
-		let street = residence["@_StreetAddress"];
-		let city = residence["@_City"];
-		let state = residence["@_State"];
-		let zip = residence["@_PostalCode"];
-
-		let payload = {
-			first_name,
-			last_name,
-			street,
-			city,
-			state,
-			zip,
-			dob,
-		};
-
-		return payload;
-	}
-};
 
 export const loader = async ({ request }) => {
 	const on_success = async (response) => {
