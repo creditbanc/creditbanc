@@ -18,13 +18,11 @@ import {
 	values,
 } from "ramda";
 import { all, filter, get } from "shades";
-import { prisma } from "~/utils/prisma.server";
 import { useLoaderData } from "@remix-run/react";
 import { plans } from "~/data/plans";
 import { redirect } from "@remix-run/node";
 import UpgradeBanner from "~/components/UpgradeMembership";
 var cookie = require("cookie");
-import CashflowChart from "~/components/CashflowChart";
 import axios from "axios";
 import { useCashflowStore } from "~/stores/useCashflowStore";
 import { useEffect } from "react";
@@ -41,13 +39,10 @@ export const loader = async ({ request }) => {
 	let url = new URL(request.url);
 	let entity_id = await get_session_entity_id(request);
 	let group_id = get_group_id(url.pathname);
-	let cookies = request.headers.get("Cookie");
-	var cookies_json = cookie.parse(cookies);
-	let { income: income_start_month = 12 } = use_search_params(request);
+	// let cookies = request.headers.get("Cookie");
+	// var cookies_json = cookie.parse(cookies);
 
 	// let entity_id = get_entity_id(url.pathname);
-
-	let { allow_empty } = cookies_json;
 
 	let onboard_state = await get_doc(["onboard", entity_id]);
 	onboard_state = pipe(
@@ -74,24 +69,10 @@ export const loader = async ({ request }) => {
 
 	let { data: scores } = credit_scores_api_response;
 
-	// console.log("scores");
-	// console.log(scores);
-
-	let cashflow_api_response = await axios({
-		method: "get",
-		url: `${url.origin}/financial/api/cashflow/resource/e/${entity_id}/g/${group_id}?income=${income_start_month}`,
-	});
-
-	let { data: financials } = cashflow_api_response;
-
-	// console.log("financials");
-	// console.log(financials);
-
 	let payload = {
 		...scores,
 		entity_id,
 		plan_id,
-		financials,
 		business,
 		onboard: onboard_state,
 	};
@@ -431,7 +412,7 @@ const posts = [
 	},
 ];
 
-const Accounts = () => {
+const Courses = () => {
 	let { pathname } = useLocation();
 	let entity_id = get_entity_id(pathname);
 	let group_id = get_group_id(pathname);
@@ -752,12 +733,7 @@ const Notifications = () => {
 
 export default function Home() {
 	console.log("home");
-	const {
-		plan_id = "essential",
-		financials = {},
-		onboard: onboard_db,
-	} = useLoaderData();
-	let set_financials = useCashflowStore((state) => state.set_state);
+	const { plan_id = "essential", onboard: onboard_db } = useLoaderData();
 	let onboard = useOnboardingStore((state) => state.onboard);
 	let set_onboard = useOnboardingStore((state) => state.set_state);
 
@@ -788,10 +764,6 @@ export default function Home() {
 	let onboard_percent_completed =
 		(onboard_steps_completed / onboard_num_of_steps) * 100;
 
-	useEffect(() => {
-		set_financials(["financials"], financials);
-	}, []);
-
 	return (
 		<div className="w-full h-full flex flex-col overflow-hidden">
 			<div className="flex flex-row h-full w-full p-5 space-x-5">
@@ -814,10 +786,6 @@ export default function Home() {
 							</div>
 						</div>
 
-						<div className="flex flex-col w-full max-h-[600px] bg-white rounded border">
-							<CashflowChart />
-						</div>
-
 						<div className="flex flex-col w-full h-fit bg-white px-5 pt-5 border rounded">
 							<div className="border-b border-gray-200 pb-3 flex flex-col sticky top-0 bg-white z-10">
 								<div>
@@ -825,13 +793,10 @@ export default function Home() {
 										Courses
 									</h3>
 								</div>
-								{/* <div>
-									<HeaderFilters />
-								</div> */}
 							</div>
 
 							<div className="flex flex-col w-full py-5 scrollbar-none">
-								<Accounts />
+								<Courses />
 							</div>
 						</div>
 					</div>

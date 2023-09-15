@@ -35,11 +35,9 @@ const subject = new Subject();
 const credit_report = subject.pipe(
 	rxfilter((message) => message.id == "get_credit_report"),
 	concatMap(({ args: { request } }) => {
-		let entity_id = from(get_session_entity_id(request));
 		let url = new URL(request.url);
-		let group_id = get_group_id(url.pathname);
 
-		let business_credit_report_queries = [
+		let business_credit_report_queries = (group_id) => [
 			{
 				param: "group_id",
 				predicate: "==",
@@ -52,33 +50,41 @@ const credit_report = subject.pipe(
 			},
 		];
 
-		let is_authorized = forkJoin({
+		let get_credit_report = (group_id) =>
+			from(
+				get_collection({
+					path: ["credit_reports"],
+					queries: business_credit_report_queries(group_id),
+				})
+			);
+
+		let group_id = rxof(get_group_id(url.pathname));
+		let entity_id = from(get_session_entity_id(request));
+
+		let entity_group_id = forkJoin({
 			entity_id,
-			group_id: rxof(group_id),
-		}).pipe(
+			group_id,
+		});
+
+		let redirect_home = entity_group_id.pipe(
 			concatMap(({ entity_id, group_id }) =>
-				from(
-					is_authorized_f(entity_id, group_id, "credit", "read")
-				).pipe(
-					concatMap(
-						ifFalse(
-							throwError(() =>
-								Response.redirect(
-									`${url.origin}/home/resource/e/${entity_id}/g/${group_id}`
-								)
-							)
-						)
+				throwError(() =>
+					Response.redirect(
+						`${url.origin}/home/resource/e/${entity_id}/g/${group_id}`
 					)
 				)
 			)
 		);
 
-		let application_id = from(
-			get_collection({
-				path: ["credit_reports"],
-				queries: business_credit_report_queries,
-			})
-		).pipe(
+		let is_authorized = entity_group_id.pipe(
+			concatMap(({ entity_id, group_id }) =>
+				is_authorized_f(entity_id, group_id, "credit", "read")
+			),
+			concatMap(ifFalse(redirect_home))
+		);
+
+		let application_id = group_id.pipe(
+			concatMap(get_credit_report),
 			rxmap(pipe(head, get("application_id"))),
 			rxmap(() => "d6d6cb45-0818-4f43-a8cd-29208f0cf7b2")
 		);
