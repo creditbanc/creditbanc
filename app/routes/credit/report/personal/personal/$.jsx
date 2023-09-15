@@ -168,6 +168,7 @@ const credit_report = subject.pipe(
 );
 
 export const loader = async ({ request }) => {
+	console.log("personal______");
 	const on_success = async (response) => {
 		console.log("___success___");
 		let entity_id = await get_session_entity_id(request);
