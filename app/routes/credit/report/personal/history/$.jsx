@@ -108,7 +108,12 @@ const credit_report = subject.pipe(
 				concatMap(() =>
 					ArrayExternal.refreshDisplayToken(clientKey, reportKey)
 				),
-				tap((value) => console.log(value)),
+				catchError((error) => {
+					console.log("___refreshDisplayTokenError___");
+					console.log(error);
+
+					return redirect_home;
+				}),
 				rxfilter((value) => value.displayToken),
 				concatMap(({ displayToken }) =>
 					update_doc(["credit_reports", report_id], {

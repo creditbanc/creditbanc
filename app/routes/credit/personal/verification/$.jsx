@@ -20,7 +20,7 @@ import {
 } from "~/utils/helpers";
 import { get_session_entity_id, get_user_id } from "~/utils/auth.server";
 import { appKey, new_credit_report, is_sandbox } from "~/data/array";
-import { get_doc } from "~/utils/firebase";
+import { get_doc, set_doc } from "~/utils/firebase";
 import { getSession } from "~/sessions/personal_credit_report_session";
 import { credit_user } from "~/api/client/array";
 import { v4 as uuidv4 } from "uuid";
@@ -30,7 +30,7 @@ export const action = async ({ request }) => {
 	let { origin } = new URL(request.url);
 	let { payload: form } = await form_params(request);
 	let { clientKey, authToken, userToken } = JSON.parse(form);
-	let { group_id, applicant, plan_id, entity_id } = search_params(request);
+	let { group_id, applicant, plan_id } = search_params(request);
 	let is_applicant = is_applicant_p(applicant);
 
 	if (!is_applicant) {
@@ -50,11 +50,33 @@ export const action = async ({ request }) => {
 		userToken,
 	};
 
-	console.log("report_payload");
+	console.log("report_payload________");
 	console.log(report_payload);
 
 	let { displayToken, reportKey, error } = await new_credit_report(
 		report_payload
+	);
+
+	let report_id = uuidv4();
+	let entity_id = await get_session_entity_id(request);
+
+	let new_report_payload = {
+		reportKey,
+		clientKey,
+		displayToken,
+		id: report_id,
+		entity_id,
+		group_id,
+		type: "personal_credit_report",
+	};
+
+	console.log("new_report_payload______");
+	console.log(new_report_payload);
+
+	await set_doc(["credit_reports", report_id], new_report_payload);
+
+	return redirect(
+		`/credit/report/personal/personal/resource/e/${entity_id}/g/${group_id}`
 	);
 
 	let { data: credit_report_api_response } = await axios({
@@ -64,6 +86,7 @@ export const action = async ({ request }) => {
 
 	console.log("credit_report_api_response");
 	console.log(credit_report_api_response);
+
 	if (has("CREDIT_RESPONSE")) {
 		let entity_id = await get_session_entity_id(request);
 		console.log("joy_________");

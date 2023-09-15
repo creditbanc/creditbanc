@@ -189,7 +189,6 @@ const new_lendflow_application = subject.pipe(
 				})
 			),
 			concatMap((request) => from(axios(request))),
-			// rxmap(() => fake_response),
 			rxmap(pipe(get("data", "data", "application_id"))),
 			concatMap((application_id) =>
 				zip($group_id, $entity_id, $plan_id, rxof(application_id))

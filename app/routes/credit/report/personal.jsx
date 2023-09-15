@@ -155,13 +155,28 @@ const credit_scores = subject.pipe(
 			)
 		);
 
+		let redirect_home = entity_group_id.pipe(
+			concatMap(({ entity_id, group_id }) =>
+				throwError(() =>
+					Response.redirect(
+						`${url.origin}/home/resource/e/${entity_id}/g/${group_id}`
+					)
+				)
+			)
+		);
+
 		const update_display_token = ({ clientKey, reportKey, report_id }) => {
 			console.log("___update_display_token___");
 			return rxof({ clientKey, reportKey, report_id }).pipe(
 				concatMap(() =>
 					ArrayExternal.refreshDisplayToken(clientKey, reportKey)
 				),
-				tap((value) => console.log(value)),
+				catchError((error) => {
+					console.log("___refreshDisplayTokenError___");
+					console.log(error);
+
+					return redirect_home;
+				}),
 				rxfilter((value) => value.displayToken),
 				concatMap(({ displayToken }) =>
 					update_doc(["credit_reports", report_id], {

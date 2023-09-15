@@ -87,7 +87,18 @@ const credit_scores = subject.pipe(
 				concatMap(() =>
 					ArrayExternal.refreshDisplayToken(clientKey, reportKey)
 				),
-				tap((value) => console.log(value)),
+				catchError((error) => {
+					console.log("___refreshDisplayTokenError___");
+					console.log(error);
+
+					return throwError(() => ({
+						experian_personal_score: 0,
+						equifax_personal_score: 0,
+						transunion_personal_score: 0,
+						experian_business_score: 0,
+						dnb_business_score: 0,
+					}));
+				}),
 				rxfilter((value) => value.displayToken),
 				concatMap(({ displayToken }) =>
 					update_doc(["credit_reports", report_id], {
@@ -123,12 +134,7 @@ const credit_scores = subject.pipe(
 									report_id,
 								})
 							),
-							catchError((error) => {
-								console.log("___refreshDisplayTokenError___");
-								console.log(error);
 
-								return rxof({});
-							}),
 							tap(() =>
 								subject.next({
 									id: "get_credit_scores",
@@ -145,8 +151,7 @@ const credit_scores = subject.pipe(
 
 		let application_id = group_id.pipe(
 			concatMap(get_business_credit_report),
-			rxmap(pipe(head, get("application_id"))),
-			rxmap(() => "d6d6cb45-0818-4f43-a8cd-29208f0cf7b2")
+			rxmap(pipe(head, get("application_id")))
 		);
 
 		let business_report = application_id.pipe(
@@ -182,13 +187,6 @@ const credit_scores = subject.pipe(
 			equifax_personal_score,
 			transunion_personal_score,
 		}).pipe(
-			// rxmap(() => ({
-			// 	experian_personal_score: 0,
-			// 	equifax_personal_score: 0,
-			// 	transunion_personal_score: 0,
-			// 	experian_business_score: 0,
-			// 	dnb_business_score: 0,
-			// })),
 			tap((value) => {
 				console.log("___tap___");
 				console.log(value);
