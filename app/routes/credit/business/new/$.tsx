@@ -25,6 +25,11 @@ import {
 	get_group_id,
 	get_search_params_obj,
 	classNames,
+	formData,
+	json_response,
+	validate_form,
+	is_valid,
+	from_validations,
 } from "~/utils/helpers";
 import { json, redirect } from "@remix-run/node";
 import {
@@ -71,10 +76,12 @@ import {
 	firstValueFrom,
 	iif,
 	throwError,
+	forkJoin,
 } from "rxjs";
 import Entity from "~/api/internal/entity";
-import { fold } from "~/utils/operators";
+import { fold, ifFalse } from "~/utils/operators";
 import flatten from "flat";
+import { is_authorized_f } from "~/api/auth";
 
 const useReportStore = create((set) => ({
 	form: {
@@ -110,32 +117,12 @@ const useReportStore = create((set) => ({
 		set((state) => pipe(mod("form", ...path)(() => value))(state)),
 }));
 
-const formData = async (request) => {
-	const form = await request.formData();
-
-	let obj = {};
-
-	for (const [key, value] of form) {
-		obj[key] = pipe(tryCatch(JSON.parse, identity))(value);
-	}
-
-	return obj;
-};
-
 interface CBEvent {
 	id: string;
 	args: {
 		request: any;
 	};
 }
-
-const json_response = (data) => {
-	return new Response(JSON.stringify(data), {
-		headers: {
-			"Content-Type": "application/json; charset=utf-8",
-		},
-	});
-};
 
 const isNotEmpty = (value) => !isEmpty(value);
 const isNotNil = (value) => !isNil(value);
@@ -159,24 +146,6 @@ let lendflow_validator = {
 	business_legal_name: pipe(allPass([isNotEmpty, isNotNil])),
 	employee_identification_number: pipe(allPass([isNotEmpty, isNotNil])),
 };
-
-const validate_form = (validator, to_validate) => {
-	console.log("validate_form");
-	return evolve(validator, to_validate);
-};
-
-const is_valid = (validations) => {
-	console.log("is_valid");
-	let res = pipe(flatten, values, includes(false), not)(validations);
-	return res;
-};
-
-let from_validations = (validations) =>
-	iif(
-		() => is_valid(validations),
-		rxof(validations),
-		throwError(validations)
-	);
 
 const subject = new Subject();
 
@@ -210,6 +179,7 @@ const new_lendflow_application = subject.pipe(
 			concatMap((form) =>
 				from_validations(validate_form(lendflow_validator, form))
 			),
+
 			concatMap(() => zip($plan_id, $formData)),
 			rxmap(([plan_id, form]) =>
 				LendflowExternal.new_application_request_creator({
@@ -234,6 +204,45 @@ const new_lendflow_application = subject.pipe(
 					id: application_id,
 				})
 			)
+		);
+	})
+);
+
+const credit_report = subject.pipe(
+	rxfilter((message) => message.id == "get_credit_report"),
+	concatMap(({ args: { request } }) => {
+		let url = new URL(request.url);
+
+		let group_id = rxof(get_group_id(url.pathname));
+		let entity_id = from(get_session_entity_id(request));
+
+		let entity_group_id = forkJoin({
+			entity_id,
+			group_id,
+		});
+
+		let redirect_home = entity_group_id.pipe(
+			concatMap(({ entity_id, group_id }) =>
+				throwError(() =>
+					Response.redirect(
+						`${url.origin}/home/resource/e/${entity_id}/g/${group_id}`
+					)
+				)
+			)
+		);
+
+		let is_authorized = entity_group_id.pipe(
+			concatMap(({ entity_id, group_id }) =>
+				is_authorized_f(entity_id, group_id, "credit", "edit")
+			),
+			concatMap(ifFalse(redirect_home))
+		);
+
+		return is_authorized.pipe(
+			tap((value) => {
+				console.log("___tap___");
+				console.log(value);
+			})
 		);
 	})
 );
@@ -273,6 +282,44 @@ export const action = async ({ request }) => {
 	new_lendflow_application.pipe(fold(on_success, on_error)).subscribe();
 
 	subject.next({ id: "new_application_start", args: { request } });
+
+	let response = await lastValueFrom(
+		subject.pipe(rxfilter(on_complete), take(1))
+	);
+
+	return response.next();
+};
+
+export const loader = async ({ request }) => {
+	console.log("new______");
+	const on_success = async (response) => {
+		console.log("___success___");
+		let entity_id = await get_session_entity_id(request);
+		// let { plan_id } = await get_doc(["entity", entity_id]);
+
+		let payload = { ...response };
+
+		subject.next({
+			id: "credit_report_response",
+			next: () => payload,
+		});
+	};
+
+	const on_error = (error) => {
+		console.log("___error___");
+		console.log(error);
+
+		subject.next({
+			id: "credit_report_response",
+			next: () => error,
+		});
+	};
+
+	const on_complete = (value) => value.id === "credit_report_response";
+
+	credit_report.pipe(fold(on_success, on_error)).subscribe();
+
+	subject.next({ id: "get_credit_report", args: { request } });
 
 	let response = await lastValueFrom(
 		subject.pipe(rxfilter(on_complete), take(1))
@@ -430,6 +477,9 @@ const Form = () => {
 	const day = useReportStore((state) => state.form.business_start_date.day);
 	const year = useReportStore((state) => state.form.business_start_date.year);
 
+	console.log("errorrrr");
+	console.log(error);
+
 	const submit = useSubmit();
 
 	const onSubmit = (e) => {
@@ -493,7 +543,7 @@ const Form = () => {
 							}
 						/>
 					</div>
-					{error?.basic_info?.first_name && (
+					{error?.basic_info?.first_name == false && (
 						<div className="text-xs text-red-500 py-1">
 							First name is required
 						</div>
@@ -523,7 +573,7 @@ const Form = () => {
 							}
 						/>
 					</div>
-					{error?.basic_info?.last_name && (
+					{error?.basic_info?.last_name == false && (
 						<div className="text-xs text-red-500 py-1">
 							Last name is required
 						</div>
@@ -554,7 +604,7 @@ const Form = () => {
 						/>
 					</div>
 
-					{error?.basic_info?.email_address && (
+					{error?.basic_info?.email_address == false && (
 						<div className="text-xs text-red-500 py-1">
 							Email is required
 						</div>
@@ -585,7 +635,7 @@ const Form = () => {
 						/>
 					</div>
 
-					{error?.basic_info?.telephone && (
+					{error?.basic_info?.telephone == false && (
 						<div className="text-xs text-red-500 py-1">
 							Telephone is required
 						</div>
@@ -619,7 +669,7 @@ const Form = () => {
 						/>
 					</div>
 
-					{error?.business_legal_name && (
+					{error?.business_legal_name == false && (
 						<div className="text-xs text-red-500 py-1">
 							Business name is required
 						</div>
@@ -662,7 +712,7 @@ const Form = () => {
 						<BusinessEntity />
 					</div>
 
-					{error?.business_entity && (
+					{error?.business_entity == false && (
 						<div className="text-xs text-red-500 py-1">
 							Business type is required
 						</div>
@@ -693,7 +743,7 @@ const Form = () => {
 						/>
 					</div>
 
-					{error?.employee_identification_number && (
+					{error?.employee_identification_number == false && (
 						<div className="text-xs text-red-500 py-1">
 							Employee identification number is required
 						</div>
@@ -805,7 +855,7 @@ const Form = () => {
 						/>
 					</div>
 
-					{error?.business_address?.address_line && (
+					{error?.business_address?.address_line == false && (
 						<div className="text-xs text-red-500 py-1">
 							Street address is required
 						</div>
@@ -836,7 +886,7 @@ const Form = () => {
 						/>
 					</div>
 
-					{error?.business_address?.city && (
+					{error?.business_address?.city == false && (
 						<div className="text-xs text-red-500 py-1">
 							City is required
 						</div>
@@ -867,7 +917,7 @@ const Form = () => {
 						/>
 					</div>
 
-					{error?.business_address?.state && (
+					{error?.business_address?.state == false && (
 						<div className="text-xs text-red-500 py-1">
 							State / Province is required
 						</div>
@@ -898,7 +948,7 @@ const Form = () => {
 						/>
 					</div>
 
-					{error?.business_address?.zip && (
+					{error?.business_address?.zip == false && (
 						<div className="text-xs text-red-500 py-1">
 							Zip / Postal code is required
 						</div>

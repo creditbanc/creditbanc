@@ -1,10 +1,22 @@
 import CreditNav from "~/components/CreditNav";
 import CreditHeroGradient from "~/components/CreditHeroGradient";
 import axios from "axios";
-import { head, is, map, pipe } from "ramda";
+import {
+	allPass,
+	flatten,
+	head,
+	includes,
+	is,
+	isEmpty,
+	isNil,
+	map,
+	not,
+	pipe,
+	values,
+} from "ramda";
 import { get, mod } from "shades";
 import { create } from "zustand";
-import { useLoaderData, useSubmit } from "@remix-run/react";
+import { useActionData, useLoaderData, useSubmit } from "@remix-run/react";
 import {
 	inspect,
 	to_resource_pathname,
@@ -14,6 +26,9 @@ import {
 	form_params,
 	search_params,
 	is_applicant_p,
+	formData,
+	validate_form,
+	json_response,
 } from "~/utils/helpers";
 import { json, redirect } from "@remix-run/node";
 import {
@@ -39,6 +54,69 @@ import { UsaStates } from "usa-states";
 import { Fragment, useEffect, useState } from "react";
 import { Listbox, Transition } from "@headlessui/react";
 import { CheckIcon, ChevronUpDownIcon } from "@heroicons/react/20/solid";
+
+import {
+	map as rxmap,
+	filter as rxfilter,
+	concatMap,
+	tap,
+	take,
+	catchError,
+} from "rxjs/operators";
+import {
+	from,
+	lastValueFrom,
+	forkJoin,
+	Subject,
+	of as rxof,
+	iif,
+	throwError,
+} from "rxjs";
+import { fold, ifEmpty, ifFalse } from "~/utils/operators";
+import { is_authorized_f } from "~/api/auth";
+import { ArrayExternal } from "~/api/external/Array";
+import { ArrayInternal } from "~/api/internal/Array";
+
+const subject = new Subject();
+
+const credit_report = subject.pipe(
+	rxfilter((message) => message.id == "get_credit_report"),
+	concatMap(({ args: { request } }) => {
+		let url = new URL(request.url);
+
+		let group_id = rxof(get_group_id(url.pathname));
+		let entity_id = from(get_session_entity_id(request));
+
+		let entity_group_id = forkJoin({
+			entity_id,
+			group_id,
+		});
+
+		let redirect_home = entity_group_id.pipe(
+			concatMap(({ entity_id, group_id }) =>
+				throwError(() =>
+					Response.redirect(
+						`${url.origin}/home/resource/e/${entity_id}/g/${group_id}`
+					)
+				)
+			)
+		);
+
+		let is_authorized = entity_group_id.pipe(
+			concatMap(({ entity_id, group_id }) =>
+				is_authorized_f(entity_id, group_id, "credit", "edit")
+			),
+			concatMap(ifFalse(redirect_home))
+		);
+
+		return is_authorized.pipe(
+			tap((value) => {
+				console.log("___tap___");
+				console.log(value);
+			})
+		);
+	})
+);
 
 function classNames(...classes) {
 	return classes.filter(Boolean).join(" ");
@@ -66,17 +144,51 @@ const useReportStore = create((set) => ({
 		set((state) => pipe(mod("form", ...path)(() => value))(state)),
 }));
 
+const isNotEmpty = (value) => !isEmpty(value);
+const isNotNil = (value) => !isNil(value);
+
+let validator = {
+	firstName: pipe(allPass([isNotEmpty, isNotNil])),
+	lastName: pipe(allPass([isNotEmpty, isNotNil])),
+	ssn: pipe(allPass([isNotEmpty, isNotNil])),
+	address: {
+		street: pipe(allPass([isNotEmpty, isNotNil])),
+		city: pipe(allPass([isNotEmpty, isNotNil])),
+		state: pipe(allPass([isNotEmpty, isNotNil])),
+		zip: pipe(allPass([isNotEmpty, isNotNil])),
+	},
+	dob: pipe(allPass([isNotEmpty, isNotNil])),
+};
+
+let is_valid = pipe(values, flatten, includes(false), not);
+
 export const action = async ({ request }) => {
 	console.log("new_credit_action");
-	let { payload: form } = await form_params(request);
+	// let { payload: form } = await form_params(request);
 	let { plan_id, applicant } = search_params(request);
 	let is_applicant = is_applicant_p(applicant);
 	const group_id = get_group_id(request.url);
 	const entity_id = get_entity_id(request.url);
-	var payload = is_sandbox ? test_identity_three : JSON.parse(form);
+	let form = await formData(request);
+	var payload = is_sandbox ? test_identity_three : form.payload;
+	console.log("_form");
+	console.log(payload);
 
 	let session = await getSession(request.headers.get("Cookie"));
 	session.set("personal_credit_report", JSON.stringify({ ...payload }));
+
+	let validations = validate_form(validator, payload);
+	let from_validations = is_valid(validations);
+	console.log("validations");
+	console.log(from_validations);
+	console.log(validations);
+
+	if (!from_validations) {
+		return json_response(validations);
+	}
+
+	// console.log("____null_____");
+	// return null;
 
 	try {
 		let config = {
@@ -138,6 +250,44 @@ export const action = async ({ request }) => {
 		console.log(error.response.data);
 		return json({ error: error.message }, { status: 500 });
 	}
+};
+
+export const loader = async ({ request }) => {
+	console.log("new______");
+	const on_success = async (response) => {
+		console.log("___success___");
+		let entity_id = await get_session_entity_id(request);
+		// let { plan_id } = await get_doc(["entity", entity_id]);
+
+		let payload = { ...response };
+
+		subject.next({
+			id: "credit_report_response",
+			next: () => payload,
+		});
+	};
+
+	const on_error = (error) => {
+		console.log("___error___");
+		console.log(error);
+
+		subject.next({
+			id: "credit_report_response",
+			next: () => error,
+		});
+	};
+
+	const on_complete = (value) => value.id === "credit_report_response";
+
+	credit_report.pipe(fold(on_success, on_error)).subscribe();
+
+	subject.next({ id: "get_credit_report", args: { request } });
+
+	let response = await lastValueFrom(
+		subject.pipe(rxfilter(on_complete), take(1))
+	);
+
+	return response.next();
 };
 
 const StatesSelect = () => {
@@ -228,6 +378,7 @@ const StatesSelect = () => {
 };
 
 const Form = () => {
+	let error = useActionData();
 	const form = useReportStore((state) => state.form);
 	const setForm = useReportStore((state) => state.setForm);
 	const first_name = useReportStore((state) => state.form.firstName);
@@ -300,6 +451,11 @@ const Form = () => {
 							}
 						/>
 					</div>
+					{error?.firstName == false && (
+						<div className="text-xs text-red-500 py-1">
+							First name is required
+						</div>
+					)}
 				</div>
 
 				<div className="sm:col-span-3">
@@ -321,6 +477,11 @@ const Form = () => {
 							}
 						/>
 					</div>
+					{error?.lastName == false && (
+						<div className="text-xs text-red-500 py-1">
+							Last name is required
+						</div>
+					)}
 				</div>
 
 				<div className="sm:col-span-6">
@@ -340,6 +501,12 @@ const Form = () => {
 							onChange={(e) => setForm(["ssn"], e.target.value)}
 						/>
 					</div>
+
+					{error?.ssn == false && (
+						<div className="text-xs text-red-500 py-1">
+							Social Security Number is required
+						</div>
+					)}
 				</div>
 
 				<div className="border-b border-gray-300 sm:col-span-6">
@@ -368,6 +535,11 @@ const Form = () => {
 							}
 						/>
 					</div>
+					{error?.dob?.month == false && (
+						<div className="text-xs text-red-500 py-1">
+							Month is required
+						</div>
+					)}
 				</div>
 
 				<div className="sm:col-span-2">
@@ -390,6 +562,11 @@ const Form = () => {
 							}
 						/>
 					</div>
+					{error?.dob?.day == false && (
+						<div className="text-xs text-red-500 py-1">
+							Day is required
+						</div>
+					)}
 				</div>
 
 				<div className="sm:col-span-2">
@@ -412,6 +589,11 @@ const Form = () => {
 							}
 						/>
 					</div>
+					{error?.dob?.year == false && (
+						<div className="text-xs text-red-500 py-1">
+							Year is required
+						</div>
+					)}
 				</div>
 
 				<div className="border-b border-gray-300 sm:col-span-6">
@@ -439,6 +621,11 @@ const Form = () => {
 							}
 						/>
 					</div>
+					{error?.address?.street == false && (
+						<div className="text-xs text-red-500 py-1">
+							Street address is required
+						</div>
+					)}
 				</div>
 
 				<div className="sm:col-span-2">
@@ -460,6 +647,11 @@ const Form = () => {
 							}
 						/>
 					</div>
+					{error?.address?.city == false && (
+						<div className="text-xs text-red-500 py-1">
+							City is required
+						</div>
+					)}
 				</div>
 
 				<div className="sm:col-span-2">
@@ -504,6 +696,11 @@ const Form = () => {
 							}
 						/>
 					</div>
+					{error?.address?.zip == false && (
+						<div className="text-xs text-red-500 py-1">
+							Zip is required
+						</div>
+					)}
 				</div>
 			</div>
 			<div className="flex flex-row w-full justify-end pt-3">

@@ -1,4 +1,4 @@
-import { curry } from "ramda";
+import { curry, isEmpty } from "ramda";
 import { Observable, iif, of, throwError } from "rxjs";
 
 export const fold = (successFn, errorFn) => {
@@ -21,4 +21,8 @@ export const fold = (successFn, errorFn) => {
 
 export const ifFalse = curry((ifFalseObservable, predicate) => {
 	return iif(() => predicate, of(true), ifFalseObservable);
+});
+
+export const ifEmpty = curry((ifEmptyObservable, value) => {
+	return iif(() => isEmpty(value), ifEmptyObservable, of(value));
 });

@@ -23,9 +23,58 @@ import {
 	isNil,
 	take,
 	nth,
+	evolve,
+	flatten,
+	values,
+	not,
+	tryCatch,
 } from "ramda";
+import { iif, of as rxof, throwError } from "rxjs";
 const util = require("util");
 import { get } from "shades";
+
+export const validate_form = (validator, to_validate) => {
+	console.log("validate_form");
+	return evolve(validator, to_validate);
+};
+
+export const is_valid = (validations) => {
+	console.log("is_valid");
+	console.log(validations);
+	console.log(pipe(flatten)(validations));
+	let vals = pipe(values, flatten);
+	let res = pipe(vals, includes(false), not)(validations);
+	console.log("ressssss");
+	console.log(res);
+	return res;
+};
+
+export const from_validations = (validations) =>
+	iif(
+		() => is_valid(validations),
+		rxof(validations),
+		throwError(validations)
+	);
+
+export const json_response = (data) => {
+	return new Response(JSON.stringify(data), {
+		headers: {
+			"Content-Type": "application/json; charset=utf-8",
+		},
+	});
+};
+
+export const formData = async (request) => {
+	const form = await request.formData();
+
+	let obj = {};
+
+	for (const [key, value] of form) {
+		obj[key] = pipe(tryCatch(JSON.parse, identity))(value);
+	}
+
+	return obj;
+};
 
 export const formatPhoneNumber = (str) => {
 	//Filter only numbers from the input

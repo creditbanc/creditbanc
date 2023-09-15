@@ -71,6 +71,9 @@ export const is_authorized_f = async (
 
 	let { permissions } = role;
 
+	// console.log("permissions");
+	// console.log(permissions);
+
 	let has_permission = validate_permission(resource, action, permissions);
 	return has_permission;
 };

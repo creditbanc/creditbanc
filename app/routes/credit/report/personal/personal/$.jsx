@@ -26,7 +26,7 @@ import {
 	iif,
 	throwError,
 } from "rxjs";
-import { fold, ifFalse } from "~/utils/operators";
+import { fold, ifEmpty, ifFalse } from "~/utils/operators";
 import { is_authorized_f } from "~/api/auth";
 import { ArrayExternal } from "~/api/external/Array";
 import { ArrayInternal } from "~/api/internal/Array";
@@ -77,6 +77,16 @@ const credit_report = subject.pipe(
 			)
 		);
 
+		let redirect_new_report = entity_group_id.pipe(
+			concatMap(({ entity_id, group_id }) =>
+				throwError(() =>
+					Response.redirect(
+						`${url.origin}/credit/personal/new/resource/e/${entity_id}/g/${group_id}`
+					)
+				)
+			)
+		);
+
 		let is_authorized = entity_group_id.pipe(
 			concatMap(({ entity_id, group_id }) =>
 				is_authorized_f(entity_id, group_id, "credit", "read")
@@ -102,6 +112,7 @@ const credit_report = subject.pipe(
 
 		let report = group_id.pipe(
 			concatMap(get_credit_report),
+			concatMap(ifEmpty(redirect_new_report)),
 			rxmap(
 				pipe(
 					head,

@@ -158,8 +158,6 @@ const SubNav = () => {
 };
 
 export default function Report() {
-	var { user_id } = useLoaderData();
-
 	return (
 		<div className="flex flex-col w-full h-full bg-gray-50 overflow-hidden">
 			<div>

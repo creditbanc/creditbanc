@@ -10,8 +10,8 @@ import {
 	get_entity_id,
 } from "~/utils/helpers";
 import { get_docs as get_group_docs } from "~/utils/group.server";
-import { head, pipe } from "ramda";
-import { filter } from "shades";
+// import { head, pipe } from "ramda";
+// import { filter } from "shades";
 import {
 	PersonalCreditTabsVertical,
 	CreditTabsSelect,
@@ -27,9 +27,35 @@ import UpdatePersonalReport from "~/components/UpdatePersonalReport";
 import { plans_index } from "~/data/plans_index";
 import { useReportPageLayoutStore } from "~/stores/useReportPageLayoutStore";
 import { DocumentDuplicateIcon, LinkIcon } from "@heroicons/react/24/outline";
-import { get_collection, get_doc } from "~/utils/firebase";
+// import { get_collection, get_doc } from "~/utils/firebase";
 import axios from "axios";
+// import { is_authorized_f } from "~/api/auth";
+
+import { get_collection, get_doc, set_doc, update_doc } from "~/utils/firebase";
+import { head, pipe, identity, curry, defaultTo, pick } from "ramda";
+import { LendflowExternal, LendflowInternal } from "~/utils/lendflow.server";
+import { get, filter } from "shades";
+import {
+	map as rxmap,
+	filter as rxfilter,
+	concatMap,
+	tap,
+	take,
+	catchError,
+} from "rxjs/operators";
+import {
+	from,
+	lastValueFrom,
+	forkJoin,
+	Subject,
+	of as rxof,
+	iif,
+	throwError,
+} from "rxjs";
+import { fold, ifFalse, ifEmpty } from "~/utils/operators";
 import { is_authorized_f } from "~/api/auth";
+import { ArrayExternal } from "~/api/external/Array";
+import { ArrayInternal } from "~/api/internal/Array";
 
 const get_scores = (report) => {
 	let { plan_id } = report;
@@ -62,71 +88,292 @@ const get_scores = (report) => {
 	}
 };
 
-export const loader = async ({ request }) => {
-	let url = new URL(request.url);
-	let { origin } = url;
-	let entity_id = await get_session_entity_id(request);
-	// let entity_id = get_entity_id(url.pathname);
-	let group_id = get_group_id(url.pathname);
+const subject = new Subject();
 
-	let is_authorized = await is_authorized_f(
-		entity_id,
-		group_id,
-		"credit",
-		"read"
+const credit_scores = subject.pipe(
+	rxfilter((message) => message.id == "get_credit_scores"),
+	concatMap(({ args: { request } }) => {
+		let url = new URL(request.url);
+
+		let personal_credit_report_queries = (group_id) => [
+			{
+				param: "group_id",
+				predicate: "==",
+				value: group_id,
+			},
+			{
+				param: "type",
+				predicate: "==",
+				value: "personal_credit_report",
+			},
+		];
+
+		let get_personal_credit_report = (group_id) =>
+			from(
+				get_collection({
+					path: ["credit_reports"],
+					queries: personal_credit_report_queries(group_id),
+				})
+			);
+
+		let business_credit_report_queries = (group_id) => [
+			{
+				param: "group_id",
+				predicate: "==",
+				value: group_id,
+			},
+			{
+				param: "type",
+				predicate: "==",
+				value: "business_credit_report",
+			},
+		];
+
+		let get_business_credit_report = (group_id) =>
+			from(
+				get_collection({
+					path: ["credit_reports"],
+					queries: business_credit_report_queries(group_id),
+				})
+			);
+
+		let group_id = rxof(get_group_id(url.pathname));
+		let entity_id = from(get_session_entity_id(request));
+
+		let entity_group_id = forkJoin({
+			entity_id,
+			group_id,
+		});
+
+		let redirect_new_report = entity_group_id.pipe(
+			concatMap(({ entity_id, group_id }) =>
+				throwError(() =>
+					Response.redirect(
+						`${url.origin}/credit/personal/new/resource/e/${entity_id}/g/${group_id}`
+					)
+				)
+			)
+		);
+
+		const update_display_token = ({ clientKey, reportKey, report_id }) => {
+			console.log("___update_display_token___");
+			return rxof({ clientKey, reportKey, report_id }).pipe(
+				concatMap(() =>
+					ArrayExternal.refreshDisplayToken(clientKey, reportKey)
+				),
+				tap((value) => console.log(value)),
+				rxfilter((value) => value.displayToken),
+				concatMap(({ displayToken }) =>
+					update_doc(["credit_reports", report_id], {
+						displayToken,
+					})
+				)
+			);
+		};
+
+		let personal_report = group_id.pipe(
+			concatMap(get_personal_credit_report),
+			tap((value) => {
+				console.log("___tapp___");
+				console.log(value);
+			}),
+			concatMap(ifEmpty(redirect_new_report)),
+			rxmap(
+				pipe(
+					head,
+					pick(["reportKey", "clientKey", "displayToken", "id"])
+				)
+			),
+			concatMap(({ reportKey, displayToken, clientKey, id: report_id }) =>
+				from(
+					ArrayExternal.get_credit_report(reportKey, displayToken)
+				).pipe(
+					rxfilter((report) => report.CREDIT_RESPONSE),
+					catchError((error) => {
+						let status = pipe(get("response", "status"))(error);
+
+						return rxof(status).pipe(
+							// rxfilter((status) => status == 401),
+							concatMap(() =>
+								update_display_token({
+									clientKey,
+									reportKey,
+									report_id,
+								})
+							),
+							tap(() =>
+								subject.next({
+									id: "get_credit_scores",
+									args: { request },
+								})
+							),
+							rxfilter((value) => value !== undefined)
+						);
+					})
+				)
+			),
+			rxmap((array_response) => new ArrayInternal(array_response))
+		);
+
+		// let application_id = group_id.pipe(
+		// 	concatMap(get_business_credit_report),
+		// 	rxmap(pipe(head, get("application_id"))),
+		// 	rxmap(() => "d6d6cb45-0818-4f43-a8cd-29208f0cf7b2")
+		// );
+
+		// let business_report = application_id.pipe(
+		// 	concatMap(LendflowExternal.get_lendflow_report),
+		// 	rxmap(pipe(get("data", "data"))),
+		// 	rxmap((report) => new LendflowInternal(report))
+		// );
+
+		experian_personal_score = personal_report.pipe(
+			rxmap((report) => report.experian_score())
+		);
+
+		equifax_personal_score = personal_report.pipe(
+			rxmap((report) => report.equifax_score())
+		);
+
+		transunion_personal_score = personal_report.pipe(
+			rxmap((report) => report.transunion_score())
+		);
+
+		// let dnb_business_score = business_report.pipe(
+		// 	rxmap((report) => report.dnb_score())
+		// );
+
+		// let experian_business_score = business_report.pipe(
+		// 	rxmap((report) => report.experian_score())
+		// );
+
+		return forkJoin({
+			// dnb_business_score,
+			// experian_business_score,
+			experian_personal_score,
+			equifax_personal_score,
+			transunion_personal_score,
+			personal_report,
+		}).pipe(
+			rxmap(
+				({
+					experian_personal_score,
+					equifax_personal_score,
+					transunion_personal_score,
+					personal_report,
+				}) => ({
+					scores: {
+						experian: experian_personal_score,
+						equifax: equifax_personal_score,
+						transunion: transunion_personal_score,
+					},
+					business: {},
+					report_plan_id: "builder",
+					plan_id: "builder",
+					report: personal_report,
+				})
+			),
+			tap((value) => {
+				console.log("___tap___");
+				console.log(value);
+			})
+		);
+	})
+);
+
+export const loader = async ({ request }) => {
+	const on_success = async (response) => {
+		console.log("___success___");
+
+		subject.next({
+			id: "credit_score_response",
+			next: () => response,
+		});
+	};
+
+	const on_error = (error) => {
+		console.log("___error___");
+		console.log(error);
+
+		subject.next({
+			id: "credit_score_response",
+			next: () => error,
+		});
+	};
+
+	const on_complete = (value) => value.id === "credit_score_response";
+
+	credit_scores.pipe(fold(on_success, on_error)).subscribe();
+
+	subject.next({ id: "get_credit_scores", args: { request } });
+
+	let response = await lastValueFrom(
+		subject.pipe(rxfilter(on_complete), take(1))
 	);
 
-	// console.log("is_authorized______");
-	// console.log(is_authorized);
+	return response.next();
 
-	if (!is_authorized) {
-		return redirect(`/home/resource/e/${entity_id}/g/${group_id}`);
-	}
+	// let url = new URL(request.url);
+	// let { origin } = url;
+	// let entity_id = await get_session_entity_id(request);
+	// // let entity_id = get_entity_id(url.pathname);
+	// let group_id = get_group_id(url.pathname);
 
-	let personal_credit_report_queries = [
-		{
-			param: "group_id",
-			predicate: "==",
-			value: group_id,
-		},
-		{
-			param: "type",
-			predicate: "==",
-			value: "personal_credit_report",
-		},
-	];
+	// let is_authorized = await is_authorized_f(
+	// 	entity_id,
+	// 	group_id,
+	// 	"credit",
+	// 	"read"
+	// );
 
-	let report_response = await get_collection({
-		path: ["credit_reports"],
-		queries: personal_credit_report_queries,
-	});
+	// if (!is_authorized) {
+	// 	return redirect(`/home/resource/e/${entity_id}/g/${group_id}`);
+	// }
 
-	let report = pipe(head)(report_response);
+	// let personal_credit_report_queries = [
+	// 	{
+	// 		param: "group_id",
+	// 		predicate: "==",
+	// 		value: group_id,
+	// 	},
+	// 	{
+	// 		param: "type",
+	// 		predicate: "==",
+	// 		value: "personal_credit_report",
+	// 	},
+	// ];
 
-	if (!report) {
-		return redirect(
-			`/credit/personal/new/resource/e/${entity_id}/g/${group_id}`
-		);
-	}
+	// let report_response = await get_collection({
+	// 	path: ["credit_reports"],
+	// 	queries: personal_credit_report_queries,
+	// });
 
-	let { plan_id } = await get_doc(["entity", entity_id]);
+	// let report = pipe(head)(report_response);
 
-	let scores = get_scores(report);
+	// if (!report) {
+	// 	return redirect(
+	// 		`/credit/personal/new/resource/e/${entity_id}/g/${group_id}`
+	// 	);
+	// }
 
-	let business_info_response = await axios({
-		method: "get",
-		url: `${origin}/credit/report/business/api/company/resource/e/${entity_id}/g/${group_id}`,
-	});
+	// let { plan_id } = await get_doc(["entity", entity_id]);
 
-	let { data: business = {} } = business_info_response;
+	// let scores = get_scores(report);
 
-	return {
-		report,
-		scores,
-		plan_id,
-		report_plan_id: report.plan_id,
-		business,
-	};
+	// let business_info_response = await axios({
+	// 	method: "get",
+	// 	url: `${origin}/credit/report/business/api/company/resource/e/${entity_id}/g/${group_id}`,
+	// });
+
+	// let { data: business = {} } = business_info_response;
+
+	// return {
+	// 	report,
+	// 	scores,
+	// 	plan_id,
+	// 	report_plan_id: report.plan_id,
+	// 	business,
+	// };
 };
 
 export default function CreditReport() {
@@ -182,7 +429,6 @@ export default function CreditReport() {
 					</div>
 				</div>
 			)}
-
 			<div className="flex flex-col w-full overflow-y-scroll overflow-hidden h-full">
 				<div
 					className="flex flex-col w-full mx-auto overflow-hidden h-full"
