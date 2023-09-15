@@ -45,6 +45,7 @@ export const loader = async ({ request }) => {
 	// let entity_id = get_entity_id(url.pathname);
 
 	let onboard_state = await get_doc(["onboard", entity_id]);
+
 	onboard_state = pipe(
 		omit(["group_id", "entity_id"]),
 		values

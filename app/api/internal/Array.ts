@@ -275,6 +275,42 @@ class TradeLine {
 export class ArrayInternal {
 	constructor(public report: ArrayReport) {}
 
+	experian_score = () => {
+		return falsyTryCatch(
+			pipe(
+				get("CREDIT_RESPONSE", "CREDIT_SCORE"),
+				filter({ "@CreditRepositorySourceType": "Experian" }),
+				head,
+				get("@_Value")
+			),
+			always(300)
+		)(this.report);
+	};
+
+	equifax_score = () => {
+		return falsyTryCatch(
+			pipe(
+				get("CREDIT_RESPONSE", "CREDIT_SCORE"),
+				filter({ "@CreditRepositorySourceType": "Equifax" }),
+				head,
+				get("@_Value")
+			),
+			always(300)
+		)(this.report);
+	};
+
+	transunion_score = () => {
+		return falsyTryCatch(
+			pipe(
+				get("CREDIT_RESPONSE", "CREDIT_SCORE"),
+				filter({ "@CreditRepositorySourceType": "TransUnion" }),
+				head,
+				get("@_Value")
+			),
+			always(300)
+		)(this.report);
+	};
+
 	first_name = () => {
 		return falsyTryCatch(
 			pipe(get("CREDIT_RESPONSE", "BORROWER", "@_FirstName")),

@@ -13,11 +13,6 @@ export const loader = async ({ request }) => {
 	let entity_id = await get_session_entity_id(request);
 	let group_id = get_group_id(url.pathname);
 
-	// console.log("entity_id");
-	// console.log(entity_id);
-	// console.log("group_id");
-	// console.log(group_id);
-
 	if (!group_id) {
 		let partition_id = await get_partition_id({
 			entity_id,
@@ -30,8 +25,6 @@ export const loader = async ({ request }) => {
 };
 
 export default function Home() {
-	var { entity_id } = useLoaderData();
-
 	return (
 		<div className="flex flex-col h-full w-full bg-gray-50 overflow-hidden">
 			<div className="flex flex-col w-full h-full">

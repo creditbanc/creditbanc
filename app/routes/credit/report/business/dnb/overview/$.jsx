@@ -6,7 +6,7 @@ import { useLoaderData } from "@remix-run/react";
 import { mrm_credit_report, Lendflow } from "~/data/lendflow";
 import { get_file_id, get_group_id, inspect } from "~/utils/helpers";
 import { get_session_entity_id, get_user_id } from "~/utils/auth.server";
-import { prisma } from "~/utils/prisma.server";
+
 import { get_collection, get_doc, set_doc } from "~/utils/firebase";
 import { head, pipe, identity, curry } from "ramda";
 import { LendflowExternal, LendflowInternal } from "~/utils/lendflow.server";
