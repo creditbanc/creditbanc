@@ -62,6 +62,7 @@ import {
 	concatMap,
 	mapTo,
 	take,
+	delay,
 } from "rxjs/operators";
 import {
 	from,
@@ -202,7 +203,8 @@ const new_lendflow_application = subject.pipe(
 					type: "business_credit_report",
 					id: application_id,
 				})
-			)
+			),
+			delay(10000)
 		);
 	})
 );
