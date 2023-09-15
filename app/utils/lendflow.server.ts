@@ -6,6 +6,7 @@ import { get } from "shades";
 import Entity from "~/api/internal/entity";
 import { set_doc } from "./firebase";
 import { data } from "autoprefixer";
+import { inspect } from "./helpers";
 
 const anyfy = (fn: any): any => fn;
 
@@ -482,6 +483,8 @@ export class LendflowExternal {
 	};
 
 	static get_lendflow_report = async (application_id: string) => {
+		console.log("get_lendflow_report");
+
 		let options = {
 			method: "get",
 			maxBodyLength: Infinity,
@@ -494,6 +497,9 @@ export class LendflowExternal {
 		};
 
 		let response = await axios(options);
+		console.log("lendflow_response");
+		inspect(response.data.data);
+
 		return response;
 	};
 }

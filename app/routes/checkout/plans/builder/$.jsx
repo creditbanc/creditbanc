@@ -28,7 +28,7 @@ const steps = [
 
 export const action = async ({ request }) => {
 	console.log("action____");
-	stripe = stripe(process.env.STRIPE);
+	// stripe = stripe(process.env.STRIPE);
 	let entity_id = await get_session_entity_id(request);
 	var form = await request.formData();
 
