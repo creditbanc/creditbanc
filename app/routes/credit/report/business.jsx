@@ -139,12 +139,12 @@ export const loader = async ({ request }) => {
 
 	let { plan_id } = await get_doc(["entity", entity_id]);
 
-	let credit_scores_api_response = await axios({
-		method: "get",
-		url: `${origin}/credit/report/api/scores/resource/e/${entity_id}/g/${group_id}`,
-	});
+	// let credit_scores_api_response = await axios({
+	// 	method: "get",
+	// 	url: `${origin}/credit/report/api/scores/resource/e/${entity_id}/g/${group_id}`,
+	// });
 
-	let { data: scores = {} } = credit_scores_api_response;
+	// let { data: scores = {} } = credit_scores_api_response;
 
 	let business_info_response = await axios({
 		method: "get",
@@ -160,7 +160,7 @@ export const loader = async ({ request }) => {
 		application_id: report?.application_id,
 		report_plan_id: report?.plan_id,
 		business,
-		scores,
+		scores: {},
 	};
 };
 
@@ -234,8 +234,8 @@ export default function BusinessReport() {
 											<span className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-gray-500">
 												<span className="text-lg font-medium leading-none text-white">
 													{business?.name
-														.charAt(0)
-														.toUpperCase()}
+														?.charAt(0)
+														?.toUpperCase()}
 												</span>
 											</span>
 										</div>

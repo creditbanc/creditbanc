@@ -88,8 +88,8 @@ const credit_report = subject.pipe(
 
 		let application_id = group_id.pipe(
 			concatMap(get_credit_report),
-			rxmap(pipe(head, get("application_id"))),
-			rxmap(() => "d6d6cb45-0818-4f43-a8cd-29208f0cf7b2")
+			rxmap(pipe(head, get("application_id")))
+			// rxmap(() => "d6d6cb45-0818-4f43-a8cd-29208f0cf7b2")
 		);
 
 		let $report = application_id.pipe(

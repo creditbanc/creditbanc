@@ -123,6 +123,12 @@ const credit_scores = subject.pipe(
 									report_id,
 								})
 							),
+							catchError((error) => {
+								console.log("___refreshDisplayTokenError___");
+								console.log(error);
+
+								return rxof({});
+							}),
 							tap(() =>
 								subject.next({
 									id: "get_credit_scores",
@@ -176,6 +182,13 @@ const credit_scores = subject.pipe(
 			equifax_personal_score,
 			transunion_personal_score,
 		}).pipe(
+			// rxmap(() => ({
+			// 	experian_personal_score: 0,
+			// 	equifax_personal_score: 0,
+			// 	transunion_personal_score: 0,
+			// 	experian_business_score: 0,
+			// 	dnb_business_score: 0,
+			// })),
 			tap((value) => {
 				console.log("___tap___");
 				console.log(value);

@@ -188,8 +188,8 @@ const new_lendflow_application = subject.pipe(
 						LendflowExternal.plan_request_products(plan_id),
 				})
 			),
-			// concatMap((request) => from(axios(request))),
-			rxmap(() => fake_response),
+			concatMap((request) => from(axios(request))),
+			// rxmap(() => fake_response),
 			rxmap(pipe(get("data", "data", "application_id"))),
 			concatMap((application_id) =>
 				zip($group_id, $entity_id, $plan_id, rxof(application_id))
@@ -294,14 +294,10 @@ export const loader = async ({ request }) => {
 	console.log("new______");
 	const on_success = async (response) => {
 		console.log("___success___");
-		let entity_id = await get_session_entity_id(request);
-		// let { plan_id } = await get_doc(["entity", entity_id]);
-
-		let payload = { ...response };
 
 		subject.next({
 			id: "credit_report_response",
-			next: () => payload,
+			next: () => null,
 		});
 	};
 
@@ -476,9 +472,6 @@ const Form = () => {
 	);
 	const day = useReportStore((state) => state.form.business_start_date.day);
 	const year = useReportStore((state) => state.form.business_start_date.year);
-
-	console.log("errorrrr");
-	console.log(error);
 
 	const submit = useSubmit();
 

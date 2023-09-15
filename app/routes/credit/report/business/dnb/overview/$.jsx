@@ -95,9 +95,8 @@ const credit_report = subject.pipe(
 
 		let application_id = group_id.pipe(
 			concatMap(get_credit_report),
-			concatMap(ifFalse(redirect_home)),
-			rxmap(pipe(head, get("application_id"))),
-			rxmap(() => "d6d6cb45-0818-4f43-a8cd-29208f0cf7b2")
+			concatMap(ifEmpty(redirect_new_report)),
+			rxmap(pipe(head, get("application_id")))
 		);
 
 		let $report = application_id.pipe(
@@ -242,14 +241,14 @@ const ScoreCard = () => {
 							Business Record shown for:
 						</div>
 						<div className="flex flex-col">
-							<div>{business.name}</div>
-							<div>{business.address.street}</div>
+							<div>{business?.name}</div>
+							<div>{business?.address?.street}</div>
 							<div className="flex flex-row space-x-1">
 								<div className="flex flex-col mr-1">
-									{business.address.city},
+									{business?.address?.city},
 								</div>
-								<div>{business.address.state}</div>
-								<div>{business.address.zip}</div>
+								<div>{business?.address?.state}</div>
+								<div>{business?.address?.zip}</div>
 							</div>
 						</div>
 					</div>

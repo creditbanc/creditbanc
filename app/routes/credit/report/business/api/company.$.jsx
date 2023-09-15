@@ -29,5 +29,5 @@ export const loader = async ({ request }) => {
 
 	let business = Lendflow.business(report);
 
-	return business;
+	return {};
 };
