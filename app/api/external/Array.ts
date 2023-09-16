@@ -70,7 +70,7 @@ export class ArrayExternal {
 			// console.log("retry_____");
 			return new Promise((resolve, reject) => {
 				setTimeout(async () => {
-					let response = await get_credit_report(
+					let response = await ArrayExternal.get_credit_report(
 						reportKey,
 						displayToken
 					);

@@ -1,9 +1,46 @@
 import { get_collection, get_doc } from "~/utils/firebase";
-import { defaultTo, head, isEmpty, pipe } from "ramda";
+import {
+	always,
+	defaultTo,
+	gt as rgt,
+	head,
+	includes,
+	isEmpty,
+	length,
+	pipe,
+	tryCatch,
+	__,
+	flip,
+} from "ramda";
 import { filter, get } from "shades";
 import { inspect } from "~/utils/helpers";
 
+let gt = flip(rgt);
+
+const is_super_p = async (entity_id) => {
+	let entity = await get_doc(["entity", entity_id]);
+	let super_roles = ["admin", "super"];
+
+	let result = tryCatch(
+		pipe(
+			get("roles"),
+			filter((value) => includes(value, super_roles)),
+			length,
+			gt(0)
+		),
+		always(false)
+	)(entity);
+
+	return result;
+};
+
 export const get_permissions = async (entity_id, group_id) => {
+	// check if is an admin or super
+	let is_super = await is_super_p(entity_id);
+	if (is_super) {
+		return Infinity;
+	}
+
 	// check if entity is the owner/creator of the resource
 
 	let role_config_response = await get_collection({
@@ -42,6 +79,8 @@ export const get_permissions = async (entity_id, group_id) => {
 	}
 
 	// if there is no role config id then get the default config for the group
+
+	return false;
 };
 
 export const validate_permission = (permission_id, action, permissions) => {
@@ -65,10 +104,12 @@ export const is_authorized_f = async (
 	console.log("api.auth.is_authorized_f");
 	console.log(role);
 
-	return true;
-
 	if (role == Infinity) {
 		return true;
+	}
+
+	if (!role) {
+		return false;
 	}
 
 	let { permissions } = role;
