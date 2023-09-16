@@ -11,16 +11,15 @@ import {
 	tryCatch,
 	__,
 	flip,
+	is,
 } from "ramda";
 import { filter, get } from "shades";
 import { inspect } from "~/utils/helpers";
 
 let gt = flip(rgt);
 
-const is_super_p = async (entity_id) => {
-	let entity = await get_doc(["entity", entity_id]);
+export const is_entity_super = (entity) => {
 	let super_roles = ["admin", "super"];
-
 	let result = tryCatch(
 		pipe(
 			get("roles"),
@@ -32,6 +31,11 @@ const is_super_p = async (entity_id) => {
 	)(entity);
 
 	return result;
+};
+
+const is_super_p = async (entity_id) => {
+	let entity = await get_doc(["entity", entity_id]);
+	return is_entity_super(entity);
 };
 
 export const get_permissions = async (entity_id, group_id) => {

@@ -2,6 +2,7 @@ import { Fragment } from "react";
 import { Disclosure, Menu, Transition } from "@headlessui/react";
 import { BellIcon } from "@heroicons/react/24/outline";
 import { Link } from "@remix-run/react";
+import { is_entity_super } from "~/api/auth";
 const cb_logo = "/images/logos/cb_logo_3.png";
 
 function classNames(...classes) {
@@ -80,6 +81,7 @@ export default function Nav({ entity_id = false }) {
 														</Link>
 													)}
 												</Menu.Item>
+
 												<Menu.Item>
 													{({ active }) => (
 														<Link

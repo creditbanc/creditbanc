@@ -4,6 +4,7 @@ import { Link, useLoaderData, useLocation } from "@remix-run/react";
 import { classNames, get_entity_id, get_group_id } from "~/utils/helpers";
 import avatars from "~/data/avatars";
 import { Cog8ToothIcon, UserCircleIcon } from "@heroicons/react/24/outline";
+import { is_entity_super } from "~/api/auth";
 
 export default function UserAccountNavMenu() {
 	let { entity } = useLoaderData();
@@ -59,6 +60,22 @@ export default function UserAccountNavMenu() {
 							</Link>
 						)}
 					</Menu.Item>
+
+					{is_entity_super(entity) && (
+						<Menu.Item>
+							{({ active }) => (
+								<Link
+									to="/admin/entities"
+									className={classNames(
+										active ? "bg-gray-100" : "",
+										"block px-4 py-2 text-sm text-gray-700"
+									)}
+								>
+									Admin
+								</Link>
+							)}
+						</Menu.Item>
+					)}
 					<Menu.Item>
 						{({ active }) => (
 							<Link
