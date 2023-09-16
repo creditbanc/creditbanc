@@ -213,7 +213,6 @@ const credit_scores = subject.pipe(
 		}).pipe(
 			tap((value) => {
 				console.log(`${log_route}.tap`);
-
 				console.log(value);
 			})
 		);

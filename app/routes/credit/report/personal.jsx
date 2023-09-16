@@ -8,6 +8,7 @@ import {
 	get_file_id,
 	inspect,
 	get_entity_id,
+	capitalize,
 } from "~/utils/helpers";
 import { get_docs as get_group_docs } from "~/utils/group.server";
 // import { head, pipe } from "ramda";
@@ -32,7 +33,7 @@ import axios from "axios";
 // import { is_authorized_f } from "~/api/auth";
 
 import { get_collection, get_doc, set_doc, update_doc } from "~/utils/firebase";
-import { head, pipe, identity, curry, defaultTo, pick } from "ramda";
+import { head, pipe, identity, curry, defaultTo, pick, toLower } from "ramda";
 import { LendflowExternal, LendflowInternal } from "~/utils/lendflow.server";
 import { get, filter } from "shades";
 import {
@@ -218,18 +219,6 @@ const credit_scores = subject.pipe(
 			rxmap((array_response) => new ArrayInternal(array_response))
 		);
 
-		// let application_id = group_id.pipe(
-		// 	concatMap(get_business_credit_report),
-		// 	rxmap(pipe(head, get("application_id"))),
-		// 	rxmap(() => "d6d6cb45-0818-4f43-a8cd-29208f0cf7b2")
-		// );
-
-		// let business_report = application_id.pipe(
-		// 	concatMap(LendflowExternal.get_lendflow_report),
-		// 	rxmap(pipe(get("data", "data"))),
-		// 	rxmap((report) => new LendflowInternal(report))
-		// );
-
 		experian_personal_score = personal_report.pipe(
 			rxmap((report) => report.experian_score())
 		);
@@ -242,21 +231,16 @@ const credit_scores = subject.pipe(
 			rxmap((report) => report.transunion_score())
 		);
 
-		// let dnb_business_score = business_report.pipe(
-		// 	rxmap((report) => report.dnb_score())
-		// );
-
-		// let experian_business_score = business_report.pipe(
-		// 	rxmap((report) => report.experian_score())
-		// );
+		let first_name = personal_report.pipe(
+			rxmap((report) => report.first_name())
+		);
 
 		return forkJoin({
-			// dnb_business_score,
-			// experian_business_score,
 			experian_personal_score,
 			equifax_personal_score,
 			transunion_personal_score,
 			personal_report,
+			first_name,
 		}).pipe(
 			rxmap(
 				({
@@ -264,6 +248,7 @@ const credit_scores = subject.pipe(
 					equifax_personal_score,
 					transunion_personal_score,
 					personal_report,
+					first_name,
 				}) => ({
 					scores: {
 						experian: experian_personal_score,
@@ -274,6 +259,7 @@ const credit_scores = subject.pipe(
 					report_plan_id: "builder",
 					plan_id: "builder",
 					report: personal_report,
+					first_name,
 				})
 			),
 			tap((value) => {
@@ -380,7 +366,7 @@ export const loader = async ({ request }) => {
 };
 
 export default function CreditReport() {
-	var { report, scores, plan_id, report_plan_id, business } =
+	var { report, scores, plan_id, report_plan_id, business, first_name } =
 		useLoaderData() ?? {};
 	const [target, setTarget] = useState();
 	const elmSize = useElmSize(target);
@@ -463,8 +449,8 @@ export default function CreditReport() {
 								<div className="flex flex-col w-full  px-5 pt-5  rounded-lg">
 									<div className="w-full text-center space-y-5 mt-5">
 										<h1 className="text-5xl font-bold tracking-tight">
-											{report.first_name}'s personal
-											credit report
+											{capitalize(toLower(first_name))}'s
+											personal credit report
 										</h1>
 										<p className="text-lg leading-6 ">
 											View all three personal credit
