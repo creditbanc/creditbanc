@@ -273,7 +273,7 @@ export default function BusinessReport() {
 											</div>
 											<div className="flex flex-col w-1/2 text-sm space-y-1">
 												<div className="text-gray-400">
-													Experian
+													Intelliscore
 												</div>
 												<div className="text-lg">
 													{experian_business_score}
