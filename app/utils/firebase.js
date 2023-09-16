@@ -199,6 +199,9 @@ export const set_doc = async (path, data, merge = false) => {
 };
 
 export const update_doc = async (path, data) => {
+	console.log("update_doc");
+	console.log(path);
+	console.log(data);
 	return await updateDoc(doc(firestore, ...path), data);
 };
 

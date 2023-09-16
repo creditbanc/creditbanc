@@ -13,6 +13,8 @@ import {
 	isEmpty,
 	not,
 	set,
+	tryCatch,
+	always,
 } from "ramda";
 import { get, filter, all, mod } from "shades";
 import {
@@ -59,20 +61,18 @@ const loader_data = subject.pipe(
 			})
 		).pipe(
 			rxmap(
-				pipe(
-					mod(all)((entity) =>
-						pickAll([
-							"id",
-							"first_name",
-							"plan_id",
-							"last_name",
-							"email",
-							// ...keys(value),
-						])(entity)
-					),
-					(entities) => ({ entities })
+				map(
+					pickAll([
+						"id",
+						"first_name",
+						"last_name",
+						"email",
+						"plan_id",
+						"roles",
+					])
 				)
-			)
+			),
+			rxmap((entities) => ({ entities }))
 		);
 
 		return entities.pipe(
@@ -175,6 +175,42 @@ const EntitiesTable = () => {
 					</div>
 				))
 			)(entities)}
+		</div>
+	);
+};
+
+const RoleAction = () => {
+	let entity = useStateStore((state) => state.entity);
+	let role = tryCatch(pipe(get("roles"), head), always(""))(entity);
+
+	const onSelectRole = async (event) => {
+		if (entity.id) {
+			await update_doc(["entity", entity.id], {
+				roles: [event.target.value],
+			});
+		}
+	};
+
+	return (
+		<div className="flex flex-col">
+			<div className="flex flex-row gap-x-2">
+				<div>role:</div>
+				<div>{role}</div>
+			</div>
+
+			<div>
+				<select
+					className="mt-2 block w-full rounded-md border-0 py-1.5 pl-3 pr-10 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-indigo-600 sm:text-sm sm:leading-6"
+					onChange={onSelectRole}
+					defaultValue="none"
+				>
+					<option disabled value="none">
+						Select a role
+					</option>
+
+					<option value="admin">Admin</option>
+				</select>
+			</div>
 		</div>
 	);
 };
@@ -289,10 +325,7 @@ const Entity = () => {
 			<div className="flex flex-col w-full border-b px-2">
 				<div className="font-semibold">Actions</div>
 				<div className="flex flex-col text-sm gap-y-2 py-2">
-					<div className="flex flex-row gap-x-2">
-						<div>role:</div>
-						<div>user</div>
-					</div>
+					<RoleAction />
 				</div>
 			</div>
 		</div>

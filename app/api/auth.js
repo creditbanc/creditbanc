@@ -9,9 +9,7 @@ import {
 	length,
 	pipe,
 	tryCatch,
-	__,
 	flip,
-	is,
 } from "ramda";
 import { filter, get } from "shades";
 import { inspect } from "~/utils/helpers";
