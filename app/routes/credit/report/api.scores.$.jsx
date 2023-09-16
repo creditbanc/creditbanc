@@ -113,9 +113,21 @@ const credit_scores = subject.pipe(
 			);
 		};
 
-		let personal_report = group_id.pipe(
+		let personal_report_response = group_id.pipe(
 			concatMap(get_personal_credit_report),
+			concatMap(ifEmpty(throwError(() => undefined))),
+			catchError((error) => {
+				console.log(`${log_route}.empty_personal_report.error`);
+				if (error == undefined) {
+					return rxof(undefined);
+				} else {
+					return throwError(() => error);
+				}
+			})
+		);
 
+		let personal_report = personal_report_response.pipe(
+			rxfilter((value) => value !== undefined),
 			rxmap(
 				pipe(
 					head,
@@ -151,8 +163,21 @@ const credit_scores = subject.pipe(
 					})
 				)
 			),
-			rxmap((array_response) => new ArrayInternal(array_response))
+			rxmap((array_response) => new ArrayInternal(array_response)),
+
+			rxfilter((value) => value !== undefined)
 		);
+
+		let empty_personal_report = personal_report_response.pipe(
+			rxfilter((value) => value === undefined),
+			rxmap(() => ({
+				experian_score: () => 0,
+				equifax_score: () => 0,
+				transunion_score: () => 0,
+			}))
+		);
+
+		let $personal_report = merge(personal_report, empty_personal_report);
 
 		let application_id = group_id.pipe(
 			concatMap(get_business_credit_report),
@@ -184,15 +209,15 @@ const credit_scores = subject.pipe(
 
 		let $business_report = merge(business_report, empty_business_report);
 
-		experian_personal_score = personal_report.pipe(
+		let experian_personal_score = $personal_report.pipe(
 			rxmap((report) => report.experian_score())
 		);
 
-		equifax_personal_score = personal_report.pipe(
+		let equifax_personal_score = $personal_report.pipe(
 			rxmap((report) => report.equifax_score())
 		);
 
-		transunion_personal_score = personal_report.pipe(
+		let transunion_personal_score = $personal_report.pipe(
 			rxmap((report) => report.transunion_score())
 		);
 
