@@ -15,6 +15,7 @@ import {
 	set,
 	tryCatch,
 	always,
+	isNil,
 } from "ramda";
 import { get, filter, all, mod } from "shades";
 import {
@@ -215,6 +216,104 @@ const RoleAction = () => {
 	);
 };
 
+const BusinessReportStatus = () => {
+	let entity = useStateStore((state) => state.entity);
+	let { group_id, has_business_credit_report = false } = entity;
+	let set_state = useStateStore((state) => state.set_state);
+
+	useEffect(() => {
+		let business_credit_report_queries = (group_id) => [
+			{
+				param: "group_id",
+				predicate: "==",
+				value: group_id,
+			},
+			{
+				param: "type",
+				predicate: "==",
+				value: "business_credit_report",
+			},
+		];
+
+		let get_business_credit_report = (group_id) =>
+			from(
+				get_collection({
+					path: ["credit_reports"],
+					queries: business_credit_report_queries(group_id),
+				})
+			);
+
+		rxof(group_id)
+			.pipe(
+				rxfilter(pipe(isNil, not)),
+				concatMap(get_business_credit_report)
+			)
+			.subscribe((response) => {
+				if (response.length > 0) {
+					set_state(["entity", "has_business_credit_report"], true);
+				} else {
+					set_state(["entity", "has_business_credit_report"], false);
+				}
+			});
+	}, [group_id]);
+
+	return (
+		<div className="flex flex-row gap-x-2">
+			<div>business credit report:</div>
+			<div>{`${has_business_credit_report}`}</div>
+		</div>
+	);
+};
+
+const PersonalReportStatus = () => {
+	let entity = useStateStore((state) => state.entity);
+	let { group_id, has_personal_credit_report = false } = entity;
+	let set_state = useStateStore((state) => state.set_state);
+
+	useEffect(() => {
+		let personal_credit_report_queries = (group_id) => [
+			{
+				param: "group_id",
+				predicate: "==",
+				value: group_id,
+			},
+			{
+				param: "type",
+				predicate: "==",
+				value: "personal_credit_report",
+			},
+		];
+
+		let get_personal_credit_report = (group_id) =>
+			from(
+				get_collection({
+					path: ["credit_reports"],
+					queries: personal_credit_report_queries(group_id),
+				})
+			);
+
+		rxof(group_id)
+			.pipe(
+				rxfilter(pipe(isNil, not)),
+				concatMap(get_personal_credit_report)
+			)
+			.subscribe((response) => {
+				if (response.length > 0) {
+					set_state(["entity", "has_personal_credit_report"], true);
+				} else {
+					set_state(["entity", "has_personal_credit_report"], false);
+				}
+			});
+	}, [group_id]);
+
+	return (
+		<div className="flex flex-row gap-x-2">
+			<div>personal credit report:</div>
+			<div>{`${has_personal_credit_report}`}</div>
+		</div>
+	);
+};
+
 const Entity = () => {
 	let entity = useStateStore((state) => state.entity);
 	let set_state = useStateStore((state) => state.set_state);
@@ -296,14 +395,8 @@ const Entity = () => {
 			<div className="flex flex-col w-full border-b px-2">
 				<div className="font-semibold">Status</div>
 				<div className="flex flex-col text-sm gap-y-2 py-2">
-					<div className="flex flex-row gap-x-2">
-						<div>business credit report:</div>
-						<div>true</div>
-					</div>
-					<div className="flex flex-row gap-x-2">
-						<div>personal credit report:</div>
-						<div>false</div>
-					</div>
+					<BusinessReportStatus />
+					<PersonalReportStatus />
 				</div>
 			</div>
 
@@ -311,13 +404,25 @@ const Entity = () => {
 				<div className="font-semibold">Quick Links</div>
 				<div className="flex flex-col text-sm gap-y-2 py-2">
 					<div className="flex flex-row gap-x-2">
-						<div>business credit report</div>
+						<Link
+							to={`/credit/report/business/experian/overview/resource/e/${entity.id}/g/${entity.group_id}`}
+						>
+							Intelliscore business credit report
+						</Link>
+					</div>
+
+					<div className="flex flex-row gap-x-2">
+						<Link
+							to={`/credit/report/business/dnb/overview/resource/e/${entity.id}/g/${entity.group_id}`}
+						>
+							Dun & Bradstreet business credit report
+						</Link>
 					</div>
 					<div className="flex flex-row gap-x-2">
 						<Link
 							to={`/credit/report/personal/personal/resource/e/${entity.id}/g/${entity.group_id}`}
 						>
-							personal credit report
+							Personal credit report
 						</Link>
 					</div>
 				</div>
