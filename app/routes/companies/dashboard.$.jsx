@@ -208,7 +208,7 @@ const CompayInfo = () => {
 						<div>
 							<DocumentDuplicateIcon className="h-4 w-4 text-blue-500" />
 						</div>
-						<div>Copy copmany share link</div>
+						<div>Copy report share link</div>
 						<div>
 							<LinkIcon className="h-4 w-4 text-blue-500" />
 						</div>
