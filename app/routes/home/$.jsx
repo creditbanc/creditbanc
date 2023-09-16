@@ -2,6 +2,7 @@ import { ChevronRightIcon, ListBulletIcon } from "@heroicons/react/20/solid";
 import { Link, useLocation } from "@remix-run/react";
 import { get_session_entity_id, get_user_id } from "~/utils/auth.server";
 import {
+	capitalize,
 	get_entity_id,
 	get_group_id,
 	use_search_params,
@@ -44,6 +45,10 @@ export const loader = async ({ request }) => {
 
 	// let entity_id = get_entity_id(url.pathname);
 
+	let entity = await get_doc(["entity", entity_id]);
+	console.log("entity");
+	console.log(entity);
+
 	let onboard_state = await get_doc(["onboard", entity_id]);
 
 	onboard_state = pipe(
@@ -76,6 +81,7 @@ export const loader = async ({ request }) => {
 		plan_id,
 		business,
 		onboard: onboard_state,
+		entity,
 	};
 
 	// console.log("payload");
@@ -251,7 +257,31 @@ const PersonalCredit = () => {
 };
 
 const HeadingTwo = () => {
-	let { business } = useLoaderData();
+	let { business, entity } = useLoaderData();
+
+	let EntityPersonalDetails = () => {
+		return (
+			<div>
+				<div className="font-semibold">
+					{capitalize(entity.first_name)}{" "}
+					{capitalize(entity.last_name)}
+				</div>
+				<div className="text-sm">{entity.email}</div>
+			</div>
+		);
+	};
+
+	let BusinessDetails = () => {
+		return (
+			<div>
+				<div className="font-semibold">{business.name}</div>
+			</div>
+		);
+	};
+
+	let EntityAccountDetails = () => {
+		return business?.name ? <BusinessDetails /> : <EntityPersonalDetails />;
+	};
 
 	return (
 		<div className="flex flex-col max-w-7xl w-full px-3 py-2">
@@ -263,8 +293,8 @@ const HeadingTwo = () => {
 						className="h-16 w-16 flex-none rounded-full ring-1 ring-gray-900/10"
 					/>
 					<h1>
-						<div className="mt-1 text-base font-semibold leading-6 text-gray-900">
-							{business?.name || "Untitled Inc"}
+						<div className="mt-1 text-base leading-6 text-gray-900">
+							<EntityAccountDetails />
 						</div>
 					</h1>
 				</div>
