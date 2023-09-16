@@ -166,7 +166,7 @@ const credit_report = subject.pipe(
 		return is_authorized.pipe(
 			concatMap(() => report),
 			tap((value) => {
-				console.log("___tap___");
+				console.log("credit.report.personal.history.tap");
 				console.log(value);
 			})
 		);

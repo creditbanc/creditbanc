@@ -127,8 +127,8 @@ export const action = async ({ request }) => {
 export const loader = async ({ request }) => {
 	let entity = await get_entity(request);
 
-	console.log("entity");
-	console.log(entity);
+	// console.log("entity");
+	// console.log(entity);
 
 	let { stripe_subscription_id } = entity;
 

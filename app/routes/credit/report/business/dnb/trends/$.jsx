@@ -108,7 +108,7 @@ const credit_report = subject.pipe(
 				})
 			),
 			tap((value) => {
-				console.log("___tap___");
+				console.log("credit.report.business.dnb.trends.tap");
 				console.log(value);
 			})
 		);

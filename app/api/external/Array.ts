@@ -26,7 +26,7 @@ export const report_url = is_sandbox
 
 export class ArrayExternal {
 	static refreshDisplayToken = async (clientKey, reportKey) => {
-		console.log("refreshDisplayToken");
+		console.log("api.external.Array.refreshDisplayToken");
 		const options = {
 			method: "PUT",
 			maxBodyLength: Infinity,
@@ -51,7 +51,7 @@ export class ArrayExternal {
 	};
 
 	static get_credit_report = async (reportKey, displayToken) => {
-		console.log("get_credit_report");
+		console.log("api.external.Array.get_credit_report");
 		var options = {
 			method: "get",
 			maxBodyLength: Infinity,

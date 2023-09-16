@@ -7,7 +7,7 @@ import { prisma } from "~/utils/prisma.server";
 import { plans } from "~/data/plans";
 import { all, get } from "shades";
 import { flatten, pipe, uniqBy, head, pick } from "ramda";
-import { get_collection, get_doc } from "~/utils/firebase";
+import { get_collection, get_doc, update_doc } from "~/utils/firebase";
 
 import {
 	map as rxmap,
@@ -95,13 +95,15 @@ const credit_report = subject.pipe(
 		);
 
 		const update_display_token = ({ clientKey, reportKey, report_id }) => {
-			console.log("___update_display_token___");
+			console.log("credit.report.personal.personal.update_display_token");
 			return rxof({ clientKey, reportKey, report_id }).pipe(
 				concatMap(() =>
 					ArrayExternal.refreshDisplayToken(clientKey, reportKey)
 				),
 				catchError((error) => {
-					console.log("___refreshDisplayTokenError___");
+					console.log(
+						"credit.report.personal.personal.update_display_token.error"
+					);
 					console.log(error);
 
 					return redirect_home;
@@ -176,7 +178,7 @@ const credit_report = subject.pipe(
 				})
 			),
 			tap((value) => {
-				console.log("___tap___");
+				console.log("credit.report.personal.personal.tap");
 				console.log(value);
 			})
 		);
@@ -184,9 +186,9 @@ const credit_report = subject.pipe(
 );
 
 export const loader = async ({ request }) => {
-	console.log("personal______");
+	console.log("credit.report.personal.personal.loader");
 	const on_success = async (response) => {
-		console.log("___success___");
+		console.log("credit.report.personal.personal.success");
 		let entity_id = await get_session_entity_id(request);
 		let { plan_id } = await get_doc(["entity", entity_id]);
 
@@ -199,7 +201,7 @@ export const loader = async ({ request }) => {
 	};
 
 	const on_error = (error) => {
-		console.log("___error___");
+		console.log("credit.report.personal.personal.error");
 		console.log(error);
 
 		subject.next({

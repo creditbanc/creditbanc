@@ -129,14 +129,6 @@ const credit_scores = subject.pipe(
 			},
 		];
 
-		let get_business_credit_report = (group_id) =>
-			from(
-				get_collection({
-					path: ["credit_reports"],
-					queries: business_credit_report_queries(group_id),
-				})
-			);
-
 		let group_id = rxof(get_group_id(url.pathname));
 		let entity_id = from(get_session_entity_id(request));
 
@@ -166,13 +158,13 @@ const credit_scores = subject.pipe(
 		);
 
 		const update_display_token = ({ clientKey, reportKey, report_id }) => {
-			console.log("___update_display_token___");
+			console.log("credit.report.personal.update_display_token");
 			return rxof({ clientKey, reportKey, report_id }).pipe(
 				concatMap(() =>
 					ArrayExternal.refreshDisplayToken(clientKey, reportKey)
 				),
 				catchError((error) => {
-					console.log("___refreshDisplayTokenError___");
+					console.log("credit.report.update_display_token.error");
 					console.log(error);
 
 					return redirect_home;
@@ -188,10 +180,6 @@ const credit_scores = subject.pipe(
 
 		let personal_report = group_id.pipe(
 			concatMap(get_personal_credit_report),
-			tap((value) => {
-				console.log("___tapp___");
-				console.log(value);
-			}),
 			concatMap(ifEmpty(redirect_new_report)),
 			rxmap(
 				pipe(
@@ -289,7 +277,7 @@ const credit_scores = subject.pipe(
 				})
 			),
 			tap((value) => {
-				console.log("___tap___");
+				console.log("credit.report.personal.tap");
 				console.log(value);
 			})
 		);
@@ -298,7 +286,7 @@ const credit_scores = subject.pipe(
 
 export const loader = async ({ request }) => {
 	const on_success = async (response) => {
-		console.log("___success___");
+		console.log("credit.report.success");
 
 		subject.next({
 			id: "credit_score_response",
@@ -307,7 +295,7 @@ export const loader = async ({ request }) => {
 	};
 
 	const on_error = (error) => {
-		console.log("___error___");
+		console.log("credit.report.error");
 		console.log(error);
 
 		subject.next({

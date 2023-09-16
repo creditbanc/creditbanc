@@ -1773,6 +1773,18 @@ video {
   min-width: 100%;
 }
 
+.min-w-\[150px\] {
+  min-width: 150px;
+}
+
+.min-w-\[200px\] {
+  min-width: 200px;
+}
+
+.min-w-\[300px\] {
+  min-width: 300px;
+}
+
 .max-w-2xl {
   max-width: 42rem;
 }
@@ -2142,6 +2154,10 @@ video {
 
 .gap-y-8 {
   row-gap: 2rem;
+}
+
+.gap-y-1 {
+  row-gap: 0.25rem;
 }
 
 .-space-x-1 > :not([hidden]) ~ :not([hidden]) {
@@ -3939,6 +3955,11 @@ body {
 
 .focus-visible\:ring-opacity-75:focus-visible {
   --tw-ring-opacity: 0.75;
+}
+
+.group:hover .group-hover\:bg-gray-100 {
+  --tw-bg-opacity: 1;
+  background-color: rgb(243 244 246 / var(--tw-bg-opacity));
 }
 
 .group:hover .group-hover\:text-blue-600 {

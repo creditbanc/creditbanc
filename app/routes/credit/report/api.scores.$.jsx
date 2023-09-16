@@ -188,7 +188,7 @@ const credit_scores = subject.pipe(
 			transunion_personal_score,
 		}).pipe(
 			tap((value) => {
-				console.log("___tap___");
+				console.log("credit.report.tap");
 				console.log(value);
 			})
 		);

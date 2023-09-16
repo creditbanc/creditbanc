@@ -483,7 +483,7 @@ export class LendflowExternal {
 	};
 
 	static get_lendflow_report = async (application_id: string) => {
-		console.log("get_lendflow_report");
+		// console.log("get_lendflow_report");
 
 		let options = {
 			method: "get",
@@ -497,8 +497,8 @@ export class LendflowExternal {
 		};
 
 		let response = await axios(options);
-		console.log("lendflow_response");
-		inspect(response.data.data);
+		// console.log("lendflow_response");
+		// inspect(response.data.data);
 
 		return response;
 	};
