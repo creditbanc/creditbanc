@@ -46,8 +46,6 @@ export const loader = async ({ request }) => {
 	// let entity_id = get_entity_id(url.pathname);
 
 	let entity = await get_doc(["entity", entity_id]);
-	console.log("entity");
-	console.log(entity);
 
 	let onboard_state = await get_doc(["onboard", entity_id]);
 

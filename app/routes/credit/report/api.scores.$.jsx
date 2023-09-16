@@ -15,6 +15,7 @@ import {
 	tap,
 	take,
 	catchError,
+	withLatestFrom,
 } from "rxjs/operators";
 import {
 	from,
@@ -24,13 +25,16 @@ import {
 	of as rxof,
 	iif,
 	throwError,
+	merge,
 } from "rxjs";
-import { fold, ifFalse } from "~/utils/operators";
+import { fold, ifEmpty, ifFalse } from "~/utils/operators";
 import { is_authorized_f } from "~/api/auth";
 import { ArrayExternal } from "~/api/external/Array";
 import { ArrayInternal } from "~/api/internal/Array";
 
 const subject = new Subject();
+
+const log_route = `credit.report.api.scores`;
 
 const credit_scores = subject.pipe(
 	rxfilter((message) => message.id == "get_credit_scores"),
@@ -82,13 +86,14 @@ const credit_scores = subject.pipe(
 		let group_id = rxof(get_group_id(url.pathname));
 
 		const update_display_token = ({ clientKey, reportKey, report_id }) => {
-			console.log("___update_display_token___");
+			console.log(`${log_route}.update_display_token`);
+
 			return rxof({ clientKey, reportKey, report_id }).pipe(
 				concatMap(() =>
 					ArrayExternal.refreshDisplayToken(clientKey, reportKey)
 				),
 				catchError((error) => {
-					console.log("___refreshDisplayTokenError___");
+					console.log(`${log_route}.update_display_token.error`);
 					console.log(error);
 
 					return throwError(() => ({
@@ -151,14 +156,33 @@ const credit_scores = subject.pipe(
 
 		let application_id = group_id.pipe(
 			concatMap(get_business_credit_report),
-			rxmap(pipe(head, get("application_id")))
+			concatMap(ifEmpty(throwError(() => undefined))),
+			rxmap(pipe(head, get("application_id"))),
+			catchError((error) => {
+				if (error == undefined) {
+					return rxof(undefined);
+				} else {
+					return throwError(() => error);
+				}
+			})
 		);
 
 		let business_report = application_id.pipe(
+			rxfilter((value) => value !== undefined),
 			concatMap(LendflowExternal.get_lendflow_report),
 			rxmap(pipe(get("data", "data"))),
 			rxmap((report) => new LendflowInternal(report))
 		);
+
+		let empty_business_report = application_id.pipe(
+			rxfilter((value) => value === undefined),
+			rxmap(() => ({
+				dnb_score: () => 0,
+				experian_score: () => 0,
+			}))
+		);
+
+		let $business_report = merge(business_report, empty_business_report);
 
 		experian_personal_score = personal_report.pipe(
 			rxmap((report) => report.experian_score())
@@ -172,11 +196,11 @@ const credit_scores = subject.pipe(
 			rxmap((report) => report.transunion_score())
 		);
 
-		let dnb_business_score = business_report.pipe(
+		let dnb_business_score = $business_report.pipe(
 			rxmap((report) => report.dnb_score())
 		);
 
-		let experian_business_score = business_report.pipe(
+		let experian_business_score = $business_report.pipe(
 			rxmap((report) => report.experian_score())
 		);
 
@@ -188,7 +212,8 @@ const credit_scores = subject.pipe(
 			transunion_personal_score,
 		}).pipe(
 			tap((value) => {
-				console.log("credit.report.tap");
+				console.log(`${log_route}.tap`);
+
 				console.log(value);
 			})
 		);
@@ -197,7 +222,7 @@ const credit_scores = subject.pipe(
 
 export const loader = async ({ request }) => {
 	const on_success = async (response) => {
-		console.log("___success___");
+		console.log(`${log_route}.success`);
 
 		subject.next({
 			id: "credit_score_response",
@@ -206,7 +231,7 @@ export const loader = async ({ request }) => {
 	};
 
 	const on_error = (error) => {
-		console.log("___error___");
+		console.log(`${log_route}.error`);
 		console.log(error);
 
 		subject.next({
