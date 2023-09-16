@@ -1753,6 +1753,18 @@ video {
   min-width: 100px;
 }
 
+.min-w-\[150px\] {
+  min-width: 150px;
+}
+
+.min-w-\[200px\] {
+  min-width: 200px;
+}
+
+.min-w-\[300px\] {
+  min-width: 300px;
+}
+
 .min-w-\[350px\] {
   min-width: 350px;
 }
@@ -1771,18 +1783,6 @@ video {
 
 .min-w-full {
   min-width: 100%;
-}
-
-.min-w-\[150px\] {
-  min-width: 150px;
-}
-
-.min-w-\[200px\] {
-  min-width: 200px;
-}
-
-.min-w-\[300px\] {
-  min-width: 300px;
 }
 
 .max-w-2xl {
@@ -2154,10 +2154,6 @@ video {
 
 .gap-y-8 {
   row-gap: 2rem;
-}
-
-.gap-y-1 {
-  row-gap: 0.25rem;
 }
 
 .-space-x-1 > :not([hidden]) ~ :not([hidden]) {
