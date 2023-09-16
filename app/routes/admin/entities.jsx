@@ -158,10 +158,10 @@ const EntitiesTable = () => {
 						onClick={() => onSelectEntity(entity)}
 					>
 						<div className="flex flex-col min-w-[150px] border-b py-2 group-hover:bg-gray-100">
-							{truncate(20, entity.first_name)}
+							{truncate(15, entity.first_name)}
 						</div>
 						<div className="flex flex-col min-w-[150px] border-b py-2 group-hover:bg-gray-100">
-							{truncate(20, entity.last_name)}
+							{truncate(15, entity.last_name)}
 						</div>
 						<div className="flex flex-col min-w-[300px] border-b py-2 group-hover:bg-gray-100">
 							{truncate(30, entity.id)}
