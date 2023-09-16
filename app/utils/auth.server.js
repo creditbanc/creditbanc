@@ -286,6 +286,8 @@ const create_user_session = async (entity_id, redirect_to) => {
 };
 
 export const get_user_session = (request) => {
+	// console.log("get_user_session");
+	// console.log(request.headers);
 	return storage.getSession(request.headers.get("Cookie"));
 };
 
@@ -309,6 +311,10 @@ export const require_user_session = async (
 export const get_session_entity_id = async (request) => {
 	const session = await get_user_session(request);
 	const user_id = session.get("entity_id");
+
+	// console.log("user_get_session_entity_idid");
+	// console.log(session.data);
+	// console.log(user_id);
 
 	if (!user_id || typeof user_id !== "string") {
 		return null;

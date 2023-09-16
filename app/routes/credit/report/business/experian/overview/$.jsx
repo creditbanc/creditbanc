@@ -8,7 +8,7 @@ import { get_file_id, get_group_id, inspect } from "~/utils/helpers";
 import { get_session_entity_id, get_user_id } from "~/utils/auth.server";
 import { prisma } from "~/utils/prisma.server";
 import { plans } from "~/data/plans";
-import { get, has } from "shades";
+import { get } from "shades";
 import { allPass, pipe, not, head, identity } from "ramda";
 import { report_tests } from "~/data/report_tests";
 import { get_lendflow_report } from "~/utils/lendflow.server";

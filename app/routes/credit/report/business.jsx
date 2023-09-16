@@ -35,6 +35,7 @@ import { DocumentDuplicateIcon, LinkIcon } from "@heroicons/react/24/outline";
 import { get_collection, get_doc, set_doc } from "~/utils/firebase";
 import axios from "axios";
 import { is_authorized_f } from "~/api/auth";
+import { encode, decode } from "js-base64";
 
 export const action = async ({ request }) => {
 	var form = await request.formData();
@@ -142,6 +143,7 @@ export const loader = async ({ request }) => {
 	let credit_scores_api_response = await axios({
 		method: "get",
 		url: `${origin}/credit/report/api/scores/resource/e/${entity_id}/g/${group_id}`,
+		withCredentials: true,
 	});
 
 	let { data: scores = {} } = credit_scores_api_response;
@@ -149,6 +151,12 @@ export const loader = async ({ request }) => {
 	let business_info_response = await axios({
 		method: "get",
 		url: `${origin}/credit/report/business/api/company/resource/e/${entity_id}/g/${group_id}`,
+		withCredentials: true,
+		headers: {
+			cookie: `creditbanc_session=${encode(
+				JSON.stringify({ entity_id })
+			)}`,
+		},
 	});
 
 	let { data: business = {} } = business_info_response;
@@ -159,7 +167,7 @@ export const loader = async ({ request }) => {
 		// report_id: file_id,
 		application_id: report?.application_id,
 		report_plan_id: report?.plan_id,
-		business,
+		business: business?.business_info,
 		scores,
 	};
 };
@@ -242,7 +250,7 @@ export default function BusinessReport() {
 										<div>{business?.name}</div>
 									</div>
 								</div>
-								<div className="flex flex-col py-2">
+								{/* <div className="flex flex-col py-2">
 									<Link
 										to={`/financial/transactions`}
 										className="px-5 mb-4 flex flex-row items-center space-x-3 text-blue-500 cursor-pointer text-sm"
@@ -255,7 +263,7 @@ export default function BusinessReport() {
 											<LinkIcon className="h-4 w-4 text-blue-500" />
 										</div>
 									</Link>
-								</div>
+								</div> */}
 								<div className="flex flex-col w-full overflow-scroll scrollbar-none">
 									<div className="border-t"></div>
 									<div className="flex flex-col w-full p-5 space-y-3">

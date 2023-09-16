@@ -235,12 +235,17 @@ const credit_scores = subject.pipe(
 			rxmap((report) => report.first_name())
 		);
 
+		let last_name = personal_report.pipe(
+			rxmap((report) => report.last_name())
+		);
+
 		return forkJoin({
 			experian_personal_score,
 			equifax_personal_score,
 			transunion_personal_score,
 			personal_report,
 			first_name,
+			last_name,
 		}).pipe(
 			rxmap(
 				({
@@ -249,6 +254,7 @@ const credit_scores = subject.pipe(
 					transunion_personal_score,
 					personal_report,
 					first_name,
+					last_name,
 				}) => ({
 					scores: {
 						experian: experian_personal_score,
@@ -260,6 +266,7 @@ const credit_scores = subject.pipe(
 					plan_id: "builder",
 					report: personal_report,
 					first_name,
+					last_name,
 				})
 			),
 			tap((value) => {
@@ -366,8 +373,15 @@ export const loader = async ({ request }) => {
 };
 
 export default function CreditReport() {
-	var { report, scores, plan_id, report_plan_id, business, first_name } =
-		useLoaderData() ?? {};
+	var {
+		report,
+		scores,
+		plan_id,
+		report_plan_id,
+		business,
+		first_name,
+		last_name,
+	} = useLoaderData() ?? {};
 	const [target, setTarget] = useState();
 	const elmSize = useElmSize(target);
 	let setContentWidth = useLayoutStore((state) => state.set_content_width);
@@ -378,8 +392,6 @@ export default function CreditReport() {
 	let { set_coordinates } = useReportPageLayoutStore();
 
 	let { experian, equifax, transunion } = scores;
-
-	// return null;
 
 	useEffect(() => {
 		if (content_width > 640) {
@@ -476,16 +488,18 @@ export default function CreditReport() {
 											<div>
 												<span className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-gray-500">
 													<span className="text-lg font-medium leading-none text-white">
-														{business?.name
+														{first_name
 															?.charAt(0)
 															.toUpperCase()}
 													</span>
 												</span>
 											</div>
-											<div>{business?.name}</div>
+											<div>
+												{first_name} {last_name}
+											</div>
 										</div>
 									</div>
-									<div className="flex flex-col py-2">
+									{/* <div className="flex flex-col py-2">
 										<Link
 											to={`/financial/transactions`}
 											className="px-5 mb-4 flex flex-row items-center space-x-3 text-blue-500 cursor-pointer text-sm"
@@ -498,7 +512,7 @@ export default function CreditReport() {
 												<LinkIcon className="h-4 w-4 text-blue-500" />
 											</div>
 										</Link>
-									</div>
+									</div> */}
 									<div className="flex flex-col w-full overflow-scroll scrollbar-none">
 										<div className="border-t"></div>
 										<div className="flex flex-col w-full p-5 space-y-3">
