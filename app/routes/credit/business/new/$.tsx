@@ -84,7 +84,7 @@ import { fold, ifFalse } from "~/utils/operators";
 import flatten from "flat";
 import { is_authorized_f } from "~/api/auth";
 
-const useReportStore = create((set) => ({
+export const useReportStore = create((set) => ({
 	form: {
 		basic_info: {
 			first_name: "",
@@ -334,7 +334,7 @@ const business_entities = [
 	{ id: "business_entity_type_8", name: "Joint Venture" },
 ];
 
-const BusinessEntity = () => {
+export const BusinessEntity = () => {
 	const [selected, setSelected] = useState(business_entities[0]);
 	const setForm = useReportStore((state) => state.setForm);
 
