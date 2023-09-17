@@ -33,7 +33,17 @@ import axios from "axios";
 // import { is_authorized_f } from "~/api/auth";
 
 import { get_collection, get_doc, set_doc, update_doc } from "~/utils/firebase";
-import { head, pipe, identity, curry, defaultTo, pick, toLower } from "ramda";
+import {
+	head,
+	pipe,
+	identity,
+	curry,
+	defaultTo,
+	pick,
+	toLower,
+	tryCatch,
+	always,
+} from "ramda";
 import { LendflowExternal, LendflowInternal } from "~/utils/lendflow.server";
 import { get, filter } from "shades";
 import {
@@ -203,28 +213,6 @@ const credit_scores = subject.pipe(
 			first_name,
 			last_name,
 		}).pipe(
-			// rxmap(
-			// 	({
-			// 		experian_personal_score,
-			// 		equifax_personal_score,
-			// 		transunion_personal_score,
-			// 		personal_report,
-			// 		first_name,
-			// 		last_name,
-			// 	}) => ({
-			// 		scores: {
-			// 			experian: experian_personal_score,
-			// 			equifax: equifax_personal_score,
-			// 			transunion: transunion_personal_score,
-			// 		},
-			// 		business: {},
-			// 		report_plan_id: "builder",
-			// 		plan_id: "builder",
-			// 		report: personal_report,
-			// 		first_name,
-			// 		last_name,
-			// 	})
-			// ),
 			tap((value) => {
 				console.log("credit.report.personal.tap");
 				console.log(value);
@@ -347,6 +335,8 @@ export default function CreditReport() {
 	const pageRef = useRef(null);
 	let { set_coordinates } = useReportPageLayoutStore();
 
+	first_name = tryCatch(pipe(toLower, capitalize), always(""))(first_name);
+
 	useEffect(() => {
 		if (content_width > 640) {
 			setIsMobile(false);
@@ -415,8 +405,8 @@ export default function CreditReport() {
 								<div className="flex flex-col w-full  px-5 pt-5  rounded-lg">
 									<div className="w-full text-center space-y-5 mt-5">
 										<h1 className="text-5xl font-bold tracking-tight">
-											{capitalize(toLower(first_name))}'s
-											personal credit report
+											{first_name}
+											's personal credit report
 										</h1>
 										<p className="text-lg leading-6 ">
 											View all three personal credit
