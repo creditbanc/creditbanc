@@ -424,7 +424,7 @@ export default function Nav({ entity_id }) {
 						)}
 					</div>
 					<div className="flex flex-row items-center space-x-3">
-						<div>
+						{/* <div>
 							<div className="flex -space-x-1 overflow-hidden">
 								<img
 									className="inline-block h-6 w-6 rounded-full ring-2 ring-white"
@@ -447,10 +447,10 @@ export default function Nav({ entity_id }) {
 									alt=""
 								/>
 							</div>
-						</div>
+						</div> */}
 						<ShareDropdown />
 
-						<Link
+						{/* <Link
 							to={`/chat/resource/e/${entity_id}/g/${group_id}?rand=${Math.random()}`}
 							className=" bg-gray-100 flex flex-col items-center rounded-full p-2 cursor-pointer relative"
 						>
@@ -460,7 +460,7 @@ export default function Nav({ entity_id }) {
 								</div>
 							</div>
 							<ChatBubbleLeftEllipsisIcon className="h-5 w-5 text-gray-500" />
-						</Link>
+						</Link> */}
 					</div>
 				</div>
 

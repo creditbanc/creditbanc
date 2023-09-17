@@ -417,6 +417,14 @@ const Entity = () => {
 				<div className="flex flex-col text-sm gap-y-2 py-2">
 					<div className="flex flex-row gap-x-2">
 						<Link
+							to={`/home/resource/e/${entity.id}/g/${entity.group_id}`}
+						>
+							Dashboard
+						</Link>
+					</div>
+
+					<div className="flex flex-row gap-x-2">
+						<Link
 							to={`/credit/report/business/experian/overview/resource/e/${entity.id}/g/${entity.group_id}`}
 						>
 							Intelliscore business credit report
