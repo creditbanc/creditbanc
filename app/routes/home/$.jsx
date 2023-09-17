@@ -35,6 +35,7 @@ import {
 	useOnboardingStore,
 	default_onboard_state,
 } from "~/stores/useOnboardingStore";
+import { encode } from "js-base64";
 
 export const loader = async ({ request }) => {
 	let url = new URL(request.url);
@@ -59,6 +60,12 @@ export const loader = async ({ request }) => {
 	let business_info_response = await axios({
 		method: "get",
 		url: `${url.origin}/credit/report/business/api/company/resource/e/${entity_id}/g/${group_id}`,
+		withCredentials: true,
+		headers: {
+			cookie: `creditbanc_session=${encode(
+				JSON.stringify({ entity_id })
+			)}`,
+		},
 	});
 
 	let { data: business = {} } = business_info_response;

@@ -28,6 +28,7 @@ import axios from "axios";
 import { useEffect } from "react";
 import { create_role_config } from "~/api/authorization";
 const cb_logo_3 = "/images/logos/cb_logo_3.png";
+import { encode } from "js-base64";
 
 export const useCompanyStore = create((set) => ({
 	company: {},
@@ -59,6 +60,12 @@ export const loader = async ({ request }) => {
 	let business_info_response = await axios({
 		method: "get",
 		url: `${origin}/credit/report/business/api/company/resource/e/${entity_id}/g/${group_id}`,
+		withCredentials: true,
+		headers: {
+			cookie: `creditbanc_session=${encode(
+				JSON.stringify({ entity_id })
+			)}`,
+		},
 	});
 
 	let { data: business = {} } = business_info_response;
@@ -269,6 +276,12 @@ const Company = ({ group_id }) => {
 			let business_info_response = await axios({
 				method: "get",
 				url: `${origin}/credit/report/business/api/company/resource/e/${entity_id}/g/${group_id}`,
+				withCredentials: true,
+				headers: {
+					cookie: `creditbanc_session=${encode(
+						JSON.stringify({ entity_id })
+					)}`,
+				},
 			});
 
 			let { data: business = {} } = business_info_response;
@@ -298,6 +311,12 @@ const Company = ({ group_id }) => {
 			let business_info_response = await axios({
 				method: "get",
 				url: `${origin}/credit/report/business/api/company/resource/e/${entity_id}/g/${group_id}`,
+				withCredentials: true,
+				headers: {
+					cookie: `creditbanc_session=${encode(
+						JSON.stringify({ entity_id })
+					)}`,
+				},
 			});
 
 			let { data: business = {} } = business_info_response;

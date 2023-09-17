@@ -10,6 +10,7 @@ import {
 	concatMap,
 	tap,
 	take,
+	catchError,
 } from "rxjs/operators";
 import {
 	from,
@@ -19,6 +20,7 @@ import {
 	of as rxof,
 	iif,
 	throwError,
+	merge,
 } from "rxjs";
 import { fold, ifEmpty, ifFalse } from "~/utils/operators";
 import { is_authorized_f } from "~/api/auth";
@@ -70,16 +72,6 @@ const credit_report = subject.pipe(
 			)
 		);
 
-		let redirect_new_report = entity_group_id.pipe(
-			concatMap(({ entity_id, group_id }) =>
-				throwError(() =>
-					Response.redirect(
-						`${url.origin}/credit/business/new/resource/e/${entity_id}/g/${group_id}`
-					)
-				)
-			)
-		);
-
 		let is_authorized = entity_group_id.pipe(
 			concatMap(({ entity_id, group_id }) =>
 				is_authorized_f(entity_id, group_id, "credit", "read")
@@ -89,15 +81,32 @@ const credit_report = subject.pipe(
 
 		let application_id = group_id.pipe(
 			concatMap(get_credit_report),
-			concatMap(ifEmpty(redirect_new_report)),
-			rxmap(pipe(head, get("application_id")))
+			concatMap(ifEmpty(throwError(() => undefined))),
+			rxmap(pipe(head, get("application_id"))),
+			catchError((error) => {
+				if (error == undefined) {
+					return rxof(undefined);
+				} else {
+					return throwError(() => error);
+				}
+			})
 		);
 
-		let $report = application_id.pipe(
+		let report = application_id.pipe(
+			rxfilter((value) => value !== undefined),
 			concatMap(LendflowExternal.get_lendflow_report),
 			rxmap(pipe(get("data", "data"))),
 			rxmap((report) => new LendflowInternal(report))
 		);
+
+		let empty_report = application_id.pipe(
+			rxfilter((value) => value === undefined),
+			rxmap(() => ({
+				business_info: () => ({}),
+			}))
+		);
+
+		let $report = merge(report, empty_report);
 
 		let business_info = $report.pipe(
 			rxmap((report) => report.business_info())

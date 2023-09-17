@@ -35,7 +35,7 @@ import { DocumentDuplicateIcon, LinkIcon } from "@heroicons/react/24/outline";
 import { get_collection, get_doc, set_doc } from "~/utils/firebase";
 import axios from "axios";
 import { is_authorized_f } from "~/api/auth";
-import { encode, decode } from "js-base64";
+import { encode } from "js-base64";
 
 export const action = async ({ request }) => {
 	var form = await request.formData();
