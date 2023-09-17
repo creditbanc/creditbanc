@@ -43,6 +43,7 @@ import { Link, useLoaderData } from "@remix-run/react";
 import { create } from "zustand";
 import { truncate } from "~/utils/helpers";
 import { useEffect } from "react";
+import moment from "moment";
 
 const useStateStore = create((set) => ({
 	entities: [],
@@ -59,6 +60,7 @@ const loader_data = subject.pipe(
 		let entities = from(
 			get_collection({
 				path: ["entity"],
+				// orderBy: [{ field: "created_at", direction: "desc" }],
 			})
 		).pipe(
 			rxmap(
@@ -70,6 +72,7 @@ const loader_data = subject.pipe(
 						"email",
 						"plan_id",
 						"roles",
+						"created_at",
 					])
 				)
 			),
@@ -137,6 +140,9 @@ const EntitiesTableHeader = () => {
 			<div className="flex flex-col min-w-[200px] border-b pb-3 bg-white ">
 				email
 			</div>
+			<div className="flex flex-col min-w-[200px] border-b pb-3 bg-white ">
+				created
+			</div>
 		</div>
 	);
 };
@@ -172,6 +178,12 @@ const EntitiesTable = () => {
 						</div>
 						<div className="flex flex-col min-w-[200px] border-b py-2 group-hover:bg-gray-100">
 							{entity.email}
+						</div>
+						<div className="flex flex-col min-w-[200px] border-b py-2 group-hover:bg-gray-100">
+							{entity.created_at &&
+								moment(
+									new Date(entity.created_at.seconds * 1000)
+								).format("MM-DD-YYYY")}
 						</div>
 					</div>
 				))

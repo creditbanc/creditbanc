@@ -7,6 +7,7 @@ import {
 	onSnapshot,
 	orderBy,
 	updateDoc,
+	serverTimestamp,
 } from "firebase/firestore";
 import {
 	doc,
@@ -41,6 +42,7 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 export const storage = getStorage(app);
 export const firestore = getFirestore(app);
+export const server_timestamp = serverTimestamp;
 
 let fire_cursors = {
 	startAt: fireStartAt,
@@ -192,16 +194,17 @@ export const get_doc_listener = (path, callback) => {
 
 export const set_doc = async (path, data, merge = false) => {
 	if (merge) {
-		return await setDoc(doc(firestore, ...path), data, { merge: true });
+		return await setDoc(
+			doc(firestore, ...path),
+			{ ...data, timestamp: server_timestamp() },
+			{ merge: true }
+		);
 	} else {
 		return await setDoc(doc(firestore, ...path), data);
 	}
 };
 
 export const update_doc = async (path, data) => {
-	console.log("update_doc");
-	console.log(path);
-	console.log(data);
 	return await updateDoc(doc(firestore, ...path), data);
 };
 

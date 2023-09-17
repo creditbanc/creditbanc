@@ -1,5 +1,5 @@
 import { v4 as uuidv4 } from "uuid";
-import { set_doc } from "~/utils/firebase";
+import { server_timestamp, set_doc } from "~/utils/firebase";
 
 export const create_role_config = async ({ group_id, entity_id, name }) => {
 	let role_id = group_id + entity_id;
@@ -11,6 +11,7 @@ export const create_role_config = async ({ group_id, entity_id, name }) => {
 		role_id,
 		id: config_id,
 		name,
+		created_at: server_timestamp(),
 	};
 
 	await set_doc(["role_configs", config_id], role);

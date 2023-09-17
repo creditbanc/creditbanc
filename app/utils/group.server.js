@@ -18,7 +18,7 @@ import {
 } from "./resource.server";
 import { inspect, trim } from "./helpers";
 import { create as create_role } from "./role.server";
-import { get_collection, get_doc, set_doc } from "./firebase";
+import { get_collection, get_doc, server_timestamp, set_doc } from "./firebase";
 import { v4 as uuidv4 } from "uuid";
 
 // const inspect = (obj) => {
@@ -36,6 +36,7 @@ export const create_partition = async ({ entity_id }) => {
 		entity_id,
 		type: "partition",
 		model: "group",
+		created_at: server_timestamp(),
 	};
 
 	await set_doc(["group", partition_id], payload);
