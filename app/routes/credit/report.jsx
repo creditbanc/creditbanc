@@ -160,9 +160,9 @@ const SubNav = () => {
 export default function Report() {
 	return (
 		<div className="flex flex-col w-full h-full bg-gray-50 overflow-hidden">
-			<div>
+			{/* <div>
 				<SubNav />
-			</div>
+			</div> */}
 			<div className="flex flex-col w-full h-full overflow-hidden p-5">
 				<Outlet />
 			</div>
