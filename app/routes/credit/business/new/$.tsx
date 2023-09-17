@@ -168,14 +168,6 @@ const new_lendflow_application = subject.pipe(
 
 		let $group_id = rxof(get_group_id(request.url));
 
-		let fake_response = {
-			data: {
-				data: {
-					application_id: "8ff74aef-4a97-49ea-b0a2-7798c466a27b",
-				},
-			},
-		};
-
 		return from($formData).pipe(
 			concatMap((form) =>
 				from_validations(validate_form(lendflow_validator, form))

@@ -716,8 +716,16 @@ const NewBusinessReportForm = () => {
 	const onSubmitNewBusinessReport = () => {
 		console.log("onSubmitNewBusinessReport");
 
+		let { business_start_date, ...rest } = form;
+		let business_start_date_string = `${business_start_date.year}-${business_start_date.month}-${business_start_date.day}`;
+
+		let payload = {
+			business_start_date: business_start_date_string,
+			...rest,
+		};
+
 		fetcher.submit(
-			{ payload: JSON.stringify(form) },
+			{ payload: JSON.stringify(payload) },
 			{
 				method: "post",
 				action: "/credit/business/new",
