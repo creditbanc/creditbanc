@@ -1128,12 +1128,12 @@ export default function Home() {
 						)}
 						<HeadingTwo />
 
-						<div className="flex flex-col lg:flex-row gap-x-5 gap-y-3 lg:space-y-0">
+						<div className="flex flex-col w-full">
 							{business_report_is_empty && (
 								<NewBusinessReportForm />
 							)}
 							{!business_report_is_empty && (
-								<div className="flex flex-col w-full">
+								<div className="flex flex-col lg:flex-row gap-x-5 gap-y-3 lg:space-y-0">
 									<div className="flex flex-col w-full">
 										<BusinessCredit />
 									</div>

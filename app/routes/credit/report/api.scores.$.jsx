@@ -5,7 +5,7 @@ import { Lendflow } from "~/data/lendflow";
 import { get_file_id, get_group_id, inspect } from "~/utils/helpers";
 import { get_session_entity_id, get_user_id } from "~/utils/auth.server";
 import { get_collection, get_doc, set_doc, update_doc } from "~/utils/firebase";
-import { head, pipe, identity, curry, defaultTo, pick } from "ramda";
+import { head, pipe, identity, curry, defaultTo, pick, hasPath } from "ramda";
 import { LendflowExternal, LendflowInternal } from "~/utils/lendflow.server";
 import { get } from "shades";
 import {
@@ -232,7 +232,8 @@ const credit_scores = subject.pipe(
 		);
 
 		let business_report_is_empty = $business_report.pipe(
-			rxmap((report) => report.is_empty())
+			rxmap((report) => report.is_empty()),
+			catchError((error) => rxof(false))
 		);
 
 		return forkJoin({
