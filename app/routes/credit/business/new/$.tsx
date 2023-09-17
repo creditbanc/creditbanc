@@ -249,7 +249,7 @@ const credit_report = subject.pipe(
 );
 
 export const action = async ({ request }) => {
-	console.log("new_business_credit_action");
+	console.log("credit.business.new.action");
 
 	const on_success = async () => {
 		console.log("credit.business.new.action.success");
@@ -268,7 +268,7 @@ export const action = async ({ request }) => {
 
 	const on_error = (error) => {
 		console.log("credit.business.new.action.error");
-		// console.log(error);
+		console.log(error);
 		subject.next({
 			id: "new_application_response",
 			next: () => json_response(error),

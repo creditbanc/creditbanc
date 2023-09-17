@@ -1,5 +1,11 @@
 import { ChevronRightIcon, ListBulletIcon } from "@heroicons/react/20/solid";
-import { Link, useLocation } from "@remix-run/react";
+import {
+	Form,
+	Link,
+	useActionData,
+	useFetcher,
+	useLocation,
+} from "@remix-run/react";
 import { get_session_entity_id, get_user_id } from "~/utils/auth.server";
 import {
 	capitalize,
@@ -36,6 +42,42 @@ import {
 	default_onboard_state,
 } from "~/stores/useOnboardingStore";
 import { encode } from "js-base64";
+import { create } from "zustand";
+import { mod } from "shades";
+
+const useNewBusinessReportFormStore = create((set) => ({
+	form: {
+		basic_info: {
+			first_name: "",
+			last_name: "",
+			email_address: "",
+			telephone: "",
+			doing_business_as: "",
+		},
+		business_address: {
+			address_line: "",
+			address_line2: "",
+			city: "",
+			state: "",
+			country: "US",
+			zip: "",
+		},
+		business_start_date: {
+			month: "",
+			day: "",
+			year: "",
+		},
+		business_entity: "business_entity_type_1",
+		business_legal_name: "",
+		employee_identification_number: "",
+		terms_of_service: true,
+		requested_products: ["experian_intelliscore"],
+	},
+	set_state: (path, value) =>
+		set((state) => pipe(mod(...path)(() => value))(state)),
+	setForm: (path, value) =>
+		set((state) => pipe(mod("form", ...path)(() => value))(state)),
+}));
 
 export const loader = async ({ request }) => {
 	let url = new URL(request.url);
@@ -697,6 +739,23 @@ const Notifications = () => {
 };
 
 const NewBusinessReportForm = () => {
+	let form = useNewBusinessReportFormStore((state) => state.form);
+	let setForm = useNewBusinessReportFormStore((state) => state.setForm);
+	const fetcher = useFetcher();
+	const error = fetcher.data;
+
+	const onSubmitNewBusinessReport = () => {
+		console.log("onSubmitNewBusinessReport");
+
+		fetcher.submit(
+			{ payload: JSON.stringify(form) },
+			{
+				method: "post",
+				action: "/credit/business/new",
+			}
+		);
+	};
+
 	return (
 		<div className="flex flex-col w-full border rounded bg-white p-5">
 			<div className="flex flex-col w-full my-2">
@@ -710,7 +769,19 @@ const NewBusinessReportForm = () => {
 								name=""
 								id=""
 								placeholder="first name"
+								value={form.basic_info.first_name}
+								onChange={(e) =>
+									setForm(
+										["basic_info", "first_name"],
+										e.target.value
+									)
+								}
 							/>
+							{error?.basic_info?.first_name == false && (
+								<div className="text-xs text-red-500 py-1">
+									First name is required
+								</div>
+							)}
 						</div>
 						<div className="flex flex-col w-[50%]">
 							<input
@@ -720,6 +791,11 @@ const NewBusinessReportForm = () => {
 								id=""
 								placeholder="last name"
 							/>
+							{error?.basic_info?.last_name == false && (
+								<div className="text-xs text-red-500 py-1">
+									Last name is required
+								</div>
+							)}
 						</div>
 					</div>
 					<div className="flex flex-row">
@@ -731,6 +807,11 @@ const NewBusinessReportForm = () => {
 								id=""
 								placeholder="email"
 							/>
+							{error?.basic_info?.email_address == false && (
+								<div className="text-xs text-red-500 py-1">
+									Email is required
+								</div>
+							)}
 						</div>
 					</div>
 					<div className="flex flex-row">
@@ -742,6 +823,11 @@ const NewBusinessReportForm = () => {
 								id=""
 								placeholder="telephone"
 							/>
+							{error?.basic_info?.telephone == false && (
+								<div className="text-xs text-red-500 py-1">
+									Telephone is required
+								</div>
+							)}
 						</div>
 					</div>
 				</div>
@@ -758,6 +844,11 @@ const NewBusinessReportForm = () => {
 								id=""
 								placeholder="business legal name"
 							/>
+							{error?.business_legal_name == false && (
+								<div className="text-xs text-red-500 py-1">
+									Business name is required
+								</div>
+							)}
 						</div>
 					</div>
 					<div className="flex flex-row">
@@ -780,6 +871,11 @@ const NewBusinessReportForm = () => {
 								id=""
 								placeholder="business type"
 							/>
+							{error?.business_entity == false && (
+								<div className="text-xs text-red-500 py-1">
+									Business type is required
+								</div>
+							)}
 						</div>
 					</div>
 					<div className="flex flex-row">
@@ -791,6 +887,11 @@ const NewBusinessReportForm = () => {
 								id=""
 								placeholder="ein"
 							/>
+							{error?.employee_identification_number == false && (
+								<div className="text-xs text-red-500 py-1">
+									Employee identification number is required
+								</div>
+							)}
 						</div>
 					</div>
 				</div>
@@ -807,6 +908,11 @@ const NewBusinessReportForm = () => {
 								id=""
 								placeholder="street address"
 							/>
+							{error?.business_address?.address_line == false && (
+								<div className="text-xs text-red-500 py-1">
+									Street address is required
+								</div>
+							)}
 						</div>
 					</div>
 					<div className="flex flex-row gap-x-2">
@@ -818,6 +924,11 @@ const NewBusinessReportForm = () => {
 								id=""
 								placeholder="city"
 							/>
+							{error?.business_address?.city == false && (
+								<div className="text-xs text-red-500 py-1">
+									City is required
+								</div>
+							)}
 						</div>
 						<div className="flex flex-col w-1/3">
 							<input
@@ -827,6 +938,11 @@ const NewBusinessReportForm = () => {
 								id=""
 								placeholder="state/province"
 							/>
+							{error?.business_address?.state == false && (
+								<div className="text-xs text-red-500 py-1">
+									State / Province is required
+								</div>
+							)}
 						</div>
 						<div className="flex flex-col w-1/3">
 							<input
@@ -836,12 +952,20 @@ const NewBusinessReportForm = () => {
 								id=""
 								placeholder="zip/postal code"
 							/>
+							{error?.business_address?.zip == false && (
+								<div className="text-xs text-red-500 py-1">
+									Zip / Postal code is required
+								</div>
+							)}
 						</div>
 					</div>
 				</div>
 			</div>
 			<div className="flex flex-col w-full my-2">
-				<div className="flex flex-col w-full items-center justify-center py-2 rounded cursor-pointer bg-green-300 text-white">
+				<div
+					className="flex flex-col w-full items-center justify-center py-2 rounded cursor-pointer bg-green-300 text-white"
+					onClick={onSubmitNewBusinessReport}
+				>
 					Submit
 				</div>
 			</div>
