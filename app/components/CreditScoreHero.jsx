@@ -3,22 +3,22 @@ import CreditScoreDoughnut from "~/components/CreditScoreDoughnut";
 import { useLayoutStore } from "~/stores/useLayoutStore";
 import { Carousel } from "antd";
 
-const Single = ({ scores }) => {
+const Single = ({ experian, equifax, transunion }) => {
 	const [index, setIndex] = useState(0);
 	const [score, setScore] = useState("");
 	const ref = useRef(null);
 
 	useEffect(() => {
 		if (index == 0) {
-			setScore(scores.experian);
+			setScore(experian);
 		}
 
 		if (index == 1) {
-			setScore(scores.equifax);
+			setScore(equifax);
 		}
 
 		if (index == 2) {
-			setScore(scores.transunion);
+			setScore(transunion);
 		}
 	}, [index]);
 
@@ -129,34 +129,34 @@ const Single = ({ scores }) => {
 	);
 };
 
-const Triple = ({ scores }) => {
+const Triple = ({ experian, equifax, transunion }) => {
 	return (
 		<div className="sm:flex sm:flex-row sm:justify-around">
 			<CreditScoreDoughnut
 				bureau={"Experian"}
 				scoreClassNames="sm:text-3xl md:text-4xl lg:text-5xl"
 				bureauTitleClassNames="sm:text-base sm:text-l"
-				score={scores.experian}
+				score={experian}
 			/>
 			<div className="mx-4"></div>
 			<CreditScoreDoughnut
 				bureau={"Equifax"}
 				scoreClassNames="sm:text-3xl md:text-4xl lg:text-5xl"
 				bureauTitleClassNames="sm:text-base sm:text-l"
-				score={scores.equifax}
+				score={equifax}
 			/>
 			<div className="mx-4"></div>
 			<CreditScoreDoughnut
 				bureau={"Transunion"}
 				scoreClassNames="sm:text-3xl md:text-4xl lg:text-5xl"
 				bureauTitleClassNames="sm:text-base sm:text-l"
-				score={scores.transunion}
+				score={transunion}
 			/>
 		</div>
 	);
 };
 
-export default function CreditScoreHero({ report, scores }) {
+export default function CreditScoreHero({ experian, equifax, transunion }) {
 	let content_width = useLayoutStore((state) => state.content_width);
 	let [isMobile, setIsMobile] = useState(true);
 
@@ -170,7 +170,19 @@ export default function CreditScoreHero({ report, scores }) {
 
 	return (
 		<div className="overflow-hidden">
-			{isMobile ? <Single scores={scores} /> : <Triple scores={scores} />}
+			{isMobile ? (
+				<Single
+					experian={experian}
+					equifax={equifax}
+					transunion={transunion}
+				/>
+			) : (
+				<Triple
+					experian={experian}
+					equifax={equifax}
+					transunion={transunion}
+				/>
+			)}
 		</div>
 	);
 }

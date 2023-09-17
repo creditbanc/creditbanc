@@ -58,37 +58,6 @@ import { is_authorized_f } from "~/api/auth";
 import { ArrayExternal } from "~/api/external/Array";
 import { ArrayInternal } from "~/api/internal/Array";
 
-const get_scores = (report) => {
-	let { plan_id } = report;
-
-	if (plan_id == "essential") {
-		let { data } = report;
-
-		let payload = {
-			experian: data.score,
-			equifax: 0,
-			transunion: 0,
-		};
-
-		return payload;
-	}
-
-	if (plan_id !== "essential") {
-		let { data } = report;
-		let experian_score = Array.experian.score(data);
-		let equifax_score = Array.equifax.score(data);
-		let transunion_score = Array.transunion.score(data);
-
-		let payload = {
-			experian: experian_score,
-			equifax: equifax_score,
-			transunion: transunion_score,
-		};
-
-		return payload;
-	}
-};
-
 const subject = new Subject();
 
 const credit_scores = subject.pipe(
@@ -116,19 +85,6 @@ const credit_scores = subject.pipe(
 					queries: personal_credit_report_queries(group_id),
 				})
 			);
-
-		let business_credit_report_queries = (group_id) => [
-			{
-				param: "group_id",
-				predicate: "==",
-				value: group_id,
-			},
-			{
-				param: "type",
-				predicate: "==",
-				value: "business_credit_report",
-			},
-		];
 
 		let group_id = rxof(get_group_id(url.pathname));
 		let entity_id = from(get_session_entity_id(request));
@@ -247,28 +203,28 @@ const credit_scores = subject.pipe(
 			first_name,
 			last_name,
 		}).pipe(
-			rxmap(
-				({
-					experian_personal_score,
-					equifax_personal_score,
-					transunion_personal_score,
-					personal_report,
-					first_name,
-					last_name,
-				}) => ({
-					scores: {
-						experian: experian_personal_score,
-						equifax: equifax_personal_score,
-						transunion: transunion_personal_score,
-					},
-					business: {},
-					report_plan_id: "builder",
-					plan_id: "builder",
-					report: personal_report,
-					first_name,
-					last_name,
-				})
-			),
+			// rxmap(
+			// 	({
+			// 		experian_personal_score,
+			// 		equifax_personal_score,
+			// 		transunion_personal_score,
+			// 		personal_report,
+			// 		first_name,
+			// 		last_name,
+			// 	}) => ({
+			// 		scores: {
+			// 			experian: experian_personal_score,
+			// 			equifax: equifax_personal_score,
+			// 			transunion: transunion_personal_score,
+			// 		},
+			// 		business: {},
+			// 		report_plan_id: "builder",
+			// 		plan_id: "builder",
+			// 		report: personal_report,
+			// 		first_name,
+			// 		last_name,
+			// 	})
+			// ),
 			tap((value) => {
 				console.log("credit.report.personal.tap");
 				console.log(value);
@@ -374,13 +330,13 @@ export const loader = async ({ request }) => {
 
 export default function CreditReport() {
 	var {
-		report,
-		scores,
 		plan_id,
 		report_plan_id,
-		business,
 		first_name,
 		last_name,
+		experian_personal_score: experian,
+		equifax_personal_score: equifax,
+		transunion_personal_score: transunion,
 	} = useLoaderData() ?? {};
 	const [target, setTarget] = useState();
 	const elmSize = useElmSize(target);
@@ -390,8 +346,6 @@ export default function CreditReport() {
 	let [isMobile, setIsMobile] = useState(true);
 	const pageRef = useRef(null);
 	let { set_coordinates } = useReportPageLayoutStore();
-
-	let { experian, equifax, transunion } = scores;
 
 	useEffect(() => {
 		if (content_width > 640) {
@@ -472,8 +426,9 @@ export default function CreditReport() {
 
 									<div className="flex flex-col w-full">
 										<CreditScoreHero
-											report={report}
-											scores={scores}
+											experian={experian}
+											equifax={equifax}
+											transunion={transunion}
 										/>
 									</div>
 								</div>
