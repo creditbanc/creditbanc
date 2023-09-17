@@ -111,25 +111,48 @@ const Companies = () => {
 	);
 };
 
+// let navigation = [
+// 	{
+// 		name: "Cashflow",
+// 		href: ({ entity_id, group_id }) =>
+// 			`/financial/cashflow/resource/e/${entity_id}/g/${group_id}`,
+// 		current: (pathname) => is_location("/financial", pathname),
+// 	},
+// 	{
+// 		name: "Vault",
+// 		href: ({ entity_id, group_id }) =>
+// 			`/vault/files/resource/e/${entity_id}/g/${group_id}`,
+// 		current: (pathname) => is_location("/vault", pathname),
+// 	},
+// 	{
+// 		name: "University",
+// 		href: ({ entity_id, group_id }) =>
+// 			`/university/courses/resource/e/${entity_id}/g/${group_id}`,
+// 		current: (pathname) => is_location("/university", pathname),
+// 	},
+// ];
+
 let navigation = [
-	// {
-	// 	name: "Cashflow",
-	// 	href: ({ entity_id, group_id }) =>
-	// 		`/financial/cashflow/resource/e/${entity_id}/g/${group_id}`,
-	// 	current: (pathname) => is_location("/financial", pathname),
-	// },
-	// {
-	// 	name: "Vault",
-	// 	href: ({ entity_id, group_id }) =>
-	// 		`/vault/files/resource/e/${entity_id}/g/${group_id}`,
-	// 	current: (pathname) => is_location("/vault", pathname),
-	// },
-	// {
-	// 	name: "University",
-	// 	href: ({ entity_id, group_id }) =>
-	// 		`/university/courses/resource/e/${entity_id}/g/${group_id}`,
-	// 	current: (pathname) => is_location("/university", pathname),
-	// },
+	{
+		name: "Intelliscore",
+		href: ({ entity_id, group_id }) =>
+			`/credit/report/business/experian/overview/resource/e/${entity_id}/g/${group_id}`,
+		current: (pathname) =>
+			is_location("/credit/report/business/experian", pathname),
+	},
+	{
+		name: "Dun & Bradstreet",
+		href: ({ entity_id, group_id }) =>
+			`/credit/report/business/dnb/overview/resource/e/${entity_id}/g/${group_id}`,
+		current: (pathname) =>
+			is_location("/credit/report/business/dnb", pathname),
+	},
+	{
+		name: "Personal",
+		href: ({ entity_id, group_id }) =>
+			`/credit/report/personal/personal/resource/e/${entity_id}/g/${group_id}`,
+		current: (pathname) => is_location("/credit/report/personal", pathname),
+	},
 ];
 
 const ShareDropdown = () => {
@@ -401,7 +424,7 @@ export default function Nav({ entity_id }) {
 					<div className="flex flex-col justify-center">
 						{!is_companies_dashboard && (
 							<div className="flex flex-row space-x-3 text-xs lg:text-sm">
-								<CreditDropdown />
+								{/* <CreditDropdown /> */}
 								{pipe(
 									mapIndexed((item, key) => (
 										<Link
