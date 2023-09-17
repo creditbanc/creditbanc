@@ -37,8 +37,12 @@ const is_super_p = async (entity_id) => {
 };
 
 export const get_permissions = async (entity_id, group_id) => {
+	// console.log("get_permissions");
+	// console.log(entity_id);
+	// console.log(group_id);
 	// check if is an admin or super
-	let is_super = await is_super_p(entity_id);
+	// let is_super = await is_super_p(entity_id);
+	let is_super = false;
 	if (is_super) {
 		return Infinity;
 	}
@@ -103,8 +107,8 @@ export const is_authorized_f = async (
 ) => {
 	let role = await get_permissions(entity_id, group_id);
 
-	console.log("api.auth.is_authorized_f");
-	console.log(role);
+	// console.log("api.auth.is_authorized_f");
+	// console.log(role);
 
 	if (role == Infinity) {
 		return true;

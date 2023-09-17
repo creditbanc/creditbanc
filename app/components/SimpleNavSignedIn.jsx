@@ -11,7 +11,7 @@ import {
 } from "~/utils/helpers";
 import { Menu, Transition } from "@headlessui/react";
 import { ChevronDownIcon } from "@heroicons/react/20/solid";
-import { map, pipe, set } from "ramda";
+import { always, isEmpty, map, pipe, set } from "ramda";
 import {
 	ChatBubbleLeftEllipsisIcon,
 	Cog6ToothIcon,
@@ -34,6 +34,17 @@ import Modal from "~/components/Modal";
 import { useModalStore } from "~/hooks/useModal";
 import avatars from "~/data/avatars";
 import { get_partition_id } from "~/utils/group.server";
+import { is_authorized_f } from "~/api/auth";
+import {
+	concatMap,
+	filter as rxfilter,
+	from,
+	of as rxof,
+	tap,
+	map as rxmap,
+	merge,
+	forkJoin,
+} from "rxjs";
 
 export const useRolesStore = create((set) => ({
 	roles: [],
@@ -155,12 +166,64 @@ let navigation = [
 	},
 ];
 
-const ShareDropdown = () => {
+let $roles = (entity_id, group_id) => {
+	const can_edit = from(
+		is_authorized_f(entity_id, group_id, "share", "edit")
+	);
+
+	const can_read = from(
+		is_authorized_f(entity_id, group_id, "share", "read")
+	);
+
+	let is_authorized = forkJoin({ can_edit, can_read });
+
+	let edit_roles = from(
+		get_collection({
+			path: ["role_configs"],
+			queries: [
+				{
+					param: "group_id",
+					predicate: "==",
+					value: group_id,
+				},
+			],
+		})
+	);
+
+	let edit_permissions = is_authorized.pipe(
+		rxfilter((value) => value.can_edit == true),
+		concatMap(() => edit_roles)
+	);
+
+	let read_permissions = is_authorized.pipe(
+		rxfilter((value) => value.can_edit == false && value.can_read == true),
+		concatMap(() => rxof([]))
+	);
+
+	let roles = merge(edit_permissions, read_permissions);
+
+	return roles.pipe(
+		tap((value) => {
+			console.log("components.SimpleNavSignedIn.tap");
+			console.log(value);
+		})
+	);
+};
+
+const ShareDropdown = ({ session_entity_id }) => {
 	let { pathname } = useLocation();
 	let entity_id = get_entity_id(pathname);
 	let group_id = get_group_id(pathname);
 	let roles = useRolesStore((state) => state.roles);
 	let set_modal = useModalStore((state) => state.set_modal);
+
+	let set_roles = useRolesStore((state) => state.set_roles);
+
+	useEffect(() => {
+		$roles(session_entity_id, group_id)
+			.pipe(tap((roles) => set_roles(["roles"], roles)))
+			.subscribe();
+	}, [group_id]);
 
 	const onCopyShareLink = (config_id, e) => {
 		e.preventDefault();
@@ -176,6 +239,24 @@ const ShareDropdown = () => {
 			id: "share_modal",
 		});
 	};
+
+	if (isEmpty(roles)) {
+		return (
+			<div className="flex flex-row divide-x bg-blue-600 text-white rounded-full px-3 py-1.5 text-sm cursor-pointer space-x-3">
+				<div
+					className="flex flex-col w-full items-center "
+					onClick={onShareModal}
+				>
+					<div className="flex flex-row space-x-2">
+						<div>
+							<UsersIcon className="h-5 w-5 text-white" />
+						</div>
+						<div>Share</div>
+					</div>
+				</div>
+			</div>
+		);
+	}
 
 	return (
 		<Menu as="div" className="relative inline-block text-left">
@@ -367,24 +448,24 @@ export default function Nav({ entity_id }) {
 	let { pathname } = location;
 	let is_companies_dashboard = is_location("/companies/dashboard", pathname);
 
-	let set_roles = useRolesStore((state) => state.set_roles);
+	// let set_roles = useRolesStore((state) => state.set_roles);
 	let set_companies = useCompaniesDropdownStore((state) => state.set_state);
 
-	useEffect(() => {
-		const get_roles = async () => {
-			let roles_response = await get_collection({
-				path: ["role_configs"],
-				queries: [
-					{ param: "entity_id", predicate: "==", value: entity_id },
-					{ param: "group_id", predicate: "==", value: group_id },
-				],
-			});
+	// useEffect(() => {
+	// 	const get_roles = async () => {
+	// 		let roles_response = await get_collection({
+	// 			path: ["role_configs"],
+	// 			queries: [
+	// 				{ param: "entity_id", predicate: "==", value: entity_id },
+	// 				{ param: "group_id", predicate: "==", value: group_id },
+	// 			],
+	// 		});
 
-			set_roles(["roles"], roles_response);
-		};
+	// 		set_roles(["roles"], roles_response);
+	// 	};
 
-		get_roles();
-	}, []);
+	// 	get_roles();
+	// }, []);
 
 	useEffect(() => {
 		const get_companies = async () => {
@@ -471,7 +552,7 @@ export default function Nav({ entity_id }) {
 								/>
 							</div>
 						</div> */}
-						<ShareDropdown />
+						<ShareDropdown session_entity_id={entity_id} />
 
 						{/* <Link
 							to={`/chat/resource/e/${entity_id}/g/${group_id}?rand=${Math.random()}`}
