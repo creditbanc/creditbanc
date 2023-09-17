@@ -76,9 +76,18 @@ export const loader = async ({ request }) => {
 	let credit_scores_api_response = await axios({
 		method: "get",
 		url: `${url.origin}/credit/report/api/scores/resource/e/${entity_id}/g/${group_id}`,
+		withCredentials: true,
+		headers: {
+			cookie: `creditbanc_session=${encode(
+				JSON.stringify({ entity_id })
+			)}`,
+		},
 	});
 
 	let { data: scores } = credit_scores_api_response;
+
+	console.log("scores");
+	console.log(scores);
 
 	let payload = {
 		...scores,
@@ -687,9 +696,166 @@ const Notifications = () => {
 	);
 };
 
+const NewBusinessReportForm = () => {
+	return (
+		<div className="flex flex-col w-full border rounded bg-white p-5">
+			<div className="flex flex-col w-full my-2">
+				<div className="mb-2">Personal information</div>
+				<div className="flex flex-col gap-y-2">
+					<div className="flex flex-row gap-x-2">
+						<div className="flex flex-col w-[50%]">
+							<input
+								className="border rounded pl-2 py-1"
+								type="text"
+								name=""
+								id=""
+								placeholder="first name"
+							/>
+						</div>
+						<div className="flex flex-col w-[50%]">
+							<input
+								className="border rounded pl-2 py-1"
+								type="text"
+								name=""
+								id=""
+								placeholder="last name"
+							/>
+						</div>
+					</div>
+					<div className="flex flex-row">
+						<div className="flex flex-col w-[100%]">
+							<input
+								className="border rounded pl-2 py-1"
+								type="text"
+								name=""
+								id=""
+								placeholder="email"
+							/>
+						</div>
+					</div>
+					<div className="flex flex-row">
+						<div className="flex flex-col w-[100%]">
+							<input
+								className="border rounded pl-2 py-1"
+								type="text"
+								name=""
+								id=""
+								placeholder="telephone"
+							/>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div className="flex flex-col w-full my-2">
+				<div className="mb-2">Business information</div>
+				<div className="flex flex-col gap-y-2">
+					<div className="flex flex-row">
+						<div className="flex flex-col w-[100%]">
+							<input
+								className="border rounded pl-2 py-1"
+								type="text"
+								name=""
+								id=""
+								placeholder="business legal name"
+							/>
+						</div>
+					</div>
+					<div className="flex flex-row">
+						<div className="flex flex-col w-[100%]">
+							<input
+								className="border rounded pl-2 py-1"
+								type="text"
+								name=""
+								id=""
+								placeholder="dba"
+							/>
+						</div>
+					</div>
+					<div className="flex flex-row">
+						<div className="flex flex-col w-[100%]">
+							<input
+								className="border rounded pl-2 py-1"
+								type="text"
+								name=""
+								id=""
+								placeholder="business type"
+							/>
+						</div>
+					</div>
+					<div className="flex flex-row">
+						<div className="flex flex-col w-[100%]">
+							<input
+								className="border rounded pl-2 py-1"
+								type="text"
+								name=""
+								id=""
+								placeholder="ein"
+							/>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div className="flex flex-col w-full my-2">
+				<div className="mb-2">Business address information</div>
+				<div className="flex flex-col gap-y-2">
+					<div className="flex flex-row">
+						<div className="flex flex-col w-[100%]">
+							<input
+								className="border rounded pl-2 py-1"
+								type="text"
+								name=""
+								id=""
+								placeholder="street address"
+							/>
+						</div>
+					</div>
+					<div className="flex flex-row gap-x-2">
+						<div className="flex flex-col w-1/3">
+							<input
+								className="border rounded pl-2 py-1"
+								type="text"
+								name=""
+								id=""
+								placeholder="city"
+							/>
+						</div>
+						<div className="flex flex-col w-1/3">
+							<input
+								className="border rounded pl-2 py-1"
+								type="text"
+								name=""
+								id=""
+								placeholder="state/province"
+							/>
+						</div>
+						<div className="flex flex-col w-1/3">
+							<input
+								className="border rounded pl-2 py-1"
+								type="text"
+								name=""
+								id=""
+								placeholder="zip/postal code"
+							/>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div className="flex flex-col w-full my-2">
+				<div className="flex flex-col w-full items-center justify-center py-2 rounded cursor-pointer bg-green-300 text-white">
+					Submit
+				</div>
+			</div>
+		</div>
+	);
+};
+
 export default function Home() {
 	console.log("home");
-	const { plan_id = "essential", onboard: onboard_db } = useLoaderData();
+	const {
+		plan_id = "essential",
+		onboard: onboard_db,
+		business_report_is_empty,
+	} = useLoaderData();
 	let onboard = useOnboardingStore((state) => state.onboard);
 	let set_onboard = useOnboardingStore((state) => state.set_state);
 
@@ -730,18 +896,23 @@ export default function Home() {
 								<UpgradeBanner />
 							</div>
 						)}
-
 						<HeadingTwo />
 
 						<div className="flex flex-col lg:flex-row gap-x-5 gap-y-3 lg:space-y-0">
-							<div className="flex flex-col w-full">
-								<BusinessCredit />
-							</div>
-							<div className="flex flex-col w-full">
-								<PersonalCredit />
-							</div>
+							{business_report_is_empty && (
+								<NewBusinessReportForm />
+							)}
+							{!business_report_is_empty && (
+								<div className="flex flex-col w-full">
+									<div className="flex flex-col w-full">
+										<BusinessCredit />
+									</div>
+									<div className="flex flex-col w-full">
+										<PersonalCredit />
+									</div>
+								</div>
+							)}
 						</div>
-
 						<div className="flex flex-col w-full h-fit bg-white px-5 pt-5 border rounded">
 							<div className="border-b border-gray-200 pb-3 flex flex-col sticky top-0 bg-white z-10">
 								<div>

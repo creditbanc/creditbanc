@@ -174,6 +174,7 @@ const credit_scores = subject.pipe(
 				experian_score: () => 0,
 				equifax_score: () => 0,
 				transunion_score: () => 0,
+				is_empty: () => true,
 			}))
 		);
 
@@ -204,6 +205,7 @@ const credit_scores = subject.pipe(
 			rxmap(() => ({
 				dnb_score: () => 0,
 				experian_score: () => 0,
+				is_empty: () => true,
 			}))
 		);
 
@@ -229,12 +231,17 @@ const credit_scores = subject.pipe(
 			rxmap((report) => report.experian_score())
 		);
 
+		let business_report_is_empty = $business_report.pipe(
+			rxmap((report) => report.is_empty())
+		);
+
 		return forkJoin({
 			dnb_business_score,
 			experian_business_score,
 			experian_personal_score,
 			equifax_personal_score,
 			transunion_personal_score,
+			business_report_is_empty,
 		}).pipe(
 			tap((value) => {
 				console.log(`${log_route}.tap`);

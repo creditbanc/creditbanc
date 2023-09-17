@@ -336,6 +336,7 @@ export default function CreditReport() {
 	let { set_coordinates } = useReportPageLayoutStore();
 
 	first_name = tryCatch(pipe(toLower, capitalize), always(""))(first_name);
+	last_name = tryCatch(pipe(toLower, capitalize), always(""))(last_name);
 
 	useEffect(() => {
 		if (content_width > 640) {
