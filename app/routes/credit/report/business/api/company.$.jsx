@@ -62,21 +62,11 @@ const credit_report = subject.pipe(
 			group_id,
 		});
 
-		let redirect_home = entity_group_id.pipe(
-			concatMap(({ entity_id, group_id }) =>
-				throwError(() =>
-					Response.redirect(
-						`${url.origin}/home/resource/e/${entity_id}/g/${group_id}`
-					)
-				)
-			)
-		);
-
 		let is_authorized = entity_group_id.pipe(
 			concatMap(({ entity_id, group_id }) =>
 				is_authorized_f(entity_id, group_id, "credit", "read")
 			),
-			concatMap(ifFalse(redirect_home))
+			concatMap(ifFalse(throwError(() => undefined)))
 		);
 
 		let application_id = group_id.pipe(

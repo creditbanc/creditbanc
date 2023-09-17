@@ -533,7 +533,7 @@ const Notifications = () => {
 					</>
 				)}
 			</Disclosure>
-			<Disclosure defaultOpen={true}>
+			{/* <Disclosure defaultOpen={true}>
 				{({ open }) => (
 					<>
 						<Disclosure.Button className="flex w-full justify-between rounded-lg  px-4 py-2 text-left text-sm font-medium   focus:outline-none focus-visible:ring  focus-visible:ring-opacity-75">
@@ -632,7 +632,7 @@ const Notifications = () => {
 						</Disclosure.Panel>
 					</>
 				)}
-			</Disclosure>
+			</Disclosure> */}
 			<Disclosure defaultOpen={true}>
 				{({ open }) => (
 					<>
