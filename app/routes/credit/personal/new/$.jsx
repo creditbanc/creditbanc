@@ -163,7 +163,7 @@ let validator = {
 let is_valid = pipe(values, flatten, includes(false), not);
 
 export const action = async ({ request }) => {
-	console.log("new_credit_action");
+	console.log("credit.personal.new.action");
 	// let { payload: form } = await form_params(request);
 	let { plan_id, applicant } = search_params(request);
 	let is_applicant = is_applicant_p(applicant);
@@ -171,7 +171,7 @@ export const action = async ({ request }) => {
 	const entity_id = get_entity_id(request.url);
 	let form = await formData(request);
 	var payload = is_sandbox ? test_identity_three : form.payload;
-	console.log("_form");
+	console.log("credit.personal.new.action.payload");
 	console.log(payload);
 
 	let session = await getSession(request.headers.get("Cookie"));
@@ -179,7 +179,7 @@ export const action = async ({ request }) => {
 
 	let validations = validate_form(validator, payload);
 	let from_validations = is_valid(validations);
-	console.log("validations");
+	console.log("credit.personal.new.validations");
 	console.log(from_validations);
 	console.log(validations);
 
@@ -210,7 +210,7 @@ export const action = async ({ request }) => {
 
 		let response = await axios(config);
 
-		console.log("response______");
+		console.log("credit.personal.new.response");
 		console.log(response.data);
 
 		let { clientKey, authToken } = response.data;
@@ -246,16 +246,16 @@ export const action = async ({ request }) => {
 			}
 		);
 	} catch (error) {
-		console.log("error");
+		console.log("credit.personal.new.catch.error");
 		console.log(error.response.data);
 		return json({ error: error.message }, { status: 500 });
 	}
 };
 
 export const loader = async ({ request }) => {
-	console.log("new______");
+	console.log("credit.personal.new.loader");
 	const on_success = async (response) => {
-		console.log("___success___");
+		console.log("credit.personal.new.success");
 		let entity_id = await get_session_entity_id(request);
 		// let { plan_id } = await get_doc(["entity", entity_id]);
 
@@ -268,7 +268,7 @@ export const loader = async ({ request }) => {
 	};
 
 	const on_error = (error) => {
-		console.log("___error___");
+		console.log("credit.personal.new.error");
 		console.log(error);
 
 		subject.next({

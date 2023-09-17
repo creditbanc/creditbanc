@@ -175,7 +175,7 @@ const credit_report = subject.pipe(
 
 export const loader = async ({ request }) => {
 	const on_success = async (response) => {
-		console.log("___success___");
+		console.log("credit.report.personal.history.success");
 		let entity_id = await get_session_entity_id(request);
 		let { plan_id } = await get_doc(["entity", entity_id]);
 
@@ -188,7 +188,7 @@ export const loader = async ({ request }) => {
 	};
 
 	const on_error = (error) => {
-		console.log("___error___");
+		console.log("credit.report.personal.history.error");
 		console.log(error);
 
 		subject.next({

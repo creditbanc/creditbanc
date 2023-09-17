@@ -252,16 +252,13 @@ export const action = async ({ request }) => {
 	console.log("new_business_credit_action");
 
 	const on_success = async () => {
-		console.log("___success___");
+		console.log("credit.business.new.action.success");
 		let { origin } = new URL(request.url);
 
 		let entity_id = await get_session_entity_id(request);
 		let group_id = get_group_id(request.url);
 
 		let redirect_url = `${origin}/credit/report/business/experian/overview/resource/e/${entity_id}/g/${group_id}`;
-
-		console.log("redirect_url");
-		console.log(redirect_url);
 
 		subject.next({
 			id: "new_application_response",
@@ -270,7 +267,7 @@ export const action = async ({ request }) => {
 	};
 
 	const on_error = (error) => {
-		// console.log("___error___");
+		console.log("credit.business.new.action.error");
 		// console.log(error);
 		subject.next({
 			id: "new_application_response",
@@ -292,9 +289,9 @@ export const action = async ({ request }) => {
 };
 
 export const loader = async ({ request }) => {
-	console.log("new______");
+	console.log("credit.business.new.loader");
 	const on_success = async (response) => {
-		console.log("___success___");
+		console.log("credit.business.new.loader.success");
 
 		subject.next({
 			id: "credit_report_response",
@@ -303,7 +300,7 @@ export const loader = async ({ request }) => {
 	};
 
 	const on_error = (error) => {
-		console.log("___error___");
+		console.log("credit.business.new.loader.error");
 		console.log(error);
 
 		subject.next({
