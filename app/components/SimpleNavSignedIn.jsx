@@ -112,24 +112,24 @@ const Companies = () => {
 };
 
 let navigation = [
-	{
-		name: "Cashflow",
-		href: ({ entity_id, group_id }) =>
-			`/financial/cashflow/resource/e/${entity_id}/g/${group_id}`,
-		current: (pathname) => is_location("/financial", pathname),
-	},
-	{
-		name: "Vault",
-		href: ({ entity_id, group_id }) =>
-			`/vault/files/resource/e/${entity_id}/g/${group_id}`,
-		current: (pathname) => is_location("/vault", pathname),
-	},
-	{
-		name: "University",
-		href: ({ entity_id, group_id }) =>
-			`/university/courses/resource/e/${entity_id}/g/${group_id}`,
-		current: (pathname) => is_location("/university", pathname),
-	},
+	// {
+	// 	name: "Cashflow",
+	// 	href: ({ entity_id, group_id }) =>
+	// 		`/financial/cashflow/resource/e/${entity_id}/g/${group_id}`,
+	// 	current: (pathname) => is_location("/financial", pathname),
+	// },
+	// {
+	// 	name: "Vault",
+	// 	href: ({ entity_id, group_id }) =>
+	// 		`/vault/files/resource/e/${entity_id}/g/${group_id}`,
+	// 	current: (pathname) => is_location("/vault", pathname),
+	// },
+	// {
+	// 	name: "University",
+	// 	href: ({ entity_id, group_id }) =>
+	// 		`/university/courses/resource/e/${entity_id}/g/${group_id}`,
+	// 	current: (pathname) => is_location("/university", pathname),
+	// },
 ];
 
 const ShareDropdown = () => {
