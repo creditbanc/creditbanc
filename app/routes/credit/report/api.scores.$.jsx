@@ -32,9 +32,9 @@ import { is_authorized_f } from "~/api/auth";
 import { ArrayExternal } from "~/api/external/Array";
 import { ArrayInternal } from "~/api/internal/Array";
 
-const subject = new Subject();
-
 const log_route = `credit.report.api.scores`;
+
+const subject = new Subject();
 
 const credit_scores = subject.pipe(
 	rxfilter((message) => message.id == "get_credit_scores"),

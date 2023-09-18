@@ -17,14 +17,9 @@ import { keys, head, pipe, defaultTo, map, isEmpty } from "ramda";
 import { Listbox, Transition, Menu } from "@headlessui/react";
 import { ChevronUpDownIcon, ChevronDownIcon } from "@heroicons/react/20/solid";
 import copy from "copy-to-clipboard";
-import { json } from "@remix-run/node";
 import { useModalStore } from "~/hooks/useModal";
-import { get_session_entity_id } from "~/utils/auth.server";
-import { get_collection } from "~/utils/firebase";
 import { filter, mod } from "shades";
 import { create } from "zustand";
-import { $roles } from "~/components/SimpleNavSignedIn";
-import { tap } from "rxjs";
 
 export const useRolesStore = create((set) => ({
 	roles: [],
@@ -129,11 +124,10 @@ const RolesDropdown = () => {
 	);
 };
 
-export default function Invite({ session_entity_id }) {
+export default function Invite({ roles }) {
 	const location = useLocation();
 	let fetcher = useFetcher();
-	// const [roles, setRoles] = useState([]);
-	// const [selectedRole, setSelectedRole] = useState({});
+
 	const set_open = useModalStore((state) => state.set_open);
 	const [member_email, set_member_email] = useState("");
 	let [share_link, set_share_link] = useState("");
@@ -141,13 +135,9 @@ export default function Invite({ session_entity_id }) {
 	let entity_id = get_entity_id(pathname);
 	let group_id = get_group_id(pathname);
 	let set_roles = useRolesStore((state) => state.set_roles);
-	let roles = useRolesStore((state) => state.roles);
+
 	let role = useRoleStore((state) => state.role);
 	let set_role = useRoleStore((state) => state.set_state);
-
-	// const onSelectRole = (role_id) => {
-	// 	setSelectedRole(pipe(filter({ id: role_id }), head)(roles));
-	// };
 
 	const onCopyLink = () => {
 		// copy(shareLink + "?role=" + selectedRole);
@@ -171,10 +161,8 @@ export default function Invite({ session_entity_id }) {
 	}, [roles]);
 
 	useEffect(() => {
-		$roles(session_entity_id, group_id)
-			.pipe(tap((roles) => set_roles(["roles"], roles)))
-			.subscribe();
-	}, []);
+		set_roles(["roles"], roles);
+	}, [roles]);
 
 	const onInvite = async () => {
 		console.log("onInvite");
