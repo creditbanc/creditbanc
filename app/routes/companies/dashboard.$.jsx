@@ -280,20 +280,20 @@ const navigation = [
 		icon: UserCircleIcon,
 		current: false,
 	},
-	{
-		name: "Cashflow",
-		href: ({ entity_id, group_id }) =>
-			`/financial/cashflow/resource/e/${entity_id}/g/${group_id}`,
-		icon: CurrencyDollarIcon,
-		current: false,
-	},
-	{
-		name: "Vault",
-		href: ({ entity_id, group_id }) =>
-			`/vault/files/resource/e/${entity_id}/g/${group_id}`,
-		icon: FolderOpenIcon,
-		current: false,
-	},
+	// {
+	// 	name: "Cashflow",
+	// 	href: ({ entity_id, group_id }) =>
+	// 		`/financial/cashflow/resource/e/${entity_id}/g/${group_id}`,
+	// 	icon: CurrencyDollarIcon,
+	// 	current: false,
+	// },
+	// {
+	// 	name: "Vault",
+	// 	href: ({ entity_id, group_id }) =>
+	// 		`/vault/files/resource/e/${entity_id}/g/${group_id}`,
+	// 	icon: FolderOpenIcon,
+	// 	current: false,
+	// },
 ];
 
 const QuickLinks = () => {
@@ -501,8 +501,9 @@ const Company = ({ company = {} }) => {
 				<div>
 					<FolderIcon className="w-[40px] h-[40px] text-blue-600" />
 				</div>
-				<div className="flex flex-col cursor-pointer bg-white p-1 rounded-full border">
-					<EllipsisHorizontalIcon className="w-4 h-4 text-gray-400" />
+				<div className="flex flex-col cursor-pointer bg-white p-1 rounded-full ">
+					<LinkIcon className="w-5 h-5 text-blue-500" />
+					{/* <EllipsisHorizontalIcon className="w-4 h-4 text-gray-400" /> */}
 				</div>
 			</div>
 			<div className="flex flex-col">
@@ -512,7 +513,7 @@ const Company = ({ company = {} }) => {
 				</div>
 				<div className="text-sm">{company.email}</div>
 			</div>
-			<div className="flex flex-col">
+			{/* <div className="flex flex-col">
 				<div className="flex flex-row justify-between items-center">
 					<div>
 						<Members />
@@ -522,7 +523,7 @@ const Company = ({ company = {} }) => {
 						<LinkIcon className="w-5 h-5 text-blue-500" />
 					</div>
 				</div>
-			</div>
+			</div> */}
 		</div>
 	);
 };
