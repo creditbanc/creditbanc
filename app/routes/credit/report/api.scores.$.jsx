@@ -85,13 +85,48 @@ const credit_scores = subject.pipe(
 
 		let group_id = rxof(get_group_id(url.pathname));
 
-		const update_display_token = ({ clientKey, reportKey, report_id }) => {
+		const update_display_token = ({
+			clientKey,
+			reportKey,
+			report_id,
+			displayToken,
+		}) => {
 			console.log(`${log_route}.update_display_token`);
 
-			return rxof({ clientKey, reportKey, report_id }).pipe(
+			return rxof({ clientKey, reportKey, report_id, displayToken }).pipe(
 				concatMap(() =>
-					ArrayExternal.refreshDisplayToken(clientKey, reportKey)
+					from(get_doc(["credit_reports", report_id])).pipe(
+						rxmap((report) => report.displayToken),
+						concatMap((report_display_token) => {
+							if (report_display_token == displayToken) {
+								console.log(
+									`${log_route}.update_display_token.array_update`
+								);
+								return from(
+									ArrayExternal.refreshDisplayToken(
+										clientKey,
+										reportKey
+									)
+								);
+							} else {
+								console.log(
+									`${log_route}.update_display_token.db_update`
+								);
+								return rxof(null).pipe(
+									tap(() =>
+										subject.next({
+											id: "get_credit_scores",
+											args: { request },
+										})
+									)
+								);
+							}
+						})
+					)
 				),
+				// concatMap(() =>
+				// 	ArrayExternal.refreshDisplayToken(clientKey, reportKey)
+				// ),
 				catchError((error) => {
 					console.log(`${log_route}.update_display_token.error`);
 					console.log(error);
@@ -140,7 +175,11 @@ const credit_scores = subject.pipe(
 				).pipe(
 					rxfilter((report) => report.CREDIT_RESPONSE),
 					catchError((error) => {
+						console.log(
+							`${log_route}.personal_report.status.error`
+						);
 						let status = pipe(get("response", "status"))(error);
+						console.log(status);
 
 						return rxof(status).pipe(
 							// rxfilter((status) => status == 401),
@@ -149,9 +188,9 @@ const credit_scores = subject.pipe(
 									clientKey,
 									reportKey,
 									report_id,
+									displayToken,
 								})
 							),
-
 							tap(() =>
 								subject.next({
 									id: "get_credit_scores",

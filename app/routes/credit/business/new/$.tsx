@@ -46,42 +46,28 @@ import { get_session_entity_id, get_user_id } from "~/utils/auth.server";
 import { create as create_new_report } from "~/utils/business_credit_report.server";
 import Cookies from "js-cookie";
 import { plan_product_requests } from "~/data/plan_product_requests";
-
 import { LendflowExternal, LendflowInternal } from "~/utils/lendflow.server";
-import { get_doc, set_doc } from "~/utils/firebase";
+import { get_collection, get_doc, set_doc } from "~/utils/firebase";
 import { v4 as uuidv4 } from "uuid";
 import {
-	catchError,
-	partition,
 	map as rxmap,
 	tap,
-	skip,
 	filter as rxfilter,
-	mergeMap,
-	switchMap,
 	concatMap,
-	mapTo,
 	take,
 	delay,
 } from "rxjs/operators";
 import {
 	from,
 	of as rxof,
-	BehaviorSubject,
 	Subject,
-	ReplaySubject,
 	zip,
 	lastValueFrom,
-	Observable,
-	takeLast,
-	firstValueFrom,
-	iif,
 	throwError,
 	forkJoin,
 } from "rxjs";
 import Entity from "~/api/internal/entity";
 import { fold, ifFalse } from "~/utils/operators";
-import flatten from "flat";
 import { is_authorized_f } from "~/api/auth";
 
 export const useReportStore = create((set) => ({
@@ -166,7 +152,39 @@ const new_lendflow_application = subject.pipe(
 			concatMap((entity) => entity.plan_id())
 		);
 
-		let $group_id = rxof(get_group_id(request.url));
+		let $group_id = rxof(get_group_id(request.url)).pipe(
+			concatMap((value) => {
+				if (value == undefined) {
+					return from($entity_id).pipe(
+						concatMap((entity_id) =>
+							from(
+								get_collection({
+									path: ["role_configs"],
+									queries: [
+										{
+											param: "entity_id",
+											predicate: "==",
+											value: entity_id,
+										},
+									],
+								})
+							)
+						),
+						rxmap(pipe(head, get("group_id")))
+					);
+				} else {
+					return rxof(value);
+				}
+			})
+		);
+
+		// return $group_id.pipe(
+		// 	delay(10000),
+		// 	tap((value) => {
+		// 		console.log("credit.business.new.tap.1");
+		// 		console.log(value);
+		// 	})
+		// );
 
 		return from($formData).pipe(
 			concatMap((form) =>
@@ -224,6 +242,16 @@ const credit_report = subject.pipe(
 			)
 		);
 
+		let redirect_to_business_report = entity_group_id.pipe(
+			concatMap(({ entity_id, group_id }) =>
+				throwError(() =>
+					Response.redirect(
+						`${url.origin}/credit/report/business/experian/overview/resource/e/${entity_id}/g/${group_id}`
+					)
+				)
+			)
+		);
+
 		let is_authorized = entity_group_id.pipe(
 			concatMap(({ entity_id, group_id }) =>
 				is_authorized_f(entity_id, group_id, "credit", "edit")
@@ -232,6 +260,33 @@ const credit_report = subject.pipe(
 		);
 
 		return is_authorized.pipe(
+			concatMap(() => group_id),
+			concatMap((group_id) => {
+				return from(
+					get_collection({
+						path: ["credit_reports"],
+						queries: [
+							{
+								param: "group_id",
+								predicate: "==",
+								value: group_id,
+							},
+							{
+								param: "type",
+								predicate: "==",
+								value: "business_credit_report",
+							},
+						],
+					})
+				);
+			}),
+			concatMap((value) => {
+				if (value.length == 0) {
+					return rxof(true);
+				} else {
+					return redirect_to_business_report;
+				}
+			}),
 			tap((value) => {
 				console.log("credit.business.new.tap");
 				console.log(value);

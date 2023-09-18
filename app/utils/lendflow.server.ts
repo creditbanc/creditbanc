@@ -434,6 +434,8 @@ export class LendflowInternal {
 	static save_application = async (
 		data: Application
 	): Promise<Application> => {
+		console.log("lendflow.sever.save_application");
+		console.log(data);
 		let { application_id } = data;
 		await set_doc(["credit_reports", application_id], data);
 		return data;
