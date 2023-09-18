@@ -26,20 +26,20 @@ const navigation = [
 		icon: UserCircleIcon,
 		selected: (pathname) => is_location("/settings/account", pathname),
 	},
-	{
-		name: "Plan",
-		href: ({ entity_id, group_id }) =>
-			`/settings/plan/resource/e/${entity_id}/g/${group_id}`,
-		icon: FingerPrintIcon,
-		selected: (pathname) => is_location("/settings/plan", pathname),
-	},
-	{
-		name: "Bank Accounts",
-		href: ({ entity_id, group_id }) =>
-			`/settings/plaid/resource/e/${entity_id}/g/${group_id}`,
-		icon: BuildingLibraryIcon,
-		selected: (pathname) => is_location("/settings/plaid", pathname),
-	},
+	// {
+	// 	name: "Plan",
+	// 	href: ({ entity_id, group_id }) =>
+	// 		`/settings/plan/resource/e/${entity_id}/g/${group_id}`,
+	// 	icon: FingerPrintIcon,
+	// 	selected: (pathname) => is_location("/settings/plan", pathname),
+	// },
+	// {
+	// 	name: "Bank Accounts",
+	// 	href: ({ entity_id, group_id }) =>
+	// 		`/settings/plaid/resource/e/${entity_id}/g/${group_id}`,
+	// 	icon: BuildingLibraryIcon,
+	// 	selected: (pathname) => is_location("/settings/plaid", pathname),
+	// },
 ];
 
 function Heading() {

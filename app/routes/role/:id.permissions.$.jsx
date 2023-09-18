@@ -69,9 +69,9 @@ const $loader = subject.pipe(
 							path: ["role_configs"],
 							queries: [
 								{
-									param: "group_id",
+									param: "id",
 									predicate: "==",
-									value: group_id,
+									value: config_id,
 								},
 							],
 						})
@@ -358,7 +358,7 @@ const RoleHeading = () => {
 					Role:
 				</h3>
 				<h3 className="ml-1 mt-1 truncate text-base text-gray-500">
-					{config.name}
+					{config?.name}
 				</h3>
 			</div>
 		</div>
@@ -367,6 +367,10 @@ const RoleHeading = () => {
 
 export default function Permissions() {
 	let { config } = useLoaderData();
+	console.log("config.permissions");
+	console.log(config);
+
+	let { permissions: config_permissions = [] } = config;
 	let { permissions, set_permissions } = usePermissionsStore();
 	let { pathname } = useLocation();
 	let config_id = get_config_id(pathname);
@@ -380,7 +384,7 @@ export default function Permissions() {
 	}, [permissions]);
 
 	useEffect(() => {
-		set_permissions(["permissions"], config.permissions);
+		set_permissions(["permissions"], config_permissions);
 	}, []);
 
 	return (
