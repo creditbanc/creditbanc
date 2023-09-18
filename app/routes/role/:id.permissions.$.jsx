@@ -367,8 +367,6 @@ const RoleHeading = () => {
 
 export default function Permissions() {
 	let { config } = useLoaderData();
-	console.log("config.permissions");
-	console.log(config);
 
 	let { permissions: config_permissions = [] } = config;
 	let { permissions, set_permissions } = usePermissionsStore();
