@@ -483,7 +483,8 @@ export class LendflowExternal {
 	};
 
 	static get_lendflow_report = async (application_id: string) => {
-		// console.log("get_lendflow_report");
+		console.log("get_lendflow_report");
+		console.log(application_id);
 
 		let options = {
 			method: "get",

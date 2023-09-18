@@ -97,8 +97,8 @@ export const loader = async ({ request }) => {
 
 	let { data: scores } = credit_scores_api_response;
 
-	console.log("scores");
-	console.log(scores);
+	// console.log("scores");
+	// console.log(scores);
 
 	let payload = {
 		...scores,

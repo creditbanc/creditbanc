@@ -9,7 +9,7 @@ import {
 	UserCircleIcon,
 	HomeIcon,
 } from "@heroicons/react/24/outline";
-import { Link, useLoaderData, useLocation } from "@remix-run/react";
+import { Link, useFetcher, useLoaderData, useLocation } from "@remix-run/react";
 import {
 	isEmpty,
 	max,
@@ -30,8 +30,10 @@ import {
 } from "~/utils/auth.server";
 import {
 	classNames,
+	formData,
 	get_entity_id,
 	get_group_id,
+	json_response,
 	truncate,
 } from "~/utils/helpers";
 import {
@@ -64,6 +66,8 @@ import {
 } from "rxjs";
 import { fold } from "~/utils/operators";
 import { is_authorized_f } from "~/api/auth";
+import { LendflowExternal } from "~/utils/lendflow.server.ts";
+import { json } from "@remix-run/node";
 
 const log_route = `companies`;
 
@@ -166,6 +170,43 @@ export const useCompaniesStore = create((set) => ({
 	set_state: (path, value) =>
 		set((state) => pipe(mod(...path)(() => value))(state)),
 }));
+
+export const action = async ({ request }) => {
+	let url = new URL(request.url);
+	let { origin } = url;
+	let form = await request.formData();
+	let entity_id = form.get("entity_id");
+	let group_id = form.get("group_id");
+
+	let scores = from(
+		axios({
+			method: "get",
+			url: `${origin}/credit/report/api/scores/resource/e/${entity_id}/g/${group_id}`,
+			withCredentials: true,
+			headers: {
+				cookie: `creditbanc_session=${encode(
+					JSON.stringify({ entity_id })
+				)}`,
+			},
+		})
+	);
+
+	let response = scores.pipe(
+		rxfilter((value) => value.data !== undefined),
+		rxmap(pipe(get("data"))),
+		tap((value) => {
+			console.log("scores.tap");
+			console.log(value);
+		})
+	);
+
+	let $scores = await lastValueFrom(response);
+
+	console.log("json.response");
+	console.log($scores);
+
+	return json($scores);
+};
 
 export const loader = async ({ request }) => {
 	const on_success = async (response) => {
@@ -327,27 +368,25 @@ const QuickLinks = () => {
 };
 
 const CompayInfo = () => {
+	let { pathname } = useLocation();
+	let entity_id = get_entity_id(pathname);
 	let company = useCompanyStore((state) => state.company);
-	let { scores = {}, business = {} } = company;
+	let fetcher = useFetcher();
 
-	let {
-		experian_personal_score,
-		equifax_personal_score,
-		transunion_personal_score,
-		experian_business_score,
-		dnb_business_score,
-	} = scores;
+	useEffect(() => {
+		console.log("company.group.changed");
+		let { origin } = window.location;
+		console.log(origin);
+		let group_id = "66349b3f-68b5-47df-a763-ab86f531b022";
+		let entity_id = "d75054c9-0360-45cb-a9f3-4a12eb173ace";
 
-	let max_personal = pipe(reduce(max, 0))([
-		experian_personal_score,
-		equifax_personal_score,
-		transunion_personal_score,
-	]);
-
-	let max_business = pipe(reduce(max, 0))([
-		experian_business_score,
-		dnb_business_score,
-	]);
+		fetcher.submit(
+			{ entity_id, group_id },
+			{
+				method: "post",
+			}
+		);
+	}, [company.group_id]);
 
 	return (
 		<div className="flex flex-col bg-white border rounded overflow-hidden">
@@ -356,16 +395,23 @@ const CompayInfo = () => {
 					<div>
 						<span className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-gray-500">
 							<span className="text-lg font-medium leading-none text-white">
-								{business?.name?.charAt(0)?.toUpperCase()}
+								{company?.first_name?.charAt(0)?.toUpperCase()}
 							</span>
 						</span>
 					</div>
-					<div>{business?.name}</div>
+					<div className="flex flex-col">
+						<div className="flex flex-row font-semibold gap-x-1">
+							<div>{company.first_name}</div>
+							<div>{company.last_name}</div>
+						</div>
+						<div className="text-sm">{company.email}</div>
+					</div>
+					{/* <div>{business?.name}</div> */}
 				</div>
 			</div>
 
 			<div className="flex flex-col w-full overflow-scroll scrollbar-none">
-				<div className="flex flex-col py-2">
+				{/* <div className="flex flex-col py-2">
 					<Link
 						to={`/financial/transactions`}
 						className="px-5 mb-4 flex flex-row items-center space-x-3 text-blue-500 cursor-pointer text-sm"
@@ -373,23 +419,55 @@ const CompayInfo = () => {
 						<div>
 							<DocumentDuplicateIcon className="h-4 w-4 text-blue-500" />
 						</div>
-						<div>Copy report share link</div>
+						<div>Copy company share link</div>
 						<div>
 							<LinkIcon className="h-4 w-4 text-blue-500" />
 						</div>
 					</Link>
+				</div> */}
+				<div className="border-t"></div>
+				<div className="flex flex-col w-full p-5 space-y-3">
+					<div className="text-gray-400 text-sm">
+						Business Credit Scores
+					</div>
+					<div className="flex flex-row">
+						<div className="flex flex-col w-1/2 text-sm space-y-1">
+							<div className="text-gray-400">Intelliscore</div>
+							<div className="text-lg">
+								{fetcher?.data?.experian_business_score}
+							</div>
+						</div>
+						<div className="flex flex-col w-1/2 text-sm space-y-1">
+							<div className="text-gray-400">D&B</div>
+							<div className="text-lg">
+								{fetcher?.data?.dnb_business_score}
+							</div>
+						</div>
+					</div>
 				</div>
 				<div className="border-t"></div>
 				<div className="flex flex-col w-full p-5 space-y-3">
-					<div className="text-gray-400 text-sm">Credit Scores</div>
+					<div className="text-gray-400 text-sm">
+						Personal Credit Scores
+					</div>
 					<div className="flex flex-row">
-						<div className="flex flex-col w-1/2 text-sm space-y-1">
-							<div className="text-gray-400">Personal</div>
-							<div className="text-lg">{max_personal}</div>
+						<div className="flex flex-col w-1/3 text-sm space-y-1">
+							<div className="text-gray-400">Equifax</div>
+							<div className="text-lg">
+								{fetcher?.data?.equifax_personal_score}
+							</div>
 						</div>
-						<div className="flex flex-col w-1/2 text-sm space-y-1">
-							<div className="text-gray-400">Business</div>
-							<div className="text-lg">{max_business}</div>
+						<div className="flex flex-col w-1/3 text-sm space-y-1">
+							<div className="text-gray-400">Experian</div>
+							<div className="text-lg">
+								{fetcher?.data?.experian_personal_score}
+							</div>
+						</div>
+						<div className="flex flex-col w-1/3 text-sm space-y-1">
+							<div className="text-gray-400">Transunion</div>
+							<div className="text-lg">
+								{fetcher?.data?.transunion_personal_score}
+							</div>
 						</div>
 					</div>
 				</div>
@@ -400,7 +478,7 @@ const CompayInfo = () => {
 						<QuickLinks />
 					</div>
 				</div>
-				<div className="border-t"></div>
+				{/* <div className="border-t"></div>
 				<div className="flex flex-col p-5 text-sm space-y-2">
 					<div className="text-gray-400">Members</div>
 					<div className="flex flex-col space-y-2">
@@ -416,7 +494,7 @@ const CompayInfo = () => {
 							className="border rounded p-3"
 						></textarea>
 					</div>
-				</div>
+				</div> */}
 			</div>
 		</div>
 	);
@@ -456,39 +534,42 @@ const Company = ({ company = {} }) => {
 	}, []);
 
 	const onSelectCompany = async () => {
-		let { origin } = window.location;
+		console.log("onSelectCompany");
+		console.log(company);
+		// let { origin } = window.location;
+		set_company(["company"], company);
 
-		const get_company_info = async () => {
-			let credit_scores_api_response = await axios({
-				method: "get",
-				url: `${origin}/credit/report/api/scores/resource/e/${entity_id}/g/${group_id}`,
-			});
+		// const get_company_info = async () => {
+		// 	let credit_scores_api_response = await axios({
+		// 		method: "get",
+		// 		url: `${origin}/credit/report/api/scores/resource/e/${entity_id}/g/${group_id}`,
+		// 	});
 
-			let { data: scores } = credit_scores_api_response;
+		// 	let { data: scores } = credit_scores_api_response;
 
-			let business_info_response = await axios({
-				method: "get",
-				url: `${origin}/credit/report/business/api/company/resource/e/${entity_id}/g/${group_id}`,
-				withCredentials: true,
-				headers: {
-					cookie: `creditbanc_session=${encode(
-						JSON.stringify({ entity_id })
-					)}`,
-				},
-			});
+		// 	let business_info_response = await axios({
+		// 		method: "get",
+		// 		url: `${origin}/credit/report/business/api/company/resource/e/${entity_id}/g/${group_id}`,
+		// 		withCredentials: true,
+		// 		headers: {
+		// 			cookie: `creditbanc_session=${encode(
+		// 				JSON.stringify({ entity_id })
+		// 			)}`,
+		// 		},
+		// 	});
 
-			let { data: business = {} } = business_info_response;
+		// 	let { data: business = {} } = business_info_response;
 
-			set_companies(["companies", group_id], {
-				...company,
-				business,
-				scores,
-			});
+		// 	set_companies(["companies", group_id], {
+		// 		...company,
+		// 		business,
+		// 		scores,
+		// 	});
 
-			set_company(["company"], { ...company, scores, business });
-		};
+		// 	set_company(["company"], { ...company, scores, business });
+		// };
 
-		set_company(["company"], {});
+		// set_company(["company"], {});
 		// get_company_info();
 	};
 
@@ -578,7 +659,7 @@ export default function Companies() {
 	let set_company = useCompanyStore((state) => state.set_state);
 
 	useEffect(() => {
-		set_company(["company"], { group_id, scores, business });
+		// set_company(["company"], { group_id, scores, business });
 	}, []);
 
 	return (

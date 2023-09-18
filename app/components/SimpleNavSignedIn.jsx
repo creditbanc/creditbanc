@@ -50,7 +50,7 @@ export const useRolesStore = create((set) => ({
 		set((state) => pipe(mod(...path)(() => value))(state)),
 }));
 
-const Companies = ({ companies }) => {
+const Companies = ({ companies = [] }) => {
 	let { pathname } = useLocation();
 	let entity_id = get_entity_id(pathname);
 	let group_id = get_group_id(pathname);
