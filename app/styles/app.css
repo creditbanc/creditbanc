@@ -3812,6 +3812,10 @@ body {
   transition-duration: 150ms;
 }
 
+.last\:border-b-0:last-child {
+  border-bottom-width: 0px;
+}
+
 .first-of-type\:ml-0:first-of-type {
   margin-left: 0px;
 }

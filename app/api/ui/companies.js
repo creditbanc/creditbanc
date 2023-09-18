@@ -3,6 +3,8 @@ import { get, all } from "shades";
 import { get_collection } from "~/utils/firebase";
 
 export const get_owner_companies_ids = async (entity_id) => {
+	console.log("get_owner_companies_ids");
+	console.log(entity_id);
 	let owner_queries = [
 		{
 			param: "entity_id",

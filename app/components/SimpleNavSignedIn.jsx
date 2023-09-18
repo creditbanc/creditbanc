@@ -50,11 +50,11 @@ export const useRolesStore = create((set) => ({
 		set((state) => pipe(mod(...path)(() => value))(state)),
 }));
 
-const Companies = () => {
+const Companies = ({ companies }) => {
 	let { pathname } = useLocation();
 	let entity_id = get_entity_id(pathname);
 	let group_id = get_group_id(pathname);
-	let companies = useCompaniesDropdownStore((state) => state.companies);
+	// let companies = useCompaniesDropdownStore((state) => state.companies);
 
 	return (
 		<Menu as="div" className="relative inline-block text-left z-50">
@@ -79,7 +79,7 @@ const Companies = () => {
 			>
 				<Menu.Items className="absolute left-0 z-50 mt-2 w-56 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none ">
 					<div className="py-1">
-						<Menu.Item>
+						<Menu.Item className="border-b">
 							{({ active }) => (
 								<Link
 									to={`/companies/dashboard/resource/e/${entity_id}/g/${group_id}`}
@@ -95,11 +95,14 @@ const Companies = () => {
 							)}
 						</Menu.Item>
 						{pipe(
-							map((company_id) => (
-								<Menu.Item key={company_id}>
+							map((company) => (
+								<Menu.Item
+									key={company.id}
+									className="border-b last:border-b-0"
+								>
 									{({ active }) => (
 										<Link
-											to={`/home/resource/e/${entity_id}/g/${company_id}`}
+											to={`/home/resource/e/${company.id}/g/${company.group_id}`}
 											className={classNames(
 												active
 													? "bg-gray-100 text-gray-900"
@@ -107,7 +110,17 @@ const Companies = () => {
 												"block px-4 py-2 text-sm"
 											)}
 										>
-											{company_id}
+											<div className="flex flex-col">
+												<div className="flex flex-row gap-x-1 font-semibold">
+													<div>
+														{company.first_name}
+													</div>
+													<div>
+														{company.last_name}
+													</div>
+												</div>
+												<div>{company.email}</div>
+											</div>
 										</Link>
 									)}
 								</Menu.Item>
@@ -398,7 +411,7 @@ const CreditDropdown = () => {
 	);
 };
 
-export default function Nav({ entity_id, roles }) {
+export default function Nav({ entity_id, roles, companies }) {
 	let location = useLocation();
 	let group_id = get_group_id(location.pathname);
 
@@ -424,7 +437,7 @@ export default function Nav({ entity_id, roles }) {
 		};
 
 		if (entity_id) {
-			get_companies();
+			// get_companies();
 		}
 	}, [entity_id]);
 
@@ -445,7 +458,7 @@ export default function Nav({ entity_id, roles }) {
 
 				<div className="flex flex-row flex-1 justify-between  items-center mt-1">
 					<div className="">
-						<Companies />
+						<Companies companies={companies} />
 					</div>
 					<div className="flex flex-col justify-center">
 						{!is_companies_dashboard && (

@@ -18,13 +18,14 @@ import { get_entity, get_session_entity_id } from "./utils/auth.server";
 import { get_group_id, is_location } from "./utils/helpers";
 import SimpleNavSignedIn from "~/components/SimpleNavSignedIn";
 import Spinner from "./components/LoadingSpinner";
-import { get_collection } from "~/utils/firebase";
+import { get_collection, get_doc } from "~/utils/firebase";
 import {
 	map as rxmap,
 	filter as rxfilter,
 	concatMap,
 	tap,
 	take,
+	reduce as rxreduce,
 } from "rxjs/operators";
 import {
 	from,
@@ -36,6 +37,12 @@ import {
 } from "rxjs";
 import { fold } from "~/utils/operators";
 import { is_authorized_f } from "~/api/auth";
+import {
+	get_owner_companies_ids,
+	get_shared_companies_ids,
+} from "./api/ui/companies";
+import { concat, head, identity, map, pickAll, pipe, uniq } from "ramda";
+import { all, get } from "shades";
 
 const log_route = `root`;
 
@@ -48,6 +55,48 @@ const $loader = subject.pipe(
 		let group_id = rxof(get_group_id(url.pathname));
 		let entity_id = from(get_session_entity_id(request));
 		let entity = from(get_entity(request));
+
+		let owner_companies = from(entity_id).pipe(
+			concatMap((entity_id) => from(get_owner_companies_ids(entity_id)))
+		);
+
+		let shared_companies = from(entity_id).pipe(
+			concatMap((entity_id) => from(get_shared_companies_ids(entity_id)))
+		);
+
+		let companies = forkJoin({ owner_companies, shared_companies }).pipe(
+			rxmap(({ owner_companies, shared_companies }) =>
+				uniq([...owner_companies, ...shared_companies])
+			),
+			concatMap(identity),
+			concatMap((group_id) =>
+				from(
+					get_collection({
+						path: ["role_configs"],
+						queries: [
+							{
+								param: "group_id",
+								predicate: "==",
+								value: group_id,
+							},
+						],
+						limit: [1],
+					})
+				).pipe(
+					rxmap(pipe(head, get("entity_id"))),
+					concatMap((entity_id) =>
+						from(get_doc(["entity", entity_id]))
+					),
+					rxmap(
+						pipe(
+							pickAll(["first_name", "last_name", "id", "email"]),
+							(entity) => ({ ...entity, group_id })
+						)
+					)
+				)
+			),
+			rxreduce((acc, curr) => [...acc, curr], [])
+		);
 
 		const can_edit = forkJoin({ entity_id, group_id }).pipe(
 			concatMap(({ entity_id, group_id }) =>
@@ -135,6 +184,7 @@ const $loader = subject.pipe(
 					roles: rxof(roles),
 					entity_id,
 					entity,
+					companies,
 				});
 			}),
 			tap((value) => {
@@ -198,7 +248,7 @@ export default function App() {
 	const transition = useTransition();
 	const show_spinner = useSpinner((state) => state.show_spinner);
 	const setSpinner = useSpinner((state) => state.setSpinner);
-	let { entity_id, roles } = useLoaderData();
+	let { entity_id, roles, companies } = useLoaderData();
 
 	useEffect(() => {
 		if (transition.state !== "idle") {
@@ -227,6 +277,7 @@ export default function App() {
 								<SimpleNavSignedIn
 									entity_id={entity_id}
 									roles={roles}
+									companies={companies}
 								/>
 							</div>
 						)}
