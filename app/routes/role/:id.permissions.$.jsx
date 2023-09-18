@@ -19,7 +19,7 @@ export const usePermissionsStore = create((set) => ({
 		set((state) => pipe(mod(...path)(() => value))(state)),
 }));
 
-const default_permissions = [
+export const default_permissions = [
 	{
 		id: "credit",
 		name: "Credit",
@@ -68,6 +68,58 @@ const default_permissions = [
 		hidden: false,
 		read: true,
 		edit: false,
+	},
+];
+
+export const admin_permissions = [
+	{
+		id: "credit",
+		name: "Credit",
+		hidden: false,
+		read: true,
+		edit: true,
+	},
+	{
+		id: "cashflow",
+		name: "Cashflow",
+		hidden: false,
+		read: true,
+		edit: true,
+	},
+	{
+		id: "accounts",
+		name: "Accounts",
+		hidden: false,
+		read: true,
+		edit: true,
+	},
+	{
+		id: "transactions",
+		name: "Transactions",
+		hidden: false,
+		read: true,
+		edit: true,
+	},
+	{
+		id: "vault",
+		name: "Vault",
+		hidden: false,
+		read: true,
+		edit: true,
+	},
+	{
+		id: "chat",
+		name: "Chat",
+		hidden: false,
+		read: true,
+		edit: true,
+	},
+	{
+		id: "share",
+		name: "Share",
+		hidden: false,
+		read: true,
+		edit: true,
 	},
 ];
 

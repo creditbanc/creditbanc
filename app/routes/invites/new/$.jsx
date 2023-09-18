@@ -23,6 +23,8 @@ import { get_session_entity_id } from "~/utils/auth.server";
 import { get_collection } from "~/utils/firebase";
 import { filter, mod } from "shades";
 import { create } from "zustand";
+import { $roles } from "~/components/SimpleNavSignedIn";
+import { tap } from "rxjs";
 
 export const useRolesStore = create((set) => ({
 	roles: [],
@@ -127,7 +129,7 @@ const RolesDropdown = () => {
 	);
 };
 
-export default function Invite() {
+export default function Invite({ session_entity_id }) {
 	const location = useLocation();
 	let fetcher = useFetcher();
 	// const [roles, setRoles] = useState([]);
@@ -155,23 +157,6 @@ export default function Invite() {
 		);
 	};
 
-	const get_roles = async () => {
-		let roles = await get_collection({
-			path: ["role_configs"],
-			queries: [
-				{
-					param: "entity_id",
-					predicate: "==",
-					value: entity_id,
-				},
-			],
-		});
-
-		if (!isEmpty(roles)) {
-			set_roles(["roles"], roles);
-		}
-	};
-
 	useEffect(() => {
 		set_share_link(
 			`${origin}/links/resource/e/${entity_id}/g/${group_id}?config_id=${role.id}`
@@ -186,7 +171,9 @@ export default function Invite() {
 	}, [roles]);
 
 	useEffect(() => {
-		get_roles();
+		$roles(session_entity_id, group_id)
+			.pipe(tap((roles) => set_roles(["roles"], roles)))
+			.subscribe();
 	}, []);
 
 	const onInvite = async () => {

@@ -41,8 +41,8 @@ export const get_permissions = async (entity_id, group_id) => {
 	// console.log(entity_id);
 	// console.log(group_id);
 	// check if is an admin or super
-	// let is_super = await is_super_p(entity_id);
-	let is_super = false;
+	let is_super = await is_super_p(entity_id);
+	// let is_super = false;
 	if (is_super) {
 		return Infinity;
 	}

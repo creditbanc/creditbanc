@@ -11,7 +11,7 @@ import {
 } from "~/utils/helpers";
 import { Menu, Transition } from "@headlessui/react";
 import { ChevronDownIcon } from "@heroicons/react/20/solid";
-import { always, isEmpty, map, pipe, set } from "ramda";
+import { always, includes, isEmpty, map, pipe, set } from "ramda";
 import {
 	ChatBubbleLeftEllipsisIcon,
 	Cog6ToothIcon,
@@ -21,7 +21,7 @@ import {
 	UsersIcon,
 } from "@heroicons/react/24/outline";
 import { get_collection } from "~/utils/firebase";
-import { mod } from "shades";
+import { all, get, mod } from "shades";
 import { create } from "zustand";
 import {
 	get_owner_companies_ids,
@@ -166,7 +166,7 @@ let navigation = [
 	},
 ];
 
-let $roles = (entity_id, group_id) => {
+export const $roles = (entity_id, group_id) => {
 	const can_edit = from(
 		is_authorized_f(entity_id, group_id, "share", "edit")
 	);
@@ -177,27 +177,59 @@ let $roles = (entity_id, group_id) => {
 
 	let is_authorized = forkJoin({ can_edit, can_read });
 
-	let edit_roles = from(
-		get_collection({
-			path: ["role_configs"],
-			queries: [
-				{
-					param: "group_id",
-					predicate: "==",
-					value: group_id,
-				},
-			],
-		})
-	);
+	let edit_roles = (group_id) =>
+		rxof(group_id).pipe(
+			rxfilter((group_id) => group_id !== undefined),
+			concatMap((group_id) =>
+				from(
+					get_collection({
+						path: ["role_configs"],
+						queries: [
+							{
+								param: "group_id",
+								predicate: "==",
+								value: group_id,
+							},
+						],
+					})
+				)
+			)
+		);
+
+	let read_roles = (group_id) =>
+		rxof(group_id).pipe(
+			rxfilter((group_id) => group_id !== undefined),
+			concatMap((group_id) =>
+				from(
+					get_collection({
+						path: ["role_configs"],
+						queries: [
+							{
+								param: "group_id",
+								predicate: "==",
+								value: group_id,
+							},
+							{
+								param: "name",
+								predicate: "==",
+								value: "@default",
+							},
+						],
+					})
+				)
+			)
+		);
 
 	let edit_permissions = is_authorized.pipe(
 		rxfilter((value) => value.can_edit == true),
-		concatMap(() => edit_roles)
+		rxmap(() => group_id),
+		concatMap(edit_roles)
 	);
 
 	let read_permissions = is_authorized.pipe(
 		rxfilter((value) => value.can_edit == false && value.can_read == true),
-		concatMap(() => rxof([]))
+		rxmap(() => group_id),
+		concatMap(read_roles)
 	);
 
 	let roles = merge(edit_permissions, read_permissions);
@@ -216,8 +248,12 @@ const ShareDropdown = ({ session_entity_id }) => {
 	let group_id = get_group_id(pathname);
 	let roles = useRolesStore((state) => state.roles);
 	let set_modal = useModalStore((state) => state.set_modal);
-
 	let set_roles = useRolesStore((state) => state.set_roles);
+
+	let can_manage_roles = pipe(
+		get(all, "name"),
+		includes("@administrator")
+	)(roles);
 
 	useEffect(() => {
 		$roles(session_entity_id, group_id)
@@ -240,7 +276,7 @@ const ShareDropdown = ({ session_entity_id }) => {
 		});
 	};
 
-	if (isEmpty(roles)) {
+	if (!can_manage_roles) {
 		return (
 			<div className="flex flex-row divide-x bg-blue-600 text-white rounded-full px-3 py-1.5 text-sm cursor-pointer space-x-3">
 				<div
@@ -486,7 +522,7 @@ export default function Nav({ entity_id }) {
 	return (
 		<div className="flex flex-col w-full h-[65px] justify-center px-5">
 			<Modal id="share_modal">
-				<Share />
+				<Share session_entity_id={entity_id} />
 			</Modal>
 			<div className="flex flex-row justify-between">
 				<div className="flex flex-col justify-center w-[150px]">

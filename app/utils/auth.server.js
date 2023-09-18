@@ -8,6 +8,10 @@ import { head, pipe, take } from "ramda";
 import { v4 as uuidv4 } from "uuid";
 import { get_collection, get_doc, set_doc } from "./firebase";
 import { create_role_config } from "~/api/authorization";
+import {
+	default_permissions,
+	admin_permissions,
+} from "~/routes/role/:id.permissions.$";
 
 let secret = process.env.SESSION_SECRET;
 
@@ -187,9 +191,17 @@ export const signup = async ({
 
 	//=> create administrator role config
 
-	let role_config = await create_role_config({
+	let default_config = await create_role_config({
 		group_id: partition.id,
 		entity_id: entity.id,
+		permissions: default_permissions,
+		name: "@default",
+	});
+
+	let admin_config = await create_role_config({
+		group_id: partition.id,
+		entity_id: entity.id,
+		permissions: admin_permissions,
 		name: "@administrator",
 	});
 

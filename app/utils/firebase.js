@@ -126,6 +126,7 @@ export const get_collection = async ({
 	let args = [...query_args, ...order_args, ...cursor_args, ...limit_args];
 
 	// console.log("args");
+	// inspect(args);
 	// inspect([...query_args, ...order_args, limit_args, cursors]);
 
 	const q = query(collection(firestore, ...path), ...args);
