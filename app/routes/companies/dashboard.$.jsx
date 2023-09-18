@@ -1,41 +1,15 @@
 import { FolderIcon } from "@heroicons/react/20/solid";
 import {
-	EllipsisHorizontalIcon,
 	LinkIcon,
-	DocumentDuplicateIcon,
 	BriefcaseIcon,
-	CurrencyDollarIcon,
-	FolderOpenIcon,
 	UserCircleIcon,
 	HomeIcon,
 } from "@heroicons/react/24/outline";
 import { Link, useFetcher, useLoaderData, useLocation } from "@remix-run/react";
-import {
-	isEmpty,
-	max,
-	prop,
-	reduce,
-	head,
-	identity,
-	map,
-	pickAll,
-	pipe,
-	uniq,
-} from "ramda";
-import { get, all, mod, fill } from "shades";
-import {
-	get_entity,
-	get_session_entity_id,
-	get_user_id,
-} from "~/utils/auth.server";
-import {
-	classNames,
-	formData,
-	get_entity_id,
-	get_group_id,
-	json_response,
-	truncate,
-} from "~/utils/helpers";
+import { isEmpty, head, identity, map, pickAll, pipe } from "ramda";
+import { get, mod } from "shades";
+import { get_entity, get_session_entity_id } from "~/utils/auth.server";
+import { classNames, get_entity_id, get_group_id } from "~/utils/helpers";
 import {
 	get_owner_companies_ids,
 	get_shared_companies_ids,
@@ -43,10 +17,8 @@ import {
 import { create } from "zustand";
 import axios from "axios";
 import { useEffect } from "react";
-import { create_role_config } from "~/api/authorization";
 const cb_logo_3 = "/images/logos/cb_logo_3.png";
 import { encode } from "js-base64";
-
 import { get_collection, get_doc } from "~/utils/firebase";
 import {
 	map as rxmap,
@@ -56,17 +28,8 @@ import {
 	take,
 	reduce as rxreduce,
 } from "rxjs/operators";
-import {
-	from,
-	lastValueFrom,
-	forkJoin,
-	Subject,
-	of as rxof,
-	merge,
-} from "rxjs";
+import { from, lastValueFrom, forkJoin, Subject, of as rxof } from "rxjs";
 import { fold } from "~/utils/operators";
-import { is_authorized_f } from "~/api/auth";
-import { LendflowExternal } from "~/utils/lendflow.server.ts";
 import { json } from "@remix-run/node";
 
 const log_route = `dashboard`;
