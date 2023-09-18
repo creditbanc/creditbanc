@@ -51,6 +51,8 @@ const useNewBusinessReportFormStore = useReportStore;
 export const loader = async ({ request }) => {
 	let url = new URL(request.url);
 	let entity_id = await get_session_entity_id(request);
+	let business_entity_id = get_entity_id(url.pathname);
+
 	let group_id = get_group_id(url.pathname);
 	// let cookies = request.headers.get("Cookie");
 	// var cookies_json = cookie.parse(cookies);
@@ -58,6 +60,7 @@ export const loader = async ({ request }) => {
 	// let entity_id = get_entity_id(url.pathname);
 
 	let entity = await get_doc(["entity", entity_id]);
+	let business_entity = await get_doc(["entity", business_entity_id]);
 
 	let onboard_state = await get_doc(["onboard", entity_id]);
 
@@ -70,11 +73,11 @@ export const loader = async ({ request }) => {
 
 	let business_info_response = await axios({
 		method: "get",
-		url: `${url.origin}/credit/report/business/api/company/resource/e/${entity_id}/g/${group_id}`,
+		url: `${url.origin}/credit/report/business/api/company/resource/e/${business_entity_id}/g/${group_id}`,
 		withCredentials: true,
 		headers: {
 			cookie: `creditbanc_session=${encode(
-				JSON.stringify({ entity_id })
+				JSON.stringify({ entity_id: business_entity_id })
 			)}`,
 		},
 	});
@@ -86,11 +89,11 @@ export const loader = async ({ request }) => {
 
 	let credit_scores_api_response = await axios({
 		method: "get",
-		url: `${url.origin}/credit/report/api/scores/resource/e/${entity_id}/g/${group_id}`,
+		url: `${url.origin}/credit/report/api/scores/resource/e/${business_entity_id}/g/${group_id}`,
 		withCredentials: true,
 		headers: {
 			cookie: `creditbanc_session=${encode(
-				JSON.stringify({ entity_id })
+				JSON.stringify({ entity_id: business_entity_id })
 			)}`,
 		},
 	});
@@ -107,6 +110,8 @@ export const loader = async ({ request }) => {
 		business,
 		onboard: onboard_state,
 		entity,
+		business_entity_id,
+		business_entity,
 	};
 
 	// console.log("payload");
@@ -282,7 +287,7 @@ const PersonalCredit = () => {
 };
 
 const HeadingTwo = () => {
-	let { business, entity } = useLoaderData();
+	let { business, business_entity: entity } = useLoaderData();
 
 	let EntityPersonalDetails = () => {
 		return (
@@ -1080,7 +1085,6 @@ const NewBusinessReportForm = () => {
 };
 
 export default function Home() {
-	console.log("home");
 	const {
 		plan_id = "essential",
 		onboard: onboard_db,

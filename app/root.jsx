@@ -56,8 +56,7 @@ const $loader = subject.pipe(
 		let url = new URL(request.url);
 		let entity_id = from(get_session_entity_id(request));
 		let entity = from(get_entity(request));
-		console.log("url.pathname");
-		console.log(url.pathname);
+
 		let group_id = rxof(get_group_id(url.pathname)).pipe(
 			concatMap((value) => {
 				if (value === undefined) {
