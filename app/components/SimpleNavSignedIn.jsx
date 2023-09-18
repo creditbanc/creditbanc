@@ -510,7 +510,9 @@ export default function Nav({ entity_id, roles, companies }) {
 								/>
 							</div>
 						</div> */}
-						<ShareDropdown session_entity_id={entity_id} />
+						{!is_location("/companies/dashboard", pathname) && (
+							<ShareDropdown session_entity_id={entity_id} />
+						)}
 
 						{/* <Link
 							to={`/chat/resource/e/${entity_id}/g/${group_id}?rand=${Math.random()}`}
