@@ -65,7 +65,7 @@ export const loader = async ({ request }) => {
 
 		subject.next({
 			id: "response",
-			next: () => error,
+			next: () => error ?? null,
 		});
 	};
 

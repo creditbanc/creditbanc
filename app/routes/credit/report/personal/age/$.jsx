@@ -183,7 +183,7 @@ export const loader = async ({ request }) => {
 
 		subject.next({
 			id: "credit_report_response",
-			next: () => error,
+			next: () => error ?? null,
 		});
 	};
 
