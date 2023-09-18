@@ -2,6 +2,7 @@ import { Link, useLoaderData, useLocation } from "@remix-run/react";
 import { get_session_entity_id, get_user_id } from "~/utils/auth.server";
 import {
 	classNames,
+	get_config_id,
 	get_entity_id,
 	get_group_id,
 	mapIndexed,
@@ -18,7 +19,7 @@ import {
 } from "@heroicons/react/24/outline";
 import { useModalStore } from "~/hooks/useModal";
 import { delete_doc, get_collection, set_doc } from "~/utils/firebase";
-import { isEmpty, pipe, set } from "ramda";
+import { filter, head, isEmpty, pipe, set } from "ramda";
 import { create } from "zustand";
 import { mod } from "shades";
 import { v4 as uuidv4 } from "uuid";
@@ -29,6 +30,89 @@ import Modal from "~/components/Modal";
 import { redirect } from "react-router-dom";
 import { create_role_config } from "~/api/authorization";
 import copy from "copy-to-clipboard";
+
+import {
+	map as rxmap,
+	filter as rxfilter,
+	concatMap,
+	tap,
+	take,
+} from "rxjs/operators";
+import {
+	from,
+	lastValueFrom,
+	forkJoin,
+	Subject,
+	of as rxof,
+	merge,
+	throwError,
+} from "rxjs";
+import { fold, ifFalse } from "~/utils/operators";
+import { is_authorized_f } from "~/api/auth";
+
+const log_route = `roles.$`;
+
+const subject = new Subject();
+
+const $loader = subject.pipe(
+	rxfilter((message) => message.id == "load"),
+	concatMap(({ args: { request } }) => {
+		let url = new URL(request.url);
+		let group_id = rxof(get_group_id(url.pathname));
+		let entity_id = from(get_session_entity_id(request));
+
+		let entity_group_id = forkJoin({
+			entity_id,
+			group_id,
+		});
+
+		let redirect_home = entity_group_id.pipe(
+			concatMap(({ entity_id, group_id }) =>
+				throwError(() =>
+					Response.redirect(
+						`${url.origin}/home/resource/e/${entity_id}/g/${group_id}`
+					)
+				)
+			)
+		);
+
+		let edit_roles = (group_id) =>
+			rxof(group_id).pipe(
+				rxfilter((group_id) => group_id !== undefined),
+				concatMap((group_id) =>
+					from(
+						get_collection({
+							path: ["role_configs"],
+							queries: [
+								{
+									param: "group_id",
+									predicate: "==",
+									value: group_id,
+								},
+							],
+						})
+					)
+				)
+			);
+
+		let is_authorized = entity_group_id.pipe(
+			concatMap(({ entity_id, group_id }) =>
+				is_authorized_f(entity_id, group_id, "share", "edit")
+			),
+			concatMap(ifFalse(redirect_home)),
+			concatMap(() => group_id),
+			concatMap(edit_roles),
+			rxmap((roles) => ({ roles }))
+		);
+
+		return is_authorized.pipe(
+			tap((value) => {
+				console.log(`${log_route}.tap`);
+				console.log(value);
+			})
+		);
+	})
+);
 
 export const useRoleStore = create((set) => ({
 	role: {},
@@ -42,24 +126,57 @@ export const useRolesStore = create((set) => ({
 		set((state) => pipe(mod(...path)(() => value))(state)),
 }));
 
+// export const loader = async ({ request }) => {
+// 	let entity_id = await get_session_entity_id(request);
+
+// 	let roles = await get_collection({
+// 		path: ["role_configs"],
+// 		queries: [
+// 			{
+// 				param: "entity_id",
+// 				predicate: "==",
+// 				value: entity_id,
+// 			},
+// 		],
+// 	});
+
+// 	// console.log("roles");
+// 	// console.log(roles);
+
+// 	return { entity_id, roles };
+// };
+
 export const loader = async ({ request }) => {
-	let entity_id = await get_session_entity_id(request);
+	const on_success = async (response) => {
+		console.log(`${log_route}.success`);
 
-	let roles = await get_collection({
-		path: ["role_configs"],
-		queries: [
-			{
-				param: "entity_id",
-				predicate: "==",
-				value: entity_id,
-			},
-		],
-	});
+		subject.next({
+			id: "response",
+			next: () => response,
+		});
+	};
 
-	// console.log("roles");
-	// console.log(roles);
+	const on_error = (error) => {
+		console.log(`${log_route}.error`);
+		console.log(error);
 
-	return { entity_id, roles };
+		subject.next({
+			id: "response",
+			next: () => error,
+		});
+	};
+
+	const on_complete = (value) => value.id === "response";
+
+	$loader.pipe(fold(on_success, on_error)).subscribe();
+
+	subject.next({ id: "load", args: { request } });
+
+	let response = await lastValueFrom(
+		subject.pipe(rxfilter(on_complete), take(1))
+	);
+
+	return response.next();
 };
 
 const RoleActions = ({ role }) => {

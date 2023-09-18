@@ -3,15 +3,108 @@ import { Switch } from "@headlessui/react";
 import {
 	classNames,
 	get_config_id,
+	get_group_id,
 	mapIndexed,
 	trim,
 	use_client_search_params,
 } from "~/utils/helpers";
-import { pipe, map, isEmpty } from "ramda";
+import { pipe, map, isEmpty, filter, head } from "ramda";
 import { create } from "zustand";
-import { mod } from "shades";
+import { get, mod } from "shades";
 import { get_collection, get_doc, set_doc, update_doc } from "~/utils/firebase";
 import { useLoaderData, useLocation } from "@remix-run/react";
+import {
+	map as rxmap,
+	filter as rxfilter,
+	concatMap,
+	tap,
+	take,
+} from "rxjs/operators";
+import {
+	from,
+	lastValueFrom,
+	forkJoin,
+	Subject,
+	of as rxof,
+	merge,
+	throwError,
+} from "rxjs";
+import { fold, ifFalse } from "~/utils/operators";
+import { is_authorized_f } from "~/api/auth";
+import { get_session_entity_id } from "~/utils/auth.server";
+
+const log_route = `role:id.permissions`;
+
+const subject = new Subject();
+
+const $loader = subject.pipe(
+	rxfilter((message) => message.id == "load"),
+	concatMap(({ args: { request } }) => {
+		let url = new URL(request.url);
+		let group_id = rxof(get_group_id(url.pathname));
+		let entity_id = from(get_session_entity_id(request));
+		let config_id = get_config_id(url.pathname);
+
+		let entity_group_id = forkJoin({
+			entity_id,
+			group_id,
+		});
+
+		let redirect_home = entity_group_id.pipe(
+			concatMap(({ entity_id, group_id }) =>
+				throwError(() =>
+					Response.redirect(
+						`${url.origin}/home/resource/e/${entity_id}/g/${group_id}`
+					)
+				)
+			)
+		);
+
+		let edit_roles = (group_id) =>
+			rxof(group_id).pipe(
+				rxfilter((group_id) => group_id !== undefined),
+				concatMap((group_id) =>
+					from(
+						get_collection({
+							path: ["role_configs"],
+							queries: [
+								{
+									param: "group_id",
+									predicate: "==",
+									value: group_id,
+								},
+							],
+						})
+					)
+				)
+			);
+
+		let is_authorized = entity_group_id.pipe(
+			concatMap(({ entity_id, group_id }) =>
+				is_authorized_f(entity_id, group_id, "share", "edit")
+			),
+			concatMap(ifFalse(redirect_home)),
+			concatMap(() => group_id),
+			concatMap(edit_roles),
+			rxmap((roles) => {
+				return pipe(
+					filter((role) => role.id == config_id),
+					head,
+					(config) => ({
+						config,
+					})
+				)(roles);
+			})
+		);
+
+		return is_authorized.pipe(
+			tap((value) => {
+				console.log(`${log_route}.tap`);
+				console.log(value);
+			})
+		);
+	})
+);
 
 export const usePermissionsStore = create((set) => ({
 	permissions: [],
@@ -123,33 +216,37 @@ export const admin_permissions = [
 	},
 ];
 
-const config_permissions_or_default = (config) => {
-	let permissions = pipe(
-		map((default_permission) => {
-			let { permissions = [] } = config;
-			let config_permission =
-				permissions.find(
-					(permission) => permission.id === default_permission.id
-				) ?? {};
-
-			return { ...default_permission, ...config_permission };
-		})
-	)(default_permissions);
-
-	return permissions;
-};
-
 export const loader = async ({ request }) => {
-	// let entity_id = await get_user_id(request);
+	const on_success = async (response) => {
+		console.log(`${log_route}.success`);
 
-	let { pathname } = new URL(request.url);
-	let config_id = get_config_id(pathname);
+		subject.next({
+			id: "response",
+			next: () => response,
+		});
+	};
 
-	let config = await get_doc(["role_configs", config_id]);
+	const on_error = (error) => {
+		console.log(`${log_route}.error`);
+		console.log(error);
 
-	let permissions = config_permissions_or_default(config);
+		subject.next({
+			id: "response",
+			next: () => error,
+		});
+	};
 
-	return { config: { ...config, permissions } };
+	const on_complete = (value) => value.id === "response";
+
+	$loader.pipe(fold(on_success, on_error)).subscribe();
+
+	subject.next({ id: "load", args: { request } });
+
+	let response = await lastValueFrom(
+		subject.pipe(rxfilter(on_complete), take(1))
+	);
+
+	return response.next();
 };
 
 const Toggle = ({ index, permission_key }) => {
