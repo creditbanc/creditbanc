@@ -69,7 +69,7 @@ import { is_authorized_f } from "~/api/auth";
 import { LendflowExternal } from "~/utils/lendflow.server.ts";
 import { json } from "@remix-run/node";
 
-const log_route = `companies`;
+const log_route = `dashboard`;
 
 const subject = new Subject();
 
@@ -77,6 +77,7 @@ const $loader = subject.pipe(
 	rxfilter((message) => message.id == "load"),
 	concatMap(({ args: { request } }) => {
 		let url = new URL(request.url);
+
 		let group_id = rxof(get_group_id(url.pathname));
 		let entity_id = from(get_session_entity_id(request));
 		let entity = from(get_entity(request));
@@ -95,6 +96,44 @@ const $loader = subject.pipe(
 					limit: [1],
 				})
 			);
+
+		let entity_group_id = forkJoin({ entity_id, group_id });
+
+		let business = entity_group_id.pipe(
+			concatMap(({ entity_id, group_id }) =>
+				from(
+					axios({
+						method: "get",
+						url: `${url.origin}/credit/report/business/api/company/resource/e/${entity_id}/g/${group_id}`,
+						withCredentials: true,
+						headers: {
+							cookie: `creditbanc_session=${encode(
+								JSON.stringify({ entity_id })
+							)}`,
+						},
+					})
+				)
+			),
+			rxmap(pipe(get("data")))
+		);
+
+		let scores = entity_group_id.pipe(
+			concatMap(({ entity_id, group_id }) =>
+				from(
+					axios({
+						method: "get",
+						url: `${url.origin}/credit/report/api/scores/resource/e/${entity_id}/g/${group_id}`,
+						withCredentials: true,
+						headers: {
+							cookie: `creditbanc_session=${encode(
+								JSON.stringify({ entity_id })
+							)}`,
+						},
+					})
+				)
+			),
+			rxmap(pipe(get("data")))
+		);
 
 		let owner_companies = from(entity_id).pipe(
 			concatMap((entity_id) => from(get_owner_companies_ids(entity_id))),
@@ -150,6 +189,8 @@ const $loader = subject.pipe(
 			entity,
 			owner_companies,
 			shared_companies,
+			business,
+			scores,
 		}).pipe(
 			tap((value) => {
 				console.log(`${log_route}.tap`);
@@ -193,17 +234,10 @@ export const action = async ({ request }) => {
 
 	let response = scores.pipe(
 		rxfilter((value) => value.data !== undefined),
-		rxmap(pipe(get("data"))),
-		tap((value) => {
-			console.log("scores.tap");
-			console.log(value);
-		})
+		rxmap(pipe(get("data")))
 	);
 
 	let $scores = await lastValueFrom(response);
-
-	console.log("json.response");
-	console.log($scores);
 
 	return json($scores);
 };
@@ -240,37 +274,6 @@ export const loader = async ({ request }) => {
 
 	return response.next();
 };
-
-// export const loader = async ({ request }) => {
-// 	let { pathname, origin } = new URL(request.url);
-// 	let entity_id = await get_user_id(request);
-// 	let group_id = get_group_id(pathname);
-
-// 	let owner_companies = await get_owner_companies_ids(entity_id);
-// 	let shared_companies = await get_shared_companies_ids(entity_id);
-
-// 	let credit_scores_api_response = await axios({
-// 		method: "get",
-// 		url: `${origin}/credit/report/api/scores/resource/e/${entity_id}/g/${group_id}`,
-// 	});
-
-// 	let { data: scores = {} } = credit_scores_api_response;
-
-// 	let business_info_response = await axios({
-// 		method: "get",
-// 		url: `${origin}/credit/report/business/api/company/resource/e/${entity_id}/g/${group_id}`,
-// 		withCredentials: true,
-// 		headers: {
-// 			cookie: `creditbanc_session=${encode(
-// 				JSON.stringify({ entity_id })
-// 			)}`,
-// 		},
-// 	});
-
-// 	let { data: business = {} } = business_info_response;
-
-// 	return { owner_companies, shared_companies, entity_id, scores, business };
-// };
 
 const Members = () => {
 	return (
@@ -374,14 +377,8 @@ const CompayInfo = () => {
 	let fetcher = useFetcher();
 
 	useEffect(() => {
-		console.log("company.group.changed");
-		let { origin } = window.location;
-		console.log(origin);
-		let group_id = "66349b3f-68b5-47df-a763-ab86f531b022";
-		let entity_id = "d75054c9-0360-45cb-a9f3-4a12eb173ace";
-
 		fetcher.submit(
-			{ entity_id, group_id },
+			{ entity_id: company.entity_id, group_id: company.group_id },
 			{
 				method: "post",
 			}
@@ -507,75 +504,15 @@ const Company = ({ company = {} }) => {
 	let set_companies = useCompaniesStore((state) => state.set_state);
 	// let company = useCompaniesStore((state) => state.companies[group_id]) ?? {};
 
-	useEffect(() => {
-		const get_company_info = async () => {
-			let business_info_response = await axios({
-				method: "get",
-				url: `${origin}/credit/report/business/api/company/resource/e/${entity_id}/g/${group_id}`,
-				withCredentials: true,
-				headers: {
-					cookie: `creditbanc_session=${encode(
-						JSON.stringify({ entity_id })
-					)}`,
-				},
-			});
-
-			let { data: business = {} } = business_info_response;
-
-			set_companies(["companies", group_id], {
-				...company,
-				entity_id,
-				group_id,
-				business,
-			});
-		};
-
-		// get_company_info();
-	}, []);
-
 	const onSelectCompany = async () => {
 		console.log("onSelectCompany");
 		console.log(company);
-		// let { origin } = window.location;
 		set_company(["company"], company);
-
-		// const get_company_info = async () => {
-		// 	let credit_scores_api_response = await axios({
-		// 		method: "get",
-		// 		url: `${origin}/credit/report/api/scores/resource/e/${entity_id}/g/${group_id}`,
-		// 	});
-
-		// 	let { data: scores } = credit_scores_api_response;
-
-		// 	let business_info_response = await axios({
-		// 		method: "get",
-		// 		url: `${origin}/credit/report/business/api/company/resource/e/${entity_id}/g/${group_id}`,
-		// 		withCredentials: true,
-		// 		headers: {
-		// 			cookie: `creditbanc_session=${encode(
-		// 				JSON.stringify({ entity_id })
-		// 			)}`,
-		// 		},
-		// 	});
-
-		// 	let { data: business = {} } = business_info_response;
-
-		// 	set_companies(["companies", group_id], {
-		// 		...company,
-		// 		business,
-		// 		scores,
-		// 	});
-
-		// 	set_company(["company"], { ...company, scores, business });
-		// };
-
-		// set_company(["company"], {});
-		// get_company_info();
 	};
 
 	return (
 		<div
-			className="flex flex-col min-w-full md:min-w-[47%] lg:min-w-[31%] xl:min-w-[23%]  h-[200px] bg-gray-50 p-5 justify-between rounded-lg shadow-sm border cursor-pointer"
+			className="flex flex-col  min-w-full max-w-full sm:min-w-[250px] sm:max-w-[250px] h-[250px] bg-gray-50 p-5 justify-between rounded-lg shadow-sm border cursor-pointer"
 			onClick={onSelectCompany}
 		>
 			<div className="flex flex-row justify-between items-center">
@@ -659,7 +596,12 @@ export default function Companies() {
 	let set_company = useCompanyStore((state) => state.set_state);
 
 	useEffect(() => {
-		// set_company(["company"], { group_id, scores, business });
+		set_company(["company"], {
+			group_id,
+			scores,
+			business,
+			...owner_companies[0],
+		});
 	}, []);
 
 	return (
