@@ -51,10 +51,27 @@ const subject = new Subject();
 const $loader = subject.pipe(
 	rxfilter((message) => message.id == "load"),
 	concatMap(({ args: { request } }) => {
+		console.log(`${log_route}.load`);
+
 		let url = new URL(request.url);
-		let group_id = rxof(get_group_id(url.pathname));
 		let entity_id = from(get_session_entity_id(request));
 		let entity = from(get_entity(request));
+		console.log("url.pathname");
+		console.log(url.pathname);
+		let group_id = rxof(get_group_id(url.pathname)).pipe(
+			concatMap((value) => {
+				if (value === undefined) {
+					return from(entity_id).pipe(
+						concatMap((entity_id) =>
+							from(get_owner_companies_ids(entity_id))
+						),
+						rxmap(pipe(head))
+					);
+				} else {
+					return rxof(value);
+				}
+			})
+		);
 
 		let owner_companies = from(entity_id).pipe(
 			concatMap((entity_id) => from(get_owner_companies_ids(entity_id)))
@@ -158,6 +175,10 @@ const $loader = subject.pipe(
 		let edit_permissions = is_authorized.pipe(
 			rxfilter((value) => value.can_edit == true),
 			concatMap(() => group_id),
+			// tap((value) => {
+			// 	console.log("root.tap");
+			// 	console.log(value);
+			// }),
 			concatMap(edit_roles)
 		);
 
@@ -179,6 +200,10 @@ const $loader = subject.pipe(
 		let $roles = merge(edit_permissions, read_permissions, no_permissions);
 
 		return $roles.pipe(
+			tap((value) => {
+				console.log("root.tap");
+				console.log(value);
+			}),
 			concatMap((roles) => {
 				return forkJoin({
 					roles: rxof(roles),
@@ -186,10 +211,6 @@ const $loader = subject.pipe(
 					entity,
 					companies,
 				});
-			}),
-			tap((value) => {
-				console.log("root.tap");
-				console.log(value);
 			})
 		);
 	})

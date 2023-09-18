@@ -57,10 +57,10 @@ const subject = new ReplaySubject(1);
 const loader_data = subject.pipe(
 	rxfilter((message) => message.id == "load"),
 	concatMap(({ args: { request } }) => {
+		console.log("admin.entities.load");
 		let entities = from(
 			get_collection({
 				path: ["entity"],
-				// orderBy: [{ field: "created_at", direction: "desc" }],
 			})
 		).pipe(
 			rxmap(
