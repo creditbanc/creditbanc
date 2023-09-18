@@ -10,9 +10,24 @@ import {
 	HomeIcon,
 } from "@heroicons/react/24/outline";
 import { Link, useLoaderData, useLocation } from "@remix-run/react";
-import { isEmpty, map, max, pipe, prop, reduce, set, uniqBy } from "ramda";
+import {
+	isEmpty,
+	max,
+	prop,
+	reduce,
+	head,
+	identity,
+	map,
+	pickAll,
+	pipe,
+	uniq,
+} from "ramda";
 import { get, all, mod, fill } from "shades";
-import { get_user_id } from "~/utils/auth.server";
+import {
+	get_entity,
+	get_session_entity_id,
+	get_user_id,
+} from "~/utils/auth.server";
 import {
 	classNames,
 	get_entity_id,
@@ -30,6 +45,116 @@ import { create_role_config } from "~/api/authorization";
 const cb_logo_3 = "/images/logos/cb_logo_3.png";
 import { encode } from "js-base64";
 
+import { get_collection, get_doc } from "~/utils/firebase";
+import {
+	map as rxmap,
+	filter as rxfilter,
+	concatMap,
+	tap,
+	take,
+	reduce as rxreduce,
+} from "rxjs/operators";
+import {
+	from,
+	lastValueFrom,
+	forkJoin,
+	Subject,
+	of as rxof,
+	merge,
+} from "rxjs";
+import { fold } from "~/utils/operators";
+import { is_authorized_f } from "~/api/auth";
+
+const log_route = `companies`;
+
+const subject = new Subject();
+
+const $loader = subject.pipe(
+	rxfilter((message) => message.id == "load"),
+	concatMap(({ args: { request } }) => {
+		let url = new URL(request.url);
+		let group_id = rxof(get_group_id(url.pathname));
+		let entity_id = from(get_session_entity_id(request));
+		let entity = from(get_entity(request));
+
+		const get_group_role_config = (group_id) =>
+			from(
+				get_collection({
+					path: ["role_configs"],
+					queries: [
+						{
+							param: "group_id",
+							predicate: "==",
+							value: group_id,
+						},
+					],
+					limit: [1],
+				})
+			);
+
+		let owner_companies = from(entity_id).pipe(
+			concatMap((entity_id) => from(get_owner_companies_ids(entity_id))),
+			concatMap(identity),
+			concatMap((group_id) =>
+				get_group_role_config(group_id).pipe(
+					rxmap(pipe(head, get("entity_id"))),
+					concatMap((entity_id) =>
+						from(get_doc(["entity", entity_id]))
+					),
+					rxmap(
+						pipe(
+							pickAll(["first_name", "last_name", "id", "email"]),
+							(entity) => ({
+								...entity,
+								entity_id: entity.id,
+								group_id,
+							})
+						)
+					)
+				)
+			),
+			rxreduce((acc, curr) => [...acc, curr], [])
+		);
+
+		let shared_companies = from(entity_id).pipe(
+			concatMap((entity_id) => from(get_shared_companies_ids(entity_id))),
+			concatMap(identity),
+			concatMap((group_id) =>
+				get_group_role_config(group_id).pipe(
+					rxmap(pipe(head, get("entity_id"))),
+					concatMap((entity_id) =>
+						from(get_doc(["entity", entity_id]))
+					),
+					rxmap(
+						pipe(
+							pickAll(["first_name", "last_name", "id", "email"]),
+							(entity) => ({
+								...entity,
+								entity_id: entity.id,
+								group_id,
+							})
+						)
+					)
+				)
+			),
+			rxreduce((acc, curr) => [...acc, curr], [])
+		);
+
+		return forkJoin({
+			entity_id,
+			group_id,
+			entity,
+			owner_companies,
+			shared_companies,
+		}).pipe(
+			tap((value) => {
+				console.log(`${log_route}.tap`);
+				console.log(value);
+			})
+		);
+	})
+);
+
 export const useCompanyStore = create((set) => ({
 	company: {},
 	set_state: (path, value) =>
@@ -43,35 +168,68 @@ export const useCompaniesStore = create((set) => ({
 }));
 
 export const loader = async ({ request }) => {
-	let { pathname, origin } = new URL(request.url);
-	let entity_id = await get_user_id(request);
-	let group_id = get_group_id(pathname);
+	const on_success = async (response) => {
+		console.log(`${log_route}.success`);
 
-	let owner_companies = await get_owner_companies_ids(entity_id);
-	let shared_companies = await get_shared_companies_ids(entity_id);
+		subject.next({
+			id: "response",
+			next: () => response,
+		});
+	};
 
-	let credit_scores_api_response = await axios({
-		method: "get",
-		url: `${origin}/credit/report/api/scores/resource/e/${entity_id}/g/${group_id}`,
-	});
+	const on_error = (error) => {
+		console.log(`${log_route}.error`);
+		console.log(error);
 
-	let { data: scores = {} } = credit_scores_api_response;
+		subject.next({
+			id: "response",
+			next: () => error,
+		});
+	};
 
-	let business_info_response = await axios({
-		method: "get",
-		url: `${origin}/credit/report/business/api/company/resource/e/${entity_id}/g/${group_id}`,
-		withCredentials: true,
-		headers: {
-			cookie: `creditbanc_session=${encode(
-				JSON.stringify({ entity_id })
-			)}`,
-		},
-	});
+	const on_complete = (value) => value.id === "response";
 
-	let { data: business = {} } = business_info_response;
+	$loader.pipe(fold(on_success, on_error)).subscribe();
 
-	return { owner_companies, shared_companies, entity_id, scores, business };
+	subject.next({ id: "load", args: { request } });
+
+	let response = await lastValueFrom(
+		subject.pipe(rxfilter(on_complete), take(1))
+	);
+
+	return response.next();
 };
+
+// export const loader = async ({ request }) => {
+// 	let { pathname, origin } = new URL(request.url);
+// 	let entity_id = await get_user_id(request);
+// 	let group_id = get_group_id(pathname);
+
+// 	let owner_companies = await get_owner_companies_ids(entity_id);
+// 	let shared_companies = await get_shared_companies_ids(entity_id);
+
+// 	let credit_scores_api_response = await axios({
+// 		method: "get",
+// 		url: `${origin}/credit/report/api/scores/resource/e/${entity_id}/g/${group_id}`,
+// 	});
+
+// 	let { data: scores = {} } = credit_scores_api_response;
+
+// 	let business_info_response = await axios({
+// 		method: "get",
+// 		url: `${origin}/credit/report/business/api/company/resource/e/${entity_id}/g/${group_id}`,
+// 		withCredentials: true,
+// 		headers: {
+// 			cookie: `creditbanc_session=${encode(
+// 				JSON.stringify({ entity_id })
+// 			)}`,
+// 		},
+// 	});
+
+// 	let { data: business = {} } = business_info_response;
+
+// 	return { owner_companies, shared_companies, entity_id, scores, business };
+// };
 
 const Members = () => {
 	return (
@@ -264,12 +422,12 @@ const CompayInfo = () => {
 	);
 };
 
-const Company = ({ group_id }) => {
+const Company = ({ company = {} }) => {
 	let { pathname } = useLocation();
 	let entity_id = get_entity_id(pathname);
 	let set_company = useCompanyStore((state) => state.set_state);
 	let set_companies = useCompaniesStore((state) => state.set_state);
-	let company = useCompaniesStore((state) => state.companies[group_id]) ?? {};
+	// let company = useCompaniesStore((state) => state.companies[group_id]) ?? {};
 
 	useEffect(() => {
 		const get_company_info = async () => {
@@ -294,7 +452,7 @@ const Company = ({ group_id }) => {
 			});
 		};
 
-		get_company_info();
+		// get_company_info();
 	}, []);
 
 	const onSelectCompany = async () => {
@@ -331,7 +489,7 @@ const Company = ({ group_id }) => {
 		};
 
 		set_company(["company"], {});
-		get_company_info();
+		// get_company_info();
 	};
 
 	return (
@@ -348,9 +506,11 @@ const Company = ({ group_id }) => {
 				</div>
 			</div>
 			<div className="flex flex-col">
-				<div className="font-semibold text-gray-600">
-					{truncate(12, company?.business?.name) || "Untitled"}
+				<div className="flex flex-row font-semibold text-gray-600 space-x-1">
+					<div>{company.first_name}</div>
+					<div>{company.last_name}</div>
 				</div>
+				<div className="text-sm">{company.email}</div>
 			</div>
 			<div className="flex flex-col">
 				<div className="flex flex-row justify-between items-center">
@@ -435,8 +595,11 @@ export default function Companies() {
 				<div className="flex flex-col w-full py-5  scrollbar-none">
 					<div className="flex flex-row w-full items-center flex-wrap gap-y-10 justify-start gap-x-5">
 						{pipe(
-							map((group_id) => (
-								<Company key={group_id} group_id={group_id} />
+							map((company) => (
+								<Company
+									key={company.entity_id}
+									company={company}
+								/>
 							))
 						)(owner_companies)}
 					</div>
@@ -454,8 +617,11 @@ export default function Companies() {
 				<div className="flex flex-col w-full py-5 scrollbar-none">
 					<div className="flex flex-row w-full items-center flex-wrap gap-y-10 justify-start gap-x-5">
 						{pipe(
-							map((group_id) => (
-								<Company key={group_id} group_id={group_id} />
+							map((company) => (
+								<Company
+									key={company.entity_id}
+									company={company}
+								/>
 							))
 						)(shared_companies)}
 					</div>

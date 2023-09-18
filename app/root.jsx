@@ -41,7 +41,7 @@ import {
 	get_owner_companies_ids,
 	get_shared_companies_ids,
 } from "./api/ui/companies";
-import { concat, head, identity, map, pickAll, pipe, uniq } from "ramda";
+import { head, identity, map, pickAll, pipe, uniq } from "ramda";
 import { all, get } from "shades";
 
 const log_route = `root`;
