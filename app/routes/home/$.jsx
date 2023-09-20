@@ -10,25 +10,33 @@ import {
 import { get_session_entity_id, get_user_id } from "~/utils/auth.server";
 import {
 	capitalize,
+	delete_cookie,
 	get_entity_id,
 	get_group_id,
+	search_params,
 	use_search_params,
 } from "~/utils/helpers";
 import {
 	__,
+	curry,
 	defaultTo,
+	equals,
 	head,
+	isEmpty,
+	join,
+	keys,
 	length,
 	map,
 	mergeDeepRight,
+	not,
 	omit,
 	pipe,
 	values,
 } from "ramda";
-import { all, filter, get } from "shades";
+import { all, filter, get, sub } from "shades";
 import { useLoaderData } from "@remix-run/react";
 import { plans } from "~/data/plans";
-import { redirect } from "@remix-run/node";
+import { json, redirect } from "@remix-run/node";
 import UpgradeBanner from "~/components/UpgradeMembership";
 var cookie = require("cookie");
 import axios from "axios";
@@ -47,23 +55,28 @@ import { create } from "zustand";
 import { mod } from "shades";
 import { BusinessEntity, useReportStore } from "../credit/business/new/$";
 import Spinner from "~/components/LoadingSpinner";
+import murmurhash from "murmurhash";
+import { concat, lastValueFrom, merge, zip } from "rxjs";
+import { use_cache } from "~/components/CacheLink";
+import { difference } from "ramda";
+
+export const useViewStore = create((set) => ({
+	view: {},
+	set_state: (path, value) =>
+		set((state) => pipe(mod(...path)(() => value))(state)),
+}));
 
 const useNewBusinessReportFormStore = useReportStore;
 
 export const loader = async ({ request }) => {
+	// return null;
+
 	let url = new URL(request.url);
 	let entity_id = await get_session_entity_id(request);
 	let business_entity_id = get_entity_id(url.pathname);
-
 	let group_id = get_group_id(url.pathname);
-	// let cookies = request.headers.get("Cookie");
-	// var cookies_json = cookie.parse(cookies);
-
-	// let entity_id = get_entity_id(url.pathname);
-
 	let entity = await get_doc(["entity", entity_id]);
 	let business_entity = await get_doc(["entity", business_entity_id]);
-
 	let onboard_state = await get_doc(["onboard", entity_id]);
 
 	onboard_state = pipe(
@@ -73,7 +86,7 @@ export const loader = async ({ request }) => {
 
 	let { plan_id } = await get_doc(["entity", entity_id]);
 
-	let business_info_response = await axios({
+	let business_info_fetch = axios({
 		method: "get",
 		url: `${url.origin}/credit/report/business/api/company/resource/e/${business_entity_id}/g/${group_id}`,
 		withCredentials: true,
@@ -84,14 +97,9 @@ export const loader = async ({ request }) => {
 		},
 	});
 
-	let { data: business = {} } = business_info_response;
-
-	// console.log("business");
-	// console.log(business);
-
-	let credit_scores_api_response = await axios({
+	let personal_scores_fetch = axios({
 		method: "get",
-		url: `${url.origin}/credit/report/api/scores/resource/e/${business_entity_id}/g/${group_id}`,
+		url: `${url.origin}/credit/report/api/scores/personal/resource/e/${business_entity_id}/g/${group_id}`,
 		withCredentials: true,
 		headers: {
 			cookie: `creditbanc_session=${encode(
@@ -100,26 +108,135 @@ export const loader = async ({ request }) => {
 		},
 	});
 
-	let { data: scores } = credit_scores_api_response;
+	let business_scores_fetch = axios({
+		method: "get",
+		url: `${url.origin}/credit/report/api/scores/business/resource/e/${business_entity_id}/g/${group_id}`,
+		withCredentials: true,
+		headers: {
+			cookie: `creditbanc_session=${encode(
+				JSON.stringify({ entity_id: business_entity_id })
+			)}`,
+		},
+	});
+
+	let fetches = zip([
+		business_info_fetch,
+		personal_scores_fetch,
+		business_scores_fetch,
+	]);
+
+	let [
+		business_info_response,
+		personal_scores_response,
+		business_scores_response,
+	] = await lastValueFrom(fetches);
+
+	let { data: business_info = {} } = business_info_response;
+	let { data: personal_scores = {} } = personal_scores_response;
+	let { data: business_scores = {} } = business_scores_response;
+
+	const cache = curry((request, payload) => {
+		let { cache_dependencies: dependencies } = payload;
+		console.log("cache");
+		console.log(dependencies);
+		let url = new URL(request.url);
+		let url_params = search_params(request);
+		let url_param_keys = pipe(keys)(url_params);
+		let dependency_params = pipe(get(all, "name"))(dependencies);
+		let url_has_dependencies = pipe(
+			difference(dependency_params),
+			equals([])
+		)(url_param_keys);
+
+		let url_has_params = pipe(isEmpty, not)(url_params);
+
+		const to_search_param_pairs = pipe(
+			map((dependency) => `${dependency.name}=${dependency.value}`)
+		);
+
+		let cache_string = (dependencies) =>
+			url_has_params
+				? pipe(
+						to_search_param_pairs,
+						join("&"),
+						(value) => `&${value}`
+				  )(dependencies)
+				: pipe(
+						to_search_param_pairs,
+						join("&"),
+						(value) => `?${value}`
+				  )(dependencies);
+
+		let redirect_link = `${url.href}${cache_string(dependencies)}`;
+
+		if (url_has_dependencies) {
+			return json(payload, {
+				headers: {
+					"Cache-Control": "private, max-age=31536000",
+				},
+			});
+		} else {
+			return redirect(redirect_link);
+		}
+
+		console.log("search_params");
+		// console.log(url);
+		console.log(url_params);
+		console.log(url_param_keys);
+		console.log(dependency_params);
+		console.log(url_has_dependencies);
+		console.log(cache_string(dependencies));
+		console.log(redirect_link);
+	});
+
+	let cache_dependencies = [
+		{
+			name: "business_credit_report",
+			value: 1,
+		},
+		{
+			name: "personal_credit_report",
+			value: 1,
+		},
+	];
+
+	console.log("fetches");
+	console.log(business_info);
+	console.log(personal_scores);
+	console.log(business_scores);
+
+	// let { data: scores = {} } = credit_scores_api_response;
+	// let scores = {};
+	// let business_info = {};
 
 	// console.log("scores");
 	// console.log(scores);
 
 	let payload = {
-		...scores,
+		...business_info,
+		...personal_scores,
+		...business_scores,
 		entity_id,
-		plan_id,
-		business,
-		onboard: onboard_state,
 		entity,
 		business_entity_id,
 		business_entity,
+		plan_id,
+		onboard: onboard_state,
 	};
+
+	let with_cache = cache(request);
+
+	return with_cache({ ...payload, cache_dependencies });
+
+	// return json(payload, {
+	// 	headers: {
+	// 		"Cache-Control": "private, max-age=31536000",
+	// 	},
+	// });
 
 	// console.log("payload");
 	// console.log(payload);
-
-	return payload;
+	// return payload;
 };
 
 const BusinessCredit = () => {
@@ -289,13 +406,14 @@ const PersonalCredit = () => {
 };
 
 const HeadingTwo = () => {
-	let { business, business_entity: entity } = useLoaderData();
+	let { business_entity: entity } = useLoaderData();
+	let { business_info } = useViewStore((state) => state.view);
 
 	let EntityPersonalDetails = () => {
 		return (
 			<div>
-				<div className="font-semibold">
-					{capitalize(entity.first_name)}{" "}
+				<div className="font-semibold flex flex-row space-x-1">
+					{capitalize(entity.first_name)}
 					{capitalize(entity.last_name)}
 				</div>
 				<div className="text-sm">{entity.email}</div>
@@ -306,13 +424,17 @@ const HeadingTwo = () => {
 	let BusinessDetails = () => {
 		return (
 			<div>
-				<div className="font-semibold">{business.name}</div>
+				<div className="font-semibold">{business_info?.name}</div>
 			</div>
 		);
 	};
 
 	let EntityAccountDetails = () => {
-		return business?.name ? <BusinessDetails /> : <EntityPersonalDetails />;
+		return business_info?.name ? (
+			<BusinessDetails />
+		) : (
+			<EntityPersonalDetails />
+		);
 	};
 
 	return (
@@ -720,8 +842,6 @@ const NewBusinessReportForm = () => {
 	let group_id = get_group_id(pathname);
 	let form = useNewBusinessReportFormStore((state) => state.form);
 	let setForm = useNewBusinessReportFormStore((state) => state.setForm);
-	let [isSubmitting, setIsSubmitting] = useState(false);
-	const navigation = useNavigation();
 
 	const fetcher = useFetcher();
 	const error = fetcher.data;
@@ -1131,6 +1251,92 @@ const NewBusinessReportForm = () => {
 };
 
 export default function Home() {
+	// return null;
+	let use_cache_client = use_cache((state) => state.set_dependencies);
+	let update_cache_key = use_cache((state) => state.set_state);
+	let cache_client = use_cache((state) => state);
+	let { pathname } = useLocation();
+	let entity_id = get_entity_id(pathname);
+	let group_id = get_group_id(pathname);
+	let [subscription, setSubscription] = useState(0);
+	let set_state = useViewStore((state) => state.set_state);
+	let { cache_dependencies } = useLoaderData();
+
+	let business_info_fetcher = useFetcher();
+	let personal_socres_fetcher = useFetcher();
+	let business_scores_fetcher = useFetcher();
+	let business_info_url = `/credit/report/ssebusiness/resource/e/${entity_id}/g/${group_id}`;
+	let personal_socres_url = `/credit/report/ssepersonalscores/resource/e/${entity_id}/g/${group_id}`;
+	let business_scores_url = `/credit/report/ssebusinessscores/resource/e/${entity_id}/g/${group_id}`;
+
+	console.log("fetcher.subscription");
+	console.log(personal_socres_fetcher.data);
+	console.log(business_scores_fetcher.data);
+	console.log(business_info_fetcher.data);
+
+	useEffect(() => {
+		use_cache_client({
+			path: `/home`,
+			dependencies: cache_dependencies,
+		});
+	}, []);
+
+	console.log("set_cache_keys");
+	console.log(cache_dependencies);
+	console.log("cache_client");
+	console.log(cache_client);
+
+	let fetcher_payload_maker = (url) => {
+		return [
+			{},
+			{
+				method: "post",
+				action: url,
+			},
+		];
+	};
+
+	const on_run_fetchers = async () => {
+		business_info_fetcher.submit(
+			...fetcher_payload_maker(business_info_url)
+		);
+
+		personal_socres_fetcher.submit(
+			...fetcher_payload_maker(personal_socres_url)
+		);
+
+		business_scores_fetcher.submit(
+			...fetcher_payload_maker(business_scores_url)
+		);
+	};
+
+	// useEffect(() => {
+	// 	on_run_fetchers();
+	// }, []);
+
+	const set_key = () => {
+		let value = Math.random();
+		setSubscription(value);
+		update_cache_key(["keys", "business_credit_report"], `${2}`);
+	};
+
+	useEffect(() => {
+		setTimeout(() => {
+			set_key();
+		}, 10000);
+	}, []);
+
+	return (
+		<div>
+			<HeadingTwo />
+			<div onClick={() => setSubscription(subscription + 1)}>
+				<div className="flex flex-col items-center justify-center w-[100px] bg-green-500 py-1 rounded mx-2 cursor-pointer text-white text-xs">
+					{subscription}
+				</div>
+			</div>
+		</div>
+	);
+
 	const {
 		plan_id = "essential",
 		onboard: onboard_db,

@@ -43,6 +43,8 @@ import Share from "~/routes/invites/new/$.jsx";
 import Modal from "~/components/Modal";
 import { useModalStore } from "~/hooks/useModal";
 import avatars from "~/data/avatars";
+import { use_cache } from "~/components/CacheLink";
+import CacheLink from "./CacheLink";
 
 export const useRolesStore = create((set) => ({
 	roles: false,
@@ -414,12 +416,19 @@ const CreditDropdown = () => {
 export default function Nav({ entity_id, roles, companies }) {
 	let location = useLocation();
 	let group_id = get_group_id(location.pathname);
+	let cache_keys = use_cache((state) => state.keys);
+	let set_cache_keys = use_cache((state) => state.set_state);
+
+	let { home } = cache_keys;
 
 	let { pathname } = location;
 	let is_companies_dashboard = is_location("/companies/dashboard", pathname);
 
 	let set_roles = useRolesStore((state) => state.set_roles);
 	let set_companies = useCompaniesDropdownStore((state) => state.set_state);
+
+	console.log("cache_keys");
+	console.log(cache_keys);
 
 	useEffect(() => {
 		set_roles(["roles"], roles);
@@ -448,12 +457,15 @@ export default function Nav({ entity_id, roles, companies }) {
 			</Modal>
 			<div className="flex flex-row justify-between">
 				<div className="flex flex-col justify-center w-[150px]">
-					<Link to={`/home/resource/e/${entity_id}/g/${group_id}`}>
+					<CacheLink
+						to={`/home/resource/e/${entity_id}/g/${group_id}`}
+						cache_key={"home"}
+					>
 						<img
 							src={cb_logo}
 							className="hidden sm:block h-5 w-auto"
 						/>
-					</Link>
+					</CacheLink>
 				</div>
 
 				<div className="flex flex-row flex-1 justify-between  items-center mt-1">

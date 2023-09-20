@@ -42,10 +42,10 @@ import {
 	get_shared_companies_ids,
 } from "./api/ui/companies";
 import { head, identity, map, pickAll, pipe, uniq } from "ramda";
-import { all, get } from "shades";
+import { all, get, mod } from "shades";
+import { json } from "@remix-run/node";
 
 const log_route = `root`;
-
 const subject = new Subject();
 
 const $loader = subject.pipe(
@@ -199,10 +199,6 @@ const $loader = subject.pipe(
 		let $roles = merge(edit_permissions, read_permissions, no_permissions);
 
 		return $roles.pipe(
-			tap((value) => {
-				console.log("root.tap");
-				console.log(value);
-			}),
 			concatMap((roles) => {
 				return forkJoin({
 					roles: rxof(roles),
@@ -210,6 +206,10 @@ const $loader = subject.pipe(
 					entity,
 					companies,
 				});
+			}),
+			tap((value) => {
+				console.log("root.tap");
+				console.log(value);
 			})
 		);
 	})
@@ -259,6 +259,12 @@ export const loader = async ({ request }) => {
 	let response = await lastValueFrom(
 		subject.pipe(rxfilter(on_complete), take(1))
 	);
+
+	return json(response.next(), {
+		headers: {
+			"Cache-Control": "private, max-age=31536000",
+		},
+	});
 
 	return response.next();
 };

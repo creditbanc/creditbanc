@@ -1,3 +1,4 @@
+import Cookies from "js-cookie";
 import {
 	lastIndexOf,
 	split,
@@ -28,10 +29,29 @@ import {
 	values,
 	not,
 	tryCatch,
+	fromPairs,
+	trim as rtrim,
 } from "ramda";
 import { iif, of as rxof, throwError } from "rxjs";
 const util = require("util");
 import { get } from "shades";
+
+export const delete_cookie = (name) => {
+	return Cookies.remove(name);
+};
+
+export const set_cookie = (name, value, options = {}) => {
+	return Cookies.set(name, value, options);
+};
+
+export const request_cookies = (request) => {
+	let cookie = request.headers.get("Cookie");
+	return pipe(
+		split(";"),
+		map(pipe(split("="), map(rtrim))),
+		fromPairs
+	)(cookie);
+};
 
 export const validate_form = (validator, to_validate) => {
 	console.log("validate_form");

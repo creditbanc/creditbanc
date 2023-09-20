@@ -59,27 +59,7 @@ const credit_scores = subject.pipe(
 				get_collection({
 					path: ["credit_reports"],
 					queries: personal_credit_report_queries(group_id),
-				})
-			);
-
-		let business_credit_report_queries = (group_id) => [
-			{
-				param: "group_id",
-				predicate: "==",
-				value: group_id,
-			},
-			{
-				param: "type",
-				predicate: "==",
-				value: "business_credit_report",
-			},
-		];
-
-		let get_business_credit_report = (group_id) =>
-			from(
-				get_collection({
-					path: ["credit_reports"],
-					queries: business_credit_report_queries(group_id),
+					limit: [1],
 				})
 			);
 
@@ -115,37 +95,6 @@ const credit_scores = subject.pipe(
 
 		let $personal_report = merge(personal_report, empty_personal_report);
 
-		let application_id = group_id.pipe(
-			concatMap(get_business_credit_report),
-			concatMap(ifEmpty(throwError(() => undefined))),
-			rxmap(pipe(head, get("application_id"))),
-			catchError((error) => {
-				if (error == undefined) {
-					return rxof(undefined);
-				} else {
-					return throwError(() => error);
-				}
-			})
-		);
-
-		let business_report = application_id.pipe(
-			rxfilter((value) => value !== undefined),
-			concatMap(LendflowExternal.get_lendflow_report),
-			rxmap(pipe(get("data", "data"))),
-			rxmap((report) => new LendflowInternal(report))
-		);
-
-		let empty_business_report = application_id.pipe(
-			rxfilter((value) => value === undefined),
-			rxmap(() => ({
-				dnb_score: () => 0,
-				experian_score: () => 0,
-				is_empty: () => true,
-			}))
-		);
-
-		let $business_report = merge(business_report, empty_business_report);
-
 		let experian_personal_score = $personal_report.pipe(
 			rxmap((report) => report.experian_score())
 		);
@@ -158,26 +107,10 @@ const credit_scores = subject.pipe(
 			rxmap((report) => report.transunion_score())
 		);
 
-		let dnb_business_score = $business_report.pipe(
-			rxmap((report) => report.dnb_score())
-		);
-
-		let experian_business_score = $business_report.pipe(
-			rxmap((report) => report.experian_score())
-		);
-
-		let business_report_is_empty = $business_report.pipe(
-			rxmap((report) => report.is_empty()),
-			catchError((error) => rxof(false))
-		);
-
 		return forkJoin({
-			dnb_business_score,
-			experian_business_score,
 			experian_personal_score,
 			equifax_personal_score,
 			transunion_personal_score,
-			business_report_is_empty,
 		}).pipe(
 			tap((value) => {
 				console.log(`${log_route}.tap`);
@@ -218,82 +151,4 @@ export const loader = async ({ request }) => {
 	);
 
 	return response.next();
-
-	// let url = new URL(request.url);
-	// let group_id = get_group_id(url.pathname);
-
-	// let personal_credit_report_queries = [
-	// 	{
-	// 		param: "group_id",
-	// 		predicate: "==",
-	// 		value: group_id,
-	// 	},
-	// 	{
-	// 		param: "type",
-	// 		predicate: "==",
-	// 		value: "personal_credit_report",
-	// 	},
-	// ];
-
-	// let personal_credit_report_response = await get_collection({
-	// 	path: ["credit_reports"],
-	// 	queries: personal_credit_report_queries,
-	// });
-
-	// let personal_credit_report = pipe(
-	// 	head,
-	// 	defaultTo({})
-	// )(personal_credit_report_response);
-
-	// let { data: personal = undefined } = personal_credit_report;
-
-	// let personal_credit_report_payload = {
-	// 	experian_personal_score: personal ? Array.experian.score(personal) : 0,
-	// 	equifax_personal_score: personal ? Array.equifax.score(personal) : 0,
-	// 	transunion_personal_score: personal
-	// 		? Array.transunion.score(personal)
-	// 		: 0,
-	// };
-
-	// let business_credit_report_queries = [
-	// 	{
-	// 		param: "group_id",
-	// 		predicate: "==",
-	// 		value: group_id,
-	// 	},
-	// 	{
-	// 		param: "type",
-	// 		predicate: "==",
-	// 		value: "business_credit_report",
-	// 	},
-	// ];
-
-	// let business_credit_report_response = await get_collection({
-	// 	path: ["credit_reports"],
-	// 	queries: business_credit_report_queries,
-	// });
-
-	// let business_credit_report = pipe(
-	// 	head,
-	// 	defaultTo({})
-	// )(business_credit_report_response);
-
-	// let business_credit_report_payload = {
-	// 	experian_business_score: business_credit_report
-	// 		? Lendflow.experian.score(business_credit_report)
-	// 		: 0,
-	// 	dnb_business_score: business_credit_report
-	// 		? Lendflow.dnb.score(business_credit_report)
-	// 		: 0,
-	// };
-
-	let payload = {
-		experian_personal_score: 0,
-		equifax_personal_score: 0,
-		transunion_personal_score: 0,
-		experian_business_score: 0,
-		dnb_business_score: 0,
-	};
-
-	return payload;
 };

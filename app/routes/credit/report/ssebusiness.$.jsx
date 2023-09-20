@@ -1,6 +1,6 @@
-import { get_group_id, inspect } from "~/utils/helpers";
-import { get } from "shades";
-import { head, pipe } from "ramda";
+import { get_group_id, inspect, request_cookies } from "~/utils/helpers";
+import { get, mod } from "shades";
+import { fromPairs, head, map, pipe, split, trim } from "ramda";
 import { Lendflow } from "~/data/lendflow";
 import { get_collection, get_doc, set_doc } from "~/utils/firebase";
 import { LendflowExternal, LendflowInternal } from "~/utils/lendflow.server";
@@ -26,13 +26,21 @@ import {
 import { fold, ifEmpty, ifFalse } from "~/utils/operators";
 import { is_authorized_f } from "~/api/auth";
 import { get_session_entity_id } from "~/utils/auth.server";
-import { emitter } from "~/utils/emitter.server";
+import { json } from "@remix-run/node";
+import { eventStream } from "remix-utils";
 
-const subject = new ReplaySubject(1);
+const log_route = `credit.report.ssebusiness`;
+const start_action = "ssebusiness.action";
 
-const credit_report = subject.pipe(
-	rxfilter((message) => message.id == "get_credit_report"),
+const actionsubject = new ReplaySubject(1);
+
+const action_response = actionsubject.pipe(
+	rxfilter((message) => message.id == start_action),
 	concatMap(({ args: { request } }) => {
+		console.log(`${log_route}.action_response.headers`);
+		let cookies = request_cookies(request);
+		console.log(cookies);
+
 		let url = new URL(request.url);
 
 		let business_credit_report_queries = (group_id) => [
@@ -61,6 +69,7 @@ const credit_report = subject.pipe(
 		let entity = entity_id.pipe(
 			concatMap((entity_id) => from(get_doc(["entity", entity_id])))
 		);
+
 		let plan_id = entity.pipe(rxmap(get("plan_id")));
 
 		let entity_group_id = forkJoin({
@@ -94,31 +103,12 @@ const credit_report = subject.pipe(
 			})
 		);
 
-		let report = db_report.pipe(
-			rxmap(pipe(get("data"))),
+		let report = application_id.pipe(
+			rxfilter((value) => value !== undefined),
+			concatMap(LendflowExternal.get_lendflow_report),
+			rxmap(pipe(get("data", "data"))),
 			rxmap((report) => new LendflowInternal(report))
-			// tap((value) => {
-			// 	console.log("credit.report.business.api.company.emitter");
-			// 	emitter.emit("message", value);
-			// })
 		);
-
-		// let report = application_id.pipe(
-		// 	rxfilter((value) => value !== undefined),
-		// 	concatMap(LendflowExternal.get_lendflow_report),
-		// 	rxmap(pipe(get("data", "data"))),
-		// 	rxmap((report) => new LendflowInternal(report))
-		// );
-
-		// return report;
-
-		// return forkJoin({ db_report });
-		// return report.pipe(
-		// 	tap((value) => {
-		// 		console.log("credit.report.business.api.company.tap");
-		// 		console.log(value);
-		// 	})
-		// );
 
 		let empty_report = application_id.pipe(
 			rxfilter((value) => value === undefined),
@@ -136,10 +126,10 @@ const credit_report = subject.pipe(
 		// return rxof({});
 		// return business_info;
 
-		return forkJoin({ business_info });
-
-		return is_authorized.pipe(
-			concatMap(() => forkJoin({ business_info })),
+		return forkJoin({ business_info }).pipe(
+			// rxmap((value) =>
+			// 	pipe(mod("business_info", "name")((name) => "test"))(value)
+			// ),
 			tap((value) => {
 				console.log("credit.report.business.api.company.tap");
 				console.log(value);
@@ -148,68 +138,9 @@ const credit_report = subject.pipe(
 	})
 );
 
-export const loader = async ({ request }) => {
-	// return null;
-	const on_success = async (response) => {
-		console.log("credit.report.business.api.company.tap.success");
-
-		subject.next({
-			id: "credit_report_response",
-			next: () => response,
-		});
-	};
-
-	const on_error = (error) => {
-		console.log("credit.report.business.api.company.error");
-		console.log(error);
-
-		subject.next({
-			id: "credit_report_response",
-			next: () => error ?? null,
-		});
-	};
-
-	const on_complete = (value) => value.id === "credit_report_response";
-
-	credit_report.pipe(fold(on_success, on_error)).subscribe();
-
-	subject.next({ id: "get_credit_report", args: { request } });
-
-	let response = await lastValueFrom(
-		subject.pipe(rxfilter(on_complete), take(1))
-	);
-
-	// console.log("responseseeee");
-	// console.log(response.next());
-
-	return response.next();
+export const action = async ({ request }) => {
+	console.log(`${log_route}.action`);
+	actionsubject.next({ id: start_action, args: { request } });
+	let response = await lastValueFrom(action_response.pipe(take(1)));
+	return json({ ...response });
 };
-
-// export const loader = async ({ request }) => {
-// 	let url = new URL(request.url);
-// 	let group_id = get_group_id(url.pathname);
-
-// 	let business_credit_report_queries = [
-// 		{
-// 			param: "group_id",
-// 			predicate: "==",
-// 			value: group_id,
-// 		},
-// 		{
-// 			param: "type",
-// 			predicate: "==",
-// 			value: "business_credit_report",
-// 		},
-// 	];
-
-// 	let report_response = await get_collection({
-// 		path: ["credit_reports"],
-// 		queries: business_credit_report_queries,
-// 	});
-
-// 	let report = pipe(head)(report_response);
-
-// 	let business = Lendflow.business(report);
-
-// 	return {};
-// };

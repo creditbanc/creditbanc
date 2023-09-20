@@ -178,14 +178,6 @@ const new_lendflow_application = subject.pipe(
 			})
 		);
 
-		// return $group_id.pipe(
-		// 	delay(10000),
-		// 	tap((value) => {
-		// 		console.log("credit.business.new.tap.1");
-		// 		console.log(value);
-		// 	})
-		// );
-
 		return from($formData).pipe(
 			concatMap((form) =>
 				from_validations(validate_form(lendflow_validator, form))
