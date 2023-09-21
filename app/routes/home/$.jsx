@@ -11,6 +11,7 @@ import {
 	normalize,
 	normalize_id,
 	search_params,
+	store,
 	use_search_params,
 } from "~/utils/helpers";
 import {
@@ -54,7 +55,8 @@ import { concat, lastValueFrom, merge, of as rxof, tap, zip } from "rxjs";
 import { filter as rxfilter } from "rxjs";
 import { use_cache } from "~/components/CacheLink";
 import { difference } from "ramda";
-import { flatten } from "flat";
+
+let use_view_store = store();
 
 const useNewBusinessReportFormStore = useReportStore;
 
@@ -282,12 +284,10 @@ const BusinessCredit = () => {
 };
 
 const PersonalCredit = () => {
+	let { personal_scores = {}, plan_id = "essential" } = use_view_store((state) => state);
 	let { pathname } = useLocation();
 	let entity_id = get_entity_id(pathname);
 	let group_id = get_group_id(pathname);
-
-	let { personal_scores = {}, plan_id } = useLoaderData();
-
 	let { experian_personal_score, equifax_personal_score, transunion_personal_score } = personal_scores;
 
 	return (
@@ -1054,9 +1054,12 @@ const NewBusinessReportForm = () => {
 
 export default function Home() {
 	// return null;
+	let set_view = use_view_store((state) => state.set_props);
+	let set_path = use_view_store((state) => state.set_state);
 	let { pathname } = useLocation();
 	let loader_data = useLoaderData();
 	let { cache_dependencies, business_scores, personal_scores, business_info } = loader_data;
+
 	let use_cache_client = use_cache((state) => state.set_dependencies);
 	let update_cache_key = use_cache((state) => state.set_state);
 	let entity_id = get_entity_id(pathname);
@@ -1084,6 +1087,12 @@ export default function Home() {
 	// }, [loader_data]);
 
 	useEffect(() => {
+		console.log("loader_data");
+		console.log(loader_data);
+		set_view(loader_data);
+	}, []);
+
+	useEffect(() => {
 		use_cache_client({ path: `/home`, dependencies: cache_dependencies });
 	}, []);
 
@@ -1101,7 +1110,7 @@ export default function Home() {
 		run_fetchers();
 	}, []);
 
-	const on_should_update = (previous_value, current_value, update_key) => {
+	const on_should_update_cache = (previous_value, current_value, update_key) => {
 		let prev_data = rxof(normalize_id(previous_value));
 		let curr_data = rxof(normalize_id(current_value));
 
@@ -1121,7 +1130,7 @@ export default function Home() {
 			// console.log("business_info_fetcher.data");
 			// console.log(fetcher_data);
 			// console.log(business_info);
-			on_should_update(business_info, fetcher_data, "business_credit_report").subscribe();
+			on_should_update_cache(business_info, fetcher_data, "business_credit_report").subscribe();
 		}
 	}, [business_info_fetcher.data]);
 
@@ -1131,17 +1140,18 @@ export default function Home() {
 			// console.log("business_scores_fetcher.data");
 			// console.log(fetcher_data);
 			// console.log(business_scores);
-			on_should_update(business_scores, fetcher_data, "business_credit_report").subscribe();
+			on_should_update_cache(business_scores, fetcher_data, "business_credit_report").subscribe();
 		}
 	}, [business_scores_fetcher.data]);
 
 	useEffect(() => {
 		let fetcher_data = personal_scores_fetcher.data;
 		if (fetcher_data) {
-			// console.log("personal_scores_fetcher.data");
-			// console.log(fetcher_data);
-			// console.log(personal_scores);
-			on_should_update(personal_scores, fetcher_data, "personal_credit_report").subscribe();
+			console.log("personal_scores_fetcher.data");
+			console.log(fetcher_data);
+			console.log(personal_scores);
+			on_should_update_cache(personal_scores, fetcher_data, "personal_credit_report").subscribe();
+			set_path(["personal_scores"], fetcher_data);
 		}
 	}, [personal_scores_fetcher.data]);
 

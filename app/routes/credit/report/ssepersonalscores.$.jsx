@@ -122,55 +122,88 @@ const action_response = subject.pipe(
 			return api_report_id !== db_report_id;
 		};
 
-		const update_db_with_new_report = async (doc_id, data) => {
+		const update_db_with_new_report = async (data, doc_id) => {
+			console.log(`${log_route}.update_db_with_new_report`);
+			// console.log(doc_id);
+			// console.log(data);
+
 			await update_doc(["credit_reports", doc_id], { data });
 			return { doc_id, data };
 		};
 
-		const update_db_report_if_needed = curry((db_personal_credit_report, db_report_id, report) => {
+		const update_db_report_if_needed = curry((db_personal_credit_report, array_report) => {
 			let db_report = isObservable(db_personal_credit_report)
 				? db_personal_credit_report
 				: rxof(db_personal_credit_report);
-			let api_report = rxof(report);
+			let api_report = rxof(array_report);
+
 			return zip([api_report, db_report]).pipe(
+				// rxmap(([api_report, db_report]) => {
+				// 	update_db_with_new_report(api_report, pipe(get("doc_id"))(db_report));
+				// }),
 				rxmap(([api_report, db_report]) => [api_report, pipe(get("data", "CREDIT_RESPONSE"))(db_report)]),
 				rxmap(([api_report, db_report]) => [normalize_id(api_report), normalize_id(db_report)]),
 				rxmap(([api_report_hash, db_report_hash]) => should_update_db(api_report_hash, db_report_hash)),
 				concatMap((value) =>
-					iif(() => value === true, from(update_db_with_new_report(db_report_id, report)), rxof(false))
+					iif(
+						() => value === true,
+						db_report.pipe(
+							rxmap(get("id")),
+							concatMap((db_report_id) =>
+								from(update_db_with_new_report(array_report, db_report_id)).pipe(
+									rxmap(() => ({ update: true }))
+								)
+							)
+						),
+						rxof(false)
+					)
 				),
-				tap(() => console.log(`${log_route}.tap.should_update_db`)),
-				tap(console.log),
+				// rxfilter((should_update) => should_update == false),
 				concatMap(() => api_report)
 			);
 		});
 
-		let personal_report = db_personal_credit_report.pipe(
+		const update_display_token_error = curry((clientKey, reportKey, report_id, displayToken, error) => {
+			console.log(`${log_route}.personal_report.status.error`);
+			// console.log(error);
+			let status = pipe(get("response", "status"))(error);
+			console.log(status);
+
+			return rxof(status).pipe(
+				// rxfilter((status) => status == 401),
+				concatMap(() => update_display_token({ clientKey, reportKey, report_id, displayToken })),
+				tap(() => subject.next({ id: start_action, args: { request } })),
+				rxfilter((value) => value !== undefined)
+			);
+		});
+
+		let array_report = db_personal_credit_report.pipe(
 			rxfilter((value) => value !== undefined),
 			rxmap(pipe(pick(["reportKey", "clientKey", "displayToken", "id"]))),
 			concatMap(({ reportKey, displayToken, clientKey, id: report_id }) =>
 				from(ArrayExternal.get_credit_report(reportKey, displayToken)).pipe(
 					rxfilter((report) => report.CREDIT_RESPONSE),
-					concatMap(update_db_report_if_needed(db_personal_credit_report, report_id)),
-					catchError((error) => {
-						console.log(`${log_route}.personal_report.status.error`);
-						console.log(error);
-						let status = pipe(get("response", "status"))(error);
-						console.log(status);
-
-						return rxof(status).pipe(
-							// rxfilter((status) => status == 401),
-							concatMap(() => update_display_token({ clientKey, reportKey, report_id, displayToken })),
-							tap(() => subject.next({ id: start_action, args: { request } })),
-							rxfilter((value) => value !== undefined)
-						);
-					})
+					catchError(update_display_token_error(clientKey, reportKey, report_id, displayToken))
+					// concatMap(update_db_report_if_needed(db_personal_credit_report, report_id))
 				)
-			),
-			// tap(() => console.log(`${log_route}.tap.personal_report`)),
+			)
+			// rxmap((array_response) => new ArrayInternal(array_response)),
+			// rxfilter((value) => value !== undefined)
+		);
+
+		let personal_report = array_report.pipe(
+			// tap(() => console.log(`${log_route}.tap.should_update_db`)),
 			// tap(console.log),
-			rxmap((array_response) => new ArrayInternal(array_response)),
-			rxfilter((value) => value !== undefined)
+			// rxmap((report) => report.response()),
+			concatMap(update_db_report_if_needed(db_personal_credit_report)),
+			rxmap((array_response) => new ArrayInternal(array_response))
+			// rxmap(() => ({
+			// 	experian_score: () => 0,
+			// 	equifax_score: () => 0,
+			// 	transunion_score: () => 0,
+			// }))
+			// tap(() => console.log(`${log_route}.tap.should_update_db`)),
+			// tap(console.log)
 		);
 
 		let empty_personal_report = db_personal_credit_report.pipe(

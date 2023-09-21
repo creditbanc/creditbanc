@@ -40,9 +40,10 @@ import { flatten as objflat } from "flat";
 import murmurhash from "murmurhash";
 import { create } from "zustand";
 
-export const store = (props) => {
+export const store = (props = {}) => {
 	return create((set) => ({
-		...store,
+		...props,
+		set_props: (props) => set((state) => ({ ...state, ...props })),
 		set_state: (path, value) => set((state) => pipe(mod(...path)(() => value))(state)),
 	}));
 };
