@@ -44,7 +44,7 @@ export const set_cookie = (name, value, options = {}) => {
 	return Cookies.set(name, value, options);
 };
 
-export const request_cookies = (request) => {
+export const get_request_cookies = (request) => {
 	let cookie = request.headers.get("Cookie");
 	return pipe(split(";"), map(pipe(split("="), map(rtrim))), fromPairs)(cookie);
 };

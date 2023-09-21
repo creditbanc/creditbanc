@@ -1,4 +1,4 @@
-import { get_group_id, inspect, request_cookies } from "~/utils/helpers";
+import { get_group_id, inspect, get_request_cookies } from "~/utils/helpers";
 import { get, mod } from "shades";
 import { fromPairs, head, map, pipe, split, trim } from "ramda";
 import { Lendflow } from "~/data/lendflow";
@@ -21,7 +21,7 @@ const loader_response = subject.pipe(
 	rxfilter((message) => message.id == start_action),
 	concatMap(({ args: { request } }) => {
 		console.log(`${log_route}.action_response.headers`);
-		let cookies = request_cookies(request);
+		let cookies = get_request_cookies(request);
 		console.log(cookies);
 
 		let url = new URL(request.url);
