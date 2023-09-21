@@ -1,6 +1,6 @@
 import { get_group_id, inspect, normalize, normalize_id } from "~/utils/helpers";
 import { get, mod } from "shades";
-import { head, pick, pipe } from "ramda";
+import { curry, head, pick, pipe } from "ramda";
 import { Lendflow } from "~/data/lendflow";
 import { get_collection, get_doc, set_doc } from "~/utils/firebase";
 import { LendflowExternal, LendflowInternal } from "~/utils/lendflow.server";
@@ -14,7 +14,19 @@ import {
 	withLatestFrom,
 	concatAll,
 } from "rxjs/operators";
-import { from, lastValueFrom, forkJoin, Subject, of as rxof, iif, throwError, merge, ReplaySubject, zip } from "rxjs";
+import {
+	from,
+	lastValueFrom,
+	forkJoin,
+	Subject,
+	of as rxof,
+	iif,
+	throwError,
+	merge,
+	ReplaySubject,
+	zip,
+	isObservable,
+} from "rxjs";
 import { concatIfTrue, fold, ifEmpty, ifFalse, ifTrue } from "~/utils/operators";
 import { is_authorized_f } from "~/api/auth";
 import { get_session_entity_id } from "~/utils/auth.server";
@@ -115,35 +127,34 @@ const action_response = subject.pipe(
 			return { doc_id, data };
 		};
 
+		const update_db_report_if_needed = curry((db_personal_credit_report, db_report_id, report) => {
+			let db_report = isObservable(db_personal_credit_report)
+				? db_personal_credit_report
+				: rxof(db_personal_credit_report);
+			let api_report = rxof(report);
+			return zip([api_report, db_report]).pipe(
+				rxmap(([api_report, db_report]) => [api_report, pipe(get("data", "CREDIT_RESPONSE"))(db_report)]),
+				rxmap(([api_report, db_report]) => [normalize_id(api_report), normalize_id(db_report)]),
+				rxmap(([api_report_hash, db_report_hash]) => should_update_db(api_report_hash, db_report_hash)),
+				concatMap((value) =>
+					iif(() => value === true, from(update_db_with_new_report(db_report_id, report)), rxof(false))
+				),
+				tap(() => console.log(`${log_route}.tap.should_update_db`)),
+				tap(console.log),
+				concatMap(() => api_report)
+			);
+		});
+
 		let personal_report = db_personal_credit_report.pipe(
 			rxfilter((value) => value !== undefined),
 			rxmap(pipe(pick(["reportKey", "clientKey", "displayToken", "id"]))),
 			concatMap(({ reportKey, displayToken, clientKey, id: report_id }) =>
 				from(ArrayExternal.get_credit_report(reportKey, displayToken)).pipe(
 					rxfilter((report) => report.CREDIT_RESPONSE),
-					concatMap((report) => {
-						return zip([rxof(report), db_personal_credit_report]).pipe(
-							rxmap(([api_report, db_report]) => [
-								api_report,
-								pipe(get("data", "CREDIT_RESPONSE"))(db_report),
-							]),
-							rxmap(([api_report, db_report]) => [normalize_id(api_report), normalize_id(db_report)]),
-							rxmap(([api_report_id, db_report_id]) => should_update_db(api_report_id, db_report_id)),
-							concatMap((value) =>
-								iif(
-									() => value === true,
-									from(update_db_with_new_report(report_id, report)),
-									rxof(false)
-								)
-							),
-							tap(() => console.log(`${log_route}.tap.should_update_db`)),
-							tap(console.log),
-							concatMap(() => rxof(report))
-						);
-					}),
+					concatMap(update_db_report_if_needed(db_personal_credit_report, report_id)),
 					catchError((error) => {
 						console.log(`${log_route}.personal_report.status.error`);
-						// console.log(error);
+						console.log(error);
 						let status = pipe(get("response", "status"))(error);
 						console.log(status);
 
