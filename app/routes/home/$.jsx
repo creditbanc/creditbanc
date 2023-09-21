@@ -8,6 +8,8 @@ import {
 	delete_cookie,
 	get_entity_id,
 	get_group_id,
+	normalize,
+	normalize_id,
 	search_params,
 	use_search_params,
 } from "~/utils/helpers";
@@ -45,8 +47,6 @@ import { CheckCircleIcon, XCircleIcon } from "@heroicons/react/24/outline";
 import { get_doc } from "~/utils/firebase";
 import { useOnboardingStore, default_onboard_state } from "~/stores/useOnboardingStore";
 import { encode } from "js-base64";
-import { create } from "zustand";
-import { mod } from "shades";
 import { BusinessEntity, useReportStore } from "../credit/business/new/$";
 import Spinner from "~/components/LoadingSpinner";
 import murmurhash from "murmurhash";
@@ -55,11 +55,6 @@ import { filter as rxfilter } from "rxjs";
 import { use_cache } from "~/components/CacheLink";
 import { difference } from "ramda";
 import { flatten } from "flat";
-
-export const useViewStore = create((set) => ({
-	view: {},
-	set_state: (path, value) => set((state) => pipe(mod(...path)(() => value))(state)),
-}));
 
 const useNewBusinessReportFormStore = useReportStore;
 
@@ -1102,17 +1097,13 @@ export default function Home() {
 		business_scores_fetcher.submit(...fetcher_payload_maker(business_scores_url));
 	};
 
-	let comparer_fn = (a, b) => `${a}`.localeCompare(`${b}`);
-
-	let normalize = pipe(flatten, values, sort(comparer_fn), murmurhash);
-
 	useEffect(() => {
 		run_fetchers();
 	}, []);
 
 	const on_should_update = (previous_value, current_value, update_key) => {
-		let prev_data = rxof(normalize(previous_value));
-		let curr_data = rxof(normalize(current_value));
+		let prev_data = rxof(normalize_id(previous_value));
+		let curr_data = rxof(normalize_id(current_value));
 
 		let update_cache = () => update_cache_key(["keys", update_key], `${Math.random()}`);
 

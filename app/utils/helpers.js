@@ -31,10 +31,27 @@ import {
 	tryCatch,
 	fromPairs,
 	trim as rtrim,
+	sort,
 } from "ramda";
 import { iif, of as rxof, throwError } from "rxjs";
 const util = require("util");
-import { get } from "shades";
+import { get, mod } from "shades";
+import { flatten as objflat } from "flat";
+import murmurhash from "murmurhash";
+import { create } from "zustand";
+
+export const store = (props) => {
+	return create((set) => ({
+		...store,
+		set_state: (path, value) => set((state) => pipe(mod(...path)(() => value))(state)),
+	}));
+};
+
+export const comparer_fn = (a, b) => `${a}`.localeCompare(`${b}`);
+
+export const normalize = pipe(objflat, values, sort(comparer_fn), join(""));
+
+export const normalize_id = pipe(normalize, murmurhash);
 
 export const delete_cookie = (name) => {
 	return Cookies.remove(name);
