@@ -69,13 +69,7 @@ export class LendflowInternal {
 	constructor(public report: LendflowReport) {}
 
 	business_info = () => {
-		const lens_path = [
-			"commercial_data",
-			"experian",
-			"business_match",
-			"response",
-			0,
-		];
+		const lens_path = ["commercial_data", "experian", "business_match", "response", 0];
 
 		const spec = applySpec({
 			name: pipe(get("businessName")),
@@ -83,81 +77,43 @@ export class LendflowInternal {
 			address: pipe(get("address")),
 		});
 
-		return falsyTryCatch(
-			pipe(get(...lens_path), spec),
-			always({})
-		)(this.report);
+		return falsyTryCatch(pipe(get(...lens_path), spec), always({}))(this.report);
 	};
 
 	experian_score = () => {
-		const lens_path = [
-			"commercial_data",
-			"experian",
-			"intelliscore",
-			"commercialScore",
-			"score",
-		];
+		const lens_path = ["commercial_data", "experian", "intelliscore", "commercialScore", "score"];
 		return falsyTryCatch(pipe(get(...lens_path)), always(0))(this.report);
 	};
 
 	experian_risk_class = () => {
-		const lens_path = [
-			"commercial_data",
-			"experian",
-			"intelliscore",
-			"commercialScore",
-			"riskClass",
-		];
+		const lens_path = ["commercial_data", "experian", "intelliscore", "commercialScore", "riskClass"];
 		return falsyTryCatch(pipe(get(...lens_path)), always({}))(this.report);
 	};
 
 	experian_trade_summary = () => {
-		const lens_path = [
-			"commercial_data",
-			"experian",
-			"trades",
-			"tradePaymentSummary",
-		];
+		const lens_path = ["commercial_data", "experian", "trades", "tradePaymentSummary"];
 		return falsyTryCatch(pipe(get(...lens_path)), always({}))(this.report);
 	};
 
 	experian_trade_payment_totals = () => {
-		const lens_path = [
-			"commercial_data",
-			"experian",
-			"trades",
-			"tradePaymentTotals",
-		];
+		const lens_path = ["commercial_data", "experian", "trades", "tradePaymentTotals"];
 
 		const spec = applySpec({
 			trade_lines: pipe(get("tradelines")),
 			combined_trade_lines: pipe(get("combinedTradelines")),
 			additional_trade_lines: pipe(get("additionalTradelines")),
 			newly_reported_trade_lines: pipe(get("newlyReportedTradelines")),
-			continuously_reported_trade_lines: pipe(
-				get("continuouslyReportedTradelines")
-			),
+			continuously_reported_trade_lines: pipe(get("continuouslyReportedTradelines")),
 		});
 
-		return falsyTryCatch(
-			pipe(get(...lens_path), spec),
-			always({})
-		)(this.report);
+		return falsyTryCatch(pipe(get(...lens_path), spec), always({}))(this.report);
 	};
 
 	experian_trade_lines = () => {
-		const lens_path = [
-			"commercial_data",
-			"experian",
-			"trades",
-			"tradePaymentExperiences",
-		];
+		const lens_path = ["commercial_data", "experian", "trades", "tradePaymentExperiences"];
 
 		return falsyTryCatch(
-			pipe(get(...lens_path), (trades) => [
-				...trades.tradeAdditional,
-				...trades.tradeNewAndContinuous,
-			]),
+			pipe(get(...lens_path), (trades) => [...trades.tradeAdditional, ...trades.tradeNewAndContinuous]),
 			always([])
 		)(this.report);
 	};
@@ -173,12 +129,7 @@ export class LendflowInternal {
 	};
 
 	experian_employee_size = () => {
-		let lens_path = [
-			"commercial_data",
-			"experian",
-			"facts",
-			"employeeSize",
-		];
+		let lens_path = ["commercial_data", "experian", "facts", "employeeSize"];
 		return falsyTryCatch(pipe(get(...lens_path)), always(0))(this.report);
 	};
 
@@ -188,48 +139,39 @@ export class LendflowInternal {
 	};
 
 	experian_sales_revenue = () => {
-		let lens_path = [
-			"commercial_data",
-			"experian",
-			"facts",
-			"salesRevenue",
-		];
+		let lens_path = ["commercial_data", "experian", "facts", "salesRevenue"];
 		return falsyTryCatch(pipe(get(...lens_path)), always({}))(this.report);
 	};
 
 	experian_factors = () => {
 		let lens_path = ["commercial_data", "experian"];
-		return falsyTryCatch(
+		let res = falsyTryCatch(
 			pipe(get(...lens_path), (experian) => [
 				...experian.intelliscore.commercialScoreFactors,
-				...experian.fsr.fsrScoreFactors,
+				// ...experian.fsr.fsrScoreFactors,
 			]),
 			always([])
 		)(this.report);
+
+		console.log("utils.lendflow.experian_factors");
+		console.log(res);
+
+		return res;
 	};
 
 	experian_derogatories = () => {
 		let lens_path = ["commercial_data", "experian", "legal_collections"];
 		return falsyTryCatch(
-			pipe(
-				get(...lens_path),
-				({ legalFilingsCollectionsSummary, legalFilingsSummary }) => ({
-					legalFilingsCollectionsSummary,
-					legalFilingsSummary,
-				})
-			),
+			pipe(get(...lens_path), ({ legalFilingsCollectionsSummary, legalFilingsSummary }) => ({
+				legalFilingsCollectionsSummary,
+				legalFilingsSummary,
+			})),
 			always({})
 		)(this.report);
 	};
 
 	experian_payment_trends = () => {
-		let lens_path = [
-			"commercial_data",
-			"experian",
-			"trades",
-			"tradePaymentTrends",
-			"monthlyTrends",
-		];
+		let lens_path = ["commercial_data", "experian", "trades", "tradePaymentTrends", "monthlyTrends"];
 		return falsyTryCatch(pipe(get(...lens_path)), always([]))(this.report);
 	};
 
@@ -258,7 +200,15 @@ export class LendflowInternal {
 			"delinquencyScore",
 			"classScoreDescription",
 		];
-		return falsyTryCatch(pipe(get(...lens_path)), always(""))(this.report);
+		let res = falsyTryCatch(pipe(get(...lens_path)), always(""))(this.report);
+
+		console.log("utils.lendflow.dnb_delinquency_score");
+
+		inspect(this.report);
+
+		// console.log(res);
+
+		return res;
 	};
 
 	dnb_total_balance_high = () => {
@@ -277,27 +227,12 @@ export class LendflowInternal {
 	};
 
 	dnb_duns_number = () => {
-		let lens_path = [
-			"commercial_data",
-			"dnb",
-			"fi_l2",
-			"organization",
-			"duns",
-		];
+		let lens_path = ["commercial_data", "dnb", "fi_l2", "organization", "duns"];
 		return falsyTryCatch(pipe(get(...lens_path)), always(0))(this.report);
 	};
 
 	dnb_payment_status = () => {
-		let lens_path = [
-			"commercial_data",
-			"dnb",
-			"pi_l3",
-			"organization",
-			"businessTrading",
-			0,
-			"summary",
-			0,
-		];
+		let lens_path = ["commercial_data", "dnb", "pi_l3", "organization", "businessTrading", 0, "summary", 0];
 
 		const spec = applySpec({
 			maximumOwedAmount: pipe(get("maximumOwedAmount")),
@@ -311,99 +246,44 @@ export class LendflowInternal {
 			badDebtExperiencesAmount: pipe(get("badDebtExperiencesAmount")),
 			negativeExperiencesAmount: pipe(get("negativeExperiencesAmount")),
 			slowExperiencesPercentage: pipe(get("slowExperiencesPercentage")),
-			slowOrNegativePaymentsCount: pipe(
-				get("slowOrNegativePaymentsCount")
-			),
-			unfavorableExperiencesCount: pipe(
-				get("unfavorableExperiencesCount")
-			),
-			badDebtExperiencesPercentage: pipe(
-				get("badDebtExperiencesPercentage")
-			),
-			unfavorableExperiencesAmount: pipe(
-				get("unfavorableExperiencesAmount")
-			),
-			negativeExperiencesPercentage: pipe(
-				get("negativeExperiencesPercentage")
-			),
-			slowAndNegativeExperiencesAmount: pipe(
-				get("slowAndNegativeExperiencesAmount")
-			),
-			slowOrNegativePaymentsPercentage: pipe(
-				get("slowOrNegativePaymentsPercentage")
-			),
-			unfavorableExperiencesPercentage: pipe(
-				get("unfavorableExperiencesPercentage")
-			),
-			slowExperiencesHighestCreditAmount: pipe(
-				get("slowExperiencesHighestCreditAmount")
-			),
+			slowOrNegativePaymentsCount: pipe(get("slowOrNegativePaymentsCount")),
+			unfavorableExperiencesCount: pipe(get("unfavorableExperiencesCount")),
+			badDebtExperiencesPercentage: pipe(get("badDebtExperiencesPercentage")),
+			unfavorableExperiencesAmount: pipe(get("unfavorableExperiencesAmount")),
+			negativeExperiencesPercentage: pipe(get("negativeExperiencesPercentage")),
+			slowAndNegativeExperiencesAmount: pipe(get("slowAndNegativeExperiencesAmount")),
+			slowOrNegativePaymentsPercentage: pipe(get("slowOrNegativePaymentsPercentage")),
+			unfavorableExperiencesPercentage: pipe(get("unfavorableExperiencesPercentage")),
+			slowExperiencesHighestCreditAmount: pipe(get("slowExperiencesHighestCreditAmount")),
 		});
-		return falsyTryCatch(
-			pipe(get(...lens_path), spec),
-			always({})
-		)(this.report);
+		return falsyTryCatch(pipe(get(...lens_path), spec), always({}))(this.report);
 	};
 
 	dnb_credit_utilization = () => {
-		let lens_path = [
-			"commercial_data",
-			"dnb",
-			"pi_l3",
-			"organization",
-			"businessTrading",
-			0,
-			"summary",
-			0,
-		];
+		let lens_path = ["commercial_data", "dnb", "pi_l3", "organization", "businessTrading", 0, "summary", 0];
 
 		const spec = applySpec({
 			averageHighCreditAmount: pipe(get("averageHighCreditAmount")),
 			maximumHighCreditAmount: pipe(get("maximumHighCreditAmount")),
 			highCreditExperiencesCount: pipe(get("highCreditExperiencesCount")),
-			satisfactoryExperiencesCount: pipe(
-				get("satisfactoryExperiencesCount")
-			),
-			satisfactoryExperiencesAmount: pipe(
-				get("satisfactoryExperiencesAmount")
-			),
-			satisfactoryExperiencesPercentage: pipe(
-				get("satisfactoryExperiencesPercentage")
-			),
-			slowExperiencesHighestCreditAmount: pipe(
-				get("slowExperiencesHighestCreditAmount")
-			),
+			satisfactoryExperiencesCount: pipe(get("satisfactoryExperiencesCount")),
+			satisfactoryExperiencesAmount: pipe(get("satisfactoryExperiencesAmount")),
+			satisfactoryExperiencesPercentage: pipe(get("satisfactoryExperiencesPercentage")),
+			slowExperiencesHighestCreditAmount: pipe(get("slowExperiencesHighestCreditAmount")),
 		});
 
-		return falsyTryCatch(
-			pipe(get(...lens_path), spec),
-			always({})
-		)(this.report);
+		return falsyTryCatch(pipe(get(...lens_path), spec), always({}))(this.report);
 	};
 
 	dnb_payment_trends = () => {
-		let lens_path = [
-			"commercial_data",
-			"dnb",
-			"pi_l3",
-			"organization",
-			"businessTrading",
-			0,
-			"summary",
-			0,
-		];
+		let lens_path = ["commercial_data", "dnb", "pi_l3", "organization", "businessTrading", 0, "summary", 0];
 
 		const spec = applySpec({
 			badDebtExperiencesCount: pipe(get("badDebtExperiencesCount")),
-			totalPastDueExperiencesCount: pipe(
-				get("totalPastDueExperiencesCount")
-			),
+			totalPastDueExperiencesCount: pipe(get("totalPastDueExperiencesCount")),
 		});
 
-		return falsyTryCatch(
-			pipe(get(...lens_path), spec),
-			always({})
-		)(this.report);
+		return falsyTryCatch(pipe(get(...lens_path), spec), always({}))(this.report);
 	};
 
 	dnb_company_info = () => {
@@ -425,15 +305,10 @@ export class LendflowInternal {
 			numberOfEmployees: pipe(get("numberOfEmployees")),
 		});
 
-		return falsyTryCatch(
-			pipe(get(...lens_path), spec),
-			always({})
-		)(this.report);
+		return falsyTryCatch(pipe(get(...lens_path), spec), always({}))(this.report);
 	};
 
-	static save_application = async (
-		data: Application
-	): Promise<Application> => {
+	static save_application = async (data: Application): Promise<Application> => {
 		console.log("lendflow.sever.save_application");
 		console.log(data);
 		let { application_id } = data;
@@ -444,25 +319,16 @@ export class LendflowInternal {
 
 export class LendflowExternal {
 	static plan_request_products = (plan_id) => {
-		let experian_requested_products = pipe(get(plan_id))(
-			plan_product_requests.experian
-		);
+		let experian_requested_products = pipe(get(plan_id))(plan_product_requests.experian);
 
-		let dnb_requested_products = pipe(get(plan_id))(
-			plan_product_requests.dnb
-		);
+		let dnb_requested_products = pipe(get(plan_id))(plan_product_requests.dnb);
 
-		let request_products = [
-			...experian_requested_products,
-			...dnb_requested_products,
-		];
+		let request_products = [...experian_requested_products, ...dnb_requested_products];
 
 		return request_products;
 	};
 
-	static new_application_request_creator = (
-		application_form: ApplicationForm
-	) => {
+	static new_application_request_creator = (application_form: ApplicationForm) => {
 		var options = {
 			method: "post",
 			maxBodyLength: Infinity,
@@ -529,10 +395,7 @@ export const get_lendflow_report = async (application_id) => {
 	}
 };
 
-export const update_lendflow_report = async (
-	application_id,
-	requested_products
-) => {
+export const update_lendflow_report = async (application_id, requested_products) => {
 	let options = {
 		method: "put",
 		maxBodyLength: Infinity,

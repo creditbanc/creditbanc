@@ -4,25 +4,8 @@ import { head, pipe } from "ramda";
 import { Lendflow } from "~/data/lendflow";
 import { get_collection, get_doc, set_doc } from "~/utils/firebase";
 import { LendflowExternal, LendflowInternal } from "~/utils/lendflow.server";
-import {
-	map as rxmap,
-	filter as rxfilter,
-	concatMap,
-	tap,
-	take,
-	catchError,
-} from "rxjs/operators";
-import {
-	from,
-	lastValueFrom,
-	forkJoin,
-	Subject,
-	of as rxof,
-	iif,
-	throwError,
-	merge,
-	ReplaySubject,
-} from "rxjs";
+import { map as rxmap, filter as rxfilter, concatMap, tap, take, catchError } from "rxjs/operators";
+import { from, lastValueFrom, forkJoin, Subject, of as rxof, iif, throwError, merge, ReplaySubject } from "rxjs";
 import { fold, ifEmpty, ifFalse } from "~/utils/operators";
 import { is_authorized_f } from "~/api/auth";
 import { get_session_entity_id } from "~/utils/auth.server";
@@ -58,9 +41,7 @@ const credit_report = subject.pipe(
 
 		let group_id = rxof(get_group_id(url.pathname));
 		let entity_id = from(get_session_entity_id(request));
-		let entity = entity_id.pipe(
-			concatMap((entity_id) => from(get_doc(["entity", entity_id])))
-		);
+		let entity = entity_id.pipe(concatMap((entity_id) => from(get_doc(["entity", entity_id]))));
 		let plan_id = entity.pipe(rxmap(get("plan_id")));
 
 		let entity_group_id = forkJoin({
@@ -69,16 +50,11 @@ const credit_report = subject.pipe(
 		});
 
 		let is_authorized = entity_group_id.pipe(
-			concatMap(({ entity_id, group_id }) =>
-				is_authorized_f(entity_id, group_id, "credit", "read")
-			),
+			concatMap(({ entity_id, group_id }) => is_authorized_f(entity_id, group_id, "credit", "read")),
 			concatMap(ifFalse(throwError(() => undefined)))
 		);
 
-		let db_report = group_id.pipe(
-			concatMap(get_credit_report),
-			rxmap(head)
-		);
+		let db_report = group_id.pipe(concatMap(get_credit_report), rxmap(head));
 
 		let report_id = db_report.pipe(rxmap(pipe(get("id"))));
 
@@ -129,14 +105,12 @@ const credit_report = subject.pipe(
 
 		let $report = merge(report, empty_report);
 
-		let business_info = $report.pipe(
-			rxmap((report) => report.business_info())
-		);
+		let business_info = $report.pipe(rxmap((report) => report.business_info()));
 
-		// return rxof({});
+		// return rxof({ test: "hiiiii" });
 		// return business_info;
 
-		return forkJoin({ business_info });
+		return business_info;
 
 		return is_authorized.pipe(
 			concatMap(() => forkJoin({ business_info })),
@@ -175,9 +149,7 @@ export const loader = async ({ request }) => {
 
 	subject.next({ id: "get_credit_report", args: { request } });
 
-	let response = await lastValueFrom(
-		subject.pipe(rxfilter(on_complete), take(1))
-	);
+	let response = await lastValueFrom(subject.pipe(rxfilter(on_complete), take(1)));
 
 	// console.log("responseseeee");
 	// console.log(response.next());

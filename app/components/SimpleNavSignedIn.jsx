@@ -2,26 +2,10 @@ import { Fragment, useEffect } from "react";
 import { Link, useLocation, useSearchParams } from "@remix-run/react";
 const cb_logo = "/images/logos/cb_logo_3.png";
 import UserAccountNavMenu from "./UserAccountNavMenu";
-import {
-	classNames,
-	get_entity_id,
-	get_group_id,
-	is_location,
-	mapIndexed,
-} from "~/utils/helpers";
+import { classNames, get_entity_id, get_group_id, is_location, mapIndexed } from "~/utils/helpers";
 import { Menu, Transition } from "@headlessui/react";
 import { ChevronDownIcon } from "@heroicons/react/20/solid";
-import {
-	always,
-	equals,
-	includes,
-	isEmpty,
-	map,
-	not,
-	pipe,
-	set,
-	tryCatch,
-} from "ramda";
+import { always, equals, includes, isEmpty, map, not, pipe, set, tryCatch } from "ramda";
 import {
 	ChatBubbleLeftEllipsisIcon,
 	Cog6ToothIcon,
@@ -33,10 +17,7 @@ import {
 import { get_collection } from "~/utils/firebase";
 import { all, get, mod } from "shades";
 import { create } from "zustand";
-import {
-	get_owner_companies_ids,
-	get_shared_companies_ids,
-} from "~/api/ui/companies";
+import { get_owner_companies_ids, get_shared_companies_ids } from "~/api/ui/companies";
 import { useCompaniesDropdownStore } from "~/stores/useCompaniesDropdownStore";
 import copy from "copy-to-clipboard";
 import Share from "~/routes/invites/new/$.jsx";
@@ -48,8 +29,7 @@ import CacheLink from "./CacheLink";
 
 export const useRolesStore = create((set) => ({
 	roles: false,
-	set_roles: (path, value) =>
-		set((state) => pipe(mod(...path)(() => value))(state)),
+	set_roles: (path, value) => set((state) => pipe(mod(...path)(() => value))(state)),
 }));
 
 const Companies = ({ companies = [] }) => {
@@ -63,10 +43,7 @@ const Companies = ({ companies = [] }) => {
 			<div>
 				<Menu.Button className="inline-flex w-full justify-center gap-x-1.5 rounded-full bg-white px-4 py-2 text-sm font-semibold text-gray-900 hover:bg-gray-100">
 					Companies
-					<ChevronDownIcon
-						className="-mr-1 h-5 w-5 text-gray-400"
-						aria-hidden="true"
-					/>
+					<ChevronDownIcon className="-mr-1 h-5 w-5 text-gray-400" aria-hidden="true" />
 				</Menu.Button>
 			</div>
 
@@ -86,9 +63,7 @@ const Companies = ({ companies = [] }) => {
 								<Link
 									to={`/companies/dashboard/resource/e/${entity_id}/g/${group_id}`}
 									className={classNames(
-										active
-											? "bg-gray-100 text-gray-900"
-											: "text-gray-700",
+										active ? "bg-gray-100 text-gray-900" : "text-gray-700",
 										"block px-4 py-2 text-sm"
 									)}
 								>
@@ -98,28 +73,19 @@ const Companies = ({ companies = [] }) => {
 						</Menu.Item>
 						{pipe(
 							map((company) => (
-								<Menu.Item
-									key={company.id}
-									className="border-b last:border-b-0"
-								>
+								<Menu.Item key={company.id} className="border-b last:border-b-0">
 									{({ active }) => (
 										<Link
 											to={`/home/resource/e/${company.id}/g/${company.group_id}`}
 											className={classNames(
-												active
-													? "bg-gray-100 text-gray-900"
-													: "text-gray-700",
+												active ? "bg-gray-100 text-gray-900" : "text-gray-700",
 												"block px-4 py-2 text-sm"
 											)}
 										>
 											<div className="flex flex-col">
 												<div className="flex flex-row gap-x-1 font-semibold">
-													<div>
-														{company.first_name}
-													</div>
-													<div>
-														{company.last_name}
-													</div>
+													<div>{company.first_name}</div>
+													<div>{company.last_name}</div>
 												</div>
 												<div>{company.email}</div>
 											</div>
@@ -161,20 +127,16 @@ let navigation = [
 		name: "Intelliscore",
 		href: ({ entity_id, group_id }) =>
 			`/credit/report/business/experian/overview/resource/e/${entity_id}/g/${group_id}`,
-		current: (pathname) =>
-			is_location("/credit/report/business/experian", pathname),
+		current: (pathname) => is_location("/credit/report/business/experian", pathname),
 	},
 	{
 		name: "Dun & Bradstreet",
-		href: ({ entity_id, group_id }) =>
-			`/credit/report/business/dnb/overview/resource/e/${entity_id}/g/${group_id}`,
-		current: (pathname) =>
-			is_location("/credit/report/business/dnb", pathname),
+		href: ({ entity_id, group_id }) => `/credit/report/business/dnb/overview/resource/e/${entity_id}/g/${group_id}`,
+		current: (pathname) => is_location("/credit/report/business/dnb", pathname),
 	},
 	{
 		name: "Personal",
-		href: ({ entity_id, group_id }) =>
-			`/credit/report/personal/personal/resource/e/${entity_id}/g/${group_id}`,
+		href: ({ entity_id, group_id }) => `/credit/report/personal/personal/resource/e/${entity_id}/g/${group_id}`,
 		current: (pathname) => is_location("/credit/report/personal", pathname),
 	},
 ];
@@ -186,19 +148,14 @@ const ShareDropdown = () => {
 	let roles = useRolesStore((state) => state.roles);
 	let set_modal = useModalStore((state) => state.set_modal);
 
-	let can_manage_roles = tryCatch(
-		pipe(get(all, "name"), includes("@administrator")),
-		always(false)
-	)(roles);
+	let can_manage_roles = tryCatch(pipe(get(all, "name"), includes("@administrator")), always(false))(roles);
 
 	let can_share = pipe(equals(false), not)(roles);
 
 	const onCopyShareLink = (config_id, e) => {
 		e.preventDefault();
 		let { origin } = window.location;
-		copy(
-			`${origin}/links/resource/e/${entity_id}/g/${group_id}?config_id=${config_id}`
-		);
+		copy(`${origin}/links/resource/e/${entity_id}/g/${group_id}?config_id=${config_id}`);
 	};
 
 	const onShareModal = (e) => {
@@ -215,10 +172,7 @@ const ShareDropdown = () => {
 	if (!can_manage_roles && can_share) {
 		return (
 			<div className="flex flex-row divide-x bg-blue-600 text-white rounded-full px-3 py-1.5 text-sm cursor-pointer space-x-3">
-				<div
-					className="flex flex-col w-full items-center "
-					onClick={onShareModal}
-				>
+				<div className="flex flex-col w-full items-center " onClick={onShareModal}>
 					<div className="flex flex-row space-x-2">
 						<div>
 							<UsersIcon className="h-5 w-5 text-white" />
@@ -233,10 +187,7 @@ const ShareDropdown = () => {
 	return (
 		<Menu as="div" className="relative inline-block text-left">
 			<div className="flex flex-row divide-x bg-blue-600 text-white rounded-full px-3 py-1.5 text-sm cursor-pointer space-x-3">
-				<div
-					className="flex flex-col w-full items-center "
-					onClick={onShareModal}
-				>
+				<div className="flex flex-col w-full items-center " onClick={onShareModal}>
 					<div className="flex flex-row space-x-2">
 						<div>
 							<UsersIcon className="h-5 w-5 text-white" />
@@ -262,9 +213,7 @@ const ShareDropdown = () => {
 					<div className="py-1">
 						<Link
 							to={`/roles/resource/e/${entity_id}/g/${group_id}`}
-							className={classNames(
-								"hover:bg-gray-100 hover:text-gray-900 text-gray-700 block text-sm"
-							)}
+							className={classNames("hover:bg-gray-100 hover:text-gray-900 text-gray-700 block text-sm")}
 						>
 							<div className="flex flex-row justify-between items-center cursor-pointer border-b px-4 py-2">
 								<div>Manage Roles</div>
@@ -282,9 +231,7 @@ const ShareDropdown = () => {
 									{({ active }) => (
 										<div
 											className={classNames(
-												active
-													? "bg-gray-100 text-gray-900"
-													: "text-gray-700",
+												active ? "bg-gray-100 text-gray-900" : "text-gray-700",
 												"block px-4 py-2 text-sm"
 											)}
 										>
@@ -296,12 +243,7 @@ const ShareDropdown = () => {
 												<div className="flex flex-row space-x-5">
 													<div
 														className="cursor-pointer"
-														onClick={(e) =>
-															onCopyShareLink(
-																role.id,
-																e
-															)
-														}
+														onClick={(e) => onCopyShareLink(role.id, e)}
 													>
 														<LinkIcon
 															className={`h-4 w-4 hover:text-blue-600 text-gray-400`}
@@ -343,10 +285,7 @@ const CreditDropdown = () => {
 					}`}
 				>
 					Credit
-					<ChevronDownIcon
-						className="ml-2 h-5 w-5 text-gray-400"
-						aria-hidden="true"
-					/>
+					<ChevronDownIcon className="ml-2 h-5 w-5 text-gray-400" aria-hidden="true" />
 				</Menu.Button>
 			</div>
 
@@ -366,9 +305,7 @@ const CreditDropdown = () => {
 								<Link
 									to={`/credit/report/personal/personal/resource/e/${entity_id}/g/${group_id}`}
 									className={classNames(
-										active
-											? "bg-gray-100 text-gray-900"
-											: "text-gray-700",
+										active ? "bg-gray-100 text-gray-900" : "text-gray-700",
 										"block px-4 py-2 text-sm"
 									)}
 								>
@@ -381,9 +318,7 @@ const CreditDropdown = () => {
 								<Link
 									to={`/credit/report/business/experian/overview/resource/e/${entity_id}/g/${group_id}`}
 									className={classNames(
-										active
-											? "bg-gray-100 text-gray-900"
-											: "text-gray-700",
+										active ? "bg-gray-100 text-gray-900" : "text-gray-700",
 										"block px-4 py-2 text-sm"
 									)}
 								>
@@ -396,9 +331,7 @@ const CreditDropdown = () => {
 								<Link
 									to={`/credit/report/business/dnb/overview/resource/e/${entity_id}/g/${group_id}`}
 									className={classNames(
-										active
-											? "bg-gray-100 text-gray-900"
-											: "text-gray-700",
+										active ? "bg-gray-100 text-gray-900" : "text-gray-700",
 										"block px-4 py-2 text-sm"
 									)}
 								>
@@ -419,7 +352,7 @@ export default function Nav({ entity_id, roles, companies }) {
 	let cache_keys = use_cache((state) => state.keys);
 	let set_cache_keys = use_cache((state) => state.set_state);
 
-	let { home } = cache_keys;
+	// let { home } = cache_keys;
 
 	let { pathname } = location;
 	let is_companies_dashboard = is_location("/companies/dashboard", pathname);
@@ -427,8 +360,8 @@ export default function Nav({ entity_id, roles, companies }) {
 	let set_roles = useRolesStore((state) => state.set_roles);
 	let set_companies = useCompaniesDropdownStore((state) => state.set_state);
 
-	console.log("cache_keys");
-	console.log(cache_keys);
+	// console.log("cache_keys");
+	// console.log(cache_keys);
 
 	useEffect(() => {
 		set_roles(["roles"], roles);
@@ -439,10 +372,7 @@ export default function Nav({ entity_id, roles, companies }) {
 			let owner_companies = await get_owner_companies_ids(entity_id);
 			let shared_companies = await get_shared_companies_ids(entity_id);
 
-			set_companies(
-				["companies"],
-				[...owner_companies, ...shared_companies]
-			);
+			set_companies(["companies"], [...owner_companies, ...shared_companies]);
 		};
 
 		if (entity_id) {
@@ -457,14 +387,8 @@ export default function Nav({ entity_id, roles, companies }) {
 			</Modal>
 			<div className="flex flex-row justify-between">
 				<div className="flex flex-col justify-center w-[150px]">
-					<CacheLink
-						to={`/home/resource/e/${entity_id}/g/${group_id}`}
-						cache_key={"home"}
-					>
-						<img
-							src={cb_logo}
-							className="hidden sm:block h-5 w-auto"
-						/>
+					<CacheLink to={`/home/resource/e/${entity_id}/g/${group_id}`}>
+						<img src={cb_logo} className="hidden sm:block h-5 w-auto" />
 					</CacheLink>
 				</div>
 
@@ -481,13 +405,11 @@ export default function Nav({ entity_id, roles, companies }) {
 										<Link
 											to={item.href({
 												entity_id: entity_id,
-												group_id:
-													get_group_id(pathname),
+												group_id: get_group_id(pathname),
 											})}
 											key={key}
 											className={`px-4 py-2 rounded-full cursor-pointer hover:bg-gray-100 ${
-												item.current(pathname) &&
-												"bg-gray-100"
+												item.current(pathname) && "bg-gray-100"
 											}`}
 										>
 											{item.name}

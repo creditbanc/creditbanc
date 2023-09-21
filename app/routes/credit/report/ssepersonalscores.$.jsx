@@ -4,25 +4,8 @@ import { head, pick, pipe } from "ramda";
 import { Lendflow } from "~/data/lendflow";
 import { get_collection, get_doc, set_doc } from "~/utils/firebase";
 import { LendflowExternal, LendflowInternal } from "~/utils/lendflow.server";
-import {
-	map as rxmap,
-	filter as rxfilter,
-	concatMap,
-	tap,
-	take,
-	catchError,
-} from "rxjs/operators";
-import {
-	from,
-	lastValueFrom,
-	forkJoin,
-	Subject,
-	of as rxof,
-	iif,
-	throwError,
-	merge,
-	ReplaySubject,
-} from "rxjs";
+import { map as rxmap, filter as rxfilter, concatMap, tap, take, catchError } from "rxjs/operators";
+import { from, lastValueFrom, forkJoin, Subject, of as rxof, iif, throwError, merge, ReplaySubject } from "rxjs";
 import { fold, ifEmpty, ifFalse } from "~/utils/operators";
 import { is_authorized_f } from "~/api/auth";
 import { get_session_entity_id } from "~/utils/auth.server";
@@ -35,9 +18,9 @@ import { update_doc } from "~/utils/firebase";
 const log_route = `credit.report.ssepersonalscores`;
 const start_action = "ssepersonalscores.action";
 
-const personalscoressubject = new ReplaySubject(1);
+const subject = new ReplaySubject(1);
 
-const action_response = personalscoressubject.pipe(
+const loader_response = subject.pipe(
 	rxfilter((message) => message.id == start_action),
 	concatMap(({ args: { request } }) => {
 		let url = new URL(request.url);
@@ -65,12 +48,7 @@ const action_response = personalscoressubject.pipe(
 
 		let group_id = rxof(get_group_id(url.pathname));
 
-		const update_display_token = ({
-			clientKey,
-			reportKey,
-			report_id,
-			displayToken,
-		}) => {
+		const update_display_token = ({ clientKey, reportKey, report_id, displayToken }) => {
 			console.log(`${log_route}.update_display_token`);
 
 			return rxof({ clientKey, reportKey, report_id, displayToken }).pipe(
@@ -79,22 +57,13 @@ const action_response = personalscoressubject.pipe(
 						rxmap((report) => report.displayToken),
 						concatMap((report_display_token) => {
 							if (report_display_token == displayToken) {
-								console.log(
-									`${log_route}.update_display_token.array_update`
-								);
-								return from(
-									ArrayExternal.refreshDisplayToken(
-										clientKey,
-										reportKey
-									)
-								);
+								console.log(`${log_route}.update_display_token.array_update`);
+								return from(ArrayExternal.refreshDisplayToken(clientKey, reportKey));
 							} else {
-								console.log(
-									`${log_route}.update_display_token.db_update`
-								);
+								console.log(`${log_route}.update_display_token.db_update`);
 								return rxof(null).pipe(
 									tap(() =>
-										personalscoressubject.next({
+										subject.next({
 											id: start_action,
 											args: { request },
 										})
@@ -143,21 +112,12 @@ const action_response = personalscoressubject.pipe(
 
 		let personal_report = personal_report_response.pipe(
 			rxfilter((value) => value !== undefined),
-			rxmap(
-				pipe(
-					head,
-					pick(["reportKey", "clientKey", "displayToken", "id"])
-				)
-			),
+			rxmap(pipe(head, pick(["reportKey", "clientKey", "displayToken", "id"]))),
 			concatMap(({ reportKey, displayToken, clientKey, id: report_id }) =>
-				from(
-					ArrayExternal.get_credit_report(reportKey, displayToken)
-				).pipe(
+				from(ArrayExternal.get_credit_report(reportKey, displayToken)).pipe(
 					rxfilter((report) => report.CREDIT_RESPONSE),
 					catchError((error) => {
-						console.log(
-							`${log_route}.personal_report.status.error`
-						);
+						console.log(`${log_route}.personal_report.status.error`);
 
 						let status = pipe(get("response", "status"))(error);
 						console.log(status);
@@ -173,7 +133,7 @@ const action_response = personalscoressubject.pipe(
 								})
 							),
 							tap(() =>
-								personalscoressubject.next({
+								subject.next({
 									id: start_action,
 									args: { request },
 								})
@@ -199,17 +159,11 @@ const action_response = personalscoressubject.pipe(
 
 		let $personal_report = merge(personal_report, empty_personal_report);
 
-		let experian_personal_score = $personal_report.pipe(
-			rxmap((report) => report.experian_score())
-		);
+		let experian_personal_score = $personal_report.pipe(rxmap((report) => report.experian_score()));
 
-		let equifax_personal_score = $personal_report.pipe(
-			rxmap((report) => report.equifax_score())
-		);
+		let equifax_personal_score = $personal_report.pipe(rxmap((report) => report.equifax_score()));
 
-		let transunion_personal_score = $personal_report.pipe(
-			rxmap((report) => report.transunion_score())
-		);
+		let transunion_personal_score = $personal_report.pipe(rxmap((report) => report.transunion_score()));
 
 		return forkJoin({
 			experian_personal_score,
@@ -226,7 +180,7 @@ const action_response = personalscoressubject.pipe(
 
 export const action = async ({ request }) => {
 	console.log(`${log_route}.action`);
-	personalscoressubject.next({ id: start_action, args: { request } });
-	let response = await lastValueFrom(action_response.pipe(take(1)));
+	subject.next({ id: start_action, args: { request } });
+	let response = await lastValueFrom(loader_response.pipe(take(1)));
 	return json({ ...response });
 };

@@ -60,6 +60,7 @@
 		"stripe": "^12.4.0",
 		"tailwind-scrollbar": "^2.1.0",
 		"tailwind-scrollbar-hide": "^1.1.7",
+		"timsort": "^0.3.0",
 		"usa-states": "^0.0.6",
 		"uuid": "^9.0.0",
 		"zustand": "^4.3.2"

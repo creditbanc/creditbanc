@@ -182,7 +182,6 @@ const new_lendflow_application = subject.pipe(
 			concatMap((form) =>
 				from_validations(validate_form(lendflow_validator, form))
 			),
-
 			concatMap(() => zip($plan_id, $formData)),
 			rxmap(([plan_id, form]) =>
 				LendflowExternal.new_application_request_creator({

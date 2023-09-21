@@ -9,7 +9,7 @@ plan_product_requests.experian.builder = [
 	"experian_business_match",
 	"experian_trades",
 	"experian_business_facts",
-	"experian_fsr",
+	// "experian_fsr",
 	"experian_legal_collections",
 ];
 
@@ -18,12 +18,12 @@ plan_product_requests.experian.pro = [
 	"experian_business_match",
 	"experian_trades",
 	"experian_business_facts",
-	"experian_fsr",
+	// "experian_fsr",
 	"experian_legal_collections",
 ];
 
 plan_product_requests.dnb.essential = ["dnb_pi_l3"];
 
-plan_product_requests.dnb.builder = ["dnb_pi_l3", "dnb_fi_l2", "dnb_ci_l2"];
+plan_product_requests.dnb.builder = ["dnb_pi_l3", "dnb_ci_l2"];
 
-plan_product_requests.dnb.pro = ["dnb_pi_l3", "dnb_fi_l2", "dnb_ci_l2"];
+plan_product_requests.dnb.pro = ["dnb_pi_l3", "dnb_ci_l2"];

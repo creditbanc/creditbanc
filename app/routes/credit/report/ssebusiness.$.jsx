@@ -4,25 +4,8 @@ import { fromPairs, head, map, pipe, split, trim } from "ramda";
 import { Lendflow } from "~/data/lendflow";
 import { get_collection, get_doc, set_doc } from "~/utils/firebase";
 import { LendflowExternal, LendflowInternal } from "~/utils/lendflow.server";
-import {
-	map as rxmap,
-	filter as rxfilter,
-	concatMap,
-	tap,
-	take,
-	catchError,
-} from "rxjs/operators";
-import {
-	from,
-	lastValueFrom,
-	forkJoin,
-	Subject,
-	of as rxof,
-	iif,
-	throwError,
-	merge,
-	ReplaySubject,
-} from "rxjs";
+import { map as rxmap, filter as rxfilter, concatMap, tap, take, catchError } from "rxjs/operators";
+import { from, lastValueFrom, forkJoin, Subject, of as rxof, iif, throwError, merge, ReplaySubject } from "rxjs";
 import { fold, ifEmpty, ifFalse } from "~/utils/operators";
 import { is_authorized_f } from "~/api/auth";
 import { get_session_entity_id } from "~/utils/auth.server";
@@ -32,9 +15,9 @@ import { eventStream } from "remix-utils";
 const log_route = `credit.report.ssebusiness`;
 const start_action = "ssebusiness.action";
 
-const actionsubject = new ReplaySubject(1);
+const subject = new ReplaySubject(1);
 
-const action_response = actionsubject.pipe(
+const loader_response = subject.pipe(
 	rxfilter((message) => message.id == start_action),
 	concatMap(({ args: { request } }) => {
 		console.log(`${log_route}.action_response.headers`);
@@ -66,9 +49,7 @@ const action_response = actionsubject.pipe(
 
 		let group_id = rxof(get_group_id(url.pathname));
 		let entity_id = from(get_session_entity_id(request));
-		let entity = entity_id.pipe(
-			concatMap((entity_id) => from(get_doc(["entity", entity_id])))
-		);
+		let entity = entity_id.pipe(concatMap((entity_id) => from(get_doc(["entity", entity_id]))));
 
 		let plan_id = entity.pipe(rxmap(get("plan_id")));
 
@@ -78,16 +59,11 @@ const action_response = actionsubject.pipe(
 		});
 
 		let is_authorized = entity_group_id.pipe(
-			concatMap(({ entity_id, group_id }) =>
-				is_authorized_f(entity_id, group_id, "credit", "read")
-			),
+			concatMap(({ entity_id, group_id }) => is_authorized_f(entity_id, group_id, "credit", "read")),
 			concatMap(ifFalse(throwError(() => undefined)))
 		);
 
-		let db_report = group_id.pipe(
-			concatMap(get_credit_report),
-			rxmap(head)
-		);
+		let db_report = group_id.pipe(concatMap(get_credit_report), rxmap(head));
 
 		let report_id = db_report.pipe(rxmap(pipe(get("id"))));
 
@@ -119,14 +95,12 @@ const action_response = actionsubject.pipe(
 
 		let $report = merge(report, empty_report);
 
-		let business_info = $report.pipe(
-			rxmap((report) => report.business_info())
-		);
+		let business_info = $report.pipe(rxmap((report) => report.business_info()));
 
 		// return rxof({});
 		// return business_info;
 
-		return forkJoin({ business_info }).pipe(
+		return from(business_info).pipe(
 			// rxmap((value) =>
 			// 	pipe(mod("business_info", "name")((name) => "test"))(value)
 			// ),
@@ -140,7 +114,7 @@ const action_response = actionsubject.pipe(
 
 export const action = async ({ request }) => {
 	console.log(`${log_route}.action`);
-	actionsubject.next({ id: start_action, args: { request } });
-	let response = await lastValueFrom(action_response.pipe(take(1)));
+	subject.next({ id: start_action, args: { request } });
+	let response = await lastValueFrom(loader_response.pipe(take(1)));
 	return json({ ...response });
 };

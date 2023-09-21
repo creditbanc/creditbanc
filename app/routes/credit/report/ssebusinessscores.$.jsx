@@ -4,25 +4,8 @@ import { head, pick, pipe } from "ramda";
 import { Lendflow } from "~/data/lendflow";
 import { get_collection, get_doc, set_doc } from "~/utils/firebase";
 import { LendflowExternal, LendflowInternal } from "~/utils/lendflow.server";
-import {
-	map as rxmap,
-	filter as rxfilter,
-	concatMap,
-	tap,
-	take,
-	catchError,
-} from "rxjs/operators";
-import {
-	from,
-	lastValueFrom,
-	forkJoin,
-	Subject,
-	of as rxof,
-	iif,
-	throwError,
-	merge,
-	ReplaySubject,
-} from "rxjs";
+import { map as rxmap, filter as rxfilter, concatMap, tap, take, catchError } from "rxjs/operators";
+import { from, lastValueFrom, forkJoin, Subject, of as rxof, iif, throwError, merge, ReplaySubject } from "rxjs";
 import { fold, ifEmpty, ifFalse } from "~/utils/operators";
 import { is_authorized_f } from "~/api/auth";
 import { get_session_entity_id } from "~/utils/auth.server";
@@ -37,7 +20,7 @@ const start_action = "ssebusinessscores.action";
 
 const actionsubject = new ReplaySubject(1);
 
-const action_response = actionsubject.pipe(
+const loader_response = actionsubject.pipe(
 	rxfilter((message) => message.id == start_action),
 	concatMap(({ args: { request } }) => {
 		let url = new URL(request.url);
@@ -65,10 +48,7 @@ const action_response = actionsubject.pipe(
 
 		let group_id = rxof(get_group_id(url.pathname));
 
-		let db_report = group_id.pipe(
-			concatMap(get_credit_report),
-			rxmap(head)
-		);
+		let db_report = group_id.pipe(concatMap(get_credit_report), rxmap(head));
 
 		let report_id = db_report.pipe(rxmap(pipe(get("id"))));
 
@@ -102,13 +82,9 @@ const action_response = actionsubject.pipe(
 
 		let $business_report = merge(report, empty_business_report);
 
-		let dnb_business_score = $business_report.pipe(
-			rxmap((report) => report.dnb_score())
-		);
+		let dnb_business_score = $business_report.pipe(rxmap((report) => report.dnb_score()));
 
-		let experian_business_score = $business_report.pipe(
-			rxmap((report) => report.experian_score())
-		);
+		let experian_business_score = $business_report.pipe(rxmap((report) => report.experian_score()));
 
 		let business_report_is_empty = $business_report.pipe(
 			rxmap((report) => report.is_empty()),
@@ -118,7 +94,6 @@ const action_response = actionsubject.pipe(
 		return forkJoin({
 			dnb_business_score,
 			experian_business_score,
-
 			business_report_is_empty,
 		}).pipe(
 			tap((value) => {
@@ -132,6 +107,6 @@ const action_response = actionsubject.pipe(
 export const action = async ({ request }) => {
 	console.log(`${log_route}.action`);
 	actionsubject.next({ id: start_action, args: { request } });
-	let response = await lastValueFrom(action_response.pipe(take(1)));
+	let response = await lastValueFrom(loader_response.pipe(take(1)));
 	return json({ ...response });
 };

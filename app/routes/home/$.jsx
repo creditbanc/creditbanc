@@ -1,15 +1,10 @@
 import { ChevronRightIcon, ListBulletIcon } from "@heroicons/react/20/solid";
-import {
-	Form,
-	Link,
-	useActionData,
-	useFetcher,
-	useLocation,
-	useNavigation,
-} from "@remix-run/react";
+import { Form, Link, useActionData, useFetcher, useLocation, useNavigate, useNavigation } from "@remix-run/react";
 import { get_session_entity_id, get_user_id } from "~/utils/auth.server";
 import {
 	capitalize,
+	consolelog,
+	consoletap,
 	delete_cookie,
 	get_entity_id,
 	get_group_id,
@@ -21,6 +16,7 @@ import {
 	curry,
 	defaultTo,
 	equals,
+	flip,
 	head,
 	isEmpty,
 	join,
@@ -31,6 +27,7 @@ import {
 	not,
 	omit,
 	pipe,
+	sort,
 	values,
 } from "ramda";
 import { all, filter, get, sub } from "shades";
@@ -46,24 +43,22 @@ import { ChevronUpIcon } from "@heroicons/react/20/solid";
 import { Disclosure } from "@headlessui/react";
 import { CheckCircleIcon, XCircleIcon } from "@heroicons/react/24/outline";
 import { get_doc } from "~/utils/firebase";
-import {
-	useOnboardingStore,
-	default_onboard_state,
-} from "~/stores/useOnboardingStore";
+import { useOnboardingStore, default_onboard_state } from "~/stores/useOnboardingStore";
 import { encode } from "js-base64";
 import { create } from "zustand";
 import { mod } from "shades";
 import { BusinessEntity, useReportStore } from "../credit/business/new/$";
 import Spinner from "~/components/LoadingSpinner";
 import murmurhash from "murmurhash";
-import { concat, lastValueFrom, merge, zip } from "rxjs";
+import { concat, lastValueFrom, merge, of as rxof, tap, zip } from "rxjs";
+import { filter as rxfilter } from "rxjs";
 import { use_cache } from "~/components/CacheLink";
 import { difference } from "ramda";
+import { flatten } from "flat";
 
 export const useViewStore = create((set) => ({
 	view: {},
-	set_state: (path, value) =>
-		set((state) => pipe(mod(...path)(() => value))(state)),
+	set_state: (path, value) => set((state) => pipe(mod(...path)(() => value))(state)),
 }));
 
 const useNewBusinessReportFormStore = useReportStore;
@@ -79,10 +74,7 @@ export const loader = async ({ request }) => {
 	let business_entity = await get_doc(["entity", business_entity_id]);
 	let onboard_state = await get_doc(["onboard", entity_id]);
 
-	onboard_state = pipe(
-		omit(["group_id", "entity_id"]),
-		values
-	)(onboard_state);
+	onboard_state = pipe(omit(["group_id", "entity_id"]), values)(onboard_state);
 
 	let { plan_id } = await get_doc(["entity", entity_id]);
 
@@ -92,7 +84,9 @@ export const loader = async ({ request }) => {
 		withCredentials: true,
 		headers: {
 			cookie: `creditbanc_session=${encode(
-				JSON.stringify({ entity_id: business_entity_id })
+				JSON.stringify({
+					entity_id: business_entity_id,
+				})
 			)}`,
 		},
 	});
@@ -103,7 +97,9 @@ export const loader = async ({ request }) => {
 		withCredentials: true,
 		headers: {
 			cookie: `creditbanc_session=${encode(
-				JSON.stringify({ entity_id: business_entity_id })
+				JSON.stringify({
+					entity_id: business_entity_id,
+				})
 			)}`,
 		},
 	});
@@ -114,62 +110,50 @@ export const loader = async ({ request }) => {
 		withCredentials: true,
 		headers: {
 			cookie: `creditbanc_session=${encode(
-				JSON.stringify({ entity_id: business_entity_id })
+				JSON.stringify({
+					entity_id: business_entity_id,
+				})
 			)}`,
 		},
 	});
 
-	let fetches = zip([
-		business_info_fetch,
-		personal_scores_fetch,
-		business_scores_fetch,
-	]);
+	let fetches = zip([business_info_fetch, personal_scores_fetch, business_scores_fetch]);
 
-	let [
-		business_info_response,
-		personal_scores_response,
-		business_scores_response,
-	] = await lastValueFrom(fetches);
+	let [business_info_response, personal_scores_response, business_scores_response] = await lastValueFrom(fetches);
 
 	let { data: business_info = {} } = business_info_response;
 	let { data: personal_scores = {} } = personal_scores_response;
 	let { data: business_scores = {} } = business_scores_response;
 
+	// console.log("home.business_info");
+	// console.log(business_info);
+
 	const cache = curry((request, payload) => {
 		let { cache_dependencies: dependencies } = payload;
-		console.log("cache");
+		console.log("home.cache");
 		console.log(dependencies);
+
 		let url = new URL(request.url);
 		let url_params = search_params(request);
 		let url_param_keys = pipe(keys)(url_params);
 		let dependency_params = pipe(get(all, "name"))(dependencies);
-		let url_has_dependencies = pipe(
-			difference(dependency_params),
-			equals([])
-		)(url_param_keys);
+		let url_has_dependencies = pipe(difference(dependency_params), equals([]))(url_param_keys);
 
 		let url_has_params = pipe(isEmpty, not)(url_params);
 
-		const to_search_param_pairs = pipe(
-			map((dependency) => `${dependency.name}=${dependency.value}`)
-		);
+		const to_search_param_pairs = pipe(map((dependency) => `${dependency.name}=${dependency.value}`));
 
 		let cache_string = (dependencies) =>
 			url_has_params
-				? pipe(
-						to_search_param_pairs,
-						join("&"),
-						(value) => `&${value}`
-				  )(dependencies)
-				: pipe(
-						to_search_param_pairs,
-						join("&"),
-						(value) => `?${value}`
-				  )(dependencies);
+				? pipe(to_search_param_pairs, join("&"), (value) => `&${value}`)(dependencies)
+				: pipe(to_search_param_pairs, join("&"), (value) => `?${value}`)(dependencies);
 
 		let redirect_link = `${url.href}${cache_string(dependencies)}`;
 
 		if (url_has_dependencies) {
+			// console.log("url_has_dependencies");
+			// console.log(payload);
+			// return payload;
 			return json(payload, {
 				headers: {
 					"Cache-Control": "private, max-age=31536000",
@@ -200,10 +184,10 @@ export const loader = async ({ request }) => {
 		},
 	];
 
-	console.log("fetches");
-	console.log(business_info);
-	console.log(personal_scores);
-	console.log(business_scores);
+	// console.log("fetches");
+	// console.log(business_info);
+	// console.log(personal_scores);
+	// console.log(business_scores);
 
 	// let { data: scores = {} } = credit_scores_api_response;
 	// let scores = {};
@@ -213,9 +197,9 @@ export const loader = async ({ request }) => {
 	// console.log(scores);
 
 	let payload = {
-		...business_info,
-		...personal_scores,
-		...business_scores,
+		business_info,
+		personal_scores,
+		business_scores,
 		entity_id,
 		entity,
 		business_entity_id,
@@ -224,14 +208,17 @@ export const loader = async ({ request }) => {
 		onboard: onboard_state,
 	};
 
+	// console.log("home.payload");
+	// console.log(payload);
+
 	let with_cache = cache(request);
 
 	return with_cache({ ...payload, cache_dependencies });
 
 	// return json(payload, {
-	// 	headers: {
-	// 		"Cache-Control": "private, max-age=31536000",
-	// 	},
+	// 	// headers: {
+	// 	// 	"Cache-Control": "private, max-age=31536000",
+	// 	// },
 	// });
 
 	// console.log("payload");
@@ -243,16 +230,16 @@ const BusinessCredit = () => {
 	let { pathname } = useLocation();
 	let entity_id = get_entity_id(pathname);
 	let group_id = get_group_id(pathname);
+	let { business_scores = {}, plan_id } = useLoaderData();
+	let { experian_business_score, dnb_business_score } = business_scores;
 
-	let { experian_business_score, dnb_business_score, plan_id } =
-		useLoaderData();
+	// console.log("business_scores");
+	// console.log(business_scores);
 
 	return (
 		<div className="flex flex-col border rounded px-4 bg-white min-h-[260px]">
 			<div className="border-b border-gray-200">
-				<h3 className="text-base font-semibold leading-6 text-gray-900 py-3">
-					Business Credit
-				</h3>
+				<h3 className="text-base font-semibold leading-6 text-gray-900 py-3">Business Credit</h3>
 			</div>
 			<div className="flex flex-col w-full py-3 border-b border-gray-200">
 				<Link
@@ -261,16 +248,12 @@ const BusinessCredit = () => {
 				>
 					<div className="flex flex-col w-2/3">
 						<div className="font-semibold">Experian ®</div>
-						<div className="text-gray-400 text-sm">
-							Intelliscore
-						</div>
+						<div className="text-gray-400 text-sm">Intelliscore</div>
 					</div>
 
 					<div className="flex flex-col w-1/3 text-2xl font-bold justify-center">
 						<div className="flex flex-row w-full justify-end items-center cursor-pointer">
-							<div className="flex flex-col">
-								{experian_business_score}
-							</div>
+							<div className="flex flex-col">{experian_business_score}</div>
 							<div className="flex flex-col w-[30px] ">
 								<ChevronRightIcon />
 							</div>
@@ -286,16 +269,12 @@ const BusinessCredit = () => {
 				>
 					<div className="flex flex-col w-2/3">
 						<div className="font-semibold">Dun & Bradstreet ®</div>
-						<div className="text-gray-400 text-sm">
-							PAYDEX Score
-						</div>
+						<div className="text-gray-400 text-sm">PAYDEX Score</div>
 					</div>
 
 					<div className="flex flex-col w-1/3 text-2xl font-bold justify-center">
 						<div className="flex flex-row w-full justify-end items-center cursor-pointer">
-							<div className="flex flex-col">
-								{dnb_business_score}
-							</div>
+							<div className="flex flex-col">{dnb_business_score}</div>
 							<div className="flex flex-col w-[30px] ">
 								<ChevronRightIcon />
 							</div>
@@ -312,19 +291,14 @@ const PersonalCredit = () => {
 	let entity_id = get_entity_id(pathname);
 	let group_id = get_group_id(pathname);
 
-	let {
-		experian_personal_score,
-		equifax_personal_score,
-		transunion_personal_score,
-		plan_id,
-	} = useLoaderData();
+	let { personal_scores = {}, plan_id } = useLoaderData();
+
+	let { experian_personal_score, equifax_personal_score, transunion_personal_score } = personal_scores;
 
 	return (
 		<div className="flex flex-col rounded px-4 border bg-white min-h-[260px]">
 			<div className="border-b border-gray-200">
-				<h3 className="text-base font-semibold leading-6 text-gray-900 py-3">
-					Personal Credit
-				</h3>
+				<h3 className="text-base font-semibold leading-6 text-gray-900 py-3">Personal Credit</h3>
 			</div>
 
 			<div className="flex flex-col w-full py-3 border-b border-gray-200">
@@ -334,16 +308,12 @@ const PersonalCredit = () => {
 				>
 					<div className="flex flex-col w-2/3">
 						<div className="font-semibold">Experian Personal ®</div>
-						<div className="text-gray-400 text-sm">
-							VantageScore® 3.0
-						</div>
+						<div className="text-gray-400 text-sm">VantageScore® 3.0</div>
 					</div>
 
 					<div className="flex flex-col w-1/3 text-2xl font-bold justify-center">
 						<div className="flex flex-row w-full justify-end items-center cursor-pointer">
-							<div className="flex flex-col">
-								{experian_personal_score}
-							</div>
+							<div className="flex flex-col">{experian_personal_score}</div>
 							<div className="flex flex-col w-[30px] ">
 								<ChevronRightIcon />
 							</div>
@@ -359,16 +329,12 @@ const PersonalCredit = () => {
 				>
 					<div className="flex flex-col w-2/3">
 						<div className="font-semibold">TransUnion ®</div>
-						<div className="text-gray-400 text-sm">
-							VantageScore® 3.0
-						</div>
+						<div className="text-gray-400 text-sm">VantageScore® 3.0</div>
 					</div>
 
 					<div className="flex flex-col w-1/3 text-2xl font-bold justify-center">
 						<div className="flex flex-row w-full justify-end items-center cursor-pointer">
-							<div className="flex flex-col">
-								{transunion_personal_score}
-							</div>
+							<div className="flex flex-col">{transunion_personal_score}</div>
 							<div className="flex flex-col w-[30px] ">
 								<ChevronRightIcon />
 							</div>
@@ -384,16 +350,12 @@ const PersonalCredit = () => {
 				>
 					<div className="flex flex-col w-2/3">
 						<div className="font-semibold">Equifax ®</div>
-						<div className="text-gray-400 text-sm">
-							VantageScore® 3.0
-						</div>
+						<div className="text-gray-400 text-sm">VantageScore® 3.0</div>
 					</div>
 
 					<div className="flex flex-col w-1/3 text-2xl font-bold justify-center">
 						<div className="flex flex-row w-full justify-end items-center cursor-pointer">
-							<div className="flex flex-col">
-								{equifax_personal_score}
-							</div>
+							<div className="flex flex-col">{equifax_personal_score}</div>
 							<div className="flex flex-col w-[30px] ">
 								<ChevronRightIcon />
 							</div>
@@ -406,8 +368,7 @@ const PersonalCredit = () => {
 };
 
 const HeadingTwo = () => {
-	let { business_entity: entity } = useLoaderData();
-	let { business_info } = useViewStore((state) => state.view);
+	let { business_info, business_entity: entity } = useLoaderData();
 
 	let EntityPersonalDetails = () => {
 		return (
@@ -430,11 +391,7 @@ const HeadingTwo = () => {
 	};
 
 	let EntityAccountDetails = () => {
-		return business_info?.name ? (
-			<BusinessDetails />
-		) : (
-			<EntityPersonalDetails />
-		);
+		return business_info?.name ? <BusinessDetails /> : <EntityPersonalDetails />;
 	};
 
 	return (
@@ -525,10 +482,7 @@ const Courses = () => {
 	return (
 		<div className="mx-auto  grid max-w-2xl grid-cols-1 gap-x-8 gap-y-20 lg:mx-0 lg:max-w-none lg:grid-cols-3">
 			{posts.map((post, index) => (
-				<article
-					key={index}
-					className="flex flex-col items-start justify-between"
-				>
+				<article key={index} className="flex flex-col items-start justify-between">
 					<div className="relative w-full">
 						<img
 							src={post.imageUrl}
@@ -550,10 +504,7 @@ const Courses = () => {
 					</div>
 					<div className="max-w-xl">
 						<div className="mt-2 flex items-center gap-x-4 text-xs">
-							<time
-								dateTime={post.datetime}
-								className="text-gray-500"
-							>
+							<time dateTime={post.datetime} className="text-gray-500">
 								{post.date}
 							</time>
 							<a
@@ -570,9 +521,7 @@ const Courses = () => {
 									{post.title}
 								</a>
 							</h3>
-							<p className="mt-5 line-clamp-3 text-sm leading-6 text-gray-600">
-								{post.description}
-							</p>
+							<p className="mt-5 line-clamp-3 text-sm leading-6 text-gray-600">{post.description}</p>
 						</div>
 
 						<div className="my-2 flex flex-col w-full">
@@ -586,10 +535,7 @@ const Courses = () => {
 						</div>
 
 						<div className="relative mt-6 flex items-center gap-x-4">
-							<img
-								src={post.author.imageUrl}
-								className="h-10 w-10 rounded-full bg-gray-100"
-							/>
+							<img src={post.author.imageUrl} className="h-10 w-10 rounded-full bg-gray-100" />
 							<div className="text-sm leading-6">
 								<p className="font-semibold text-gray-900">
 									<a href={post.author.href}>
@@ -597,9 +543,7 @@ const Courses = () => {
 										{post.author.name}
 									</a>
 								</p>
-								<p className="text-gray-600">
-									{post.author.role}
-								</p>
+								<p className="text-gray-600">{post.author.role}</p>
 							</div>
 						</div>
 					</div>
@@ -622,11 +566,7 @@ const Notifications = () => {
 					<>
 						<Disclosure.Button className="flex w-full justify-between rounded-lg  px-4 py-2 text-left text-sm font-medium focus:outline-none focus-visible:ring  focus-visible:ring-opacity-75">
 							<span>CREDIT</span>
-							<ChevronUpIcon
-								className={`${
-									open ? "rotate-180 transform" : ""
-								} h-5 w-5 text-gray-500`}
-							/>
+							<ChevronUpIcon className={`${open ? "rotate-180 transform" : ""} h-5 w-5 text-gray-500`} />
 						</Disclosure.Button>
 
 						<Disclosure.Panel className="px-4  pb-2 text-gray-500 space-y-3 text-sm">
@@ -637,10 +577,7 @@ const Notifications = () => {
 										// completed: false,
 									}),
 									map((step) => (
-										<div
-											className="flex flex-row w-full border p-2 rounded"
-											key={step.id}
-										>
+										<div className="flex flex-row w-full border p-2 rounded" key={step.id}>
 											{!step.completed && (
 												<Link
 													className="flex flex-row w-full space-x-2 items-center space-between cursor-pointer"
@@ -667,9 +604,7 @@ const Notifications = () => {
 													<div>
 														<CheckCircleIcon className="h-5 w-5 text-green-500" />
 													</div>
-													<div>
-														{step.completed_text}
-													</div>
+													<div>{step.completed_text}</div>
 												</Link>
 											)}
 
@@ -787,11 +722,7 @@ const Notifications = () => {
 					<>
 						<Disclosure.Button className="flex w-full justify-between rounded-lg  px-4 py-2 text-left text-sm font-medium   focus:outline-none focus-visible:ring  focus-visible:ring-opacity-75">
 							<span>SOCIAL</span>
-							<ChevronUpIcon
-								className={`${
-									open ? "rotate-180 transform" : ""
-								} h-5 w-5 text-gray-500`}
-							/>
+							<ChevronUpIcon className={`${open ? "rotate-180 transform" : ""} h-5 w-5 text-gray-500`} />
 						</Disclosure.Button>
 						<Disclosure.Panel className="px-4  pb-2 text-gray-500 space-y-3 text-sm">
 							<div className="flex flex-col gap-y-3">
@@ -801,10 +732,7 @@ const Notifications = () => {
 										// completed: false,
 									}),
 									map((step) => (
-										<div
-											className="flex flex-row w-full border p-2 rounded"
-											key={step.id}
-										>
+										<div className="flex flex-row w-full border p-2 rounded" key={step.id}>
 											<Link
 												className="flex flex-row w-full space-x-2 items-center space-between cursor-pointer"
 												to={step.href({
@@ -858,7 +786,9 @@ const NewBusinessReportForm = () => {
 		};
 
 		fetcher.submit(
-			{ payload: JSON.stringify(payload) },
+			{
+				payload: JSON.stringify(payload),
+			},
 			{
 				method: "post",
 				action: `/credit/business/new/resource/e/${entity_id}/g/${group_id}`,
@@ -889,17 +819,10 @@ const NewBusinessReportForm = () => {
 										placeholder="First name"
 										autoComplete="given-name"
 										value={form.basic_info.first_name}
-										onChange={(e) =>
-											setForm(
-												["basic_info", "first_name"],
-												e.target.value
-											)
-										}
+										onChange={(e) => setForm(["basic_info", "first_name"], e.target.value)}
 									/>
 									{error?.basic_info?.first_name == false && (
-										<div className="text-xs text-red-500 py-1">
-											First name is required
-										</div>
+										<div className="text-xs text-red-500 py-1">First name is required</div>
 									)}
 								</div>
 								<div className="flex flex-col w-[50%]">
@@ -910,17 +833,10 @@ const NewBusinessReportForm = () => {
 										placeholder="Last name"
 										autoComplete="family-name"
 										value={form.basic_info.last_name}
-										onChange={(e) =>
-											setForm(
-												["basic_info", "last_name"],
-												e.target.value
-											)
-										}
+										onChange={(e) => setForm(["basic_info", "last_name"], e.target.value)}
 									/>
 									{error?.basic_info?.last_name == false && (
-										<div className="text-xs text-red-500 py-1">
-											Last name is required
-										</div>
+										<div className="text-xs text-red-500 py-1">Last name is required</div>
 									)}
 								</div>
 							</div>
@@ -933,18 +849,10 @@ const NewBusinessReportForm = () => {
 										placeholder="Email"
 										autoComplete="email"
 										value={form.basic_info.email_address}
-										onChange={(e) =>
-											setForm(
-												["basic_info", "email_address"],
-												e.target.value
-											)
-										}
+										onChange={(e) => setForm(["basic_info", "email_address"], e.target.value)}
 									/>
-									{error?.basic_info?.email_address ==
-										false && (
-										<div className="text-xs text-red-500 py-1">
-											Email is required
-										</div>
+									{error?.basic_info?.email_address == false && (
+										<div className="text-xs text-red-500 py-1">Email is required</div>
 									)}
 								</div>
 							</div>
@@ -957,17 +865,10 @@ const NewBusinessReportForm = () => {
 										placeholder="Telephone"
 										autoComplete="tel"
 										value={form.basic_info.telephone}
-										onChange={(e) =>
-											setForm(
-												["basic_info", "telephone"],
-												e.target.value
-											)
-										}
+										onChange={(e) => setForm(["basic_info", "telephone"], e.target.value)}
 									/>
 									{error?.basic_info?.telephone == false && (
-										<div className="text-xs text-red-500 py-1">
-											Telephone is required
-										</div>
+										<div className="text-xs text-red-500 py-1">Telephone is required</div>
 									)}
 								</div>
 							</div>
@@ -985,17 +886,10 @@ const NewBusinessReportForm = () => {
 										placeholder="Business legal name"
 										autoComplete="organization"
 										value={form.business_legal_name}
-										onChange={(e) =>
-											setForm(
-												["business_legal_name"],
-												e.target.value
-											)
-										}
+										onChange={(e) => setForm(["business_legal_name"], e.target.value)}
 									/>
 									{error?.business_legal_name == false && (
-										<div className="text-xs text-red-500 py-1">
-											Business name is required
-										</div>
+										<div className="text-xs text-red-500 py-1">Business name is required</div>
 									)}
 								</div>
 							</div>
@@ -1006,18 +900,8 @@ const NewBusinessReportForm = () => {
 										type="text"
 										name=""
 										placeholder="Doing business as (DBA)"
-										value={
-											form.basic_info.doing_business_as
-										}
-										onChange={(e) =>
-											setForm(
-												[
-													"basic_info",
-													"doing_business_as",
-												],
-												e.target.value
-											)
-										}
+										value={form.basic_info.doing_business_as}
+										onChange={(e) => setForm(["basic_info", "doing_business_as"], e.target.value)}
 									/>
 								</div>
 							</div>
@@ -1025,9 +909,7 @@ const NewBusinessReportForm = () => {
 								<div className="flex flex-col w-[100%]">
 									<BusinessEntity />
 									{error?.business_entity == false && (
-										<div className="text-xs text-red-500 py-1">
-											Business type is required
-										</div>
+										<div className="text-xs text-red-500 py-1">Business type is required</div>
 									)}
 								</div>
 							</div>
@@ -1038,23 +920,12 @@ const NewBusinessReportForm = () => {
 										type="text"
 										name=""
 										placeholder="Employer identification number (EIN)"
-										value={
-											form.employee_identification_number
-										}
-										onChange={(e) =>
-											setForm(
-												[
-													"employee_identification_number",
-												],
-												e.target.value
-											)
-										}
+										value={form.employee_identification_number}
+										onChange={(e) => setForm(["employee_identification_number"], e.target.value)}
 									/>
-									{error?.employee_identification_number ==
-										false && (
+									{error?.employee_identification_number == false && (
 										<div className="text-xs text-red-500 py-1">
-											Employee identification number is
-											required
+											Employee identification number is required
 										</div>
 									)}
 								</div>
@@ -1072,21 +943,10 @@ const NewBusinessReportForm = () => {
 										name=""
 										placeholder="MM"
 										value={form.business_start_date.month}
-										onChange={(e) =>
-											setForm(
-												[
-													"business_start_date",
-													"month",
-												],
-												e.target.value
-											)
-										}
+										onChange={(e) => setForm(["business_start_date", "month"], e.target.value)}
 									/>
-									{error?.business_start_date?.month ==
-										false && (
-										<div className="text-xs text-red-500 py-1">
-											Month is required
-										</div>
+									{error?.business_start_date?.month == false && (
+										<div className="text-xs text-red-500 py-1">Month is required</div>
 									)}
 								</div>
 								<div className="flex flex-col w-1/3">
@@ -1096,18 +956,10 @@ const NewBusinessReportForm = () => {
 										name=""
 										placeholder="DD"
 										value={form.business_start_date.day}
-										onChange={(e) =>
-											setForm(
-												["business_start_date", "day"],
-												e.target.value
-											)
-										}
+										onChange={(e) => setForm(["business_start_date", "day"], e.target.value)}
 									/>
-									{error?.business_start_date?.day ==
-										false && (
-										<div className="text-xs text-red-500 py-1">
-											Day is required
-										</div>
+									{error?.business_start_date?.day == false && (
+										<div className="text-xs text-red-500 py-1">Day is required</div>
 									)}
 								</div>
 								<div className="flex flex-col w-1/3">
@@ -1117,27 +969,17 @@ const NewBusinessReportForm = () => {
 										name=""
 										placeholder="YYYY"
 										value={form.business_start_date.year}
-										onChange={(e) =>
-											setForm(
-												["business_start_date", "year"],
-												e.target.value
-											)
-										}
+										onChange={(e) => setForm(["business_start_date", "year"], e.target.value)}
 									/>
-									{error?.business_start_date?.year ==
-										false && (
-										<div className="text-xs text-red-500 py-1">
-											Year is required
-										</div>
+									{error?.business_start_date?.year == false && (
+										<div className="text-xs text-red-500 py-1">Year is required</div>
 									)}
 								</div>
 							</div>
 						</div>
 					</div>
 					<div className="flex flex-col w-full my-2">
-						<div className="mb-2 text-sm">
-							Business address information
-						</div>
+						<div className="mb-2 text-sm">Business address information</div>
 						<div className="flex flex-col gap-y-2">
 							<div className="flex flex-row">
 								<div className="flex flex-col w-[100%]">
@@ -1147,24 +989,11 @@ const NewBusinessReportForm = () => {
 										name=""
 										placeholder="Street address"
 										autoComplete="street-address"
-										value={
-											form.business_address.address_line
-										}
-										onChange={(e) =>
-											setForm(
-												[
-													"business_address",
-													"address_line",
-												],
-												e.target.value
-											)
-										}
+										value={form.business_address.address_line}
+										onChange={(e) => setForm(["business_address", "address_line"], e.target.value)}
 									/>
-									{error?.business_address?.address_line ==
-										false && (
-										<div className="text-xs text-red-500 py-1">
-											Street address is required
-										</div>
+									{error?.business_address?.address_line == false && (
+										<div className="text-xs text-red-500 py-1">Street address is required</div>
 									)}
 								</div>
 							</div>
@@ -1177,17 +1006,10 @@ const NewBusinessReportForm = () => {
 										placeholder="City"
 										autoComplete="address-level2"
 										value={form.business_address.city}
-										onChange={(e) =>
-											setForm(
-												["business_address", "city"],
-												e.target.value
-											)
-										}
+										onChange={(e) => setForm(["business_address", "city"], e.target.value)}
 									/>
 									{error?.business_address?.city == false && (
-										<div className="text-xs text-red-500 py-1">
-											City is required
-										</div>
+										<div className="text-xs text-red-500 py-1">City is required</div>
 									)}
 								</div>
 								<div className="flex flex-col w-1/3">
@@ -1198,18 +1020,10 @@ const NewBusinessReportForm = () => {
 										placeholder="State / Province"
 										value={form.business_address.state}
 										autoComplete="address-level1"
-										onChange={(e) =>
-											setForm(
-												["business_address", "state"],
-												e.target.value
-											)
-										}
+										onChange={(e) => setForm(["business_address", "state"], e.target.value)}
 									/>
-									{error?.business_address?.state ==
-										false && (
-										<div className="text-xs text-red-500 py-1">
-											State / Province is required
-										</div>
+									{error?.business_address?.state == false && (
+										<div className="text-xs text-red-500 py-1">State / Province is required</div>
 									)}
 								</div>
 								<div className="flex flex-col w-1/3">
@@ -1220,17 +1034,10 @@ const NewBusinessReportForm = () => {
 										placeholder="Zip / Postal code"
 										autoComplete="postal-code"
 										value={form.business_address.zip}
-										onChange={(e) =>
-											setForm(
-												["business_address", "zip"],
-												e.target.value
-											)
-										}
+										onChange={(e) => setForm(["business_address", "zip"], e.target.value)}
 									/>
 									{error?.business_address?.zip == false && (
-										<div className="text-xs text-red-500 py-1">
-											Zip / Postal code is required
-										</div>
+										<div className="text-xs text-red-500 py-1">Zip / Postal code is required</div>
 									)}
 								</div>
 							</div>
@@ -1252,96 +1059,111 @@ const NewBusinessReportForm = () => {
 
 export default function Home() {
 	// return null;
+	let { pathname } = useLocation();
+	let loader_data = useLoaderData();
+	let { cache_dependencies, business_scores, personal_scores, business_info } = loader_data;
 	let use_cache_client = use_cache((state) => state.set_dependencies);
 	let update_cache_key = use_cache((state) => state.set_state);
-	let cache_client = use_cache((state) => state);
-	let { pathname } = useLocation();
 	let entity_id = get_entity_id(pathname);
 	let group_id = get_group_id(pathname);
 	let [subscription, setSubscription] = useState(0);
-	let set_state = useViewStore((state) => state.set_state);
-	let { cache_dependencies } = useLoaderData();
 
 	let business_info_fetcher = useFetcher();
-	let personal_socres_fetcher = useFetcher();
+	let personal_scores_fetcher = useFetcher();
 	let business_scores_fetcher = useFetcher();
 	let business_info_url = `/credit/report/ssebusiness/resource/e/${entity_id}/g/${group_id}`;
-	let personal_socres_url = `/credit/report/ssepersonalscores/resource/e/${entity_id}/g/${group_id}`;
+	let personal_scores_url = `/credit/report/ssepersonalscores/resource/e/${entity_id}/g/${group_id}`;
 	let business_scores_url = `/credit/report/ssebusinessscores/resource/e/${entity_id}/g/${group_id}`;
 
-	console.log("fetcher.subscription");
-	console.log(personal_socres_fetcher.data);
-	console.log(business_scores_fetcher.data);
-	console.log(business_info_fetcher.data);
-
-	useEffect(() => {
-		use_cache_client({
-			path: `/home`,
-			dependencies: cache_dependencies,
-		});
-	}, []);
-
-	console.log("set_cache_keys");
-	console.log(cache_dependencies);
-	console.log("cache_client");
-	console.log(cache_client);
-
-	let fetcher_payload_maker = (url) => {
-		return [
-			{},
-			{
-				method: "post",
-				action: url,
-			},
-		];
-	};
-
-	const on_run_fetchers = async () => {
-		business_info_fetcher.submit(
-			...fetcher_payload_maker(business_info_url)
-		);
-
-		personal_socres_fetcher.submit(
-			...fetcher_payload_maker(personal_socres_url)
-		);
-
-		business_scores_fetcher.submit(
-			...fetcher_payload_maker(business_scores_url)
-		);
-	};
+	// console.log("fetcher.subscription");
+	// console.log(business_info);
+	// console.log("business_scores");
+	// console.log(business_scores);
+	// console.log(personal_socres_fetcher.data);
+	// console.log(business_scores_fetcher.data);
+	// console.log(business_info_fetcher.data);
 
 	// useEffect(() => {
-	// 	on_run_fetchers();
-	// }, []);
+	// 	console.log("loader_data");
+	// 	console.log(loader_data);
+	// }, [loader_data]);
 
-	const set_key = () => {
-		let value = Math.random();
-		setSubscription(value);
-		update_cache_key(["keys", "business_credit_report"], `${2}`);
+	useEffect(() => {
+		use_cache_client({ path: `/home`, dependencies: cache_dependencies });
+	}, []);
+
+	let fetcher_payload_maker = (url) => {
+		return [{}, { method: "post", action: url }];
+	};
+
+	const run_fetchers = async () => {
+		business_info_fetcher.submit(...fetcher_payload_maker(business_info_url));
+		personal_scores_fetcher.submit(...fetcher_payload_maker(personal_scores_url));
+		business_scores_fetcher.submit(...fetcher_payload_maker(business_scores_url));
+	};
+
+	let comparer_fn = (a, b) => `${a}`.localeCompare(`${b}`);
+
+	let normalize = pipe(flatten, values, sort(comparer_fn), murmurhash);
+
+	useEffect(() => {
+		run_fetchers();
+	}, []);
+
+	const on_should_update = (previous_value, current_value, update_key) => {
+		let prev_data = rxof(normalize(previous_value));
+		let curr_data = rxof(normalize(current_value));
+
+		let update_cache = () => update_cache_key(["keys", update_key], `${Math.random()}`);
+
+		return zip([prev_data, curr_data]).pipe(
+			tap(console.log("on_should_update")),
+			tap(console.log),
+			rxfilter(([prev_data, curr_data]) => prev_data !== curr_data),
+			tap(update_cache)
+		);
 	};
 
 	useEffect(() => {
-		setTimeout(() => {
-			set_key();
-		}, 10000);
-	}, []);
+		let fetcher_data = business_info_fetcher.data;
+		if (fetcher_data) {
+			// console.log("business_info_fetcher.data");
+			// console.log(fetcher_data);
+			// console.log(business_info);
+			on_should_update(business_info, fetcher_data, "business_credit_report").subscribe();
+		}
+	}, [business_info_fetcher.data]);
 
-	return (
-		<div>
-			<HeadingTwo />
-			<div onClick={() => setSubscription(subscription + 1)}>
-				<div className="flex flex-col items-center justify-center w-[100px] bg-green-500 py-1 rounded mx-2 cursor-pointer text-white text-xs">
-					{subscription}
-				</div>
-			</div>
-		</div>
-	);
+	useEffect(() => {
+		let fetcher_data = business_scores_fetcher.data;
+		if (fetcher_data) {
+			// console.log("business_scores_fetcher.data");
+			// console.log(fetcher_data);
+			// console.log(business_scores);
+			on_should_update(business_scores, fetcher_data, "business_credit_report").subscribe();
+		}
+	}, [business_scores_fetcher.data]);
 
-	const {
-		plan_id = "essential",
-		onboard: onboard_db,
-		business_report_is_empty,
-	} = useLoaderData();
+	useEffect(() => {
+		let fetcher_data = personal_scores_fetcher.data;
+		if (fetcher_data) {
+			// console.log("personal_scores_fetcher.data");
+			// console.log(fetcher_data);
+			// console.log(personal_scores);
+			on_should_update(personal_scores, fetcher_data, "personal_credit_report").subscribe();
+		}
+	}, [personal_scores_fetcher.data]);
+
+	// return (
+	// 	<div>
+	// 		<HeadingTwo />
+	// 		<div onClick={() => console.log("clicked")}>
+	// 			<div className="flex flex-col items-center justify-center h-[30px] w-[100px] bg-green-500 py-1 rounded mx-2 cursor-pointer text-white text-xs"></div>
+	// 		</div>
+	// 	</div>
+	// );
+
+	const { plan_id = "essential", onboard: onboard_db, business_report_is_empty } = useLoaderData();
 	let onboard = useOnboardingStore((state) => state.onboard);
 	let set_onboard = useOnboardingStore((state) => state.set_state);
 
@@ -1358,7 +1180,9 @@ export default function Home() {
 				mergeDeepRight(
 					step,
 					pipe(
-						filter({ id: step.id }),
+						filter({
+							id: step.id,
+						}),
 						head,
 						defaultTo({})
 					)(onboard_db)
@@ -1369,8 +1193,7 @@ export default function Home() {
 		set_onboard(["onboard"], onboard);
 	}, [onboard_db]);
 
-	let onboard_percent_completed =
-		(onboard_steps_completed / onboard_num_of_steps) * 100;
+	let onboard_percent_completed = (onboard_steps_completed / onboard_num_of_steps) * 100;
 
 	return (
 		<div className="w-full h-full flex flex-col overflow-hidden">
@@ -1385,9 +1208,7 @@ export default function Home() {
 						<HeadingTwo />
 
 						<div className="flex flex-col w-full">
-							{business_report_is_empty && (
-								<NewBusinessReportForm />
-							)}
+							{business_report_is_empty && <NewBusinessReportForm />}
 							{!business_report_is_empty && (
 								<div className="flex flex-col lg:flex-row gap-x-5 gap-y-3 lg:space-y-0">
 									<div className="flex flex-col w-full">
@@ -1402,9 +1223,7 @@ export default function Home() {
 						<div className="flex flex-col w-full h-fit bg-white px-5 pt-5 border rounded">
 							<div className="border-b border-gray-200 pb-3 flex flex-col sticky top-0 bg-white z-10">
 								<div>
-									<h3 className="mt-2 text-base font-semibold leading-6 text-gray-900">
-										Courses
-									</h3>
+									<h3 className="mt-2 text-base font-semibold leading-6 text-gray-900">Courses</h3>
 								</div>
 							</div>
 
@@ -1428,8 +1247,7 @@ export default function Home() {
 
 								<div className="flex flex-col w-full space-y-5">
 									<p className="mt-1 text-sm text-gray-500">
-										Follow the steps below to complete your
-										CreditBanc profile
+										Follow the steps below to complete your CreditBanc profile
 									</p>
 								</div>
 
@@ -1437,8 +1255,7 @@ export default function Home() {
 									<div className="flex flex-row w-full justify-between my-2 text-sm text-gray-400">
 										<div>{onboard_percent_completed}%</div>
 										<div>
-											{onboard_steps_completed}/
-											{onboard_num_of_steps} steps
+											{onboard_steps_completed}/{onboard_num_of_steps} steps
 										</div>
 									</div>
 									<div className="w-full bg-gray-200 rounded-full h-2.5 dark:bg-gray-700">

@@ -46,11 +46,7 @@ export const set_cookie = (name, value, options = {}) => {
 
 export const request_cookies = (request) => {
 	let cookie = request.headers.get("Cookie");
-	return pipe(
-		split(";"),
-		map(pipe(split("="), map(rtrim))),
-		fromPairs
-	)(cookie);
+	return pipe(split(";"), map(pipe(split("="), map(rtrim))), fromPairs)(cookie);
 };
 
 export const validate_form = (validator, to_validate) => {
@@ -70,11 +66,7 @@ export const is_valid = (validations) => {
 };
 
 export const from_validations = (validations) =>
-	iif(
-		() => is_valid(validations),
-		rxof(validations),
-		throwError(validations)
-	);
+	iif(() => is_valid(validations), rxof(validations), throwError(validations));
 
 export const json_response = (data) => {
 	return new Response(JSON.stringify(data), {
@@ -107,9 +99,7 @@ export const formatPhoneNumber = (str) => {
 		//Remove the matched extension code
 		//Change this to format for any country code.
 		let intlCode = match[1] ? "+1 " : "";
-		return [intlCode, "(", match[2], ") ", match[3], "-", match[4]].join(
-			""
-		);
+		return [intlCode, "(", match[2], ") ", match[3], "-", match[4]].join("");
 	}
 
 	return null;
@@ -155,8 +145,7 @@ export const is_applicant_p = (value) => {
 	return value == "true" ? true : false;
 };
 
-export const get_search_params_obj = (search) =>
-	Object.fromEntries(new URLSearchParams(search));
+export const get_search_params_obj = (search) => Object.fromEntries(new URLSearchParams(search));
 
 export const mapIndexed = addIndex(map);
 
@@ -187,9 +176,18 @@ export const currency_precise = (precision) =>
 		maximumFractionDigits: precision,
 	});
 
-export const just = curry((filter_array, array) =>
-	pipe(filter((value) => includes(value, filter_array)))(array)
-);
+export const just = curry((filter_array, array) => pipe(filter((value) => includes(value, filter_array)))(array));
+
+export const consoletap = (value, name = "console.log.tap") => {
+	console.log(name);
+	console.log(value);
+};
+
+export const consolelog = (value, name = "console.log") => {
+	console.log(name);
+	console.log(value);
+	return value;
+};
 
 export const inspect = curry((obj, label = "") => {
 	// console.log(label);
@@ -197,14 +195,10 @@ export const inspect = curry((obj, label = "") => {
 	return obj;
 });
 
-export const remove_first_n = curry((n, array) =>
-	pipe(slice(n, Infinity))(array)
-);
+export const remove_first_n = curry((n, array) => pipe(slice(n, Infinity))(array));
 export const remove_last_n = curry((n, array) => pipe(slice(0, -n))(array));
 
-export const remove_trailing_slash = pipe(
-	ifElse(pipe(last, equals("/")), pipe(slice(0, -1)), identity)
-);
+export const remove_trailing_slash = pipe(ifElse(pipe(last, equals("/")), pipe(slice(0, -1)), identity));
 
 const get_pathname = (uri) => {
 	if (uri.includes("http")) {
@@ -222,11 +216,7 @@ export const to_resource_pathname = (uri) => {
 	if (isEmpty(resource_url)) {
 		return "";
 	} else {
-		return pipe(
-			join("/"),
-			remove_trailing_slash,
-			(path) => `/resource` + path
-		)(resource_url);
+		return pipe(join("/"), remove_trailing_slash, (path) => `/resource` + path)(resource_url);
 	}
 };
 
@@ -291,21 +281,13 @@ export const to_group_pathname = (uri) => {
 export const to_path_array = pipe(split("/"), reject(equals("")));
 
 export const to_resource_path_array = (uri) => {
-	return pipe(
-		remove_trailing_slash,
-		to_resource_pathname,
-		to_path_array
-	)(uri);
+	return pipe(remove_trailing_slash, to_resource_pathname, to_path_array)(uri);
 };
 
 export const get_resource_type = (uri) => {
 	return pipe(
 		to_resource_path_array,
-		ifElse(
-			pipe(remove_last_n(1), is_object_id),
-			pipe(remove_last_n(2), last),
-			pipe(remove_last_n(1), last)
-		)
+		ifElse(pipe(remove_last_n(1), is_object_id), pipe(remove_last_n(2), last), pipe(remove_last_n(1), last))
 	)(uri);
 };
 
@@ -322,9 +304,7 @@ export const get_resource_id = (uri) => {
 };
 
 export const get_entity_id = (uri) => {
-	return pipe(to_resource_path_array, (path) =>
-		pipe(indexOf("e"), (index) => path[index + 1])(path)
-	)(uri);
+	return pipe(to_resource_path_array, (path) => pipe(indexOf("e"), (index) => path[index + 1])(path))(uri);
 };
 
 // export const is_object_id = (id) => {
@@ -337,23 +317,13 @@ export const get_entity_id = (uri) => {
 // };
 
 export const is_root_path_p = (uri) => {
-	let res = pipe(
-		to_resource_path_array,
-		just(["e", "g", "d", "f"]),
-		length,
-		equals(1)
-	)(uri);
+	let res = pipe(to_resource_path_array, just(["e", "g", "d", "f"]), length, equals(1))(uri);
 
 	return res;
 };
 
 export const is_group_p = (uri) => {
-	return pipe(
-		to_resource_path_array,
-		filter(equals("d")),
-		length,
-		equals(1)
-	)(uri);
+	return pipe(to_resource_path_array, filter(equals("d")), length, equals(1))(uri);
 };
 
 // export const is_directory_p = (uri) => {
@@ -370,15 +340,11 @@ export const is_resource_p = (uri) => {
 };
 
 export const get_group_id = (uri) => {
-	return pipe(to_resource_path_array, (array) =>
-		pipe(indexOf("g"), (index) => array[index + 1])(array)
-	)(uri);
+	return pipe(to_resource_path_array, (array) => pipe(indexOf("g"), (index) => array[index + 1])(array))(uri);
 };
 
 export const get_file_id = (uri) => {
-	return pipe(to_resource_path_array, (array) =>
-		pipe(lastIndexOf("f"), (index) => array[index + 1])(array)
-	)(uri);
+	return pipe(to_resource_path_array, (array) => pipe(lastIndexOf("f"), (index) => array[index + 1])(array))(uri);
 };
 
 export const has_valid_route_p = (route, uri) => {
@@ -409,8 +375,7 @@ export const has_resource_url_p = (uri) => {
 // 		)(path)
 // 	)(uri);
 // };
-export const sample = (array) =>
-	array[Math.floor(Math.random() * array.length)];
+export const sample = (array) => array[Math.floor(Math.random() * array.length)];
 
 export const jsreduce = curry((fn, array) => {
 	return array.reduce(fn);
