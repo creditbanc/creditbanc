@@ -13,7 +13,7 @@ import {
 import { get_session_entity_id, get_user_id } from "~/utils/auth.server";
 import { LendflowExternal, LendflowInternal } from "~/utils/lendflow.server";
 import { get_collection } from "~/utils/firebase";
-import { map as rxmap, tap, filter as rxfilter, concatMap, take, delay } from "rxjs/operators";
+import { map as rxmap, tap, filter as rxfilter, concatMap, take, delay, repeat } from "rxjs/operators";
 import { from, of as rxof, Subject, zip, lastValueFrom, throwError, forkJoin } from "rxjs";
 import Entity from "~/api/internal/entity";
 import { fold } from "~/utils/operators";
@@ -28,79 +28,84 @@ let loader_response = "loader.response";
 
 const subject = new Subject();
 
-// const action_subject = subject.pipe(
-// 	rxfilter((event) => event.id === action_start),
-// 	concatMap(({ args: { request } }) => {
-// 		console.log(`${route_logger}.action_subject`);
-// 		let $formData = from(formData(request)).pipe(rxmap((form) => form.payload));
+const action_subject = subject.pipe(
+	rxfilter((event) => event.id === action_start),
+	concatMap(({ args: { request } }) => {
+		console.log(`${route_logger}.action_subject`);
+		let $formData = from(formData(request)).pipe(rxmap((form) => form.payload));
 
-// 		// return rxof({ test: "hi" });
+		let $application_id = "1bbb9ba5-50ec-4fc5-955c-43239198a8a5";
+		// let $application_id = from(get_doc(["credit_reports", application_id]));
 
-// 		let value_or_empty = (value) => (value ? value : "");
+		// return rxof({ test: "hi" });
 
-// 		let $entity_id = from(get_session_entity_id(request)).pipe(rxmap(value_or_empty));
+		let value_or_empty = (value) => (value ? value : "");
 
-// 		let $plan_id = $entity_id.pipe(
-// 			rxmap((entity_id) => new Entity(entity_id)),
-// 			concatMap((entity) => entity.plan_id())
-// 		);
+		let $entity_id = from(get_session_entity_id(request)).pipe(rxmap(value_or_empty));
 
-// 		let $group_id = rxof(get_group_id(request.url)).pipe(
-// 			concatMap((value) => {
-// 				if (value == undefined) {
-// 					return from($entity_id).pipe(
-// 						concatMap((entity_id) =>
-// 							from(
-// 								get_collection({
-// 									path: ["role_configs"],
-// 									queries: [
-// 										{
-// 											param: "entity_id",
-// 											predicate: "==",
-// 											value: entity_id,
-// 										},
-// 									],
-// 								})
-// 							)
-// 						),
-// 						rxmap(pipe(head, get("group_id")))
-// 					);
-// 				} else {
-// 					return rxof(value);
-// 				}
-// 			})
-// 		);
+		let $plan_id = $entity_id.pipe(
+			rxmap((entity_id) => new Entity(entity_id)),
+			concatMap((entity) => entity.plan_id())
+		);
 
-// 		return from($formData).pipe(
-// 			concatMap((form) => from_validations(validate_form(lendflow_validator, form))),
-// 			concatMap(() => zip($plan_id, $formData)),
-// 			rxmap(([plan_id, form]) =>
-// 				LendflowExternal.new_application_request_creator({
-// 					...form,
-// 					requested_products: ["experian_business_match"],
-// 				})
-// 			),
-// 			concatMap((request) => from(axios(request))),
-// 			rxmap(pipe(get("data", "data", "application_id"))),
-// 			tap(() => console.log(`${route_logger}.action_subject.value`)),
-// 			tap(inspect),
-// 			concatMap((application_id) => zip($group_id, $entity_id, $plan_id, rxof(application_id))),
-// 			concatMap(([group_id, entity_id, plan_id, application_id]) =>
-// 				LendflowInternal.save_application({
-// 					group_id,
-// 					entity_id,
-// 					plan_id,
-// 					application_id,
-// 					type: "business_credit_report",
-// 					id: application_id,
-// 				})
-// 			),
-// 			// delay(10000),
-// 			tap(() => console.log(`${route_logger}.action_subject.value`)),
-// 			tap(inspect)
-// 		);
-// 	})
-// );
+		let $group_id = rxof(get_group_id(request.url)).pipe(
+			concatMap((value) => {
+				if (value == undefined) {
+					return from($entity_id).pipe(
+						concatMap((entity_id) =>
+							from(
+								get_collection({
+									path: ["role_configs"],
+									queries: [
+										{
+											param: "entity_id",
+											predicate: "==",
+											value: entity_id,
+										},
+									],
+								})
+							)
+						),
+						rxmap(pipe(head, get("group_id")))
+					);
+				} else {
+					return rxof(value);
+				}
+			})
+		);
+
+		return from($formData).pipe(
+			concatMap((form) => from_validations(validate_form(lendflow_validator, form))),
+			concatMap(() => zip($plan_id, $formData)),
+			rxmap(([plan_id, form]) =>
+				LendflowExternal.new_application_request_creator({
+					...form,
+					requested_products: ["experian_business_match"],
+				})
+			),
+			// concatMap((request) => from(axios(request))),
+			// rxmap(pipe(get("data", "data", "application_id"))),
+			// tap(() => console.log(`${route_logger}.action_subject.value`)),
+			// tap(inspect),
+			concatMap((application_id) => zip($group_id, $entity_id, $plan_id, rxof($application_id), $formData)),
+			concatMap(([group_id, entity_id, plan_id, application_id, form]) =>
+				LendflowInternal.save_application({
+					group_id,
+					entity_id,
+					plan_id,
+					application_id,
+					type: "business_credit_report",
+					id: application_id,
+					form,
+				})
+			),
+			rxmap(pipe(get("application_id"))),
+			rxmap((application_id) => ({ application_id })),
+			tap(() => console.log(`${route_logger}.action_subject.value`)),
+			tap(inspect)
+		);
+	})
+);
 
 const loader_subject = subject.pipe(
 	rxfilter((event) => event.id === loader_start),
@@ -111,8 +116,12 @@ const loader_subject = subject.pipe(
 
 		let application = from(LendflowExternal.get_lendflow_report(application_id)).pipe(
 			rxmap(get("data", "data")),
+			rxfilter((application) => application?.statuses?.experian?.business_match === "Success"),
+			tap(() => console.log(`${route_logger}.get_lendflow_report.1`)),
+			tap(inspect),
 			rxmap((application) => new LendflowInternal(application)),
-			rxmap((application) => ({ application_id, business_match: application.business_match() }))
+			rxmap((application) => ({ application_id, business_match: application.business_match() })),
+			take(1)
 		);
 
 		// return rxof({});
@@ -188,47 +197,47 @@ const loader_subject = subject.pipe(
 	})
 );
 
-// export const action = async ({ request }) => {
-// 	console.log(route_logger);
+export const action = async ({ request }) => {
+	console.log(route_logger);
 
-// 	const on_success = async (value) => {
-// 		console.log(`${route_logger}.action.success`);
-// 		let { origin } = new URL(request.url);
+	const on_success = async (value) => {
+		console.log(`${route_logger}.action.success`);
+		let { origin } = new URL(request.url);
 
-// 		let entity_id = await get_session_entity_id(request);
-// 		let group_id = get_group_id(request.url);
+		let entity_id = await get_session_entity_id(request);
+		let group_id = get_group_id(request.url);
 
-// 		let redirect_url = `${origin}/credit/report/business/experian/overview/resource/e/${entity_id}/g/${group_id}`;
+		let redirect_url = `${origin}/credit/report/business/experian/overview/resource/e/${entity_id}/g/${group_id}`;
 
-// 		subject.next({
-// 			id: action_response,
-// 			next: () => value,
-// 		});
+		subject.next({
+			id: action_response,
+			next: () => value,
+		});
 
-// 		// subject.next({
-// 		// 	id: "new_application_response",
-// 		// 	next: () => Response.redirect(redirect_url),
-// 		// });
-// 	};
+		// subject.next({
+		// 	id: "new_application_response",
+		// 	next: () => Response.redirect(redirect_url),
+		// });
+	};
 
-// 	const on_error = (error) => {
-// 		console.log(`${route_logger}.action.error`);
-// 		console.log(error);
+	const on_error = (error) => {
+		console.log(`${route_logger}.action.error`);
+		console.log(error);
 
-// 		subject.next({
-// 			id: action_response,
-// 			next: () => json_response(error),
-// 		});
-// 	};
+		subject.next({
+			id: action_response,
+			next: () => json_response(error),
+		});
+	};
 
-// 	const on_complete = (value) => value.id === action_response;
+	const on_complete = (value) => value.id === action_response;
 
-// 	action_subject.pipe(fold(on_success, on_error)).subscribe();
-// 	subject.next({ id: action_start, args: { request } });
-// 	let response = await lastValueFrom(subject.pipe(rxfilter(on_complete), take(1)));
+	action_subject.pipe(fold(on_success, on_error)).subscribe();
+	subject.next({ id: action_start, args: { request } });
+	let response = await lastValueFrom(subject.pipe(rxfilter(on_complete), take(1)));
 
-// 	return response.next();
-// };
+	return response.next();
+};
 
 export const loader = async ({ request }) => {
 	console.log(route_logger);

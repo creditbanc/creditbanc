@@ -19,13 +19,17 @@ import {
 } from "~/utils/helpers";
 import {
 	__,
+	allPass,
+	anyPass,
 	curry,
 	defaultTo,
 	equals,
 	flip,
 	head,
 	identity,
+	is,
 	isEmpty,
+	isNil,
 	join,
 	keys,
 	length,
@@ -34,6 +38,7 @@ import {
 	not,
 	omit,
 	pipe,
+	set,
 	sort,
 	times,
 	values,
@@ -56,7 +61,7 @@ import { encode } from "js-base64";
 import { BusinessEntity, useReportStore } from "../credit/business/new/$";
 import Spinner from "~/components/LoadingSpinner";
 import murmurhash from "murmurhash";
-import { concat, from, lastValueFrom, merge, of as rxof, tap, zip } from "rxjs";
+import { concat, concatMap, delay, from, lastValueFrom, merge, of as rxof, tap, zip } from "rxjs";
 import { filter as rxfilter, map as rxmap } from "rxjs";
 import { use_cache } from "~/components/CacheLink";
 import { difference } from "ramda";
@@ -782,7 +787,9 @@ const Notifications = () => {
 
 const NewBusinessReportForm = () => {
 	let location = useLocation();
+	let { new_application_is_submiting = false } = use_view_store((state) => state);
 	let set_props = use_view_store((state) => state.set_props);
+	let set_state = use_view_store((state) => state.set_state);
 	let search_obj = get_search_params_obj(location.search);
 	let { pathname } = useLocation();
 	let entity_id = get_entity_id(pathname);
@@ -793,11 +800,11 @@ const NewBusinessReportForm = () => {
 	const fetcher = useFetcher();
 	const error = fetcher.data;
 
-	// console.log("fetcher");
-	// console.log(fetcher.data);
+	console.log("fetcher");
+	console.log(fetcher.data);
 
-	const get_application = async () => {
-		let application_id = "79ffec5e-7095-414f-b301-0052278661b4";
+	const get_application = async (application_id) => {
+		// let application_id = "79ffec5e-7095-414f-b301-0052278661b4";
 
 		return axios({
 			method: "get",
@@ -806,21 +813,44 @@ const NewBusinessReportForm = () => {
 	};
 
 	useEffect(() => {
-		let application = from(get_application()).pipe(
-			rxmap(get("data")),
-			rxfilter((value) => value !== undefined),
-			tap(() => console.log("get_application.tap")),
-			tap(console.log),
-			rxmap(({ application_id, business_match }) => {
-				console.log("business_match");
-				console.log(business_match);
-				console.log(application_id);
-				set_props({ application_id, business_match });
-			})
-		);
+		// let application_id = "ef83ecd6-96f5-4156-9082-51e18d364b31";
+		let application_id = fetcher?.data?.application_id;
+		if (application_id) {
+			let application = rxof(application_id).pipe(
+				tap((application_id) => set_props({ application_id })),
+				delay(5000),
+				concatMap(get_application),
+				rxmap(pipe(get("data"))),
+				rxfilter((value) => isEmpty(value?.business_match) == false),
+				tap(() => console.log("get_application.tap")),
+				tap(console.log),
+				rxmap(({ application_id, business_match }) => {
+					console.log("business_match");
+					console.log(business_match);
+					console.log(application_id);
+					set_props({ application_id, business_match, new_application_is_submiting: false });
+				})
+			);
 
-		application.subscribe();
-	}, []);
+			application.subscribe();
+		}
+	}, [fetcher?.data?.application_id]);
+
+	// useEffect(() => {
+	// 	if (fetcher?.state == "submitting") {
+	// 		set_props({ new_application_is_submiting: true });
+	// 	}
+	// }, [fetcher?.state]);
+
+	const onSubmit = () => {
+		let { business_start_date, ...rest } = form;
+		let business_start_date_string = `${business_start_date.year}-${business_start_date.month}-${business_start_date.day}`;
+
+		let payload = {
+			business_start_date: business_start_date_string,
+			...rest,
+		};
+	};
 
 	const onSubmitNewBusinessReport = () => {
 		console.log("onSubmitNewBusinessReport");
@@ -833,10 +863,10 @@ const NewBusinessReportForm = () => {
 			...rest,
 		};
 
+		set_state(["new_application_is_submiting"], true);
+
 		fetcher.submit(
-			{
-				payload: JSON.stringify(payload),
-			},
+			{ payload: JSON.stringify(payload) },
 			{
 				method: "post",
 				action: `/credit/business/match/resource/e/${entity_id}/g/${group_id}`,
@@ -845,263 +875,260 @@ const NewBusinessReportForm = () => {
 		);
 	};
 
+	if (new_application_is_submiting == true) {
+		return <div></div>;
+	}
+
 	return (
 		<div className="flex flex-col w-full border rounded bg-white p-5">
 			{search_obj.cookie == "monster" && <PreFills />}
-			{fetcher?.state == "submitting" && (
-				<div className="flex flex-col w-full">
-					<Spinner />
-				</div>
-			)}
 
-			{fetcher.state !== "submitting" && (
-				<div className="flex flex-col w-full">
-					<div className="flex flex-col w-full my-2">
-						<div className="mb-2 text-sm">Personal information</div>
-						<div className="flex flex-col gap-y-2">
-							<div className="flex flex-row gap-x-2">
-								<div className="flex flex-col w-[50%]">
-									<input
-										className="border rounded pl-2 py-1 shadow-sm"
-										type="text"
-										name="given-name"
-										placeholder="First name"
-										autoComplete="given-name"
-										value={form.basic_info.first_name}
-										onChange={(e) => setForm(["basic_info", "first_name"], e.target.value)}
-									/>
-									{error?.basic_info?.first_name == false && (
-										<div className="text-xs text-red-500 py-1">First name is required</div>
-									)}
-								</div>
-								<div className="flex flex-col w-[50%]">
-									<input
-										className="border rounded pl-2 py-1 shadow-sm"
-										type="text"
-										name=""
-										placeholder="Last name"
-										autoComplete="family-name"
-										value={form.basic_info.last_name}
-										onChange={(e) => setForm(["basic_info", "last_name"], e.target.value)}
-									/>
-									{error?.basic_info?.last_name == false && (
-										<div className="text-xs text-red-500 py-1">Last name is required</div>
-									)}
-								</div>
+			<div className="flex flex-col w-full">
+				<div className="flex flex-col w-full my-2">
+					<div className="mb-2 text-sm">Personal information</div>
+					<div className="flex flex-col gap-y-2">
+						<div className="flex flex-row gap-x-2">
+							<div className="flex flex-col w-[50%]">
+								<input
+									className="border rounded pl-2 py-1 shadow-sm"
+									type="text"
+									name="given-name"
+									placeholder="First name"
+									autoComplete="given-name"
+									value={form.basic_info.first_name}
+									onChange={(e) => setForm(["basic_info", "first_name"], e.target.value)}
+								/>
+								{error?.basic_info?.first_name == false && (
+									<div className="text-xs text-red-500 py-1">First name is required</div>
+								)}
 							</div>
-							<div className="flex flex-row">
-								<div className="flex flex-col w-[100%]">
-									<input
-										className="border rounded pl-2 py-1 shadow-sm"
-										type="text"
-										name=""
-										placeholder="Email"
-										autoComplete="email"
-										value={form.basic_info.email_address}
-										onChange={(e) => setForm(["basic_info", "email_address"], e.target.value)}
-									/>
-									{error?.basic_info?.email_address == false && (
-										<div className="text-xs text-red-500 py-1">Email is required</div>
-									)}
-								</div>
-							</div>
-							<div className="flex flex-row">
-								<div className="flex flex-col w-[100%]">
-									<input
-										className="border rounded pl-2 py-1 shadow-sm"
-										type="text"
-										name=""
-										placeholder="Telephone"
-										autoComplete="tel"
-										value={form.basic_info.telephone}
-										onChange={(e) => setForm(["basic_info", "telephone"], e.target.value)}
-									/>
-									{error?.basic_info?.telephone == false && (
-										<div className="text-xs text-red-500 py-1">Telephone is required</div>
-									)}
-								</div>
+							<div className="flex flex-col w-[50%]">
+								<input
+									className="border rounded pl-2 py-1 shadow-sm"
+									type="text"
+									name=""
+									placeholder="Last name"
+									autoComplete="family-name"
+									value={form.basic_info.last_name}
+									onChange={(e) => setForm(["basic_info", "last_name"], e.target.value)}
+								/>
+								{error?.basic_info?.last_name == false && (
+									<div className="text-xs text-red-500 py-1">Last name is required</div>
+								)}
 							</div>
 						</div>
-					</div>
-					<div className="flex flex-col w-full my-2">
-						<div className="mb-2 text-sm">Business information</div>
-						<div className="flex flex-col gap-y-2">
-							<div className="flex flex-row">
-								<div className="flex flex-col w-[100%]">
-									<input
-										className="border rounded pl-2 py-1 shadow-sm"
-										type="text"
-										name=""
-										placeholder="Business legal name"
-										autoComplete="organization"
-										value={form.business_legal_name}
-										onChange={(e) => setForm(["business_legal_name"], e.target.value)}
-									/>
-									{error?.business_legal_name == false && (
-										<div className="text-xs text-red-500 py-1">Business name is required</div>
-									)}
-								</div>
-							</div>
-							<div className="flex flex-row">
-								<div className="flex flex-col w-[100%]">
-									<input
-										className="border rounded pl-2 py-1 shadow-sm"
-										type="text"
-										name=""
-										placeholder="Doing business as (DBA)"
-										value={form.basic_info.doing_business_as}
-										onChange={(e) => setForm(["basic_info", "doing_business_as"], e.target.value)}
-									/>
-								</div>
-							</div>
-							<div className="flex flex-row">
-								<div className="flex flex-col w-[100%]">
-									<BusinessEntity />
-									{error?.business_entity == false && (
-										<div className="text-xs text-red-500 py-1">Business type is required</div>
-									)}
-								</div>
-							</div>
-							<div className="flex flex-row">
-								<div className="flex flex-col w-[100%]">
-									<input
-										className="border rounded pl-2 py-1 shadow-sm"
-										type="text"
-										name=""
-										placeholder="Employer identification number (EIN)"
-										value={form.employee_identification_number}
-										onChange={(e) => setForm(["employee_identification_number"], e.target.value)}
-									/>
-									{error?.employee_identification_number == false && (
-										<div className="text-xs text-red-500 py-1">
-											Employee identification number is required
-										</div>
-									)}
-								</div>
+						<div className="flex flex-row">
+							<div className="flex flex-col w-[100%]">
+								<input
+									className="border rounded pl-2 py-1 shadow-sm"
+									type="text"
+									name=""
+									placeholder="Email"
+									autoComplete="email"
+									value={form.basic_info.email_address}
+									onChange={(e) => setForm(["basic_info", "email_address"], e.target.value)}
+								/>
+								{error?.basic_info?.email_address == false && (
+									<div className="text-xs text-red-500 py-1">Email is required</div>
+								)}
 							</div>
 						</div>
-					</div>
-					<div className="flex flex-col w-full my-2">
-						<div className="mb-2 text-sm">Business start date</div>
-						<div className="flex flex-col gap-y-2">
-							<div className="flex flex-row gap-x-2">
-								<div className="flex flex-col w-1/3">
-									<input
-										className="border rounded pl-2 py-1 shadow-sm"
-										type="text"
-										name=""
-										placeholder="MM"
-										value={form.business_start_date.month}
-										onChange={(e) => setForm(["business_start_date", "month"], e.target.value)}
-									/>
-									{error?.business_start_date?.month == false && (
-										<div className="text-xs text-red-500 py-1">Month is required</div>
-									)}
-								</div>
-								<div className="flex flex-col w-1/3">
-									<input
-										className="border rounded pl-2 py-1 shadow-sm"
-										type="text"
-										name=""
-										placeholder="DD"
-										value={form.business_start_date.day}
-										onChange={(e) => setForm(["business_start_date", "day"], e.target.value)}
-									/>
-									{error?.business_start_date?.day == false && (
-										<div className="text-xs text-red-500 py-1">Day is required</div>
-									)}
-								</div>
-								<div className="flex flex-col w-1/3">
-									<input
-										className="border rounded pl-2 py-1 shadow-sm"
-										type="text"
-										name=""
-										placeholder="YYYY"
-										value={form.business_start_date.year}
-										onChange={(e) => setForm(["business_start_date", "year"], e.target.value)}
-									/>
-									{error?.business_start_date?.year == false && (
-										<div className="text-xs text-red-500 py-1">Year is required</div>
-									)}
-								</div>
+						<div className="flex flex-row">
+							<div className="flex flex-col w-[100%]">
+								<input
+									className="border rounded pl-2 py-1 shadow-sm"
+									type="text"
+									name=""
+									placeholder="Telephone"
+									autoComplete="tel"
+									value={form.basic_info.telephone}
+									onChange={(e) => setForm(["basic_info", "telephone"], e.target.value)}
+								/>
+								{error?.basic_info?.telephone == false && (
+									<div className="text-xs text-red-500 py-1">Telephone is required</div>
+								)}
 							</div>
-						</div>
-					</div>
-					<div className="flex flex-col w-full my-2">
-						<div className="mb-2 text-sm">Business address information</div>
-						<div className="flex flex-col gap-y-2">
-							<div className="flex flex-row">
-								<div className="flex flex-col w-[100%]">
-									<input
-										className="border rounded pl-2 py-1 shadow-sm"
-										type="text"
-										name=""
-										placeholder="Street address"
-										autoComplete="street-address"
-										value={form.business_address.address_line}
-										onChange={(e) => setForm(["business_address", "address_line"], e.target.value)}
-									/>
-									{error?.business_address?.address_line == false && (
-										<div className="text-xs text-red-500 py-1">Street address is required</div>
-									)}
-								</div>
-							</div>
-							<div className="flex flex-row gap-x-2">
-								<div className="flex flex-col w-1/3">
-									<input
-										className="border rounded pl-2 py-1 shadow-sm"
-										type="text"
-										name=""
-										placeholder="City"
-										autoComplete="address-level2"
-										value={form.business_address.city}
-										onChange={(e) => setForm(["business_address", "city"], e.target.value)}
-									/>
-									{error?.business_address?.city == false && (
-										<div className="text-xs text-red-500 py-1">City is required</div>
-									)}
-								</div>
-								<div className="flex flex-col w-1/3">
-									<input
-										className="border rounded pl-2 py-1 shadow-sm"
-										type="text"
-										name=""
-										placeholder="State / Province"
-										value={form.business_address.state}
-										autoComplete="address-level1"
-										onChange={(e) => setForm(["business_address", "state"], e.target.value)}
-									/>
-									{error?.business_address?.state == false && (
-										<div className="text-xs text-red-500 py-1">State / Province is required</div>
-									)}
-								</div>
-								<div className="flex flex-col w-1/3">
-									<input
-										className="border rounded pl-2 py-1 shadow-sm"
-										type="text"
-										name=""
-										placeholder="Zip / Postal code"
-										autoComplete="postal-code"
-										value={form.business_address.zip}
-										onChange={(e) => setForm(["business_address", "zip"], e.target.value)}
-									/>
-									{error?.business_address?.zip == false && (
-										<div className="text-xs text-red-500 py-1">Zip / Postal code is required</div>
-									)}
-								</div>
-							</div>
-						</div>
-					</div>
-					<div className="flex flex-col w-full my-2">
-						<div
-							className="flex flex-col w-full items-center justify-center py-2 rounded cursor-pointer bg-green-300 text-white"
-							onClick={onSubmitNewBusinessReport}
-						>
-							Submit
 						</div>
 					</div>
 				</div>
-			)}
+				<div className="flex flex-col w-full my-2">
+					<div className="mb-2 text-sm">Business information</div>
+					<div className="flex flex-col gap-y-2">
+						<div className="flex flex-row">
+							<div className="flex flex-col w-[100%]">
+								<input
+									className="border rounded pl-2 py-1 shadow-sm"
+									type="text"
+									name=""
+									placeholder="Business legal name"
+									autoComplete="organization"
+									value={form.business_legal_name}
+									onChange={(e) => setForm(["business_legal_name"], e.target.value)}
+								/>
+								{error?.business_legal_name == false && (
+									<div className="text-xs text-red-500 py-1">Business name is required</div>
+								)}
+							</div>
+						</div>
+						<div className="flex flex-row">
+							<div className="flex flex-col w-[100%]">
+								<input
+									className="border rounded pl-2 py-1 shadow-sm"
+									type="text"
+									name=""
+									placeholder="Doing business as (DBA)"
+									value={form.basic_info.doing_business_as}
+									onChange={(e) => setForm(["basic_info", "doing_business_as"], e.target.value)}
+								/>
+							</div>
+						</div>
+						<div className="flex flex-row">
+							<div className="flex flex-col w-[100%]">
+								<BusinessEntity />
+								{error?.business_entity == false && (
+									<div className="text-xs text-red-500 py-1">Business type is required</div>
+								)}
+							</div>
+						</div>
+						<div className="flex flex-row">
+							<div className="flex flex-col w-[100%]">
+								<input
+									className="border rounded pl-2 py-1 shadow-sm"
+									type="text"
+									name=""
+									placeholder="Employer identification number (EIN)"
+									value={form.employee_identification_number}
+									onChange={(e) => setForm(["employee_identification_number"], e.target.value)}
+								/>
+								{error?.employee_identification_number == false && (
+									<div className="text-xs text-red-500 py-1">
+										Employee identification number is required
+									</div>
+								)}
+							</div>
+						</div>
+					</div>
+				</div>
+				<div className="flex flex-col w-full my-2">
+					<div className="mb-2 text-sm">Business start date</div>
+					<div className="flex flex-col gap-y-2">
+						<div className="flex flex-row gap-x-2">
+							<div className="flex flex-col w-1/3">
+								<input
+									className="border rounded pl-2 py-1 shadow-sm"
+									type="text"
+									name=""
+									placeholder="MM"
+									value={form.business_start_date.month}
+									onChange={(e) => setForm(["business_start_date", "month"], e.target.value)}
+								/>
+								{error?.business_start_date?.month == false && (
+									<div className="text-xs text-red-500 py-1">Month is required</div>
+								)}
+							</div>
+							<div className="flex flex-col w-1/3">
+								<input
+									className="border rounded pl-2 py-1 shadow-sm"
+									type="text"
+									name=""
+									placeholder="DD"
+									value={form.business_start_date.day}
+									onChange={(e) => setForm(["business_start_date", "day"], e.target.value)}
+								/>
+								{error?.business_start_date?.day == false && (
+									<div className="text-xs text-red-500 py-1">Day is required</div>
+								)}
+							</div>
+							<div className="flex flex-col w-1/3">
+								<input
+									className="border rounded pl-2 py-1 shadow-sm"
+									type="text"
+									name=""
+									placeholder="YYYY"
+									value={form.business_start_date.year}
+									onChange={(e) => setForm(["business_start_date", "year"], e.target.value)}
+								/>
+								{error?.business_start_date?.year == false && (
+									<div className="text-xs text-red-500 py-1">Year is required</div>
+								)}
+							</div>
+						</div>
+					</div>
+				</div>
+				<div className="flex flex-col w-full my-2">
+					<div className="mb-2 text-sm">Business address information</div>
+					<div className="flex flex-col gap-y-2">
+						<div className="flex flex-row">
+							<div className="flex flex-col w-[100%]">
+								<input
+									className="border rounded pl-2 py-1 shadow-sm"
+									type="text"
+									name=""
+									placeholder="Street address"
+									autoComplete="street-address"
+									value={form.business_address.address_line}
+									onChange={(e) => setForm(["business_address", "address_line"], e.target.value)}
+								/>
+								{error?.business_address?.address_line == false && (
+									<div className="text-xs text-red-500 py-1">Street address is required</div>
+								)}
+							</div>
+						</div>
+						<div className="flex flex-row gap-x-2">
+							<div className="flex flex-col w-1/3">
+								<input
+									className="border rounded pl-2 py-1 shadow-sm"
+									type="text"
+									name=""
+									placeholder="City"
+									autoComplete="address-level2"
+									value={form.business_address.city}
+									onChange={(e) => setForm(["business_address", "city"], e.target.value)}
+								/>
+								{error?.business_address?.city == false && (
+									<div className="text-xs text-red-500 py-1">City is required</div>
+								)}
+							</div>
+							<div className="flex flex-col w-1/3">
+								<input
+									className="border rounded pl-2 py-1 shadow-sm"
+									type="text"
+									name=""
+									placeholder="State / Province"
+									value={form.business_address.state}
+									autoComplete="address-level1"
+									onChange={(e) => setForm(["business_address", "state"], e.target.value)}
+								/>
+								{error?.business_address?.state == false && (
+									<div className="text-xs text-red-500 py-1">State / Province is required</div>
+								)}
+							</div>
+							<div className="flex flex-col w-1/3">
+								<input
+									className="border rounded pl-2 py-1 shadow-sm"
+									type="text"
+									name=""
+									placeholder="Zip / Postal code"
+									autoComplete="postal-code"
+									value={form.business_address.zip}
+									onChange={(e) => setForm(["business_address", "zip"], e.target.value)}
+								/>
+								{error?.business_address?.zip == false && (
+									<div className="text-xs text-red-500 py-1">Zip / Postal code is required</div>
+								)}
+							</div>
+						</div>
+					</div>
+				</div>
+				<div className="flex flex-col w-full my-2">
+					<div
+						className="flex flex-col w-full items-center justify-center py-2 rounded cursor-pointer bg-green-300 text-white"
+						onClick={onSubmitNewBusinessReport}
+					>
+						Submit
+					</div>
+				</div>
+			</div>
 		</div>
 	);
 };
@@ -1124,7 +1151,7 @@ const BusinessMatchSelect = () => {
 
 	const onSelectBusiness = (business) => {
 		console.log("onSelectBusiness");
-		console.log(business);
+		// console.log(business);
 		let redirect_url = `/credit/report/business/experian/overview/resource/e/${entity_id}/g/${group_id}`;
 		let bin_response = from(update_business_bin(business.bin)).pipe(
 			rxfilter((value) => value?.data?.status == "success"),
@@ -1185,6 +1212,8 @@ export default function Home() {
 		onboard: onboard_db,
 		plan_id = "essential",
 		business_match = undefined,
+		application_id = undefined,
+		new_application_is_submiting = false,
 	} = use_view_store((state) => state);
 
 	let { business_report_is_empty = true } = business_info;
@@ -1322,6 +1351,9 @@ export default function Home() {
 
 	let onboard_percent_completed = (onboard_steps_completed / onboard_num_of_steps) * 100;
 
+	const no_business_match = pipe(anyPass([isNil, isEmpty]), not)(business_match);
+	const is_loading = new_application_is_submiting;
+
 	return (
 		<div className="w-full h-full flex flex-col overflow-hidden">
 			<div className="flex flex-row h-full w-full p-5 space-x-5">
@@ -1334,9 +1366,15 @@ export default function Home() {
 						)}
 						<HeadingTwo />
 
+						{is_loading && (
+							<div className="flex flex-col w-full">
+								<Spinner />
+							</div>
+						)}
+
 						<div className="flex flex-col w-full">
-							{business_report_is_empty && !business_match && <NewBusinessReportForm />}
-							{business_match && <BusinessMatchSelect />}
+							{!application_id && <NewBusinessReportForm />}
+							{no_business_match && <BusinessMatchSelect />}
 							{!business_report_is_empty && (
 								<div className="flex flex-col lg:flex-row gap-x-5 gap-y-3 lg:space-y-0">
 									<div className="flex flex-col w-full">
