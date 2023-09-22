@@ -8,11 +8,14 @@ import {
 	delete_cookie,
 	get_entity_id,
 	get_group_id,
+	get_search_params_obj,
 	normalize,
 	normalize_id,
 	search_params,
 	store,
 	use_search_params,
+	get,
+	formatPhoneNumber,
 } from "~/utils/helpers";
 import {
 	__,
@@ -21,6 +24,7 @@ import {
 	equals,
 	flip,
 	head,
+	identity,
 	isEmpty,
 	join,
 	keys,
@@ -31,9 +35,10 @@ import {
 	omit,
 	pipe,
 	sort,
+	times,
 	values,
 } from "ramda";
-import { all, filter, get, sub } from "shades";
+import { all, cons, filter } from "shades";
 import { useLoaderData } from "@remix-run/react";
 import { plans } from "~/data/plans";
 import { json, redirect } from "@remix-run/node";
@@ -51,10 +56,12 @@ import { encode } from "js-base64";
 import { BusinessEntity, useReportStore } from "../credit/business/new/$";
 import Spinner from "~/components/LoadingSpinner";
 import murmurhash from "murmurhash";
-import { concat, lastValueFrom, merge, of as rxof, tap, zip } from "rxjs";
-import { filter as rxfilter } from "rxjs";
+import { concat, from, lastValueFrom, merge, of as rxof, tap, zip } from "rxjs";
+import { filter as rxfilter, map as rxmap } from "rxjs";
 import { use_cache } from "~/components/CacheLink";
 import { difference } from "ramda";
+import PreFills from "../credit/business/PreFills";
+import { LendflowExternal } from "~/utils/lendflow.server";
 
 let use_view_store = store();
 
@@ -774,6 +781,9 @@ const Notifications = () => {
 };
 
 const NewBusinessReportForm = () => {
+	let location = useLocation();
+	let set_props = use_view_store((state) => state.set_props);
+	let search_obj = get_search_params_obj(location.search);
 	let { pathname } = useLocation();
 	let entity_id = get_entity_id(pathname);
 	let group_id = get_group_id(pathname);
@@ -782,6 +792,35 @@ const NewBusinessReportForm = () => {
 
 	const fetcher = useFetcher();
 	const error = fetcher.data;
+
+	// console.log("fetcher");
+	// console.log(fetcher.data);
+
+	const get_application = async () => {
+		let application_id = "79ffec5e-7095-414f-b301-0052278661b4";
+
+		return axios({
+			method: "get",
+			url: `/credit/business/match/resource/e/${entity_id}/g/${group_id}?application_id=${application_id}`,
+		});
+	};
+
+	useEffect(() => {
+		let application = from(get_application()).pipe(
+			rxmap(get("data")),
+			rxfilter((value) => value !== undefined),
+			tap(() => console.log("get_application.tap")),
+			tap(console.log),
+			rxmap(({ application_id, business_match }) => {
+				console.log("business_match");
+				console.log(business_match);
+				console.log(application_id);
+				set_props({ application_id, business_match });
+			})
+		);
+
+		application.subscribe();
+	}, []);
 
 	const onSubmitNewBusinessReport = () => {
 		console.log("onSubmitNewBusinessReport");
@@ -800,14 +839,15 @@ const NewBusinessReportForm = () => {
 			},
 			{
 				method: "post",
-				action: `/credit/business/new/resource/e/${entity_id}/g/${group_id}`,
-				// action: `/credit/business/new`,
+				action: `/credit/business/match/resource/e/${entity_id}/g/${group_id}`,
+				// action: `/credit/business/new/resource/e/${entity_id}/g/${group_id}`,
 			}
 		);
 	};
 
 	return (
 		<div className="flex flex-col w-full border rounded bg-white p-5">
+			{search_obj.cookie == "monster" && <PreFills />}
 			{fetcher?.state == "submitting" && (
 				<div className="flex flex-col w-full">
 					<Spinner />
@@ -1066,13 +1106,88 @@ const NewBusinessReportForm = () => {
 	);
 };
 
+const BusinessMatchSelect = () => {
+	let { pathname } = useLocation();
+	let entity_id = get_entity_id(pathname);
+	let group_id = get_group_id(pathname);
+	let { business_match = [], application_id = undefined } = use_view_store((state) => state);
+	let navigate = useNavigate();
+
+	const update_business_bin = (bin) => {
+		return from(
+			axios({
+				method: "post",
+				url: `/credit/business/match/bin/${bin}/resource/e/${entity_id}/g/${group_id}`,
+			})
+		);
+	};
+
+	const onSelectBusiness = (business) => {
+		console.log("onSelectBusiness");
+		console.log(business);
+		let redirect_url = `/credit/report/business/experian/overview/resource/e/${entity_id}/g/${group_id}`;
+		let bin_response = from(update_business_bin(business.bin)).pipe(
+			rxfilter((value) => value?.data?.status == "success"),
+			tap(() => console.log("update_business_bin.tap")),
+			tap(console.log),
+			tap(() => navigate(redirect_url))
+		);
+
+		bin_response.subscribe();
+	};
+
+	return (
+		<div className="flex flex-col my-2 p-3 bg-white border rounded text-sm">
+			<div className="flex flex-col font-semibold mb-2">Select your business</div>
+			<div className="flex flex-col space-y-3">
+				{pipe(
+					map((business) => (
+						<div
+							className="flex flex-col rounded bg-white px-3 text-sm cursor-pointer hover:border-green-300 border-2 hover:border-2"
+							key={business.bin}
+							onClick={() => onSelectBusiness(business)}
+						>
+							<div className="flex flex-row border-b py-2 font-semibold justify-between items-end mb-2">
+								<div>{business?.businessName}</div>
+								<div className="flex flex-col px-3 py-1 bg-gray-100 hover:bg-green-300 text-gray-700 hover:text-white rounded cursor-pointer">
+									Select
+								</div>
+							</div>
+							<div className="flex flex-col space-y-1 my-1 pb-1">
+								<div className="flex flex-col">{business?.address?.street}</div>
+								<div className="flex flex-row space-x-1">
+									<div>{business?.address?.city},</div>
+									<div> {business?.address?.state} </div>
+									<div> {business?.address?.zip} </div>
+								</div>
+								<div className="flex flex-col">{formatPhoneNumber(business?.phone)}</div>
+							</div>
+						</div>
+					))
+				)(business_match)}
+			</div>
+		</div>
+	);
+};
+
 export default function Home() {
 	// return null;
+	let loader_data = useLoaderData();
 	let set_view = use_view_store((state) => state.set_props);
 	let set_path = use_view_store((state) => state.set_state);
+
 	let { pathname } = useLocation();
-	let loader_data = useLoaderData();
-	let { cache_dependencies, business_scores, personal_scores, business_info } = loader_data;
+	let {
+		cache_dependencies,
+		business_scores,
+		personal_scores,
+		business_info = {},
+		onboard: onboard_db,
+		plan_id = "essential",
+		business_match = undefined,
+	} = use_view_store((state) => state);
+
+	let { business_report_is_empty = true } = business_info;
 
 	let use_cache_client = use_cache((state) => state.set_dependencies);
 	let update_cache_key = use_cache((state) => state.set_state);
@@ -1086,6 +1201,17 @@ export default function Home() {
 	let business_info_url = `/credit/report/ssebusiness/resource/e/${entity_id}/g/${group_id}`;
 	let personal_scores_url = `/credit/report/ssepersonalscores/resource/e/${entity_id}/g/${group_id}`;
 	let business_scores_url = `/credit/report/ssebusinessscores/resource/e/${entity_id}/g/${group_id}`;
+
+	// const { plan_id = "essential", onboard: onboard_db, business_report_is_empty } = useLoaderData();
+	let onboard = useOnboardingStore((state) => state.onboard);
+	// let set_onboard = useOnboardingStore((state) => state.set_state);
+
+	let onboard_num_of_steps = pipe(length)(onboard);
+	let onboard_steps_completed = pipe(
+		get(all, "completed"),
+		filter((value) => value == true),
+		length
+	)(onboard);
 
 	// console.log("fetcher.subscription");
 	// console.log(business_info);
@@ -1120,8 +1246,8 @@ export default function Home() {
 	};
 
 	useEffect(() => {
-		console.log("loader_data");
-		console.log(loader_data);
+		// console.log("loader_data");
+		// console.log(loader_data);
 		set_view(loader_data);
 	}, []);
 
@@ -1166,6 +1292,25 @@ export default function Home() {
 	// 	}
 	// }, [personal_scores_fetcher.data]);
 
+	// useEffect(() => {
+	// 	onboard = pipe(
+	// 		map((step) =>
+	// 			mergeDeepRight(
+	// 				step,
+	// 				pipe(
+	// 					filter({
+	// 						id: step.id,
+	// 					}),
+	// 					head,
+	// 					defaultTo({})
+	// 				)(onboard_db)
+	// 			)
+	// 		)
+	// 	)(onboard);
+
+	// 	set_onboard(["onboard"], onboard);
+	// }, [onboard_db]);
+
 	// return (
 	// 	<div>
 	// 		<HeadingTwo />
@@ -1174,36 +1319,6 @@ export default function Home() {
 	// 		</div>
 	// 	</div>
 	// );
-
-	const { plan_id = "essential", onboard: onboard_db, business_report_is_empty } = useLoaderData();
-	let onboard = useOnboardingStore((state) => state.onboard);
-	let set_onboard = useOnboardingStore((state) => state.set_state);
-
-	let onboard_num_of_steps = pipe(length)(onboard);
-	let onboard_steps_completed = pipe(
-		get(all, "completed"),
-		filter((value) => value == true),
-		length
-	)(onboard);
-
-	useEffect(() => {
-		onboard = pipe(
-			map((step) =>
-				mergeDeepRight(
-					step,
-					pipe(
-						filter({
-							id: step.id,
-						}),
-						head,
-						defaultTo({})
-					)(onboard_db)
-				)
-			)
-		)(onboard);
-
-		set_onboard(["onboard"], onboard);
-	}, [onboard_db]);
 
 	let onboard_percent_completed = (onboard_steps_completed / onboard_num_of_steps) * 100;
 
@@ -1220,7 +1335,8 @@ export default function Home() {
 						<HeadingTwo />
 
 						<div className="flex flex-col w-full">
-							{business_report_is_empty && <NewBusinessReportForm />}
+							{business_report_is_empty && !business_match && <NewBusinessReportForm />}
+							{business_match && <BusinessMatchSelect />}
 							{!business_report_is_empty && (
 								<div className="flex flex-col lg:flex-row gap-x-5 gap-y-3 lg:space-y-0">
 									<div className="flex flex-col w-full">
@@ -1245,47 +1361,47 @@ export default function Home() {
 						</div>
 					</div>
 				</div>
-				<div className="hidden lg:flex flex-col lg:w-[30%] rounded border">
-					<div className="flex flex-col w-full h-full rounded bg-white">
-						<div className="flex flex-row py-4 px-5 justify-between w-full items-center">
-							<div>Notifications</div>
-						</div>
-						<div className="flex flex-col w-full border-t"></div>
-						<div className="flex flex-col overflow-scroll scrollbar-none">
-							<div className="border-b border-gray-200 bg-white px-4 py-3 sm:px-6 sticky top-0 z-10">
-								<h3 className="text-base font-semibold leading-6 text-gray-900 my-2">
-									Complete Your Profile
-								</h3>
+				<div className="hidden lg:flex flex-col lg:w-[30%] rounded border bg-white">
+					{/* <div className="flex flex-col w-full h-full rounded bg-white">
+							<div className="flex flex-row py-4 px-5 justify-between w-full items-center">
+								<div>Notifications</div>
+							</div>
+							<div className="flex flex-col w-full border-t"></div>
+							<div className="flex flex-col overflow-scroll scrollbar-none">
+								<div className="border-b border-gray-200 bg-white px-4 py-3 sm:px-6 sticky top-0 z-10">
+									<h3 className="text-base font-semibold leading-6 text-gray-900 my-2">
+										Complete Your Profile
+									</h3>
 
-								<div className="flex flex-col w-full space-y-5">
-									<p className="mt-1 text-sm text-gray-500">
-										Follow the steps below to complete your CreditBanc profile
-									</p>
-								</div>
+									<div className="flex flex-col w-full space-y-5">
+										<p className="mt-1 text-sm text-gray-500">
+											Follow the steps below to complete your CreditBanc profile
+										</p>
+									</div>
 
-								<div className="my-2 flex flex-col w-full">
-									<div className="flex flex-row w-full justify-between my-2 text-sm text-gray-400">
-										<div>{onboard_percent_completed}%</div>
-										<div>
-											{onboard_steps_completed}/{onboard_num_of_steps} steps
+									<div className="my-2 flex flex-col w-full">
+										<div className="flex flex-row w-full justify-between my-2 text-sm text-gray-400">
+											<div>{onboard_percent_completed}%</div>
+											<div>
+												{onboard_steps_completed}/{onboard_num_of_steps} steps
+											</div>
+										</div>
+										<div className="w-full bg-gray-200 rounded-full h-2.5 dark:bg-gray-700">
+											<div
+												className={`flex flex-col bg-blue-600 h-2.5 rounded-full`}
+												style={{
+													width: `${onboard_percent_completed}%`,
+												}}
+											></div>
 										</div>
 									</div>
-									<div className="w-full bg-gray-200 rounded-full h-2.5 dark:bg-gray-700">
-										<div
-											className={`flex flex-col bg-blue-600 h-2.5 rounded-full`}
-											style={{
-												width: `${onboard_percent_completed}%`,
-											}}
-										></div>
-									</div>
+								</div>
+
+								<div className="flex flex-col w-full my-3">
+									<Notifications />
 								</div>
 							</div>
-
-							<div className="flex flex-col w-full my-3">
-								<Notifications />
-							</div>
-						</div>
-					</div>
+						</div> */}
 				</div>
 			</div>
 		</div>

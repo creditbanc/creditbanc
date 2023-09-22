@@ -4,7 +4,7 @@ import { plan_product_requests } from "~/data/plan_product_requests";
 import { pipe, always, identity, tryCatch, curry, applySpec } from "ramda";
 import { get } from "shades";
 import Entity from "~/api/internal/entity";
-import { set_doc } from "./firebase";
+import { set_doc, update_doc } from "./firebase";
 import { data } from "autoprefixer";
 import { inspect } from "./helpers";
 
@@ -68,6 +68,11 @@ interface ApplicationForm {
 export class LendflowInternal {
 	constructor(public report: LendflowReport) {}
 
+	business_match = () => {
+		const lens_path = ["commercial_data", "experian", "business_match", "response"];
+		return falsyTryCatch(pipe(get(...lens_path)), always(0))(this.report);
+	};
+
 	business_info = () => {
 		const lens_path = ["commercial_data", "experian", "business_match", "response", 0];
 
@@ -121,6 +126,11 @@ export class LendflowInternal {
 	experian_sic_codes = () => {
 		let lens_path = ["commercial_data", "experian", "facts", "sicCodes"];
 		return falsyTryCatch(pipe(get(...lens_path)), always({}))(this.report);
+	};
+
+	experian_facts = () => {
+		let lens_path = ["commercial_data", "experian", "facts"];
+		return falsyTryCatch(pipe(get(...lens_path)), always(0))(this.report);
 	};
 
 	experian_years_on_file = () => {
@@ -315,6 +325,14 @@ export class LendflowInternal {
 		await set_doc(["credit_reports", application_id], data);
 		return data;
 	};
+
+	static update_application = async (data: Application): Promise<Application> => {
+		console.log("lendflow.sever.update_application");
+		console.log(data);
+		let { application_id, ...report } = data;
+		await update_doc(["credit_reports", application_id], { data: report });
+		return data;
+	};
 }
 
 export class LendflowExternal {
@@ -360,8 +378,8 @@ export class LendflowExternal {
 			url: `https://api.lendflow.com/api/int/applications/${application_id}/commercial_data`,
 			headers: {
 				Authorization: `Bearer ${LENDFLOW_BEARER}`,
+				"Content-Type": "application/json",
 			},
-			"Content-Type": "application/json",
 			data: {},
 		};
 
@@ -369,6 +387,53 @@ export class LendflowExternal {
 		// console.log("lendflow_response");
 		// inspect(response.data.data);
 
+		return response;
+	};
+
+	static update_application_bin = async (application_id: string, bin: string) => {
+		console.log("update_application_bin");
+		console.log(application_id);
+		console.log(bin);
+
+		let options = {
+			method: "PUT",
+			maxBodyLength: Infinity,
+			url: `https://api.lendflow.com/api/v2/workflow/applications/${application_id}`,
+			headers: {
+				Authorization: `Bearer ${LENDFLOW_BEARER}`,
+				"Content-Type": "application/json",
+			},
+			data: {
+				additional_business: {
+					additional_business_experian_bin: bin,
+				},
+			},
+		};
+
+		let response = await axios(options);
+
+		// console.log("update_application_bin_response");
+		// inspect(response.data);
+
+		return response;
+	};
+
+	static update_lendflow_report = async (application_id, requested_products) => {
+		console.log("update_lendflow_report");
+		console.log(application_id);
+		console.log(requested_products);
+		let options = {
+			method: "put",
+			maxBodyLength: Infinity,
+			url: `https://api.lendflow.com/api/v1/applications/business_credit/${application_id}/enrich`,
+			headers: {
+				Authorization: `Bearer ${LENDFLOW_BEARER}`,
+				"Content-Type": "application/json",
+			},
+			data: { requested_products: ["experian_business_facts"] },
+		};
+
+		let response = await axios(options);
 		return response;
 	};
 }
@@ -402,8 +467,8 @@ export const update_lendflow_report = async (application_id, requested_products)
 		url: `https://api.lendflow.com/api/v1/applications/business_credit/${application_id}/enrich`,
 		headers: {
 			Authorization: `Bearer ${LENDFLOW_BEARER}`,
+			"Content-Type": "application/json",
 		},
-		"Content-Type": "application/json",
 		data: { requested_products },
 	};
 

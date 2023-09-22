@@ -41,7 +41,7 @@ import { flatten as objflat } from "flat";
 import murmurhash from "murmurhash";
 import { create } from "zustand";
 
-export const get = (path) => tryCatch(pipe(sget(...path)), always(undefined));
+export const get = tryCatch(sget, always(undefined));
 
 export const store = (props = {}) => {
 	return create((set) => ({

@@ -1,21 +1,7 @@
 import { useState, Fragment } from "react";
 import CreditNav from "~/components/CreditNav";
 import axios from "axios";
-import {
-	head,
-	identity,
-	pipe,
-	tryCatch,
-	evolve,
-	isNil,
-	allPass,
-	isEmpty,
-	of,
-	values,
-	any,
-	includes,
-	not,
-} from "ramda";
+import { head, identity, pipe, tryCatch, evolve, isNil, allPass, isEmpty, of, values, any, includes, not } from "ramda";
 import { filter, get, mod, set, sub } from "shades";
 import { create } from "zustand";
 import { useActionData, useLocation, useSubmit } from "@remix-run/react";
@@ -49,26 +35,13 @@ import { plan_product_requests } from "~/data/plan_product_requests";
 import { LendflowExternal, LendflowInternal } from "~/utils/lendflow.server";
 import { get_collection, get_doc, set_doc } from "~/utils/firebase";
 import { v4 as uuidv4 } from "uuid";
-import {
-	map as rxmap,
-	tap,
-	filter as rxfilter,
-	concatMap,
-	take,
-	delay,
-} from "rxjs/operators";
-import {
-	from,
-	of as rxof,
-	Subject,
-	zip,
-	lastValueFrom,
-	throwError,
-	forkJoin,
-} from "rxjs";
+import { map as rxmap, tap, filter as rxfilter, concatMap, take, delay } from "rxjs/operators";
+import { from, of as rxof, Subject, zip, lastValueFrom, throwError, forkJoin } from "rxjs";
 import Entity from "~/api/internal/entity";
 import { fold, ifFalse } from "~/utils/operators";
 import { is_authorized_f } from "~/api/auth";
+import { lendflow_validator } from "../../helpers";
+import PreFills from "../PreFills";
 
 export const useReportStore = create((set) => ({
 	form: {
@@ -98,10 +71,8 @@ export const useReportStore = create((set) => ({
 		terms_of_service: true,
 		requested_products: ["experian_intelliscore"],
 	},
-	set_state: (path, value) =>
-		set((state) => pipe(mod(...path)(() => value))(state)),
-	setForm: (path, value) =>
-		set((state) => pipe(mod("form", ...path)(() => value))(state)),
+	set_state: (path, value) => set((state) => pipe(mod(...path)(() => value))(state)),
+	setForm: (path, value) => set((state) => pipe(mod("form", ...path)(() => value))(state)),
 }));
 
 interface CBEvent {
@@ -111,41 +82,37 @@ interface CBEvent {
 	};
 }
 
-const isNotEmpty = (value) => !isEmpty(value);
-const isNotNil = (value) => !isNil(value);
+// const isNotEmpty = (value) => !isEmpty(value);
+// const isNotNil = (value) => !isNil(value);
 
-let lendflow_validator = {
-	business_start_date: pipe(allPass([isNotEmpty, isNotNil])),
-	basic_info: {
-		first_name: pipe(allPass([isNotEmpty, isNotNil])),
-		last_name: pipe(allPass([isNotEmpty, isNotNil])),
-		email_address: pipe(allPass([isNotEmpty, isNotNil])),
-		telephone: pipe(allPass([isNotEmpty, isNotNil])),
-	},
-	business_address: {
-		address_line: pipe(allPass([isNotEmpty, isNotNil])),
-		city: pipe(allPass([isNotEmpty, isNotNil])),
-		state: pipe(allPass([isNotEmpty, isNotNil])),
-		country: pipe(allPass([isNotEmpty, isNotNil])),
-		zip: pipe(allPass([isNotEmpty, isNotNil])),
-	},
-	business_entity: pipe(allPass([isNotEmpty, isNotNil])),
-	business_legal_name: pipe(allPass([isNotEmpty, isNotNil])),
-	employee_identification_number: pipe(allPass([isNotEmpty, isNotNil])),
-};
+// export const lendflow_validator = {
+// 	business_start_date: pipe(allPass([isNotEmpty, isNotNil])),
+// 	basic_info: {
+// 		first_name: pipe(allPass([isNotEmpty, isNotNil])),
+// 		last_name: pipe(allPass([isNotEmpty, isNotNil])),
+// 		email_address: pipe(allPass([isNotEmpty, isNotNil])),
+// 		telephone: pipe(allPass([isNotEmpty, isNotNil])),
+// 	},
+// 	business_address: {
+// 		address_line: pipe(allPass([isNotEmpty, isNotNil])),
+// 		city: pipe(allPass([isNotEmpty, isNotNil])),
+// 		state: pipe(allPass([isNotEmpty, isNotNil])),
+// 		country: pipe(allPass([isNotEmpty, isNotNil])),
+// 		zip: pipe(allPass([isNotEmpty, isNotNil])),
+// 	},
+// 	business_entity: pipe(allPass([isNotEmpty, isNotNil])),
+// 	business_legal_name: pipe(allPass([isNotEmpty, isNotNil])),
+// 	employee_identification_number: pipe(allPass([isNotEmpty, isNotNil])),
+// };
 
 const subject = new Subject();
 
 const new_lendflow_application = subject.pipe(
 	rxfilter((event: any) => event.id === "new_application_start"),
 	concatMap(({ args: { request } }: CBEvent) => {
-		let $formData = from(formData(request)).pipe(
-			rxmap((form) => form.payload)
-		);
+		let $formData = from(formData(request)).pipe(rxmap((form) => form.payload));
 
-		let $entity_id = from(get_session_entity_id(request)).pipe(
-			rxmap((entity_id) => (entity_id ? entity_id : ""))
-		);
+		let $entity_id = from(get_session_entity_id(request)).pipe(rxmap((entity_id) => (entity_id ? entity_id : "")));
 
 		let $plan_id = $entity_id.pipe(
 			rxmap((entity_id) => new Entity(entity_id)),
@@ -179,22 +146,17 @@ const new_lendflow_application = subject.pipe(
 		);
 
 		return from($formData).pipe(
-			concatMap((form) =>
-				from_validations(validate_form(lendflow_validator, form))
-			),
+			concatMap((form) => from_validations(validate_form(lendflow_validator, form))),
 			concatMap(() => zip($plan_id, $formData)),
 			rxmap(([plan_id, form]) =>
 				LendflowExternal.new_application_request_creator({
 					...form,
-					requested_products:
-						LendflowExternal.plan_request_products(plan_id),
+					requested_products: LendflowExternal.plan_request_products(plan_id),
 				})
 			),
 			concatMap((request) => from(axios(request))),
 			rxmap(pipe(get("data", "data", "application_id"))),
-			concatMap((application_id) =>
-				zip($group_id, $entity_id, $plan_id, rxof(application_id))
-			),
+			concatMap((application_id) => zip($group_id, $entity_id, $plan_id, rxof(application_id))),
 			concatMap(([group_id, entity_id, plan_id, application_id]) =>
 				LendflowInternal.save_application({
 					group_id,
@@ -225,11 +187,7 @@ const credit_report = subject.pipe(
 
 		let redirect_home = entity_group_id.pipe(
 			concatMap(({ entity_id, group_id }) =>
-				throwError(() =>
-					Response.redirect(
-						`${url.origin}/home/resource/e/${entity_id}/g/${group_id}`
-					)
-				)
+				throwError(() => Response.redirect(`${url.origin}/home/resource/e/${entity_id}/g/${group_id}`))
 			)
 		);
 
@@ -244,9 +202,7 @@ const credit_report = subject.pipe(
 		);
 
 		let is_authorized = entity_group_id.pipe(
-			concatMap(({ entity_id, group_id }) =>
-				is_authorized_f(entity_id, group_id, "credit", "edit")
-			),
+			concatMap(({ entity_id, group_id }) => is_authorized_f(entity_id, group_id, "credit", "edit")),
 			concatMap(ifFalse(redirect_home))
 		);
 
@@ -319,9 +275,7 @@ export const action = async ({ request }) => {
 
 	subject.next({ id: "new_application_start", args: { request } });
 
-	let response = await lastValueFrom(
-		subject.pipe(rxfilter(on_complete), take(1))
-	);
+	let response = await lastValueFrom(subject.pipe(rxfilter(on_complete), take(1)));
 
 	return response.next();
 };
@@ -353,9 +307,7 @@ export const loader = async ({ request }) => {
 
 	subject.next({ id: "get_credit_report", args: { request } });
 
-	let response = await lastValueFrom(
-		subject.pipe(rxfilter(on_complete), take(1))
-	);
+	let response = await lastValueFrom(subject.pipe(rxfilter(on_complete), take(1)));
 
 	return response.next();
 };
@@ -388,14 +340,9 @@ export const BusinessEntity = () => {
 				<>
 					<div className="relative mt-1">
 						<Listbox.Button className="relative w-full cursor-default rounded-md border border-gray-300 bg-white py-2 pl-3 pr-10 text-left shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 sm:text-sm">
-							<span className="block truncate">
-								{selected.name}
-							</span>
+							<span className="block truncate">{selected.name}</span>
 							<span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
-								<ChevronUpDownIcon
-									className="h-5 w-5 text-gray-400"
-									aria-hidden="true"
-								/>
+								<ChevronUpDownIcon className="h-5 w-5 text-gray-400" aria-hidden="true" />
 							</span>
 						</Listbox.Button>
 
@@ -412,9 +359,7 @@ export const BusinessEntity = () => {
 										key={person.id}
 										className={({ active }) =>
 											classNames(
-												active
-													? "text-white bg-indigo-600"
-													: "text-gray-900",
+												active ? "text-white bg-indigo-600" : "text-gray-900",
 												"relative cursor-default select-none py-2 pl-3 pr-9"
 											)
 										}
@@ -424,9 +369,7 @@ export const BusinessEntity = () => {
 											<>
 												<span
 													className={classNames(
-														selected
-															? "font-semibold"
-															: "font-normal",
+														selected ? "font-semibold" : "font-normal",
 														"block truncate"
 													)}
 												>
@@ -436,16 +379,11 @@ export const BusinessEntity = () => {
 												{selected ? (
 													<span
 														className={classNames(
-															active
-																? "text-white"
-																: "text-indigo-600",
+															active ? "text-white" : "text-indigo-600",
 															"absolute inset-y-0 right-0 flex items-center pr-4"
 														)}
 													>
-														<CheckIcon
-															className="h-5 w-5"
-															aria-hidden="true"
-														/>
+														<CheckIcon className="h-5 w-5" aria-hidden="true" />
 													</span>
 												) : null}
 											</>
@@ -465,47 +403,23 @@ const Form = () => {
 	let error = useActionData();
 	const form = useReportStore((state) => state.form);
 	const setForm = useReportStore((state) => state.setForm);
-	const first_name = useReportStore(
-		(state) => state.form.basic_info.first_name
-	);
-	const last_name = useReportStore(
-		(state) => state.form.basic_info.last_name
-	);
-	const email = useReportStore(
-		(state) => state.form.basic_info.email_address
-	);
-	const telephone = useReportStore(
-		(state) => state.form.basic_info.telephone
-	);
-	const doing_business_as = useReportStore(
-		(state) => state.form.basic_info.doing_business_as
-	);
-	const street = useReportStore(
-		(state) => state.form.business_address.address_line
-	);
+	const first_name = useReportStore((state) => state.form.basic_info.first_name);
+	const last_name = useReportStore((state) => state.form.basic_info.last_name);
+	const email = useReportStore((state) => state.form.basic_info.email_address);
+	const telephone = useReportStore((state) => state.form.basic_info.telephone);
+	const doing_business_as = useReportStore((state) => state.form.basic_info.doing_business_as);
+	const street = useReportStore((state) => state.form.business_address.address_line);
 	const city = useReportStore((state) => state.form.business_address.city);
 	const state = useReportStore((state) => state.form.business_address.state);
-	const country = useReportStore(
-		(state) => state.form.business_address.country
-	);
+	const country = useReportStore((state) => state.form.business_address.country);
 	const zip = useReportStore((state) => state.form.business_address.zip);
-	const business_start_date = useReportStore(
-		(state) => state.form.business_start_date
-	);
+	const business_start_date = useReportStore((state) => state.form.business_start_date);
 
-	const business_legal_name = useReportStore(
-		(state) => state.form.business_legal_name
-	);
-	const employee_identification_number = useReportStore(
-		(state) => state.form.employee_identification_number
-	);
-	const terms_of_service = useReportStore(
-		(state) => state.form.terms_of_service
-	);
+	const business_legal_name = useReportStore((state) => state.form.business_legal_name);
+	const employee_identification_number = useReportStore((state) => state.form.employee_identification_number);
+	const terms_of_service = useReportStore((state) => state.form.terms_of_service);
 
-	const month = useReportStore(
-		(state) => state.form.business_start_date.month
-	);
+	const month = useReportStore((state) => state.form.business_start_date.month);
 	const day = useReportStore((state) => state.form.business_start_date.day);
 	const year = useReportStore((state) => state.form.business_start_date.year);
 
@@ -544,16 +458,11 @@ const Form = () => {
 		<form className="space-y-8 mb-[30px]" onSubmit={onSubmit}>
 			<div className="mt-6 grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-6">
 				<div className="border-b border-gray-300 sm:col-span-6">
-					<h3 className="text-lg font-medium leading-6 text-gray-900 pb-2">
-						Personal information
-					</h3>
+					<h3 className="text-lg font-medium leading-6 text-gray-900 pb-2">Personal information</h3>
 				</div>
 
 				<div className="sm:col-span-3">
-					<label
-						htmlFor="first_name"
-						className="block text-sm font-medium text-gray-700"
-					>
+					<label htmlFor="first_name" className="block text-sm font-medium text-gray-700">
 						First name
 					</label>
 					<div className="mt-1">
@@ -564,26 +473,16 @@ const Form = () => {
 							autoComplete="first_name"
 							className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm border h-[38px] pl-2"
 							value={first_name}
-							onChange={(e) =>
-								setForm(
-									["basic_info", "first_name"],
-									e.target.value
-								)
-							}
+							onChange={(e) => setForm(["basic_info", "first_name"], e.target.value)}
 						/>
 					</div>
 					{error?.basic_info?.first_name == false && (
-						<div className="text-xs text-red-500 py-1">
-							First name is required
-						</div>
+						<div className="text-xs text-red-500 py-1">First name is required</div>
 					)}
 				</div>
 
 				<div className="sm:col-span-3">
-					<label
-						htmlFor="last_name"
-						className="block text-sm font-medium text-gray-700"
-					>
+					<label htmlFor="last_name" className="block text-sm font-medium text-gray-700">
 						Last name
 					</label>
 					<div className="mt-1">
@@ -594,26 +493,16 @@ const Form = () => {
 							autoComplete="last_name"
 							className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm border h-[38px] pl-2"
 							value={last_name}
-							onChange={(e) =>
-								setForm(
-									["basic_info", "last_name"],
-									e.target.value
-								)
-							}
+							onChange={(e) => setForm(["basic_info", "last_name"], e.target.value)}
 						/>
 					</div>
 					{error?.basic_info?.last_name == false && (
-						<div className="text-xs text-red-500 py-1">
-							Last name is required
-						</div>
+						<div className="text-xs text-red-500 py-1">Last name is required</div>
 					)}
 				</div>
 
 				<div className="sm:col-span-6">
-					<label
-						htmlFor="email"
-						className="block text-sm font-medium text-gray-700"
-					>
+					<label htmlFor="email" className="block text-sm font-medium text-gray-700">
 						Email
 					</label>
 					<div className="mt-1">
@@ -624,27 +513,17 @@ const Form = () => {
 							autoComplete="email"
 							className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm border h-[38px] pl-2"
 							value={email}
-							onChange={(e) =>
-								setForm(
-									["basic_info", "email_address"],
-									e.target.value
-								)
-							}
+							onChange={(e) => setForm(["basic_info", "email_address"], e.target.value)}
 						/>
 					</div>
 
 					{error?.basic_info?.email_address == false && (
-						<div className="text-xs text-red-500 py-1">
-							Email is required
-						</div>
+						<div className="text-xs text-red-500 py-1">Email is required</div>
 					)}
 				</div>
 
 				<div className="sm:col-span-6">
-					<label
-						htmlFor="telephone"
-						className="block text-sm font-medium text-gray-700"
-					>
+					<label htmlFor="telephone" className="block text-sm font-medium text-gray-700">
 						Telephone
 					</label>
 					<div className="mt-1">
@@ -655,33 +534,21 @@ const Form = () => {
 							autoComplete="telephone"
 							className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm border h-[38px] pl-2"
 							value={telephone}
-							onChange={(e) =>
-								setForm(
-									["basic_info", "telephone"],
-									e.target.value
-								)
-							}
+							onChange={(e) => setForm(["basic_info", "telephone"], e.target.value)}
 						/>
 					</div>
 
 					{error?.basic_info?.telephone == false && (
-						<div className="text-xs text-red-500 py-1">
-							Telephone is required
-						</div>
+						<div className="text-xs text-red-500 py-1">Telephone is required</div>
 					)}
 				</div>
 
 				<div className="border-b border-gray-300 sm:col-span-6">
-					<h3 className="text-lg font-medium leading-6 text-gray-900 pb-2">
-						Business information
-					</h3>
+					<h3 className="text-lg font-medium leading-6 text-gray-900 pb-2">Business information</h3>
 				</div>
 
 				<div className="sm:col-span-6">
-					<label
-						htmlFor="business_legal_name"
-						className="block text-sm font-medium text-gray-700"
-					>
+					<label htmlFor="business_legal_name" className="block text-sm font-medium text-gray-700">
 						Business legal name
 					</label>
 					<div className="mt-1">
@@ -692,24 +559,17 @@ const Form = () => {
 							autoComplete="business_legal_name"
 							className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm border h-[38px] pl-2"
 							value={business_legal_name}
-							onChange={(e) =>
-								setForm(["business_legal_name"], e.target.value)
-							}
+							onChange={(e) => setForm(["business_legal_name"], e.target.value)}
 						/>
 					</div>
 
 					{error?.business_legal_name == false && (
-						<div className="text-xs text-red-500 py-1">
-							Business name is required
-						</div>
+						<div className="text-xs text-red-500 py-1">Business name is required</div>
 					)}
 				</div>
 
 				<div className="sm:col-span-6">
-					<label
-						htmlFor="doing_business_as"
-						className="block text-sm font-medium text-gray-700"
-					>
+					<label htmlFor="doing_business_as" className="block text-sm font-medium text-gray-700">
 						Doing business as (optional)
 					</label>
 					<div className="mt-1">
@@ -720,21 +580,13 @@ const Form = () => {
 							autoComplete="doing_business_as"
 							className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm border h-[38px] pl-2"
 							value={doing_business_as}
-							onChange={(e) =>
-								setForm(
-									["basic_info", "doing_business_as"],
-									e.target.value
-								)
-							}
+							onChange={(e) => setForm(["basic_info", "doing_business_as"], e.target.value)}
 						/>
 					</div>
 				</div>
 
 				<div className="sm:col-span-6">
-					<label
-						htmlFor="business_type"
-						className="block text-sm font-medium text-gray-700"
-					>
+					<label htmlFor="business_type" className="block text-sm font-medium text-gray-700">
 						Business type
 					</label>
 					<div className="mt-1">
@@ -742,17 +594,12 @@ const Form = () => {
 					</div>
 
 					{error?.business_entity == false && (
-						<div className="text-xs text-red-500 py-1">
-							Business type is required
-						</div>
+						<div className="text-xs text-red-500 py-1">Business type is required</div>
 					)}
 				</div>
 
 				<div className="sm:col-span-6">
-					<label
-						htmlFor="employee_identification_number"
-						className="block text-sm font-medium text-gray-700"
-					>
+					<label htmlFor="employee_identification_number" className="block text-sm font-medium text-gray-700">
 						Employee identification number
 					</label>
 					<div className="mt-1">
@@ -763,26 +610,17 @@ const Form = () => {
 							autoComplete="employee_identification_number"
 							className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm border h-[38px] pl-2"
 							value={employee_identification_number}
-							onChange={(e) =>
-								setForm(
-									["employee_identification_number"],
-									e.target.value
-								)
-							}
+							onChange={(e) => setForm(["employee_identification_number"], e.target.value)}
 						/>
 					</div>
 
 					{error?.employee_identification_number == false && (
-						<div className="text-xs text-red-500 py-1">
-							Employee identification number is required
-						</div>
+						<div className="text-xs text-red-500 py-1">Employee identification number is required</div>
 					)}
 				</div>
 
 				<div className=" sm:col-span-6">
-					<h3 className="text-sm font-medium text-gray-700 -mb-6">
-						Business start date
-					</h3>
+					<h3 className="text-sm font-medium text-gray-700 -mb-6">Business start date</h3>
 				</div>
 
 				<div className="sm:col-span-2">
@@ -795,17 +633,10 @@ const Form = () => {
 							className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm border h-[38px] pl-2 "
 							placeholder="MM"
 							value={month}
-							onChange={(e) =>
-								setForm(
-									["business_start_date", "month"],
-									e.target.value
-								)
-							}
+							onChange={(e) => setForm(["business_start_date", "month"], e.target.value)}
 						/>
 					</div>
-					<div className="text-xs text-red-500 py-1">
-						Month is required
-					</div>
+					<div className="text-xs text-red-500 py-1">Month is required</div>
 				</div>
 
 				<div className="sm:col-span-2">
@@ -818,17 +649,10 @@ const Form = () => {
 							className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm border h-[38px] pl-2 "
 							value={day}
 							placeholder="DD"
-							onChange={(e) =>
-								setForm(
-									["business_start_date", "day"],
-									e.target.value
-								)
-							}
+							onChange={(e) => setForm(["business_start_date", "day"], e.target.value)}
 						/>
 					</div>
-					<div className="text-xs text-red-500 py-1">
-						Day is required
-					</div>
+					<div className="text-xs text-red-500 py-1">Day is required</div>
 				</div>
 
 				<div className="sm:col-span-2">
@@ -841,30 +665,18 @@ const Form = () => {
 							className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm border h-[38px] pl-2 "
 							value={year}
 							placeholder="YYYY"
-							onChange={(e) =>
-								setForm(
-									["business_start_date", "year"],
-									e.target.value
-								)
-							}
+							onChange={(e) => setForm(["business_start_date", "year"], e.target.value)}
 						/>
 					</div>
-					<div className="text-xs text-red-500 py-1">
-						Year is required
-					</div>
+					<div className="text-xs text-red-500 py-1">Year is required</div>
 				</div>
 
 				<div className="border-b border-gray-300 sm:col-span-6">
-					<h3 className="text-lg font-medium leading-6 text-gray-900 pb-2">
-						Business address information
-					</h3>
+					<h3 className="text-lg font-medium leading-6 text-gray-900 pb-2">Business address information</h3>
 				</div>
 
 				<div className="sm:col-span-6">
-					<label
-						htmlFor="street_address"
-						className="block text-sm font-medium text-gray-700"
-					>
+					<label htmlFor="street_address" className="block text-sm font-medium text-gray-700">
 						Street address
 					</label>
 					<div className="mt-1">
@@ -875,27 +687,17 @@ const Form = () => {
 							autoComplete="street_address"
 							className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm border h-[38px] pl-2"
 							value={street}
-							onChange={(e) =>
-								setForm(
-									["business_address", "address_line"],
-									e.target.value
-								)
-							}
+							onChange={(e) => setForm(["business_address", "address_line"], e.target.value)}
 						/>
 					</div>
 
 					{error?.business_address?.address_line == false && (
-						<div className="text-xs text-red-500 py-1">
-							Street address is required
-						</div>
+						<div className="text-xs text-red-500 py-1">Street address is required</div>
 					)}
 				</div>
 
 				<div className="sm:col-span-2">
-					<label
-						htmlFor="city"
-						className="block text-sm font-medium text-gray-700"
-					>
+					<label htmlFor="city" className="block text-sm font-medium text-gray-700">
 						City
 					</label>
 					<div className="mt-1">
@@ -906,27 +708,17 @@ const Form = () => {
 							autoComplete="city"
 							className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm border h-[38px] pl-2"
 							value={city}
-							onChange={(e) =>
-								setForm(
-									["business_address", "city"],
-									e.target.value
-								)
-							}
+							onChange={(e) => setForm(["business_address", "city"], e.target.value)}
 						/>
 					</div>
 
 					{error?.business_address?.city == false && (
-						<div className="text-xs text-red-500 py-1">
-							City is required
-						</div>
+						<div className="text-xs text-red-500 py-1">City is required</div>
 					)}
 				</div>
 
 				<div className="sm:col-span-2">
-					<label
-						htmlFor="state"
-						className="block text-sm font-medium text-gray-700"
-					>
+					<label htmlFor="state" className="block text-sm font-medium text-gray-700">
 						State / Province
 					</label>
 					<div className="mt-1">
@@ -937,27 +729,17 @@ const Form = () => {
 							autoComplete="state"
 							className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm border h-[38px] pl-2"
 							value={state}
-							onChange={(e) =>
-								setForm(
-									["business_address", "state"],
-									e.target.value
-								)
-							}
+							onChange={(e) => setForm(["business_address", "state"], e.target.value)}
 						/>
 					</div>
 
 					{error?.business_address?.state == false && (
-						<div className="text-xs text-red-500 py-1">
-							State / Province is required
-						</div>
+						<div className="text-xs text-red-500 py-1">State / Province is required</div>
 					)}
 				</div>
 
 				<div className="sm:col-span-2">
-					<label
-						htmlFor="zip_code"
-						className="block text-sm font-medium text-gray-700"
-					>
+					<label htmlFor="zip_code" className="block text-sm font-medium text-gray-700">
 						ZIP / Postal code
 					</label>
 					<div className="mt-1">
@@ -968,19 +750,12 @@ const Form = () => {
 							autoComplete="zip_code"
 							className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm border h-[38px] pl-2"
 							value={zip}
-							onChange={(e) =>
-								setForm(
-									["business_address", "zip"],
-									e.target.value
-								)
-							}
+							onChange={(e) => setForm(["business_address", "zip"], e.target.value)}
 						/>
 					</div>
 
 					{error?.business_address?.zip == false && (
-						<div className="text-xs text-red-500 py-1">
-							Zip / Postal code is required
-						</div>
+						<div className="text-xs text-red-500 py-1">Zip / Postal code is required</div>
 					)}
 				</div>
 			</div>
@@ -1012,9 +787,8 @@ const Heading = () => {
 						TELL US A LITTLE BIT ABOUT YOUR BUSINESS
 					</p>
 					<p className="text-lg font-semibold text-[#202536] mt-6">
-						We don’t need your firstborn, a blood sample, or a DNA
-						swab, but we need to know what to call you and how to
-						reach you
+						We don’t need your firstborn, a blood sample, or a DNA swab, but we need to know what to call
+						you and how to reach you
 					</p>
 				</div>
 			</div>
@@ -1022,52 +796,37 @@ const Heading = () => {
 	);
 };
 
-const PreFills = () => {
-	let set_state = useReportStore((state) => state.set_state);
+// const PreFills = () => {
+// 	let set_state = useReportStore((state) => state.set_state);
 
-	const onPreFill = (identity) => {
-		set_state(["form"], identity);
-	};
+// 	const onPreFill = (identity) => {
+// 		set_state(["form"], identity);
+// 	};
 
-	return (
-		<div className="absolute top-0 right-[10px] z-[101] space-y-2 py-5">
-			<div
-				className="cursor-pointer"
-				onClick={() => onPreFill(test_identity_three)}
-			>
-				MRM
-			</div>
+// 	return (
+// 		<div className="absolute top-0 right-[10px] z-[101] space-y-2 py-5">
+// 			<div className="cursor-pointer" onClick={() => onPreFill(test_identity_three)}>
+// 				MRM
+// 			</div>
 
-			<div
-				className="cursor-pointer"
-				onClick={() => onPreFill(test_identity_four)}
-			>
-				Meta
-			</div>
+// 			<div className="cursor-pointer" onClick={() => onPreFill(test_identity_four)}>
+// 				Meta
+// 			</div>
 
-			<div
-				className="cursor-pointer"
-				onClick={() => onPreFill(test_identity_five)}
-			>
-				McDonalds
-			</div>
+// 			<div className="cursor-pointer" onClick={() => onPreFill(test_identity_five)}>
+// 				McDonalds
+// 			</div>
 
-			<div
-				className="cursor-pointer"
-				onClick={() => onPreFill(test_identity_six)}
-			>
-				Lkq Auto Parts Of North Texas, Inc.
-			</div>
+// 			<div className="cursor-pointer" onClick={() => onPreFill(test_identity_six)}>
+// 				Lkq Auto Parts Of North Texas, Inc.
+// 			</div>
 
-			<div
-				className="cursor-pointer"
-				onClick={() => onPreFill(test_identity_seven)}
-			>
-				Nuveen New York Quality Income Municipal Fund Inc
-			</div>
-		</div>
-	);
-};
+// 			<div className="cursor-pointer" onClick={() => onPreFill(test_identity_seven)}>
+// 				Nuveen New York Quality Income Municipal Fund Inc
+// 			</div>
+// 		</div>
+// 	);
+// };
 
 export default function NewBusinessReport() {
 	let location = useLocation();
