@@ -224,10 +224,10 @@ export const loader = async ({ request }) => {
 };
 
 const BusinessCredit = () => {
+	let { business_scores = {}, plan_id = "essential" } = use_view_store((state) => state);
 	let { pathname } = useLocation();
 	let entity_id = get_entity_id(pathname);
 	let group_id = get_group_id(pathname);
-	let { business_scores = {}, plan_id } = useLoaderData();
 	let { experian_business_score, dnb_business_score } = business_scores;
 
 	// console.log("business_scores");
@@ -363,16 +363,16 @@ const PersonalCredit = () => {
 };
 
 const HeadingTwo = () => {
-	let { business_info, business_entity: entity } = useLoaderData();
+	let { business_info = {}, business_entity: entity } = use_view_store((state) => state);
 
 	let EntityPersonalDetails = () => {
 		return (
 			<div>
 				<div className="font-semibold flex flex-row space-x-1">
-					{capitalize(entity.first_name)}
-					{capitalize(entity.last_name)}
+					{capitalize(entity?.first_name)}
+					{capitalize(entity?.last_name)}
 				</div>
-				<div className="text-sm">{entity.email}</div>
+				<div className="text-sm">{entity?.email}</div>
 			</div>
 		);
 	};
@@ -1131,6 +1131,7 @@ export default function Home() {
 			// console.log(fetcher_data);
 			// console.log(business_info);
 			on_should_update_cache(business_info, fetcher_data, "business_credit_report").subscribe();
+			set_path(["business_info"], fetcher_data);
 		}
 	}, [business_info_fetcher.data]);
 
@@ -1141,6 +1142,7 @@ export default function Home() {
 			// console.log(fetcher_data);
 			// console.log(business_scores);
 			on_should_update_cache(business_scores, fetcher_data, "business_credit_report").subscribe();
+			set_path(["business_scores"], fetcher_data);
 		}
 	}, [business_scores_fetcher.data]);
 
