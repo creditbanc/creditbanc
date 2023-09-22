@@ -19,28 +19,11 @@ import { get_group_id, is_location } from "./utils/helpers";
 import SimpleNavSignedIn from "~/components/SimpleNavSignedIn";
 import Spinner from "./components/LoadingSpinner";
 import { get_collection, get_doc } from "~/utils/firebase";
-import {
-	map as rxmap,
-	filter as rxfilter,
-	concatMap,
-	tap,
-	take,
-	reduce as rxreduce,
-} from "rxjs/operators";
-import {
-	from,
-	lastValueFrom,
-	forkJoin,
-	Subject,
-	of as rxof,
-	merge,
-} from "rxjs";
+import { map as rxmap, filter as rxfilter, concatMap, tap, take, reduce as rxreduce } from "rxjs/operators";
+import { from, lastValueFrom, forkJoin, Subject, of as rxof, merge } from "rxjs";
 import { fold } from "~/utils/operators";
 import { is_authorized_f } from "~/api/auth";
-import {
-	get_owner_companies_ids,
-	get_shared_companies_ids,
-} from "./api/ui/companies";
+import { get_owner_companies_ids, get_shared_companies_ids } from "./api/ui/companies";
 import { head, identity, map, pickAll, pipe, uniq } from "ramda";
 import { all, get, mod } from "shades";
 import { json } from "@remix-run/node";
@@ -61,9 +44,7 @@ const $loader = subject.pipe(
 			concatMap((value) => {
 				if (value === undefined) {
 					return from(entity_id).pipe(
-						concatMap((entity_id) =>
-							from(get_owner_companies_ids(entity_id))
-						),
+						concatMap((entity_id) => from(get_owner_companies_ids(entity_id))),
 						rxmap(pipe(head))
 					);
 				} else {
@@ -72,18 +53,14 @@ const $loader = subject.pipe(
 			})
 		);
 
-		let owner_companies = from(entity_id).pipe(
-			concatMap((entity_id) => from(get_owner_companies_ids(entity_id)))
-		);
+		let owner_companies = from(entity_id).pipe(concatMap((entity_id) => from(get_owner_companies_ids(entity_id))));
 
 		let shared_companies = from(entity_id).pipe(
 			concatMap((entity_id) => from(get_shared_companies_ids(entity_id)))
 		);
 
 		let companies = forkJoin({ owner_companies, shared_companies }).pipe(
-			rxmap(({ owner_companies, shared_companies }) =>
-				uniq([...owner_companies, ...shared_companies])
-			),
+			rxmap(({ owner_companies, shared_companies }) => uniq([...owner_companies, ...shared_companies])),
 			concatMap(identity),
 			concatMap((group_id) =>
 				from(
@@ -100,14 +77,9 @@ const $loader = subject.pipe(
 					})
 				).pipe(
 					rxmap(pipe(head, get("entity_id"))),
-					concatMap((entity_id) =>
-						from(get_doc(["entity", entity_id]))
-					),
+					concatMap((entity_id) => from(get_doc(["entity", entity_id]))),
 					rxmap(
-						pipe(
-							pickAll(["first_name", "last_name", "id", "email"]),
-							(entity) => ({ ...entity, group_id })
-						)
+						pipe(pickAll(["first_name", "last_name", "id", "email"]), (entity) => ({ ...entity, group_id }))
 					)
 				)
 			),
@@ -115,15 +87,11 @@ const $loader = subject.pipe(
 		);
 
 		const can_edit = forkJoin({ entity_id, group_id }).pipe(
-			concatMap(({ entity_id, group_id }) =>
-				from(is_authorized_f(entity_id, group_id, "share", "edit"))
-			)
+			concatMap(({ entity_id, group_id }) => from(is_authorized_f(entity_id, group_id, "share", "edit")))
 		);
 
 		const can_read = forkJoin({ entity_id, group_id }).pipe(
-			concatMap(({ entity_id, group_id }) =>
-				from(is_authorized_f(entity_id, group_id, "share", "read"))
-			)
+			concatMap(({ entity_id, group_id }) => from(is_authorized_f(entity_id, group_id, "share", "read")))
 		);
 
 		let is_authorized = forkJoin({ can_edit, can_read });
@@ -182,17 +150,13 @@ const $loader = subject.pipe(
 		);
 
 		let read_permissions = is_authorized.pipe(
-			rxfilter(
-				(value) => value.can_edit == false && value.can_read == true
-			),
+			rxfilter((value) => value.can_edit == false && value.can_read == true),
 			concatMap(() => group_id),
 			concatMap(read_roles)
 		);
 
 		let no_permissions = is_authorized.pipe(
-			rxfilter(
-				(value) => value.can_edit == false && value.can_read == false
-			),
+			rxfilter((value) => value.can_edit == false && value.can_read == false),
 			rxmap(() => false)
 		);
 
@@ -256,9 +220,7 @@ export const loader = async ({ request }) => {
 
 	subject.next({ id: "load", args: { request } });
 
-	let response = await lastValueFrom(
-		subject.pipe(rxfilter(on_complete), take(1))
-	);
+	let response = await lastValueFrom(subject.pipe(rxfilter(on_complete), take(1)));
 
 	return json(response.next(), {
 		headers: {
@@ -286,6 +248,49 @@ export default function App() {
 
 	let is_resource_path = is_location("/resource", pathname);
 
+	const load_intercom = () => {
+		window.intercomSettings = {
+			api_base: "https://api-iam.intercom.io",
+			app_id: "lh4nbwaz",
+		};
+
+		var w = window;
+		var ic = w.Intercom;
+		if (typeof ic === "function") {
+			ic("reattach_activator");
+			ic("update", w.intercomSettings);
+		} else {
+			var d = document;
+			var i = function () {
+				i.c(arguments);
+			};
+			i.q = [];
+			i.c = function (args) {
+				i.q.push(args);
+			};
+			w.Intercom = i;
+			var l = function () {
+				var s = d.createElement("script");
+				s.type = "text/javascript";
+				s.async = true;
+				s.src = "https://widget.intercom.io/widget/lh4nbwaz";
+				var x = d.getElementsByTagName("script")[0];
+				x.parentNode.insertBefore(s, x);
+			};
+			if (document.readyState === "complete") {
+				l();
+			} else if (w.attachEvent) {
+				w.attachEvent("onload", l);
+			} else {
+				w.addEventListener("load", l, false);
+			}
+		}
+	};
+
+	useEffect(() => {
+		load_intercom();
+	}, []);
+
 	return (
 		<html lang="en">
 			<head>
@@ -300,11 +305,7 @@ export default function App() {
 					<div className="flex flex-col w-full h-full relative overflow-hidden">
 						{is_resource_path && (
 							<div className="flex flex-col w-full border-b bg-white sticky top-0 z-[99]">
-								<SimpleNavSignedIn
-									entity_id={entity_id}
-									roles={roles}
-									companies={companies}
-								/>
+								<SimpleNavSignedIn entity_id={entity_id} roles={roles} companies={companies} />
 							</div>
 						)}
 						<Outlet />
