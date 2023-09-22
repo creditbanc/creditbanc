@@ -8,25 +8,8 @@ import { get_collection, get_doc, set_doc, update_doc } from "~/utils/firebase";
 import { head, pipe, identity, curry, defaultTo, pick, hasPath } from "ramda";
 import { LendflowExternal, LendflowInternal } from "~/utils/lendflow.server";
 import { get } from "shades";
-import {
-	map as rxmap,
-	filter as rxfilter,
-	concatMap,
-	tap,
-	take,
-	catchError,
-	withLatestFrom,
-} from "rxjs/operators";
-import {
-	from,
-	lastValueFrom,
-	forkJoin,
-	Subject,
-	of as rxof,
-	iif,
-	throwError,
-	merge,
-} from "rxjs";
+import { map as rxmap, filter as rxfilter, concatMap, tap, take, catchError, withLatestFrom } from "rxjs/operators";
+import { from, lastValueFrom, forkJoin, Subject, of as rxof, iif, throwError, merge } from "rxjs";
 import { fold, ifEmpty, ifFalse } from "~/utils/operators";
 import { is_authorized_f } from "~/api/auth";
 import { ArrayExternal } from "~/api/external/Array";
@@ -146,25 +129,15 @@ const credit_scores = subject.pipe(
 
 		let $business_report = merge(business_report, empty_business_report);
 
-		let experian_personal_score = $personal_report.pipe(
-			rxmap((report) => report.experian_score())
-		);
+		let experian_personal_score = $personal_report.pipe(rxmap((report) => report.experian_score()));
 
-		let equifax_personal_score = $personal_report.pipe(
-			rxmap((report) => report.equifax_score())
-		);
+		let equifax_personal_score = $personal_report.pipe(rxmap((report) => report.equifax_score()));
 
-		let transunion_personal_score = $personal_report.pipe(
-			rxmap((report) => report.transunion_score())
-		);
+		let transunion_personal_score = $personal_report.pipe(rxmap((report) => report.transunion_score()));
 
-		let dnb_business_score = $business_report.pipe(
-			rxmap((report) => report.dnb_score())
-		);
+		let dnb_business_score = $business_report.pipe(rxmap((report) => report.dnb_score()));
 
-		let experian_business_score = $business_report.pipe(
-			rxmap((report) => report.experian_score())
-		);
+		let experian_business_score = $business_report.pipe(rxmap((report) => report.experian_score()));
 
 		let business_report_is_empty = $business_report.pipe(
 			rxmap((report) => report.is_empty()),
@@ -213,9 +186,7 @@ export const loader = async ({ request }) => {
 
 	subject.next({ id: "get_credit_scores", args: { request } });
 
-	let response = await lastValueFrom(
-		subject.pipe(rxfilter(on_complete), take(1))
-	);
+	let response = await lastValueFrom(subject.pipe(rxfilter(on_complete), take(1)));
 
 	return response.next();
 

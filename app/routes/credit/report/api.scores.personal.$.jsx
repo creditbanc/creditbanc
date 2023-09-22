@@ -5,34 +5,17 @@ import { Lendflow } from "~/data/lendflow";
 import { get_file_id, get_group_id, inspect } from "~/utils/helpers";
 import { get_session_entity_id, get_user_id } from "~/utils/auth.server";
 import { get_collection, get_doc, set_doc, update_doc } from "~/utils/firebase";
-import { head, pipe, identity, curry, defaultTo, pick, hasPath } from "ramda";
+import { head, pipe, identity, curry, defaultTo, pick, hasPath, ifElse, always, equals } from "ramda";
 import { LendflowExternal, LendflowInternal } from "~/utils/lendflow.server";
 import { get } from "shades";
-import {
-	map as rxmap,
-	filter as rxfilter,
-	concatMap,
-	tap,
-	take,
-	catchError,
-	withLatestFrom,
-} from "rxjs/operators";
-import {
-	from,
-	lastValueFrom,
-	forkJoin,
-	Subject,
-	of as rxof,
-	iif,
-	throwError,
-	merge,
-} from "rxjs";
+import { map as rxmap, filter as rxfilter, concatMap, tap, take, catchError, withLatestFrom } from "rxjs/operators";
+import { from, lastValueFrom, forkJoin, Subject, of as rxof, iif, throwError, merge } from "rxjs";
 import { fold, ifEmpty, ifFalse } from "~/utils/operators";
 import { is_authorized_f } from "~/api/auth";
 import { ArrayExternal } from "~/api/external/Array";
 import { ArrayInternal } from "~/api/internal/Array";
 
-const log_route = `credit.report.api.scores`;
+const log_route = `credit.report.api.scores.personal`;
 
 const subject = new Subject();
 
@@ -67,24 +50,18 @@ const credit_scores = subject.pipe(
 
 		let personal_report_response = group_id.pipe(
 			concatMap(get_personal_credit_report),
-			concatMap(ifEmpty(throwError(() => undefined))),
-			catchError((error) => {
-				console.log(`${log_route}.empty_personal_report.error`);
-				if (error == undefined) {
-					return rxof(undefined);
-				} else {
-					return throwError(() => error);
-				}
-			})
+			concatMap(ifElse(equals([]), always(rxof(undefined)), throwError))
 		);
 
 		let personal_report = personal_report_response.pipe(
+			rxfilter((value) => value !== undefined),
 			rxmap(pipe(head, get("data"))),
 			rxmap((array_response) => new ArrayInternal(array_response))
 		);
 
 		let empty_personal_report = personal_report_response.pipe(
 			rxfilter((value) => value === undefined),
+
 			rxmap(() => ({
 				experian_score: () => 0,
 				equifax_score: () => 0,
@@ -95,27 +72,13 @@ const credit_scores = subject.pipe(
 
 		let $personal_report = merge(personal_report, empty_personal_report);
 
-		let experian_personal_score = $personal_report.pipe(
-			rxmap((report) => report.experian_score())
-		);
+		let experian_personal_score = $personal_report.pipe(rxmap((report) => report.experian_score()));
+		let equifax_personal_score = $personal_report.pipe(rxmap((report) => report.equifax_score()));
+		let transunion_personal_score = $personal_report.pipe(rxmap((report) => report.transunion_score()));
 
-		let equifax_personal_score = $personal_report.pipe(
-			rxmap((report) => report.equifax_score())
-		);
-
-		let transunion_personal_score = $personal_report.pipe(
-			rxmap((report) => report.transunion_score())
-		);
-
-		return forkJoin({
-			experian_personal_score,
-			equifax_personal_score,
-			transunion_personal_score,
-		}).pipe(
-			tap((value) => {
-				console.log(`${log_route}.tap`);
-				console.log(value);
-			})
+		return forkJoin({ experian_personal_score, equifax_personal_score, transunion_personal_score }).pipe(
+			tap(() => console.log(`${log_route}.tap`)),
+			tap(console.log)
 		);
 	})
 );
@@ -146,9 +109,7 @@ export const loader = async ({ request }) => {
 
 	subject.next({ id: "get_credit_scores", args: { request } });
 
-	let response = await lastValueFrom(
-		subject.pipe(rxfilter(on_complete), take(1))
-	);
+	let response = await lastValueFrom(subject.pipe(rxfilter(on_complete), take(1)));
 
 	return response.next();
 };

@@ -114,6 +114,8 @@ export const loader = async ({ request }) => {
 		},
 	});
 
+	// return rxof({});
+
 	let fetches = zip([business_info_fetch, personal_scores_fetch, business_scores_fetch]);
 
 	let [business_info_response, personal_scores_response, business_scores_response] = await lastValueFrom(fetches);
@@ -210,7 +212,10 @@ export const loader = async ({ request }) => {
 
 	let with_cache = cache(request);
 
-	return with_cache({ ...payload, cache_dependencies });
+	return with_cache({
+		...payload,
+		cache_dependencies,
+	});
 
 	// return json(payload, {
 	// 	// headers: {
@@ -420,7 +425,10 @@ const posts = [
 			"https://images.unsplash.com/photo-1496128858413-b36217c2ce36?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=3603&q=80",
 		date: "Mar 16, 2020",
 		datetime: "2020-03-16",
-		category: { title: "Marketing", href: "#" },
+		category: {
+			title: "Marketing",
+			href: "#",
+		},
 		author: {
 			name: "Michael Foster",
 			role: "Co-Founder / CTO",
@@ -439,7 +447,10 @@ const posts = [
 			"https://images.unsplash.com/photo-1547586696-ea22b4d4235d?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=3270&q=80",
 		date: "Mar 16, 2020",
 		datetime: "2020-03-16",
-		category: { title: "Marketing", href: "#" },
+		category: {
+			title: "Marketing",
+			href: "#",
+		},
 		author: {
 			name: "Michael Foster",
 			role: "Co-Founder / CTO",
@@ -458,7 +469,10 @@ const posts = [
 			"https://images.unsplash.com/photo-1492724441997-5dc865305da7?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=3270&q=80",
 		date: "Mar 16, 2020",
 		datetime: "2020-03-16",
-		category: { title: "Marketing", href: "#" },
+		category: {
+			title: "Marketing",
+			href: "#",
+		},
 		author: {
 			name: "Michael Foster",
 			role: "Co-Founder / CTO",
@@ -1081,21 +1095,6 @@ export default function Home() {
 	// console.log(business_scores_fetcher.data);
 	// console.log(business_info_fetcher.data);
 
-	// useEffect(() => {
-	// 	console.log("loader_data");
-	// 	console.log(loader_data);
-	// }, [loader_data]);
-
-	useEffect(() => {
-		console.log("loader_data");
-		console.log(loader_data);
-		set_view(loader_data);
-	}, []);
-
-	useEffect(() => {
-		use_cache_client({ path: `/home`, dependencies: cache_dependencies });
-	}, []);
-
 	let fetcher_payload_maker = (url) => {
 		return [{}, { method: "post", action: url }];
 	};
@@ -1105,10 +1104,6 @@ export default function Home() {
 		personal_scores_fetcher.submit(...fetcher_payload_maker(personal_scores_url));
 		business_scores_fetcher.submit(...fetcher_payload_maker(business_scores_url));
 	};
-
-	useEffect(() => {
-		run_fetchers();
-	}, []);
 
 	const on_should_update_cache = (previous_value, current_value, update_key) => {
 		let prev_data = rxof(normalize_id(previous_value));
@@ -1125,37 +1120,51 @@ export default function Home() {
 	};
 
 	useEffect(() => {
-		let fetcher_data = business_info_fetcher.data;
-		if (fetcher_data) {
-			// console.log("business_info_fetcher.data");
-			// console.log(fetcher_data);
-			// console.log(business_info);
-			on_should_update_cache(business_info, fetcher_data, "business_credit_report").subscribe();
-			set_path(["business_info"], fetcher_data);
-		}
-	}, [business_info_fetcher.data]);
+		console.log("loader_data");
+		console.log(loader_data);
+		set_view(loader_data);
+	}, []);
 
-	useEffect(() => {
-		let fetcher_data = business_scores_fetcher.data;
-		if (fetcher_data) {
-			// console.log("business_scores_fetcher.data");
-			// console.log(fetcher_data);
-			// console.log(business_scores);
-			on_should_update_cache(business_scores, fetcher_data, "business_credit_report").subscribe();
-			set_path(["business_scores"], fetcher_data);
-		}
-	}, [business_scores_fetcher.data]);
+	// useEffect(() => {
+	// 	use_cache_client({ path: `/home`, dependencies: cache_dependencies });
+	// }, []);
 
-	useEffect(() => {
-		let fetcher_data = personal_scores_fetcher.data;
-		if (fetcher_data) {
-			console.log("personal_scores_fetcher.data");
-			console.log(fetcher_data);
-			console.log(personal_scores);
-			on_should_update_cache(personal_scores, fetcher_data, "personal_credit_report").subscribe();
-			set_path(["personal_scores"], fetcher_data);
-		}
-	}, [personal_scores_fetcher.data]);
+	// useEffect(() => {
+	// 	run_fetchers();
+	// }, []);
+
+	// useEffect(() => {
+	// 	let fetcher_data = business_info_fetcher.data;
+	// 	if (fetcher_data) {
+	// 		// console.log("business_info_fetcher.data");
+	// 		// console.log(fetcher_data);
+	// 		// console.log(business_info);
+	// 		on_should_update_cache(business_info, fetcher_data, "business_credit_report").subscribe();
+	// 		set_path(["business_info"], fetcher_data);
+	// 	}
+	// }, [business_info_fetcher.data]);
+
+	// useEffect(() => {
+	// 	let fetcher_data = business_scores_fetcher.data;
+	// 	if (fetcher_data) {
+	// 		// console.log("business_scores_fetcher.data");
+	// 		// console.log(fetcher_data);
+	// 		// console.log(business_scores);
+	// 		on_should_update_cache(business_scores, fetcher_data, "business_credit_report").subscribe();
+	// 		set_path(["business_scores"], fetcher_data);
+	// 	}
+	// }, [business_scores_fetcher.data]);
+
+	// useEffect(() => {
+	// 	let fetcher_data = personal_scores_fetcher.data;
+	// 	if (fetcher_data) {
+	// 		console.log("personal_scores_fetcher.data");
+	// 		console.log(fetcher_data);
+	// 		console.log(personal_scores);
+	// 		on_should_update_cache(personal_scores, fetcher_data, "personal_credit_report").subscribe();
+	// 		set_path(["personal_scores"], fetcher_data);
+	// 	}
+	// }, [personal_scores_fetcher.data]);
 
 	// return (
 	// 	<div>

@@ -10,13 +10,7 @@ import {
 } from "@heroicons/react/24/outline";
 import { useLoaderData, useLocation, useNavigate } from "@remix-run/react";
 import { get_session_entity_id, get_user_id } from "~/utils/auth.server";
-import {
-	classNames,
-	get_entity_id,
-	get_group_id,
-	get_resource_id,
-	mapIndexed,
-} from "~/utils/helpers";
+import { classNames, get_entity_id, get_group_id, get_resource_id, mapIndexed } from "~/utils/helpers";
 import { Menu, Transition } from "@headlessui/react";
 import { create } from "zustand";
 import {
@@ -38,14 +32,7 @@ import {
 } from "ramda";
 import { get, mod } from "shades";
 import { v4 as uuidv4 } from "uuid";
-import {
-	get_collection,
-	get_collection_listener,
-	get_count,
-	get_doc,
-	set_doc,
-	update_doc,
-} from "~/utils/firebase";
+import { get_collection, get_collection_listener, get_count, get_doc, set_doc, update_doc } from "~/utils/firebase";
 import moment from "moment";
 import avatars from "~/data/avatars";
 import axios from "axios";
@@ -53,28 +40,24 @@ import { redirect } from "@remix-run/node";
 
 const useMessageStore = create((set) => ({
 	message: "",
-	set_message: (path, value) =>
-		set((state) => pipe(mod(...path)(() => value))(state)),
+	set_message: (path, value) => set((state) => pipe(mod(...path)(() => value))(state)),
 }));
 
 const useChatStore = create((set) => ({
 	messages: [],
-	set_chat_state: (path, value) =>
-		set((state) => pipe(mod(...path)(() => value))(state)),
+	set_chat_state: (path, value) => set((state) => pipe(mod(...path)(() => value))(state)),
 }));
 
 const useChatUIStore = create((set) => ({
 	ui: {
 		members_panel_open: true,
 	},
-	set_state: (path, value) =>
-		set((state) => pipe(mod(...path)(() => value))(state)),
+	set_state: (path, value) => set((state) => pipe(mod(...path)(() => value))(state)),
 }));
 
 const useEntityStore = create((set) => ({
 	entity: {},
-	set_state: (path, value) =>
-		set((state) => pipe(mod(...path)(() => value))(state)),
+	set_state: (path, value) => set((state) => pipe(mod(...path)(() => value))(state)),
 }));
 
 export const loader = async ({ request }) => {
@@ -124,10 +107,7 @@ const MessageActions = () => {
 		<Menu as="div" className="relative inline-block text-left">
 			<div>
 				<Menu.Button className="inline-flex w-full justify-center gap-x-1.5 rounded-md bg-white text-sm font-semibold text-gray-900 ">
-					<EllipsisHorizontalIcon
-						className="-mr-1 h-5 w-5 text-gray-400"
-						aria-hidden="true"
-					/>
+					<EllipsisHorizontalIcon className="-mr-1 h-5 w-5 text-gray-400" aria-hidden="true" />
 				</Menu.Button>
 			</div>
 
@@ -147,9 +127,7 @@ const MessageActions = () => {
 								<a
 									href="#"
 									className={classNames(
-										active
-											? "bg-gray-100 text-gray-900"
-											: "text-gray-700",
+										active ? "bg-gray-100 text-gray-900" : "text-gray-700",
 										"block px-4 py-2 text-sm"
 									)}
 								>
@@ -162,9 +140,7 @@ const MessageActions = () => {
 								<a
 									href="#"
 									className={classNames(
-										active
-											? "bg-gray-100 text-gray-900"
-											: "text-gray-700",
+										active ? "bg-gray-100 text-gray-900" : "text-gray-700",
 										"block px-4 py-2 text-sm"
 									)}
 								>
@@ -177,9 +153,7 @@ const MessageActions = () => {
 								<a
 									href="#"
 									className={classNames(
-										active
-											? "bg-gray-100 text-gray-900"
-											: "text-gray-700",
+										active ? "bg-gray-100 text-gray-900" : "text-gray-700",
 										"block px-4 py-2 text-sm"
 									)}
 								>
@@ -193,9 +167,7 @@ const MessageActions = () => {
 									<button
 										type="submit"
 										className={classNames(
-											active
-												? "bg-gray-100 text-gray-900"
-												: "text-gray-700",
+											active ? "bg-gray-100 text-gray-900" : "text-gray-700",
 											"block w-full px-4 py-2 text-left text-sm"
 										)}
 									>
@@ -214,11 +186,7 @@ const MessageActions = () => {
 const Message = ({ message }) => {
 	let avatar = avatars(message.user.email, { size: 35 });
 
-	let message_text = pipe(
-		get("message"),
-		split("\n"),
-		ifElse(pipe(last, equals("")), init, identity)
-	)(message);
+	let message_text = pipe(get("message"), split("\n"), ifElse(pipe(last, equals("")), init, identity))(message);
 
 	return (
 		<div className="flex flex-row w-full py-3">
@@ -235,11 +203,7 @@ const Message = ({ message }) => {
 					<div className="bg-gray-100 w-fit rounded-3xl px-4 py-2">
 						{pipe(
 							mapIndexed((text, index) =>
-								text == "" ? (
-									<br key={index}></br>
-								) : (
-									<div key={index}>{text}</div>
-								)
+								text == "" ? <br key={index}></br> : <div key={index}>{text}</div>
 							)
 						)(message_text)}
 					</div>
@@ -450,9 +414,7 @@ const MemberActionsDropdown = ({ member }) => {
 			// console.log("chat");
 			// console.log(chat);
 
-			navigate(
-				`/chat/id/resource/e/${entity_id}/g/${group_id}/f/${chat.id}`
-			);
+			navigate(`/chat/id/resource/e/${entity_id}/g/${group_id}/f/${chat.id}`);
 		}
 
 		if (direct_messages.length == 0) {
@@ -493,10 +455,7 @@ const MemberActionsDropdown = ({ member }) => {
 		<Menu as="div" className="relative inline-block text-left">
 			<div>
 				<Menu.Button className="inline-flex w-full justify-center gap-x-1.5 rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 ">
-					<EllipsisHorizontalIcon
-						className="h-5 w-5 text-gray-400"
-						aria-hidden="true"
-					/>
+					<EllipsisHorizontalIcon className="h-5 w-5 text-gray-400" aria-hidden="true" />
 				</Menu.Button>
 			</div>
 
@@ -516,9 +475,7 @@ const MemberActionsDropdown = ({ member }) => {
 								<div
 									onClick={onDirectMessage}
 									className={classNames(
-										active
-											? "bg-gray-100 text-gray-900"
-											: "text-gray-700",
+										active ? "bg-gray-100 text-gray-900" : "text-gray-700",
 										"block px-4 py-2 text-sm"
 									)}
 								>
@@ -586,8 +543,7 @@ const Messages = () => {
 	const messages = useChatStore((state) => state.messages);
 	const messagesEndRef = useRef(null);
 	let chat_id = get_resource_id(pathname);
-	let [is_listening_to_messages, set_is_listening_to_messages] =
-		useState(false);
+	let [is_listening_to_messages, set_is_listening_to_messages] = useState(false);
 
 	const scrollToBottom = () => {
 		messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -598,10 +554,7 @@ const Messages = () => {
 	}, []);
 
 	useEffect(() => {
-		set_chat_state(
-			["messages"],
-			uniqBy(prop("message_id"), [...messages, new_message_queue])
-		);
+		set_chat_state(["messages"], uniqBy(prop("message_id"), [...messages, new_message_queue]));
 	}, [new_message_queue]);
 
 	const update_entity_chat_message_count = async () => {
@@ -692,11 +645,7 @@ const Messages = () => {
 	return (
 		<div className="flex flex-col w-full h-full overflow-hidden py-3 justify-end">
 			<div className="overflow-y-scroll overflow-x-hidden scrollbar-none">
-				{pipe(
-					map((message) => (
-						<Message key={message.message_id} message={message} />
-					))
-				)(messages)}
+				{pipe(map((message) => <Message key={message.message_id} message={message} />))(messages)}
 				<div ref={messagesEndRef}></div>
 			</div>
 		</div>
@@ -742,11 +691,7 @@ const MembersPanel = () => {
 				</div>
 			</div>
 			<div className="flex flex-col w-full">
-				{pipe(
-					map((member) => (
-						<Member key={member.entity_id} member={member} />
-					))
-				)(members)}
+				{pipe(map((member) => <Member key={member.entity_id} member={member} />))(members)}
 			</div>
 			<div className="flex flex-row w-full border-b p-3 text-xs text-gray-400 cursor-pointer items-center">
 				<div className="flex flex-row space-x-[1px]">
@@ -769,10 +714,7 @@ const ClosedMembersPanel = () => {
 	};
 
 	return (
-		<div
-			className="flex flex-col w-full items-center pt-5 cursor-pointer h-[50px]"
-			onClick={onOpenMemberPanel}
-		>
+		<div className="flex flex-col w-full items-center pt-5 cursor-pointer h-[50px]" onClick={onOpenMemberPanel}>
 			<ChevronLeftIcon className="h-4 w-4 text-gray-400" />
 		</div>
 	);

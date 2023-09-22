@@ -32,13 +32,16 @@ import {
 	fromPairs,
 	trim as rtrim,
 	sort,
+	always,
 } from "ramda";
 import { iif, of as rxof, throwError } from "rxjs";
 const util = require("util");
-import { get, mod } from "shades";
+import { get as sget, mod } from "shades";
 import { flatten as objflat } from "flat";
 import murmurhash from "murmurhash";
 import { create } from "zustand";
+
+export const get = (path) => tryCatch(pipe(sget(...path)), always(undefined));
 
 export const store = (props = {}) => {
 	return create((set) => ({
