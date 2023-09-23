@@ -16,6 +16,7 @@ import {
 	use_search_params,
 	get,
 	formatPhoneNumber,
+	inspect,
 } from "~/utils/helpers";
 import {
 	__,
@@ -133,11 +134,12 @@ export const loader = async ({ request }) => {
 	let [business_info_response, personal_scores_response, business_scores_response] = await lastValueFrom(fetches);
 
 	let { data: business_info = {} } = business_info_response;
+
 	let { data: personal_scores = {} } = personal_scores_response;
 	let { data: business_scores = {} } = business_scores_response;
 
-	// console.log("home.business_info");
-	// console.log(business_info);
+	console.log("home.business_info");
+	inspect(business_info);
 
 	const cache = curry((request, payload) => {
 		let { cache_dependencies: dependencies } = payload;
