@@ -1,20 +1,8 @@
 import { useEffect, useState } from "react";
-import {
-	Link,
-	Outlet,
-	useLoaderData,
-	useLocation,
-	useSubmit,
-} from "@remix-run/react";
+import { Link, Outlet, useLoaderData, useLocation, useSubmit } from "@remix-run/react";
 import { useLayoutStore } from "~/stores/useLayoutStore";
 import { useElmSize } from "~/hooks/useElmSize";
-import {
-	get_route_endpoint,
-	get_file_id,
-	inspect,
-	get_group_id,
-	get_entity_id,
-} from "~/utils/helpers";
+import { get_route_endpoint, get_file_id, inspect, get_group_id, get_entity_id } from "~/utils/helpers";
 import { get_session_entity_id, get_user_id } from "~/utils/auth.server";
 import { redirect } from "@remix-run/node";
 import { VerticalNav } from "~/components/BusinessCreditNav";
@@ -24,10 +12,7 @@ import { plan_product_requests } from "~/data/plan_product_requests";
 import { head, pipe } from "ramda";
 import { get } from "shades";
 import { Lendflow } from "~/data/lendflow";
-import {
-	update_lendflow_report,
-	get_lendflow_report,
-} from "~/utils/lendflow.server";
+import { update_lendflow_report, get_lendflow_report } from "~/utils/lendflow.server";
 import deepEqual from "deep-equal";
 import UpgradeBanner from "~/components/UpgradeMembership";
 import UpgradeCard from "~/components/UpgradeCard";
@@ -46,16 +31,11 @@ export const action = async ({ request }) => {
 	const report_plan_id = form.get("report_plan_id");
 	const redirect_to = form.get("redirect_to");
 
-	let experian_requested_products = pipe(get(plan_id))(
-		plan_product_requests.experian
-	);
+	let experian_requested_products = pipe(get(plan_id))(plan_product_requests.experian);
 
 	let dnb_requested_products = pipe(get(plan_id))(plan_product_requests.dnb);
 
-	let requested_products = [
-		...experian_requested_products,
-		...dnb_requested_products,
-	];
+	let requested_products = [...experian_requested_products, ...dnb_requested_products];
 
 	await update_lendflow_report(application_id, requested_products);
 
@@ -85,12 +65,7 @@ export const loader = async ({ request }) => {
 	let entity_id = await get_session_entity_id(request);
 	let group_id = get_group_id(url.pathname);
 
-	let is_authorized = await is_authorized_f(
-		entity_id,
-		group_id,
-		"credit",
-		"read"
-	);
+	let is_authorized = await is_authorized_f(entity_id, group_id, "credit", "read");
 
 	// console.log("is_authorized______");
 	// console.log(is_authorized);
@@ -123,9 +98,7 @@ export const loader = async ({ request }) => {
 	// console.log(report);
 
 	if (!report) {
-		return redirect(
-			`/credit/business/new/resource/e/${entity_id}/g/${group_id}`
-		);
+		return redirect(`/credit/business/new/resource/e/${entity_id}/g/${group_id}`);
 	}
 
 	let lendflow_report = await get_lendflow_report(report.application_id);
@@ -150,12 +123,10 @@ export const loader = async ({ request }) => {
 
 	let business_info_response = await axios({
 		method: "get",
-		url: `${origin}/credit/report/business/api/company/resource/e/${entity_id}/g/${group_id}`,
+		url: `${origin}/credit/report/api/businessinfo/resource/e/${entity_id}/g/${group_id}`,
 		withCredentials: true,
 		headers: {
-			cookie: `creditbanc_session=${encode(
-				JSON.stringify({ entity_id })
-			)}`,
+			cookie: `creditbanc_session=${encode(JSON.stringify({ entity_id }))}`,
 		},
 	});
 
@@ -179,12 +150,7 @@ export default function BusinessReport() {
 	let setContentWidth = useLayoutStore((state) => state.set_content_width);
 	let content_width = useLayoutStore((state) => state.content_width);
 	let [isMobile, setIsMobile] = useState(true);
-	let {
-		plan_id = undefined,
-		report_plan_id = undefined,
-		business = undefined,
-		scores = {},
-	} = useLoaderData();
+	let { plan_id = undefined, report_plan_id = undefined, business = undefined, scores = {} } = useLoaderData();
 
 	let { experian_business_score = 0, dnb_business_score = 0 } = scores;
 
@@ -221,14 +187,9 @@ export default function BusinessReport() {
 			)}
 
 			<div className="flex flex-col w-full overflow-hidden h-full">
-				<div
-					className="flex flex-col w-full mx-auto overflow-hidden h-full"
-					ref={setTarget}
-				>
+				<div className="flex flex-col w-full mx-auto overflow-hidden h-full" ref={setTarget}>
 					<div
-						className={`flex overflow-hidden rounded h-full ${
-							isMobile ? "flex-col" : "flex-row gap-x-5"
-						}`}
+						className={`flex overflow-hidden rounded h-full ${isMobile ? "flex-col" : "flex-row gap-x-5"}`}
 					>
 						<div className="flex flex-col flex-1 overflow-y-scroll rounded-lg scrollbar-none">
 							<Outlet />
@@ -241,9 +202,7 @@ export default function BusinessReport() {
 										<div>
 											<span className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-gray-500">
 												<span className="text-lg font-medium leading-none text-white">
-													{business?.name
-														?.charAt(0)
-														?.toUpperCase()}
+													{business?.name?.charAt(0)?.toUpperCase()}
 												</span>
 											</span>
 										</div>
@@ -267,38 +226,24 @@ export default function BusinessReport() {
 								<div className="flex flex-col w-full overflow-scroll scrollbar-none">
 									<div className="border-t"></div>
 									<div className="flex flex-col w-full p-5 space-y-3">
-										<div className="text-gray-400 text-sm">
-											Credit Scores
-										</div>
+										<div className="text-gray-400 text-sm">Credit Scores</div>
 										<div className="flex flex-row">
 											<div className="flex flex-col w-1/2 text-sm space-y-1">
-												<div className="text-gray-400">
-													Dun & Bradstreet
-												</div>
-												<div className="text-lg">
-													{dnb_business_score}
-												</div>
+												<div className="text-gray-400">Dun & Bradstreet</div>
+												<div className="text-lg">{dnb_business_score}</div>
 											</div>
 											<div className="flex flex-col w-1/2 text-sm space-y-1">
-												<div className="text-gray-400">
-													Intelliscore
-												</div>
-												<div className="text-lg">
-													{experian_business_score}
-												</div>
+												<div className="text-gray-400">Intelliscore</div>
+												<div className="text-lg">{experian_business_score}</div>
 											</div>
 										</div>
 									</div>
 									<div className="border-t"></div>
 									<div className="flex flex-col px-5 pt-5 text-sm space-y-3">
-										<div className=" text-gray-400">
-											Quick Links
-										</div>
+										<div className=" text-gray-400">Quick Links</div>
 
 										<VerticalNav
-											selected={get_route_endpoint(
-												location.pathname
-											)}
+											selected={get_route_endpoint(location.pathname)}
 											report_plan_id={report_plan_id}
 										/>
 									</div>

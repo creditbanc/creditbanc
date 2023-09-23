@@ -90,6 +90,114 @@ export default class PersonalReport {
 		return this;
 	}
 
+	get experian_score() {
+		this.response = this.report.pipe(
+			rxmap((report) => ({ experian_score: report.experian_score() })),
+			concatMap(merge_with_current(this.response))
+		);
+
+		return this;
+	}
+
+	get equifax_score() {
+		this.response = this.report.pipe(
+			rxmap((report) => ({ equifax_score: report.equifax_score() })),
+			concatMap(merge_with_current(this.response))
+		);
+
+		return this;
+	}
+
+	get transunion_score() {
+		this.response = this.report.pipe(
+			rxmap((report) => ({ transunion_score: report.transunion_score() })),
+			concatMap(merge_with_current(this.response))
+		);
+
+		return this;
+	}
+
+	get first_name() {
+		this.response = this.report.pipe(
+			rxmap((report) => ({ first_name: report.first_name() })),
+			concatMap(merge_with_current(this.response))
+		);
+
+		return this;
+	}
+
+	get last_name() {
+		this.response = this.report.pipe(
+			rxmap((report) => ({ last_name: report.last_name() })),
+			concatMap(merge_with_current(this.response))
+		);
+
+		return this;
+	}
+
+	get street() {
+		this.response = this.report.pipe(
+			rxmap((report) => ({ street: report.street() })),
+			concatMap(merge_with_current(this.response))
+		);
+
+		return this;
+	}
+
+	get city() {
+		this.response = this.report.pipe(
+			rxmap((report) => ({ city: report.city() })),
+			concatMap(merge_with_current(this.response))
+		);
+
+		return this;
+	}
+
+	get state() {
+		this.response = this.report.pipe(
+			rxmap((report) => ({ state: report.state() })),
+			concatMap(merge_with_current(this.response))
+		);
+
+		return this;
+	}
+
+	get zip() {
+		this.response = this.report.pipe(
+			rxmap((report) => ({ zip: report.zip() })),
+			concatMap(merge_with_current(this.response))
+		);
+
+		return this;
+	}
+
+	get dob() {
+		this.response = this.report.pipe(
+			rxmap((report) => ({ dob: report.dob() })),
+			concatMap(merge_with_current(this.response))
+		);
+
+		return this;
+	}
+
+	get trade_lines() {
+		this.response = this.report.pipe(
+			rxmap((report) => ({ trade_lines: report.trade_lines() })),
+			concatMap(merge_with_current(this.response))
+		);
+
+		return this;
+	}
+
+	get factors() {
+		this.response = this.report.pipe(
+			rxmap((report) => ({ factors: report.factors() })),
+			concatMap(merge_with_current(this.response))
+		);
+
+		return this;
+	}
+
 	get fold() {
 		return this.response;
 	}

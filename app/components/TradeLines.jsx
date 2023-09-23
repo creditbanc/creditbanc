@@ -1,16 +1,4 @@
-import {
-	pipe,
-	flatten,
-	uniq,
-	reject,
-	isEmpty,
-	head,
-	split,
-	take,
-	curry,
-	tryCatch,
-	always,
-} from "ramda";
+import { pipe, flatten, uniq, reject, isEmpty, head, split, take, curry, tryCatch, always } from "ramda";
 import { all, get, filter } from "shades";
 import { mapIndexed, currency } from "~/utils/helpers";
 import { ArrowDownIcon, ArrowUpIcon } from "@heroicons/react/20/solid";
@@ -68,16 +56,12 @@ const Stat = () => {
 				<div className="flex flex-row font-semibold text-[#55CF9E] sm:mr-2 my-2 sm:my-0">
 					{item.stat}
 					<p className="ml-1 font-medium text-gray-500">of</p>
-					<p className="ml-1 font-medium text-gray-500">
-						{item.previousStat}
-					</p>
+					<p className="ml-1 font-medium text-gray-500">{item.previousStat}</p>
 				</div>
 
 				<div
 					className={classNames(
-						item.changeType === "increase"
-							? "bg-green-100 text-green-800"
-							: "bg-red-100 text-red-800",
+						item.changeType === "increase" ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800",
 						"flex flex-row rounded-full px-2.5 py-0.5 font-medium md:mt-2 lg:mt-0 "
 					)}
 				>
@@ -99,11 +83,7 @@ const PaymentPattern = ({ pattern }) => {
 	return (
 		<>
 			{pipe((value) => {
-				let start_month = pipe(
-					split("-"),
-					get(1),
-					Number
-				)(value["@_StartDate"]);
+				let start_month = pipe(split("-"), get(1), Number)(value["@_StartDate"]);
 
 				return (
 					<>
@@ -111,15 +91,9 @@ const PaymentPattern = ({ pattern }) => {
 							take(12),
 							mapIndexed((value, index) => {
 								let raw_month_number = start_month - index;
-								let month_number =
-									raw_month_number < 1
-										? raw_month_number + 12
-										: raw_month_number;
+								let month_number = raw_month_number < 1 ? raw_month_number + 12 : raw_month_number;
 
-								let month_border_classname =
-									value == "C"
-										? "border-green-200"
-										: "border-red-300";
+								let month_border_classname = value == "C" ? "border-green-200" : "border-red-300";
 
 								return (
 									<div
@@ -131,9 +105,7 @@ const PaymentPattern = ({ pattern }) => {
 										>
 											{month_mapping[month_number]}
 										</div>
-										<div className="flex flex-col items-center justify-center py-1">
-											{value}
-										</div>
+										<div className="flex flex-col items-center justify-center py-1">{value}</div>
 									</div>
 								);
 							})
@@ -145,13 +117,7 @@ const PaymentPattern = ({ pattern }) => {
 	);
 };
 
-const TradeLine = ({
-	trade_line,
-	type = "basic",
-	experian = false,
-	equifax = false,
-	transunion = false,
-}) => {
+const TradeLine = ({ trade_line = {}, type = "basic", experian = false, equifax = false, transunion = false }) => {
 	return (
 		<div className="overflow-hidden bg-white border rounded-lg">
 			<div className="px-4 py-5 flex flex-row justify-between">
@@ -163,23 +129,15 @@ const TradeLine = ({
 							uniq,
 							head
 						)([
-							pipe(get("original_creditor", all, "value"))(
-								trade_line
-							),
-							pipe(get("creditor", all, "value", "@_Name"))(
-								trade_line
-							),
+							pipe(get("original_creditor", all, "value"))(trade_line),
+							pipe(get("creditor", all, "value", "@_Name"))(trade_line),
 						])}
 					</p>
 					<p className="mt-1 max-w-2xl text-sm text-gray-500">
 						#
 						{pipe(
 							get("id"),
-							filter(
-								(id) =>
-									id.source == "Equifax" ||
-									id.source == "TransUnion"
-							),
+							filter((id) => id.source == "Equifax" || id.source == "TransUnion"),
 							get(all, "value"),
 							head
 						)(trade_line)}
@@ -214,34 +172,16 @@ const TradeLine = ({
 						<div className="text-sm text-gray-900 flex flex-row justify-between sm:justify-around sm:flex-grow">
 							<>
 								<div className="w-[100px] sm:w-[120px]">
-									<div className=" text-gray-500 text-xs sm:hidden">
-										Transunion
-									</div>
-									<div>
-										{TradeLineApi.account_type(
-											"TransUnion"
-										)(trade_line)}
-									</div>
+									<div className=" text-gray-500 text-xs sm:hidden">Transunion</div>
+									<div>{TradeLineApi.account_type("TransUnion")(trade_line)}</div>
 								</div>
 								<div className="w-[100px] sm:w-[120px]">
-									<div className=" text-gray-500 text-xs sm:hidden">
-										Equifax
-									</div>
-									<div>
-										{TradeLineApi.account_type("Equifax")(
-											trade_line
-										)}
-									</div>
+									<div className=" text-gray-500 text-xs sm:hidden">Equifax</div>
+									<div>{TradeLineApi.account_type("Equifax")(trade_line)}</div>
 								</div>
 								<div className="w-[100px] sm:w-[120px]">
-									<div className=" text-gray-500 text-xs sm:hidden">
-										Experian
-									</div>
-									<div>
-										{TradeLineApi.account_type("Experian")(
-											trade_line
-										)}
-									</div>
+									<div className=" text-gray-500 text-xs sm:hidden">Experian</div>
+									<div>{TradeLineApi.account_type("Experian")(trade_line)}</div>
 								</div>
 							</>
 						</div>
@@ -253,34 +193,16 @@ const TradeLine = ({
 						<div className="text-sm text-gray-900 flex flex-row justify-between sm:justify-around sm:flex-grow">
 							<>
 								<div className="w-[100px] sm:w-[120px]">
-									<div className=" text-gray-500 text-xs sm:hidden">
-										Transunion
-									</div>
-									<div>
-										{TradeLineApi.account_status(
-											"TransUnion"
-										)(trade_line)}
-									</div>
+									<div className=" text-gray-500 text-xs sm:hidden">Transunion</div>
+									<div>{TradeLineApi.account_status("TransUnion")(trade_line)}</div>
 								</div>
 								<div className="w-[100px] sm:w-[120px]">
-									<div className=" text-gray-500 text-xs sm:hidden">
-										Equifax
-									</div>
-									<div>
-										{TradeLineApi.account_status("Equifax")(
-											trade_line
-										)}
-									</div>
+									<div className=" text-gray-500 text-xs sm:hidden">Equifax</div>
+									<div>{TradeLineApi.account_status("Equifax")(trade_line)}</div>
 								</div>
 								<div className="w-[100px] sm:w-[120px]">
-									<div className=" text-gray-500 text-xs sm:hidden">
-										Experian
-									</div>
-									<div>
-										{TradeLineApi.account_status(
-											"Experian"
-										)(trade_line)}
-									</div>
+									<div className=" text-gray-500 text-xs sm:hidden">Experian</div>
+									<div>{TradeLineApi.account_status("Experian")(trade_line)}</div>
 								</div>
 							</>
 						</div>
@@ -292,34 +214,16 @@ const TradeLine = ({
 						<div className="text-sm text-gray-900 flex flex-row justify-between sm:justify-around sm:flex-grow">
 							<>
 								<div className="w-[100px] sm:w-[120px]">
-									<div className=" text-gray-500 text-xs sm:hidden">
-										Transunion
-									</div>
-									<div>
-										{TradeLineApi.payment_amount(
-											"TransUnion"
-										)(trade_line)}
-									</div>
+									<div className=" text-gray-500 text-xs sm:hidden">Transunion</div>
+									<div>{TradeLineApi.payment_amount("TransUnion")(trade_line)}</div>
 								</div>
 								<div className="w-[100px] sm:w-[120px]">
-									<div className=" text-gray-500 text-xs sm:hidden">
-										Equifax
-									</div>
-									<div>
-										{TradeLineApi.payment_amount("Equifax")(
-											trade_line
-										)}
-									</div>
+									<div className=" text-gray-500 text-xs sm:hidden">Equifax</div>
+									<div>{TradeLineApi.payment_amount("Equifax")(trade_line)}</div>
 								</div>
 								<div className="w-[100px] sm:w-[120px]">
-									<div className=" text-gray-500 text-xs sm:hidden">
-										Experian
-									</div>
-									<div>
-										{TradeLineApi.payment_amount(
-											"Experian"
-										)(trade_line)}
-									</div>
+									<div className=" text-gray-500 text-xs sm:hidden">Experian</div>
+									<div>{TradeLineApi.payment_amount("Experian")(trade_line)}</div>
 								</div>
 							</>
 						</div>
@@ -331,34 +235,16 @@ const TradeLine = ({
 						<div className="text-sm text-gray-900 flex flex-row justify-between sm:justify-around sm:flex-grow">
 							<>
 								<div className="w-[100px] sm:w-[120px]">
-									<div className=" text-gray-500 text-xs sm:hidden">
-										Transunion
-									</div>
-									<div>
-										{TradeLineApi.opened_date("TransUnion")(
-											trade_line
-										)}
-									</div>
+									<div className=" text-gray-500 text-xs sm:hidden">Transunion</div>
+									<div>{TradeLineApi.opened_date("TransUnion")(trade_line)}</div>
 								</div>
 								<div className="w-[100px] sm:w-[120px]">
-									<div className=" text-gray-500 text-xs sm:hidden">
-										Equifax
-									</div>
-									<div>
-										{TradeLineApi.opened_date("Equifax")(
-											trade_line
-										)}
-									</div>
+									<div className=" text-gray-500 text-xs sm:hidden">Equifax</div>
+									<div>{TradeLineApi.opened_date("Equifax")(trade_line)}</div>
 								</div>
 								<div className="w-[100px] sm:w-[120px]">
-									<div className=" text-gray-500 text-xs sm:hidden">
-										Experian
-									</div>
-									<div>
-										{TradeLineApi.opened_date("Experian")(
-											trade_line
-										)}
-									</div>
+									<div className=" text-gray-500 text-xs sm:hidden">Experian</div>
+									<div>{TradeLineApi.opened_date("Experian")(trade_line)}</div>
 								</div>
 							</>
 						</div>
@@ -370,34 +256,16 @@ const TradeLine = ({
 						<div className="text-sm text-gray-900 flex flex-row justify-between sm:justify-around sm:flex-grow">
 							<>
 								<div className="w-[100px] sm:w-[120px]">
-									<div className=" text-gray-500 text-xs sm:hidden">
-										Transunion
-									</div>
-									<div>
-										{TradeLineApi.unpaid_balance(
-											"TransUnion"
-										)(trade_line)}
-									</div>
+									<div className=" text-gray-500 text-xs sm:hidden">Transunion</div>
+									<div>{TradeLineApi.unpaid_balance("TransUnion")(trade_line)}</div>
 								</div>
 								<div className="w-[100px] sm:w-[120px]">
-									<div className=" text-gray-500 text-xs sm:hidden">
-										Equifax
-									</div>
-									<div>
-										{TradeLineApi.unpaid_balance("Equifax")(
-											trade_line
-										)}
-									</div>
+									<div className=" text-gray-500 text-xs sm:hidden">Equifax</div>
+									<div>{TradeLineApi.unpaid_balance("Equifax")(trade_line)}</div>
 								</div>
 								<div className="w-[100px] sm:w-[120px]">
-									<div className=" text-gray-500 text-xs sm:hidden">
-										Experian
-									</div>
-									<div>
-										{TradeLineApi.unpaid_balance(
-											"Experian"
-										)(trade_line)}
-									</div>
+									<div className=" text-gray-500 text-xs sm:hidden">Experian</div>
+									<div>{TradeLineApi.unpaid_balance("Experian")(trade_line)}</div>
 								</div>
 							</>
 						</div>
@@ -409,34 +277,16 @@ const TradeLine = ({
 						<div className="text-sm text-gray-900 flex flex-row justify-between sm:justify-around sm:flex-grow">
 							<>
 								<div className="w-[100px] sm:w-[120px]">
-									<div className=" text-gray-500 text-xs sm:hidden">
-										Transunion
-									</div>
-									<div>
-										{TradeLineApi.terms("Transunion")(
-											trade_line
-										)}
-									</div>
+									<div className=" text-gray-500 text-xs sm:hidden">Transunion</div>
+									<div>{TradeLineApi.terms("Transunion")(trade_line)}</div>
 								</div>
 								<div className="w-[100px] sm:w-[120px]">
-									<div className=" text-gray-500 text-xs sm:hidden">
-										Equifax
-									</div>
-									<div>
-										{TradeLineApi.terms("Equifax")(
-											trade_line
-										)}
-									</div>
+									<div className=" text-gray-500 text-xs sm:hidden">Equifax</div>
+									<div>{TradeLineApi.terms("Equifax")(trade_line)}</div>
 								</div>
 								<div className="w-[100px] sm:w-[120px]">
-									<div className=" text-gray-500 text-xs sm:hidden">
-										Experian
-									</div>
-									<div>
-										{TradeLineApi.terms("Experian")(
-											trade_line
-										)}
-									</div>
+									<div className=" text-gray-500 text-xs sm:hidden">Experian</div>
+									<div>{TradeLineApi.terms("Experian")(trade_line)}</div>
 								</div>
 							</>
 						</div>
@@ -448,34 +298,16 @@ const TradeLine = ({
 						<div className="text-sm text-gray-900 flex flex-row justify-between sm:justify-around sm:flex-grow">
 							<>
 								<div className="w-[100px] sm:w-[120px]">
-									<div className=" text-gray-500 text-xs sm:hidden">
-										Transunion
-									</div>
-									<div>
-										{TradeLineApi.credit_limit(
-											"Transunion"
-										)(trade_line)}
-									</div>
+									<div className=" text-gray-500 text-xs sm:hidden">Transunion</div>
+									<div>{TradeLineApi.credit_limit("Transunion")(trade_line)}</div>
 								</div>
 								<div className="w-[100px] sm:w-[120px]">
-									<div className=" text-gray-500 text-xs sm:hidden">
-										Equifax
-									</div>
-									<div>
-										{TradeLineApi.credit_limit("Equifax")(
-											trade_line
-										)}
-									</div>
+									<div className=" text-gray-500 text-xs sm:hidden">Equifax</div>
+									<div>{TradeLineApi.credit_limit("Equifax")(trade_line)}</div>
 								</div>
 								<div className="w-[100px] sm:w-[120px]">
-									<div className=" text-gray-500 text-xs sm:hidden">
-										Experian
-									</div>
-									<div>
-										{TradeLineApi.credit_limit("Experian")(
-											trade_line
-										)}
-									</div>
+									<div className=" text-gray-500 text-xs sm:hidden">Experian</div>
+									<div>{TradeLineApi.credit_limit("Experian")(trade_line)}</div>
 								</div>
 							</>
 						</div>
@@ -487,34 +319,16 @@ const TradeLine = ({
 						<div className="text-sm text-gray-900 flex flex-row justify-between sm:justify-around sm:flex-grow">
 							<>
 								<div className="w-[100px] sm:w-[120px]">
-									<div className=" text-gray-500 text-xs sm:hidden">
-										Transunion
-									</div>
-									<div>
-										{TradeLineApi.past_due_amount(
-											"Transunion"
-										)(trade_line)}
-									</div>
+									<div className=" text-gray-500 text-xs sm:hidden">Transunion</div>
+									<div>{TradeLineApi.past_due_amount("Transunion")(trade_line)}</div>
 								</div>
 								<div className="w-[100px] sm:w-[120px]">
-									<div className=" text-gray-500 text-xs sm:hidden">
-										Equifax
-									</div>
-									<div>
-										{TradeLineApi.past_due_amount(
-											"Equifax"
-										)(trade_line)}
-									</div>
+									<div className=" text-gray-500 text-xs sm:hidden">Equifax</div>
+									<div>{TradeLineApi.past_due_amount("Equifax")(trade_line)}</div>
 								</div>
 								<div className="w-[100px] sm:w-[120px]">
-									<div className=" text-gray-500 text-xs sm:hidden">
-										Experian
-									</div>
-									<div>
-										{TradeLineApi.past_due_amount(
-											"Experian"
-										)(trade_line)}
-									</div>
+									<div className=" text-gray-500 text-xs sm:hidden">Experian</div>
+									<div>{TradeLineApi.past_due_amount("Experian")(trade_line)}</div>
 								</div>
 							</>
 						</div>
@@ -526,34 +340,16 @@ const TradeLine = ({
 						<div className="text-sm text-gray-900 flex flex-row justify-between sm:justify-around sm:flex-grow">
 							<>
 								<div className="w-[100px] sm:w-[120px]">
-									<div className=" text-gray-500 text-xs sm:hidden">
-										Transunion
-									</div>
-									<div>
-										{TradeLineApi.current_rating(
-											"Transunion"
-										)(trade_line)}
-									</div>
+									<div className=" text-gray-500 text-xs sm:hidden">Transunion</div>
+									<div>{TradeLineApi.current_rating("Transunion")(trade_line)}</div>
 								</div>
 								<div className="w-[100px] sm:w-[120px]">
-									<div className=" text-gray-500 text-xs sm:hidden">
-										Equifax
-									</div>
-									<div>
-										{TradeLineApi.current_rating("Equifax")(
-											trade_line
-										)}
-									</div>
+									<div className=" text-gray-500 text-xs sm:hidden">Equifax</div>
+									<div>{TradeLineApi.current_rating("Equifax")(trade_line)}</div>
 								</div>
 								<div className="w-[100px] sm:w-[120px]">
-									<div className=" text-gray-500 text-xs sm:hidden">
-										Experian
-									</div>
-									<div>
-										{TradeLineApi.current_rating(
-											"Experian"
-										)(trade_line)}
-									</div>
+									<div className=" text-gray-500 text-xs sm:hidden">Experian</div>
+									<div>{TradeLineApi.current_rating("Experian")(trade_line)}</div>
 								</div>
 							</>
 						</div>
@@ -565,34 +361,16 @@ const TradeLine = ({
 						<div className="text-sm text-gray-900 flex flex-row justify-between sm:justify-around sm:flex-grow">
 							<>
 								<div className="w-[100px] sm:w-[120px]">
-									<div className=" text-gray-500 text-xs sm:hidden">
-										Transunion
-									</div>
-									<div>
-										{TradeLineApi.account_reported_date(
-											"Transunion"
-										)(trade_line)}
-									</div>
+									<div className=" text-gray-500 text-xs sm:hidden">Transunion</div>
+									<div>{TradeLineApi.account_reported_date("Transunion")(trade_line)}</div>
 								</div>
 								<div className="w-[100px] sm:w-[120px]">
-									<div className=" text-gray-500 text-xs sm:hidden">
-										Equifax
-									</div>
-									<div>
-										{TradeLineApi.account_reported_date(
-											"Equifax"
-										)(trade_line)}
-									</div>
+									<div className=" text-gray-500 text-xs sm:hidden">Equifax</div>
+									<div>{TradeLineApi.account_reported_date("Equifax")(trade_line)}</div>
 								</div>
 								<div className="w-[100px] sm:w-[120px]">
-									<div className=" text-gray-500 text-xs sm:hidden">
-										Experian
-									</div>
-									<div>
-										{TradeLineApi.account_reported_date(
-											"Experian"
-										)(trade_line)}
-									</div>
+									<div className=" text-gray-500 text-xs sm:hidden">Experian</div>
+									<div>{TradeLineApi.account_reported_date("Experian")(trade_line)}</div>
 								</div>
 							</>
 						</div>
@@ -603,12 +381,9 @@ const TradeLine = ({
 						</div>
 						<div className="text-sm text-gray-900 flex flex-row justify-between sm:justify-around sm:flex-grow">
 							<div className="w-full flex flex-row justify-between text-xs sm:text-sm">
-								{pipe(
-									TradeLineApi.payment_pattern("Experian"),
-									(pattern) => (
-										<PaymentPattern pattern={pattern} />
-									)
-								)(trade_line)}
+								{pipe(TradeLineApi.payment_pattern("Experian"), (pattern) => (
+									<PaymentPattern pattern={pattern} />
+								))(trade_line)}
 							</div>
 						</div>
 					</div>
@@ -619,7 +394,7 @@ const TradeLine = ({
 };
 
 export const Accounts = ({
-	trade_lines,
+	trade_lines = [],
 	type = "basic",
 	experian = false,
 	equifax = false,

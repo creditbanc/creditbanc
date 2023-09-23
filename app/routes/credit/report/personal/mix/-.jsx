@@ -1,22 +1,26 @@
+import { ChartPieIcon } from "@heroicons/react/24/outline";
+import { FactorBar } from "~/components/FactorBar";
+import { Accounts } from "~/components/TradeLines";
 import { useLoaderData } from "@remix-run/react";
-import { useEffect } from "react";
-import { Array } from "~/data/array";
+import { pipe, map, filter, includes, flatten, head, pick } from "ramda";
 import { get_file_id, get_group_id, inspect } from "~/utils/helpers";
+import { TradeLine as Tradeline, credit_report_data, CreditReport, Liabilities } from "~/data/array";
+import { get_doc as get_credit_report } from "~/utils/personal_credit_report.server";
+import { all, get } from "shades";
+import { plans } from "~/data/plans";
 import { get_session_entity_id, get_user_id } from "~/utils/auth.server";
 import { prisma } from "~/utils/prisma.server";
-import { plans } from "~/data/plans";
-import { all, get } from "shades";
-import { flatten, pipe, uniqBy, head, pick } from "ramda";
+import { useReportPageLayoutStore } from "~/stores/useReportPageLayoutStore";
 import { get_collection, get_doc, update_doc } from "~/utils/firebase";
-import { map as rxmap, filter as rxfilter, concatMap, tap, take, catchError } from "rxjs/operators";
-import { from, lastValueFrom, forkJoin, Subject, of as rxof, iif, throwError } from "rxjs";
-import { fold, ifEmpty, ifFalse } from "~/utils/operators";
-import { is_authorized_f } from "~/api/auth";
 import { ArrayExternal } from "~/api/external/Array";
 import { ArrayInternal } from "~/api/internal/Array";
+import { map as rxmap, filter as rxfilter, concatMap, tap, take, catchError } from "rxjs/operators";
+import { from, lastValueFrom, forkJoin, Subject, of as rxof, iif, throwError } from "rxjs";
+import { fold, ifFalse } from "~/utils/operators";
+import { is_authorized_f } from "~/api/auth";
 import PersonalReport from "~/api/client/PersonalReport";
 
-const log_route = `credit.report.personal.personal`;
+const log_route = `credit.report.personal.history`;
 
 const on_success = (response) => {
 	console.log(`${log_route}.success`);
@@ -33,7 +37,7 @@ export const loader = async ({ request }) => {
 	let url = new URL(request.url);
 	let group_id = get_group_id(url.pathname);
 	let report = new PersonalReport(group_id);
-	let response = report.first_name.last_name.street.city.state.zip.dob.fold;
+	let response = report.trade_lines.fold;
 	return await lastValueFrom(response.pipe(fold(on_success, on_error)));
 };
 
@@ -83,16 +87,6 @@ export const loader = async ({ request }) => {
 // 			)
 // 		);
 
-// 		let redirect_new_report = entity_group_id.pipe(
-// 			concatMap(({ entity_id, group_id }) =>
-// 				throwError(() =>
-// 					Response.redirect(
-// 						`${url.origin}/credit/personal/new/resource/e/${entity_id}/g/${group_id}`
-// 					)
-// 				)
-// 			)
-// 		);
-
 // 		let is_authorized = entity_group_id.pipe(
 // 			concatMap(({ entity_id, group_id }) =>
 // 				is_authorized_f(entity_id, group_id, "credit", "read")
@@ -101,15 +95,13 @@ export const loader = async ({ request }) => {
 // 		);
 
 // 		const update_display_token = ({ clientKey, reportKey, report_id }) => {
-// 			console.log("credit.report.personal.personal.update_display_token");
+// 			console.log("___update_display_token___");
 // 			return rxof({ clientKey, reportKey, report_id }).pipe(
 // 				concatMap(() =>
 // 					ArrayExternal.refreshDisplayToken(clientKey, reportKey)
 // 				),
 // 				catchError((error) => {
-// 					console.log(
-// 						"credit.report.personal.personal.update_display_token.error"
-// 					);
+// 					console.log("___refreshDisplayTokenError___");
 // 					console.log(error);
 
 // 					return redirect_home;
@@ -125,7 +117,6 @@ export const loader = async ({ request }) => {
 
 // 		let report = group_id.pipe(
 // 			concatMap(get_credit_report),
-// 			concatMap(ifEmpty(redirect_new_report)),
 // 			rxmap(
 // 				pipe(
 // 					head,
@@ -160,31 +151,14 @@ export const loader = async ({ request }) => {
 // 					})
 // 				)
 // 			),
-// 			rxmap((array_response) => new ArrayInternal(array_response))
+// 			rxmap((array_response) => new ArrayInternal(array_response)),
+// 			rxmap((report) => report.trade_lines())
 // 		);
 
-// 		let first_name = report.pipe(rxmap((report) => report.first_name()));
-// 		let last_name = report.pipe(rxmap((report) => report.last_name()));
-// 		let street = report.pipe(rxmap((report) => report.street()));
-// 		let city = report.pipe(rxmap((report) => report.city()));
-// 		let state = report.pipe(rxmap((report) => report.state()));
-// 		let zip = report.pipe(rxmap((report) => report.zip()));
-// 		let dob = report.pipe(rxmap((report) => report.dob()));
-
 // 		return is_authorized.pipe(
-// 			concatMap(() =>
-// 				forkJoin({
-// 					first_name,
-// 					last_name,
-// 					street,
-// 					city,
-// 					state,
-// 					zip,
-// 					dob,
-// 				})
-// 			),
+// 			concatMap(() => report),
 // 			tap((value) => {
-// 				console.log("credit.report.personal.personal.tap");
+// 				console.log("credit.report.personal.mix.tap");
 // 				console.log(value);
 // 			})
 // 		);
@@ -192,13 +166,12 @@ export const loader = async ({ request }) => {
 // );
 
 // export const loader = async ({ request }) => {
-// 	console.log("credit.report.personal.personal.loader");
 // 	const on_success = async (response) => {
-// 		console.log("credit.report.personal.personal.success");
+// 		console.log("credit.report.personal.mix.success");
 // 		let entity_id = await get_session_entity_id(request);
 // 		let { plan_id } = await get_doc(["entity", entity_id]);
 
-// 		let payload = { ...response, plan_id };
+// 		let payload = { trade_lines: response, plan_id };
 
 // 		subject.next({
 // 			id: "credit_report_response",
@@ -207,7 +180,7 @@ export const loader = async ({ request }) => {
 // 	};
 
 // 	const on_error = (error) => {
-// 		console.log("credit.report.personal.personal.error");
+// 		console.log("credit.report.personal.mix.error");
 // 		console.log(error);
 
 // 		subject.next({
@@ -228,9 +201,20 @@ export const loader = async ({ request }) => {
 
 // 	return response.next();
 
-// 	// let url = new URL(request.url);
 // 	// let entity_id = await get_session_entity_id(request);
-// 	// let group_id = get_group_id(url.pathname);
+// 	// let { plan_id } = await get_doc(["entity", entity_id]);
+
+// 	// let response = await lastValueFrom(creditreport(request));
+
+// 	// // console.log("response");
+// 	// // console.log(response);
+
+// 	// return { trade_lines: response, plan_id };
+
+// 	// let url = new URL(request.url);
+// 	// let pathname = url.pathname;
+// 	// let entity_id = await get_session_entity_id(request);
+// 	// let group_id = get_group_id(pathname);
 
 // 	// let personal_credit_report_queries = [
 // 	// 	{
@@ -252,62 +236,72 @@ export const loader = async ({ request }) => {
 
 // 	// let report = pipe(head)(report_response);
 
+// 	// // let report = await get_credit_report({
+// 	// // 	resource_id: report_id,
+// 	// // });
+
+// 	// let credit_report = CreditReport(report.data);
+// 	// let liabilities = Liabilities(credit_report.liabilities());
+
+// 	// let trade_lines = pipe(
+// 	// 	map((value) => Tradeline(flatten([value]))),
+// 	// 	map((tl) => tl.values())
+// 	// 	// filter((tl) => pipe(get(all, "value"), includes("Closed"))(tl.status))
+// 	// )(liabilities.trade_lines());
+
 // 	// let is_owner = report.entity_id == entity_id;
 
 // 	// let { plan_id } = await get_doc(["entity", entity_id]);
 
-// 	// let personal_data = get_personal_data(report);
-
-// 	// return { plan_id, ...personal_data };
+// 	// return { trade_lines, plan_id };
 // };
 
-const PersonalInfoCard = () => {
-	let { plan_id, first_name, last_name, street, city, state, zip, dob } = useLoaderData();
-
+const InfoCard = () => {
 	return (
-		<div className="overflow-hidden bg-white rounded-lg border">
-			<div className="px-4 py-5 sm:px-6">
-				<h3 className="text-lg font-medium leading-6 text-gray-900">Personal Information</h3>
-				<p className="mt-1 max-w-2xl text-sm text-gray-500">
-					Below is your personal information as it appears in your credit file. This information includes your
-					legal name, current and previous addresses, employment information and other details.
-				</p>
+		<div className="flex flex-col h-fit bg-white rounded-lg border">
+			<div className="px-4 py-5 sm:px-6 flex flex-row items-center">
+				<div className="flex flex-col w-[25px] mr-3">
+					<ChartPieIcon />
+				</div>
+				<div className="flex flex-col">
+					<h3 className="text-xl font-medium leading-6 text-gray-900">How Important is My Account Mix?</h3>
+				</div>
 			</div>
-			<div className="border-t border-gray-200 px-4 py-1">
-				<dl className="divide-y divide-gray-200">
-					<div className="py-4 flex flex-col sm:flex-row sm:py-5 sm:px-6">
-						<dt className="text-sm font-medium text-gray-500 w-[200px]">Name</dt>
-						<dd className="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0">
-							{first_name} {last_name}
-						</dd>
-					</div>
-					<div className="py-4 flex flex-col sm:flex-row sm:py-5 sm:px-6">
-						<dt className="text-sm font-medium text-gray-500 w-[200px]">Date of birth</dt>
-						<dd className="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0">{dob}</dd>
-					</div>
-					<div className="py-4 flex flex-col sm:flex-row sm:py-5 sm:px-6">
-						<dt className="text-sm font-medium text-gray-500 w-[200px]">Address</dt>
-						<dd className="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0">
-							<div className="flex flex-col">
-								<div>{street}</div>
-								<div className="flex flex-row space-x-1">
-									<div>{city},</div>
-									<div>{state}</div>
-									<div>{zip}</div>
-								</div>
-							</div>
-						</dd>
-					</div>
-				</dl>
+			<div className="border-t border-gray-200 px-6 py-2">
+				<div className="flex flex-col text-lg py-2 text-gray-700 font-semibold">
+					<p>10% of your credit score is based on your Account Mix</p>
+				</div>
+
+				<FactorBar index={3} />
+
+				<div className="flex flex-col py-2 text-gray-700">
+					<p>
+						Just like you should diversify your investments, you should diversify your debt; creditors like
+						to see you’ve had experience with different types of credit accounts. To ace this category, you
+						should have a mix of revolving credit (credit cards, installment loans, store cards, etc.) and
+						installment loans (car loans, student loans, mortgages, etc.).
+					</p>
+				</div>
 			</div>
 		</div>
 	);
 };
 
-export default function Personal() {
+export default function Mix() {
+	let { trade_lines, plan_id } = useLoaderData();
+
+	// let experian = pipe(get(plan_id, "personal", "experian", "authorized"))(plans);
+	// let equifax = pipe(get(plan_id, "personal", "equifax", "authorized"))(plans);
+	// let transunion = pipe(get(plan_id, "personal", "transunion", "authorized"))(plans);
+
+	let experian = true;
+	let equifax = true;
+	let transunion = true;
+
 	return (
-		<div className="flex flex-col w-full">
-			<PersonalInfoCard />
+		<div className={`flex flex-col w-full h-full py-5 `}>
+			<InfoCard />
+			<Accounts trade_lines={trade_lines} experian={experian} transunion={transunion} equifax={equifax} />
 		</div>
 	);
 }

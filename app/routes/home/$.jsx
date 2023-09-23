@@ -90,7 +90,7 @@ export const loader = async ({ request }) => {
 
 	let business_info_fetch = axios({
 		method: "get",
-		url: `${url.origin}/credit/report/business/api/company/resource/e/${business_entity_id}/g/${group_id}`,
+		url: `${url.origin}/credit/report/api/businessinfo/resource/e/${business_entity_id}/g/${group_id}`,
 		withCredentials: true,
 		headers: {
 			cookie: `creditbanc_session=${encode(
@@ -138,8 +138,8 @@ export const loader = async ({ request }) => {
 	let { data: personal_scores = {} } = personal_scores_response;
 	let { data: business_scores = {} } = business_scores_response;
 
-	console.log("home.business_info");
-	inspect(business_info);
+	// console.log("home.business_info");
+	// inspect(personal_scores);
 
 	const cache = curry((request, payload) => {
 		let { cache_dependencies: dependencies } = payload;

@@ -1,33 +1,18 @@
 import { FolderIcon } from "@heroicons/react/20/solid";
-import {
-	LinkIcon,
-	BriefcaseIcon,
-	UserCircleIcon,
-	HomeIcon,
-} from "@heroicons/react/24/outline";
+import { LinkIcon, BriefcaseIcon, UserCircleIcon, HomeIcon } from "@heroicons/react/24/outline";
 import { Link, useFetcher, useLoaderData, useLocation } from "@remix-run/react";
 import { isEmpty, head, identity, map, pickAll, pipe } from "ramda";
 import { get, mod } from "shades";
 import { get_entity, get_session_entity_id } from "~/utils/auth.server";
 import { classNames, get_entity_id, get_group_id } from "~/utils/helpers";
-import {
-	get_owner_companies_ids,
-	get_shared_companies_ids,
-} from "~/api/ui/companies";
+import { get_owner_companies_ids, get_shared_companies_ids } from "~/api/ui/companies";
 import { create } from "zustand";
 import axios from "axios";
 import { useEffect } from "react";
 const cb_logo_3 = "/images/logos/cb_logo_3.png";
 import { encode } from "js-base64";
 import { get_collection, get_doc } from "~/utils/firebase";
-import {
-	map as rxmap,
-	filter as rxfilter,
-	concatMap,
-	tap,
-	take,
-	reduce as rxreduce,
-} from "rxjs/operators";
+import { map as rxmap, filter as rxfilter, concatMap, tap, take, reduce as rxreduce } from "rxjs/operators";
 import { from, lastValueFrom, forkJoin, Subject, of as rxof } from "rxjs";
 import { fold } from "~/utils/operators";
 import { json } from "@remix-run/node";
@@ -67,12 +52,10 @@ const $loader = subject.pipe(
 				from(
 					axios({
 						method: "get",
-						url: `${url.origin}/credit/report/business/api/company/resource/e/${entity_id}/g/${group_id}`,
+						url: `${url.origin}/credit/report/api/businessinfo/resource/e/${entity_id}/g/${group_id}`,
 						withCredentials: true,
 						headers: {
-							cookie: `creditbanc_session=${encode(
-								JSON.stringify({ entity_id })
-							)}`,
+							cookie: `creditbanc_session=${encode(JSON.stringify({ entity_id }))}`,
 						},
 					})
 				)
@@ -88,9 +71,7 @@ const $loader = subject.pipe(
 						url: `${url.origin}/credit/report/api/scores/resource/e/${entity_id}/g/${group_id}`,
 						withCredentials: true,
 						headers: {
-							cookie: `creditbanc_session=${encode(
-								JSON.stringify({ entity_id })
-							)}`,
+							cookie: `creditbanc_session=${encode(JSON.stringify({ entity_id }))}`,
 						},
 					})
 				)
@@ -104,18 +85,13 @@ const $loader = subject.pipe(
 			concatMap((group_id) =>
 				get_group_role_config(group_id).pipe(
 					rxmap(pipe(head, get("entity_id"))),
-					concatMap((entity_id) =>
-						from(get_doc(["entity", entity_id]))
-					),
+					concatMap((entity_id) => from(get_doc(["entity", entity_id]))),
 					rxmap(
-						pipe(
-							pickAll(["first_name", "last_name", "id", "email"]),
-							(entity) => ({
-								...entity,
-								entity_id: entity.id,
-								group_id,
-							})
-						)
+						pipe(pickAll(["first_name", "last_name", "id", "email"]), (entity) => ({
+							...entity,
+							entity_id: entity.id,
+							group_id,
+						}))
 					)
 				)
 			),
@@ -128,18 +104,13 @@ const $loader = subject.pipe(
 			concatMap((group_id) =>
 				get_group_role_config(group_id).pipe(
 					rxmap(pipe(head, get("entity_id"))),
-					concatMap((entity_id) =>
-						from(get_doc(["entity", entity_id]))
-					),
+					concatMap((entity_id) => from(get_doc(["entity", entity_id]))),
 					rxmap(
-						pipe(
-							pickAll(["first_name", "last_name", "id", "email"]),
-							(entity) => ({
-								...entity,
-								entity_id: entity.id,
-								group_id,
-							})
-						)
+						pipe(pickAll(["first_name", "last_name", "id", "email"]), (entity) => ({
+							...entity,
+							entity_id: entity.id,
+							group_id,
+						}))
 					)
 				)
 			),
@@ -165,14 +136,12 @@ const $loader = subject.pipe(
 
 export const useCompanyStore = create((set) => ({
 	company: {},
-	set_state: (path, value) =>
-		set((state) => pipe(mod(...path)(() => value))(state)),
+	set_state: (path, value) => set((state) => pipe(mod(...path)(() => value))(state)),
 }));
 
 export const useCompaniesStore = create((set) => ({
 	companies: {},
-	set_state: (path, value) =>
-		set((state) => pipe(mod(...path)(() => value))(state)),
+	set_state: (path, value) => set((state) => pipe(mod(...path)(() => value))(state)),
 }));
 
 export const action = async ({ request }) => {
@@ -188,9 +157,7 @@ export const action = async ({ request }) => {
 			url: `${origin}/credit/report/api/scores/resource/e/${entity_id}/g/${group_id}`,
 			withCredentials: true,
 			headers: {
-				cookie: `creditbanc_session=${encode(
-					JSON.stringify({ entity_id })
-				)}`,
+				cookie: `creditbanc_session=${encode(JSON.stringify({ entity_id }))}`,
 			},
 		})
 	);
@@ -231,9 +198,7 @@ export const loader = async ({ request }) => {
 
 	subject.next({ id: "load", args: { request } });
 
-	let response = await lastValueFrom(
-		subject.pipe(rxfilter(on_complete), take(1))
-	);
+	let response = await lastValueFrom(subject.pipe(rxfilter(on_complete), take(1)));
 
 	return response.next();
 };
@@ -268,8 +233,7 @@ const Members = () => {
 const navigation = [
 	{
 		name: "Dashboard",
-		href: ({ entity_id, group_id }) =>
-			`/home/resource/e/${entity_id}/g/${group_id}`,
+		href: ({ entity_id, group_id }) => `/home/resource/e/${entity_id}/g/${group_id}`,
 		icon: HomeIcon,
 		current: false,
 	},
@@ -282,8 +246,7 @@ const navigation = [
 	},
 	{
 		name: "Personal Credit Report",
-		href: ({ entity_id, group_id }) =>
-			`/credit/report/personal/personal/resource/e/${entity_id}/g/${entity_id}`,
+		href: ({ entity_id, group_id }) => `/credit/report/personal/personal/resource/e/${entity_id}/g/${entity_id}`,
 		icon: UserCircleIcon,
 		current: false,
 	},
@@ -319,9 +282,7 @@ const QuickLinks = () => {
 							)}
 						>
 							<item.icon
-								className={classNames(
-									"text-gray-400 group-hover:text-blue-600 h-5 w-5 shrink-0"
-								)}
+								className={classNames("text-gray-400 group-hover:text-blue-600 h-5 w-5 shrink-0")}
 								aria-hidden="true"
 							/>
 							{item.name}
@@ -387,47 +348,33 @@ const CompayInfo = () => {
 				</div> */}
 				<div className="border-t"></div>
 				<div className="flex flex-col w-full p-5 space-y-3">
-					<div className="text-gray-400 text-sm">
-						Business Credit Scores
-					</div>
+					<div className="text-gray-400 text-sm">Business Credit Scores</div>
 					<div className="flex flex-row">
 						<div className="flex flex-col w-1/2 text-sm space-y-1">
 							<div className="text-gray-400">Intelliscore</div>
-							<div className="text-lg">
-								{fetcher?.data?.experian_business_score}
-							</div>
+							<div className="text-lg">{fetcher?.data?.experian_business_score}</div>
 						</div>
 						<div className="flex flex-col w-1/2 text-sm space-y-1">
 							<div className="text-gray-400">D&B</div>
-							<div className="text-lg">
-								{fetcher?.data?.dnb_business_score}
-							</div>
+							<div className="text-lg">{fetcher?.data?.dnb_business_score}</div>
 						</div>
 					</div>
 				</div>
 				<div className="border-t"></div>
 				<div className="flex flex-col w-full p-5 space-y-3">
-					<div className="text-gray-400 text-sm">
-						Personal Credit Scores
-					</div>
+					<div className="text-gray-400 text-sm">Personal Credit Scores</div>
 					<div className="flex flex-row">
 						<div className="flex flex-col w-1/3 text-sm space-y-1">
 							<div className="text-gray-400">Equifax</div>
-							<div className="text-lg">
-								{fetcher?.data?.equifax_personal_score}
-							</div>
+							<div className="text-lg">{fetcher?.data?.equifax_personal_score}</div>
 						</div>
 						<div className="flex flex-col w-1/3 text-sm space-y-1">
 							<div className="text-gray-400">Experian</div>
-							<div className="text-lg">
-								{fetcher?.data?.experian_personal_score}
-							</div>
+							<div className="text-lg">{fetcher?.data?.experian_personal_score}</div>
 						</div>
 						<div className="flex flex-col w-1/3 text-sm space-y-1">
 							<div className="text-gray-400">Transunion</div>
-							<div className="text-lg">
-								{fetcher?.data?.transunion_personal_score}
-							</div>
+							<div className="text-lg">{fetcher?.data?.transunion_personal_score}</div>
 						</div>
 					</div>
 				</div>
@@ -549,12 +496,7 @@ const Loading = () => {
 export default function Companies() {
 	let { pathname } = useLocation();
 	let group_id = get_group_id(pathname);
-	let {
-		owner_companies,
-		shared_companies,
-		scores = {},
-		business = {},
-	} = useLoaderData();
+	let { owner_companies, shared_companies, scores = {}, business = {} } = useLoaderData();
 	let company = useCompanyStore((state) => state.company);
 	let set_company = useCompanyStore((state) => state.set_state);
 
@@ -572,45 +514,29 @@ export default function Companies() {
 			<div className="flex flex-col w-full lg:w-[70%] h-full bg-white rounded px-5 overflow-y-scroll border scrollbar-none ">
 				<div className="border-b border-gray-200 pb-3 flex flex-row justify-between sticky top-0 bg-white pt-5 ">
 					<div>
-						<h3 className="mt-2 text-base font-semibold leading-6 text-gray-900">
-							Companies
-						</h3>
+						<h3 className="mt-2 text-base font-semibold leading-6 text-gray-900">Companies</h3>
 					</div>
 					<div></div>
 				</div>
 
 				<div className="flex flex-col w-full py-5  scrollbar-none">
 					<div className="flex flex-row w-full items-center flex-wrap gap-y-10 justify-start gap-x-5">
-						{pipe(
-							map((company) => (
-								<Company
-									key={company.entity_id}
-									company={company}
-								/>
-							))
-						)(owner_companies)}
+						{pipe(map((company) => <Company key={company.entity_id} company={company} />))(owner_companies)}
 					</div>
 				</div>
 
 				<div className="border-b border-gray-200 pb-3 flex flex-row justify-between sticky top-0 pt-5 bg-white ">
 					<div>
-						<h3 className="mt-2 text-base font-semibold leading-6 text-gray-900">
-							Shared Companies
-						</h3>
+						<h3 className="mt-2 text-base font-semibold leading-6 text-gray-900">Shared Companies</h3>
 					</div>
 					<div></div>
 				</div>
 
 				<div className="flex flex-col w-full py-5 scrollbar-none">
 					<div className="flex flex-row w-full items-center flex-wrap gap-y-10 justify-start gap-x-5">
-						{pipe(
-							map((company) => (
-								<Company
-									key={company.entity_id}
-									company={company}
-								/>
-							))
-						)(shared_companies)}
+						{pipe(map((company) => <Company key={company.entity_id} company={company} />))(
+							shared_companies
+						)}
 					</div>
 				</div>
 			</div>
