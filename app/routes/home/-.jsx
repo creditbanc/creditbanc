@@ -1,63 +1,146 @@
 import { ChevronRightIcon, ListBulletIcon } from "@heroicons/react/20/solid";
-import { Link, useFetcher, useLocation, useNavigate } from "@remix-run/react";
-import { get_session_entity_id } from "~/utils/auth.server";
+import { Form, Link, useActionData, useFetcher, useLocation, useNavigate, useNavigation } from "@remix-run/react";
+import { get_session_entity_id, get_user_id } from "~/utils/auth.server";
 import {
 	capitalize,
+	consolelog,
+	consoletap,
+	delete_cookie,
 	get_entity_id,
 	get_group_id,
 	get_search_params_obj,
+	normalize,
 	normalize_id,
+	search_params,
 	store,
+	use_search_params,
 	get,
 	formatPhoneNumber,
+	inspect,
 	cache,
 } from "~/utils/helpers";
-import { __, anyPass, isEmpty, isNil, length, map, not, omit, pipe, values } from "ramda";
-import { all, filter } from "shades";
+import {
+	__,
+	allPass,
+	anyPass,
+	curry,
+	defaultTo,
+	equals,
+	flip,
+	head,
+	identity,
+	is,
+	isEmpty,
+	isNil,
+	join,
+	keys,
+	length,
+	map,
+	mergeDeepRight,
+	not,
+	omit,
+	pipe,
+	set,
+	sort,
+	times,
+	values,
+} from "ramda";
+import { all, cons, filter } from "shades";
 import { useLoaderData } from "@remix-run/react";
+import { plans } from "~/data/plans";
+import { json, redirect } from "@remix-run/node";
 import UpgradeBanner from "~/components/UpgradeMembership";
+var cookie = require("cookie");
 import axios from "axios";
+import { useCashflowStore } from "~/stores/useCashflowStore";
 import { useEffect, useState } from "react";
 import { ChevronUpIcon } from "@heroicons/react/20/solid";
 import { Disclosure } from "@headlessui/react";
 import { CheckCircleIcon, XCircleIcon } from "@heroicons/react/24/outline";
 import { get_doc } from "~/utils/firebase";
-import { useOnboardingStore } from "~/stores/useOnboardingStore";
+import { useOnboardingStore, default_onboard_state } from "~/stores/useOnboardingStore";
+import { encode } from "js-base64";
 import { BusinessEntity, useReportStore } from "../credit/business/new/$";
 import Spinner from "~/components/LoadingSpinner";
-import { concatMap, delay, forkJoin, from, lastValueFrom, of as rxof, tap, zip } from "rxjs";
+import murmurhash from "murmurhash";
+import { concat, concatMap, delay, from, lastValueFrom, merge, of as rxof, tap, zip } from "rxjs";
 import { filter as rxfilter, map as rxmap } from "rxjs";
 import { use_cache } from "~/components/CacheLink";
+import { difference } from "ramda";
 import PreFills from "../credit/business/PreFills";
+import { LendflowExternal } from "~/utils/lendflow.server";
 import PersonalReport from "~/api/client/PersonalReport";
 import BusinessReport from "~/api/client/BusinessReport";
-import { fold } from "~/utils/operators";
-import Entity from "~/api/client/Entity";
 
 let use_view_store = store();
 
 const useNewBusinessReportFormStore = useReportStore;
-
-const log_route = `home.$`;
-
-const on_success = (response) => {
-	console.log(`${log_route}.success`);
-	return response;
-};
-
-const on_error = (error) => {
-	console.log(`${log_route}.error`);
-	console.log(error);
-	return error;
-};
 
 export const loader = async ({ request }) => {
 	let url = new URL(request.url);
 	let entity_id = await get_session_entity_id(request);
 	let business_entity_id = get_entity_id(url.pathname);
 	let group_id = get_group_id(url.pathname);
+	let entity = await get_doc(["entity", entity_id]);
+	let business_entity = await get_doc(["entity", business_entity_id]);
 	let onboard_state = await get_doc(["onboard", entity_id]);
-	let onboard = pipe(omit(["group_id", "entity_id"]), values)(onboard_state);
+
+	let personal_report = new PersonalReport(group_id);
+	let business_report = new BusinessReport(group_id);
+	let personal_response = personal_report.scores.fold;
+	let business_response = business_report.business_info.scores.fold;
+
+	onboard_state = pipe(omit(["group_id", "entity_id"]), values)(onboard_state);
+
+	let { plan_id } = await get_doc(["entity", entity_id]);
+
+	let business_info_fetch = axios({
+		method: "get",
+		url: `${url.origin}/credit/report/api/businessinfo/resource/e/${business_entity_id}/g/${group_id}`,
+		withCredentials: true,
+		headers: {
+			cookie: `creditbanc_session=${encode(
+				JSON.stringify({
+					entity_id: business_entity_id,
+				})
+			)}`,
+		},
+	});
+
+	let personal_scores_fetch = axios({
+		method: "get",
+		url: `${url.origin}/credit/report/api/scores/personal/resource/e/${business_entity_id}/g/${group_id}`,
+		withCredentials: true,
+		headers: {
+			cookie: `creditbanc_session=${encode(
+				JSON.stringify({
+					entity_id: business_entity_id,
+				})
+			)}`,
+		},
+	});
+
+	let business_scores_fetch = axios({
+		method: "get",
+		url: `${url.origin}/credit/report/api/scores/business/resource/e/${business_entity_id}/g/${group_id}`,
+		withCredentials: true,
+		headers: {
+			cookie: `creditbanc_session=${encode(
+				JSON.stringify({
+					entity_id: business_entity_id,
+				})
+			)}`,
+		},
+	});
+
+	let fetches = zip([business_info_fetch, personal_scores_fetch, business_scores_fetch]);
+
+	let [business_info_response, personal_scores_response, business_scores_response] = await lastValueFrom(fetches);
+
+	let { data: business_info = {} } = business_info_response;
+
+	let { data: personal_scores = {} } = personal_scores_response;
+	let { data: business_scores = {} } = business_scores_response;
 
 	let cache_dependencies = [
 		{
@@ -70,36 +153,24 @@ export const loader = async ({ request }) => {
 		},
 	];
 
-	let entity = new Entity(entity_id);
-	let business_entity = new Entity(business_entity_id);
-	let personal_report = new PersonalReport(group_id);
-	let business_report = new BusinessReport(group_id);
+	let payload = {
+		business_info,
+		personal_scores,
+		business_scores,
+		entity_id,
+		entity,
+		business_entity_id,
+		business_entity,
+		plan_id,
+		onboard: onboard_state,
+	};
 
-	let entity_response = entity.identity.plan_id.fold;
-	let business_entity_response = business_entity.identity.fold;
-	let personal_response = personal_report.scores.fold;
-	let business_response = business_report.business_info.scores.fold;
-
-	let payload = forkJoin({ personal_response, business_response, entity_response, business_entity_response }).pipe(
-		rxmap(({ personal_response, business_response, entity_response, business_entity_response }) => {
-			return {
-				business_info: business_response.business_info,
-				business_scores: business_response.scores,
-				personal_scores: personal_response.scores,
-				entity_id,
-				entity: entity_response.identity,
-				plan_id: entity_response.plan_id,
-				business_entity_id,
-				business_entity: business_entity_response.identity,
-				onboard,
-			};
-		})
-	);
-
-	let response = await lastValueFrom(payload.pipe(fold(on_success, on_error)));
 	let with_cache = cache(request);
 
-	return with_cache({ ...response, cache_dependencies });
+	return with_cache({
+		...payload,
+		cache_dependencies,
+	});
 };
 
 const BusinessCredit = () => {

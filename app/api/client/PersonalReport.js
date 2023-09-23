@@ -70,9 +70,11 @@ export default class PersonalReport {
 	get scores() {
 		this.response = this.report.pipe(
 			rxmap((report) => ({
-				experian_personal_score: report.experian_score(),
-				equifax_personal_score: report.equifax_score(),
-				transunion_personal_score: report.transunion_score(),
+				scores: {
+					experian_personal_score: report.experian_score(),
+					equifax_personal_score: report.equifax_score(),
+					transunion_personal_score: report.transunion_score(),
+				},
 			})),
 			concatMap(merge_with_current(this.response))
 		);

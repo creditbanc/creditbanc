@@ -66,7 +66,7 @@ export default class BusinessReport {
 
 	get business_info() {
 		this.response = this.report.pipe(
-			rxmap((report) => ({ ...report.business_info() })),
+			rxmap((report) => ({ business_info: report.business_info() })),
 			concatMap(merge_with_current(this.response))
 		);
 
@@ -220,8 +220,10 @@ export default class BusinessReport {
 	get scores() {
 		this.response = this.report.pipe(
 			rxmap((report) => ({
-				dnb_business_score: report.dnb_score(),
-				experian_business_score: report.experian_score(),
+				scores: {
+					dnb_business_score: report.dnb_score(),
+					experian_business_score: report.experian_score(),
+				},
 			})),
 			concatMap(merge_with_current(this.response))
 		);
