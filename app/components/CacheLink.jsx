@@ -60,21 +60,14 @@ export default function CacheLink({ to, id = "", className = "", children }) {
 	let cache = use_cache((state) => state);
 	let [href, setHref] = useState(to);
 
-	const create_cache_string = (path, cache) => {
-		// console.log("create_cache_string");
-		// console.log(path);
-		// console.log(cache);
+	const get_cache_params = (path, cache) => {
 		let get_route_key = pipe(get("routes"), keys, filter(includes(__, path)), head, defaultTo(""));
 
 		let res = pipe(get_route_key, (route_key) =>
 			pipe(
 				get("routes", route_key),
-
 				defaultTo([]),
-				uniq,
 				map((dependency) => ({ key: dependency, value: cache.keys[dependency] }))
-				// map((dependency) => `${dependency}=${cache.keys[dependency]}`)
-				// join("&")
 			)(cache)
 		)(cache);
 
@@ -83,9 +76,8 @@ export default function CacheLink({ to, id = "", className = "", children }) {
 
 	useEffect(() => {
 		if (!isEmpty(cache.keys)) {
-			let cache_params = create_cache_string(to, cache);
+			let cache_params = get_cache_params(to, cache);
 			let cache_string_keys = pipe(get(all, "key"))(cache_params);
-			// let link = to.includes("?") ? `${to}&${cache_params}` : `${to}?${cache_params}`;
 
 			let url_path = pipe(split("?"), head, defaultTo(""))(to);
 			let path_params = pipe(split("?"), (value) => {
@@ -106,12 +98,12 @@ export default function CacheLink({ to, id = "", className = "", children }) {
 
 			let link = `${url_path}?${params}`;
 
-			console.log("cache_string");
-			console.log(cache_params);
-			console.log(other_params);
-			console.log(params);
-			console.log(url_path);
-			console.log(link);
+			// console.log("cache_string");
+			// console.log(cache_params);
+			// console.log(other_params);
+			// console.log(params);
+			// console.log(url_path);
+			// console.log(link);
 
 			setHref(link);
 		}
