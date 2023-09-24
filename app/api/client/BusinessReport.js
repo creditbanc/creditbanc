@@ -252,6 +252,14 @@ export default class BusinessReport {
 	}
 
 	get fold() {
-		return this.response;
+		return this.response.pipe(
+			catchError((error) => {
+				console.log("BusinessReport.error");
+				console.log(error);
+				return throwError(() => error);
+			}),
+			tap(() => console.log(`BusinessReport.fold`)),
+			tap(inspect)
+		);
 	}
 }

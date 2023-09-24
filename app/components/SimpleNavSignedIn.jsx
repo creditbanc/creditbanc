@@ -402,7 +402,7 @@ export default function Nav({ entity_id, roles, companies }) {
 								{/* <CreditDropdown /> */}
 								{pipe(
 									mapIndexed((item, key) => (
-										<Link
+										<CacheLink
 											to={item.href({
 												entity_id: entity_id,
 												group_id: get_group_id(pathname),
@@ -413,7 +413,7 @@ export default function Nav({ entity_id, roles, companies }) {
 											}`}
 										>
 											{item.name}
-										</Link>
+										</CacheLink>
 									))
 								)(navigation)}
 							</div>

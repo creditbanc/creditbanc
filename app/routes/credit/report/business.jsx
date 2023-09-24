@@ -1,5 +1,6 @@
 import { Outlet, useLoaderData, useLocation } from "@remix-run/react";
 import { get_route_endpoint, get_group_id } from "~/utils/helpers";
+import { cache } from "~/utils/helpers.server";
 import { get_session_entity_id } from "~/utils/auth.server";
 import { redirect } from "@remix-run/node";
 import { VerticalNav } from "~/components/BusinessCreditNav";
@@ -15,6 +16,8 @@ import { fold } from "~/utils/operators";
 import { forkJoin, lastValueFrom, map as rxmap, tap } from "rxjs";
 import Report from "~/api/client/BusinessReport";
 import Entity from "~/api/client/Entity";
+import { useEffect } from "react";
+import { use_cache } from "~/components/CacheLink";
 
 const log_route = `credit.report.business`;
 
@@ -70,6 +73,13 @@ export const loader = async ({ request }) => {
 	let entity_id = await get_session_entity_id(request);
 	let group_id = get_group_id(url.pathname);
 
+	let cache_dependencies = [
+		{
+			name: "business_credit_report",
+			value: 1,
+		},
+	];
+
 	let entity = new Entity(entity_id);
 	let business_report = new Report(group_id);
 
@@ -88,24 +98,37 @@ export const loader = async ({ request }) => {
 	);
 
 	let response = await lastValueFrom(payload.pipe(fold(on_success, on_error)));
-	return response;
+
+	let with_cache = cache(request);
+	return with_cache({ ...response, cache_dependencies });
 };
 
 export default function BusinessReport() {
+	// return null;
 	let location = useLocation();
+	let use_cache_client = use_cache((state) => state.set_dependencies);
 
 	let {
 		plan_id = undefined,
 		report_plan_id = undefined,
 		business_info: business = undefined,
 		scores = {},
+		cache_dependencies = undefined,
 	} = useLoaderData();
 
 	let { experian_business_score = 0, dnb_business_score = 0 } = scores;
 
+	useEffect(() => {
+		console.log("cache.dependencies");
+		console.log(cache_dependencies);
+		if (cache_dependencies !== undefined) {
+			use_cache_client({ path: `/credit/report/business`, dependencies: cache_dependencies });
+		}
+	}, [cache_dependencies]);
+
 	return (
 		<div className="flex flex-col flex-1 overflow-y-scroll overflow-hidden">
-			{plan_id == "essential" && (
+			{/* {plan_id == "essential" && (
 				<div className="flex flex-col w-full items-center">
 					<div className="flex flex-col w-full max-w-5xl">
 						<UpgradeBanner />
@@ -119,13 +142,13 @@ export default function BusinessReport() {
 						<UpgradeCard />
 					</div>
 				</div>
-			)}
+			)} */}
 
 			<div className="flex flex-col w-full overflow-hidden h-full">
 				<div className="flex flex-col w-full mx-auto overflow-hidden h-full">
 					<div className={`@container flex overflow-hidden rounded h-full flex-row gap-x-5`}>
 						<div className="flex flex-col flex-1 overflow-y-scroll rounded-lg scrollbar-none">
-							<Outlet />
+							{/* <Outlet /> */}
 						</div>
 
 						<div className="hidden @3xl:flex flex-col w-[30%] h-full bg-white border rounded">

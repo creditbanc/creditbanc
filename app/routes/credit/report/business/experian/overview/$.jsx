@@ -1,5 +1,6 @@
 import { useLoaderData } from "@remix-run/react";
 import { get_group_id, inspect } from "~/utils/helpers";
+import { cache } from "~/utils/helpers.server";
 import { lastValueFrom, tap } from "rxjs";
 import { fold } from "~/utils/operators";
 import BusinessReport from "~/api/client/BusinessReport";
@@ -20,15 +21,22 @@ const on_error = (error) => {
 export const loader = async ({ request }) => {
 	let url = new URL(request.url);
 	let group_id = get_group_id(url.pathname);
+
+	let cache_dependencies = [
+		{
+			name: "business_credit_report",
+			value: 1,
+		},
+	];
+
 	let report = new BusinessReport(group_id);
+
 	let response = report.business_info.experian_score.experian_risk_class.experian_trade_summary.fold;
+	let payload = await lastValueFrom(response.pipe(fold(on_success, on_error)));
 
-	let result = response.pipe(
-		tap(() => console.log(`${log_route}.tap`)),
-		tap(inspect)
-	);
+	let with_cache = cache(request);
 
-	return await lastValueFrom(result.pipe(fold(on_success, on_error)));
+	return with_cache({ ...payload, cache_dependencies });
 };
 
 const ScoreCard = () => {

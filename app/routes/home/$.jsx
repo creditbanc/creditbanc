@@ -10,7 +10,7 @@ import {
 	store,
 	get,
 	formatPhoneNumber,
-	cache,
+	inspect,
 } from "~/utils/helpers";
 import { __, anyPass, isEmpty, isNil, length, map, not, omit, pipe, values } from "ramda";
 import { all, filter } from "shades";
@@ -33,6 +33,7 @@ import PersonalReport from "~/api/client/PersonalReport";
 import BusinessReport from "~/api/client/BusinessReport";
 import { fold } from "~/utils/operators";
 import Entity from "~/api/client/Entity";
+import { cache } from "~/utils/helpers.server";
 
 let use_view_store = store();
 
@@ -52,6 +53,7 @@ const on_error = (error) => {
 };
 
 export const loader = async ({ request }) => {
+	// return null;
 	let url = new URL(request.url);
 	let entity_id = await get_session_entity_id(request);
 	let business_entity_id = get_entity_id(url.pathname);
@@ -81,6 +83,8 @@ export const loader = async ({ request }) => {
 	let business_response = business_report.business_info.scores.fold;
 
 	let payload = forkJoin({ personal_response, business_response, entity_response, business_entity_response }).pipe(
+		// tap(() => console.log("home.$.payload")),
+		// tap(inspect)
 		rxmap(({ personal_response, business_response, entity_response, business_entity_response }) => {
 			return {
 				business_info: business_response.business_info,
@@ -95,10 +99,11 @@ export const loader = async ({ request }) => {
 			};
 		})
 	);
+	// return null;
 
 	let response = await lastValueFrom(payload.pipe(fold(on_success, on_error)));
+	// return response;
 	let with_cache = cache(request);
-
 	return with_cache({ ...response, cache_dependencies });
 };
 
@@ -1104,7 +1109,8 @@ export default function Home() {
 		length
 	)(onboard);
 
-	// console.log("fetcher.subscription");
+	console.log("home.$");
+	console.log(cache_dependencies);
 	// console.log(business_info);
 	// console.log("business_scores");
 	// console.log(business_scores);
@@ -1142,9 +1148,13 @@ export default function Home() {
 		set_view(loader_data);
 	}, []);
 
-	// useEffect(() => {
-	// 	use_cache_client({ path: `/home`, dependencies: cache_dependencies });
-	// }, []);
+	useEffect(() => {
+		console.log("cache.dependencies");
+		console.log(cache_dependencies);
+		if (cache_dependencies !== undefined) {
+			use_cache_client({ path: `/home`, dependencies: cache_dependencies });
+		}
+	}, [cache_dependencies]);
 
 	// useEffect(() => {
 	// 	run_fetchers();
