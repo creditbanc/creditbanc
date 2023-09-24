@@ -104,7 +104,6 @@ export const loader = async ({ request }) => {
 };
 
 export default function BusinessReport() {
-	// return null;
 	let location = useLocation();
 	let use_cache_client = use_cache((state) => state.set_dependencies);
 

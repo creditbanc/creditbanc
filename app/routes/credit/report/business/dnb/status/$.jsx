@@ -6,6 +6,9 @@ import { get } from "shades";
 import { lastValueFrom } from "rxjs";
 import { fold } from "~/utils/operators";
 import BusinessReport from "~/api/client/BusinessReport";
+import { cache } from "~/utils/helpers.server";
+import { use_cache } from "~/components/CacheLink";
+import { useEffect } from "react";
 
 const log_route = `credit.report.business.dnb.status`;
 
@@ -22,10 +25,21 @@ const on_error = (error) => {
 
 export const loader = async ({ request }) => {
 	let url = new URL(request.url);
+
+	let cache_dependencies = [
+		{
+			name: "business_credit_report",
+			value: 1,
+		},
+	];
+
 	let group_id = get_group_id(url.pathname);
 	let report = new BusinessReport(group_id);
 	let response = report.business_info.dnb_score.dnb_delinquency_score.fold;
-	return await lastValueFrom(response.pipe(fold(on_success, on_error)));
+	let payload = await lastValueFrom(response.pipe(fold(on_success, on_error)));
+
+	let with_cache = cache(request);
+	return with_cache({ ...payload, cache_dependencies });
 };
 
 const PaymentStatus = () => {
@@ -190,6 +204,15 @@ const ExplanationCard = () => {
 };
 
 export default function Container() {
+	let { cache_dependencies } = useLoaderData();
+	let use_cache_client = use_cache((state) => state.set_dependencies);
+
+	useEffect(() => {
+		if (cache_dependencies !== undefined) {
+			use_cache_client({ path: `/credit/report/business/dnb`, dependencies: cache_dependencies });
+		}
+	}, [cache_dependencies]);
+
 	return (
 		<div className="flex flex-col w-full space-y-5">
 			<div>

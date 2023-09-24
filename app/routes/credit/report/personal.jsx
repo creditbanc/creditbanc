@@ -1,38 +1,17 @@
 import { useEffect, useState, useRef } from "react";
-import { Link, Outlet, useLoaderData, useLocation } from "@remix-run/react";
+import { Outlet, useLoaderData, useLocation } from "@remix-run/react";
 import { useLayoutStore } from "~/stores/useLayoutStore";
 import { useElmSize } from "~/hooks/useElmSize";
-import { get_group_id, get_route_endpoint, get_file_id, inspect, get_entity_id, capitalize } from "~/utils/helpers";
-import { get_docs as get_group_docs } from "~/utils/group.server";
-// import { head, pipe } from "ramda";
-// import { filter } from "shades";
+import { get_group_id, get_route_endpoint, capitalize } from "~/utils/helpers";
 import { PersonalCreditTabsVertical, CreditTabsSelect } from "~/components/PersonalCreditTabs";
 import CreditScoreHero from "~/components/CreditScoreHero";
-import { get_session_entity_id, get_user_id } from "~/utils/auth.server";
-import { validate_action, is_resource_owner_p } from "~/utils/resource.server";
-import { redirect } from "@remix-run/node";
-import { Array, get_credit_report } from "~/data/array";
-import { prisma } from "~/utils/prisma.server";
-import UpgradeMembership from "~/components/UpgradeMembership";
-import UpdatePersonalReport from "~/components/UpdatePersonalReport";
-import { plans_index } from "~/data/plans_index";
 import { useReportPageLayoutStore } from "~/stores/useReportPageLayoutStore";
-import { DocumentDuplicateIcon, LinkIcon } from "@heroicons/react/24/outline";
-// import { get_collection, get_doc } from "~/utils/firebase";
-import axios from "axios";
-// import { is_authorized_f } from "~/api/auth";
-
-import { get_collection, get_doc, set_doc, update_doc } from "~/utils/firebase";
-import { head, pipe, identity, curry, defaultTo, pick, toLower, tryCatch, always } from "ramda";
-import { LendflowExternal, LendflowInternal } from "~/utils/lendflow.server";
-import { get, filter } from "shades";
-import { map as rxmap, filter as rxfilter, concatMap, tap, take, catchError } from "rxjs/operators";
-import { from, lastValueFrom, forkJoin, Subject, of as rxof, iif, throwError } from "rxjs";
-import { fold, ifFalse, ifEmpty } from "~/utils/operators";
-import { is_authorized_f } from "~/api/auth";
-import { ArrayExternal } from "~/api/external/Array";
-import { ArrayInternal } from "~/api/internal/Array";
+import { pipe, toLower, tryCatch, always } from "ramda";
+import { lastValueFrom } from "rxjs";
+import { fold } from "~/utils/operators";
 import PersonalReport from "~/api/client/PersonalReport";
+import { cache } from "~/utils/helpers.server";
+import { use_cache } from "~/components/CacheLink";
 
 const log_route = `credit.report.personal`;
 
@@ -49,10 +28,21 @@ const on_error = (error) => {
 
 export const loader = async ({ request }) => {
 	let url = new URL(request.url);
+
+	let cache_dependencies = [
+		{
+			name: "personal_credit_report",
+			value: 1,
+		},
+	];
+
 	let group_id = get_group_id(url.pathname);
 	let report = new PersonalReport(group_id);
 	let response = report.experian_score.equifax_score.transunion_score.first_name.last_name.fold;
-	return await lastValueFrom(response.pipe(fold(on_success, on_error)));
+	let payload = await lastValueFrom(response.pipe(fold(on_success, on_error)));
+
+	let with_cache = cache(request);
+	return with_cache({ ...payload, cache_dependencies });
 };
 
 // const subject = new Subject();
@@ -289,7 +279,9 @@ export default function CreditReport() {
 		experian_personal_score: experian,
 		equifax_personal_score: equifax,
 		transunion_personal_score: transunion,
-	} = useLoaderData() ?? {};
+		cache_dependencies,
+	} = useLoaderData();
+	let use_cache_client = use_cache((state) => state.set_dependencies);
 	const [target, setTarget] = useState();
 	const elmSize = useElmSize(target);
 	let setContentWidth = useLayoutStore((state) => state.set_content_width);
@@ -301,6 +293,12 @@ export default function CreditReport() {
 
 	first_name = tryCatch(pipe(toLower, capitalize), always(""))(first_name);
 	last_name = tryCatch(pipe(toLower, capitalize), always(""))(last_name);
+
+	useEffect(() => {
+		if (cache_dependencies !== undefined) {
+			use_cache_client({ path: `/credit/report/personal`, dependencies: cache_dependencies });
+		}
+	}, [cache_dependencies]);
 
 	useEffect(() => {
 		if (content_width > 640) {

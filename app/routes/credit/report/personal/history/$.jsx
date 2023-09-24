@@ -3,10 +3,12 @@ import { FactorBar } from "~/components/FactorBar";
 import { Accounts } from "~/components/TradeLines";
 import { useLoaderData } from "@remix-run/react";
 import { get_group_id } from "~/utils/helpers";
-import { useReportPageLayoutStore } from "~/stores/useReportPageLayoutStore";
 import { lastValueFrom } from "rxjs";
 import { fold } from "~/utils/operators";
 import PersonalReport from "~/api/client/PersonalReport";
+import { cache } from "~/utils/helpers.server";
+import { use_cache } from "~/components/CacheLink";
+import { useEffect } from "react";
 
 const log_route = `credit.report.personal.history`;
 
@@ -23,10 +25,21 @@ const on_error = (error) => {
 
 export const loader = async ({ request }) => {
 	let url = new URL(request.url);
+
+	let cache_dependencies = [
+		{
+			name: "personal_credit_report",
+			value: 1,
+		},
+	];
+
 	let group_id = get_group_id(url.pathname);
 	let report = new PersonalReport(group_id);
 	let response = report.trade_lines.fold;
-	return await lastValueFrom(response.pipe(fold(on_success, on_error)));
+	let payload = await lastValueFrom(response.pipe(fold(on_success, on_error)));
+
+	let with_cache = cache(request);
+	return with_cache({ ...payload, cache_dependencies });
 };
 
 const InfoCard = () => {
@@ -104,7 +117,8 @@ const InfoCard = () => {
 };
 
 export default function History() {
-	let { trade_lines = [], plan_id = "essential" } = useLoaderData();
+	let { trade_lines = [], plan_id = "essential", cache_dependencies } = useLoaderData();
+	let use_cache_client = use_cache((state) => state.set_dependencies);
 
 	// let experian = pipe(get(plan_id, "personal", "experian", "authorized"))(plans);
 	// let equifax = pipe(get(plan_id, "personal", "equifax", "authorized"))(plans);
@@ -113,6 +127,12 @@ export default function History() {
 	let experian = true;
 	let equifax = true;
 	let transunion = true;
+
+	useEffect(() => {
+		if (cache_dependencies !== undefined) {
+			use_cache_client({ path: `/credit/report/personal`, dependencies: cache_dependencies });
+		}
+	}, [cache_dependencies]);
 
 	return (
 		<div className={`flex flex-col w-full h-full py-5`}>

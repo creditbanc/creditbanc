@@ -1109,8 +1109,8 @@ export default function Home() {
 		length
 	)(onboard);
 
-	console.log("home.$");
-	console.log(cache_dependencies);
+	// console.log("home.$");
+	// console.log(cache_dependencies);
 	// console.log(business_info);
 	// console.log("business_scores");
 	// console.log(business_scores);
@@ -1256,7 +1256,7 @@ export default function Home() {
 								</div>
 							)}
 						</div>
-						<div className="flex flex-col w-full h-fit bg-white px-5 pt-5 border rounded">
+						{/* <div className="flex flex-col w-full h-fit bg-white px-5 pt-5 border rounded">
 							<div className="border-b border-gray-200 pb-3 flex flex-col sticky top-0 bg-white z-10">
 								<div>
 									<h3 className="mt-2 text-base font-semibold leading-6 text-gray-900">Courses</h3>
@@ -1266,50 +1266,50 @@ export default function Home() {
 							<div className="flex flex-col w-full py-5 scrollbar-none">
 								<Courses />
 							</div>
-						</div>
+						</div> */}
 					</div>
 				</div>
 				<div className="hidden lg:flex flex-col lg:w-[30%] rounded border bg-white">
-					{/* <div className="flex flex-col w-full h-full rounded bg-white">
-							<div className="flex flex-row py-4 px-5 justify-between w-full items-center">
-								<div>Notifications</div>
-							</div>
-							<div className="flex flex-col w-full border-t"></div>
-							<div className="flex flex-col overflow-scroll scrollbar-none">
-								<div className="border-b border-gray-200 bg-white px-4 py-3 sm:px-6 sticky top-0 z-10">
-									<h3 className="text-base font-semibold leading-6 text-gray-900 my-2">
-										Complete Your Profile
-									</h3>
+					<div className="flex flex-col w-full h-full rounded bg-white">
+						<div className="flex flex-row py-4 px-5 justify-between w-full items-center">
+							<div>Notifications</div>
+						</div>
+						<div className="flex flex-col w-full border-t"></div>
+						<div className="flex flex-col overflow-scroll scrollbar-none">
+							<div className="border-b border-gray-200 bg-white px-4 py-3 sm:px-6 sticky top-0 z-10">
+								<h3 className="text-base font-semibold leading-6 text-gray-900 my-2">
+									Complete Your Profile
+								</h3>
 
-									<div className="flex flex-col w-full space-y-5">
-										<p className="mt-1 text-sm text-gray-500">
-											Follow the steps below to complete your CreditBanc profile
-										</p>
-									</div>
-
-									<div className="my-2 flex flex-col w-full">
-										<div className="flex flex-row w-full justify-between my-2 text-sm text-gray-400">
-											<div>{onboard_percent_completed}%</div>
-											<div>
-												{onboard_steps_completed}/{onboard_num_of_steps} steps
-											</div>
-										</div>
-										<div className="w-full bg-gray-200 rounded-full h-2.5 dark:bg-gray-700">
-											<div
-												className={`flex flex-col bg-blue-600 h-2.5 rounded-full`}
-												style={{
-													width: `${onboard_percent_completed}%`,
-												}}
-											></div>
-										</div>
-									</div>
+								<div className="flex flex-col w-full space-y-5">
+									<p className="mt-1 text-sm text-gray-500">
+										Follow the steps below to complete your CreditBanc profile
+									</p>
 								</div>
 
-								<div className="flex flex-col w-full my-3">
-									<Notifications />
+								<div className="my-2 flex flex-col w-full">
+									<div className="flex flex-row w-full justify-between my-2 text-sm text-gray-400">
+										<div>{onboard_percent_completed}%</div>
+										<div>
+											{onboard_steps_completed}/{onboard_num_of_steps} steps
+										</div>
+									</div>
+									<div className="w-full bg-gray-200 rounded-full h-2.5 dark:bg-gray-700">
+										<div
+											className={`flex flex-col bg-blue-600 h-2.5 rounded-full`}
+											style={{
+												width: `${onboard_percent_completed}%`,
+											}}
+										></div>
+									</div>
 								</div>
 							</div>
-						</div> */}
+
+							<div className="flex flex-col w-full my-3">
+								<Notifications />
+							</div>
+						</div>
+					</div>
 				</div>
 			</div>
 		</div>
