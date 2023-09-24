@@ -1221,11 +1221,11 @@ export default function Home() {
 			<div className="flex flex-row h-full w-full p-5 space-x-5">
 				<div className="flex flex-col h-full w-full lg:w-[70%] rounded overflow-y-scroll scrollbar-none ">
 					<div className="flex flex-col h-full max-w-7xl gap-y-5">
-						{plan_id == "essential" && (
+						{/* {plan_id == "essential" && (
 							<div className="mb-5">
 								<UpgradeBanner />
 							</div>
-						)}
+						)} */}
 						<HeadingTwo />
 
 						{is_loading && (

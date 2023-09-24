@@ -241,6 +241,16 @@ export default class BusinessReport {
 		return this;
 	}
 
+	get plan_id() {
+		this.response = this.application.pipe(
+			rxmap(pipe(get("plan_id"))),
+			rxmap((plan_id) => ({ plan_id })),
+			concatMap(merge_with_current(this.response))
+		);
+
+		return this;
+	}
+
 	get fold() {
 		return this.response;
 	}

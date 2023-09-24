@@ -518,6 +518,40 @@ video {
   --tw-backdrop-sepia:  ;
 }
 
+.container {
+  width: 100%;
+}
+
+@media (min-width: 640px) {
+  .container {
+    max-width: 640px;
+  }
+}
+
+@media (min-width: 768px) {
+  .container {
+    max-width: 768px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .container {
+    max-width: 1024px;
+  }
+}
+
+@media (min-width: 1280px) {
+  .container {
+    max-width: 1280px;
+  }
+}
+
+@media (min-width: 1536px) {
+  .container {
+    max-width: 1536px;
+  }
+}
+
 .sr-only {
   position: absolute;
   width: 1px;
@@ -3772,6 +3806,10 @@ video {
   display: none;
 }
 
+.\@container {
+  container-type: inline-size;
+}
+
 .\[mask-image\:linear-gradient\(to_bottom\2c white_20\%\2c transparent_75\%\)\] {
   -webkit-mask-image: linear-gradient(to bottom,white 20%,transparent 75%);
           mask-image: linear-gradient(to bottom,white 20%,transparent 75%);
@@ -4188,6 +4226,12 @@ body {
 .active\:before\:bg-transparent:active::before {
   content: var(--tw-content);
   background-color: transparent;
+}
+
+@container (min-width: 48rem) {
+  .\@3xl\:flex {
+    display: flex;
+  }
 }
 
 @media (prefers-color-scheme: dark) {

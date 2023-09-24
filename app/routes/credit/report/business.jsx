@@ -1,26 +1,22 @@
-import { useEffect, useState } from "react";
-import { Link, Outlet, useLoaderData, useLocation, useSubmit } from "@remix-run/react";
-import { useLayoutStore } from "~/stores/useLayoutStore";
-import { useElmSize } from "~/hooks/useElmSize";
-import { get_route_endpoint, get_file_id, inspect, get_group_id, get_entity_id } from "~/utils/helpers";
-import { get_session_entity_id, get_user_id } from "~/utils/auth.server";
+import { Outlet, useLoaderData, useLocation } from "@remix-run/react";
+import { get_route_endpoint, get_group_id } from "~/utils/helpers";
+import { get_session_entity_id } from "~/utils/auth.server";
 import { redirect } from "@remix-run/node";
 import { VerticalNav } from "~/components/BusinessCreditNav";
 import { prisma } from "~/utils/prisma.server";
 import { plans_index } from "~/data/plans_index";
 import { plan_product_requests } from "~/data/plan_product_requests";
-import { head, pipe } from "ramda";
+import { pipe } from "ramda";
 import { get } from "shades";
-import { Lendflow } from "~/data/lendflow";
 import { update_lendflow_report, get_lendflow_report } from "~/utils/lendflow.server";
-import deepEqual from "deep-equal";
 import UpgradeBanner from "~/components/UpgradeMembership";
 import UpgradeCard from "~/components/UpgradeCard";
-import { DocumentDuplicateIcon, LinkIcon } from "@heroicons/react/24/outline";
-import { get_collection, get_doc, set_doc } from "~/utils/firebase";
-import axios from "axios";
-import { is_authorized_f } from "~/api/auth";
-import { encode } from "js-base64";
+import { fold } from "~/utils/operators";
+import { forkJoin, lastValueFrom, map as rxmap, tap } from "rxjs";
+import Report from "~/api/client/BusinessReport";
+import Entity from "~/api/client/Entity";
+
+const log_route = `credit.report.business`;
 
 export const action = async ({ request }) => {
 	var form = await request.formData();
@@ -58,115 +54,54 @@ export const action = async ({ request }) => {
 	return redirect(redirect_to);
 };
 
+const on_success = (response) => {
+	console.log(`${log_route}.success`);
+	return response;
+};
+
+const on_error = (error) => {
+	console.log(`${log_route}.error`);
+	console.log(error);
+	return error;
+};
+
 export const loader = async ({ request }) => {
 	let url = new URL(request.url);
-	let { origin } = url;
-	// let file_id = get_file_id(url.pathname);
 	let entity_id = await get_session_entity_id(request);
 	let group_id = get_group_id(url.pathname);
 
-	let is_authorized = await is_authorized_f(entity_id, group_id, "credit", "read");
+	let entity = new Entity(entity_id);
+	let business_report = new Report(group_id);
 
-	// console.log("is_authorized______");
-	// console.log(is_authorized);
+	let entity_response = entity.plan_id.fold;
+	let business_response = business_report.business_info.application_id.plan_id.scores.fold;
 
-	if (!is_authorized) {
-		return redirect(`/home/resource/e/${entity_id}/g/${group_id}`);
-	}
+	let payload = forkJoin({ business_response, entity_response }).pipe(
+		rxmap(({ business_response, entity_response }) => {
+			return {
+				...business_response,
+				entity_id,
+				plan_id: entity_response.plan_id,
+				report_plan_id: business_response.plan_id,
+			};
+		})
+	);
 
-	let business_credit_report_queries = [
-		{
-			param: "group_id",
-			predicate: "==",
-			value: group_id,
-		},
-		{
-			param: "type",
-			predicate: "==",
-			value: "business_credit_report",
-		},
-	];
-
-	let report_response = await get_collection({
-		path: ["credit_reports"],
-		queries: business_credit_report_queries,
-	});
-
-	let report = pipe(head)(report_response);
-
-	// console.log("dbreport");
-	// console.log(report);
-
-	if (!report) {
-		return redirect(`/credit/business/new/resource/e/${entity_id}/g/${group_id}`);
-	}
-
-	let lendflow_report = await get_lendflow_report(report.application_id);
-	// let is_latest_report = deepEqual(report.data, lendflow_report.data);
-
-	let payload = {
-		...report,
-		...lendflow_report,
-	};
-
-	await set_doc(["credit_reports", report.doc_id], payload);
-
-	let { plan_id } = await get_doc(["entity", entity_id]);
-
-	let credit_scores_api_response = await axios({
-		method: "get",
-		url: `${origin}/credit/report/api/scores/resource/e/${entity_id}/g/${group_id}`,
-		withCredentials: true,
-	});
-
-	let { data: scores = {} } = credit_scores_api_response;
-
-	let business_info_response = await axios({
-		method: "get",
-		url: `${origin}/credit/report/api/businessinfo/resource/e/${entity_id}/g/${group_id}`,
-		withCredentials: true,
-		headers: {
-			cookie: `creditbanc_session=${encode(JSON.stringify({ entity_id }))}`,
-		},
-	});
-
-	let { data: business = {} } = business_info_response;
-
-	return {
-		entity_id,
-		plan_id,
-		// report_id: file_id,
-		application_id: report?.application_id,
-		report_plan_id: report?.plan_id,
-		business: business?.business_info,
-		scores,
-	};
+	let response = await lastValueFrom(payload.pipe(fold(on_success, on_error)));
+	return response;
 };
 
 export default function BusinessReport() {
 	let location = useLocation();
-	const [target, setTarget] = useState();
-	const elmSize = useElmSize(target);
-	let setContentWidth = useLayoutStore((state) => state.set_content_width);
-	let content_width = useLayoutStore((state) => state.content_width);
-	let [isMobile, setIsMobile] = useState(true);
-	let { plan_id = undefined, report_plan_id = undefined, business = undefined, scores = {} } = useLoaderData();
+
+	let {
+		plan_id = undefined,
+		report_plan_id = undefined,
+		business_info: business = undefined,
+		scores = {},
+	} = useLoaderData();
 
 	let { experian_business_score = 0, dnb_business_score = 0 } = scores;
-
-	useEffect(() => {
-		if (content_width > 640) {
-			setIsMobile(false);
-		} else {
-			setIsMobile(true);
-		}
-	}, [content_width]);
-
-	useEffect(() => {
-		if (elmSize) {
-			setContentWidth(elmSize.width);
-		}
-	}, [elmSize]);
 
 	return (
 		<div className="flex flex-col flex-1 overflow-y-scroll overflow-hidden">
@@ -187,29 +122,26 @@ export default function BusinessReport() {
 			)}
 
 			<div className="flex flex-col w-full overflow-hidden h-full">
-				<div className="flex flex-col w-full mx-auto overflow-hidden h-full" ref={setTarget}>
-					<div
-						className={`flex overflow-hidden rounded h-full ${isMobile ? "flex-col" : "flex-row gap-x-5"}`}
-					>
+				<div className="flex flex-col w-full mx-auto overflow-hidden h-full">
+					<div className={`@container flex overflow-hidden rounded h-full flex-row gap-x-5`}>
 						<div className="flex flex-col flex-1 overflow-y-scroll rounded-lg scrollbar-none">
 							<Outlet />
 						</div>
 
-						{!isMobile && (
-							<div className="sm:flex flex-col w-[30%] h-full bg-white border rounded">
-								<div className="p-5">
-									<div className="flex flex-row space-x-3 items-center">
-										<div>
-											<span className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-gray-500">
-												<span className="text-lg font-medium leading-none text-white">
-													{business?.name?.charAt(0)?.toUpperCase()}
-												</span>
+						<div className="hidden @3xl:flex flex-col w-[30%] h-full bg-white border rounded">
+							<div className="p-5">
+								<div className="flex flex-row space-x-3 items-center">
+									<div>
+										<span className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-gray-500">
+											<span className="text-lg font-medium leading-none text-white">
+												{business?.name?.charAt(0)?.toUpperCase()}
 											</span>
-										</div>
-										<div>{business?.name}</div>
+										</span>
 									</div>
+									<div>{business?.name}</div>
 								</div>
-								{/* <div className="flex flex-col py-2">
+							</div>
+							{/* <div className="flex flex-col py-2">
 									<Link
 										to={`/financial/transactions`}
 										className="px-5 mb-4 flex flex-row items-center space-x-3 text-blue-500 cursor-pointer text-sm"
@@ -223,33 +155,32 @@ export default function BusinessReport() {
 										</div>
 									</Link>
 								</div> */}
-								<div className="flex flex-col w-full overflow-scroll scrollbar-none">
-									<div className="border-t"></div>
-									<div className="flex flex-col w-full p-5 space-y-3">
-										<div className="text-gray-400 text-sm">Credit Scores</div>
-										<div className="flex flex-row">
-											<div className="flex flex-col w-1/2 text-sm space-y-1">
-												<div className="text-gray-400">Dun & Bradstreet</div>
-												<div className="text-lg">{dnb_business_score}</div>
-											</div>
-											<div className="flex flex-col w-1/2 text-sm space-y-1">
-												<div className="text-gray-400">Intelliscore</div>
-												<div className="text-lg">{experian_business_score}</div>
-											</div>
+							<div className="flex flex-col w-full overflow-scroll scrollbar-none">
+								<div className="border-t"></div>
+								<div className="flex flex-col w-full p-5 space-y-3">
+									<div className="text-gray-400 text-sm">Credit Scores</div>
+									<div className="flex flex-row">
+										<div className="flex flex-col w-1/2 text-sm space-y-1">
+											<div className="text-gray-400">Dun & Bradstreet</div>
+											<div className="text-lg">{dnb_business_score}</div>
+										</div>
+										<div className="flex flex-col w-1/2 text-sm space-y-1">
+											<div className="text-gray-400">Intelliscore</div>
+											<div className="text-lg">{experian_business_score}</div>
 										</div>
 									</div>
-									<div className="border-t"></div>
-									<div className="flex flex-col px-5 pt-5 text-sm space-y-3">
-										<div className=" text-gray-400">Quick Links</div>
+								</div>
+								<div className="border-t"></div>
+								<div className="flex flex-col px-5 pt-5 text-sm space-y-3">
+									<div className=" text-gray-400">Quick Links</div>
 
-										<VerticalNav
-											selected={get_route_endpoint(location.pathname)}
-											report_plan_id={report_plan_id}
-										/>
-									</div>
+									<VerticalNav
+										selected={get_route_endpoint(location.pathname)}
+										report_plan_id={report_plan_id}
+									/>
 								</div>
 							</div>
-						)}
+						</div>
 					</div>
 				</div>
 			</div>
