@@ -1,5 +1,5 @@
-import { Outlet, useLoaderData, useLocation } from "@remix-run/react";
-import { get_route_endpoint, get_group_id } from "~/utils/helpers";
+import { Outlet, useFetcher, useLoaderData, useLocation } from "@remix-run/react";
+import { get_route_endpoint, get_group_id, get_entity_id, fetcher_payload_maker } from "~/utils/helpers";
 import { cache } from "~/utils/helpers.server";
 import { get_session_entity_id } from "~/utils/auth.server";
 import { redirect } from "@remix-run/node";
@@ -13,7 +13,7 @@ import { update_lendflow_report, get_lendflow_report } from "~/utils/lendflow.se
 import UpgradeBanner from "~/components/UpgradeMembership";
 import UpgradeCard from "~/components/UpgradeCard";
 import { fold } from "~/utils/operators";
-import { forkJoin, lastValueFrom, map as rxmap, tap } from "rxjs";
+import { forkJoin, lastValueFrom, of as rxof, map as rxmap, tap, filter as rxfilter } from "rxjs";
 import Report from "~/api/client/BusinessReport";
 import Entity from "~/api/client/Entity";
 import { useEffect } from "react";
@@ -76,7 +76,7 @@ export const loader = async ({ request }) => {
 	let cache_dependencies = [
 		{
 			name: "business_credit_report",
-			value: 1,
+			value: 2,
 		},
 	];
 
@@ -84,7 +84,7 @@ export const loader = async ({ request }) => {
 	let business_report = new Report(group_id);
 
 	let entity_response = entity.plan_id.fold;
-	let business_response = business_report.business_info.application_id.plan_id.scores.fold;
+	let business_response = business_report.business_info.application_id.plan_id.scores.report_sha.fold;
 
 	let payload = forkJoin({ business_response, entity_response }).pipe(
 		rxmap(({ business_response, entity_response }) => {
@@ -100,12 +100,24 @@ export const loader = async ({ request }) => {
 	let response = await lastValueFrom(payload.pipe(fold(on_success, on_error)));
 
 	let with_cache = cache(request);
-	return with_cache({ ...response, cache_dependencies });
+	return with_cache({
+		...response,
+		cache_dependencies: [
+			{
+				name: "business_credit_report",
+				value: response.report_sha,
+			},
+		],
+	});
 };
 
 export default function BusinessReport() {
-	let location = useLocation();
+	let { pathname } = useLocation();
+	let entity_id = get_entity_id(pathname);
+	let group_id = get_group_id(pathname);
+
 	let use_cache_client = use_cache((state) => state.set_dependencies);
+	let update_cache_key = use_cache((state) => state.set_state);
 
 	let {
 		plan_id = undefined,
@@ -117,11 +129,42 @@ export default function BusinessReport() {
 
 	let { experian_business_score = 0, dnb_business_score = 0 } = scores;
 
+	let business_report_shas_fetcher = useFetcher();
+	let business_report_shas_url = `/credit/report/api/business/shas/resource/e/${entity_id}/g/${group_id}`;
+
+	// console.log("fetcher.data");
+	// console.log(business_report_shas_fetcher.data);
+
+	const on_should_update_cache = ({ prev_sha, curr_sha }, update_key) => {
+		let update_cache = () => update_cache_key(["keys", update_key], `${curr_sha}`);
+
+		return rxof({ prev_sha, curr_sha }).pipe(
+			tap(console.log("on_should_update")),
+			tap(console.log),
+			rxfilter(({ prev_sha, curr_sha }) => prev_sha !== curr_sha),
+			tap(update_cache)
+		);
+	};
+
+	useEffect(() => {
+		business_report_shas_fetcher.submit(...fetcher_payload_maker(business_report_shas_url));
+	}, []);
+
 	useEffect(() => {
 		if (cache_dependencies !== undefined) {
+			console.log("udpate_cache_dependencies");
+			console.log(cache_dependencies);
 			use_cache_client({ path: `/credit/report/business`, dependencies: cache_dependencies });
 		}
-	}, [cache_dependencies]);
+	}, []);
+
+	useEffect(() => {
+		if (business_report_shas_fetcher.data) {
+			console.log("business_report_shas_fetcher.data");
+			console.log(business_report_shas_fetcher.data);
+			on_should_update_cache(business_report_shas_fetcher.data, "business_credit_report").subscribe();
+		}
+	}, [business_report_shas_fetcher.data]);
 
 	return (
 		<div className="flex flex-col flex-1 overflow-y-scroll overflow-hidden">
@@ -195,7 +238,7 @@ export default function BusinessReport() {
 									<div className=" text-gray-400">Quick Links</div>
 
 									<VerticalNav
-										selected={get_route_endpoint(location.pathname)}
+										selected={get_route_endpoint(pathname)}
 										report_plan_id={report_plan_id}
 									/>
 								</div>

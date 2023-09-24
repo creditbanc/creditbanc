@@ -1,4 +1,4 @@
-import { useLoaderData } from "@remix-run/react";
+import { useFetcher, useLoaderData } from "@remix-run/react";
 import { get_group_id, inspect } from "~/utils/helpers";
 import { cache } from "~/utils/helpers.server";
 import { lastValueFrom, tap } from "rxjs";
@@ -33,7 +33,7 @@ export const loader = async ({ request }) => {
 
 	let report = new BusinessReport(group_id);
 
-	let response = report.business_info.experian_score.experian_risk_class.fold;
+	let response = report.business_info.experian_score.experian_risk_class.application_id.fold;
 	let payload = await lastValueFrom(response.pipe(fold(on_success, on_error)));
 
 	let with_cache = cache(request);
@@ -86,11 +86,11 @@ export default function Container() {
 	let { cache_dependencies } = useLoaderData();
 	let use_cache_client = use_cache((state) => state.set_dependencies);
 
-	useEffect(() => {
-		if (cache_dependencies !== undefined) {
-			use_cache_client({ path: `/credit/report/business/experian`, dependencies: cache_dependencies });
-		}
-	}, [cache_dependencies]);
+	// useEffect(() => {
+	// 	if (cache_dependencies !== undefined) {
+	// 		use_cache_client({ path: `/credit/report/business/experian`, dependencies: cache_dependencies });
+	// 	}
+	// }, [cache_dependencies]);
 
 	return (
 		<div className="flex flex-col w-full space-y-5">

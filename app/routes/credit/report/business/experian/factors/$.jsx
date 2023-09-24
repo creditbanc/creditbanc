@@ -125,11 +125,11 @@ export default function Container() {
 	let { cache_dependencies } = loader_data;
 	let use_cache_client = use_cache((state) => state.set_dependencies);
 
-	useEffect(() => {
-		if (cache_dependencies !== undefined) {
-			use_cache_client({ path: `/credit/report/business/experian`, dependencies: cache_dependencies });
-		}
-	}, [cache_dependencies]);
+	// useEffect(() => {
+	// 	if (cache_dependencies !== undefined) {
+	// 		use_cache_client({ path: `/credit/report/business/experian`, dependencies: cache_dependencies });
+	// 	}
+	// }, [cache_dependencies]);
 
 	return (
 		<div className="flex flex-col w-full space-y-5">

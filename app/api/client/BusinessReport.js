@@ -1,5 +1,5 @@
-import { get_group_id, inspect, get } from "~/utils/helpers";
-import { always, apply, curry, equals, head, identity, ifElse, pipe, tryCatch } from "ramda";
+import { get_group_id, inspect, get, normalize_id } from "~/utils/helpers";
+import { always, apply, curry, equals, head, identity, ifElse, omit, pickAll, pipe, tryCatch, without } from "ramda";
 import { Lendflow } from "~/data/lendflow";
 import { get_collection, get_doc, set_doc } from "~/utils/firebase";
 import { LendflowExternal, LendflowInternal } from "~/utils/lendflow.server";
@@ -260,6 +260,48 @@ export default class BusinessReport {
 		return this;
 	}
 
+	get _lendflow_report() {
+		return this.application.pipe(
+			rxmap(pipe(get("application_id"))),
+			concatMap(LendflowExternal.get_lendflow_report),
+			rxmap(pipe(get("data", "data")))
+		);
+	}
+
+	get _report() {
+		return this.application.pipe(rxmap(pipe(get("data"))));
+	}
+
+	get reports() {
+		this.response = forkJoin({ report: this._report, lendflow_report: this._lendflow_report }).pipe(
+			rxmap((reports) => ({ reports })),
+			concatMap(merge_with_current(this.response))
+		);
+
+		return this;
+	}
+
+	get report_sha() {
+		this.response = from(this._report).pipe(
+			rxmap((report) => ({ report_sha: normalize_id(report) })),
+			concatMap(merge_with_current(this.response))
+		);
+
+		return this;
+	}
+
+	get shas() {
+		this.response = forkJoin({ report: this._report, lendflow_report: this._lendflow_report }).pipe(
+			rxmap(({ report, lendflow_report }) => ({
+				prev_sha: normalize_id(report),
+				curr_sha: normalize_id(lendflow_report),
+			})),
+			concatMap(merge_with_current(this.response))
+		);
+
+		return this;
+	}
+
 	get fold() {
 		return this.response.pipe(
 			catchError((error) => {
@@ -268,7 +310,7 @@ export default class BusinessReport {
 				return throwError(() => error);
 			}),
 			tap(() => console.log(`BusinessReport.fold`)),
-			tap(inspect)
+			tap(console.log)
 		);
 	}
 }

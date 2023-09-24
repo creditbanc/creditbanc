@@ -11,6 +11,7 @@ import {
 	get,
 	formatPhoneNumber,
 	inspect,
+	fetcher_payload_maker,
 } from "~/utils/helpers";
 import { __, anyPass, isEmpty, isNil, length, map, not, omit, pipe, values } from "ramda";
 import { all, filter } from "shades";
@@ -1115,10 +1116,6 @@ export default function Home() {
 	// console.log(business_scores_fetcher.data);
 	// console.log(business_info_fetcher.data);
 
-	let fetcher_payload_maker = (url) => {
-		return [{}, { method: "post", action: url }];
-	};
-
 	const run_fetchers = async () => {
 		business_info_fetcher.submit(...fetcher_payload_maker(business_info_url));
 		personal_scores_fetcher.submit(...fetcher_payload_maker(personal_scores_url));
@@ -1149,7 +1146,7 @@ export default function Home() {
 		if (cache_dependencies !== undefined) {
 			use_cache_client({ path: `/home`, dependencies: cache_dependencies });
 		}
-	}, [cache_dependencies]);
+	}, []);
 
 	// useEffect(() => {
 	// 	run_fetchers();
