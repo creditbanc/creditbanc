@@ -83,8 +83,6 @@ export const loader = async ({ request }) => {
 	let business_response = business_report.business_info.scores.fold;
 
 	let payload = forkJoin({ personal_response, business_response, entity_response, business_entity_response }).pipe(
-		// tap(() => console.log("home.$.payload")),
-		// tap(inspect)
 		rxmap(({ personal_response, business_response, entity_response, business_entity_response }) => {
 			return {
 				business_info: business_response.business_info,
@@ -99,10 +97,9 @@ export const loader = async ({ request }) => {
 			};
 		})
 	);
-	// return null;
 
 	let response = await lastValueFrom(payload.pipe(fold(on_success, on_error)));
-	// return response;
+
 	let with_cache = cache(request);
 	return with_cache({ ...response, cache_dependencies });
 };
