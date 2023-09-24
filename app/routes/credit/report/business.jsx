@@ -119,8 +119,6 @@ export default function BusinessReport() {
 	let { experian_business_score = 0, dnb_business_score = 0 } = scores;
 
 	useEffect(() => {
-		console.log("cache.dependencies");
-		console.log(cache_dependencies);
 		if (cache_dependencies !== undefined) {
 			use_cache_client({ path: `/credit/report/business`, dependencies: cache_dependencies });
 		}
@@ -148,7 +146,7 @@ export default function BusinessReport() {
 				<div className="flex flex-col w-full mx-auto overflow-hidden h-full">
 					<div className={`@container flex overflow-hidden rounded h-full flex-row gap-x-5`}>
 						<div className="flex flex-col flex-1 overflow-y-scroll rounded-lg scrollbar-none">
-							{/* <Outlet /> */}
+							<Outlet />
 						</div>
 
 						<div className="hidden @3xl:flex flex-col w-[30%] h-full bg-white border rounded">

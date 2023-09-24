@@ -30,7 +30,6 @@ export const use_cache = create((set) => ({
 	keys: {},
 	routes: {},
 	set_state: (path, value) => set((state) => pipe(mod(...path)(() => `${murmurhash(value)}`))(state)),
-
 	set_dependencies: ({ path, dependencies = [] }) => {
 		// console.log("set_dependencies");
 		// console.log(dependencies);

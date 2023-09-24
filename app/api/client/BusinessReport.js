@@ -172,6 +172,15 @@ export default class BusinessReport {
 		return this;
 	}
 
+	get experian_payment_trends() {
+		this.response = this.report.pipe(
+			rxmap((report) => ({ experian_payment_trends: report.experian_payment_trends() })),
+			concatMap(merge_with_current(this.response))
+		);
+
+		return this;
+	}
+
 	get experian_factors() {
 		this.response = this.report.pipe(
 			rxmap((report) => ({ experian_factors: report.experian_factors() })),

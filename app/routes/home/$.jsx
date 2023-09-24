@@ -1149,8 +1149,6 @@ export default function Home() {
 	}, []);
 
 	useEffect(() => {
-		console.log("cache.dependencies");
-		console.log(cache_dependencies);
 		if (cache_dependencies !== undefined) {
 			use_cache_client({ path: `/home`, dependencies: cache_dependencies });
 		}
