@@ -1260,7 +1260,7 @@ export default function Home() {
 						</div> */}
 					</div>
 				</div>
-				<div className="hidden lg:flex flex-col lg:w-[30%] rounded border bg-white">
+				{/* <div className="hidden lg:flex flex-col lg:w-[30%] rounded border bg-white">
 					<div className="flex flex-col w-full h-full rounded bg-white">
 						<div className="flex flex-row py-4 px-5 justify-between w-full items-center">
 							<div>Notifications</div>
@@ -1301,7 +1301,7 @@ export default function Home() {
 							</div>
 						</div>
 					</div>
-				</div>
+				</div> */}
 			</div>
 		</div>
 	);
