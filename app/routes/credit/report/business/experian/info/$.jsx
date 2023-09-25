@@ -46,8 +46,6 @@ const ExplanationCard = () => {
 		report_plan_id = "builder",
 	} = useLoaderData();
 
-	console.log("sic_codes");
-	console.log(sic_codes);
 	let sic_code = head(sic_codes);
 	let naics_code = head(naics_codes);
 

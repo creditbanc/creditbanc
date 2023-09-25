@@ -1076,9 +1076,11 @@ export default function Home() {
 		business_match = undefined,
 		application_id = undefined,
 		new_application_is_submiting = false,
+		business_report_is_empty,
 	} = use_view_store((state) => state);
 
-	let { business_report_is_empty = true } = business_info;
+	console.log("business_report_is_empty");
+	console.log(business_report_is_empty);
 
 	let use_cache_client = use_cache((state) => state.set_dependencies);
 	let update_cache_key = use_cache((state) => state.set_state);
@@ -1234,7 +1236,7 @@ export default function Home() {
 						)}
 
 						<div className="flex flex-col w-full">
-							{!application_id && <NewBusinessReportForm />}
+							{!application_id && business_report_is_empty && <NewBusinessReportForm />}
 							{no_business_match && <BusinessMatchSelect />}
 							{!business_report_is_empty && (
 								<div className="flex flex-col lg:flex-row gap-x-5 gap-y-3 lg:space-y-0">

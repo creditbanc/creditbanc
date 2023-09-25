@@ -1,7 +1,7 @@
 import { useState, Fragment } from "react";
 import CreditNav from "~/components/CreditNav";
 import axios from "axios";
-import { head, identity, pipe, tryCatch, evolve, isNil, allPass, isEmpty, of, values, any, includes, not } from "ramda";
+import { head, pipe } from "ramda";
 import { filter, get, mod, set, sub } from "shades";
 import { create } from "zustand";
 import { useActionData, useLocation, useSubmit } from "@remix-run/react";
@@ -14,27 +14,14 @@ import {
 	formData,
 	json_response,
 	validate_form,
-	is_valid,
 	from_validations,
 } from "~/utils/helpers";
-import { json, redirect } from "@remix-run/node";
-import {
-	test_identity_three,
-	test_identity_four,
-	test_identity_five,
-	test_identity_six,
-	test_identity_seven,
-	mrm_credit_report,
-} from "~/data/lendflow";
 import { Listbox, Transition } from "@headlessui/react";
 import { CheckIcon, ChevronUpDownIcon } from "@heroicons/react/20/solid";
 import { get_session_entity_id, get_user_id } from "~/utils/auth.server";
-import { create as create_new_report } from "~/utils/business_credit_report.server";
 import Cookies from "js-cookie";
-import { plan_product_requests } from "~/data/plan_product_requests";
 import { LendflowExternal, LendflowInternal } from "~/utils/lendflow.server";
 import { get_collection, get_doc, set_doc } from "~/utils/firebase";
-import { v4 as uuidv4 } from "uuid";
 import { map as rxmap, tap, filter as rxfilter, concatMap, take, delay } from "rxjs/operators";
 import { from, of as rxof, Subject, zip, lastValueFrom, throwError, forkJoin } from "rxjs";
 import Entity from "~/api/internal/entity";
@@ -81,29 +68,6 @@ interface CBEvent {
 		request: any;
 	};
 }
-
-// const isNotEmpty = (value) => !isEmpty(value);
-// const isNotNil = (value) => !isNil(value);
-
-// export const lendflow_validator = {
-// 	business_start_date: pipe(allPass([isNotEmpty, isNotNil])),
-// 	basic_info: {
-// 		first_name: pipe(allPass([isNotEmpty, isNotNil])),
-// 		last_name: pipe(allPass([isNotEmpty, isNotNil])),
-// 		email_address: pipe(allPass([isNotEmpty, isNotNil])),
-// 		telephone: pipe(allPass([isNotEmpty, isNotNil])),
-// 	},
-// 	business_address: {
-// 		address_line: pipe(allPass([isNotEmpty, isNotNil])),
-// 		city: pipe(allPass([isNotEmpty, isNotNil])),
-// 		state: pipe(allPass([isNotEmpty, isNotNil])),
-// 		country: pipe(allPass([isNotEmpty, isNotNil])),
-// 		zip: pipe(allPass([isNotEmpty, isNotNil])),
-// 	},
-// 	business_entity: pipe(allPass([isNotEmpty, isNotNil])),
-// 	business_legal_name: pipe(allPass([isNotEmpty, isNotNil])),
-// 	employee_identification_number: pipe(allPass([isNotEmpty, isNotNil])),
-// };
 
 const subject = new Subject();
 

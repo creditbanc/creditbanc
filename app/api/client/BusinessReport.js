@@ -315,6 +315,7 @@ export default class BusinessReport {
 					return throwError(() => error);
 				}
 			}),
+			rxmap((response) => ({ ...response, business_report_is_empty: false })),
 			tap(() => console.log(`BusinessReport.fold.1`)),
 			tap(inspect)
 		);
