@@ -73,13 +73,6 @@ export const loader = async ({ request }) => {
 	let entity_id = await get_session_entity_id(request);
 	let group_id = get_group_id(url.pathname);
 
-	let cache_dependencies = [
-		{
-			name: "business_credit_report",
-			value: 2,
-		},
-	];
-
 	let entity = new Entity(entity_id);
 	let business_report = new Report(group_id);
 
@@ -152,8 +145,6 @@ export default function BusinessReport() {
 
 	useEffect(() => {
 		if (cache_dependencies !== undefined) {
-			console.log("udpate_cache_dependencies");
-			console.log(cache_dependencies);
 			use_cache_client({ path: `/credit/report/business`, dependencies: cache_dependencies });
 		}
 	}, []);

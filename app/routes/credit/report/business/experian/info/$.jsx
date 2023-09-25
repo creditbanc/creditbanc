@@ -38,24 +38,26 @@ const on_error = (error) => {
 
 export const loader = async ({ request }) => {
 	let url = new URL(request.url);
-
-	let cache_dependencies = [
-		{
-			name: "business_credit_report",
-			value: 1,
-		},
-	];
-
 	let group_id = get_group_id(url.pathname);
-	let report = new BusinessReport(group_id);
-	let response =
-		report.business_info.experian_sic_codes.experian_years_on_file.experian_employee_size.experian_naics_codes
-			.experian_sales_revenue.fold;
 
-	let payload = await lastValueFrom(response.pipe(fold(on_success, on_error)));
+	let report = new BusinessReport(group_id);
+
+	let payload =
+		report.business_info.experian_sic_codes.experian_years_on_file.experian_employee_size.experian_naics_codes
+			.experian_sales_revenue.report_sha.fold;
+
+	let response = await lastValueFrom(payload.pipe(fold(on_success, on_error)));
 
 	let with_cache = cache(request);
-	return with_cache({ ...payload, cache_dependencies });
+	return with_cache({
+		...response,
+		cache_dependencies: [
+			{
+				name: "business_credit_report",
+				value: response.report_sha,
+			},
+		],
+	});
 };
 
 const ExplanationCard = () => {
@@ -180,11 +182,11 @@ export default function Container() {
 	let { cache_dependencies } = loader_data;
 	let use_cache_client = use_cache((state) => state.set_dependencies);
 
-	// useEffect(() => {
-	// 	if (cache_dependencies !== undefined) {
-	// 		use_cache_client({ path: `/credit/report/business/experian`, dependencies: cache_dependencies });
-	// 	}
-	// }, [cache_dependencies]);
+	useEffect(() => {
+		if (cache_dependencies !== undefined) {
+			use_cache_client({ path: `/credit/report/business/experian`, dependencies: cache_dependencies });
+		}
+	}, []);
 
 	return (
 		<div className="flex flex-col w-full space-y-5">

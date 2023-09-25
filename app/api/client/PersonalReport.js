@@ -1,25 +1,8 @@
-import { get_group_id, inspect, get } from "~/utils/helpers";
-import { always, apply, curry, equals, head, identity, ifElse, pipe, tryCatch } from "ramda";
-import { Lendflow } from "~/data/lendflow";
-import { get_collection, get_doc, set_doc } from "~/utils/firebase";
-import { LendflowExternal, LendflowInternal } from "~/utils/lendflow.server";
-import { map as rxmap, filter as rxfilter, concatMap, tap, take, catchError } from "rxjs/operators";
-import {
-	from,
-	lastValueFrom,
-	forkJoin,
-	Subject,
-	of as rxof,
-	iif,
-	throwError,
-	merge,
-	ReplaySubject,
-	Observable,
-} from "rxjs";
-import { fold, ifEmpty, ifFalse } from "~/utils/operators";
-import { is_authorized_f } from "~/api/auth";
-import { get_session_entity_id } from "~/utils/auth.server";
-import { emitter } from "~/utils/emitter.server";
+import { get, normalize_id } from "~/utils/helpers";
+import { curry, head, pipe } from "ramda";
+import { get_collection } from "~/utils/firebase";
+import { map as rxmap, filter as rxfilter, concatMap } from "rxjs/operators";
+import { from, of as rxof } from "rxjs";
 import { ArrayExternal } from "~/api/external/Array";
 import { ArrayInternal } from "~/api/internal/Array";
 
@@ -194,6 +177,19 @@ export default class PersonalReport {
 	get factors() {
 		this.response = this.report.pipe(
 			rxmap((report) => ({ factors: report.factors() })),
+			concatMap(merge_with_current(this.response))
+		);
+
+		return this;
+	}
+
+	get _report() {
+		return this.application.pipe(rxmap(pipe(get("data"))));
+	}
+
+	get report_sha() {
+		this.response = from(this._report).pipe(
+			rxmap((report) => ({ report_sha: normalize_id(report) })),
 			concatMap(merge_with_current(this.response))
 		);
 

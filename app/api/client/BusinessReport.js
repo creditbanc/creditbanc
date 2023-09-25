@@ -1,25 +1,9 @@
-import { get_group_id, inspect, get, normalize_id } from "~/utils/helpers";
-import { always, apply, curry, equals, head, identity, ifElse, omit, pickAll, pipe, tryCatch, without } from "ramda";
-import { Lendflow } from "~/data/lendflow";
-import { get_collection, get_doc, set_doc } from "~/utils/firebase";
+import { get, normalize_id } from "~/utils/helpers";
+import { curry, head, pipe } from "ramda";
+import { get_collection } from "~/utils/firebase";
 import { LendflowExternal, LendflowInternal } from "~/utils/lendflow.server";
-import { map as rxmap, filter as rxfilter, concatMap, tap, take, catchError } from "rxjs/operators";
-import {
-	from,
-	lastValueFrom,
-	forkJoin,
-	Subject,
-	of as rxof,
-	iif,
-	throwError,
-	merge,
-	ReplaySubject,
-	Observable,
-} from "rxjs";
-import { fold, ifEmpty, ifFalse } from "~/utils/operators";
-import { is_authorized_f } from "~/api/auth";
-import { get_session_entity_id } from "~/utils/auth.server";
-import { emitter } from "~/utils/emitter.server";
+import { map as rxmap, filter as rxfilter, concatMap, tap, catchError } from "rxjs/operators";
+import { from, forkJoin, of as rxof, throwError } from "rxjs";
 
 const merge_with_current = curry((current, data) => {
 	return current.pipe(

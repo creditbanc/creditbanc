@@ -25,21 +25,23 @@ const on_error = (error) => {
 
 export const loader = async ({ request }) => {
 	let url = new URL(request.url);
-
-	let cache_dependencies = [
-		{
-			name: "business_credit_report",
-			value: 1,
-		},
-	];
-
 	let group_id = get_group_id(url.pathname);
+
 	let report = new BusinessReport(group_id);
-	let response = report.dnb_credit_utilization.fold;
-	let payload = await lastValueFrom(response.pipe(fold(on_success, on_error)));
+
+	let payload = report.dnb_credit_utilization.report_sha.fold;
+	let response = await lastValueFrom(payload.pipe(fold(on_success, on_error)));
 
 	let with_cache = cache(request);
-	return with_cache({ ...payload, cache_dependencies });
+	return with_cache({
+		...response,
+		cache_dependencies: [
+			{
+				name: "business_credit_report",
+				value: response.report_sha,
+			},
+		],
+	});
 };
 
 const CreditUtilization = () => {
@@ -138,7 +140,7 @@ export default function Container() {
 		if (cache_dependencies !== undefined) {
 			use_cache_client({ path: `/credit/report/business/dnb`, dependencies: cache_dependencies });
 		}
-	}, [cache_dependencies]);
+	}, []);
 
 	return (
 		<div className="flex flex-col w-full space-y-5">
