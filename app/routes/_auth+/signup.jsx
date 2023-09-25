@@ -80,8 +80,6 @@ export async function action({ request }) {
 const Form = () => {
 	const form = useForm((state) => state.form);
 	const setForm = useForm((state) => state.setForm);
-	const email = useForm((state) => state.form.email);
-	const password = useForm((state) => state.form.password);
 	const has_accepted_tc = useForm((state) => state.has_accepted_tc);
 	const setTc = useForm((state) => state.setTc);
 	const submit = useSubmit();
@@ -109,7 +107,7 @@ const Form = () => {
 							id="name"
 							autoComplete="name"
 							className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm border h-[38px] pl-2"
-							value={email}
+							value={form.first_name}
 							onChange={(e) => setForm(["first_name"], e.target.value)}
 						/>
 					</div>
@@ -126,7 +124,7 @@ const Form = () => {
 							id="name"
 							autoComplete="name"
 							className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm border h-[38px] pl-2"
-							value={email}
+							value={form.last_name}
 							onChange={(e) => setForm(["last_name"], e.target.value)}
 						/>
 					</div>
@@ -143,7 +141,7 @@ const Form = () => {
 							id="email"
 							autoComplete="email"
 							className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm border h-[38px] pl-2"
-							value={email}
+							value={form.email}
 							onChange={(e) => setForm(["email"], e.target.value)}
 						/>
 					</div>
@@ -160,7 +158,7 @@ const Form = () => {
 							id="password"
 							autoComplete="password"
 							className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm border h-[38px] pl-2"
-							value={password}
+							value={form.password}
 							onChange={(e) => setForm(["password"], e.target.value)}
 						/>
 					</div>

@@ -26,8 +26,8 @@ export async function action({ request }) {
 	let form = await form_params(request);
 	let { email, password, redirect_url, first_name, last_name } = form;
 
-	console.log("formform2");
-	console.log(form);
+	// console.log("formform2");
+	// console.log(form);
 
 	if (typeof email !== "string" || typeof password !== "string") {
 		return json({ error: "Invalid form data" }, { status: 400 });
@@ -36,11 +36,11 @@ export async function action({ request }) {
 	// return null;
 
 	if (redirect_url) {
-		console.log("here1");
+		// console.log("here1");
 
 		return await signup({ email, password, first_name, last_name, redirect_to: redirect_url });
 	} else {
-		console.log("here2");
+		// console.log("here2");
 		// console.log("noDisplayToken");
 		// let redirect_to = `/credit/personal/create?${url.searchParams.toString()}`;
 		return await signup({ email, password });
@@ -51,8 +51,8 @@ export const loader = async ({ request }) => {
 	let url = new URL(request.url);
 	let email = url.searchParams.get("email");
 	let redirect_url = url.pathname.replace("/signup", "") + url.search;
-	console.log("loader.redirect_url");
-	console.log(url);
+	// console.log("loader.redirect_url");
+	// console.log(url);
 
 	return { email, redirect_url };
 };
@@ -73,8 +73,8 @@ const Form = () => {
 			redirect_url,
 		};
 
-		console.log("submitform");
-		console.log(payload);
+		// console.log("submitform");
+		// console.log(payload);
 		// console.log(redirect_url);
 
 		// console.log(location);

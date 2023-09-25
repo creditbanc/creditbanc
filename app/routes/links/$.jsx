@@ -7,8 +7,8 @@ export const loader = async ({ request }) => {
 	console.log("routes.links.$");
 	let url = new URL(request.url);
 
-	console.log("url");
-	console.log(url);
+	// console.log("url");
+	// console.log(url);
 
 	let entity_id = await get_session_entity_id(request);
 	let redirect_url = url.pathname + decodeURIComponent(url.search);
@@ -34,8 +34,8 @@ export const loader = async ({ request }) => {
 		last_name,
 	};
 
-	console.log("role_____");
-	console.log(role);
+	// console.log("role_____");
+	// console.log(role);
 
 	await set_doc(["roles", role_id], role);
 
