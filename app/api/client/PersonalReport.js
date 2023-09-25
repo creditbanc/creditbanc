@@ -202,6 +202,7 @@ export default class PersonalReport {
 						tap(() => console.log(`PersonalReport.tap.3`)),
 						tap(console.log),
 						concatMap((report_display_token) => {
+							return from(ArrayExternal.refreshDisplayToken(clientKey, reportKey));
 							if (report_display_token == displayToken) {
 								console.log(`${log_route}.update_display_token.array_update`);
 								return from(ArrayExternal.refreshDisplayToken(clientKey, reportKey));
@@ -237,10 +238,10 @@ export default class PersonalReport {
 
 			return rxof(status).pipe(
 				// rxfilter((status) => status == 401),
-				tap(() => console.log(`PersonalReport.tap.1`)),
+				tap(() => console.log(`PersonalReport.tap.2`)),
 				tap(console.log),
 				concatMap(() => update_display_token({ clientKey, reportKey, report_id, displayToken })),
-				tap(() => console.log(`PersonalReport.tap.2`)),
+				tap(() => console.log(`PersonalReport.tap.3`)),
 				tap(console.log),
 				tap(() => subject.next({ id: start_action })),
 				rxfilter((value) => value !== undefined)
@@ -251,13 +252,22 @@ export default class PersonalReport {
 			rxfilter((event) => event.id == start_action),
 			concatMap(() => this.application),
 			rxmap(pipe(pickAll(["reportKey", "clientKey", "displayToken", "id"]))),
+			tap(() => console.log(`PersonalReport.tap.1`)),
+			tap(console.log),
 			concatMap(({ reportKey, displayToken, clientKey, id: report_id }) =>
 				from(ArrayExternal.get_credit_report(reportKey, displayToken)).pipe(
 					rxfilter((report) => report.CREDIT_RESPONSE),
-					catchError(update_display_token_error(clientKey, reportKey, report_id, displayToken))
+					catchError(update_display_token_error(clientKey, reportKey, report_id, displayToken)),
+					concatMap((report) => {
+						return from(update_doc(["credit_reports", report_id], { data: report })).pipe(
+							rxmap((value) => report)
+						);
+					})
 					// concatMap(update_db_report_if_needed(db_personal_credit_report, report_id))
 				)
-			)
+			),
+			tap(() => console.log(`PersonalReport.tap.5`)),
+			tap(console.log)
 		);
 
 		subject.next({ id: start_action });
@@ -280,8 +290,10 @@ export default class PersonalReport {
 
 	get shas() {
 		this.response = forkJoin({ report: this._report, array_report: this._array_report }).pipe(
+			tap(() => console.log(`PersonalReport.tap.6`)),
+			tap(console.log),
 			rxmap(({ report, array_report }) => ({
-				prev_sha: normalize_id(report),
+				prev_sha: report == undefined ? normalize_id(array_report) : normalize_id(report),
 				curr_sha: normalize_id(array_report),
 			})),
 			concatMap(merge_with_current(this.response))
