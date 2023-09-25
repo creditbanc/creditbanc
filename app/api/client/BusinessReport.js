@@ -38,8 +38,8 @@ export default class BusinessReport {
 
 		let application = from(get_credit_report(group_id)).pipe(
 			rxmap(head),
-			// tap(() => console.log(`BusinessReport.fold`)),
-			// tap(inspect),
+			tap(() => console.log(`BusinessReport.fold.top`)),
+			tap(inspect),
 			concatMap(ifElse(equals(undefined), always(throwError(() => undefined)), (report) => rxof(report)))
 		);
 
@@ -315,7 +315,10 @@ export default class BusinessReport {
 					return throwError(() => error);
 				}
 			}),
-			rxmap((response) => ({ ...response, business_report_is_empty: false })),
+			rxmap((response) => ({
+				...response,
+				business_report_is_empty: response.business_report_is_empty ? response.business_report_is_empty : false,
+			})),
 			tap(() => console.log(`BusinessReport.fold.1`)),
 			tap(inspect)
 		);

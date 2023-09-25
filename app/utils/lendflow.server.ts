@@ -420,8 +420,8 @@ export class LendflowExternal {
 
 	static update_lendflow_report = async (application_id, requested_products) => {
 		console.log("update_lendflow_report");
-		console.log(application_id);
-		console.log(requested_products);
+		// console.log(application_id);
+		// console.log(requested_products);
 		let options = {
 			method: "put",
 			maxBodyLength: Infinity,
@@ -431,6 +431,7 @@ export class LendflowExternal {
 				"Content-Type": "application/json",
 			},
 			data: { requested_products: ["experian_business_facts"] },
+			// data: { requested_products: LendflowExternal.plan_request_products("builder") },
 		};
 
 		let response = await axios(options);
@@ -455,8 +456,8 @@ export const get_lendflow_report = async (application_id) => {
 		return response?.data;
 	} catch (error) {
 		console.log("error");
-		console.log(error.response.data);
-		return { error: error.message }, { status: 500 };
+		console.log(error?.response?.data);
+		return { error: error?.message };
 	}
 };
 

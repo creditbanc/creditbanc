@@ -86,6 +86,7 @@ export const loader = async ({ request }) => {
 				business_entity_id,
 				business_entity: business_entity_response.identity,
 				onboard,
+				business_report_is_empty: business_response.business_report_is_empty,
 			};
 		})
 	);
@@ -1068,19 +1069,12 @@ export default function Home() {
 	let { pathname } = useLocation();
 	let {
 		cache_dependencies,
-		business_scores,
-		personal_scores,
-		business_info = {},
 		onboard: onboard_db,
-		plan_id = "essential",
 		business_match = undefined,
 		application_id = undefined,
 		new_application_is_submiting = false,
 		business_report_is_empty,
 	} = use_view_store((state) => state);
-
-	console.log("business_report_is_empty");
-	console.log(business_report_is_empty);
 
 	let use_cache_client = use_cache((state) => state.set_dependencies);
 	let update_cache_key = use_cache((state) => state.set_state);
@@ -1147,42 +1141,42 @@ export default function Home() {
 		}
 	}, []);
 
-	// useEffect(() => {
-	// 	run_fetchers();
-	// }, []);
+	useEffect(() => {
+		run_fetchers();
+	}, []);
 
-	// useEffect(() => {
-	// 	let fetcher_data = business_info_fetcher.data;
-	// 	if (fetcher_data) {
-	// 		// console.log("business_info_fetcher.data");
-	// 		// console.log(fetcher_data);
-	// 		// console.log(business_info);
-	// 		on_should_update_cache(business_info, fetcher_data, "business_credit_report").subscribe();
-	// 		set_path(["business_info"], fetcher_data);
-	// 	}
-	// }, [business_info_fetcher.data]);
+	useEffect(() => {
+		let fetcher_data = business_info_fetcher.data;
+		if (fetcher_data) {
+			console.log("business_info_fetcher.data");
+			console.log(fetcher_data);
+			// console.log(business_info);
+			// on_should_update_cache(business_info, fetcher_data, "business_credit_report").subscribe();
+			set_path(["business_info"], fetcher_data);
+		}
+	}, [business_info_fetcher.data]);
 
-	// useEffect(() => {
-	// 	let fetcher_data = business_scores_fetcher.data;
-	// 	if (fetcher_data) {
-	// 		// console.log("business_scores_fetcher.data");
-	// 		// console.log(fetcher_data);
-	// 		// console.log(business_scores);
-	// 		on_should_update_cache(business_scores, fetcher_data, "business_credit_report").subscribe();
-	// 		set_path(["business_scores"], fetcher_data);
-	// 	}
-	// }, [business_scores_fetcher.data]);
+	useEffect(() => {
+		let fetcher_data = business_scores_fetcher.data;
+		if (fetcher_data) {
+			console.log("business_scores_fetcher.data");
+			console.log(fetcher_data);
+			// console.log(business_scores);
+			// on_should_update_cache(business_scores, fetcher_data, "business_credit_report").subscribe();
+			set_path(["business_scores"], fetcher_data);
+		}
+	}, [business_scores_fetcher.data]);
 
-	// useEffect(() => {
-	// 	let fetcher_data = personal_scores_fetcher.data;
-	// 	if (fetcher_data) {
-	// 		console.log("personal_scores_fetcher.data");
-	// 		console.log(fetcher_data);
-	// 		console.log(personal_scores);
-	// 		on_should_update_cache(personal_scores, fetcher_data, "personal_credit_report").subscribe();
-	// 		set_path(["personal_scores"], fetcher_data);
-	// 	}
-	// }, [personal_scores_fetcher.data]);
+	useEffect(() => {
+		let fetcher_data = personal_scores_fetcher.data;
+		if (fetcher_data) {
+			console.log("personal_scores_fetcher.data");
+			console.log(fetcher_data);
+			// console.log(personal_scores);
+			// on_should_update_cache(personal_scores, fetcher_data, "personal_credit_report").subscribe();
+			set_path(["personal_scores"], fetcher_data);
+		}
+	}, [personal_scores_fetcher.data]);
 
 	// useEffect(() => {
 	// 	onboard = pipe(

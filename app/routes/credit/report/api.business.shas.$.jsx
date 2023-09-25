@@ -21,7 +21,7 @@ export const action = async ({ request }) => {
 	let url = new URL(request.url);
 	let group_id = get_group_id(url.pathname);
 	let report = new BusinessReport(group_id);
-	let response = report.shas.fold;
+	let response = report.application_id.shas.fold;
 
 	let payload = await lastValueFrom(response.pipe(fold(on_success, on_error)));
 	return payload;
