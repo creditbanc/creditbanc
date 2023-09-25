@@ -8,7 +8,7 @@ export const on_success = curry((request, response) => {
 	console.log(`${log_route}.success`);
 
 	if (response.business_report_is_empty == true) {
-		return redirect("/credit/business/new");
+		return redirect("/home");
 	}
 
 	let with_cache = cache(request);
