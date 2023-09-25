@@ -249,7 +249,11 @@ const PersonalCredit = () => {
 };
 
 const HeadingTwo = () => {
-	let { business_info = {}, business_entity: entity } = use_view_store((state) => state);
+	let loader_data = use_view_store((state) => state);
+	let { entity, business_info } = loader_data;
+
+	console.log("entity.HeadingTwo");
+	console.log(entity);
 
 	let EntityPersonalDetails = () => {
 		return (
