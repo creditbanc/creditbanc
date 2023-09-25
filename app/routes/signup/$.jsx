@@ -158,7 +158,7 @@ const Form = () => {
 
 				<div className="sm:col-span-6">
 					<label htmlFor="password" className="block text-sm font-medium text-gray-700">
-						Confirmm Password
+						Confirm Password
 					</label>
 					<div className="mt-1">
 						<input

@@ -56,14 +56,14 @@ export const signup = async (form) => {
 		group_id: partition.id,
 		entity_id: entity.id,
 		permissions: default_permissions,
-		name: "@default",
+		name: "View only",
 	});
 
 	let admin_config = await create_role_config({
 		group_id: partition.id,
 		entity_id: entity.id,
 		permissions: admin_permissions,
-		name: "@administrator",
+		name: "Full access",
 	});
 
 	redirect_to = new_entity ? redirect_to + `/resource/e/${entity.id}/g/${partition.id}` : redirect_to;
