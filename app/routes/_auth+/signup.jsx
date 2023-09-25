@@ -18,8 +18,7 @@ const useForm = create((set) => ({
 	},
 	has_accepted_tc: false,
 	setTc: (value) => set({ has_accepted_tc: value }),
-	setForm: (path, value) =>
-		set((state) => pipe(mod("form", ...path)(() => value))(state)),
+	setForm: (path, value) => set((state) => pipe(mod("form", ...path)(() => value))(state)),
 }));
 
 export async function action({ request }) {
@@ -81,8 +80,8 @@ export async function action({ request }) {
 const Form = () => {
 	const form = useForm((state) => state.form);
 	const setForm = useForm((state) => state.setForm);
-	const email = useForm((state) => state.form.firstName);
-	const password = useForm((state) => state.form.lastName);
+	const email = useForm((state) => state.form.email);
+	const password = useForm((state) => state.form.password);
 	const has_accepted_tc = useForm((state) => state.has_accepted_tc);
 	const setTc = useForm((state) => state.setTc);
 	const submit = useSubmit();
@@ -100,10 +99,7 @@ const Form = () => {
 		<form className="space-y-8" onSubmit={onSubmit}>
 			<div className="mt-6 grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-6">
 				<div className="sm:col-span-6">
-					<label
-						htmlFor="email"
-						className="block text-sm font-medium text-gray-700"
-					>
+					<label htmlFor="email" className="block text-sm font-medium text-gray-700">
 						First Name
 					</label>
 					<div className="mt-1">
@@ -114,18 +110,13 @@ const Form = () => {
 							autoComplete="name"
 							className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm border h-[38px] pl-2"
 							value={email}
-							onChange={(e) =>
-								setForm(["first_name"], e.target.value)
-							}
+							onChange={(e) => setForm(["first_name"], e.target.value)}
 						/>
 					</div>
 				</div>
 
 				<div className="sm:col-span-6">
-					<label
-						htmlFor="email"
-						className="block text-sm font-medium text-gray-700"
-					>
+					<label htmlFor="email" className="block text-sm font-medium text-gray-700">
 						Last Name
 					</label>
 					<div className="mt-1">
@@ -136,18 +127,13 @@ const Form = () => {
 							autoComplete="name"
 							className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm border h-[38px] pl-2"
 							value={email}
-							onChange={(e) =>
-								setForm(["last_name"], e.target.value)
-							}
+							onChange={(e) => setForm(["last_name"], e.target.value)}
 						/>
 					</div>
 				</div>
 
 				<div className="sm:col-span-6">
-					<label
-						htmlFor="email"
-						className="block text-sm font-medium text-gray-700"
-					>
+					<label htmlFor="email" className="block text-sm font-medium text-gray-700">
 						Email
 					</label>
 					<div className="mt-1">
@@ -164,10 +150,7 @@ const Form = () => {
 				</div>
 
 				<div className="sm:col-span-6">
-					<label
-						htmlFor="password"
-						className="block text-sm font-medium text-gray-700"
-					>
+					<label htmlFor="password" className="block text-sm font-medium text-gray-700">
 						Password
 					</label>
 					<div className="mt-1">
@@ -178,18 +161,13 @@ const Form = () => {
 							autoComplete="password"
 							className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm border h-[38px] pl-2"
 							value={password}
-							onChange={(e) =>
-								setForm(["password"], e.target.value)
-							}
+							onChange={(e) => setForm(["password"], e.target.value)}
 						/>
 					</div>
 				</div>
 
 				<div className="sm:col-span-6">
-					<label
-						htmlFor="password"
-						className="block text-sm font-medium text-gray-700"
-					>
+					<label htmlFor="password" className="block text-sm font-medium text-gray-700">
 						Confirmm Password
 					</label>
 					<div className="mt-1">
@@ -219,21 +197,11 @@ const Form = () => {
 							onChange={(e) => setTc(e.target.checked)}
 						/>
 					</div>
-					<a
-						className="ml-3 text-sm leading-6"
-						href="/"
-						target="_blank"
-					>
-						<label
-							htmlFor="comments"
-							className="font-medium text-gray-900"
-						>
+					<a className="ml-3 text-sm leading-6" href="/" target="_blank">
+						<label htmlFor="comments" className="font-medium text-gray-900">
 							Yes,
 						</label>{" "}
-						<span
-							id="comments-description"
-							className="text-gray-500"
-						>
+						<span id="comments-description" className="text-gray-500">
 							I accept the{" "}
 							<a href="/tc" className="text-blue-700 underline">
 								terms and conditions
@@ -249,12 +217,8 @@ const Form = () => {
 					disabled={!has_accepted_tc}
 					type="submit"
 					className={`w-full inline-flex justify-center rounded-md border border-transparent  py-2 px-4 text-sm font-medium text-white shadow-sm ${
-						has_accepted_tc &&
-						"bg-[#55CF9E] hover:bg-[#55CF9E] focus:ring-[#55CF9E]"
-					} ${
-						!has_accepted_tc &&
-						"bg-gray-300 hover:bg-gray-300 focus:ring-gray-300"
-					}
+						has_accepted_tc && "bg-[#55CF9E] hover:bg-[#55CF9E] focus:ring-[#55CF9E]"
+					} ${!has_accepted_tc && "bg-gray-300 hover:bg-gray-300 focus:ring-gray-300"}
 					focus:outline-none focus:ring-2  focus:ring-offset-2`}
 				>
 					Sign me up
@@ -269,15 +233,10 @@ const Heading = () => {
 		<div className="bg-transparent">
 			<div className="mx-auto max-w-7xl py-4 pb-6 px-2">
 				<div className="text-center">
-					<p className="text-3xl font-bold my-2 text-[#55CF9E]">
-						WELL, HEY THERE
-					</p>
-					<p className="text-5xl font-bold my-2 text-[#202536]">
-						First time here?
-					</p>
+					<p className="text-3xl font-bold my-2 text-[#55CF9E]">WELL, HEY THERE</p>
+					<p className="text-5xl font-bold my-2 text-[#202536]">First time here?</p>
 					<p className="text-lg mt-4 font-semibold">
-						Let’s get you set up with a new account. It’ll be
-						painless, we swear.
+						Let’s get you set up with a new account. It’ll be painless, we swear.
 					</p>
 				</div>
 			</div>

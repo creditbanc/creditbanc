@@ -297,6 +297,7 @@ export default class PersonalReport {
 				console.log(error);
 				if (error == undefined) {
 					return rxof({
+						personal_report_is_empty: true,
 						experian_personal_score: 0,
 						equifax_personal_score: 0,
 						transunion_personal_score: 0,

@@ -273,7 +273,7 @@ export const loader = async ({ request }) => {
 // };
 
 export default function CreditReport() {
-	var { plan_id, report_plan_id, first_name, last_name, scores, cache_dependencies } = useLoaderData();
+	var { plan_id, report_plan_id, first_name, last_name, scores = {}, cache_dependencies } = useLoaderData();
 	let use_cache_client = use_cache((state) => state.set_dependencies);
 	const [target, setTarget] = useState();
 	const elmSize = useElmSize(target);

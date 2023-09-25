@@ -296,6 +296,7 @@ export default class BusinessReport {
 				console.log(error);
 				if (error == undefined) {
 					return rxof({
+						business_report_is_empty: true,
 						dnb_business_score: 0,
 						experian_business_score: 0,
 					});
