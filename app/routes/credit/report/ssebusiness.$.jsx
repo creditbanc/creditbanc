@@ -10,7 +10,6 @@ import { fold, ifEmpty, ifFalse } from "~/utils/operators";
 import { is_authorized_f } from "~/api/auth";
 import { get_session_entity_id } from "~/utils/auth.server";
 import { json } from "@remix-run/node";
-import { eventStream } from "remix-utils";
 
 const log_route = `credit.report.ssebusiness`;
 const start_action = "ssebusiness.action";
@@ -71,6 +70,9 @@ const loader_response = subject.pipe(
 			concatMap(ifEmpty(throwError(() => undefined))),
 			rxmap(pipe(get("application_id"))),
 			catchError((error) => {
+				console.log(`${log_route}.error`);
+				console.log(error);
+				return rxof(undefined);
 				if (error == undefined) {
 					return rxof(undefined);
 				} else {
@@ -83,16 +85,16 @@ const loader_response = subject.pipe(
 			rxfilter((value) => value !== undefined),
 			concatMap(LendflowExternal.get_lendflow_report),
 			rxmap(pipe(get("data", "data"))),
-			concatMap((report) => {
-				return application_id.pipe(
-					concatMap((application_id) => {
-						console.log("ssebusiness.application_id");
-						console.log(application_id);
-						return from(update_doc(["credit_reports", application_id], { data: report }));
-					}),
-					rxmap((value) => report)
-				);
-			}),
+			// concatMap((report) => {
+			// 	return application_id.pipe(
+			// 		concatMap((application_id) => {
+			// 			console.log("ssebusiness.application_id");
+			// 			console.log(application_id);
+			// 			return from(update_doc(["credit_reports", application_id], { data: report }));
+			// 		}),
+			// 		rxmap((value) => report)
+			// 	);
+			// }),
 			rxmap((report) => new LendflowInternal(report))
 		);
 
