@@ -2,7 +2,7 @@ import { get_group_id, inspect, get_request_cookies } from "~/utils/helpers";
 import { get, mod } from "shades";
 import { fromPairs, head, map, pipe, split, trim } from "ramda";
 import { Lendflow } from "~/data/lendflow";
-import { get_collection, get_doc, set_doc } from "~/utils/firebase";
+import { get_collection, get_doc, set_doc, update_doc } from "~/utils/firebase";
 import { LendflowExternal, LendflowInternal } from "~/utils/lendflow.server";
 import { map as rxmap, filter as rxfilter, concatMap, tap, take, catchError } from "rxjs/operators";
 import { from, lastValueFrom, forkJoin, Subject, of as rxof, iif, throwError, merge, ReplaySubject } from "rxjs";
@@ -83,6 +83,16 @@ const loader_response = subject.pipe(
 			rxfilter((value) => value !== undefined),
 			concatMap(LendflowExternal.get_lendflow_report),
 			rxmap(pipe(get("data", "data"))),
+			concatMap((report) => {
+				return application_id.pipe(
+					concatMap((application_id) => {
+						console.log("ssebusiness.application_id");
+						console.log(application_id);
+						return from(update_doc(["credit_reports", application_id], { data: report }));
+					}),
+					rxmap((value) => report)
+				);
+			}),
 			rxmap((report) => new LendflowInternal(report))
 		);
 

@@ -68,6 +68,20 @@ const loader_response = actionsubject.pipe(
 			rxfilter((value) => value !== undefined),
 			concatMap(LendflowExternal.get_lendflow_report),
 			rxmap(pipe(get("data", "data"))),
+			concatMap((report) => {
+				return application_id.pipe(
+					concatMap((application_id) => {
+						console.log("ssebusinesssocres.application_id");
+						console.log(application_id);
+						return from(update_doc(["credit_reports", application_id], { data: report }));
+					}),
+					rxmap((value) => report)
+				);
+			}),
+			tap((value) => {
+				console.log(`${log_route}.tap.ssebusinessscores`);
+				console.log(value);
+			}),
 			rxmap((report) => new LendflowInternal(report))
 		);
 
@@ -81,9 +95,7 @@ const loader_response = actionsubject.pipe(
 		);
 
 		let $business_report = merge(report, empty_business_report);
-
 		let dnb_business_score = $business_report.pipe(rxmap((report) => report.dnb_score()));
-
 		let experian_business_score = $business_report.pipe(rxmap((report) => report.experian_score()));
 
 		let business_report_is_empty = $business_report.pipe(
