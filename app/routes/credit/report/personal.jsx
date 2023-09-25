@@ -32,7 +32,7 @@ export const loader = async ({ request }) => {
 
 	let report = new PersonalReport(group_id);
 
-	let payload = report.experian_score.equifax_score.transunion_score.first_name.last_name.report_sha.shas.fold;
+	let payload = report.scores.first_name.last_name.report_sha.shas.fold;
 	let response = await lastValueFrom(payload.pipe(fold(on_success, on_error)));
 
 	let with_cache = cache(request);
@@ -273,16 +273,7 @@ export const loader = async ({ request }) => {
 // };
 
 export default function CreditReport() {
-	var {
-		plan_id,
-		report_plan_id,
-		first_name,
-		last_name,
-		experian_personal_score: experian,
-		equifax_personal_score: equifax,
-		transunion_personal_score: transunion,
-		cache_dependencies,
-	} = useLoaderData();
+	var { plan_id, report_plan_id, first_name, last_name, scores, cache_dependencies } = useLoaderData();
 	let use_cache_client = use_cache((state) => state.set_dependencies);
 	const [target, setTarget] = useState();
 	const elmSize = useElmSize(target);
@@ -292,6 +283,12 @@ export default function CreditReport() {
 	let [isMobile, setIsMobile] = useState(true);
 	const pageRef = useRef(null);
 	let { set_coordinates } = useReportPageLayoutStore();
+
+	let {
+		experian_personal_score: experian = 0,
+		equifax_personal_score: equifax = 0,
+		transunion_personal_score: transunion = 0,
+	} = scores;
 
 	first_name = tryCatch(pipe(toLower, capitalize), always(""))(first_name);
 	last_name = tryCatch(pipe(toLower, capitalize), always(""))(last_name);

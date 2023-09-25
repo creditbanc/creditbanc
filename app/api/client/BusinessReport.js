@@ -1,5 +1,5 @@
 import { get, normalize_id } from "~/utils/helpers";
-import { curry, head, pipe } from "ramda";
+import { always, curry, equals, head, ifElse, pipe } from "ramda";
 import { get_collection } from "~/utils/firebase";
 import { LendflowExternal, LendflowInternal } from "~/utils/lendflow.server";
 import { map as rxmap, filter as rxfilter, concatMap, tap, catchError } from "rxjs/operators";
@@ -36,7 +36,10 @@ export default class BusinessReport {
 				})
 			);
 
-		let application = from(get_credit_report(group_id)).pipe(rxmap(head));
+		let application = from(get_credit_report(group_id)).pipe(
+			rxmap(head),
+			concatMap(ifElse(equals(undefined), always(throwError(() => undefined)), (report) => rxof(report)))
+		);
 
 		let report = application.pipe(
 			rxmap(pipe(get("data"))),
@@ -291,7 +294,14 @@ export default class BusinessReport {
 			catchError((error) => {
 				console.log("BusinessReport.error");
 				console.log(error);
-				return throwError(() => error);
+				if (error == undefined) {
+					return rxof({
+						dnb_business_score: 0,
+						experian_business_score: 0,
+					});
+				} else {
+					return throwError(() => error);
+				}
 			}),
 			tap(() => console.log(`BusinessReport.fold`)),
 			tap(console.log)

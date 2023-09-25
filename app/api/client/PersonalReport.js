@@ -1,8 +1,8 @@
 import { get, normalize_id } from "~/utils/helpers";
-import { curry, head, pickAll, pipe } from "ramda";
+import { always, curry, equals, head, identity, ifElse, pickAll, pipe } from "ramda";
 import { get_collection, get_doc, update_doc } from "~/utils/firebase";
 import { map as rxmap, filter as rxfilter, concatMap, catchError, tap, take } from "rxjs/operators";
-import { Subject, from, of as rxof, forkJoin, ReplaySubject } from "rxjs";
+import { Subject, from, of as rxof, forkJoin, ReplaySubject, throwError } from "rxjs";
 import { ArrayExternal } from "~/api/external/Array";
 import { ArrayInternal } from "~/api/internal/Array";
 
@@ -40,7 +40,10 @@ export default class PersonalReport {
 				})
 			);
 
-		let application = from(get_credit_report(group_id)).pipe(rxmap(head));
+		let application = from(get_credit_report(group_id)).pipe(
+			rxmap(head),
+			concatMap(ifElse(equals(undefined), always(throwError(() => undefined)), (report) => rxof(report)))
+		);
 
 		let report = application.pipe(
 			rxmap(pipe(get("data"))),
@@ -196,6 +199,8 @@ export default class PersonalReport {
 				concatMap(() =>
 					from(get_doc(["credit_reports", report_id])).pipe(
 						rxmap((report) => report.displayToken),
+						tap(() => console.log(`PersonalReport.tap.3`)),
+						tap(console.log),
 						concatMap((report_display_token) => {
 							if (report_display_token == displayToken) {
 								console.log(`${log_route}.update_display_token.array_update`);
@@ -204,7 +209,9 @@ export default class PersonalReport {
 								console.log(`${log_route}.update_display_token.db_update`);
 								return rxof(undefined).pipe(tap(() => subject.next({ id: start_action })));
 							}
-						})
+						}),
+						tap(() => console.log(`PersonalReport.tap.4`)),
+						tap(console.log)
 					)
 				),
 				catchError((error) => {
@@ -230,7 +237,11 @@ export default class PersonalReport {
 
 			return rxof(status).pipe(
 				// rxfilter((status) => status == 401),
+				tap(() => console.log(`PersonalReport.tap.1`)),
+				tap(console.log),
 				concatMap(() => update_display_token({ clientKey, reportKey, report_id, displayToken })),
+				tap(() => console.log(`PersonalReport.tap.2`)),
+				tap(console.log),
 				tap(() => subject.next({ id: start_action })),
 				rxfilter((value) => value !== undefined)
 			);
@@ -284,7 +295,15 @@ export default class PersonalReport {
 			catchError((error) => {
 				console.log("PersonalReport.error");
 				console.log(error);
-				return throwError(() => error);
+				if (error == undefined) {
+					return rxof({
+						experian_personal_score: 0,
+						equifax_personal_score: 0,
+						transunion_personal_score: 0,
+					});
+				} else {
+					return throwError(() => error);
+				}
 			}),
 			tap(() => console.log(`PersonalReport.fold`)),
 			tap(console.log)
