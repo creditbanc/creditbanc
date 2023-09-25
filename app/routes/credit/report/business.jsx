@@ -1,13 +1,10 @@
 import { Outlet, useFetcher, useLoaderData, useLocation } from "@remix-run/react";
 import { get_route_endpoint, get_group_id, get_entity_id, fetcher_payload_maker } from "~/utils/helpers";
-import { cache } from "~/utils/helpers.server";
 import { get_session_entity_id } from "~/utils/auth.server";
 import { redirect } from "@remix-run/node";
 import { VerticalNav } from "~/components/BusinessCreditNav";
 import { prisma } from "~/utils/prisma.server";
-import { plans_index } from "~/data/plans_index";
 import { plan_product_requests } from "~/data/plan_product_requests";
-import { pipe } from "ramda";
 import { get } from "shades";
 import { update_lendflow_report, get_lendflow_report } from "~/utils/lendflow.server";
 import UpgradeBanner from "~/components/UpgradeMembership";
@@ -18,6 +15,7 @@ import Report from "~/api/client/BusinessReport";
 import Entity from "~/api/client/Entity";
 import { useEffect } from "react";
 import { use_cache } from "~/components/CacheLink";
+import { on_success } from "./business/success";
 
 const log_route = `credit.report.business`;
 
@@ -57,11 +55,6 @@ export const action = async ({ request }) => {
 	return redirect(redirect_to);
 };
 
-const on_success = (response) => {
-	console.log(`${log_route}.success`);
-	return response;
-};
-
 const on_error = (error) => {
 	console.log(`${log_route}.error`);
 	console.log(error);
@@ -90,18 +83,8 @@ export const loader = async ({ request }) => {
 		})
 	);
 
-	let response = await lastValueFrom(payload.pipe(fold(on_success, on_error)));
-
-	let with_cache = cache(request);
-	return with_cache({
-		...response,
-		cache_dependencies: [
-			{
-				name: "business_credit_report",
-				value: response.report_sha,
-			},
-		],
-	});
+	let response = await lastValueFrom(payload.pipe(fold(on_success(request), on_error)));
+	return response;
 };
 
 export default function BusinessReport() {

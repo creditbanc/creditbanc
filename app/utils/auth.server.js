@@ -40,7 +40,7 @@ export const signup = async (form) => {
 		last_name,
 		plan_id = "essential",
 	} = form;
-	console.log(form);
+	// console.log(form);
 
 	let entity = await create_entity({
 		email,
@@ -67,8 +67,8 @@ export const signup = async (form) => {
 	});
 
 	redirect_to = new_entity ? redirect_to + `/resource/e/${entity.id}/g/${partition.id}` : redirect_to;
-	console.log("redirect_to");
-	console.log(redirect_to);
+	// console.log("redirect_to");
+	// console.log(redirect_to);
 
 	return create_user_session(entity.id, redirect_to);
 };

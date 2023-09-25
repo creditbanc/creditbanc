@@ -9,16 +9,11 @@ import DoughnutChart from "~/components/DoughnutChart";
 import { lastValueFrom } from "rxjs";
 import { fold } from "~/utils/operators";
 import BusinessReport from "~/api/client/BusinessReport";
-import { cache } from "~/utils/helpers.server";
 import { use_cache } from "~/components/CacheLink";
 import { useEffect } from "react";
+import { on_success } from "../../success";
 
 const log_route = `credit.report.business.experian.utilization`;
-
-const on_success = (response) => {
-	console.log(`${log_route}.success`);
-	return response;
-};
 
 const on_error = (error) => {
 	console.log(`${log_route}.error`);
@@ -29,22 +24,10 @@ const on_error = (error) => {
 export const loader = async ({ request }) => {
 	let url = new URL(request.url);
 	let group_id = get_group_id(url.pathname);
-
 	let report = new BusinessReport(group_id);
-
 	let payload = report.experian_trade_payment_totals.report_sha.experian_trade_lines.fold;
-	let response = await lastValueFrom(payload.pipe(fold(on_success, on_error)));
-
-	let with_cache = cache(request);
-	return with_cache({
-		...response,
-		cache_dependencies: [
-			{
-				name: "business_credit_report",
-				value: response.report_sha,
-			},
-		],
-	});
+	let response = await lastValueFrom(payload.pipe(fold(on_success(request), on_error)));
+	return response;
 };
 
 const ExplanationCard = () => {

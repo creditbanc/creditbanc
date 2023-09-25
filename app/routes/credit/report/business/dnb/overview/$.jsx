@@ -1,18 +1,13 @@
 import { useLoaderData } from "@remix-run/react";
-import { get_file_id, get_group_id, inspect } from "~/utils/helpers";
-import { from, lastValueFrom, forkJoin, Subject, of as rxof, iif, throwError } from "rxjs";
-import { fold, ifEmpty, ifFalse } from "~/utils/operators";
+import { get_group_id } from "~/utils/helpers";
+import { lastValueFrom } from "rxjs";
+import { fold } from "~/utils/operators";
 import BusinessReport from "~/api/client/BusinessReport";
-import { cache } from "~/utils/helpers.server";
 import { useEffect } from "react";
 import { use_cache } from "~/components/CacheLink";
+import { on_success } from "../../success";
 
 const log_route = `credit.report.business.experian.status`;
-
-const on_success = (response) => {
-	console.log(`${log_route}.success`);
-	return response;
-};
 
 const on_error = (error) => {
 	console.log(`${log_route}.error`);
@@ -23,22 +18,10 @@ const on_error = (error) => {
 export const loader = async ({ request }) => {
 	let url = new URL(request.url);
 	let group_id = get_group_id(url.pathname);
-
 	let report = new BusinessReport(group_id);
-
 	let payload = report.business_info.dnb_score.dnb_delinquency_score.report_sha.fold;
-	let response = await lastValueFrom(payload.pipe(fold(on_success, on_error)));
-
-	let with_cache = cache(request);
-	return with_cache({
-		...response,
-		cache_dependencies: [
-			{
-				name: "business_credit_report",
-				value: response.report_sha,
-			},
-		],
-	});
+	let response = await lastValueFrom(payload.pipe(fold(on_success(request), on_error)));
+	return response;
 };
 
 const ScoreCard = () => {

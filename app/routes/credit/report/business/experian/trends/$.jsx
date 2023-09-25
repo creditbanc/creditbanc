@@ -1,32 +1,17 @@
 import { useLoaderData, Link } from "@remix-run/react";
-import { Lendflow } from "~/data/lendflow";
-import { pipe, allPass, head, not, defaultTo, tryCatch, always, identity } from "ramda";
-import { get_file_id, get_group_id, mapIndexed } from "~/utils/helpers";
-import { prisma } from "~/utils/prisma.server";
-import { get_session_entity_id, get_user_id } from "~/utils/auth.server";
+import { pipe, head, tryCatch, always } from "ramda";
+import { get_group_id, mapIndexed } from "~/utils/helpers";
 import { plans } from "~/data/plans";
 import { get } from "shades";
 import AccountCard from "~/components/AccountCard";
-import { report_tests } from "~/data/report_tests";
-import { get_lendflow_report } from "~/utils/lendflow.server";
-import { update_business_report } from "~/utils/business_credit_report.server";
-import { get_collection, get_doc } from "~/utils/firebase";
-import { LendflowExternal, LendflowInternal } from "~/utils/lendflow.server";
-import { map as rxmap, concatMap, tap, filter as rxfilter, take } from "rxjs/operators";
-import { from, lastValueFrom, forkJoin, of as rxof, Subject, iif, throwError } from "rxjs";
-import { fold, ifFalse } from "~/utils/operators";
-import { is_authorized_f } from "~/api/auth";
+import { lastValueFrom } from "rxjs";
+import { fold } from "~/utils/operators";
 import BusinessReport from "~/api/client/BusinessReport";
-import { cache } from "~/utils/helpers.server";
 import { use_cache } from "~/components/CacheLink";
 import { useEffect } from "react";
+import { on_success } from "../../success";
 
 const log_route = `credit.report.business.experian.trends`;
-
-const on_success = (response) => {
-	console.log(`${log_route}.success`);
-	return response;
-};
 
 const on_error = (error) => {
 	console.log(`${log_route}.error`);
@@ -37,22 +22,10 @@ const on_error = (error) => {
 export const loader = async ({ request }) => {
 	let url = new URL(request.url);
 	let group_id = get_group_id(url.pathname);
-
 	let report = new BusinessReport(group_id);
-
 	let payload = report.experian_payment_trends.report_sha.experian_trade_lines.fold;
-	let response = await lastValueFrom(payload.pipe(fold(on_success, on_error)));
-
-	let with_cache = cache(request);
-	return with_cache({
-		...response,
-		cache_dependencies: [
-			{
-				name: "business_credit_report",
-				value: response.report_sha,
-			},
-		],
-	});
+	let response = await lastValueFrom(payload.pipe(fold(on_success(response), on_error)));
+	return response;
 };
 
 const ExplanationCard = () => {

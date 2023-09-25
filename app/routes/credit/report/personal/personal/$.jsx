@@ -3,16 +3,11 @@ import { get_group_id } from "~/utils/helpers";
 import { lastValueFrom } from "rxjs";
 import { fold } from "~/utils/operators";
 import PersonalReport from "~/api/client/PersonalReport";
-import { cache } from "~/utils/helpers.server";
 import { use_cache } from "~/components/CacheLink";
 import { useEffect } from "react";
+import { on_success } from "~/routes/credit/report/personal/success";
 
 const log_route = `credit.report.personal.personal`;
-
-const on_success = (response) => {
-	console.log(`${log_route}.success`);
-	return response;
-};
 
 const on_error = (error) => {
 	console.log(`${log_route}.error`);
@@ -23,22 +18,10 @@ const on_error = (error) => {
 export const loader = async ({ request }) => {
 	let url = new URL(request.url);
 	let group_id = get_group_id(url.pathname);
-
 	let report = new PersonalReport(group_id);
-
 	let payload = report.first_name.last_name.street.city.state.zip.dob.report_sha.fold;
-	let response = await lastValueFrom(payload.pipe(fold(on_success, on_error)));
-
-	let with_cache = cache(request);
-	return with_cache({
-		...response,
-		cache_dependencies: [
-			{
-				name: "personal_credit_report",
-				value: response.report_sha,
-			},
-		],
-	});
+	let response = await lastValueFrom(payload.pipe(fold(on_success(request), on_error)));
+	return response;
 };
 
 const PersonalInfoCard = () => {
