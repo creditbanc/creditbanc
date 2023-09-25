@@ -125,9 +125,6 @@ export default function BusinessReport() {
 	let business_report_shas_fetcher = useFetcher();
 	let business_report_shas_url = `/credit/report/api/business/shas/resource/e/${entity_id}/g/${group_id}`;
 
-	// console.log("fetcher.data");
-	// console.log(business_report_shas_fetcher.data);
-
 	const on_should_update_cache = ({ prev_sha, curr_sha }, update_key) => {
 		let update_cache = () => update_cache_key(["keys", update_key], `${curr_sha}`);
 
@@ -140,13 +137,13 @@ export default function BusinessReport() {
 	};
 
 	useEffect(() => {
-		business_report_shas_fetcher.submit(...fetcher_payload_maker(business_report_shas_url));
-	}, []);
-
-	useEffect(() => {
 		if (cache_dependencies !== undefined) {
 			use_cache_client({ path: `/credit/report/business`, dependencies: cache_dependencies });
 		}
+	}, []);
+
+	useEffect(() => {
+		business_report_shas_fetcher.submit(...fetcher_payload_maker(business_report_shas_url));
 	}, []);
 
 	useEffect(() => {

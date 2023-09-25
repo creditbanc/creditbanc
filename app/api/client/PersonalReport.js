@@ -1,10 +1,12 @@
 import { get, normalize_id } from "~/utils/helpers";
-import { curry, head, pipe } from "ramda";
-import { get_collection } from "~/utils/firebase";
-import { map as rxmap, filter as rxfilter, concatMap } from "rxjs/operators";
-import { from, of as rxof } from "rxjs";
+import { curry, head, pickAll, pipe } from "ramda";
+import { get_collection, get_doc, update_doc } from "~/utils/firebase";
+import { map as rxmap, filter as rxfilter, concatMap, catchError, tap, take } from "rxjs/operators";
+import { Subject, from, of as rxof, forkJoin, ReplaySubject } from "rxjs";
 import { ArrayExternal } from "~/api/external/Array";
 import { ArrayInternal } from "~/api/internal/Array";
+
+const log_route = `api.client.PersonalReport`;
 
 const merge_with_current = curry((current, data) => {
 	return current.pipe(
@@ -183,6 +185,75 @@ export default class PersonalReport {
 		return this;
 	}
 
+	get _array_report() {
+		let subject = new ReplaySubject(1);
+		let start_action = "get_report";
+
+		const update_display_token = ({ clientKey, reportKey, report_id, displayToken }) => {
+			console.log(`${log_route}.update_display_token`);
+
+			return rxof({ clientKey, reportKey, report_id, displayToken }).pipe(
+				concatMap(() =>
+					from(get_doc(["credit_reports", report_id])).pipe(
+						rxmap((report) => report.displayToken),
+						concatMap((report_display_token) => {
+							if (report_display_token == displayToken) {
+								console.log(`${log_route}.update_display_token.array_update`);
+								return from(ArrayExternal.refreshDisplayToken(clientKey, reportKey));
+							} else {
+								console.log(`${log_route}.update_display_token.db_update`);
+								return rxof(undefined).pipe(tap(() => subject.next({ id: start_action })));
+							}
+						})
+					)
+				),
+				catchError((error) => {
+					console.log(`${log_route}.update_display_token.error`);
+					console.log(error);
+
+					return throwError(() => ({
+						experian_personal_score: 0,
+						equifax_personal_score: 0,
+						transunion_personal_score: 0,
+					}));
+				}),
+				rxfilter((value) => value?.displayToken),
+				concatMap(({ displayToken }) => update_doc(["credit_reports", report_id], { displayToken }))
+			);
+		};
+
+		const update_display_token_error = curry((clientKey, reportKey, report_id, displayToken, error) => {
+			console.log(`${log_route}.personal_report.status.error`);
+			// console.log(error);
+			let status = pipe(get("response", "status"))(error);
+			console.log(status);
+
+			return rxof(status).pipe(
+				// rxfilter((status) => status == 401),
+				concatMap(() => update_display_token({ clientKey, reportKey, report_id, displayToken })),
+				tap(() => subject.next({ id: start_action })),
+				rxfilter((value) => value !== undefined)
+			);
+		});
+
+		let report = subject.pipe(
+			rxfilter((event) => event.id == start_action),
+			concatMap(() => this.application),
+			rxmap(pipe(pickAll(["reportKey", "clientKey", "displayToken", "id"]))),
+			concatMap(({ reportKey, displayToken, clientKey, id: report_id }) =>
+				from(ArrayExternal.get_credit_report(reportKey, displayToken)).pipe(
+					rxfilter((report) => report.CREDIT_RESPONSE),
+					catchError(update_display_token_error(clientKey, reportKey, report_id, displayToken))
+					// concatMap(update_db_report_if_needed(db_personal_credit_report, report_id))
+				)
+			)
+		);
+
+		subject.next({ id: start_action });
+		// return this;
+		return report.pipe(take(1));
+	}
+
 	get _report() {
 		return this.application.pipe(rxmap(pipe(get("data"))));
 	}
@@ -196,7 +267,27 @@ export default class PersonalReport {
 		return this;
 	}
 
+	get shas() {
+		this.response = forkJoin({ report: this._report, array_report: this._array_report }).pipe(
+			rxmap(({ report, array_report }) => ({
+				prev_sha: normalize_id(report),
+				curr_sha: normalize_id(array_report),
+			})),
+			concatMap(merge_with_current(this.response))
+		);
+
+		return this;
+	}
+
 	get fold() {
-		return this.response;
+		return this.response.pipe(
+			catchError((error) => {
+				console.log("PersonalReport.error");
+				console.log(error);
+				return throwError(() => error);
+			}),
+			tap(() => console.log(`PersonalReport.fold`)),
+			tap(console.log)
+		);
 	}
 }

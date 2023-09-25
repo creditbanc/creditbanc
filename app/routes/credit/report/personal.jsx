@@ -32,7 +32,7 @@ export const loader = async ({ request }) => {
 
 	let report = new PersonalReport(group_id);
 
-	let payload = report.experian_score.equifax_score.transunion_score.first_name.last_name.report_sha.fold;
+	let payload = report.experian_score.equifax_score.transunion_score.first_name.last_name.report_sha.shas.fold;
 	let response = await lastValueFrom(payload.pipe(fold(on_success, on_error)));
 
 	let with_cache = cache(request);
