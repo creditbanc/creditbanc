@@ -258,9 +258,9 @@ const HeadingTwo = () => {
 	let EntityPersonalDetails = () => {
 		return (
 			<div>
-				<div className="font-semibold flex flex-row space-x-1">
-					{capitalize(entity?.first_name)}
-					{capitalize(entity?.last_name)}
+				<div className="flex flex-row space-x-1 font-semibold">
+					<div>{capitalize(entity?.first_name)}</div>
+					<div>{capitalize(entity?.last_name)}</div>
 				</div>
 				<div className="text-sm">{entity?.email}</div>
 			</div>
