@@ -1,4 +1,4 @@
-import { get, normalize_id } from "~/utils/helpers";
+import { get, inspect, normalize_id } from "~/utils/helpers";
 import { always, curry, equals, head, ifElse, pipe } from "ramda";
 import { get_collection } from "~/utils/firebase";
 import { LendflowExternal, LendflowInternal } from "~/utils/lendflow.server";
@@ -38,6 +38,8 @@ export default class BusinessReport {
 
 		let application = from(get_credit_report(group_id)).pipe(
 			rxmap(head),
+			// tap(() => console.log(`BusinessReport.fold`)),
+			// tap(inspect),
 			concatMap(ifElse(equals(undefined), always(throwError(() => undefined)), (report) => rxof(report)))
 		);
 
@@ -177,6 +179,15 @@ export default class BusinessReport {
 		return this;
 	}
 
+	get experian_facts() {
+		this.response = this.report.pipe(
+			rxmap((report) => ({ experian_facts: report.experian_facts() })),
+			concatMap(merge_with_current(this.response))
+		);
+
+		return this;
+	}
+
 	get dnb_score() {
 		this.response = this.report.pipe(
 			rxmap((report) => ({ dnb_score: report.dnb_score() })),
@@ -304,8 +315,8 @@ export default class BusinessReport {
 					return throwError(() => error);
 				}
 			}),
-			tap(() => console.log(`BusinessReport.fold`)),
-			tap(console.log)
+			tap(() => console.log(`BusinessReport.fold.1`)),
+			tap(inspect)
 		);
 	}
 }

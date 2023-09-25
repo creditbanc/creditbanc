@@ -704,12 +704,6 @@ const NewBusinessReportForm = () => {
 		}
 	}, [fetcher?.data?.application_id]);
 
-	// useEffect(() => {
-	// 	if (fetcher?.state == "submitting") {
-	// 		set_props({ new_application_is_submiting: true });
-	// 	}
-	// }, [fetcher?.state]);
-
 	const onSubmit = () => {
 		let { business_start_date, ...rest } = form;
 		let business_start_date_string = `${business_start_date.year}-${business_start_date.month}-${business_start_date.day}`;

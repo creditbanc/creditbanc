@@ -59,9 +59,9 @@ const action_subject = subject.pipe(
 		return application.pipe(
 			concatMap((application) =>
 				from(LendflowExternal.update_application_bin(application.id, bin_id)).pipe(
-					// concatMap((bin_update_response) => {
-					// 	return from(LendflowExternal.update_lendflow_report(application.id));
-					// }),
+					concatMap((bin_update_response) => {
+						return from(LendflowExternal.update_lendflow_report(application.id));
+					}),
 					concatMap((application_response) =>
 						from(LendflowExternal.get_lendflow_report(application.id)).pipe(rxmap(get("data", "data")))
 					),

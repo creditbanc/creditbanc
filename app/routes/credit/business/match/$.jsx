@@ -34,7 +34,7 @@ const action_subject = subject.pipe(
 		console.log(`${route_logger}.action_subject`);
 		let $formData = from(formData(request)).pipe(rxmap((form) => form.payload));
 
-		let $application_id = "1bbb9ba5-50ec-4fc5-955c-43239198a8a5";
+		// let $application_id = "1bbb9ba5-50ec-4fc5-955c-43239198a8a5";
 		// let $application_id = from(get_doc(["credit_reports", application_id]));
 
 		// return rxof({ test: "hi" });
@@ -83,11 +83,11 @@ const action_subject = subject.pipe(
 					requested_products: ["experian_business_match"],
 				})
 			),
-			// concatMap((request) => from(axios(request))),
-			// rxmap(pipe(get("data", "data", "application_id"))),
-			// tap(() => console.log(`${route_logger}.action_subject.value`)),
-			// tap(inspect),
-			concatMap((application_id) => zip($group_id, $entity_id, $plan_id, rxof($application_id), $formData)),
+			concatMap((request) => from(axios(request))),
+			rxmap(pipe(get("data", "data", "application_id"))),
+			tap(() => console.log(`${route_logger}.match.tap.1`)),
+			tap(inspect),
+			concatMap((application_id) => zip($group_id, $entity_id, $plan_id, rxof(application_id), $formData)),
 			concatMap(([group_id, entity_id, plan_id, application_id, form]) =>
 				LendflowInternal.save_application({
 					group_id,

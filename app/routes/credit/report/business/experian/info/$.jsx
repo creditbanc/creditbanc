@@ -28,7 +28,7 @@ export const loader = async ({ request }) => {
 	let report = new BusinessReport(group_id);
 	let payload =
 		report.business_info.experian_sic_codes.experian_years_on_file.experian_employee_size.experian_naics_codes
-			.experian_sales_revenue.report_sha.fold;
+			.experian_sales_revenue.report_sha.experian_facts.fold;
 
 	let response = await lastValueFrom(payload.pipe(fold(on_success(request), on_error)));
 	return response;
@@ -38,13 +38,18 @@ const ExplanationCard = () => {
 	let {
 		experian_years_on_file: years_on_file,
 		experian_employee_size: employee_size,
-		experian_sic_code: sic_code,
-		experian_naics_code: naics_code,
+		experian_sic_codes: sic_codes,
+		experian_naics_codes: naics_codes,
 		experian_sales_revenue: sales_revenue,
 		business_info: business,
 		plan_id,
 		report_plan_id = "builder",
 	} = useLoaderData();
+
+	console.log("sic_codes");
+	console.log(sic_codes);
+	let sic_code = head(sic_codes);
+	let naics_code = head(naics_codes);
 
 	let plan = pipe(get(report_plan_id, "business", "experian"))(plans);
 
