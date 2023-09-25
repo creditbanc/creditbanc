@@ -56,7 +56,7 @@ const loader_response = actionsubject.pipe(
 			concatMap(ifEmpty(throwError(() => undefined))),
 			rxmap(pipe(get("application_id"))),
 			catchError((error) => {
-				console.log(`${log_route}.error`);
+				console.log(`${log_route}.error.1`);
 				console.log(error);
 				return rxof(undefined);
 				if (error == undefined) {
@@ -70,7 +70,7 @@ const loader_response = actionsubject.pipe(
 		let report = application_id.pipe(
 			rxfilter((value) => value !== undefined),
 			tap((value) => {
-				console.log(`${log_route}.tap.ssebusinessscores`);
+				console.log(`${log_route}.tap.1`);
 				console.log(value);
 			}),
 			concatMap(LendflowExternal.get_lendflow_report),
@@ -90,11 +90,11 @@ const loader_response = actionsubject.pipe(
 		);
 
 		let empty_business_report = application_id.pipe(
+			rxfilter((value) => value === undefined),
 			tap((value) => {
-				console.log(`${log_route}.tap.ssebusinessscores`);
+				console.log(`${log_route}.tap.2`);
 				console.log(value);
 			}),
-			rxfilter((value) => value === undefined),
 			rxmap(() => ({
 				dnb_score: () => 0,
 				experian_score: () => 0,

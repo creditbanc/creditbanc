@@ -70,7 +70,7 @@ const loader_response = subject.pipe(
 			concatMap(ifEmpty(throwError(() => undefined))),
 			rxmap(pipe(get("application_id"))),
 			catchError((error) => {
-				console.log(`${log_route}.error`);
+				console.log(`${log_route}.error.1`);
 				console.log(error);
 				return rxof(undefined);
 				if (error == undefined) {
