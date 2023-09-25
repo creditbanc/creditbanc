@@ -62,17 +62,6 @@ export const loader = async ({ request }) => {
 	let onboard_state = await get_doc(["onboard", entity_id]);
 	let onboard = pipe(omit(["group_id", "entity_id"]), values)(onboard_state);
 
-	let cache_dependencies = [
-		{
-			name: "business_credit_report",
-			value: 1,
-		},
-		{
-			name: "personal_credit_report",
-			value: 1,
-		},
-	];
-
 	let entity = new Entity(entity_id);
 	let business_entity = new Entity(business_entity_id);
 	let personal_report = new PersonalReport(group_id);
@@ -80,15 +69,17 @@ export const loader = async ({ request }) => {
 
 	let entity_response = entity.identity.plan_id.fold;
 	let business_entity_response = business_entity.identity.fold;
-	let personal_response = personal_report.scores.fold;
-	let business_response = business_report.business_info.scores.fold;
+	let personal_response = personal_report.scores.report_sha.fold;
+	let business_response = business_report.business_info.scores.report_sha.fold;
 
 	let payload = forkJoin({ personal_response, business_response, entity_response, business_entity_response }).pipe(
 		rxmap(({ personal_response, business_response, entity_response, business_entity_response }) => {
 			return {
 				business_info: business_response.business_info,
 				business_scores: business_response.scores,
+				business_report_sha: business_response.report_sha,
 				personal_scores: personal_response.scores,
+				personal_report_sha: personal_response.report_sha,
 				entity_id,
 				entity: entity_response.identity,
 				plan_id: entity_response.plan_id,
@@ -102,7 +93,19 @@ export const loader = async ({ request }) => {
 	let response = await lastValueFrom(payload.pipe(fold(on_success, on_error)));
 
 	let with_cache = cache(request);
-	return with_cache({ ...response, cache_dependencies });
+	return with_cache({
+		...response,
+		cache_dependencies: [
+			{
+				name: "business_credit_report",
+				value: response.business_report_sha,
+			},
+			{
+				name: "personal_credit_report",
+				value: response.personal_report_sha,
+			},
+		],
+	});
 };
 
 const BusinessCredit = () => {
