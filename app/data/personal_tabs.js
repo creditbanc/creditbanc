@@ -27,9 +27,7 @@ export const tabs = [
 	{
 		name: "Personal",
 		href: ({ pathname = "", search = "" } = {}) =>
-			"/credit/report/personal/personal" +
-			to_resource_pathname(pathname) +
-			search,
+			"/credit/report/personal/personal" + to_resource_pathname(pathname) + search,
 		icon: UserIcon,
 		current: false,
 		id: "personal",
@@ -37,9 +35,7 @@ export const tabs = [
 	{
 		name: "History",
 		href: ({ pathname = "", search = "" } = {}) =>
-			"/credit/report/personal/history" +
-			to_resource_pathname(pathname) +
-			search,
+			"/credit/report/personal/history" + to_resource_pathname(pathname) + search,
 		icon: BookOpenIcon,
 		current: false,
 		id: "history",
@@ -47,9 +43,7 @@ export const tabs = [
 	{
 		name: "Debt Usage",
 		href: ({ pathname = "", search = "" } = {}) =>
-			"/credit/report/personal/usage" +
-			to_resource_pathname(pathname) +
-			search,
+			"/credit/report/personal/usage" + to_resource_pathname(pathname) + search,
 		icon: BeakerIcon,
 		current: false,
 		id: "usage",
@@ -57,9 +51,7 @@ export const tabs = [
 	{
 		name: "Credit Age",
 		href: ({ pathname = "", search = "" } = {}) =>
-			"/credit/report/personal/age" +
-			to_resource_pathname(pathname) +
-			search,
+			"/credit/report/personal/age" + to_resource_pathname(pathname) + search,
 		icon: ClockIcon,
 		current: false,
 		id: "age",
@@ -67,9 +59,7 @@ export const tabs = [
 	{
 		name: "Account Mix",
 		href: ({ pathname = "", search = "" } = {}) =>
-			"/credit/report/personal/mix" +
-			to_resource_pathname(pathname) +
-			search,
+			"/credit/report/personal/mix" + to_resource_pathname(pathname) + search,
 		icon: ChartPieIcon,
 		current: false,
 		id: "mix",
@@ -77,29 +67,25 @@ export const tabs = [
 	{
 		name: "Inquiries",
 		href: ({ pathname = "", search = "" } = {}) =>
-			"/credit/report/personal/inquiries" +
-			to_resource_pathname(pathname) +
-			search,
+			"/credit/report/personal/inquiries" + to_resource_pathname(pathname) + search,
 		icon: QuestionMarkCircleIcon,
 		current: false,
 		id: "inquiries",
 	},
-	{
-		name: "Debt vs Income",
-		href: ({ pathname = "", search = "" } = {}) =>
-			"/credit/report/personal/debtvsincome" +
-			to_resource_pathname(pathname) +
-			search,
-		icon: ScaleIcon,
-		current: false,
-		id: "debtvsincome",
-	},
+	// {
+	// 	name: "Debt vs Income",
+	// 	href: ({ pathname = "", search = "" } = {}) =>
+	// 		"/credit/report/personal/debtvsincome" +
+	// 		to_resource_pathname(pathname) +
+	// 		search,
+	// 	icon: ScaleIcon,
+	// 	current: false,
+	// 	id: "debtvsincome",
+	// },
 	{
 		name: "Score Factors",
 		href: ({ pathname = "", search = "" } = {}) =>
-			"/credit/report/personal/factors" +
-			to_resource_pathname(pathname) +
-			search,
+			"/credit/report/personal/factors" + to_resource_pathname(pathname) + search,
 		icon: ListBulletIcon,
 		current: false,
 		id: "factors",

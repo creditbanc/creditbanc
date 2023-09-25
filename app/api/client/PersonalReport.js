@@ -1,8 +1,8 @@
 import { get, normalize_id } from "~/utils/helpers";
-import { always, curry, equals, head, identity, ifElse, pickAll, pipe } from "ramda";
+import { always, curry, equals, head, ifElse, pickAll, pipe } from "ramda";
 import { get_collection, get_doc, update_doc } from "~/utils/firebase";
 import { map as rxmap, filter as rxfilter, concatMap, catchError, tap, take } from "rxjs/operators";
-import { Subject, from, of as rxof, forkJoin, ReplaySubject, throwError } from "rxjs";
+import { from, of as rxof, forkJoin, ReplaySubject, throwError } from "rxjs";
 import { ArrayExternal } from "~/api/external/Array";
 import { ArrayInternal } from "~/api/internal/Array";
 

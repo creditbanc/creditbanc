@@ -143,11 +143,11 @@ const TradeLine = ({ trade_line = {}, type = "basic", experian = false, equifax 
 						)(trade_line)}
 					</p>
 				</div>
-				{type == "usage" && (
+				{/* {type == "usage" && (
 					<div className="flex flex-col">
 						<Stat />
 					</div>
-				)}
+				)} */}
 			</div>
 			<div className="border-t border-gray-200 px-4 py-3">
 				<div className="hidden sm:flex sm:flex-row sm:py-2">
