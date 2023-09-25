@@ -24,7 +24,7 @@ export const loader = async ({ request }) => {
 	let group_id = get_group_id(url.pathname);
 	let report = new BusinessReport(group_id);
 	let payload = report.experian_payment_trends.report_sha.experian_trade_lines.fold;
-	let response = await lastValueFrom(payload.pipe(fold(on_success(response), on_error)));
+	let response = await lastValueFrom(payload.pipe(fold(on_success(request), on_error)));
 	return response;
 };
 
