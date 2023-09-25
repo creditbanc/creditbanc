@@ -9,6 +9,8 @@ import BusinessReport from "~/api/client/BusinessReport";
 import { use_cache } from "~/components/CacheLink";
 import { useEffect } from "react";
 import { on_success } from "../../success";
+import { is_authorized } from "../../authorized";
+import { redirect } from "@remix-run/node";
 
 const log_route = `credit.report.business.dnb.trends`;
 
@@ -19,6 +21,7 @@ const on_error = (error) => {
 };
 
 export const loader = async ({ request }) => {
+	if (!(await is_authorized(request))) return redirect("/home");
 	let url = new URL(request.url);
 	let group_id = get_group_id(url.pathname);
 	let report = new BusinessReport(group_id);

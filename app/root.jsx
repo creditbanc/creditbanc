@@ -222,8 +222,6 @@ export const loader = async ({ request }) => {
 
 	let response = await lastValueFrom(subject.pipe(rxfilter(on_complete), take(1)));
 
-	return response.next();
-
 	return json(response.next(), {
 		headers: {
 			"Cache-Control": "private, max-age=31536000",

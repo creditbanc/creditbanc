@@ -16,6 +16,7 @@ import Entity from "~/api/client/Entity";
 import { useEffect } from "react";
 import { use_cache } from "~/components/CacheLink";
 import { on_success } from "./business/success";
+import { is_authorized } from "./business/authorized";
 
 const log_route = `credit.report.business`;
 
@@ -62,6 +63,7 @@ const on_error = (error) => {
 };
 
 export const loader = async ({ request }) => {
+	if (!(await is_authorized(request))) return redirect("/home");
 	let url = new URL(request.url);
 	let entity_id = await get_session_entity_id(request);
 	let group_id = get_group_id(url.pathname);
