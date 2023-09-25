@@ -12,6 +12,8 @@ import { fold } from "~/utils/operators";
 import PersonalReport from "~/api/client/PersonalReport";
 import { use_cache } from "~/components/CacheLink";
 import { on_success } from "./personal/success";
+import { is_authorized } from "./personal/authorized";
+import { redirect } from "@remix-run/node";
 
 const log_route = `credit.report.personal`;
 
@@ -22,6 +24,7 @@ const on_error = (error) => {
 };
 
 export const loader = async ({ request }) => {
+	if (!(await is_authorized(request))) return redirect("/home");
 	let url = new URL(request.url);
 	let group_id = get_group_id(url.pathname);
 	let report = new PersonalReport(group_id);

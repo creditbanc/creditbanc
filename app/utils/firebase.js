@@ -1,14 +1,7 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
 import { getStorage } from "firebase/storage";
-import {
-	getCountFromServer,
-	getFirestore,
-	onSnapshot,
-	orderBy,
-	updateDoc,
-	serverTimestamp,
-} from "firebase/firestore";
+import { getCountFromServer, getFirestore, onSnapshot, orderBy, updateDoc, serverTimestamp } from "firebase/firestore";
 import {
 	doc,
 	setDoc,
@@ -56,13 +49,9 @@ export const get_collection_listener = async (
 	callback
 ) => {
 	let limit_args = limit.map((limit_amount) => firelimit(limit_amount));
-	let order_args = orderBy.map(({ field, direction = "desc" }) =>
-		fireorder(field, direction)
-	);
+	let order_args = orderBy.map(({ field, direction = "desc" }) => fireorder(field, direction));
 
-	let query_args = queries.map((query) =>
-		where(query.param, query.predicate, query.value)
-	);
+	let query_args = queries.map((query) => where(query.param, query.predicate, query.value));
 
 	// console.log("cursors");
 	// console.log(cursors);
@@ -94,21 +83,11 @@ export const get_collection_listener = async (
 	return unsubscribe;
 };
 
-export const get_collection = async ({
-	path,
-	queries = [],
-	limit = [],
-	orderBy = [],
-	cursors = [],
-}) => {
+export const get_collection = async ({ path, queries = [], limit = [], orderBy = [], cursors = [] }) => {
 	let limit_args = limit.map((limit_amount) => firelimit(limit_amount));
-	let order_args = orderBy.map(({ field, direction = "desc" }) =>
-		fireorder(field, direction)
-	);
+	let order_args = orderBy.map(({ field, direction = "desc" }) => fireorder(field, direction));
 
-	let query_args = queries.map((query) =>
-		where(query.param, query.predicate, query.value)
-	);
+	let query_args = queries.map((query) => where(query.param, query.predicate, query.value));
 
 	let cursor_args = await Promise.all(
 		cursors.map(async (cursor) => {
@@ -135,21 +114,11 @@ export const get_collection = async ({
 	return querySnapshot.docs.map((doc) => ({ doc_id: doc.id, ...doc.data() }));
 };
 
-export const get_count = async ({
-	path,
-	queries = [],
-	limit = [],
-	orderBy = [],
-	cursors = [],
-}) => {
+export const get_count = async ({ path, queries = [], limit = [], orderBy = [], cursors = [] }) => {
 	let limit_args = limit.map((limit_amount) => firelimit(limit_amount));
-	let order_args = orderBy.map(({ field, direction = "desc" }) =>
-		fireorder(field, direction)
-	);
+	let order_args = orderBy.map(({ field, direction = "desc" }) => fireorder(field, direction));
 
-	let query_args = queries.map((query) =>
-		where(query.param, query.predicate, query.value)
-	);
+	let query_args = queries.map((query) => where(query.param, query.predicate, query.value));
 
 	let cursor_args = await Promise.all(
 		cursors.map(async (cursor) => {
@@ -195,11 +164,7 @@ export const get_doc_listener = (path, callback) => {
 
 export const set_doc = async (path, data, merge = false) => {
 	if (merge) {
-		return await setDoc(
-			doc(firestore, ...path),
-			{ ...data, timestamp: server_timestamp() },
-			{ merge: true }
-		);
+		return await setDoc(doc(firestore, ...path), { ...data, timestamp: server_timestamp() }, { merge: true });
 	} else {
 		return await setDoc(doc(firestore, ...path), data);
 	}

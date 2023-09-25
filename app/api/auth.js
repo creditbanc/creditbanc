@@ -1,16 +1,5 @@
 import { get_collection, get_doc } from "~/utils/firebase";
-import {
-	always,
-	defaultTo,
-	gt as rgt,
-	head,
-	includes,
-	isEmpty,
-	length,
-	pipe,
-	tryCatch,
-	flip,
-} from "ramda";
+import { always, defaultTo, gt as rgt, head, includes, isEmpty, length, pipe, tryCatch, flip } from "ramda";
 import { filter, get } from "shades";
 import { inspect } from "~/utils/helpers";
 
@@ -87,21 +76,12 @@ export const get_permissions = async (entity_id, group_id) => {
 };
 
 export const validate_permission = (permission_id, action, permissions) => {
-	let has_permission = pipe(
-		filter({ id: permission_id }),
-		head,
-		get(action)
-	)(permissions);
+	let has_permission = pipe(filter({ id: permission_id }), head, get(action))(permissions);
 
 	return has_permission;
 };
 
-export const is_authorized_f = async (
-	entity_id,
-	group_id,
-	resource,
-	action
-) => {
+export const is_authorized_f = async (entity_id, group_id, resource, action) => {
 	let role = await get_permissions(entity_id, group_id);
 
 	// console.log("api.auth.is_authorized_f");
