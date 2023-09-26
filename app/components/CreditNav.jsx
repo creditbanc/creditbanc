@@ -2,11 +2,7 @@ import { Fragment, useState } from "react";
 import { Disclosure, Menu, Transition, Dialog } from "@headlessui/react";
 import { BellIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import { Link, useLocation } from "@remix-run/react";
-import {
-	mapIndexed,
-	to_group_pathname,
-	to_resource_pathname,
-} from "~/utils/helpers";
+import { mapIndexed, to_group_pathname, to_resource_pathname } from "~/utils/helpers";
 import { isEmpty, pipe } from "ramda";
 import { useModalStore } from "~/hooks/useModal";
 import Modal from "./Modal";
@@ -27,11 +23,7 @@ const BurgerIcon = () => {
 			stroke="currentColor"
 			className="w-6 h-6 text-gray-400"
 		>
-			<path
-				strokeLinecap="round"
-				strokeLinejoin="round"
-				d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"
-			/>
+			<path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
 		</svg>
 	);
 };
@@ -87,11 +79,7 @@ let DeleteIcon = () => {
 			onMouseEnter={(e) => setColor("red")}
 			onMouseLeave={(e) => setColor("currentColor")}
 		>
-			<path
-				strokeLinecap="round"
-				strokeLinejoin="round"
-				d="M15 12H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z"
-			/>
+			<path strokeLinecap="round" strokeLinejoin="round" d="M15 12H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z" />
 		</svg>
 	);
 };
@@ -106,11 +94,7 @@ let PlusIcon = () => {
 			stroke="currentColor"
 			className="w-4 h-4"
 		>
-			<path
-				strokeLinecap="round"
-				strokeLinejoin="round"
-				d="M12 4.5v15m7.5-7.5h-15"
-			/>
+			<path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
 		</svg>
 	);
 };
@@ -218,44 +202,29 @@ function Panel({ is_open, setPanel, reports = {} }) {
 													<button
 														type="button"
 														className="rounded-md bg-white text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
-														onClick={() =>
-															setPanel(false)
-														}
+														onClick={() => setPanel(false)}
 													>
-														<span className="sr-only">
-															Close panel
-														</span>
-														<XMarkIcon
-															className="h-6 w-6"
-															aria-hidden="true"
-														/>
+														<span className="sr-only">Close panel</span>
+														<XMarkIcon className="h-6 w-6" aria-hidden="true" />
 													</button>
 												</div>
 											</div>
 										</div>
 										<div className="relative mt-6 flex-1 px-4 sm:px-6">
 											<div className="absolute inset-0 px-4 sm:px-6">
-												<div
-													className="w-full h-full "
-													aria-hidden="true"
-												>
+												<div className="w-full h-full " aria-hidden="true">
 													<fieldset>
 														<div>
 															<div className="flex flex-row">
 																<div className="mr-2">
 																	<PersonIcon />
 																</div>
-																<div>
-																	Personal
-																	reports
-																</div>
+																<div>Personal reports</div>
 															</div>
 
 															<div className="py-3">
 																<PersonalReports
-																	reports={
-																		reports.personal_credit_reports
-																	}
+																	reports={reports.personal_credit_reports}
 																/>
 															</div>
 
@@ -263,27 +232,19 @@ function Panel({ is_open, setPanel, reports = {} }) {
 																<div className="mr-2">
 																	<BusinessIcon />
 																</div>
-																<div>
-																	Business
-																	reports
-																</div>
+																<div>Business reports</div>
 															</div>
 															<div className="py-3">
 																<Link
 																	className="border-gray-200 cursor-pointer flex flex-row border rounded-md hover:border-indigo-400"
 																	to={
 																		"/credit/business/new" +
-																		to_group_pathname(
-																			location.pathname
-																		)
+																		to_group_pathname(location.pathname)
 																	}
 																>
 																	<div className="text-sm mx-2 text-gray-700 justify-start w-full ">
 																		<div className="flex flex-row items-center justify-between py-1 rounded">
-																			<div>
-																				Add
-																				new
-																			</div>
+																			<div>Add new</div>
 																			<div className="pr-1">
 																				<PlusIcon />
 																			</div>
@@ -291,9 +252,7 @@ function Panel({ is_open, setPanel, reports = {} }) {
 																	</div>
 																</Link>
 																<BusinessReports
-																	reports={
-																		reports.business_credit_reports
-																	}
+																	reports={reports.business_credit_reports}
 																/>
 															</div>
 														</div>
@@ -312,12 +271,7 @@ function Panel({ is_open, setPanel, reports = {} }) {
 	);
 }
 
-export default function Nav({
-	origin,
-	can_share = false,
-	reports = {},
-	user_id = false,
-}) {
+export default function Nav({ origin, can_share = false, reports = {}, user_id = false }) {
 	const location = useLocation();
 	let url = origin + location.pathname + location.search;
 	let resource_pathname = to_resource_pathname(url);
@@ -338,35 +292,20 @@ export default function Nav({
 		<Disclosure as="nav" className="bg-white top-0 sticky z-50">
 			{({ open }) => (
 				<>
-					<Panel
-						is_open={panel}
-						setPanel={setPanel}
-						reports={reports}
-					/>
+					<Panel is_open={panel} setPanel={setPanel} reports={reports} />
 
 					<div className="mx-auto px-4 sm:px-6 lg:px-8">
 						<div className="flex h-16 justify-between">
 							<div className="flex flex-col justify-center space-y-1.5">
 								{user_id && (
 									<div className="sm:hidden flex flex-col items-center justify-center mr-5">
-										<div
-											className="cursor-pointer"
-											onClick={onPanelToggle}
-										>
+										<div className="cursor-pointer" onClick={onPanelToggle}>
 											<BurgerIcon />
 										</div>
 									</div>
 								)}
-								<Link
-									to="/"
-									className="flex flex-shrink-0 items-center"
-									href="/"
-								>
-									<img
-										className="hidden sm:block h-5 w-auto"
-										src={cb_logo}
-										alt="Credit Banc"
-									/>
+								<Link to="/" className="flex flex-shrink-0 items-center" href="/">
+									<img className="hidden sm:block h-5 w-auto" src={cb_logo} alt="Credit Banc" />
 								</Link>
 							</div>
 
@@ -432,24 +371,15 @@ export default function Nav({
 									/>
 								</div>
 								<div className="ml-3">
-									<div className="text-base font-medium text-gray-800">
-										Tom Cook
-									</div>
-									<div className="text-sm font-medium text-gray-500">
-										tom@example.com
-									</div>
+									<div className="text-base font-medium text-gray-800">Tom Cook</div>
+									<div className="text-sm font-medium text-gray-500">tom@example.com</div>
 								</div>
 								<button
 									type="button"
 									className="ml-auto flex-shrink-0 rounded-full bg-white p-1 text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
 								>
-									<span className="sr-only">
-										View notifications
-									</span>
-									<BellIcon
-										className="h-6 w-6"
-										aria-hidden="true"
-									/>
+									<span className="sr-only">View notifications</span>
+									<BellIcon className="h-6 w-6" aria-hidden="true" />
 								</button>
 							</div>
 							<div className="mt-3 space-y-1">

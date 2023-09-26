@@ -3,7 +3,7 @@ import { Link, useLocation } from "@remix-run/react";
 import { Listbox, Transition } from "@headlessui/react";
 import { CheckIcon, ChevronUpDownIcon } from "@heroicons/react/20/solid";
 import { tabs } from "~/data/personal_tabs";
-import { pipe, head } from "ramda";
+import { pipe, head, join, mapObjIndexed, values } from "ramda";
 import { filter } from "shades";
 import { classNames } from "~/utils/helpers";
 
@@ -122,19 +122,28 @@ export const PersonalCreditTabs = ({ selected = "Personal" }) => {
 
 export const PersonalCreditTabsVertical = ({ selected = "Personal" }) => {
 	let location = useLocation();
-	let search_params = location.search;
+	let params = new URLSearchParams(location.search);
+
+	let params_string = pipe(
+		Object.fromEntries,
+		(values) => ({ ...values, rand: Math.random() }),
+		filter((value) => value !== undefined),
+		mapObjIndexed((value, key) => `${key}=${value}`),
+		values,
+		join("&"),
+		(value) => `?${value}`
+	)(params);
 
 	return (
 		<nav className="flex flex-col justify-start bg-white rounded" aria-label="Tabs">
 			{tabs.map((tab) => (
 				<Link
-					key={tab.name}
-					to={
-						tab.href({
-							search: search_params,
-							pathname: location.pathname,
-						}) + `?rand=${Math.random()}`
-					}
+					key={Math.random()}
+					reloadDocument={false}
+					to={tab.href({
+						search: params_string,
+						pathname: location.pathname,
+					})}
 					className={classNames(
 						selected == tab.id ? " text-blue-600" : " text-gray-500 hover:border-gray-300",
 						"group inline-flex items-center py-4 px-2 border-b font-medium text-sm last-of-type:border-none pl-4 hover:text-blue-600"
