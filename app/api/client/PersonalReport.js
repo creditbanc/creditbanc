@@ -327,8 +327,6 @@ export default class PersonalReport {
 
 	get shas() {
 		this.response = forkJoin({ report: this._report, array_report: this._array_report }).pipe(
-			tap(() => console.log(`PersonalReport.tap.6`)),
-			tap(console.log),
 			rxmap(({ report, array_report }) => ({
 				prev_sha: report == undefined ? normalize_id(array_report) : normalize_id(report),
 				curr_sha: normalize_id(array_report),

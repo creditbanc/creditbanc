@@ -23,21 +23,15 @@ export const loader = async ({ request }) => {
 	let url = new URL(request.url);
 	let group_id = get_group_id(url.pathname);
 	let report = new PersonalReport(group_id);
-	let payload = report.first_name.last_name.street.city.state.zip.dob.identity.user_token.fold;
+	let payload = report.user_token.fold;
 	let response = await lastValueFrom(payload.pipe(fold(on_success(request), on_error)));
 	return response;
 };
 
 export default function Personal() {
 	let loader_data = useLoaderData();
-	let { cache_dependencies, user_token } = loader_data;
+	let { user_token } = loader_data;
 	let use_cache_client = use_cache((state) => state.set_dependencies);
-
-	useEffect(() => {
-		if (cache_dependencies !== undefined) {
-			use_cache_client({ path: `/credit/report/personal`, dependencies: cache_dependencies });
-		}
-	}, []);
 
 	return (
 		<div>

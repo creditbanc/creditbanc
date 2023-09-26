@@ -3,15 +3,11 @@ import { get_group_id, inspect } from "~/utils/helpers";
 import { concatMap, from, lastValueFrom, map as rxmap, tap } from "rxjs";
 import { fold } from "~/utils/operators";
 import PersonalReport from "~/api/client/PersonalReport";
-import { use_cache } from "~/components/CacheLink";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { on_success } from "~/routes/credit/report/personal/success";
 import { is_authorized } from "../authorized";
 import { redirect } from "@remix-run/node";
 import { appKey } from "~/data/array";
-import { pickAll, pipe } from "ramda";
-import { ArrayExternal } from "~/api/external/Array";
-import { update_doc } from "~/utils/firebase";
 
 const log_route = `credit.report.personal.personal`;
 
@@ -26,68 +22,19 @@ export const loader = async ({ request }) => {
 	let url = new URL(request.url);
 	let group_id = get_group_id(url.pathname);
 	let report = new PersonalReport(group_id);
-	let payload = report.first_name.last_name.street.city.state.zip.dob.identity.user_token.fold;
+	let payload = report.user_token.fold;
 	let response = await lastValueFrom(payload.pipe(fold(on_success(request), on_error)));
+	console.log("response", response);
 	return response;
-};
-
-const PersonalInfoCard = () => {
-	let { plan_id, first_name, last_name, street, city, state, zip, dob } = useLoaderData();
-
-	return (
-		<div className="overflow-hidden bg-white rounded-lg border">
-			<div className="px-4 py-5 sm:px-6">
-				<h3 className="text-lg font-medium leading-6 text-gray-900">Personal Information</h3>
-				<p className="mt-1 max-w-2xl text-sm text-gray-500">
-					Below is your personal information as it appears in your credit file. This information includes your
-					legal name, current and previous addresses, employment information and other details.
-				</p>
-			</div>
-			<div className="border-t border-gray-200 px-4 py-1">
-				<dl className="divide-y divide-gray-200">
-					<div className="py-4 flex flex-col sm:flex-row sm:py-5 sm:px-6">
-						<dt className="text-sm font-medium text-gray-500 w-[200px]">Name</dt>
-						<dd className="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0">
-							{first_name} {last_name}
-						</dd>
-					</div>
-					<div className="py-4 flex flex-col sm:flex-row sm:py-5 sm:px-6">
-						<dt className="text-sm font-medium text-gray-500 w-[200px]">Date of birth</dt>
-						<dd className="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0">{dob}</dd>
-					</div>
-					<div className="py-4 flex flex-col sm:flex-row sm:py-5 sm:px-6">
-						<dt className="text-sm font-medium text-gray-500 w-[200px]">Address</dt>
-						<dd className="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0">
-							<div className="flex flex-col">
-								<div>{street}</div>
-								<div className="flex flex-row space-x-1">
-									<div>{city},</div>
-									<div>{state}</div>
-									<div>{zip}</div>
-								</div>
-							</div>
-						</dd>
-					</div>
-				</dl>
-			</div>
-		</div>
-	);
 };
 
 export default function Personal() {
 	let loader_data = useLoaderData();
-	let { cache_dependencies, user_token } = loader_data;
-	let use_cache_client = use_cache((state) => state.set_dependencies);
-
-	useEffect(() => {
-		if (cache_dependencies !== undefined) {
-			use_cache_client({ path: `/credit/report/personal`, dependencies: cache_dependencies });
-		}
-	}, []);
+	let { user_token } = loader_data;
 
 	return (
 		<div>
-			<array-credit-debt-analysis appKey={appKey} userToken={user_token}></array-credit-debt-analysis>
+			<array-credit-report appKey={appKey} userToken={user_token}></array-credit-report>
 		</div>
 	);
 }

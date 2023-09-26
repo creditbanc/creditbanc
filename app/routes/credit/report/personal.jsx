@@ -28,7 +28,7 @@ export const loader = async ({ request }) => {
 	let url = new URL(request.url);
 	let group_id = get_group_id(url.pathname);
 	let report = new PersonalReport(group_id);
-	let payload = report.scores.first_name.last_name.report_sha.shas.fold;
+	let payload = report.scores.first_name.last_name.fold;
 	let response = await lastValueFrom(payload.pipe(fold(on_success(request), on_error)));
 	return response;
 };

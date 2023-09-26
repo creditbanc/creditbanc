@@ -33,12 +33,11 @@ export const loader = async ({ request }) => {
 
 export default function Factors() {
 	let loader_data = useLoaderData();
-	let { cache_dependencies, user_token } = loader_data;
+	let { user_token } = loader_data;
 
 	return (
 		<div>
-			{/* <array-credit-score-factors appKey={appKey} userToken={user_token}></array-credit-score-factors> */}
-			<array-identity-protect appKey={appKey} userToken={user_token}></array-identity-protect>
+			<array-credit-score-factors appKey={appKey} userToken={user_token}></array-credit-score-factors>
 		</div>
 	);
 }
