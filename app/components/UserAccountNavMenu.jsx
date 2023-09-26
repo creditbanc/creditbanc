@@ -7,12 +7,12 @@ import { Cog8ToothIcon, UserCircleIcon } from "@heroicons/react/24/outline";
 import { is_entity_super } from "~/api/auth";
 
 export default function UserAccountNavMenu() {
-	let { entity } = useLoaderData();
+	let { identity: entity } = useLoaderData();
 	let { pathname } = useLocation();
 	let entity_id = get_entity_id(pathname);
 	let group_id = get_group_id(pathname);
 
-	let avatar = avatars(entity.email, { size: 35 });
+	let avatar = avatars(entity?.email, { size: 35 });
 
 	return (
 		<Menu as="div" className="relative ml-3">

@@ -1097,15 +1097,6 @@ export default function Home() {
 		length
 	)(onboard);
 
-	// console.log("home.$");
-	// console.log(cache_dependencies);
-	// console.log(business_info);
-	// console.log("business_scores");
-	// console.log(business_scores);
-	// console.log(personal_socres_fetcher.data);
-	// console.log(business_scores_fetcher.data);
-	// console.log(business_info_fetcher.data);
-
 	const run_fetchers = async () => {
 		business_info_fetcher.submit(...fetcher_payload_maker(business_info_url));
 		personal_scores_fetcher.submit(...fetcher_payload_maker(personal_scores_url));

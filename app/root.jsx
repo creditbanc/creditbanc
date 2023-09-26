@@ -103,7 +103,7 @@ export default function App() {
 	const show_spinner = useSpinner((state) => state.show_spinner);
 	const setSpinner = useSpinner((state) => state.setSpinner);
 	let loader_data = useLoaderData();
-	let { entity_id, roles, companies } = loader_data;
+	let { identity, roles, companies } = loader_data;
 
 	let is_resource_path = is_location("/resource", pathname);
 
@@ -133,7 +133,7 @@ export default function App() {
 					<div className="flex flex-col w-full h-full relative overflow-hidden">
 						{is_resource_path && (
 							<div className="flex flex-col w-full border-b bg-white sticky top-0 z-[99]">
-								<SimpleNavSignedIn entity_id={entity_id} roles={roles} companies={companies} />
+								<SimpleNavSignedIn entity_id={identity?.id} roles={roles} companies={companies} />
 							</div>
 						)}
 						<Outlet />
