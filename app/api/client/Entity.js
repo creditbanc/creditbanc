@@ -1,6 +1,6 @@
 import { curry, head, identity, pickAll, pipe, prop, uniqBy, values } from "ramda";
 import { get_doc, get_collection } from "~/utils/firebase";
-import { forkJoin, from, merge, of as rxof, zip } from "rxjs";
+import { forkJoin, from, merge, of as rxof, throwError, zip } from "rxjs";
 import { map as rxmap, concatMap, catchError, reduce as rxreduce, filter as rxfilter, tap } from "rxjs/operators";
 import { get, inspect } from "~/utils/helpers";
 import { is_authorized_f } from "../auth";
@@ -269,6 +269,7 @@ export default class Entity {
 			catchError((error) => {
 				console.log("api.client.Entity.fold.error");
 				console.log(error);
+				return rxof({});
 			})
 		);
 	}
