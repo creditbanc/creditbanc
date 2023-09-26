@@ -5,7 +5,7 @@ import UserAccountNavMenu from "./UserAccountNavMenu";
 import { classNames, get_entity_id, get_group_id, is_location, mapIndexed } from "~/utils/helpers";
 import { Menu, Transition } from "@headlessui/react";
 import { ChevronDownIcon } from "@heroicons/react/20/solid";
-import { always, equals, includes, isEmpty, map, not, pipe, set, tryCatch } from "ramda";
+import { always, equals, includes, isEmpty, map, not, pipe, prop, set, tryCatch, uniqBy } from "ramda";
 import {
 	ChatBubbleLeftEllipsisIcon,
 	Cog6ToothIcon,
@@ -32,11 +32,13 @@ export const useRolesStore = create((set) => ({
 	set_roles: (path, value) => set((state) => pipe(mod(...path)(() => value))(state)),
 }));
 
-const Companies = ({ companies = [] }) => {
+const Companies = ({ companies: { shared_companies = [], owner_companies = [] } }) => {
 	let { pathname } = useLocation();
 	let entity_id = get_entity_id(pathname);
 	let group_id = get_group_id(pathname);
-	// let companies = useCompaniesDropdownStore((state) => state.companies);
+	let companies = pipe(uniqBy(prop("id")))([...owner_companies, ...shared_companies]);
+	console.log("companies");
+	console.log(companies);
 
 	return (
 		<Menu as="div" className="relative inline-block text-left z-50">
@@ -358,7 +360,7 @@ export default function Nav({ entity_id, roles, companies }) {
 	let is_companies_dashboard = is_location("/companies/dashboard", pathname);
 
 	let set_roles = useRolesStore((state) => state.set_roles);
-	let set_companies = useCompaniesDropdownStore((state) => state.set_state);
+	// let set_companies = useCompaniesDropdownStore((state) => state.set_state);
 
 	// console.log("cache_keys");
 	// console.log(cache_keys);
@@ -367,18 +369,18 @@ export default function Nav({ entity_id, roles, companies }) {
 		set_roles(["roles"], roles);
 	}, [roles]);
 
-	useEffect(() => {
-		const get_companies = async () => {
-			let owner_companies = await get_owner_companies_ids(entity_id);
-			let shared_companies = await get_shared_companies_ids(entity_id);
+	// useEffect(() => {
+	// 	const get_companies = async () => {
+	// 		let owner_companies = await get_owner_companies_ids(entity_id);
+	// 		let shared_companies = await get_shared_companies_ids(entity_id);
 
-			set_companies(["companies"], [...owner_companies, ...shared_companies]);
-		};
+	// 		set_companies(["companies"], [...owner_companies, ...shared_companies]);
+	// 	};
 
-		if (entity_id) {
-			// get_companies();
-		}
-	}, [entity_id]);
+	// 	if (entity_id) {
+	// 		// get_companies();
+	// 	}
+	// }, [entity_id]);
 
 	return (
 		<div className="flex flex-col w-full h-[65px] justify-center px-5">
