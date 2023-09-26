@@ -212,8 +212,6 @@ export default class Entity {
 
 	get companies() {
 		this.response = zip([this._owner_companies_, this._shared_companies_]).pipe(
-			tap(() => console.log("api.client.Entity.shared_companies")),
-			tap(inspect),
 			rxmap(([owner_companies, shared_companies]) => ({
 				companies: {
 					owner_companies,

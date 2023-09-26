@@ -21,8 +21,6 @@ import Spinner from "./components/LoadingSpinner";
 import { lastValueFrom } from "rxjs";
 import { fold } from "~/utils/operators";
 import Entity from "./api/client/Entity";
-import { isEmpty } from "ramda";
-import { use_nav_store } from "./stores/nav";
 
 const log_route = `root`;
 
