@@ -8,9 +8,6 @@ import { is_authorized_f } from "../auth";
 const merge_with_current = curry((current, data) => {
 	return current.pipe(
 		rxmap((response) => {
-			console.log("merge_with_current");
-			console.log(response);
-			console.log(data);
 			return { ...response, ...data };
 		})
 	);

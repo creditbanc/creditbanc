@@ -14,16 +14,12 @@ import {
 	PlusIcon,
 	UsersIcon,
 } from "@heroicons/react/24/outline";
-import { get_collection } from "~/utils/firebase";
 import { all, get, mod } from "shades";
 import { create } from "zustand";
-import { get_owner_companies_ids, get_shared_companies_ids } from "~/api/ui/companies";
-import { useCompaniesDropdownStore } from "~/stores/useCompaniesDropdownStore";
 import copy from "copy-to-clipboard";
 import Share from "~/routes/invites/new/$.jsx";
 import Modal from "~/components/Modal";
 import { useModalStore } from "~/hooks/useModal";
-import avatars from "~/data/avatars";
 import { use_cache } from "~/components/CacheLink";
 import CacheLink from "./CacheLink";
 
@@ -37,8 +33,6 @@ const Companies = ({ companies: { shared_companies = [], owner_companies = [] } 
 	let entity_id = get_entity_id(pathname);
 	let group_id = get_group_id(pathname);
 	let companies = pipe(uniqBy(prop("id")))([...owner_companies, ...shared_companies]);
-	console.log("companies");
-	console.log(companies);
 
 	return (
 		<Menu as="div" className="relative inline-block text-left z-50">
@@ -360,27 +354,10 @@ export default function Nav({ entity_id, roles, companies }) {
 	let is_companies_dashboard = is_location("/companies/dashboard", pathname);
 
 	let set_roles = useRolesStore((state) => state.set_roles);
-	// let set_companies = useCompaniesDropdownStore((state) => state.set_state);
-
-	// console.log("cache_keys");
-	// console.log(cache_keys);
 
 	useEffect(() => {
 		set_roles(["roles"], roles);
 	}, [roles]);
-
-	// useEffect(() => {
-	// 	const get_companies = async () => {
-	// 		let owner_companies = await get_owner_companies_ids(entity_id);
-	// 		let shared_companies = await get_shared_companies_ids(entity_id);
-
-	// 		set_companies(["companies"], [...owner_companies, ...shared_companies]);
-	// 	};
-
-	// 	if (entity_id) {
-	// 		// get_companies();
-	// 	}
-	// }, [entity_id]);
 
 	return (
 		<div className="flex flex-col w-full h-[65px] justify-center px-5">
