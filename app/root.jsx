@@ -13,7 +13,7 @@ import { useTransition } from "@remix-run/react";
 import { create } from "zustand";
 import { useEffect } from "react";
 const cb_logo_3 = "/images/logos/cb_logo_3.png";
-import { array_script_tag, kba_script_tag } from "./data/array";
+import { appKey, array_script_tag, kba_script_tag } from "./data/array";
 import { get_session_entity_id } from "./utils/auth.server";
 import { is_location } from "./utils/helpers";
 import SimpleNavSignedIn from "~/components/SimpleNavSignedIn";
@@ -126,6 +126,7 @@ export default function App() {
 				<Links />
 				<script src={kba_script_tag}></script>
 				<script src={array_script_tag}></script>
+				<script src={`https://embed.array.io/cms/array-credit-report.js?appKey=${appKey}`}></script>
 			</head>
 			<body className="flex flex-col relative">
 				{show_spinner && <Spinner />}

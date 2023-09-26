@@ -108,25 +108,25 @@ export default function CreditReport() {
 							)}
 
 							<div
-								className="flex flex-col h-full flex-1 overflow-y-scroll scrollbar-none rounded-lg"
+								className="flex flex-col h-full flex-1 overflow-y-scroll scrollbar-none rounded-lg bg-white border"
 								ref={pageRef}
 							>
 								<div className="flex flex-col w-full  px-5 pt-5  rounded-lg">
 									<div className="w-full text-center space-y-5 mt-5">
-										<h1 className="text-5xl font-bold tracking-tight">
-											{first_name}
-											's personal credit report
-										</h1>
-										<p className="text-lg leading-6 ">View all three personal credit bureaus</p>
+										<div className="flex flex-row text-5xl font-bold tracking-tight space-x-1 justify-center mb-5">
+											<div>{first_name}</div>
+											<div>'s personal credit report</div>
+										</div>
+										{/* <p className="text-lg leading-6 ">View all three personal credit bureaus</p> */}
 									</div>
 
-									<div className="flex flex-col w-full">
+									{/* <div className="flex flex-col w-full">
 										<CreditScoreHero
 											experian={experian}
 											equifax={equifax}
 											transunion={transunion}
 										/>
-									</div>
+									</div> */}
 								</div>
 
 								<Outlet />

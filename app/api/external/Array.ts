@@ -1,30 +1,37 @@
 import { get, all, mod, filter } from "shades";
-import {
-	pipe,
-	map,
-	splitWhenever,
-	head,
-	pick,
-	tryCatch,
-	always,
-	uniqBy,
-	flatten,
-} from "ramda";
+import { pipe, map, splitWhenever, head, pick, tryCatch, always, uniqBy, flatten } from "ramda";
 import { inspect, currency } from "~/utils/helpers";
 import axios from "axios";
 import { mapIndexed } from "~/utils/helpers";
 
 export const is_sandbox = false;
 
-export const appKey = is_sandbox
-	? "F5C7226A-4F96-43BF-B748-09278FFE0E36"
-	: "F5C7226A-4F96-43BF-B748-09278FFE0E36";
+export const appKey = is_sandbox ? "F5C7226A-4F96-43BF-B748-09278FFE0E36" : "F5C7226A-4F96-43BF-B748-09278FFE0E36";
 
-export const report_url = is_sandbox
-	? "https://sandbox.array.io/api/report/v2"
-	: "https://array.io/api/report/v2";
+export const report_url = is_sandbox ? "https://sandbox.array.io/api/report/v2" : "https://array.io/api/report/v2";
 
 export class ArrayExternal {
+	static regenerateUserToken = async (appKey, clientKey, ttlInMinutes = 60) => {
+		console.log("api.external.Array.refreshDisplayToken");
+		const options = {
+			method: "POST",
+			maxBodyLength: Infinity,
+			url: "https://array.io/api/authenticate/v2/usertoken",
+			headers: {
+				accept: "application/json",
+				"Content-Type": "application/json",
+				"x-credmo-client-token": "8241960C-7A8B-4389-BB6C-1AAF99E7873C",
+			},
+			data: { appKey, clientKey, ttlInMinutes },
+		};
+
+		let response = await axios.request(options);
+
+		console.log("ArrayExternal.response");
+		console.log(response);
+		return response?.data;
+	};
+
 	static refreshDisplayToken = async (clientKey, reportKey) => {
 		console.log("api.external.Array.refreshDisplayToken");
 		const options = {
@@ -70,10 +77,7 @@ export class ArrayExternal {
 			// console.log("retry_____");
 			return new Promise((resolve, reject) => {
 				setTimeout(async () => {
-					let response = await ArrayExternal.get_credit_report(
-						reportKey,
-						displayToken
-					);
+					let response = await ArrayExternal.get_credit_report(reportKey, displayToken);
 					resolve(response);
 				}, delay_time_in_milliseconds);
 			});

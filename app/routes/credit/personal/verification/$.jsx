@@ -41,8 +41,7 @@ export const action = async ({ request }) => {
 		plan_id = entity.plan_id;
 	}
 
-	let productCode =
-		plan_id == "essential" ? "exp1bScore" : "credmo3bReportScore";
+	let productCode = plan_id == "essential" ? "exp1bScore" : "credmo3bReportScore";
 
 	let report_payload = {
 		clientKey,
@@ -53,9 +52,7 @@ export const action = async ({ request }) => {
 	console.log("report_payload________");
 	console.log(report_payload);
 
-	let { displayToken, reportKey, error } = await new_credit_report(
-		report_payload
-	);
+	let { displayToken, reportKey, error } = await new_credit_report(report_payload);
 
 	let report_id = uuidv4();
 	let entity_id = await get_session_entity_id(request);
@@ -67,6 +64,7 @@ export const action = async ({ request }) => {
 		id: report_id,
 		entity_id,
 		group_id,
+		userToken,
 		type: "personal_credit_report",
 	};
 
@@ -75,9 +73,7 @@ export const action = async ({ request }) => {
 
 	await set_doc(["credit_reports", report_id], new_report_payload);
 
-	return redirect(
-		`/credit/report/personal/personal/resource/e/${entity_id}/g/${group_id}`
-	);
+	return redirect(`/credit/report/personal/personal/resource/e/${entity_id}/g/${group_id}`);
 
 	let { data: credit_report_api_response } = await axios({
 		method: "get",
@@ -92,12 +88,11 @@ export const action = async ({ request }) => {
 		console.log("joy_________");
 
 		let session = await getSession(request.headers.get("Cookie"));
-		let { street, city, state, zip, first_name, last_name, ssn, dob } =
-			credit_user(JSON.parse(session.data.personal_credit_report));
-
-		let credit_report_request = credit_user(
+		let { street, city, state, zip, first_name, last_name, ssn, dob } = credit_user(
 			JSON.parse(session.data.personal_credit_report)
 		);
+
+		let credit_report_request = credit_user(JSON.parse(session.data.personal_credit_report));
 
 		let report_id = uuidv4();
 
@@ -158,9 +153,7 @@ export const action = async ({ request }) => {
 		`applicant=${applicant}`,
 	];
 
-	let redirect_search_params = is_applicant
-		? applicant_params.join("&")
-		: params.join("&");
+	let redirect_search_params = is_applicant ? applicant_params.join("&") : params.join("&");
 
 	return null;
 
@@ -169,9 +162,7 @@ export const action = async ({ request }) => {
 		return redirect(`/credit/personal/create?${redirect_search_params}`);
 	} else {
 		if (is_sandbox) {
-			return redirect(
-				`/credit/personal/create?${redirect_search_params}`
-			);
+			return redirect(`/credit/personal/create?${redirect_search_params}`);
 		}
 	}
 };
@@ -191,12 +182,9 @@ const Heading = () => {
 			<div className="mx-auto max-w-7xl py-4 pb-6 px-2">
 				<div className="text-center">
 					<p className="mt-1 text-3xl font-bold tracking-tight text-[#55CF9E]">
-						Almost there; We just need to make sure you’re a real
-						person.
+						Almost there; We just need to make sure you’re a real person.
 					</p>
-					<p className="text-lg font-semibold text-[#202536] mt-3">
-						No hard feelings?
-					</p>
+					<p className="text-lg font-semibold text-[#202536] mt-3">No hard feelings?</p>
 				</div>
 			</div>
 		</div>
@@ -213,10 +201,7 @@ export default function Verification() {
 		window.addEventListener("array-event", function arrayEvent(arrayEvent) {
 			const { tagName, event, metadata = {} } = arrayEvent.detail;
 
-			let userToken = tryCatch(
-				pipe(get("user-token")),
-				always(null)
-			)(metadata);
+			let userToken = tryCatch(pipe(get("user-token")), always(null))(metadata);
 
 			if (userToken) {
 				let payload = JSON.stringify({

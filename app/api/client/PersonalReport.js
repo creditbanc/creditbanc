@@ -1,10 +1,12 @@
 import { get, normalize_id } from "~/utils/helpers";
 import { always, curry, equals, head, ifElse, pickAll, pipe } from "ramda";
-import { get_collection, get_doc, update_doc } from "~/utils/firebase";
+import { get_collection, get_doc, server_timestamp, set_doc, update_doc } from "~/utils/firebase";
 import { map as rxmap, filter as rxfilter, concatMap, catchError, tap, take } from "rxjs/operators";
 import { from, of as rxof, forkJoin, ReplaySubject, throwError } from "rxjs";
 import { ArrayExternal } from "~/api/external/Array";
 import { ArrayInternal } from "~/api/internal/Array";
+import { appKey } from "~/data/array";
+import moment from "moment";
 
 const log_route = `api.client.PersonalReport`;
 
@@ -53,6 +55,12 @@ export default class PersonalReport {
 		this.response = rxof({});
 		this.application = application;
 		this.report = report;
+	}
+
+	get identity() {
+		this.response = this.application.pipe(concatMap(merge_with_current(this.response)));
+
+		return this;
 	}
 
 	get scores() {
@@ -182,6 +190,35 @@ export default class PersonalReport {
 	get factors() {
 		this.response = this.report.pipe(
 			rxmap((report) => ({ factors: report.factors() })),
+			concatMap(merge_with_current(this.response))
+		);
+
+		return this;
+	}
+
+	get user_token() {
+		this.response = this.application.pipe(
+			rxmap(pipe(pickAll(["clientKey", "id", "userToken", "user_token_updated_at"]))),
+			concatMap(({ clientKey, id, userToken, user_token_updated_at }) => {
+				let start = moment(new Date(user_token_updated_at.seconds * 1000));
+				var minutes_passed = moment().diff(start, "minutes");
+				if (minutes_passed > 30 || userToken == undefined) {
+					console.log("PersonalReport.tap.user_token_update_needed");
+					return from(ArrayExternal.regenerateUserToken(appKey, clientKey)).pipe(
+						concatMap(({ userToken }) =>
+							from(
+								update_doc(["credit_reports", id], {
+									userToken,
+									user_token_updated_at: server_timestamp(),
+								})
+							).pipe(rxmap(() => ({ user_token: userToken })))
+						)
+					);
+				} else {
+					console.log("PersonalReport.tap.no_user_token_update_needed");
+					return rxof({ user_token: userToken });
+				}
+			}),
 			concatMap(merge_with_current(this.response))
 		);
 

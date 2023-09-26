@@ -1,6 +1,6 @@
 import { useLoaderData } from "@remix-run/react";
-import { get_group_id } from "~/utils/helpers";
-import { lastValueFrom } from "rxjs";
+import { get_group_id, inspect } from "~/utils/helpers";
+import { concatMap, from, lastValueFrom, map as rxmap, tap } from "rxjs";
 import { fold } from "~/utils/operators";
 import PersonalReport from "~/api/client/PersonalReport";
 import { use_cache } from "~/components/CacheLink";
@@ -8,6 +8,10 @@ import { useEffect } from "react";
 import { on_success } from "~/routes/credit/report/personal/success";
 import { is_authorized } from "../authorized";
 import { redirect } from "@remix-run/node";
+import { appKey } from "~/data/array";
+import { pickAll, pipe } from "ramda";
+import { ArrayExternal } from "~/api/external/Array";
+import { update_doc } from "~/utils/firebase";
 
 const log_route = `credit.report.personal.personal`;
 
@@ -22,7 +26,7 @@ export const loader = async ({ request }) => {
 	let url = new URL(request.url);
 	let group_id = get_group_id(url.pathname);
 	let report = new PersonalReport(group_id);
-	let payload = report.first_name.last_name.street.city.state.zip.dob.report_sha.fold;
+	let payload = report.first_name.last_name.street.city.state.zip.dob.identity.user_token.fold;
 	let response = await lastValueFrom(payload.pipe(fold(on_success(request), on_error)));
 	return response;
 };
@@ -71,14 +75,24 @@ const PersonalInfoCard = () => {
 };
 
 export default function Personal() {
-	let { cache_dependencies } = useLoaderData();
+	let loader_data = useLoaderData();
+	let { cache_dependencies, user_token } = loader_data;
 	let use_cache_client = use_cache((state) => state.set_dependencies);
+
+	console.log("Personal.loader_data");
+	console.log(loader_data);
 
 	useEffect(() => {
 		if (cache_dependencies !== undefined) {
 			use_cache_client({ path: `/credit/report/personal`, dependencies: cache_dependencies });
 		}
 	}, []);
+
+	return (
+		<div>
+			<array-credit-report appKey={appKey} userToken={user_token}></array-credit-report>
+		</div>
+	);
 
 	return (
 		<div className="flex flex-col w-full">
