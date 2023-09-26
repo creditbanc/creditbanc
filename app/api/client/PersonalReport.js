@@ -200,7 +200,9 @@ export default class PersonalReport {
 		this.response = this.application.pipe(
 			rxmap(pipe(pickAll(["clientKey", "id", "userToken", "user_token_updated_at"]))),
 			concatMap(({ clientKey, id, userToken, user_token_updated_at }) => {
-				let start = moment(new Date(user_token_updated_at.seconds * 1000));
+				let start = user_token_updated_at?.seconds
+					? moment(new Date(user_token_updated_at.seconds * 1000))
+					: moment().subtract(1, "days");
 				var minutes_passed = moment().diff(start, "minutes");
 				if (minutes_passed > 30 || userToken == undefined) {
 					console.log("PersonalReport.tap.user_token_update_needed");
