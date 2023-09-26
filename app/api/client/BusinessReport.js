@@ -308,8 +308,10 @@ export default class BusinessReport {
 				if (error == undefined) {
 					return rxof({
 						business_report_is_empty: true,
-						dnb_business_score: 0,
-						experian_business_score: 0,
+						scores: {
+							dnb_business_score: 0,
+							experian_business_score: 0,
+						},
 					});
 				} else {
 					return throwError(() => error);

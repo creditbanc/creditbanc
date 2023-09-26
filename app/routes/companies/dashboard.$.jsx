@@ -1,146 +1,27 @@
 import { FolderIcon } from "@heroicons/react/20/solid";
 import { LinkIcon, BriefcaseIcon, UserCircleIcon, HomeIcon } from "@heroicons/react/24/outline";
 import { Link, useFetcher, useLoaderData, useLocation } from "@remix-run/react";
-import { isEmpty, head, identity, map, pickAll, pipe } from "ramda";
+import { isEmpty, map, pipe } from "ramda";
 import { get, mod } from "shades";
-import { get_entity, get_session_entity_id } from "~/utils/auth.server";
-import { classNames, get_entity_id, get_group_id } from "~/utils/helpers";
-import { get_owner_companies_ids, get_shared_companies_ids } from "~/api/ui/companies";
+import { get_session_entity_id } from "~/utils/auth.server";
+import { classNames, get_entity_id, get_group_id, inspect } from "~/utils/helpers";
 import { create } from "zustand";
 import axios from "axios";
 import { useEffect } from "react";
 const cb_logo_3 = "/images/logos/cb_logo_3.png";
 import { encode } from "js-base64";
-import { get_collection, get_doc } from "~/utils/firebase";
-import { map as rxmap, filter as rxfilter, concatMap, tap, take, reduce as rxreduce } from "rxjs/operators";
-import { from, lastValueFrom, forkJoin, Subject, of as rxof } from "rxjs";
+import { map as rxmap, filter as rxfilter, tap } from "rxjs/operators";
+import { from, lastValueFrom, forkJoin, Subject } from "rxjs";
 import { fold } from "~/utils/operators";
 import { json } from "@remix-run/node";
+import Entity from "~/api/client/Entity";
+import BusinessReport from "~/api/client/BusinessReport";
+import PersonalReport from "~/api/client/PersonalReport";
 
 const log_route = `dashboard`;
 
-const subject = new Subject();
-
-const $loader = subject.pipe(
-	rxfilter((message) => message.id == "load"),
-	concatMap(({ args: { request } }) => {
-		let url = new URL(request.url);
-
-		let group_id = rxof(get_group_id(url.pathname));
-		let entity_id = from(get_session_entity_id(request));
-		let entity = from(get_entity(request));
-
-		const get_group_role_config = (group_id) =>
-			from(
-				get_collection({
-					path: ["role_configs"],
-					queries: [
-						{
-							param: "group_id",
-							predicate: "==",
-							value: group_id,
-						},
-					],
-					limit: [1],
-				})
-			);
-
-		let entity_group_id = forkJoin({ entity_id, group_id });
-
-		let business = entity_group_id.pipe(
-			concatMap(({ entity_id, group_id }) =>
-				from(
-					axios({
-						method: "get",
-						url: `${url.origin}/credit/report/api/businessinfo/resource/e/${entity_id}/g/${group_id}`,
-						withCredentials: true,
-						headers: {
-							cookie: `creditbanc_session=${encode(JSON.stringify({ entity_id }))}`,
-						},
-					})
-				)
-			),
-			rxmap(pipe(get("data")))
-		);
-
-		let scores = entity_group_id.pipe(
-			concatMap(({ entity_id, group_id }) =>
-				from(
-					axios({
-						method: "get",
-						url: `${url.origin}/credit/report/api/scores/resource/e/${entity_id}/g/${group_id}`,
-						withCredentials: true,
-						headers: {
-							cookie: `creditbanc_session=${encode(JSON.stringify({ entity_id }))}`,
-						},
-					})
-				)
-			),
-			rxmap(pipe(get("data")))
-		);
-
-		let owner_companies = from(entity_id).pipe(
-			concatMap((entity_id) => from(get_owner_companies_ids(entity_id))),
-			concatMap(identity),
-			concatMap((group_id) =>
-				get_group_role_config(group_id).pipe(
-					rxmap(pipe(head, get("entity_id"))),
-					concatMap((entity_id) => from(get_doc(["entity", entity_id]))),
-					rxmap(
-						pipe(pickAll(["first_name", "last_name", "id", "email"]), (entity) => ({
-							...entity,
-							entity_id: entity.id,
-							group_id,
-						}))
-					)
-				)
-			),
-			rxreduce((acc, curr) => [...acc, curr], [])
-		);
-
-		let shared_companies = from(entity_id).pipe(
-			concatMap((entity_id) => from(get_shared_companies_ids(entity_id))),
-			concatMap(identity),
-			concatMap((group_id) =>
-				get_group_role_config(group_id).pipe(
-					rxmap(pipe(head, get("entity_id"))),
-					concatMap((entity_id) => from(get_doc(["entity", entity_id]))),
-					rxmap(
-						pipe(pickAll(["first_name", "last_name", "id", "email"]), (entity) => ({
-							...entity,
-							entity_id: entity.id,
-							group_id,
-						}))
-					)
-				)
-			),
-			rxreduce((acc, curr) => [...acc, curr], [])
-		);
-
-		return forkJoin({
-			entity_id,
-			group_id,
-			entity,
-			owner_companies,
-			shared_companies,
-			business,
-			scores,
-		}).pipe(
-			tap((value) => {
-				console.log(`${log_route}.tap`);
-				console.log(value);
-			})
-		);
-	})
-);
-
 export const useCompanyStore = create((set) => ({
 	company: {},
-	set_state: (path, value) => set((state) => pipe(mod(...path)(() => value))(state)),
-}));
-
-export const useCompaniesStore = create((set) => ({
-	companies: {},
 	set_state: (path, value) => set((state) => pipe(mod(...path)(() => value))(state)),
 }));
 
@@ -172,35 +53,50 @@ export const action = async ({ request }) => {
 	return json($scores);
 };
 
+const on_success = (response) => {
+	console.log(`${log_route}.success`);
+	return response;
+};
+
+const on_error = (error) => {
+	console.log(`${log_route}.error`);
+	console.log(error);
+	return error;
+};
+
 export const loader = async ({ request }) => {
-	const on_success = async (response) => {
-		console.log(`${log_route}.success`);
+	let url = new URL(request.url);
+	let group_id = get_group_id(url.pathname);
+	let entity_id = await get_session_entity_id(request);
 
-		subject.next({
-			id: "response",
-			next: () => response,
-		});
-	};
+	let entity = new Entity(entity_id);
+	let business = new BusinessReport(group_id);
+	let personal = new PersonalReport(group_id);
 
-	const on_error = (error) => {
-		console.log(`${log_route}.error`);
-		console.log(error);
+	let entity_response = entity.identity.companies.fold;
+	let business_response = business.business_info.scores.fold;
+	let personal_response = personal.scores.fold;
 
-		subject.next({
-			id: "response",
-			next: () => error ?? null,
-		});
-	};
+	let payload = forkJoin({
+		entity: entity_response,
+		business: business_response,
+		personal: personal_response,
+	}).pipe(
+		rxmap(({ entity, business, personal }) => ({
+			entity_id,
+			group_id,
+			...entity,
+			...business,
+			...personal,
+			scores: {
+				...business.scores,
+				...personal.scores,
+			},
+		}))
+	);
 
-	const on_complete = (value) => value.id === "response";
-
-	$loader.pipe(fold(on_success, on_error)).subscribe();
-
-	subject.next({ id: "load", args: { request } });
-
-	let response = await lastValueFrom(subject.pipe(rxfilter(on_complete), take(1)));
-
-	return response.next();
+	let response = await lastValueFrom(payload.pipe(fold(on_success, on_error)));
+	return response;
 };
 
 const Members = () => {
@@ -411,7 +307,7 @@ const Company = ({ company = {} }) => {
 	let { pathname } = useLocation();
 	let entity_id = get_entity_id(pathname);
 	let set_company = useCompanyStore((state) => state.set_state);
-	let set_companies = useCompaniesStore((state) => state.set_state);
+	// let set_companies = useCompaniesStore((state) => state.set_state);
 	// let company = useCompaniesStore((state) => state.companies[group_id]) ?? {};
 
 	const onSelectCompany = async () => {
@@ -496,7 +392,9 @@ const Loading = () => {
 export default function Companies() {
 	let { pathname } = useLocation();
 	let group_id = get_group_id(pathname);
-	let { owner_companies, shared_companies, scores = {}, business = {} } = useLoaderData();
+	let loader_data = useLoaderData();
+	let { companies, scores = {}, business = {} } = loader_data;
+	let { owner_companies = [], shared_companies = [] } = companies;
 	let company = useCompanyStore((state) => state.company);
 	let set_company = useCompanyStore((state) => state.set_state);
 
@@ -521,7 +419,7 @@ export default function Companies() {
 
 				<div className="flex flex-col w-full py-5  scrollbar-none">
 					<div className="flex flex-row w-full items-center flex-wrap gap-y-10 justify-start gap-x-5">
-						{pipe(map((company) => <Company key={company.entity_id} company={company} />))(owner_companies)}
+						{pipe(map((company) => <Company key={company.id} company={company} />))(owner_companies)}
 					</div>
 				</div>
 
@@ -534,9 +432,7 @@ export default function Companies() {
 
 				<div className="flex flex-col w-full py-5 scrollbar-none">
 					<div className="flex flex-row w-full items-center flex-wrap gap-y-10 justify-start gap-x-5">
-						{pipe(map((company) => <Company key={company.entity_id} company={company} />))(
-							shared_companies
-						)}
+						{pipe(map((company) => <Company key={company.id} company={company} />))(shared_companies)}
 					</div>
 				</div>
 			</div>

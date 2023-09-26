@@ -1,12 +1,7 @@
 import { Link, Outlet, useLoaderData, useLocation } from "@remix-run/react";
-import SimpleNavSignedIn from "~/components/SimpleNavSignedIn";
+
 import { get_session_entity_id, get_user_id } from "~/utils/auth.server";
-import {
-	classNames,
-	get_group_id,
-	is_location,
-	get_entity_id,
-} from "~/utils/helpers";
+import { classNames, get_group_id, is_location, get_entity_id } from "~/utils/helpers";
 import { EllipsisHorizontalIcon } from "@heroicons/react/24/outline";
 import { Fragment, useEffect } from "react";
 import { Menu, Transition } from "@headlessui/react";
@@ -18,8 +13,7 @@ import { mod } from "shades";
 
 export const useAccountsStore = create((set) => ({
 	accounts: [],
-	set_accounts: (path, value) =>
-		set((state) => pipe(mod(...path)(() => value))(state)),
+	set_accounts: (path, value) => set((state) => pipe(mod(...path)(() => value))(state)),
 }));
 
 export const loader = async ({ request }) => {
@@ -38,14 +32,12 @@ export const loader = async ({ request }) => {
 const tabs = [
 	{
 		name: "Cashflow",
-		href: ({ entity_id, group_id }) =>
-			`/financial/cashflow/resource/e/${entity_id}/g/${group_id}`,
+		href: ({ entity_id, group_id }) => `/financial/cashflow/resource/e/${entity_id}/g/${group_id}`,
 		current: (pathname) => is_location("/financial/cashflow", pathname),
 	},
 	{
 		name: "Accounts",
-		href: ({ entity_id, group_id }) =>
-			`/financial/accounts/resource/e/${entity_id}/g/${group_id}`,
+		href: ({ entity_id, group_id }) => `/financial/accounts/resource/e/${entity_id}/g/${group_id}`,
 		current: (pathname) => is_location("/financial/accounts", pathname),
 	},
 	// {
@@ -74,10 +66,7 @@ const TransactionsDropdown = () => {
 					)}
 				>
 					Transactions
-					<ChevronDownIcon
-						className="-mr-1 h-5 w-5 text-gray-400"
-						aria-hidden="true"
-					/>
+					<ChevronDownIcon className="-mr-1 h-5 w-5 text-gray-400" aria-hidden="true" />
 				</Menu.Button>
 			</div>
 
@@ -97,9 +86,7 @@ const TransactionsDropdown = () => {
 								<Link
 									to={`/financial/transactions/resource/e/${entity_id}/g/${group_id}`}
 									className={classNames(
-										active
-											? "bg-gray-100 text-gray-900"
-											: "text-gray-700",
+										active ? "bg-gray-100 text-gray-900" : "text-gray-700",
 										"block px-4 py-2 text-sm"
 									)}
 								>
@@ -114,9 +101,7 @@ const TransactionsDropdown = () => {
 										<Link
 											to={`/financial/transactions/resource/e/${entity_id}/g/${group_id}?account_id=${account.account_id}`}
 											className={classNames(
-												active
-													? "bg-gray-100 text-gray-900"
-													: "text-gray-700",
+												active ? "bg-gray-100 text-gray-900" : "text-gray-700",
 												"block px-4 py-2 text-sm"
 											)}
 										>
@@ -165,9 +150,7 @@ const SubNav = () => {
 										: "border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700",
 									"border-b-2 py-2 px-1 text-center text-sm cursor-pointer"
 								)}
-								aria-current={
-									tab.current(pathname) ? "page" : undefined
-								}
+								aria-current={tab.current(pathname) ? "page" : undefined}
 							>
 								{tab.name}
 							</Link>

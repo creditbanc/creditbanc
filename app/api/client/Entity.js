@@ -1,4 +1,4 @@
-import { curry, head, identity, pickAll, pipe, values } from "ramda";
+import { curry, head, identity, pickAll, pipe, prop, uniqBy, values } from "ramda";
 import { get_doc, get_collection } from "~/utils/firebase";
 import { forkJoin, from, merge, of as rxof, zip } from "rxjs";
 import { map as rxmap, concatMap, catchError, reduce as rxreduce, filter as rxfilter, tap } from "rxjs/operators";
@@ -176,7 +176,7 @@ export default class Entity {
 				)
 			),
 			rxreduce((acc, curr) => [...acc, curr], []),
-			concatMap(merge_with_current(this.response))
+			rxmap(uniqBy(prop("id")))
 		);
 	}
 
@@ -201,7 +201,7 @@ export default class Entity {
 				)
 			),
 			rxreduce((acc, curr) => [...acc, curr], []),
-			concatMap(merge_with_current(this.response))
+			rxmap(uniqBy(prop("id")))
 		);
 	}
 
@@ -212,10 +212,12 @@ export default class Entity {
 
 	get companies() {
 		this.response = zip([this._owner_companies_, this._shared_companies_]).pipe(
+			tap(() => console.log("api.client.Entity.shared_companies")),
+			tap(inspect),
 			rxmap(([owner_companies, shared_companies]) => ({
 				companies: {
-					owner_companies: values(owner_companies),
-					shared_companies: values(shared_companies),
+					owner_companies,
+					shared_companies,
 				},
 			})),
 			concatMap(merge_with_current(this.response))

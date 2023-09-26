@@ -1,28 +1,11 @@
 import { Link, Outlet, useLocation } from "@remix-run/react";
-import { useEffect, useState } from "react";
-import {
-	BuildingLibraryIcon,
-	FingerPrintIcon,
-	UserCircleIcon,
-} from "@heroicons/react/24/outline";
-import Nav from "~/components/TopNavNoSharing";
-import { get_session_entity_id, get_user_id } from "~/utils/auth.server";
-import { useLoaderData } from "@remix-run/react";
-import { redirect } from "@remix-run/node";
-import { create } from "zustand";
-import {
-	classNames,
-	get_entity_id,
-	get_group_id,
-	is_location,
-} from "~/utils/helpers";
-import SimpleNavSignedIn from "~/components/SimpleNavSignedIn";
+import { UserCircleIcon } from "@heroicons/react/24/outline";
+import { classNames, get_entity_id, get_group_id, is_location } from "~/utils/helpers";
 
 const navigation = [
 	{
 		name: "Account",
-		href: ({ entity_id, group_id }) =>
-			`/settings/account/resource/e/${entity_id}/g/${group_id}`,
+		href: ({ entity_id, group_id }) => `/settings/account/resource/e/${entity_id}/g/${group_id}`,
 		icon: UserCircleIcon,
 		selected: (pathname) => is_location("/settings/account", pathname),
 	},
@@ -45,9 +28,7 @@ const navigation = [
 function Heading() {
 	return (
 		<div className="border-b border-gray-200 pb-5 w-full flex flex-col">
-			<h3 className="text-base font-semibold leading-6 text-gray-900 px-8 lg:px-0">
-				Settings
-			</h3>
+			<h3 className="text-base font-semibold leading-6 text-gray-900 px-8 lg:px-0">Settings</h3>
 		</div>
 	);
 }
@@ -70,10 +51,7 @@ export default function Account() {
 			<div className="flex flex-col lg:flex-row w-full gap-y-5 px-8 lg:py-8 lg:gap-x-5">
 				<aside className="flex flex-col flex-1 py-4">
 					<nav className="">
-						<ul
-							role="list"
-							className="flex gap-x-3 gap-y-3 whitespace-nowrap lg:flex-col"
-						>
+						<ul role="list" className="flex gap-x-3 gap-y-3 whitespace-nowrap lg:flex-col">
 							{navigation.map((item) => (
 								<li key={item.name}>
 									<Link

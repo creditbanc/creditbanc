@@ -1,15 +1,7 @@
 import { Link, Outlet, useLoaderData, useLocation } from "@remix-run/react";
-import SimpleNavSignedIn from "~/components/SimpleNavSignedIn";
+
 import { get_session_entity_id, get_user_id } from "~/utils/auth.server";
-import {
-	classNames,
-	get_entity_id,
-	get_group_id,
-	get_role_id,
-	is_location,
-	mapIndexed,
-	trim,
-} from "~/utils/helpers";
+import { classNames, get_entity_id, get_group_id, get_role_id, is_location, mapIndexed, trim } from "~/utils/helpers";
 import {
 	EllipsisHorizontalIcon,
 	LinkIcon,
@@ -34,14 +26,12 @@ import copy from "copy-to-clipboard";
 
 export const useRoleStore = create((set) => ({
 	role: {},
-	set_role: (path, value) =>
-		set((state) => pipe(mod(...path)(() => value))(state)),
+	set_role: (path, value) => set((state) => pipe(mod(...path)(() => value))(state)),
 }));
 
 export const useRolesStore = create((set) => ({
 	roles: [],
-	set_roles: (path, value) =>
-		set((state) => pipe(mod(...path)(() => value))(state)),
+	set_roles: (path, value) => set((state) => pipe(mod(...path)(() => value))(state)),
 }));
 
 export const loader = async ({ request }) => {
@@ -70,14 +60,12 @@ const role_tabs = [
 	},
 	{
 		name: "Members",
-		href: ({ entity_id, group_id, role_id }) =>
-			`/role/${role_id}/members/resource/e/${entity_id}/g/${group_id}`,
+		href: ({ entity_id, group_id, role_id }) => `/role/${role_id}/members/resource/e/${entity_id}/g/${group_id}`,
 		current: (pathname) => is_location("/members", pathname),
 	},
 	{
 		name: "Requests",
-		href: ({ entity_id, group_id, role_id }) =>
-			`/role/${role_id}/requests/resource/e/${entity_id}/g/${group_id}`,
+		href: ({ entity_id, group_id, role_id }) => `/role/${role_id}/requests/resource/e/${entity_id}/g/${group_id}`,
 		current: (pathname) => is_location("/requests", pathname),
 	},
 ];
@@ -92,9 +80,7 @@ const RoleNav = () => {
 		e.preventDefault();
 		let { origin } = window.location;
 
-		copy(
-			`${origin}/links/resource/e/${entity_id}/g/${group_id}?config_id=${role_id}`
-		);
+		copy(`${origin}/links/resource/e/${entity_id}/g/${group_id}?config_id=${role_id}`);
 	};
 
 	return (
@@ -112,9 +98,7 @@ const RoleNav = () => {
 										: "border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700",
 									" border-b-2 py-2 px-1 text-center text-sm "
 								)}
-								aria-current={
-									tab.current(pathname) ? "page" : undefined
-								}
+								aria-current={tab.current(pathname) ? "page" : undefined}
 							>
 								{tab.name}
 							</Link>
@@ -145,22 +129,15 @@ const EmptyRolesState = () => {
 	return (
 		<div className="text-center border-dashed p-3 py-5 border-2 rounded">
 			<UserPlusIcon className="h-8 w-8 text-gray-400 mx-auto" />
-			<h3 className="mt-2 text-sm font-semibold text-gray-900">
-				No roles yet
-			</h3>
-			<p className="mt-1 text-sm text-gray-500">
-				Get started by creating a new role.
-			</p>
+			<h3 className="mt-2 text-sm font-semibold text-gray-900">No roles yet</h3>
+			<p className="mt-1 text-sm text-gray-500">Get started by creating a new role.</p>
 			<div className="mt-6">
 				<button
 					type="button"
 					className="inline-flex items-center rounded-md bg-blue-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
 					onClick={onCreateNewRoleModal}
 				>
-					<PlusIcon
-						className="-ml-0.5 mr-1.5 h-5 w-5"
-						aria-hidden="true"
-					/>
+					<PlusIcon className="-ml-0.5 mr-1.5 h-5 w-5" aria-hidden="true" />
 					New Role
 				</button>
 			</div>
@@ -194,19 +171,14 @@ const RoleActions = ({ role }) => {
 		e.preventDefault();
 		let { origin } = window.location;
 
-		copy(
-			`${origin}/links/resource/e/${entity_id}/g/${group_id}?config_id=${role.id}`
-		);
+		copy(`${origin}/links/resource/e/${entity_id}/g/${group_id}?config_id=${role.id}`);
 	};
 
 	return (
 		<Menu as="div" className="relative inline-block text-left">
 			<div>
 				<Menu.Button className="flex flex-col rounded-full w-full justify-center items-center gap-x-1.5 bg-white text-sm hover:bg-white p-1">
-					<EllipsisHorizontalIcon
-						className="h-5 w-5 text-gray-700"
-						aria-hidden="true"
-					/>
+					<EllipsisHorizontalIcon className="h-5 w-5 text-gray-700" aria-hidden="true" />
 				</Menu.Button>
 			</div>
 
@@ -226,16 +198,11 @@ const RoleActions = ({ role }) => {
 								<div
 									// onClick={onDeleteRole}
 									className={classNames(
-										active
-											? "bg-gray-100 text-gray-900"
-											: "text-gray-700",
+										active ? "bg-gray-100 text-gray-900" : "text-gray-700",
 										"block px-4 py-2 text-sm"
 									)}
 								>
-									<div
-										className="flex flex-row items-center space-x-2"
-										onClick={onCopyShareLink}
-									>
+									<div className="flex flex-row items-center space-x-2" onClick={onCopyShareLink}>
 										<div>
 											<LinkIcon className="h-4 w-4 text-gray-700" />
 										</div>
@@ -250,9 +217,7 @@ const RoleActions = ({ role }) => {
 									<div
 										onClick={onDeleteRole}
 										className={classNames(
-											active
-												? "bg-gray-100 text-gray-900"
-												: "text-gray-700",
+											active ? "bg-gray-100 text-gray-900" : "text-gray-700",
 											"block px-4 py-2 text-sm"
 										)}
 									>
@@ -297,9 +262,7 @@ const RolesNav = () => {
 		event.preventDefault();
 		let { origin } = window.location;
 
-		copy(
-			`${origin}/links/resource/e/${entity_id}/g/${group_id}?config_id=${config_id}`
-		);
+		copy(`${origin}/links/resource/e/${entity_id}/g/${group_id}?config_id=${config_id}`);
 	};
 
 	return (
@@ -347,11 +310,7 @@ const RolesNav = () => {
 										/>
 									</div>
 									<div className="flex flex-row items-center space-x-3">
-										<div
-											onClick={(e) =>
-												onCopyShareLink(role.id, e)
-											}
-										>
+										<div onClick={(e) => onCopyShareLink(role.id, e)}>
 											<LinkIcon className="h-4 w-4 text-blue-600 cursor-pointer" />
 										</div>
 										<div>
@@ -445,9 +404,6 @@ export default function Role() {
 	return (
 		<div className="flex flex-col w-full h-full bg-gray-50 overflow-hidden">
 			<NewRoleModal />
-			{/* <div className="flex flex-col w-full border-b bg-white">
-				<SimpleNavSignedIn user_id={entity_id} />
-			</div> */}
 
 			<div className="flex flex-row w-full h-full gap-x-5 p-5 overflow-hidden">
 				<div className="hidden lg:flex flex-col w-[25%] bg-white rounded border">

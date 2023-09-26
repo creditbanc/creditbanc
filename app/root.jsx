@@ -21,6 +21,8 @@ import Spinner from "./components/LoadingSpinner";
 import { lastValueFrom } from "rxjs";
 import { fold } from "~/utils/operators";
 import Entity from "./api/client/Entity";
+import { isEmpty } from "ramda";
+import { use_nav_store } from "./stores/nav";
 
 const log_route = `root`;
 
@@ -39,6 +41,45 @@ export const meta = () => ({
 	viewport: "width=device-width,initial-scale=1",
 });
 
+const load_intercom = () => {
+	window.intercomSettings = {
+		api_base: "https://api-iam.intercom.io",
+		app_id: "lh4nbwaz",
+	};
+
+	var w = window;
+	var ic = w.Intercom;
+	if (typeof ic === "function") {
+		ic("reattach_activator");
+		ic("update", w.intercomSettings);
+	} else {
+		var d = document;
+		var i = function () {
+			i.c(arguments);
+		};
+		i.q = [];
+		i.c = function (args) {
+			i.q.push(args);
+		};
+		w.Intercom = i;
+		var l = function () {
+			var s = d.createElement("script");
+			s.type = "text/javascript";
+			s.async = true;
+			s.src = "https://widget.intercom.io/widget/lh4nbwaz";
+			var x = d.getElementsByTagName("script")[0];
+			x.parentNode.insertBefore(s, x);
+		};
+		if (document.readyState === "complete") {
+			l();
+		} else if (w.attachEvent) {
+			w.attachEvent("onload", l);
+		} else {
+			w.addEventListener("load", l, false);
+		}
+	}
+};
+
 const on_success = (response) => {
 	console.log(`${log_route}.success`);
 	return response;
@@ -53,7 +94,7 @@ const on_error = (error) => {
 export const loader = async ({ request }) => {
 	let entity_id = await get_session_entity_id(request);
 	let entity = new Entity(entity_id);
-	let payload = entity.companies.roles.identity.fold;
+	let payload = entity.roles.identity.companies.fold;
 	let response = await lastValueFrom(payload.pipe(fold(on_success, on_error)));
 	return response;
 };
@@ -66,6 +107,8 @@ export default function App() {
 	let loader_data = useLoaderData();
 	let { entity_id, roles, companies } = loader_data;
 
+	let is_resource_path = is_location("/resource", pathname);
+
 	useEffect(() => {
 		if (transition.state !== "idle") {
 			setSpinner(true);
@@ -73,47 +116,6 @@ export default function App() {
 			setSpinner(false);
 		}
 	}, [transition.state]);
-
-	let is_resource_path = is_location("/resource", pathname);
-
-	const load_intercom = () => {
-		window.intercomSettings = {
-			api_base: "https://api-iam.intercom.io",
-			app_id: "lh4nbwaz",
-		};
-
-		var w = window;
-		var ic = w.Intercom;
-		if (typeof ic === "function") {
-			ic("reattach_activator");
-			ic("update", w.intercomSettings);
-		} else {
-			var d = document;
-			var i = function () {
-				i.c(arguments);
-			};
-			i.q = [];
-			i.c = function (args) {
-				i.q.push(args);
-			};
-			w.Intercom = i;
-			var l = function () {
-				var s = d.createElement("script");
-				s.type = "text/javascript";
-				s.async = true;
-				s.src = "https://widget.intercom.io/widget/lh4nbwaz";
-				var x = d.getElementsByTagName("script")[0];
-				x.parentNode.insertBefore(s, x);
-			};
-			if (document.readyState === "complete") {
-				l();
-			} else if (w.attachEvent) {
-				w.attachEvent("onload", l);
-			} else {
-				w.addEventListener("load", l, false);
-			}
-		}
-	};
 
 	useEffect(() => {
 		load_intercom();

@@ -251,9 +251,6 @@ const HeadingTwo = () => {
 	let loader_data = use_view_store((state) => state);
 	let { entity, business_entity, business_info } = loader_data;
 
-	console.log("entity.HeadingTwo");
-	console.log(loader_data);
-
 	let EntityPersonalDetails = () => {
 		return (
 			<div>

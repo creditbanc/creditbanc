@@ -20,9 +20,7 @@ import {
 	addIndex,
 	map,
 	isEmpty,
-	either,
 	isNil,
-	take,
 	nth,
 	evolve,
 	flatten,
@@ -33,16 +31,13 @@ import {
 	trim as rtrim,
 	sort,
 	always,
-	difference,
-	keys,
 } from "ramda";
 import { iif, of as rxof, throwError } from "rxjs";
 const util = require("util");
-import { get as sget, mod, all } from "shades";
+import { get as sget, mod } from "shades";
 import { flatten as objflat } from "flat";
 import murmurhash from "murmurhash";
 import { create } from "zustand";
-import { json, redirect } from "@remix-run/node";
 
 export const fetcher_payload_maker = (url) => [{}, { method: "post", action: url }];
 
@@ -53,6 +48,7 @@ export const store = (props = {}) => {
 		...props,
 		set_props: (props) => set((state) => ({ ...state, ...props })),
 		set_state: (path, value) => set((state) => pipe(mod(...path)(() => value))(state)),
+		set_path: (path, value) => set((state) => pipe(mod(...path)(() => value))(state)),
 	}));
 };
 
@@ -76,18 +72,13 @@ export const get_request_cookies = (request) => {
 };
 
 export const validate_form = (validator, to_validate) => {
-	console.log("validate_form");
 	return evolve(validator, to_validate);
 };
 
 export const is_valid = (validations) => {
-	console.log("is_valid");
-	console.log(validations);
-	console.log(pipe(flatten)(validations));
 	let vals = pipe(values, flatten);
 	let res = pipe(vals, includes(false), not)(validations);
-	console.log("ressssss");
-	console.log(res);
+
 	return res;
 };
 

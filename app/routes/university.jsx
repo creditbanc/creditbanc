@@ -1,5 +1,4 @@
 import { Outlet, useLoaderData } from "@remix-run/react";
-import SimpleNavSignedIn from "~/components/SimpleNavSignedIn";
 import { get_session_entity_id, get_user_id } from "~/utils/auth.server";
 
 export const loader = async ({ request }) => {

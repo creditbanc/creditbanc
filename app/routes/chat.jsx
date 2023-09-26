@@ -1,21 +1,10 @@
 import { Link, Outlet, useLoaderData, useLocation } from "@remix-run/react";
-import SimpleNavSignedIn from "~/components/SimpleNavSignedIn";
 import { get_session_entity_id, get_user_id } from "~/utils/auth.server";
-import {
-	get_entity_id,
-	get_group_id,
-	get_resource_id,
-	is_location,
-} from "~/utils/helpers";
+import { get_entity_id, get_group_id, get_resource_id, is_location } from "~/utils/helpers";
 import { useModalStore } from "~/hooks/useModal";
 import Modal from "~/components/Modal";
 import { useEffect, useState } from "react";
-import {
-	EllipsisHorizontalIcon,
-	HashtagIcon,
-	TrashIcon,
-	XMarkIcon,
-} from "@heroicons/react/24/outline";
+import { EllipsisHorizontalIcon, HashtagIcon, TrashIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import { v4 as uuidv4 } from "uuid";
 import {
 	delete_doc,
@@ -25,46 +14,20 @@ import {
 	get_doc_listener,
 	set_doc,
 } from "~/utils/firebase";
-import {
-	defaultTo,
-	findIndex,
-	head,
-	isEmpty,
-	map,
-	pipe,
-	prop,
-	propEq,
-	sortBy,
-} from "ramda";
+import { defaultTo, findIndex, head, isEmpty, map, pipe, prop, propEq, sortBy } from "ramda";
 import { get, mod, filter } from "shades";
 import { create } from "zustand";
 import { Fragment } from "react";
 import { Menu, Transition } from "@headlessui/react";
 import { classNames } from "~/utils/helpers";
-import { redirect } from "@remix-run/node";
+
 import avatars from "~/data/avatars";
 
 const useChatsStore = create((set) => ({
 	channels: [],
 	direct_messages: [],
-	set_chats_state: (path, value) =>
-		set((state) => pipe(mod(...path)(() => value))(state)),
+	set_chats_state: (path, value) => set((state) => pipe(mod(...path)(() => value))(state)),
 }));
-
-// let create_default_channel = async ({ group_id }) => {
-// 	let default_chat_id = uuidv4();
-
-// 	let default_chat_payload = {
-// 		group_id,
-// 		id: default_chat_id,
-// 		index: 0,
-// 		title: "General",
-// 		type: "channel",
-// 	};
-
-// 	await set_doc(["chats", default_chat_id], default_chat_payload);
-// 	return default_chat_payload;
-// };
 
 export const loader = async ({ request }) => {
 	let entity_id = await get_session_entity_id(request);
@@ -92,24 +55,15 @@ export const loader = async ({ request }) => {
 	channels = await Promise.all(
 		pipe(
 			map(async (channel) => {
-				let channel_state = await get_doc([
-					"channel_state",
-					channel.id,
-				]);
-				let entity_channel_state = await get_doc([
-					"entity_channel_state",
-					channel.id + entity_id,
-				]);
+				let channel_state = await get_doc(["channel_state", channel.id]);
+				let entity_channel_state = await get_doc(["entity_channel_state", channel.id + entity_id]);
 
-				let unread =
-					channel_state.num_of_messages -
-					entity_channel_state.num_of_messages;
+				let unread = channel_state.num_of_messages - entity_channel_state.num_of_messages;
 
 				return {
 					...channel,
 					unread,
-					entity_channel_messages:
-						entity_channel_state.num_of_messages,
+					entity_channel_messages: entity_channel_state.num_of_messages,
 				};
 			})
 		)(channels)
@@ -149,24 +103,15 @@ export const loader = async ({ request }) => {
 	direct_messages = await Promise.all(
 		pipe(
 			map(async (channel) => {
-				let channel_state = await get_doc([
-					"channel_state",
-					channel.id,
-				]);
-				let entity_channel_state = await get_doc([
-					"entity_channel_state",
-					channel.id + entity_id,
-				]);
+				let channel_state = await get_doc(["channel_state", channel.id]);
+				let entity_channel_state = await get_doc(["entity_channel_state", channel.id + entity_id]);
 
-				let unread =
-					channel_state.num_of_messages -
-					entity_channel_state.num_of_messages;
+				let unread = channel_state.num_of_messages - entity_channel_state.num_of_messages;
 
 				return {
 					...channel,
 					unread,
-					entity_channel_messages:
-						entity_channel_state.num_of_messages,
+					entity_channel_messages: entity_channel_state.num_of_messages,
 				};
 			})
 		)(direct_messages)
@@ -180,10 +125,7 @@ const DirectMessage = ({ unread = 0, id, selected = false, chat }) => {
 	let entity_id = get_entity_id(pathname);
 	let group_id = get_group_id(pathname);
 
-	let member = pipe(
-		filter({ entity_id: (member_id) => entity_id !== member_id }),
-		head
-	)(chat.members);
+	let member = pipe(filter({ entity_id: (member_id) => entity_id !== member_id }), head)(chat.members);
 
 	let avatar = avatars(member.email, { size: 35 });
 
@@ -195,9 +137,7 @@ const DirectMessage = ({ unread = 0, id, selected = false, chat }) => {
 			<div className="flex flex-row flex-1 space-x-3 items-center px-2 py-3">
 				<div>
 					<div
-						className={`inline-block rounded-full border-blue-500 ${
-							selected && "border-4 shadow-sm"
-						}`}
+						className={`inline-block rounded-full border-blue-500 ${selected && "border-4 shadow-sm"}`}
 						dangerouslySetInnerHTML={{ __html: avatar }}
 					/>
 				</div>
@@ -228,20 +168,14 @@ const ChannelActions = ({ channel_id }) => {
 
 		delete_doc(["chats", channel_id]);
 
-		set_chats_state(
-			["channels"],
-			pipe(filter({ id: (id) => id !== channel_id }))(channels)
-		);
+		set_chats_state(["channels"], pipe(filter({ id: (id) => id !== channel_id }))(channels));
 	};
 
 	return (
 		<Menu as="div" className="relative inline-block text-left">
 			<div>
 				<Menu.Button className="flex flex-col w-full justify-center gap-x-1.5 rounded-full text-sm font-semibold text-gray-900 hover:bg-gray-50">
-					<EllipsisHorizontalIcon
-						className="h-4 w-4 text-gray-400"
-						aria-hidden="true"
-					/>
+					<EllipsisHorizontalIcon className="h-4 w-4 text-gray-400" aria-hidden="true" />
 				</Menu.Button>
 			</div>
 
@@ -261,9 +195,7 @@ const ChannelActions = ({ channel_id }) => {
 								<div
 									onClick={onDeleteChannel}
 									className={classNames(
-										active
-											? "bg-gray-100 text-gray-900"
-											: "text-gray-700",
+										active ? "bg-gray-100 text-gray-900" : "text-gray-700",
 										"block px-4 py-2 text-sm cursor-pointer"
 									)}
 								>
@@ -359,10 +291,7 @@ const NewChannelModal = () => {
 					</div>
 					<div>Create Channel</div>
 				</div>
-				<div
-					className="border rounded-lg p-2 cursor-pointer"
-					onClick={onCloseModal}
-				>
+				<div className="border rounded-lg p-2 cursor-pointer" onClick={onCloseModal}>
 					<XMarkIcon className="h-6 w-6 text-gray-400" />
 				</div>
 			</div>
@@ -395,23 +324,15 @@ const NewChannelModal = () => {
 
 export default function Chat() {
 	let { pathname } = useLocation();
-	let {
-		entity_id,
-		channels: server_channels,
-		direct_messages: server_direct_messages,
-	} = useLoaderData();
+	let { entity_id, channels: server_channels, direct_messages: server_direct_messages } = useLoaderData();
 	let set_modal = useModalStore((state) => state.set_modal);
 	let channels = useChatsStore((state) => state.channels);
 	let direct_messages = useChatsStore((state) => state.direct_messages);
 	let set_chats_state = useChatsStore((state) => state.set_chats_state);
 	let chat_id = get_resource_id(pathname);
 	let group_id = get_group_id(pathname);
-	const [is_listening_to_channels, set_is_listening_to_channels] =
-		useState(false);
-	const [
-		is_listening_to_direct_messages,
-		set_is_listening_to_direct_messages,
-	] = useState(false);
+	const [is_listening_to_channels, set_is_listening_to_channels] = useState(false);
+	const [is_listening_to_direct_messages, set_is_listening_to_direct_messages] = useState(false);
 
 	useEffect(() => {
 		if (server_channels.length > 0) {
@@ -446,19 +367,14 @@ export default function Chat() {
 					map(async (change) => {
 						let channel_state = change.doc.data();
 
-						let { chat_id, num_of_messages, group_id } =
-							channel_state;
+						let { chat_id, num_of_messages, group_id } = channel_state;
 
-						let channel_index = channels.findIndex(
-							(channel) => channel.id === chat_id
-						);
+						let channel_index = channels.findIndex((channel) => channel.id === chat_id);
 
 						let channel = channels[channel_index];
 
 						if (channel) {
-							let unread =
-								num_of_messages -
-								channel?.entity_channel_messages;
+							let unread = num_of_messages - channel?.entity_channel_messages;
 
 							set_chats_state(
 								["channels"],
@@ -493,19 +409,14 @@ export default function Chat() {
 					map(async (change) => {
 						let channel_state = change.doc.data();
 
-						let { chat_id, num_of_messages, group_id } =
-							channel_state;
+						let { chat_id, num_of_messages, group_id } = channel_state;
 
-						let channel_index = direct_messages.findIndex(
-							(channel) => channel.id === chat_id
-						);
+						let channel_index = direct_messages.findIndex((channel) => channel.id === chat_id);
 
 						let channel = direct_messages[channel_index];
 
 						if (channel) {
-							let unread =
-								num_of_messages -
-								channel?.entity_channel_messages;
+							let unread = num_of_messages - channel?.entity_channel_messages;
 
 							set_chats_state(
 								["direct_messages"],
@@ -540,9 +451,7 @@ export default function Chat() {
 	return (
 		<div className="flex flex-col w-full h-full bg-gray-50 overflow-hidden">
 			<NewChannelModal />
-			{/* <div className="flex flex-col w-full border-b bg-white">
-				<SimpleNavSignedIn user_id={entity_id} />
-			</div> */}
+
 			<div className="flex flex-row w-full h-full  overflow-hidden">
 				<div className="flex flex-col w-[300px] bg-white border-r overflow-scroll scrollbar-none">
 					<div className="flex flex-col w-full py-3 px-3 sticky top-0 bg-white">

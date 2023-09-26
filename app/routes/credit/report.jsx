@@ -1,35 +1,20 @@
-import {
-	get_group_id,
-	get_report_endpoint,
-	classNames,
-	get_entity_id,
-	is_location,
-} from "~/utils/helpers";
+import { get_group_id, get_report_endpoint, classNames, get_entity_id, is_location } from "~/utils/helpers";
 import { get_session_entity_id, get_user_id } from "~/utils/auth.server";
-import { get_docs as get_group_docs } from "~/utils/group.server";
-import { defaultTo, pipe } from "ramda";
-import { filter } from "shades";
-import { Outlet, useLoaderData, useLocation, Link } from "@remix-run/react";
-import SimpleNavSignedIn from "~/components/SimpleNavSignedIn";
+import { Outlet, useLocation, Link } from "@remix-run/react";
 import { EllipsisHorizontalIcon } from "@heroicons/react/24/outline";
 import { Fragment } from "react";
 import { Menu, Transition } from "@headlessui/react";
 import { ChevronDownIcon } from "@heroicons/react/20/solid";
-import { get_collection, get_doc } from "~/utils/firebase";
 
 export const loader = async ({ request }) => {
-	let { pathname } = new URL(request.url);
 	let user_id = await get_session_entity_id(request);
-	let group_id = get_group_id(pathname);
-
 	return { user_id };
 };
 
 const tabs = [
 	{
 		name: "Personal",
-		href: ({ entity_id, group_id }) =>
-			`/credit/report/personal/personal/resource/e/${entity_id}/g/${group_id}`,
+		href: ({ entity_id, group_id }) => `/credit/report/personal/personal/resource/e/${entity_id}/g/${group_id}`,
 		current: (pathname) => is_location("/credit/report/personal", pathname),
 	},
 	// { name: "Business", href: "/financial/accounts", current: false },
@@ -52,10 +37,7 @@ const BusinessDropdown = () => {
 					)}
 				>
 					Business
-					<ChevronDownIcon
-						className="-mr-1 h-5 w-5 text-gray-400"
-						aria-hidden="true"
-					/>
+					<ChevronDownIcon className="-mr-1 h-5 w-5 text-gray-400" aria-hidden="true" />
 				</Menu.Button>
 			</div>
 
@@ -75,9 +57,7 @@ const BusinessDropdown = () => {
 								<Link
 									to={`/credit/report/business/dnb/overview/resource/e/${entity_id}/g/${group_id}`}
 									className={classNames(
-										active
-											? "bg-gray-100 text-gray-900"
-											: "text-gray-700",
+										active ? "bg-gray-100 text-gray-900" : "text-gray-700",
 										"block px-4 py-2 text-sm"
 									)}
 								>
@@ -90,9 +70,7 @@ const BusinessDropdown = () => {
 								<Link
 									to={`/credit/report/business/experian/overview/resource/e/${entity_id}/g/${group_id}`}
 									className={classNames(
-										active
-											? "bg-gray-100 text-gray-900"
-											: "text-gray-700",
+										active ? "bg-gray-100 text-gray-900" : "text-gray-700",
 										"block px-4 py-2 text-sm"
 									)}
 								>
@@ -139,9 +117,7 @@ const SubNav = () => {
 										: "border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700",
 									" border-b-2 py-2 px-1 text-center text-sm "
 								)}
-								aria-current={
-									tab.current(pathname) ? "page" : undefined
-								}
+								aria-current={tab.current(pathname) ? "page" : undefined}
 							>
 								{tab.name}
 							</Link>

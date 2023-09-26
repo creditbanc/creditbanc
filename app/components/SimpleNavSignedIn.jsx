@@ -20,7 +20,6 @@ import copy from "copy-to-clipboard";
 import Share from "~/routes/invites/new/$.jsx";
 import Modal from "~/components/Modal";
 import { useModalStore } from "~/hooks/useModal";
-import { use_cache } from "~/components/CacheLink";
 import CacheLink from "./CacheLink";
 
 export const useRolesStore = create((set) => ({
@@ -28,11 +27,12 @@ export const useRolesStore = create((set) => ({
 	set_roles: (path, value) => set((state) => pipe(mod(...path)(() => value))(state)),
 }));
 
-const Companies = ({ companies: { shared_companies = [], owner_companies = [] } }) => {
+const Companies = ({ companies: all_companies = {} }) => {
 	let { pathname } = useLocation();
 	let entity_id = get_entity_id(pathname);
 	let group_id = get_group_id(pathname);
-	let companies = pipe(uniqBy(prop("id")))([...owner_companies, ...shared_companies]);
+	let { shared_companies, owner_companies } = all_companies;
+	let companies = pipe(uniqBy(prop("id")))([...shared_companies, ...owner_companies]);
 
 	return (
 		<Menu as="div" className="relative inline-block text-left z-50">
@@ -345,11 +345,6 @@ const CreditDropdown = () => {
 export default function Nav({ entity_id, roles, companies }) {
 	let location = useLocation();
 	let group_id = get_group_id(location.pathname);
-	let cache_keys = use_cache((state) => state.keys);
-	let set_cache_keys = use_cache((state) => state.set_state);
-
-	// let { home } = cache_keys;
-
 	let { pathname } = location;
 	let is_companies_dashboard = is_location("/companies/dashboard", pathname);
 

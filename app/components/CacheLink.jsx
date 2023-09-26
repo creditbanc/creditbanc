@@ -79,8 +79,6 @@ export default function CacheLink({ to, id = "", className = "", children }) {
 	};
 
 	useEffect(() => {
-		console.log("keyskeyskeys");
-		console.log(cache.keys);
 		if (!isEmpty(cache.keys)) {
 			let cache_params = get_cache_params(to, cache);
 			let cache_string_keys = pipe(get(all, "key"))(cache_params);
@@ -104,12 +102,12 @@ export default function CacheLink({ to, id = "", className = "", children }) {
 
 			let link = `${url_path}?${params}`;
 
-			console.log("cache_string");
-			console.log(cache_params);
+			// console.log("cache_string");
+			// console.log(cache_params);
 			// console.log(other_params);
 			// console.log(params);
 			// console.log(url_path);
-			console.log(link);
+			// console.log(link);
 
 			setHref(link);
 		}

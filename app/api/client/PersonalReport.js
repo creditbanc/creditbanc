@@ -310,9 +310,11 @@ export default class PersonalReport {
 				if (error == undefined) {
 					return rxof({
 						personal_report_is_empty: true,
-						experian_personal_score: 0,
-						equifax_personal_score: 0,
-						transunion_personal_score: 0,
+						scores: {
+							experian_personal_score: 0,
+							equifax_personal_score: 0,
+							transunion_personal_score: 0,
+						},
 					});
 				} else {
 					return throwError(() => error);
