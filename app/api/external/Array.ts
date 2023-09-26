@@ -27,8 +27,6 @@ export class ArrayExternal {
 
 		let response = await axios.request(options);
 
-		console.log("ArrayExternal.response");
-		console.log(response);
 		return response?.data;
 	};
 

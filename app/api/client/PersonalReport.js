@@ -302,9 +302,7 @@ export default class PersonalReport {
 					})
 					// concatMap(update_db_report_if_needed(db_personal_credit_report, report_id))
 				)
-			),
-			tap(() => console.log(`PersonalReport.tap.5`)),
-			tap(console.log)
+			)
 		);
 
 		subject.next({ id: start_action });

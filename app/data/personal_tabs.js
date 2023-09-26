@@ -10,6 +10,7 @@ import {
 	Bars3Icon,
 	QuestionMarkCircleIcon,
 	ListBulletIcon,
+	ArrowTrendingUpIcon,
 } from "@heroicons/react/24/outline";
 import { to_resource_pathname } from "~/utils/helpers";
 
@@ -37,7 +38,7 @@ export const tabs = [
 		name: "Debt Analysis",
 		href: ({ pathname = "", search = "" } = {}) =>
 			"/credit/report/personal/debtanalysis" + to_resource_pathname(pathname) + search,
-		icon: UserIcon,
+		icon: ArrowTrendingUpIcon,
 		current: false,
 		id: "debtanalysis",
 	},

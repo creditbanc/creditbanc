@@ -24,7 +24,6 @@ export const loader = async ({ request }) => {
 	let report = new PersonalReport(group_id);
 	let payload = report.user_token.fold;
 	let response = await lastValueFrom(payload.pipe(fold(on_success(request), on_error)));
-	console.log("response", response);
 	return response;
 };
 
