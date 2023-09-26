@@ -13,7 +13,7 @@ import {
 	inspect,
 	fetcher_payload_maker,
 } from "~/utils/helpers";
-import { __, anyPass, isEmpty, isNil, length, map, not, omit, pipe, values } from "ramda";
+import { __, anyPass, curry, isEmpty, isNil, length, map, not, omit, pipe, values } from "ramda";
 import { all, filter } from "shades";
 import { useLoaderData } from "@remix-run/react";
 import UpgradeBanner from "~/components/UpgradeMembership";
@@ -42,10 +42,23 @@ const useNewBusinessReportFormStore = useReportStore;
 
 const log_route = `home.$`;
 
-const on_success = (response) => {
+const on_success = curry((request, response) => {
 	console.log(`${log_route}.success`);
-	return response;
-};
+	let with_cache = cache(request);
+	return with_cache({
+		...response,
+		cache_dependencies: [
+			{
+				name: "business_credit_report",
+				value: response.business_report_sha,
+			},
+			{
+				name: "personal_credit_report",
+				value: response.personal_report_sha,
+			},
+		],
+	});
+});
 
 const on_error = (error) => {
 	console.log(`${log_route}.error`);
@@ -91,22 +104,8 @@ export const loader = async ({ request }) => {
 		})
 	);
 
-	let response = await lastValueFrom(payload.pipe(fold(on_success, on_error)));
-
-	let with_cache = cache(request);
-	return with_cache({
-		...response,
-		cache_dependencies: [
-			{
-				name: "business_credit_report",
-				value: response.business_report_sha,
-			},
-			{
-				name: "personal_credit_report",
-				value: response.personal_report_sha,
-			},
-		],
-	});
+	let response = await lastValueFrom(payload.pipe(fold(on_success(request), on_error)));
+	return response;
 };
 
 const BusinessCredit = () => {
@@ -250,19 +249,19 @@ const PersonalCredit = () => {
 
 const HeadingTwo = () => {
 	let loader_data = use_view_store((state) => state);
-	let { entity, business_info } = loader_data;
+	let { entity, business_entity, business_info } = loader_data;
 
 	console.log("entity.HeadingTwo");
-	console.log(entity);
+	console.log(loader_data);
 
 	let EntityPersonalDetails = () => {
 		return (
 			<div>
 				<div className="flex flex-row space-x-1 font-semibold">
-					<div>{capitalize(entity?.first_name)}</div>
-					<div>{capitalize(entity?.last_name)}</div>
+					<div>{capitalize(business_entity?.first_name)}</div>
+					<div>{capitalize(business_entity?.last_name)}</div>
 				</div>
-				<div className="text-sm">{entity?.email}</div>
+				<div className="text-sm">{business_entity?.email}</div>
 			</div>
 		);
 	};
