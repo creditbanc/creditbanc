@@ -1,9 +1,6 @@
-import { TrophyIcon } from "@heroicons/react/24/outline";
-import { pipe } from "ramda";
-import { get_group_id, mapIndexed } from "~/utils/helpers";
 import { useLoaderData } from "@remix-run/react";
-import { ChevronDoubleRightIcon } from "@heroicons/react/24/outline";
-import { lastValueFrom } from "rxjs";
+import { get_group_id, inspect } from "~/utils/helpers";
+import { lastValueFrom, map as rxmap, tap } from "rxjs";
 import { fold } from "~/utils/operators";
 import PersonalReport from "~/api/client/PersonalReport";
 import { use_cache } from "~/components/CacheLink";
@@ -13,7 +10,7 @@ import { is_authorized } from "../authorized";
 import { redirect } from "@remix-run/node";
 import { appKey } from "~/data/array";
 
-const log_route = `credit.report.personal.mix`;
+const log_route = `credit.report.personal.debtanalysis`;
 
 const on_error = (error) => {
 	console.log(`${log_route}.error`);
@@ -26,19 +23,25 @@ export const loader = async ({ request }) => {
 	let url = new URL(request.url);
 	let group_id = get_group_id(url.pathname);
 	let report = new PersonalReport(group_id);
-	let payload = report.user_token.fold;
+	let payload = report.first_name.last_name.street.city.state.zip.dob.identity.user_token.fold;
 	let response = await lastValueFrom(payload.pipe(fold(on_success(request), on_error)));
 	return response;
 };
 
-export default function Factors() {
+export default function Personal() {
 	let loader_data = useLoaderData();
 	let { cache_dependencies, user_token } = loader_data;
+	let use_cache_client = use_cache((state) => state.set_dependencies);
+
+	useEffect(() => {
+		if (cache_dependencies !== undefined) {
+			use_cache_client({ path: `/credit/report/personal`, dependencies: cache_dependencies });
+		}
+	}, []);
 
 	return (
 		<div>
-			{/* <array-credit-score-factors appKey={appKey} userToken={user_token}></array-credit-score-factors> */}
-			<array-identity-protect appKey={appKey} userToken={user_token}></array-identity-protect>
+			<array-credit-debt-analysis appKey={appKey} userToken={user_token}></array-credit-debt-analysis>
 		</div>
 	);
 }

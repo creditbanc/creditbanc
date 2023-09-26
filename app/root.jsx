@@ -127,6 +127,10 @@ export default function App() {
 				<script src={kba_script_tag}></script>
 				<script src={array_script_tag}></script>
 				<script src={`https://embed.array.io/cms/array-credit-report.js?appKey=${appKey}`}></script>
+				<script src={`https://embed.array.io/cms/array-credit-debt-analysis.js?appKey=${appKey}`}></script>
+				<script src={`https://embed.array.io/cms/array-credit-score-factors.js?appKey=${appKey}`}></script>
+				<script src={`https://embed.array.io/cms/array-credit-score-simulator.js?appKey=${appKey}`}></script>
+				<script src={`https://embed.array.io/cms/array-identity-protect.js?appKey=${appKey}`}></script>
 			</head>
 			<body className="flex flex-col relative">
 				{show_spinner && <Spinner />}

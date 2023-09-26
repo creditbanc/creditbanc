@@ -37,8 +37,7 @@ export default function Factors() {
 
 	return (
 		<div>
-			{/* <array-credit-score-factors appKey={appKey} userToken={user_token}></array-credit-score-factors> */}
-			<array-identity-protect appKey={appKey} userToken={user_token}></array-identity-protect>
+			<array-credit-score-simulator appKey={appKey} userToken={user_token}></array-credit-score-simulator>
 		</div>
 	);
 }

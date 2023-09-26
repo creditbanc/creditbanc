@@ -113,10 +113,10 @@ export default function CreditReport() {
 							>
 								<div className="flex flex-col w-full  px-5 pt-5  rounded-lg">
 									<div className="w-full text-center space-y-5 mt-5">
-										<div className="flex flex-row text-5xl font-bold tracking-tight space-x-1 justify-center mb-5">
+										{/* <div className="flex flex-row text-5xl font-bold tracking-tight space-x-1 justify-center mb-5">
 											<div>{first_name}</div>
 											<div>'s personal credit report</div>
-										</div>
+										</div> */}
 										{/* <p className="text-lg leading-6 ">View all three personal credit bureaus</p> */}
 									</div>
 
@@ -168,16 +168,16 @@ export default function CreditReport() {
 											<div className="text-gray-400 text-sm">Credit Scores</div>
 											<div className="flex flex-row">
 												<div className="flex flex-col w-1/2 text-sm space-y-1">
+													<div className="text-gray-400">Transunion</div>
+													<div className="text-lg">{transunion}</div>
+												</div>
+												<div className="flex flex-col w-1/2 text-sm space-y-1">
 													<div className="text-gray-400">Experian</div>
 													<div className="text-lg">{experian}</div>
 												</div>
 												<div className="flex flex-col w-1/2 text-sm space-y-1">
 													<div className="text-gray-400">Equifax</div>
 													<div className="text-lg">{equifax}</div>
-												</div>
-												<div className="flex flex-col w-1/2 text-sm space-y-1">
-													<div className="text-gray-400">Transunion</div>
-													<div className="text-lg">{transunion}</div>
 												</div>
 											</div>
 										</div>

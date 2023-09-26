@@ -79,9 +79,6 @@ export default function Personal() {
 	let { cache_dependencies, user_token } = loader_data;
 	let use_cache_client = use_cache((state) => state.set_dependencies);
 
-	console.log("Personal.loader_data");
-	console.log(loader_data);
-
 	useEffect(() => {
 		if (cache_dependencies !== undefined) {
 			use_cache_client({ path: `/credit/report/personal`, dependencies: cache_dependencies });
@@ -90,13 +87,7 @@ export default function Personal() {
 
 	return (
 		<div>
-			<array-credit-report appKey={appKey} userToken={user_token}></array-credit-report>
-		</div>
-	);
-
-	return (
-		<div className="flex flex-col w-full">
-			<PersonalInfoCard />
+			<array-credit-debt-analysis appKey={appKey} userToken={user_token}></array-credit-debt-analysis>
 		</div>
 	);
 }
