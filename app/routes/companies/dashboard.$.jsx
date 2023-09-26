@@ -25,34 +25,6 @@ export const useCompanyStore = create((set) => ({
 	set_state: (path, value) => set((state) => pipe(mod(...path)(() => value))(state)),
 }));
 
-export const action = async ({ request }) => {
-	let url = new URL(request.url);
-	let { origin } = url;
-	let form = await request.formData();
-	let entity_id = form.get("entity_id");
-	let group_id = form.get("group_id");
-
-	let scores = from(
-		axios({
-			method: "get",
-			url: `${origin}/credit/report/api/scores/resource/e/${entity_id}/g/${group_id}`,
-			withCredentials: true,
-			headers: {
-				cookie: `creditbanc_session=${encode(JSON.stringify({ entity_id }))}`,
-			},
-		})
-	);
-
-	let response = scores.pipe(
-		rxfilter((value) => value.data !== undefined),
-		rxmap(pipe(get("data")))
-	);
-
-	let $scores = await lastValueFrom(response);
-
-	return json($scores);
-};
-
 const on_success = (response) => {
 	console.log(`${log_route}.success`);
 	return response;
@@ -62,6 +34,31 @@ const on_error = (error) => {
 	console.log(`${log_route}.error`);
 	console.log(error);
 	return error;
+};
+
+export const action = async ({ request }) => {
+	let form = await request.formData();
+	let group_id = form.get("group_id");
+
+	let business = new BusinessReport(group_id);
+	let personal = new PersonalReport(group_id);
+	let business_resposne = business.scores.fold;
+	let personal_resposne = personal.scores.fold;
+
+	let payload = forkJoin({
+		business: business_resposne,
+		personal: personal_resposne,
+	}).pipe(
+		rxmap(({ business, personal }) => ({
+			scores: {
+				...business.scores,
+				...personal.scores,
+			},
+		}))
+	);
+
+	let response = await lastValueFrom(payload.pipe(fold(on_success, on_error)));
+	return response;
 };
 
 export const loader = async ({ request }) => {
@@ -191,8 +188,6 @@ const QuickLinks = () => {
 };
 
 const CompayInfo = () => {
-	let { pathname } = useLocation();
-	let entity_id = get_entity_id(pathname);
 	let company = useCompanyStore((state) => state.company);
 	let fetcher = useFetcher();
 
@@ -248,11 +243,11 @@ const CompayInfo = () => {
 					<div className="flex flex-row">
 						<div className="flex flex-col w-1/2 text-sm space-y-1">
 							<div className="text-gray-400">Intelliscore</div>
-							<div className="text-lg">{fetcher?.data?.experian_business_score}</div>
+							<div className="text-lg">{fetcher?.data?.scores?.experian_business_score}</div>
 						</div>
 						<div className="flex flex-col w-1/2 text-sm space-y-1">
 							<div className="text-gray-400">D&B</div>
-							<div className="text-lg">{fetcher?.data?.dnb_business_score}</div>
+							<div className="text-lg">{fetcher?.data?.scores?.dnb_business_score}</div>
 						</div>
 					</div>
 				</div>
@@ -262,15 +257,15 @@ const CompayInfo = () => {
 					<div className="flex flex-row">
 						<div className="flex flex-col w-1/3 text-sm space-y-1">
 							<div className="text-gray-400">Equifax</div>
-							<div className="text-lg">{fetcher?.data?.equifax_personal_score}</div>
+							<div className="text-lg">{fetcher?.data?.scores?.equifax_personal_score}</div>
 						</div>
 						<div className="flex flex-col w-1/3 text-sm space-y-1">
 							<div className="text-gray-400">Experian</div>
-							<div className="text-lg">{fetcher?.data?.experian_personal_score}</div>
+							<div className="text-lg">{fetcher?.data?.scores?.experian_personal_score}</div>
 						</div>
 						<div className="flex flex-col w-1/3 text-sm space-y-1">
 							<div className="text-gray-400">Transunion</div>
-							<div className="text-lg">{fetcher?.data?.transunion_personal_score}</div>
+							<div className="text-lg">{fetcher?.data?.scores?.transunion_personal_score}</div>
 						</div>
 					</div>
 				</div>
@@ -311,8 +306,6 @@ const Company = ({ company = {} }) => {
 	// let company = useCompaniesStore((state) => state.companies[group_id]) ?? {};
 
 	const onSelectCompany = async () => {
-		console.log("onSelectCompany");
-		console.log(company);
 		set_company(["company"], company);
 	};
 

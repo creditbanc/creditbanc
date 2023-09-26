@@ -669,9 +669,6 @@ const NewBusinessReportForm = () => {
 	const fetcher = useFetcher();
 	const error = fetcher.data;
 
-	console.log("fetcher");
-	console.log(fetcher.data);
-
 	const get_application = async (application_id) => {
 		// let application_id = "79ffec5e-7095-414f-b301-0052278661b4";
 
@@ -1148,8 +1145,8 @@ export default function Home() {
 	useEffect(() => {
 		let fetcher_data = business_info_fetcher.data;
 		if (fetcher_data) {
-			console.log("business_info_fetcher.data");
-			console.log(fetcher_data);
+			// console.log("business_info_fetcher.data");
+			// console.log(fetcher_data);
 			// console.log(business_info);
 			// on_should_update_cache(business_info, fetcher_data, "business_credit_report").subscribe();
 			set_path(["business_info"], fetcher_data);
@@ -1159,8 +1156,8 @@ export default function Home() {
 	useEffect(() => {
 		let fetcher_data = business_scores_fetcher.data;
 		if (fetcher_data) {
-			console.log("business_scores_fetcher.data");
-			console.log(fetcher_data);
+			// console.log("business_scores_fetcher.data");
+			// console.log(fetcher_data);
 			// console.log(business_scores);
 			// on_should_update_cache(business_scores, fetcher_data, "business_credit_report").subscribe();
 			set_path(["business_scores"], fetcher_data);
@@ -1170,8 +1167,8 @@ export default function Home() {
 	useEffect(() => {
 		let fetcher_data = personal_scores_fetcher.data;
 		if (fetcher_data) {
-			console.log("personal_scores_fetcher.data");
-			console.log(fetcher_data);
+			// console.log("personal_scores_fetcher.data");
+			// console.log(fetcher_data);
 			// console.log(personal_scores);
 			// on_should_update_cache(personal_scores, fetcher_data, "personal_credit_report").subscribe();
 			set_path(["personal_scores"], fetcher_data);
