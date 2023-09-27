@@ -65,7 +65,7 @@ const on_error = (error) => {
 };
 
 export const loader = async ({ request }) => {
-	if (!(await is_authorized(request))) return redirect("/home");
+	// if (!(await is_authorized(request))) return redirect("/home");
 	let url = new URL(request.url);
 	let entity_id = await get_session_entity_id(request);
 	let group_id = get_group_id(url.pathname);
