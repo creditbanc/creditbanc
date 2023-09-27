@@ -6,17 +6,19 @@ import { VerticalNav } from "~/components/BusinessCreditNav";
 import { prisma } from "~/utils/prisma.server";
 import { plan_product_requests } from "~/data/plan_product_requests";
 import { get } from "shades";
-import { update_lendflow_report, get_lendflow_report } from "~/utils/lendflow.server";
+import { update_lendflow_report, get_lendflow_report, LendflowExternal } from "~/utils/lendflow.server";
 import UpgradeBanner from "~/components/UpgradeMembership";
 import UpgradeCard from "~/components/UpgradeCard";
 import { fold } from "~/utils/operators";
-import { forkJoin, lastValueFrom, of as rxof, map as rxmap, tap, filter as rxfilter } from "rxjs";
+import { forkJoin, lastValueFrom, of as rxof, map as rxmap, tap, filter as rxfilter, concatMap, from } from "rxjs";
 import Report from "~/api/client/BusinessReport";
 import Entity from "~/api/client/Entity";
 import { useEffect } from "react";
 import { use_cache } from "~/components/CacheLink";
 import { on_success } from "./business/success";
 import { is_authorized } from "./business/authorized";
+import { pipe } from "ramda";
+import { update_doc } from "~/utils/firebase";
 
 const log_route = `credit.report.business`;
 
@@ -73,6 +75,28 @@ export const loader = async ({ request }) => {
 
 	let entity_response = entity.plan_id.fold;
 	let business_response = business_report.business_info.application_id.plan_id.scores.report_sha.fold;
+
+	let report = business_response
+		.pipe(
+			concatMap((response) => {
+				let { application_id, data = undefined } = response;
+				if (data == undefined) {
+					return from(LendflowExternal.get_lendflow_report(application_id)).pipe(
+						rxmap(pipe(get("data", "data"))),
+						concatMap((report) =>
+							from(update_doc(["credit_reports", application_id], { data: report })).pipe(
+								rxmap(() => report)
+							)
+						)
+					);
+				} else {
+					return rxof(response);
+				}
+			}),
+			tap(() => console.log("LendflowExternal.report")),
+			tap(console.log)
+		)
+		.subscribe();
 
 	let payload = forkJoin({ business_response, entity_response }).pipe(
 		rxmap(({ business_response, entity_response }) => {
