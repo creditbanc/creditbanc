@@ -21,7 +21,8 @@ const merge_with_current = curry((current, data) => {
 const catch_with_default = curry((default_value, fn_name, error) => {
 	console.log(`${log_route}.error.${fn_name}`);
 	console.log(error);
-	return default_value;
+	console.log(default_value);
+	return rxof(default_value);
 });
 
 export default class PersonalReport {
@@ -345,6 +346,8 @@ export default class PersonalReport {
 		this.response = from(this._report).pipe(
 			rxmap((report) => ({ report_sha: normalize_id(report) })),
 			catchError(catch_with_default({ report_sha: "" }, "report_sha")),
+			tap(() => console.log(`PersonalReport.tap.report_sha`)),
+			tap(console.log),
 			concatMap(merge_with_current(this.response))
 		);
 

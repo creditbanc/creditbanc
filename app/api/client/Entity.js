@@ -107,7 +107,8 @@ let read_roles = (group_id) =>
 const catch_with_default = curry((default_value, fn_name, error) => {
 	console.log(`api.client.Entity.error.${fn_name}`);
 	console.log(error);
-	return default_value;
+	console.log(default_value);
+	return rxof(default_value);
 });
 
 export default class Entity {
