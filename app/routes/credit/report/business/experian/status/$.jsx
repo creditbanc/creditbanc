@@ -953,7 +953,7 @@ export default function Container() {
 				<ExplanationCard />
 			</div>
 
-			<div className="flex flex-col w-full">
+			{/* <div className="flex flex-col w-full">
 				<CreditUtilization />
 			</div>
 
@@ -963,15 +963,15 @@ export default function Container() {
 
 			<div className="flex flex-col w-full">
 				<TradeLines />
-			</div>
+			</div> */}
 
-			{/* <div className="flex flex-col gap-y-4">
+			<div className="flex flex-col gap-y-4">
 				{pipe(
 					mapIndexed((trade_line, idx) => (
 						<AccountCard trade_line={trade_line} key={idx} plan_id={report_plan_id} />
 					))
 				)(trade_lines)}
-			</div> */}
+			</div>
 		</div>
 	);
 }

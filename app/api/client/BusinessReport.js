@@ -57,7 +57,9 @@ export default class BusinessReport {
 			rxmap((report) => new LendflowInternal(report))
 		);
 
-		this.response = rxof({});
+		this.response = application.pipe(
+			concatMap((application) => (application.length < 1 ? rxof({ business_report_is_empty: true }) : rxof({})))
+		);
 		this.application = application;
 		this.report = report;
 	}

@@ -1196,6 +1196,10 @@ export default function Home() {
 
 	let onboard_percent_completed = (onboard_steps_completed / onboard_num_of_steps) * 100;
 
+	console.log("home.NewBusinessReportForm");
+	console.log(application_id);
+	console.log(business_report_is_empty);
+
 	const no_business_match = pipe(anyPass([isNil, isEmpty]), not)(business_match);
 	const is_loading = new_application_is_submiting;
 
