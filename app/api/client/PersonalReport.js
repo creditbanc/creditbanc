@@ -18,6 +18,12 @@ const merge_with_current = curry((current, data) => {
 	);
 });
 
+const catch_with_default = curry((default_value, fn_name, error) => {
+	console.log(`${log_route}.error.${fn_name}`);
+	console.log(error);
+	return default_value;
+});
+
 export default class PersonalReport {
 	constructor(group_id) {
 		let personal_credit_report_queries = (group_id) => [
@@ -72,6 +78,12 @@ export default class PersonalReport {
 					transunion_personal_score: report.transunion_score(),
 				},
 			})),
+			catchError(
+				catch_with_default(
+					{ scores: { experian_personal_score: 0, equifax_personal_score: 0, transunion_personal_score: 0 } },
+					"scores"
+				)
+			),
 			concatMap(merge_with_current(this.response))
 		);
 
@@ -82,6 +94,7 @@ export default class PersonalReport {
 		this.response = this.application.pipe(
 			rxmap(pipe(get("application_id"))),
 			rxmap((application_id) => ({ application_id })),
+			catchError(catch_with_default({ application_id: "" }, "application_id")),
 			concatMap(merge_with_current(this.response))
 		);
 
@@ -91,6 +104,7 @@ export default class PersonalReport {
 	get experian_score() {
 		this.response = this.report.pipe(
 			rxmap((report) => ({ experian_score: report.experian_score() })),
+			catchError(catch_with_default({ experian_score: 0 }, "experian_score")),
 			concatMap(merge_with_current(this.response))
 		);
 
@@ -100,6 +114,7 @@ export default class PersonalReport {
 	get equifax_score() {
 		this.response = this.report.pipe(
 			rxmap((report) => ({ equifax_score: report.equifax_score() })),
+			catchError(catch_with_default({ equifax_score: 0 }, "equifax_score")),
 			concatMap(merge_with_current(this.response))
 		);
 
@@ -109,6 +124,7 @@ export default class PersonalReport {
 	get transunion_score() {
 		this.response = this.report.pipe(
 			rxmap((report) => ({ transunion_score: report.transunion_score() })),
+			catchError(catch_with_default({ transunion_score: 0 }, "transunion_score")),
 			concatMap(merge_with_current(this.response))
 		);
 
@@ -118,6 +134,7 @@ export default class PersonalReport {
 	get first_name() {
 		this.response = this.report.pipe(
 			rxmap((report) => ({ first_name: report.first_name() })),
+			catchError(catch_with_default({ first_name: "" }, "first_name")),
 			concatMap(merge_with_current(this.response))
 		);
 
@@ -127,6 +144,7 @@ export default class PersonalReport {
 	get last_name() {
 		this.response = this.report.pipe(
 			rxmap((report) => ({ last_name: report.last_name() })),
+			catchError(catch_with_default({ last_name: "" }, "last_name")),
 			concatMap(merge_with_current(this.response))
 		);
 
@@ -136,6 +154,7 @@ export default class PersonalReport {
 	get street() {
 		this.response = this.report.pipe(
 			rxmap((report) => ({ street: report.street() })),
+			catchError(catch_with_default({ street: "" }, "street")),
 			concatMap(merge_with_current(this.response))
 		);
 
@@ -145,6 +164,7 @@ export default class PersonalReport {
 	get city() {
 		this.response = this.report.pipe(
 			rxmap((report) => ({ city: report.city() })),
+			catchError(catch_with_default({ city: "" }, "city")),
 			concatMap(merge_with_current(this.response))
 		);
 
@@ -154,6 +174,7 @@ export default class PersonalReport {
 	get state() {
 		this.response = this.report.pipe(
 			rxmap((report) => ({ state: report.state() })),
+			catchError(catch_with_default({ state: "" }, "state")),
 			concatMap(merge_with_current(this.response))
 		);
 
@@ -163,6 +184,7 @@ export default class PersonalReport {
 	get zip() {
 		this.response = this.report.pipe(
 			rxmap((report) => ({ zip: report.zip() })),
+			catchError(catch_with_default({ zip: "" }, "zip")),
 			concatMap(merge_with_current(this.response))
 		);
 
@@ -172,6 +194,7 @@ export default class PersonalReport {
 	get dob() {
 		this.response = this.report.pipe(
 			rxmap((report) => ({ dob: report.dob() })),
+			catchError(catch_with_default({ dob: "" }, "dob")),
 			concatMap(merge_with_current(this.response))
 		);
 
@@ -181,6 +204,7 @@ export default class PersonalReport {
 	get trade_lines() {
 		this.response = this.report.pipe(
 			rxmap((report) => ({ trade_lines: report.trade_lines() })),
+			catchError(catch_with_default({ trade_lines: [] }, "trade_lines")),
 			concatMap(merge_with_current(this.response))
 		);
 
@@ -190,6 +214,7 @@ export default class PersonalReport {
 	get factors() {
 		this.response = this.report.pipe(
 			rxmap((report) => ({ factors: report.factors() })),
+			catchError(catch_with_default({ factors: [] }, "factors")),
 			concatMap(merge_with_current(this.response))
 		);
 
@@ -319,6 +344,7 @@ export default class PersonalReport {
 	get report_sha() {
 		this.response = from(this._report).pipe(
 			rxmap((report) => ({ report_sha: normalize_id(report) })),
+			catchError(catch_with_default({ report_sha: "" }, "report_sha")),
 			concatMap(merge_with_current(this.response))
 		);
 
@@ -331,6 +357,7 @@ export default class PersonalReport {
 				prev_sha: report == undefined ? normalize_id(array_report) : normalize_id(report),
 				curr_sha: normalize_id(array_report),
 			})),
+			catchError(catch_with_default({ prev_sha: "", curr_sha: "" }, "shas")),
 			concatMap(merge_with_current(this.response))
 		);
 

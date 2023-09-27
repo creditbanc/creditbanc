@@ -104,6 +104,12 @@ let read_roles = (group_id) =>
 		)
 	);
 
+const catch_with_default = curry((default_value, fn_name, error) => {
+	console.log(`api.client.Entity.error.${fn_name}`);
+	console.log(error);
+	return default_value;
+});
+
 export default class Entity {
 	constructor(entity_id) {
 		let entity = from(get_doc(["entity", entity_id]));
@@ -115,6 +121,7 @@ export default class Entity {
 	get identity() {
 		this.response = this.entity.pipe(
 			rxmap((entity) => ({ identity: entity })),
+			catchError(catch_with_default({ identity: {} }, "identity")),
 			concatMap(merge_with_current(this.response))
 		);
 
@@ -124,6 +131,7 @@ export default class Entity {
 	get plan_id() {
 		this.response = this.entity.pipe(
 			rxmap((entity) => ({ plan_id: entity.plan_id })),
+			catchError(catch_with_default({ plan_id: "" }, "plan_id")),
 			concatMap(merge_with_current(this.response))
 		);
 
@@ -141,6 +149,7 @@ export default class Entity {
 	get group_id() {
 		this.response = this._group_id_.pipe(
 			rxmap((group_id) => ({ group_id })),
+			catchError(catch_with_default({ group_id: "" }, "group_id")),
 			concatMap(merge_with_current(this.response))
 		);
 
@@ -154,6 +163,7 @@ export default class Entity {
 	get entity_id() {
 		this.response = rxof(this._entity_id).pipe(
 			rxmap((entity_id) => ({ entity_id })),
+			catchError(catch_with_default({ entity_id: "" }, "entity_id")),
 			concatMap(merge_with_current(this.response))
 		);
 
@@ -212,12 +222,8 @@ export default class Entity {
 
 	get companies() {
 		this.response = zip([this._owner_companies_, this._shared_companies_]).pipe(
-			rxmap(([owner_companies, shared_companies]) => ({
-				companies: {
-					owner_companies,
-					shared_companies,
-				},
-			})),
+			rxmap(([owner_companies, shared_companies]) => ({ companies: { owner_companies, shared_companies } })),
+			catchError(catch_with_default({ companies: { owner_companies: [], shared_companies: [] } }, "companies")),
 			concatMap(merge_with_current(this.response))
 		);
 		return this;
@@ -258,6 +264,7 @@ export default class Entity {
 
 		this.response = roles.pipe(
 			rxmap((roles) => ({ roles })),
+			catchError(catch_with_default({ roles: [] }, "roles")),
 			concatMap(merge_with_current(this.response))
 		);
 
