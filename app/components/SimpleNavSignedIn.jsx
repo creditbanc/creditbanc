@@ -132,7 +132,8 @@ let navigation = [
 	},
 	{
 		name: "Personal",
-		href: ({ entity_id, group_id }) => `/credit/report/personal/personal/resource/e/${entity_id}/g/${group_id}`,
+		href: ({ entity_id, group_id }) =>
+			`/credit/report/personal/personal/resource/e/${entity_id}/g/${group_id}?rand=${Math.random()}`,
 		current: (pathname) => is_location("/credit/report/personal", pathname),
 	},
 ];
