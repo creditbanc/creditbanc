@@ -233,7 +233,9 @@ const TradeLines = () => {
 
 	return (
 		<div className="flex flex-col items-start gap-y-2 w-full">
-			{pipe(map((trade_line) => <TradeLine trade_line={trade_line} />))(experian_trade_lines)}
+			{pipe(map((trade_line) => <TradeLine key={trade_line?.businessCategory} trade_line={trade_line} />))(
+				experian_trade_lines
+			)}
 			<div className="flex flex-col w-full h-[30px] items-center cursor-pointer">
 				<div className="flex flex-row w-full items-center justify-center h-full gap-x-3 bg-gray-100 rounded text-blue-500 text-xs font-semibold">
 					<div>Show all tradelines</div>
@@ -862,6 +864,70 @@ const DerogatoriesContainer = () => {
 	);
 };
 
+const CreditUtilization = () => {
+	let loader_data = useLoaderData();
+	let { experian_trade_lines = [] } = loader_data;
+
+	const TradeLine = ({ trade_line }) => {
+		let is_current = trade_line.dbt30 === 0 && trade_line.dbt60 === 0 && trade_line.dbt90 == 0;
+		let maybe_utilization_ratio = (trade_line?.accountBalance?.amount / trade_line?.recentHighCredit?.amount) * 100;
+		let utilization_ratio = maybe_utilization_ratio ? maybe_utilization_ratio : 0;
+
+		return (
+			<div className="flex flex-row border-b bg-white last-of-type:border-b-0 rounded">
+				<div className="flex flex-col w-[5px] bg-green-500"></div>
+				<div className="flex flex-row w-full px-4 h-[60px]">
+					<div className="flex flex-col  w-[20%] h-full justify-center">{trade_line?.businessCategory}</div>
+					<div className="flex flex-col  w-[20%] h-full justify-center">
+						{currency.format(trade_line?.accountBalance?.amount)}
+					</div>
+					<div className="flex flex-col  w-[20%] h-full justify-center">
+						{currency.format(trade_line?.recentHighCredit?.amount)}
+					</div>
+					<div className="flex flex-col  w-[20%] h-full justify-center">{utilization_ratio.toFixed(2)}%</div>
+					<div className="flex flex-col  w-[20%] h-full justify-center">
+						{is_current && <div className="flex flex-col text-green-500 ">in good standing</div>}
+					</div>
+				</div>
+			</div>
+		);
+	};
+
+	return (
+		<div className="flex flex-col w-full gap-y-4">
+			<div className="flex flex-row w-full divide-x">
+				<div className="flex flex-col w-1/3 items-center gap-y-2">
+					<div className="text-3xl font-semibold">$307,617</div>
+					<div className="text-sm">Total credit limit</div>
+				</div>
+				<div className="flex flex-col w-1/3 items-center gap-y-2">
+					<div className="text-3xl font-semibold">$30,617</div>
+					<div className="text-sm">Total current balance</div>
+				</div>
+				<div className="flex flex-col w-1/3 items-center gap-y-2">
+					<div className="text-3xl font-semibold">14%</div>
+					<div className="text-sm">Credit utilization ratio</div>
+				</div>
+			</div>
+			<div className="text-sm my-3 rounded border">
+				<div className="flex flex-row h-[40px] items-center border-b rounded bg-slate-50">
+					<div className="flex flex-col w-[5px]"></div>
+					<div className="flex flex-row h-full items-center px-4 w-full">
+						<div className="flex flex-col w-[20%]">Account</div>
+						<div className="flex flex-col w-[20%]">Balance</div>
+						<div className="flex flex-col w-[20%]">Credit limit</div>
+						<div className="flex flex-col w-[20%]">Usage</div>
+						<div className="flex flex-col w-[20%]">Status</div>
+					</div>
+				</div>
+				{pipe(map((trade_line) => <TradeLine key={trade_line?.businessCategory} trade_line={trade_line} />))(
+					experian_trade_lines
+				)}
+			</div>
+		</div>
+	);
+};
+
 export default function Container() {
 	let loader_data = useLoaderData();
 	let {
@@ -887,21 +953,25 @@ export default function Container() {
 				<ExplanationCard />
 			</div>
 
-			{/* <div className="flex flex-col w-full">
+			<div className="flex flex-col w-full">
+				<CreditUtilization />
+			</div>
+
+			<div className="flex flex-col w-full">
 				<DerogatoriesContainer />
 			</div>
 
 			<div className="flex flex-col w-full">
 				<TradeLines />
-			</div> */}
+			</div>
 
-			<div className="flex flex-col gap-y-4">
+			{/* <div className="flex flex-col gap-y-4">
 				{pipe(
 					mapIndexed((trade_line, idx) => (
 						<AccountCard trade_line={trade_line} key={idx} plan_id={report_plan_id} />
 					))
 				)(trade_lines)}
-			</div>
+			</div> */}
 		</div>
 	);
 }
