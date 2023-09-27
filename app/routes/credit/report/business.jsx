@@ -76,6 +76,10 @@ export const loader = async ({ request }) => {
 	let entity_response = entity.plan_id.fold;
 	let business_response = business_report.business_info.application_id.plan_id.scores.report_sha.fold;
 
+	// DELETE THIS --- DELETE THIS --- DELETE THIS
+	// DELETE THIS --- DELETE THIS --- DELETE THIS
+	// DELETE THIS --- DELETE THIS --- DELETE THIS
+	// DELETE THIS --- DELETE THIS --- DELETE THIS
 	let report = business_response
 		.pipe(
 			concatMap((response) => {
@@ -97,6 +101,9 @@ export const loader = async ({ request }) => {
 			tap(console.log)
 		)
 		.subscribe();
+	// DELETE THIS --- DELETE THIS --- DELETE THIS
+	// DELETE THIS --- DELETE THIS --- DELETE THIS
+	// DELETE THIS --- DELETE THIS --- DELETE THIS
 
 	let payload = forkJoin({ business_response, entity_response }).pipe(
 		rxmap(({ business_response, entity_response }) => {

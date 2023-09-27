@@ -184,7 +184,7 @@ const PersonalCredit = () => {
 			<div className="flex flex-col w-full py-3 border-b border-gray-200">
 				<Link
 					className="flex flex-row w-full"
-					to={`/credit/report/personal/personal/resource/e/${entity_id}/g/${group_id}`}
+					to={`/credit/report/personal/personal/resource/e/${entity_id}/g/${group_id}?rand=${Math.random()}`}
 				>
 					<div className="flex flex-col w-2/3">
 						<div className="font-semibold">Experian Personal ®</div>
@@ -205,7 +205,7 @@ const PersonalCredit = () => {
 			<div className="flex flex-col w-full py-3 border-b border-gray-200">
 				<Link
 					className="flex flex-row w-full"
-					to={`/credit/report/personal/personal/resource/e/${entity_id}/g/${group_id}`}
+					to={`/credit/report/personal/personal/resource/e/${entity_id}/g/${group_id}?rand=${Math.random()}`}
 				>
 					<div className="flex flex-col w-2/3">
 						<div className="font-semibold">TransUnion ®</div>
@@ -226,7 +226,7 @@ const PersonalCredit = () => {
 			<div className="flex flex-col w-full py-3">
 				<Link
 					className="flex flex-row w-full"
-					to={`/credit/report/personal/personal/resource/e/${entity_id}/g/${group_id}`}
+					to={`/credit/report/personal/personal/resource/e/${entity_id}/g/${group_id}?rand=${Math.random()}`}
 				>
 					<div className="flex flex-col w-2/3">
 						<div className="font-semibold">Equifax ®</div>
