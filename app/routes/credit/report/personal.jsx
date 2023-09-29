@@ -129,7 +129,7 @@ export default function CreditReport() {
 								<Outlet />
 							</div>
 
-							<div className="hidden @3xl:flex flex-col min-w-[330px] max-w-[350px] mr-2 h-full bg-white border rounded">
+							<div className="hidden @6xl:flex flex-col min-w-[330px] max-w-[350px] mr-2 h-full bg-white border rounded">
 								<div className="p-5">
 									<div className="flex flex-row space-x-3 items-center">
 										<div>
