@@ -1,5 +1,5 @@
 import { Outlet, useFetcher, useLoaderData, useLocation } from "@remix-run/react";
-import { get_route_endpoint, get_group_id, get_entity_id, fetcher_payload_maker } from "~/utils/helpers";
+import { get_route_endpoint, get_group_id, get_entity_id, fetcher_payload_maker, inspect } from "~/utils/helpers";
 import { get_session_entity_id } from "~/utils/auth.server";
 import { redirect } from "@remix-run/node";
 import { VerticalNav } from "~/components/BusinessCreditNav";
@@ -80,27 +80,26 @@ export const loader = async ({ request }) => {
 	// DELETE THIS --- DELETE THIS --- DELETE THIS
 	// DELETE THIS --- DELETE THIS --- DELETE THIS
 	// DELETE THIS --- DELETE THIS --- DELETE THIS
-	let report = business_response
-		.pipe(
-			concatMap((response) => {
-				let { application_id, data = undefined } = response;
-				if (data == undefined) {
-					return from(LendflowExternal.get_lendflow_report(application_id)).pipe(
-						rxmap(pipe(get("data", "data"))),
-						concatMap((report) =>
-							from(update_doc(["credit_reports", application_id], { data: report })).pipe(
-								rxmap(() => report)
-							)
+	let report = business_response.pipe(
+		concatMap((response) => {
+			let { application_id, data = undefined } = response;
+			if (data == undefined) {
+				return from(LendflowExternal.get_lendflow_report(application_id)).pipe(
+					rxmap(pipe(get("data", "data"))),
+					concatMap((report) =>
+						from(update_doc(["credit_reports", application_id], { data: report })).pipe(
+							rxmap(() => report),
+							tap(() => console.log("credit.report.business.LendflowExternal")),
+							tap(inspect)
 						)
-					);
-				} else {
-					return rxof(response);
-				}
-			}),
-			tap(() => console.log("LendflowExternal.report")),
-			tap(console.log)
-		)
-		.subscribe();
+					)
+				);
+			} else {
+				return rxof(response);
+			}
+		})
+	);
+	// .subscribe();
 	// DELETE THIS --- DELETE THIS --- DELETE THIS
 	// DELETE THIS --- DELETE THIS --- DELETE THIS
 	// DELETE THIS --- DELETE THIS --- DELETE THIS
@@ -191,7 +190,7 @@ export default function BusinessReport() {
 			<div className="flex flex-col w-full overflow-hidden h-full">
 				<div className="flex flex-col w-full mx-auto overflow-hidden h-full">
 					<div className={`@container flex overflow-hidden rounded h-full flex-row gap-x-5`}>
-						<div className="flex flex-col flex-1 overflow-y-scroll rounded-lg scrollbar-none">
+						<div className="flex flex-col flex-1 overflow-y-scroll rounded-lg scrollbar-none border">
 							<Outlet />
 						</div>
 

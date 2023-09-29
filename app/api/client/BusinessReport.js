@@ -47,8 +47,8 @@ export default class BusinessReport {
 
 		let application = from(get_credit_report(group_id)).pipe(
 			rxmap(head),
-			tap(() => console.log(`BusinessReport.fold.top`)),
-			tap(inspect),
+			// tap(() => console.log(`BusinessReport.fold.top`)),
+			// tap(inspect),
 			concatMap(ifElse(equals(undefined), always(throwError(() => undefined)), (report) => rxof(report)))
 		);
 

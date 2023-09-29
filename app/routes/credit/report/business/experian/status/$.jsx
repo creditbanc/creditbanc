@@ -13,7 +13,7 @@ import { on_success } from "../../success";
 import { is_authorized } from "../../authorized";
 import { redirect } from "@remix-run/node";
 import { Disclosure } from "@headlessui/react";
-import { MinusCircleIcon, PencilSquareIcon } from "@heroicons/react/24/outline";
+import { BuildingOffice2Icon, MinusCircleIcon, PencilSquareIcon, UserCircleIcon } from "@heroicons/react/24/outline";
 import { ChevronDownIcon } from "@heroicons/react/20/solid";
 
 const log_route = `credit.report.business.experian.status`;
@@ -928,6 +928,519 @@ const CreditUtilization = () => {
 	);
 };
 
+const BusinessFacts = () => {
+	return (
+		<div className="flex flex-col w-full gap-y-3">
+			<div className="flex flex-col w-full items-start bg-white border rounded text-sm my-1">
+				<Disclosure defaultOpen={true}>
+					<Disclosure.Button className="flex flex-col w-full py-4 border-b px-3 rounded">
+						MRM Capital Holdings, Inc.
+					</Disclosure.Button>
+					<Disclosure.Panel className="flex flex-col w-full text-gray-500 rounded overflow-hidden">
+						<div className="flex flex-col w-full rounded">
+							<div className="flex flex-row w-full border-b h-[100px] divide-x">
+								<div className="flex flex-col w-1/4 items-end justify-center px-5">
+									<div className="">Sales Revenue</div>
+									<div className="flex flex-col text-2xl font-semibold">$837,000</div>
+								</div>
+								<div className="flex flex-col w-1/4 items-end justify-center px-5">
+									<div>Employee Size</div>
+									<div className="flex flex-col text-2xl font-semibold">1</div>
+								</div>
+								<div className="flex flex-col w-1/4 items-end justify-center px-5">
+									<div>Years on File</div>
+									<div className="flex flex-col text-2xl font-semibold">8</div>
+								</div>
+								<div className="flex flex-col w-1/4 items-end justify-center px-5">
+									<div>Date of incorporation</div>
+									<div className="flex flex-col text-2xl font-semibold">11-12-2015</div>
+								</div>
+							</div>
+							<div className="flex flex-row w-full divide-x border-b">
+								<div className="flex flex-col w-1/2 ">
+									<div className="flex flex-row py-3 border-b justify-between px-3 last-of-type:border-b-0">
+										<div>Business Type</div>
+										<div className="flex flex-col font-semibold">Corporation</div>
+									</div>
+									<div className="flex flex-row py-3 border-b justify-between px-3 last-of-type:border-b-0">
+										<div>Corporate Linkage Type</div>
+										<div className="flex flex-col font-semibold">Headquarters/Parent</div>
+									</div>
+									<div className="flex flex-row py-3 border-b justify-between px-3 last-of-type:border-b-0">
+										<div>State of Incorporation</div>
+										<div className="flex flex-col font-semibold">FL</div>
+									</div>
+								</div>
+								<div className="flex flex-col w-1/2">
+									<div className="flex flex-row py-3 border-b justify-between px-3 last-of-type:border-b-0">
+										<div>Legal Business name</div>
+										<div className="flex flex-col font-semibold">MRM CAPITAL HOLDINGS, INC</div>
+									</div>
+									<div className="flex flex-row py-3 border-b justify-between px-3 last-of-type:border-b-0">
+										<div>Tax ID</div>
+										<div className="flex flex-col font-semibold">464612632</div>
+									</div>
+									<div className="flex flex-row py-3 border-b justify-between px-3 last-of-type:border-b-0">
+										{/* <div>Tax ID</div> */}
+										{/* <div className="flex flex-col font-semibold">464612632</div> */}
+									</div>
+								</div>
+							</div>
+							<div className="flex flex-col w-full">
+								<div className="flex flex-row w-full py-4 border-b last-of-type:border-b-0">
+									<div className="flex flex-col w-[50px] items-end pr-3">
+										<BuildingOffice2Icon className="h-6 w-6 text-gray-500" />
+									</div>
+									<div className="flex flex-col flex-1">
+										<div className="flex flex-row gap-x-4">
+											<div className="text-base font-semibold">9315 TRINANA CIR</div>
+										</div>
+										<div>WINTER GARDEN, FL, 34787</div>
+									</div>
+								</div>
+								<div className="flex flex-row w-full py-4 border-b last-of-type:border-b-0">
+									<div className="flex flex-col w-[50px] items-end pr-3">
+										<UserCircleIcon className="h-6 w-6 text-gray-500" />
+									</div>
+									<div className="flex flex-col flex-1">
+										<div className="flex flex-row gap-x-4">
+											<div className="text-base font-semibold">Mathew Meehan</div>
+											<div className="bg-slate-100 py-1 rounded-full text-xs px-4">CEO</div>
+										</div>
+										<div>Executive</div>
+									</div>
+								</div>
+								<div className="flex flex-row w-full py-4 border-b last-of-type:border-b-0">
+									<div className="flex flex-col w-[50px] items-end pr-3">
+										<UserCircleIcon className="h-6 w-6 text-gray-500" />
+									</div>
+									<div className="flex flex-col flex-1">
+										<div className="flex flex-row gap-x-4">
+											<div className="text-base font-semibold">Krissy Dascoli</div>
+											<div className="bg-slate-100 py-1 rounded-full text-xs px-4">
+												Vice President
+											</div>
+										</div>
+										<div>Executive</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</Disclosure.Panel>
+				</Disclosure>
+			</div>
+
+			<div className="flex flex-col w-full items-start bg-white border rounded text-sm my-1">
+				<Disclosure defaultOpen={true}>
+					<Disclosure.Button className="flex flex-col w-full py-4 border-b px-3 rounded">
+						SIC Codes
+					</Disclosure.Button>
+					<Disclosure.Panel className="flex flex-col w-full text-gray-500 rounded overflow-hidden">
+						<div className="flex flex-col w-full rounded">
+							<div className="flex flex-col divide-y">
+								<div className="flex flex-row w-full h-[50px] items-center px-4">
+									<div className="flex flex-col w-[100px]">Code</div>
+									<div className="font-semibold">6719</div>
+								</div>
+								<div className="flex flex-row w-full h-[50px] items-center px-4">
+									<div className="flex flex-col w-[100px]">Description</div>
+									<div className="font-semibold">Offices of Holding Companies, NEC</div>
+								</div>
+							</div>
+						</div>
+					</Disclosure.Panel>
+				</Disclosure>
+			</div>
+
+			<div className="flex flex-col w-full items-start bg-white border rounded text-sm my-1">
+				<Disclosure defaultOpen={true}>
+					<Disclosure.Button className="flex flex-col w-full py-4 border-b px-3 rounded">
+						NAICS Codes
+					</Disclosure.Button>
+					<Disclosure.Panel className="flex flex-col w-full text-gray-500 rounded overflow-hidden">
+						<div className="flex flex-col w-full rounded">
+							<div className="flex flex-col divide-y">
+								<div className="flex flex-row w-full h-[50px] items-center px-4">
+									<div className="flex flex-col w-[100px]">Code</div>
+									<div className="font-semibold">6719</div>
+								</div>
+								<div className="flex flex-row w-full h-[50px] items-center px-4">
+									<div className="flex flex-col w-[100px]">Description</div>
+									<div className="font-semibold">Offices of Holding Companies, NEC</div>
+								</div>
+							</div>
+						</div>
+					</Disclosure.Panel>
+				</Disclosure>
+			</div>
+		</div>
+	);
+};
+
+const TradePaymentTotals = () => {
+	return (
+		<div>
+			<div className="flex flex-col w-full items-start bg-white border rounded text-sm my-1">
+				<Disclosure defaultOpen={true}>
+					<Disclosure.Button className="flex flex-col w-full py-4 border-b px-3">
+						Trade Payment Totals
+					</Disclosure.Button>
+					<Disclosure.Panel className="flex flex-col w-full text-gray-500">
+						<div className="flex flex-col w-full gap-y-4 p-3 ">
+							<div className="flex flex-col w-full gap-y-3">
+								<div className="font-semibold">Trade Lines</div>
+								<div className="flex flex-row gap-x-4">
+									<div className="p-5 border w-1/4 rounded">
+										<div>Current Debt</div>
+										<div className="font-semibold text-2xl">0</div>
+									</div>
+									<div className="p-5 border w-1/4 rounded">
+										<div>Current Debt</div>
+										<div className="font-semibold text-2xl">0</div>
+									</div>
+									<div className="p-5 border w-1/4 rounded">
+										<div>Current Debt</div>
+										<div className="font-semibold text-2xl">0</div>
+									</div>
+									<div className="p-5 border w-1/4 rounded">
+										<div>Current Debt</div>
+										<div className="font-semibold text-2xl">0</div>
+									</div>
+								</div>
+							</div>
+							<div className="flex flex-col w-full gap-y-3">
+								<div className="font-semibold">Trade Lines</div>
+								<div className="flex flex-row gap-x-4">
+									<div className="p-5 border w-1/4 rounded">
+										<div>Current Debt</div>
+										<div className="font-semibold text-2xl">0</div>
+									</div>
+									<div className="p-5 border w-1/4 rounded">
+										<div>Current Debt</div>
+										<div className="font-semibold text-2xl">0</div>
+									</div>
+									<div className="p-5 border w-1/4 rounded">
+										<div>Current Debt</div>
+										<div className="font-semibold text-2xl">0</div>
+									</div>
+									<div className="p-5 border w-1/4 rounded">
+										<div>Current Debt</div>
+										<div className="font-semibold text-2xl">0</div>
+									</div>
+								</div>
+							</div>
+							<div className="flex flex-col w-full gap-y-3">
+								<div className="font-semibold">Trade Lines</div>
+								<div className="flex flex-row gap-x-4">
+									<div className="p-5 border w-1/4 rounded">
+										<div>Current Debt</div>
+										<div className="font-semibold text-2xl">0</div>
+									</div>
+									<div className="p-5 border w-1/4 rounded">
+										<div>Current Debt</div>
+										<div className="font-semibold text-2xl">0</div>
+									</div>
+									<div className="p-5 border w-1/4 rounded">
+										<div>Current Debt</div>
+										<div className="font-semibold text-2xl">0</div>
+									</div>
+									<div className="p-5 border w-1/4 rounded">
+										<div>Current Debt</div>
+										<div className="font-semibold text-2xl">0</div>
+									</div>
+								</div>
+							</div>
+							<div className="flex flex-col w-full gap-y-3">
+								<div className="font-semibold">Trade Lines</div>
+								<div className="flex flex-row gap-x-4">
+									<div className="p-5 border w-1/4 rounded">
+										<div>Current Debt</div>
+										<div className="font-semibold text-2xl">0</div>
+									</div>
+									<div className="p-5 border w-1/4 rounded">
+										<div>Current Debt</div>
+										<div className="font-semibold text-2xl">0</div>
+									</div>
+									<div className="p-5 border w-1/4 rounded">
+										<div>Current Debt</div>
+										<div className="font-semibold text-2xl">0</div>
+									</div>
+									<div className="p-5 border w-1/4 rounded">
+										<div>Current Debt</div>
+										<div className="font-semibold text-2xl">0</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</Disclosure.Panel>
+				</Disclosure>
+			</div>
+		</div>
+	);
+};
+
+const Intelliscore = () => {
+	return (
+		<div>
+			<div className="flex flex-col w-full items-start bg-white border rounded text-sm my-1">
+				<Disclosure defaultOpen={true}>
+					<Disclosure.Button className="flex flex-col w-full py-4 border-b px-3">
+						Intelliscore
+					</Disclosure.Button>
+					<Disclosure.Panel className="flex flex-col w-full text-gray-500">
+						<div className="flex flex-row w-full gap-y-4 p-3">
+							<div className="flex flex-col w-1/2">
+								<div className="mb-3 font-semibold">Scores</div>
+								<div className="flex flex-row w-full gap-x-3">
+									<div className="flex flex-row w-1/2 gap-x-4 border rounded p-2">
+										<div className="flex flex-col w-[50px] h-[50px] relative justify-center items-center">
+											<div className="flex flex-col items-center justify-center h-full w-full text-md">
+												74
+											</div>
+											<svg viewBox="0 0 36 36" className="absolute">
+												<path
+													className="stroke-green-300 stroke-[3px] fill-none"
+													stroke-dasharray="74, 100"
+													d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
+													style={{ strokeLinecap: "round", fill: "none !important" }}
+												/>
+											</svg>
+										</div>
+										<div className="flex flex-col justify-center">
+											<div className="font-semibold text-md">Commercial Score</div>
+										</div>
+									</div>
+									<div className="flex flex-row w-1/2 gap-x-4 border rounded p-2">
+										<div className="flex flex-col w-[50px] h-[50px] relative justify-center items-center">
+											<div className="flex flex-col items-center justify-center h-full w-full text-md">
+												74
+											</div>
+											<svg viewBox="0 0 36 36" className="absolute">
+												<path
+													className="stroke-green-300 stroke-[3px] fill-none"
+													stroke-dasharray="74, 100"
+													d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
+													style={{ strokeLinecap: "round", fill: "none !important" }}
+												/>
+											</svg>
+										</div>
+										<div className="flex flex-col justify-center">
+											<div className="font-semibold text-md">Percentile Ranking</div>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div className="flex flex-col w-1/2 px-4">
+								<div className="mb-3 flex flex-row justify-between">
+									<div className="font-semibold">Risk Class</div>
+									<div className="flex flex-row text-xs items-center gap-x-2 bg-green-100 py-1 px-2 rounded-full">
+										<div className="flex flex-col bg-green-300 rounded-full h-[20px] w-[20px] items-center justify-center text-white">
+											2
+										</div>
+										<div className="text-green-500">LOW TO MEDIUM</div>
+									</div>
+								</div>
+								<div className="flex flex-row w-full gap-x-3 items-center h-full">
+									<div className="flex flex-col w-1/5 h-[12px] rounded-full bg-green-300"></div>
+									<div className="flex flex-col w-1/5 h-[12px] rounded-full bg-green-300"></div>
+									<div className="flex flex-col w-1/5 h-[12px] rounded-full bg-slate-100"></div>
+									<div className="flex flex-col w-1/5 h-[12px] rounded-full bg-slate-100"></div>
+									<div className="flex flex-col w-1/5 h-[12px] rounded-full bg-slate-100"></div>
+								</div>
+							</div>
+						</div>
+					</Disclosure.Panel>
+				</Disclosure>
+			</div>
+		</div>
+	);
+};
+
+const Paydexscore = () => {
+	return (
+		<div>
+			<div className="flex flex-col w-full items-start bg-white border rounded text-sm my-1">
+				<Disclosure defaultOpen={true}>
+					<Disclosure.Button className="flex flex-col w-full py-4 border-b px-3">Paydex</Disclosure.Button>
+					<Disclosure.Panel className="flex flex-col w-full text-gray-500">
+						<div className="flex flex-row w-full gap-y-4 p-3">
+							<div className="flex flex-col w-full">
+								{/* <div className="mb-3 font-semibold">Business Trading</div> */}
+								<div className="flex flex-row w-full gap-x-3">
+									<div className="flex flex-row w-1/2 gap-x-4 border rounded p-2">
+										<div className="flex flex-col w-[50px] h-[50px] relative justify-center items-center">
+											<div className="flex flex-col items-center justify-center h-full w-full text-md">
+												74
+											</div>
+											<svg viewBox="0 0 36 36" className="absolute">
+												<path
+													className="stroke-green-300 stroke-[3px] fill-none"
+													stroke-dasharray="74, 100"
+													d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
+													style={{ strokeLinecap: "round", fill: "none !important" }}
+												/>
+											</svg>
+										</div>
+										<div className="flex flex-col justify-center">
+											<div className="font-semibold text-md">Paydex Score</div>
+										</div>
+									</div>
+									<div className="flex flex-row w-1/2 gap-x-4 border rounded p-2">
+										<div className="flex flex-col w-[50px] h-[50px] relative justify-center items-center">
+											<div className="flex flex-col items-center justify-center h-full w-full text-md">
+												74
+											</div>
+											<svg viewBox="0 0 36 36" className="absolute">
+												<path
+													className="stroke-green-300 stroke-[3px] fill-none"
+													stroke-dasharray="74, 100"
+													d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"
+													style={{ strokeLinecap: "round", fill: "none !important" }}
+												/>
+											</svg>
+										</div>
+										<div className="flex flex-col justify-center">
+											<div className="font-semibold text-md">Paydex Score 3 Months Prior</div>
+										</div>
+									</div>
+								</div>
+							</div>
+							{/* <div className="flex flex-col w-1/2 px-4">
+								<div className="mb-3 flex flex-row justify-between">
+									<div className="font-semibold">Risk Class</div>
+									<div className="flex flex-row text-xs items-center gap-x-2 bg-green-100 py-1 px-2 rounded-full">
+										<div className="flex flex-col bg-green-300 rounded-full h-[20px] w-[20px] items-center justify-center text-white">
+											2
+										</div>
+										<div className="text-green-500">LOW TO MEDIUM</div>
+									</div>
+								</div>
+								<div className="flex flex-row w-full gap-x-3 items-center h-full">
+									<div className="flex flex-col w-1/5 h-[12px] rounded-full bg-green-300"></div>
+									<div className="flex flex-col w-1/5 h-[12px] rounded-full bg-green-300"></div>
+									<div className="flex flex-col w-1/5 h-[12px] rounded-full bg-slate-100"></div>
+									<div className="flex flex-col w-1/5 h-[12px] rounded-full bg-slate-100"></div>
+									<div className="flex flex-col w-1/5 h-[12px] rounded-full bg-slate-100"></div>
+								</div>
+							</div> */}
+						</div>
+					</Disclosure.Panel>
+				</Disclosure>
+			</div>
+		</div>
+	);
+};
+
+const Factors = () => {
+	return (
+		<div>
+			<div className="flex flex-col w-full items-start bg-white border rounded text-sm my-1">
+				<Disclosure defaultOpen={true}>
+					<Disclosure.Button className="flex flex-col w-full py-4 border-b px-3">
+						Commercial Score Factors
+					</Disclosure.Button>
+					<Disclosure.Panel className="flex flex-col w-full text-gray-500">
+						<div className="flex flex-col w-full">
+							<div className="flex flex-row border-b p-3 font-semibold">
+								<div className="flex flex-col w-[150px]">Score</div>
+								<div className="flex flex-col flex-1">Definition</div>
+							</div>
+
+							<div className="flex flex-col w-full divide-y">
+								<div className="flex flex-row p-3">
+									<div className="flex flex-col w-[150px]">045</div>
+									<div className="flex flex-col flex-1">NUMBER OF GOOD COMMERCIAL ACCOUNTS</div>
+								</div>
+								<div className="flex flex-row p-3">
+									<div className="flex flex-col w-[150px]">045</div>
+									<div className="flex flex-col flex-1">NUMBER OF GOOD COMMERCIAL ACCOUNTS</div>
+								</div>
+								<div className="flex flex-row p-3">
+									<div className="flex flex-col w-[150px]">045</div>
+									<div className="flex flex-col flex-1">NUMBER OF GOOD COMMERCIAL ACCOUNTS</div>
+								</div>
+							</div>
+						</div>
+					</Disclosure.Panel>
+				</Disclosure>
+			</div>
+		</div>
+	);
+};
+
+const TradeSummary = () => {
+	let trade_line = {};
+	// let is_current = trade_line.dbt30 === 0 && trade_line.dbt60 === 0 && trade_line.dbt90 == 0;
+
+	return (
+		<div className="flex flex-col w-full items-start bg-white border rounded text-sm my-1">
+			<Disclosure defaultOpen={true}>
+				<Disclosure.Button className="flex flex-col w-full py-4 px-3 border-b">Trade Summary</Disclosure.Button>
+				<Disclosure.Panel className="flex flex-col w-full text-gray-500">
+					<div className="flex flex-row w-full gap-x-5 bg-white rounded-b px-3 py-2 text-xs">
+						<div className="flex flex-col w-[50%]">
+							<div className="flex flex-col w-full divide-y">
+								<div className="flex flex-row justify-between w-full py-3">
+									<div className="">Current Dbt</div>
+									<div className="text-black font-semibold">
+										{currency.format(trade_line?.accountBalance?.amount)}
+									</div>
+								</div>
+								<div className="flex flex-row justify-between w-full py-3">
+									<div className="">Monthly Average Dbt</div>
+									<div className="text-black font-semibold">
+										{currency.format(trade_line?.recentHighCredit?.amount)}
+									</div>
+								</div>
+								<div className="flex flex-row justify-between w-full py-3">
+									<div className="">Highest Dbt 6 Months</div>
+									<div className="text-black font-semibold">{trade_line?.currentPercentage}%</div>
+								</div>
+								<div className="flex flex-row justify-between w-full py-3">
+									<div className="">Highest Dbt 5 Quarters</div>
+									<div className="text-black font-semibold">{trade_line?.dateReported}</div>
+								</div>
+								<div className="flex flex-row justify-between w-full py-3">
+									<div className="">All Tradeline Count</div>
+									<div className="text-black font-semibold">{trade_line?.dateLastActivity}</div>
+								</div>
+							</div>
+						</div>
+						<div className="flex flex-col w-[50%]">
+							<div className="flex flex-col w-full divide-y">
+								<div className="flex flex-row justify-between w-full py-3">
+									<div className="">All Tradeline Balance</div>
+									<div className="text-black font-semibold">
+										{currency.format(trade_line?.accountBalance?.amount)}
+									</div>
+								</div>
+								<div className="flex flex-row justify-between w-full py-3">
+									<div className="">Current Tradeline Count</div>
+									<div className="text-black font-semibold">
+										{currency.format(trade_line?.recentHighCredit?.amount)}
+									</div>
+								</div>
+								<div className="flex flex-row justify-between w-full py-3">
+									<div className="">Current Account Balance</div>
+									<div className="text-black font-semibold">{trade_line?.currentPercentage}%</div>
+								</div>
+								<div className="flex flex-row justify-between w-full py-3">
+									<div className="">Median Credit Amount Extended</div>
+									<div className="text-black font-semibold">{trade_line?.dateReported}</div>
+								</div>
+								<div className="flex flex-row justify-between w-full py-3">
+									<div className="">Single High Credit</div>
+									<div className="text-black font-semibold">{trade_line?.dateLastActivity}</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</Disclosure.Panel>
+			</Disclosure>
+		</div>
+	);
+};
+
 export default function Container() {
 	let loader_data = useLoaderData();
 	let {
@@ -945,33 +1458,89 @@ export default function Container() {
 	}, []);
 
 	return (
-		<div className="flex flex-col w-full gap-y-5">
-			<div>
+		<div className="flex flex-col w-full bg-white p-4 rounded">
+			<div className="flex flex-col w-full items-center my-10">
+				<div className="flex flex-col max-w-5xl text-center">
+					<h1 className="text-4xl font-bold tracking-tight text-gray-900 sm:text-6xl">
+						MRM Capital Holdings, Inc.
+					</h1>
+					<p className="mt-6 text-lg leading-8 text-gray-600">
+						Anim aute id magna aliqua ad ad non deserunt sunt. Qui irure qui lorem cupidatat commodo. Elit
+						sunt amet fugiat veniam occaecat fugiat aliqua.
+					</p>
+				</div>
+			</div>
+			{/* <div>
 				<PaymentStatus />
 			</div>
 			<div>
 				<ExplanationCard />
-			</div>
-
-			{/* <div className="flex flex-col w-full">
-				<CreditUtilization />
-			</div>
-
-			<div className="flex flex-col w-full">
-				<DerogatoriesContainer />
-			</div>
-
-			<div className="flex flex-col w-full">
-				<TradeLines />
 			</div> */}
+			<div className="flex flex-col w-full items-center">
+				<div className="flex flex-col max-w-7xl gap-y-10">
+					<div className="flex flex-col w-full">
+						<div className="border-b border-gray-200 mb-5 pb-5">
+							<h3 className="text-2xl font-semibold leading-6 text-gray-900">Scores</h3>
+						</div>
+						<Intelliscore />
+					</div>
 
-			<div className="flex flex-col gap-y-4">
+					<div className="flex flex-col w-full">
+						<Paydexscore />
+					</div>
+
+					<div className="flex flex-col w-full">
+						<div className="border-b border-gray-200 mb-5 pb-5">
+							<h3 className="text-2xl font-semibold leading-6 text-gray-900">Business Info</h3>
+						</div>
+						<BusinessFacts />
+					</div>
+
+					<div className="flex flex-col w-full">
+						<div className="border-b border-gray-200 mb-5 pb-5">
+							<h3 className="text-2xl font-semibold leading-6 text-gray-900">Trade Lines</h3>
+						</div>
+						<TradeLines />
+					</div>
+
+					<div className="flex flex-col w-full">
+						<div className="border-b border-gray-200 mb-5 pb-5">
+							<h3 className="text-2xl font-semibold leading-6 text-gray-900">Trades</h3>
+						</div>
+						<TradeSummary />
+					</div>
+
+					<div className="flex flex-col w-full">
+						<TradePaymentTotals />
+					</div>
+
+					<div className="flex flex-col w-full">
+						<div className="border-b border-gray-200 mb-5 pb-5">
+							<h3 className="text-2xl font-semibold leading-6 text-gray-900">Factors</h3>
+						</div>
+						<Factors />
+					</div>
+
+					<div className="flex flex-col w-full">
+						<DerogatoriesContainer />
+					</div>
+
+					<div className="flex flex-col w-full">
+						<div className="border-b border-gray-200 mb-5 pb-5">
+							<h3 className="text-2xl font-semibold leading-6 text-gray-900">Debt Analysis</h3>
+						</div>
+						<CreditUtilization />
+					</div>
+				</div>
+			</div>
+
+			{/* <div className="flex flex-col gap-y-4">
 				{pipe(
 					mapIndexed((trade_line, idx) => (
 						<AccountCard trade_line={trade_line} key={idx} plan_id={report_plan_id} />
 					))
 				)(trade_lines)}
-			</div>
+			</div> */}
 		</div>
 	);
 }
