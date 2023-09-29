@@ -4331,12 +4331,6 @@ body {
   background-color: transparent;
 }
 
-@container (min-width: 48rem) {
-  .\@3xl\:flex {
-    display: flex;
-  }
-}
-
 @container (min-width: 72rem) {
   .\@6xl\:flex {
     display: flex;

@@ -120,16 +120,16 @@ const Companies = ({ companies: all_companies = {} }) => {
 
 let navigation = [
 	{
-		name: "Intelliscore",
+		name: "Business",
 		href: ({ entity_id, group_id }) =>
-			`/credit/report/business/experian/overview/resource/e/${entity_id}/g/${group_id}`,
+			`/credit/report/business/experian/status/resource/e/${entity_id}/g/${group_id}?rand=${Math.random()}`,
 		current: (pathname) => is_location("/credit/report/business/experian", pathname),
 	},
-	{
-		name: "Dun & Bradstreet",
-		href: ({ entity_id, group_id }) => `/credit/report/business/dnb/overview/resource/e/${entity_id}/g/${group_id}`,
-		current: (pathname) => is_location("/credit/report/business/dnb", pathname),
-	},
+	// {
+	// 	name: "Dun & Bradstreet",
+	// 	href: ({ entity_id, group_id }) => `/credit/report/business/dnb/overview/resource/e/${entity_id}/g/${group_id}`,
+	// 	current: (pathname) => is_location("/credit/report/business/dnb", pathname),
+	// },
 	{
 		name: "Personal",
 		href: ({ entity_id, group_id }) =>
