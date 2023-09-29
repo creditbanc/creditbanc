@@ -973,7 +973,7 @@ const BusinessFacts = () => {
 								</div>
 								<div className="flex flex-col w-1/2">
 									<div className="flex flex-row py-3 border-b justify-between px-3 last-of-type:border-b-0">
-										<div>Legal Business name</div>
+										<div>Business name</div>
 										<div className="flex flex-col font-semibold">MRM CAPITAL HOLDINGS, INC</div>
 									</div>
 									<div className="flex flex-row py-3 border-b justify-between px-3 last-of-type:border-b-0">
@@ -981,8 +981,8 @@ const BusinessFacts = () => {
 										<div className="flex flex-col font-semibold">464612632</div>
 									</div>
 									<div className="flex flex-row py-3 border-b justify-between px-3 last-of-type:border-b-0">
-										{/* <div>Tax ID</div> */}
-										{/* <div className="flex flex-col font-semibold">464612632</div> */}
+										<div>DUNS</div>
+										<div className="flex flex-col font-semibold">464612632</div>
 									</div>
 								</div>
 							</div>
@@ -1109,7 +1109,7 @@ const TradePaymentTotals = () => {
 								</div>
 							</div>
 							<div className="flex flex-col w-full gap-y-3">
-								<div className="font-semibold">Trade Lines</div>
+								<div className="font-semibold">Combined Trade Lines</div>
 								<div className="flex flex-row gap-x-4">
 									<div className="p-5 border w-1/4 rounded">
 										<div>Current Debt</div>
@@ -1130,7 +1130,7 @@ const TradePaymentTotals = () => {
 								</div>
 							</div>
 							<div className="flex flex-col w-full gap-y-3">
-								<div className="font-semibold">Trade Lines</div>
+								<div className="font-semibold">Additional Trade Lines</div>
 								<div className="flex flex-row gap-x-4">
 									<div className="p-5 border w-1/4 rounded">
 										<div>Current Debt</div>
@@ -1151,7 +1151,7 @@ const TradePaymentTotals = () => {
 								</div>
 							</div>
 							<div className="flex flex-col w-full gap-y-3">
-								<div className="font-semibold">Trade Lines</div>
+								<div className="font-semibold">Newly Reported Trade Lines</div>
 								<div className="flex flex-row gap-x-4">
 									<div className="p-5 border w-1/4 rounded">
 										<div>Current Debt</div>
@@ -1459,23 +1459,25 @@ export default function Container() {
 
 	return (
 		<div className="flex flex-col w-full bg-white p-4 rounded">
-			<div className="flex flex-col w-full items-center my-10">
-				<div className="flex flex-col max-w-5xl text-center">
-					<h1 className="text-4xl font-bold tracking-tight text-gray-900 sm:text-6xl">
-						MRM Capital Holdings, Inc.
-					</h1>
-					<p className="mt-6 text-lg leading-8 text-gray-600">
-						Anim aute id magna aliqua ad ad non deserunt sunt. Qui irure qui lorem cupidatat commodo. Elit
-						sunt amet fugiat veniam occaecat fugiat aliqua.
-					</p>
-				</div>
-			</div>
 			{/* <div>
 				<PaymentStatus />
 			</div>
 			<div>
 				<ExplanationCard />
 			</div> */}
+
+			<div className="flex flex-col w-full items-center my-10 px-5">
+				<div className="flex flex-col max-w-4xl text-center">
+					<h1 className="text-4xl font-bold tracking-tight text-gray-900 sm:text-6xl">
+						MRM Capital Holdings, Inc.
+					</h1>
+					<div className="flex flex-row w-full justify-center gap-x-2 mt-6 text-lg leading-8 text-gray-600">
+						<div>Date of incorporation:</div>
+						<div className="font-semibold">11-12-2015</div>
+					</div>
+				</div>
+			</div>
+
 			<div className="flex flex-col w-full items-center">
 				<div className="flex flex-col max-w-7xl gap-y-10">
 					<div className="flex flex-col w-full">

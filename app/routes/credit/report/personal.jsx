@@ -100,55 +100,51 @@ export default function CreditReport() {
 			<div className="flex flex-col w-full overflow-y-scroll overflow-hidden h-full">
 				<div className="flex flex-col w-full mx-auto overflow-hidden h-full" ref={setTarget}>
 					<div className="flex flex-col w-full h-full overflow-hidden" onScroll={onPageScroll}>
-						<div className={`flex h-full overflow-hidden ${isMobile ? "flex-col" : "flex-row gap-x-5"}`}>
-							{isMobile && (
+						<div className={`@container flex h-full overflow-hidden flex-row gap-x-5`}>
+							{/* {isMobile && (
 								<div className="flex flex-col my-4">
 									<CreditTabsSelect selected={get_route_endpoint(location.pathname)} />
 								</div>
-							)}
+							)} */}
 
-							<div
-								className="flex flex-col h-full flex-1 overflow-y-scroll scrollbar-none rounded-lg bg-white border"
-								ref={pageRef}
-							>
-								<div className="flex flex-col w-full  px-5 pt-5  rounded-lg">
+							<div className="flex flex-col h-full flex-1 overflow-y-scroll scrollbar-none rounded-lg bg-white border">
+								{/* <div className="flex flex-col w-full  px-5 pt-5  rounded-lg">
 									<div className="w-full text-center space-y-5 mt-5">
-										{/* <div className="flex flex-row text-5xl font-bold tracking-tight space-x-1 justify-center mb-5">
+										<div className="flex flex-row text-5xl font-bold tracking-tight space-x-1 justify-center mb-5">
 											<div>{first_name}</div>
 											<div>'s personal credit report</div>
-										</div> */}
-										{/* <p className="text-lg leading-6 ">View all three personal credit bureaus</p> */}
+										</div>
+										<p className="text-lg leading-6 ">View all three personal credit bureaus</p>
 									</div>
 
-									{/* <div className="flex flex-col w-full">
+									<div className="flex flex-col w-full">
 										<CreditScoreHero
 											experian={experian}
 											equifax={equifax}
 											transunion={transunion}
 										/>
-									</div> */}
-								</div>
+									</div>
+								</div> */}
 
 								<Outlet />
 							</div>
 
-							{!isMobile && (
-								<div className="sm:flex flex-col w-[30%] mr-2 h-full bg-white border rounded">
-									<div className="p-5">
-										<div className="flex flex-row space-x-3 items-center">
-											<div>
-												<span className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-gray-500">
-													<span className="text-lg font-medium leading-none text-white">
-														{first_name?.charAt(0).toUpperCase()}
-													</span>
+							<div className="hidden @3xl:flex flex-col min-w-[330px] max-w-[350px] mr-2 h-full bg-white border rounded">
+								<div className="p-5">
+									<div className="flex flex-row space-x-3 items-center">
+										<div>
+											<span className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-gray-500">
+												<span className="text-lg font-medium leading-none text-white">
+													{first_name?.charAt(0).toUpperCase()}
 												</span>
-											</div>
-											<div>
-												{first_name} {last_name}
-											</div>
+											</span>
+										</div>
+										<div>
+											{first_name} {last_name}
 										</div>
 									</div>
-									{/* <div className="flex flex-col py-2">
+								</div>
+								{/* <div className="flex flex-col py-2">
 										<Link
 											to={`/financial/transactions`}
 											className="px-5 mb-4 flex flex-row items-center space-x-3 text-blue-500 cursor-pointer text-sm"
@@ -162,35 +158,32 @@ export default function CreditReport() {
 											</div>
 										</Link>
 									</div> */}
-									<div className="flex flex-col w-full overflow-scroll scrollbar-none">
-										<div className="border-t"></div>
-										<div className="flex flex-col w-full p-5 space-y-3">
-											<div className="text-gray-400 text-sm">Credit Scores</div>
-											<div className="flex flex-row">
-												<div className="flex flex-col w-1/2 text-sm space-y-1">
-													<div className="text-gray-400">Transunion</div>
-													<div className="text-lg">{transunion}</div>
-												</div>
-												<div className="flex flex-col w-1/2 text-sm space-y-1">
-													<div className="text-gray-400">Experian</div>
-													<div className="text-lg">{experian}</div>
-												</div>
-												<div className="flex flex-col w-1/2 text-sm space-y-1">
-													<div className="text-gray-400">Equifax</div>
-													<div className="text-lg">{equifax}</div>
-												</div>
+								<div className="flex flex-col w-full overflow-scroll scrollbar-none">
+									<div className="border-t"></div>
+									<div className="flex flex-col w-full p-5 space-y-3">
+										<div className="text-gray-400 text-sm">Credit Scores</div>
+										<div className="flex flex-row">
+											<div className="flex flex-col w-1/2 text-sm space-y-1">
+												<div className="text-gray-400">Transunion</div>
+												<div className="text-lg">{transunion}</div>
+											</div>
+											<div className="flex flex-col w-1/2 text-sm space-y-1">
+												<div className="text-gray-400">Experian</div>
+												<div className="text-lg">{experian}</div>
+											</div>
+											<div className="flex flex-col w-1/2 text-sm space-y-1">
+												<div className="text-gray-400">Equifax</div>
+												<div className="text-lg">{equifax}</div>
 											</div>
 										</div>
-										<div className="border-t"></div>
-										<div className="flex flex-col px-5 pt-5 text-sm space-y-3">
-											<div className=" text-gray-400">Quick Links</div>
-											<PersonalCreditTabsVertical
-												selected={get_route_endpoint(location.pathname)}
-											/>
-										</div>
+									</div>
+									<div className="border-t"></div>
+									<div className="flex flex-col px-5 pt-5 text-sm space-y-3">
+										<div className=" text-gray-400">Quick Links</div>
+										<PersonalCreditTabsVertical selected={get_route_endpoint(location.pathname)} />
 									</div>
 								</div>
-							)}
+							</div>
 						</div>
 					</div>
 				</div>

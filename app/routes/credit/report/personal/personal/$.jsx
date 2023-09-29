@@ -33,6 +33,16 @@ export default function Personal() {
 
 	return (
 		<div>
+			<div className="flex flex-col w-full items-center my-10 px-5">
+				<div className="flex flex-col max-w-4xl text-center">
+					<h1 className="text-4xl font-bold tracking-tight text-gray-900 sm:text-6xl">Matthew Meehan</h1>
+					<div className="flex flex-row w-full justify-center gap-x-2 mt-6 text-lg leading-8 text-gray-600">
+						<div>Personal:</div>
+						<div className="font-semibold">09-29-2023</div>
+					</div>
+				</div>
+			</div>
+
 			<array-credit-report appKey={appKey} userToken={user_token}></array-credit-report>
 		</div>
 	);
