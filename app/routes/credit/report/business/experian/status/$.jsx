@@ -1190,9 +1190,9 @@ const Intelliscore = () => {
 					<Disclosure.Panel className="flex flex-col w-full text-gray-500">
 						<div className="flex flex-row w-full gap-y-4 p-3">
 							<div className="flex flex-col w-1/2">
-								<div className="mb-3 font-semibold">Scores</div>
 								<div className="flex flex-row w-full gap-x-3">
-									<div className="flex flex-row w-1/2 gap-x-4 border rounded p-2">
+									<IntelliscoreGraph score={74} />
+									{/* <div className="flex flex-row w-1/2 gap-x-4 border rounded p-2">
 										<div className="flex flex-col w-[50px] h-[50px] relative justify-center items-center">
 											<div className="flex flex-col items-center justify-center h-full w-full text-md">
 												74
@@ -1227,7 +1227,7 @@ const Intelliscore = () => {
 										<div className="flex flex-col justify-center">
 											<div className="font-semibold text-md">Percentile Ranking</div>
 										</div>
-									</div>
+									</div> */}
 								</div>
 							</div>
 							<div className="flex flex-col w-1/2 px-4">
@@ -1441,6 +1441,104 @@ const TradeSummary = () => {
 	);
 };
 
+let score_color = (score) => {
+	if (score < 10) {
+		return "red-500";
+	}
+
+	if (score >= 10 && score < 25) {
+		return "orange-400";
+	}
+
+	if (score >= 25 && score < 50) {
+		return "yellow-300";
+	}
+
+	if (score >= 50 && score < 75) {
+		return "green-600";
+	}
+
+	if (score >= 75) {
+		return "green-700";
+	}
+
+	return "green-700";
+};
+
+const ScoreLinearRangeGraph = ({ score = 0 }) => {
+	let height = 10;
+
+	return (
+		<div className="flex flex-col w-full relative">
+			<div className="flex flex-col w-full relative justify-center">
+				<div className={`flex flex-col w-full h-[${height}px] relative rounded overflow-hidden`}>
+					<div className={`flex flex-col absolute h-[${height}px] w-full bg-green-700`}></div>
+					<div className={`flex flex-col absolute h-[${height}px] w-[75%] bg-green-600`}></div>
+					<div className={`flex flex-col absolute h-[${height}px] w-[50%] bg-yellow-300`}></div>
+					<div className={`flex flex-col absolute h-[${height}px] w-[25%] bg-orange-400`}></div>
+					<div className={`flex flex-col absolute h-[${height}px] w-[10%] bg-red-500`}></div>
+				</div>
+				<div
+					className={`flex flex-col absolute w-[20px] h-[20px] rounded-full border-[3px] border-white shadow bg-${score_color(
+						score
+					)}`}
+					style={{ left: `calc(${score}% - 15px)` }}
+				></div>
+			</div>
+			<div className="felx flex-col w-full relative text-xs mt-2 -ml-2">
+				<div className={`flex flex-col absolute left-[0%]`}>0</div>
+				<div className={`flex flex-col absolute left-[10%]`}>10</div>
+				<div className={`flex flex-col absolute left-[25%]`}>25</div>
+				<div className={`flex flex-col absolute left-[50%]`}>50</div>
+				<div className={`flex flex-col absolute left-[75%]`}>75</div>
+				<div className={`flex flex-col absolute left-[100%]`}>100</div>
+			</div>
+		</div>
+	);
+};
+
+const IntelliscoreGraph = ({ score, bureau = "" }) => {
+	var Bureau = ({ bureau }) => {
+		console.log("bureau", bureau);
+		if (bureau == "experian") {
+			return (
+				<img
+					src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/31/Experian_logo.svg/1280px-Experian_logo.svg.png"
+					className="flex flex-col max-h-[30px] max-w-fit"
+				/>
+			);
+		}
+
+		if (bureau == "dnb") {
+			return (
+				<img
+					src="https://consent.trustarc.com/v2/asset/23:19:56.535ialy6v_DB_WORDMARK_Pantone.png"
+					className="flex flex-col max-h-[30px] max-w-fit"
+				/>
+			);
+		}
+	};
+
+	return (
+		<div className="flex flex-col w-full gap-y-2">
+			<div className="flex flex-col w-full mb-3">
+				<Bureau bureau={bureau} />
+				{/* <img
+					src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/31/Experian_logo.svg/1280px-Experian_logo.svg.png"
+					className="w-[20%]"
+				/> */}
+			</div>
+			<div className="flex flex-row justify-between items-end mb-3 font-semibold">
+				<div className="text-5xl">{score}</div>
+				<div className={`text-2xl ${"text-" + score_color(score)}`}>Low risk</div>
+			</div>
+			<div>
+				<ScoreLinearRangeGraph score={score} />
+			</div>
+		</div>
+	);
+};
+
 export default function Container() {
 	let loader_data = useLoaderData();
 	let {
@@ -1450,6 +1548,7 @@ export default function Container() {
 		cache_dependencies,
 	} = loader_data;
 	let use_cache_client = use_cache((state) => state.set_dependencies);
+	let score = 50;
 
 	useEffect(() => {
 		if (cache_dependencies !== undefined) {
@@ -1458,7 +1557,7 @@ export default function Container() {
 	}, []);
 
 	return (
-		<div className="flex flex-col w-full bg-white p-4 rounded">
+		<div className="flex flex-col w-full bg-white py-4 px-5 rounded">
 			{/* <div>
 				<PaymentStatus />
 			</div>
@@ -1481,15 +1580,22 @@ export default function Container() {
 			<div className="flex flex-col w-full items-center">
 				<div className="flex flex-col max-w-7xl gap-y-10">
 					<div className="flex flex-col w-full">
-						<div className="border-b border-gray-200 mb-5 pb-5">
+						{/* <div className="border-b border-gray-200 mb-5 pb-5">
 							<h3 className="text-2xl font-semibold leading-6 text-gray-900">Scores</h3>
+						</div> */}
+						<div className="flex flex-row w-full justify-between gap-x-[100px] px-[10px]">
+							<div className="flex flex-col w-[50%] ">
+								<IntelliscoreGraph score={74} bureau="experian" />
+							</div>
+							<div className="flex flex-col w-[50%] ">
+								<IntelliscoreGraph score={74} bureau="dnb" />
+							</div>
 						</div>
-						<Intelliscore />
 					</div>
 
-					<div className="flex flex-col w-full">
+					{/* <div className="flex flex-col w-full">
 						<Paydexscore />
-					</div>
+					</div> */}
 
 					<div className="flex flex-col w-full">
 						<div className="border-b border-gray-200 mb-5 pb-5">
