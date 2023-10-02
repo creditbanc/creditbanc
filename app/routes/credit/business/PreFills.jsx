@@ -5,6 +5,7 @@ import {
 	test_identity_five,
 	test_identity_six,
 	test_identity_seven,
+	test_identity_eight,
 	mrm_credit_report,
 } from "~/data/lendflow";
 
@@ -35,6 +36,10 @@ export default function PreFills() {
 
 			<div className="cursor-pointer" onClick={() => onPreFill(test_identity_seven)}>
 				Nuveen New York Quality Income Municipal Fund Inc
+			</div>
+
+			<div className="cursor-pointer" onClick={() => onPreFill(test_identity_eight)}>
+				Michael
 			</div>
 		</div>
 	);

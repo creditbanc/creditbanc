@@ -77,6 +77,33 @@ export const test_identity_three = {
 	terms_of_service: true,
 };
 
+export const test_identity_eight = {
+	basic_info: {
+		first_name: "MICHAEL",
+		last_name: "SYLKATIS",
+		email_address: "michael@shieldadvisorsllc.com",
+		telephone: "352-355-8833",
+		doing_business_as: "",
+	},
+	business_address: {
+		address_line: "1309 COFFEEN AVE STE",
+		address_line2: "",
+		city: "SHERIDAN",
+		state: "WY",
+		country: "US",
+		zip: "82801",
+	},
+	business_start_date: {
+		month: "07",
+		day: "13",
+		year: "2022",
+	},
+	business_entity: "business_entity_type_4",
+	business_legal_name: "MBS HOLDINGS LLC",
+	employee_identification_number: "883226104",
+	terms_of_service: true,
+};
+
 export const test_identity_four = {
 	basic_info: {
 		first_name: "Test",
@@ -248,8 +275,7 @@ export const credit_report_data = {
 							unitId: "1314 SOPHIA LN APT 3",
 							origination: {
 								code: "1",
-								definition:
-									"Reported via A/R tape, but different from inquiry",
+								definition: "Reported via A/R tape, but different from inquiry",
 							},
 							dwellingType: {
 								code: "A",
@@ -274,8 +300,7 @@ export const credit_report_data = {
 							unitId: "2600 BOWSER ST #312",
 							origination: {
 								code: "6",
-								definition:
-									"Reported via Inquiry, but different from inquiry",
+								definition: "Reported via Inquiry, but different from inquiry",
 							},
 							dwellingType: {
 								code: "A",
@@ -335,8 +360,7 @@ export const credit_report_data = {
 							date: "1998-12-05",
 							type: {
 								code: "31",
-								definition:
-									"Unknown - Credit Extension, Review, Or Collection",
+								definition: "Unknown - Credit Extension, Review, Or Collection",
 							},
 							terms: {
 								code: "UNK",
@@ -378,8 +402,7 @@ export const credit_report_data = {
 							date: "1997-10-21",
 							type: {
 								code: "31",
-								definition:
-									"Unknown - Credit Extension, Review, Or Collection",
+								definition: "Unknown - Credit Extension, Review, Or Collection",
 							},
 							terms: {
 								code: "UNK",
@@ -435,14 +458,12 @@ export const credit_report_data = {
 							},
 							maxPayment: {
 								code: "9",
-								definition:
-									"Collection, Charge off or Bankruptcy",
+								definition: "Collection, Charge off or Bankruptcy",
 							},
 							statusDate: "1994-09-01",
 							accountType: {
 								code: "31",
-								definition:
-									"Unknown - Credit Extension, Review, Or Collection",
+								definition: "Unknown - Credit Extension, Review, Or Collection",
 							},
 							balanceDate: "1996-04-05",
 							derogCounter: 20,
@@ -461,8 +482,7 @@ export const credit_report_data = {
 							paymentProfile: "99999999999999999999",
 							specialComment: {
 								code: "78",
-								definition:
-									"ACCOUNT INFORMATION DISPUTED BY CONSUMER",
+								definition: "ACCOUNT INFORMATION DISPUTED BY CONSUMER",
 							},
 							availableAmount: null,
 							lastPaymentDate: null,
@@ -501,8 +521,7 @@ export const credit_report_data = {
 							},
 							status: {
 								code: "11",
-								definition:
-									"This is an account in good standing",
+								definition: "This is an account in good standing",
 							},
 							amounts: [
 								{
@@ -544,8 +563,7 @@ export const credit_report_data = {
 							paymentProfile: "B0CCCCCCCCCCCCCCCC",
 							specialComment: {
 								code: "19",
-								definition:
-									"ACCOUNT CLOSED AT CONSUMER'S REQUEST",
+								definition: "ACCOUNT CLOSED AT CONSUMER'S REQUEST",
 							},
 							availableAmount: null,
 							lastPaymentDate: null,
@@ -583,8 +601,7 @@ export const credit_report_data = {
 							},
 							status: {
 								code: "11",
-								definition:
-									"This is an account in good standing",
+								definition: "This is an account in good standing",
 							},
 							amounts: [
 								{
@@ -750,8 +767,7 @@ export const credit_report_data = {
 							},
 							status: {
 								code: "73",
-								definition:
-									"Account 30 days past due date three times",
+								definition: "Account 30 days past due date three times",
 							},
 							amounts: [
 								{
@@ -838,8 +854,7 @@ export const credit_report_data = {
 							},
 							status: {
 								code: "84",
-								definition:
-									"Account delinquent 180 days past due date",
+								definition: "Account delinquent 180 days past due date",
 							},
 							amounts: [
 								{
@@ -885,8 +900,7 @@ export const credit_report_data = {
 							paymentProfile: "7654321CCCC00CCCCCCCCCCCC",
 							specialComment: {
 								code: "13",
-								definition:
-									"ACCOUNT PREVIOUSLY IN DISPUTE - NOW RESOLVED - REPORTED BY SUBSCRIBER",
+								definition: "ACCOUNT PREVIOUSLY IN DISPUTE - NOW RESOLVED - REPORTED BY SUBSCRIBER",
 							},
 							availableAmount: null,
 							lastPaymentDate: null,
@@ -924,8 +938,7 @@ export const credit_report_data = {
 							},
 							status: {
 								code: "11",
-								definition:
-									"This is an account in good standing",
+								definition: "This is an account in good standing",
 							},
 							amounts: [
 								{
@@ -1009,8 +1022,7 @@ export const credit_report_data = {
 							},
 							status: {
 								code: "11",
-								definition:
-									"This is an account in good standing",
+								definition: "This is an account in good standing",
 							},
 							amounts: [
 								{
@@ -1093,8 +1105,7 @@ export const credit_report_data = {
 							},
 							status: {
 								code: "11",
-								definition:
-									"This is an account in good standing",
+								definition: "This is an account in good standing",
 							},
 							amounts: [
 								{
@@ -1262,8 +1273,7 @@ export const credit_report_data = {
 							amount: 100000,
 							status: {
 								code: "13",
-								definition:
-									"Bankruptcy Chapter 13-petition filed",
+								definition: "Bankruptcy Chapter 13-petition filed",
 							},
 							bankruptcy: {
 								type: {
@@ -1305,14 +1315,12 @@ export const credit_report_data = {
 							socialCount: 8,
 							socialError: {
 								code: "0",
-								definition:
-									"Indicates that no error conditions occur.",
+								definition: "Indicates that no error conditions occur.",
 							},
 							addressCount: 15,
 							addressError: {
 								code: "0",
-								definition:
-									"Indicates that no error conditions occur.",
+								definition: "Indicates that no error conditions occur.",
 							},
 							ssnPossibleIssuanceYear: {
 								last: "1966",
@@ -1352,8 +1360,7 @@ export const credit_report_data = {
 								code: "02",
 								definition: "Retired Social",
 							},
-							textData:
-								"CKPT: INPUT SSN RECORDED AS DECEASEDD1200110195103301996",
+							textData: "CKPT: INPUT SSN RECORDED AS DECEASEDD1200110195103301996",
 							indicators: [],
 							socialDate: null,
 							addressDate: null,
@@ -1384,8 +1391,7 @@ export const credit_report_data = {
 						satisfactoryAccounts: 6,
 						monthlyPaymentPartial: {
 							code: "",
-							definition:
-								"All tradelines are included in monthly payment amount.",
+							definition: "All tradelines are included in monthly payment amount.",
 						},
 						delinquenciesOver30Days: null,
 						delinquenciesOver60Days: null,
@@ -1393,13 +1399,11 @@ export const credit_report_data = {
 						disputedAccountsExcluded: 1,
 						realEstatePaymentPartial: {
 							code: "",
-							definition:
-								"All tradelines are included in monthly payment amount.",
+							definition: "All tradelines are included in monthly payment amount.",
 						},
 						revolvingAvailablePartial: {
 							code: "",
-							definition:
-								"All tradelines are included in monthly payment amount",
+							definition: "All tradelines are included in monthly payment amount",
 						},
 						revolvingAvailablePercent: 27,
 						inquiriesDuringLast6Months: 0,
@@ -1726,23 +1730,19 @@ export const fb_credit_report = {
 					commercialScoreFactors: [
 						{
 							code: "029",
-							definition:
-								"AVERAGE BALANCE OF RECENTLY DELINQUENT COMMERCIAL ACCOUNTS",
+							definition: "AVERAGE BALANCE OF RECENTLY DELINQUENT COMMERCIAL ACCOUNTS",
 						},
 						{
 							code: "050",
-							definition:
-								"NUMBER OF COMMERCIAL ACCOUNTS WITH HIGH UTILIZATION",
+							definition: "NUMBER OF COMMERCIAL ACCOUNTS WITH HIGH UTILIZATION",
 						},
 						{
 							code: "011",
-							definition:
-								"NUMBER OF COMMERCIAL COLLECTION ACCOUNTS",
+							definition: "NUMBER OF COMMERCIAL COLLECTION ACCOUNTS",
 						},
 						{
 							code: "013",
-							definition:
-								"AGE OF MOST RECENTLY OPENED COMMERCIAL COLLECTION ACCOUNT",
+							definition: "AGE OF MOST RECENTLY OPENED COMMERCIAL COLLECTION ACCOUNT",
 						},
 					],
 				},
@@ -1806,23 +1806,19 @@ export const fb_credit_report = {
 					fsrScoreFactors: [
 						{
 							code: "001",
-							definition:
-								"NUMBER OF COMMERCIAL COLLECTION ACCOUNTS",
+							definition: "NUMBER OF COMMERCIAL COLLECTION ACCOUNTS",
 						},
 						{
 							code: "005",
-							definition:
-								"NUMBER OF COMMERCIAL DEROGATORY PUBLIC RECORDS",
+							definition: "NUMBER OF COMMERCIAL DEROGATORY PUBLIC RECORDS",
 						},
 						{
 							code: "004",
-							definition:
-								"RISK ASSOCIATED WITH THE COMPANY'S INDUSTRY SECTOR",
+							definition: "RISK ASSOCIATED WITH THE COMPANY'S INDUSTRY SECTOR",
 						},
 						{
 							code: "012",
-							definition:
-								"BALANCE TO HIGH CREDIT RATIO FOR OTHER COMMERCIAL ACCOUNTS",
+							definition: "BALANCE TO HIGH CREDIT RATIO FOR OTHER COMMERCIAL ACCOUNTS",
 						},
 					],
 				},
@@ -1865,8 +1861,7 @@ export const fb_credit_report = {
 						{
 							amountPaid: 0,
 							dateClosed: "2019-05-01",
-							accountStatus:
-								"Partial Payment, Balance Uncollected",
+							accountStatus: "Partial Payment, Balance Uncollected",
 							collectionAgencyInfo: {
 								name: "RECEIVABLE MANAGEMENT SERVICES",
 								phoneNumber: "+14842424000",
@@ -3406,8 +3401,7 @@ export const fb_credit_report = {
 					},
 					transactionDetail: {
 						inLanguage: "en-US",
-						transactionID:
-							"rrt-05d10aa25d6a8fd93-c-wo-17469-2656504-114",
+						transactionID: "rrt-05d10aa25d6a8fd93-c-wo-17469-2656504-114",
 						transactionTimestamp: "2023-03-24T18:19:34.308Z",
 					},
 				},
@@ -3450,8 +3444,7 @@ export const fb_credit_report = {
 					},
 					transactionDetail: {
 						inLanguage: "en-US",
-						transactionID:
-							"rrt-011ea210de0ee8a06-b-wo-17235-2662218-167",
+						transactionID: "rrt-011ea210de0ee8a06-b-wo-17235-2662218-167",
 						transactionTimestamp: "2023-03-24T18:19:34.412Z",
 					},
 				},
@@ -3527,14 +3520,12 @@ export const fb_credit_report = {
 										slowExperiencesHighestCreditAmount: 50000000,
 										placedForCollectionExperiencesCount: 8,
 										currentManneredExperiencesPercentage: 63.31,
-										badDebtExperiencesHighestCreditAmount:
-											null,
+										badDebtExperiencesHighestCreditAmount: null,
 										negativeExperiencesHighestCreditAmount: 5000,
 										placedForCollectionHighestCreditAmount: 5000,
 										favorableExperiencesHighestCreditAmount: 50000000,
 										placedForCollectionExperiencesPercentage: 0,
-										unfavorableExperiencesHighestCreditAmount:
-											null,
+										unfavorableExperiencesHighestCreditAmount: null,
 										currentManneredExperiencesHighestCreditAmount: 50000000,
 										slowAndNegativeExperiencesHighestCreditAmount: 50000000,
 									},
@@ -3579,8 +3570,7 @@ export const fb_credit_report = {
 					},
 					transactionDetail: {
 						inLanguage: "en-US",
-						transactionID:
-							"rrt-0c925ed1ed2cfe456-a-wo-17008-2679366-497",
+						transactionID: "rrt-0c925ed1ed2cfe456-a-wo-17008-2679366-497",
 						transactionTimestamp: "2023-03-24T18:19:34.360Z",
 					},
 				},
@@ -3637,8 +3627,7 @@ export const fb_credit_report = {
 										familytreeRolesPlayed: [
 											{
 												dnbCode: 9141,
-												description:
-													"Parent/Headquarters",
+												description: "Parent/Headquarters",
 											},
 										],
 									},
@@ -3661,8 +3650,7 @@ export const fb_credit_report = {
 									matchGrade: "AAAAAZZAFFZ",
 									confidenceCode: 10,
 									nameMatchScore: 100,
-									matchDataProfile:
-										"0500000000989800000000000098",
+									matchDataProfile: "0500000000989800000000000098",
 									matchGradeComponents: [
 										{
 											componentType: "Name",
@@ -3830,8 +3818,7 @@ export const fb_credit_report = {
 									matchGrade: "AFFAAZZAFFZ",
 									confidenceCode: 7,
 									nameMatchScore: 100,
-									matchDataProfile:
-										"0000000000989800000000009998",
+									matchDataProfile: "0000000000989800000000009998",
 									matchGradeComponents: [
 										{
 											componentType: "Name",
@@ -4006,8 +3993,7 @@ export const fb_credit_report = {
 									matchGrade: "AFFAAZZAFFZ",
 									confidenceCode: 7,
 									nameMatchScore: 100,
-									matchDataProfile:
-										"0500000000989800000000009998",
+									matchDataProfile: "0500000000989800000000009998",
 									matchGradeComponents: [
 										{
 											componentType: "Name",
@@ -4179,8 +4165,7 @@ export const fb_credit_report = {
 									matchGrade: "AFFAAZZAFFZ",
 									confidenceCode: 7,
 									nameMatchScore: 100,
-									matchDataProfile:
-										"0000000000989800000000009998",
+									matchDataProfile: "0000000000989800000000009998",
 									matchGradeComponents: [
 										{
 											componentType: "Name",
@@ -4348,8 +4333,7 @@ export const fb_credit_report = {
 									matchGrade: "AFFFAZZFFFZ",
 									confidenceCode: 4,
 									nameMatchScore: 100,
-									matchDataProfile:
-										"0000000000989800000000009998",
+									matchDataProfile: "0000000000989800000000009998",
 									matchGradeComponents: [
 										{
 											componentType: "Name",
@@ -4467,8 +4451,7 @@ export const fb_credit_report = {
 											telephoneNumber: "6507239158",
 										},
 									],
-									primaryName:
-										"STANFORD PUBLIC INTEREST LAW FOUNDATION",
+									primaryName: "STANFORD PUBLIC INTEREST LAW FOUNDATION",
 									isStandalone: true,
 									mailingAddress: {
 										postalCode: null,
@@ -4513,8 +4496,7 @@ export const fb_credit_report = {
 									registrationNumbers: [
 										{
 											typeDnBCode: 6863,
-											typeDescription:
-												"Federal Taxpayer Identification Number (US)",
+											typeDescription: "Federal Taxpayer Identification Number (US)",
 											registrationNumber: "942536926",
 										},
 									],
@@ -4529,8 +4511,7 @@ export const fb_credit_report = {
 									matchGrade: "BFFAAZZAFFZ",
 									confidenceCode: 4,
 									nameMatchScore: 43.2715,
-									matchDataProfile:
-										"0403030303989800000000000098",
+									matchDataProfile: "0403030303989800000000000098",
 									matchGradeComponents: [
 										{
 											componentType: "Name",
@@ -4705,8 +4686,7 @@ export const fb_credit_report = {
 									matchGrade: "AFFFAZZFFFZ",
 									confidenceCode: 4,
 									nameMatchScore: 100,
-									matchDataProfile:
-										"0500000000989800000000009998",
+									matchDataProfile: "0500000000989800000000009998",
 									matchGradeComponents: [
 										{
 											componentType: "Name",
@@ -4885,8 +4865,7 @@ export const fb_credit_report = {
 									matchGrade: "AFFFAZZFFFZ",
 									confidenceCode: 4,
 									nameMatchScore: 100,
-									matchDataProfile:
-										"0500000000989800000000009998",
+									matchDataProfile: "0500000000989800000000009998",
 									matchGradeComponents: [
 										{
 											componentType: "Name",
@@ -5061,8 +5040,7 @@ export const fb_credit_report = {
 									matchGrade: "AFFFAZZFFFZ",
 									confidenceCode: 4,
 									nameMatchScore: 100,
-									matchDataProfile:
-										"0500000000989800000000009998",
+									matchDataProfile: "0500000000989800000000009998",
 									matchGradeComponents: [
 										{
 											componentType: "Name",
@@ -5241,8 +5219,7 @@ export const fb_credit_report = {
 									matchGrade: "AFFFAZZFFFZ",
 									confidenceCode: 4,
 									nameMatchScore: 100,
-									matchDataProfile:
-										"0500000000989800000000009998",
+									matchDataProfile: "0500000000989800000000009998",
 									matchGradeComponents: [
 										{
 											componentType: "Name",
@@ -5440,13 +5417,11 @@ export const fb_credit_report = {
 								fraudIDScanAlertCodes: [
 									{
 										code: "1",
-										description:
-											"INQUIRY ADDRESS IS LISTED AS A MULTI-DWELLING UNIT",
+										description: "INQUIRY ADDRESS IS LISTED AS A MULTI-DWELLING UNIT",
 									},
 									{
 										code: "7",
-										description:
-											"UNABLE TO PERFORM SSN VALIDATION DUE TO INSUFFICIENT SSN INPUT",
+										description: "UNABLE TO PERFORM SSN VALIDATION DUE TO INSUFFICIENT SSN INPUT",
 									},
 									{
 										code: "8",
@@ -5455,8 +5430,7 @@ export const fb_credit_report = {
 									},
 									{
 										code: "J",
-										description:
-											"INQUIRY ADDRESS IS LISTED AS A HOTEL/MOTEL",
+										description: "INQUIRY ADDRESS IS LISTED AS A HOTEL/MOTEL",
 									},
 								],
 								multipleReportIndicator: "F",
@@ -5468,8 +5442,7 @@ export const fb_credit_report = {
 										stateAbbreviation: "GA",
 									},
 									bureauCode: "006",
-									bureauName:
-										"EQUIFAX INFORMATION SERVICES LLC",
+									bureauName: "EQUIFAX INFORMATION SERVICES LLC",
 									telephoneNumber: {
 										telephoneNumber: "8006851111",
 									},
@@ -6104,13 +6077,11 @@ export const mrm_credit_report_ = {
 						},
 						{
 							code: "061",
-							definition:
-								"RATIO OF BALANCE TO HIGH CREDIT FOR COMMERCIAL ACCOUNTS",
+							definition: "RATIO OF BALANCE TO HIGH CREDIT FOR COMMERCIAL ACCOUNTS",
 						},
 						{
 							code: "021",
-							definition:
-								"PCT OF NEW COMMERCIAL ACCTS TO TOTAL NBR OF ACCTS",
+							definition: "PCT OF NEW COMMERCIAL ACCTS TO TOTAL NBR OF ACCTS",
 						},
 					],
 				},
@@ -6169,8 +6140,7 @@ export const mrm_credit_report_ = {
 					fsrScoreFactors: [
 						{
 							code: "004",
-							definition:
-								"RISK ASSOCIATED WITH THE COMPANY'S INDUSTRY SECTOR",
+							definition: "RISK ASSOCIATED WITH THE COMPANY'S INDUSTRY SECTOR",
 						},
 						{
 							code: "009",
@@ -6178,8 +6148,7 @@ export const mrm_credit_report_ = {
 						},
 						{
 							code: "002",
-							definition:
-								"RISK ASSOCIATED WITH THE BUSINESS TYPE",
+							definition: "RISK ASSOCIATED WITH THE BUSINESS TYPE",
 						},
 						{
 							code: "003",
@@ -6644,8 +6613,7 @@ export const mrm_credit_report_ = {
 							},
 						],
 						success: "false",
-						requestId:
-							"rrt-083b9fc3900f9a7e7-c-wo-17668-27483687-1",
+						requestId: "rrt-083b9fc3900f9a7e7-c-wo-17668-27483687-1",
 					},
 					risk_check: {
 						errors: [
@@ -6655,8 +6623,7 @@ export const mrm_credit_report_ = {
 							},
 						],
 						success: "false",
-						requestId:
-							"rrt-083b9fc3900f9a7e7-c-wo-17668-27483731-1",
+						requestId: "rrt-083b9fc3900f9a7e7-c-wo-17668-27483731-1",
 					},
 					small_report: null,
 					extended_report: {
@@ -6667,8 +6634,7 @@ export const mrm_credit_report_ = {
 							},
 						],
 						success: "false",
-						requestId:
-							"rrt-00cf170f009d45570-a-wo-17693-27920109-1",
+						requestId: "rrt-00cf170f009d45570-a-wo-17693-27920109-1",
 					},
 					canadian_profile_report: null,
 				},
@@ -6833,8 +6799,7 @@ export const mrm_credit_report_ = {
 					},
 					transactionDetail: {
 						inLanguage: "en-US",
-						transactionID:
-							"rrt-029b49081c63df860-b-wo-17052-9008498-62",
+						transactionID: "rrt-029b49081c63df860-b-wo-17052-9008498-62",
 						transactionTimestamp: "2023-05-04T21:53:47.208Z",
 					},
 				},
@@ -6877,8 +6842,7 @@ export const mrm_credit_report_ = {
 					},
 					transactionDetail: {
 						inLanguage: "en-US",
-						transactionID:
-							"rrt-05b8aae4b99350e99-b-wo-17125-3422819-70",
+						transactionID: "rrt-05b8aae4b99350e99-b-wo-17125-3422819-70",
 						transactionTimestamp: "2023-03-29T16:16:25.213Z",
 					},
 				},
@@ -6962,11 +6926,9 @@ export const mrm_credit_report_ = {
 							{
 								code: "551112",
 								priority: 1,
-								description:
-									"Offices of Other Holding Companies",
+								description: "Offices of Other Holding Companies",
 								typeDnBCode: 37788,
-								typeDescription:
-									"North American Industry Classification System 2022",
+								typeDescription: "North American Industry Classification System 2022",
 							},
 							{
 								code: "67190000",
@@ -6987,25 +6949,21 @@ export const mrm_credit_report_ = {
 								priority: 1,
 								description: "Holding company",
 								typeDnBCode: 399,
-								typeDescription:
-									"US Standard Industry Code 1987 - 4 digit",
+								typeDescription: "US Standard Industry Code 1987 - 4 digit",
 							},
 							{
 								code: "2024",
 								priority: 1,
-								description:
-									"Management of Companies & Enterprises",
+								description: "Management of Companies & Enterprises",
 								typeDnBCode: 25838,
 								typeDescription: "D&B Hoovers Industry Code",
 							},
 							{
 								code: "H",
 								priority: 1,
-								description:
-									"Finance, Insurance, and Real Estate",
+								description: "Finance, Insurance, and Real Estate",
 								typeDnBCode: 24657,
-								typeDescription:
-									"D&B Standard Major Industry Code",
+								typeDescription: "D&B Standard Major Industry Code",
 							},
 						],
 						tsrReportDate: null,
@@ -7190,8 +7148,7 @@ export const mrm_credit_report_ = {
 					},
 					transactionDetail: {
 						inLanguage: "en-US",
-						transactionID:
-							"rrt-029b49081c63df860-b-wo-17053-10414996-13",
+						transactionID: "rrt-029b49081c63df860-b-wo-17053-10414996-13",
 						transactionTimestamp: "2023-05-14T01:42:31.797Z",
 					},
 				},
@@ -7263,25 +7220,17 @@ export const mrm_credit_report_ = {
 										slowOrNegativePaymentsPercentage: null,
 										unfavorableExperiencesPercentage: null,
 										satisfactoryExperiencesPercentage: 99.6,
-										slowExperiencesHighestCreditAmount:
-											null,
-										placedForCollectionExperiencesCount:
-											null,
+										slowExperiencesHighestCreditAmount: null,
+										placedForCollectionExperiencesCount: null,
 										currentManneredExperiencesPercentage: 99.6,
-										badDebtExperiencesHighestCreditAmount:
-											null,
-										negativeExperiencesHighestCreditAmount:
-											null,
-										placedForCollectionHighestCreditAmount:
-											null,
+										badDebtExperiencesHighestCreditAmount: null,
+										negativeExperiencesHighestCreditAmount: null,
+										placedForCollectionHighestCreditAmount: null,
 										favorableExperiencesHighestCreditAmount: 55000,
-										placedForCollectionExperiencesPercentage:
-											null,
-										unfavorableExperiencesHighestCreditAmount:
-											null,
+										placedForCollectionExperiencesPercentage: null,
+										unfavorableExperiencesHighestCreditAmount: null,
 										currentManneredExperiencesHighestCreditAmount: 55000,
-										slowAndNegativeExperiencesHighestCreditAmount:
-											null,
+										slowAndNegativeExperiencesHighestCreditAmount: null,
 									},
 								],
 								currency: "USD",
@@ -7324,8 +7273,7 @@ export const mrm_credit_report_ = {
 					},
 					transactionDetail: {
 						inLanguage: "en-US",
-						transactionID:
-							"rrt-05d10aa25d6a8fd93-c-wo-17468-3418190-352",
+						transactionID: "rrt-05d10aa25d6a8fd93-c-wo-17468-3418190-352",
 						transactionTimestamp: "2023-03-29T15:52:15.976Z",
 					},
 				},
@@ -7398,8 +7346,7 @@ export const mrm_credit_report_ = {
 									matchGrade: "AAAAAZZAFAA",
 									confidenceCode: 10,
 									nameMatchScore: 100,
-									matchDataProfile:
-										"0000000000989800000000009998",
+									matchDataProfile: "0000000000989800000000009998",
 									matchGradeComponents: [
 										{
 											componentType: "Name",
@@ -7571,8 +7518,7 @@ export const mrm_credit_report_ = {
 									matchGrade: "AFFFAZZFFAF",
 									confidenceCode: 6,
 									nameMatchScore: 80,
-									matchDataProfile:
-										"0000000000989800000000009998",
+									matchDataProfile: "0000000000989800000000009998",
 									matchGradeComponents: [
 										{
 											componentType: "Name",
@@ -7744,8 +7690,7 @@ export const mrm_credit_report_ = {
 									matchGrade: "BFFFAZZFFAA",
 									confidenceCode: 4,
 									nameMatchScore: 37,
-									matchDataProfile:
-										"0000000000989800000000009998",
+									matchDataProfile: "0000000000989800000000009998",
 									matchGradeComponents: [
 										{
 											componentType: "Name",
@@ -7908,8 +7853,7 @@ export const mrm_credit_report_ = {
 									matchGrade: "BFFFAZZBFAF",
 									confidenceCode: 4,
 									nameMatchScore: 37,
-									matchDataProfile:
-										"0000000000989800000000009998",
+									matchDataProfile: "0000000000989800000000009998",
 									matchGradeComponents: [
 										{
 											componentType: "Name",
@@ -8022,8 +7966,7 @@ export const mrm_credit_report_ = {
 								organization: {
 									duns: "060276522",
 									telephone: [],
-									primaryName:
-										"INNOVATION HOLDING CAPITAL LLC",
+									primaryName: "INNOVATION HOLDING CAPITAL LLC",
 									isStandalone: true,
 									mailingAddress: {
 										postalCode: null,
@@ -8073,8 +8016,7 @@ export const mrm_credit_report_ = {
 									matchGrade: "BFFFAZZFBAF",
 									confidenceCode: 4,
 									nameMatchScore: 37,
-									matchDataProfile:
-										"0000000000989800000000009998",
+									matchDataProfile: "0000000000989800000000009998",
 									matchGradeComponents: [
 										{
 											componentType: "Name",
@@ -8237,8 +8179,7 @@ export const mrm_credit_report_ = {
 									matchGrade: "BFFFAZZFBAF",
 									confidenceCode: 4,
 									nameMatchScore: 37,
-									matchDataProfile:
-										"0000000000989800000000009998",
+									matchDataProfile: "0000000000989800000000009998",
 									matchGradeComponents: [
 										{
 											componentType: "Name",
@@ -8351,8 +8292,7 @@ export const mrm_credit_report_ = {
 								organization: {
 									duns: "113324801",
 									telephone: [],
-									primaryName:
-										"HOLDINGS TRADERS CAPITAL INVESTMENTS L.L.C",
+									primaryName: "HOLDINGS TRADERS CAPITAL INVESTMENTS L.L.C",
 									isStandalone: true,
 									mailingAddress: {
 										postalCode: null,
@@ -8402,8 +8342,7 @@ export const mrm_credit_report_ = {
 									matchGrade: "BFFFAZZFBAF",
 									confidenceCode: 4,
 									nameMatchScore: 37,
-									matchDataProfile:
-										"0000000000989800000000009998",
+									matchDataProfile: "0000000000989800000000009998",
 									matchGradeComponents: [
 										{
 											componentType: "Name",
@@ -8516,8 +8455,7 @@ export const mrm_credit_report_ = {
 								organization: {
 									duns: "619697068",
 									telephone: [],
-									primaryName:
-										"FINANCIAL HOLDINGS CAPITAL MGT",
+									primaryName: "FINANCIAL HOLDINGS CAPITAL MGT",
 									isStandalone: true,
 									mailingAddress: {
 										postalCode: null,
@@ -8571,8 +8509,7 @@ export const mrm_credit_report_ = {
 									matchGrade: "BFFFAZZFFAA",
 									confidenceCode: 4,
 									nameMatchScore: 37,
-									matchDataProfile:
-										"0000000000989800000000009998",
+									matchDataProfile: "0000000000989800000000009998",
 									matchGradeComponents: [
 										{
 											componentType: "Name",
@@ -9330,13 +9267,11 @@ export const mrm_credit_report = {
 						},
 						{
 							code: "021",
-							definition:
-								"PCT OF NEW COMMERCIAL ACCTS TO TOTAL NBR OF ACCTS",
+							definition: "PCT OF NEW COMMERCIAL ACCTS TO TOTAL NBR OF ACCTS",
 						},
 						{
 							code: "028",
-							definition:
-								"NBR OF LEASING ACCTS AS PCT OF TOTAL NBR OF ACCTS",
+							definition: "NBR OF LEASING ACCTS AS PCT OF TOTAL NBR OF ACCTS",
 						},
 					],
 				},
@@ -9805,8 +9740,7 @@ export const mrm_credit_report = {
 					},
 					transactionDetail: {
 						inLanguage: "en-US",
-						transactionID:
-							"rrt-03859a9b277b7502d-a-wo-17022-7857391-147",
+						transactionID: "rrt-03859a9b277b7502d-a-wo-17022-7857391-147",
 						transactionTimestamp: "2023-07-13T21:41:27.414Z",
 					},
 				},
@@ -9838,9 +9772,7 @@ export const mrm_credit_report = {
 							registrationLocation: { addressRegion: "FL" },
 						},
 						startDate: "2016",
-						telephone: [
-							{ isdCode: "1", telephoneNumber: "3214306828" },
-						],
+						telephone: [{ isdCode: "1", telephoneNumber: "3214306828" }],
 						activities: [
 							{
 								language: {
@@ -9879,11 +9811,9 @@ export const mrm_credit_report = {
 							{
 								code: "551112",
 								priority: 1,
-								description:
-									"Offices of Other Holding Companies",
+								description: "Offices of Other Holding Companies",
 								typeDnBCode: 37788,
-								typeDescription:
-									"North American Industry Classification System 2022",
+								typeDescription: "North American Industry Classification System 2022",
 							},
 							{
 								code: "67190000",
@@ -9904,25 +9834,21 @@ export const mrm_credit_report = {
 								priority: 1,
 								description: "Holding company",
 								typeDnBCode: 399,
-								typeDescription:
-									"US Standard Industry Code 1987 - 4 digit",
+								typeDescription: "US Standard Industry Code 1987 - 4 digit",
 							},
 							{
 								code: "2024",
 								priority: 1,
-								description:
-									"Management of Companies & Enterprises",
+								description: "Management of Companies & Enterprises",
 								typeDnBCode: 25838,
 								typeDescription: "D&B Hoovers Industry Code",
 							},
 							{
 								code: "H",
 								priority: 1,
-								description:
-									"Finance, Insurance, and Real Estate",
+								description: "Finance, Insurance, and Real Estate",
 								typeDnBCode: 24657,
-								typeDescription:
-									"D&B Standard Major Industry Code",
+								typeDescription: "D&B Standard Major Industry Code",
 							},
 						],
 						tsrReportDate: null,
@@ -9978,9 +9904,7 @@ export const mrm_credit_report = {
 						],
 						defaultCurrency: "USD",
 						isSmallBusiness: null,
-						tradeStyleNames: [
-							{ name: "SHIELD ADVISORY GROUP", priority: 1 },
-						],
+						tradeStyleNames: [{ name: "SHIELD ADVISORY GROUP", priority: 1 }],
 						domesticUltimate: [],
 						incorporatedDate: "2015-11-12",
 						dunsControlStatus: {
@@ -10077,8 +10001,7 @@ export const mrm_credit_report = {
 						registrationNumbers: [
 							{
 								typeDnBCode: 12444,
-								typeDescription:
-									"Business Registration Number (US)",
+								typeDescription: "Business Registration Number (US)",
 								registrationNumber: "P15000094476",
 								isPreferredRegistrationNumber: null,
 							},
@@ -10104,8 +10027,7 @@ export const mrm_credit_report = {
 					},
 					transactionDetail: {
 						inLanguage: "en-US",
-						transactionID:
-							"rrt-0b03881d1d9d2dd51-b-wo-17010-7879668-14",
+						transactionID: "rrt-0b03881d1d9d2dd51-b-wo-17010-7879668-14",
 						transactionTimestamp: "2023-07-13T21:41:27.741Z",
 					},
 				},
@@ -10177,25 +10099,17 @@ export const mrm_credit_report = {
 										slowOrNegativePaymentsPercentage: null,
 										unfavorableExperiencesPercentage: null,
 										satisfactoryExperiencesPercentage: 99.6,
-										slowExperiencesHighestCreditAmount:
-											null,
-										placedForCollectionExperiencesCount:
-											null,
+										slowExperiencesHighestCreditAmount: null,
+										placedForCollectionExperiencesCount: null,
 										currentManneredExperiencesPercentage: 99.6,
-										badDebtExperiencesHighestCreditAmount:
-											null,
-										negativeExperiencesHighestCreditAmount:
-											null,
-										placedForCollectionHighestCreditAmount:
-											null,
+										badDebtExperiencesHighestCreditAmount: null,
+										negativeExperiencesHighestCreditAmount: null,
+										placedForCollectionHighestCreditAmount: null,
 										favorableExperiencesHighestCreditAmount: 55000,
-										placedForCollectionExperiencesPercentage:
-											null,
-										unfavorableExperiencesHighestCreditAmount:
-											null,
+										placedForCollectionExperiencesPercentage: null,
+										unfavorableExperiencesHighestCreditAmount: null,
 										currentManneredExperiencesHighestCreditAmount: 55000,
-										slowAndNegativeExperiencesHighestCreditAmount:
-											null,
+										slowAndNegativeExperiencesHighestCreditAmount: null,
 									},
 								],
 								currency: "USD",
@@ -10233,8 +10147,7 @@ export const mrm_credit_report = {
 					},
 					transactionDetail: {
 						inLanguage: "en-US",
-						transactionID:
-							"rrt-08e476411537dc239-a-wo-17009-7900795-639",
+						transactionID: "rrt-08e476411537dc239-a-wo-17009-7900795-639",
 						transactionTimestamp: "2023-07-13T21:41:27.404Z",
 					},
 				},
@@ -10296,17 +10209,14 @@ export const mrm_credit_report = {
 										isMailUndeliverable: false,
 									},
 									registrationNumbers: [],
-									mostSeniorPrincipals: [
-										{ fullName: "MATTHEW  MEEHAN" },
-									],
+									mostSeniorPrincipals: [{ fullName: "MATTHEW  MEEHAN" }],
 								},
 								displaySequence: 1,
 								matchQualityInformation: {
 									matchGrade: "AAAAAZZAFAA",
 									confidenceCode: 10,
 									nameMatchScore: 100,
-									matchDataProfile:
-										"0000000000989800000000009898",
+									matchDataProfile: "0000000000989800000000009898",
 									matchGradeComponents: [
 										{
 											componentType: "Name",
@@ -10419,8 +10329,7 @@ export const mrm_credit_report = {
 								organization: {
 									duns: "125598929",
 									telephone: [],
-									primaryName:
-										"Blue Diamond Holding Capital LLC",
+									primaryName: "Blue Diamond Holding Capital LLC",
 									isStandalone: true,
 									mailingAddress: {
 										postalCode: null,
@@ -10463,17 +10372,14 @@ export const mrm_credit_report = {
 										isMailUndeliverable: false,
 									},
 									registrationNumbers: [],
-									mostSeniorPrincipals: [
-										{ fullName: "JOSE  MAESTRE" },
-									],
+									mostSeniorPrincipals: [{ fullName: "JOSE  MAESTRE" }],
 								},
 								displaySequence: 2,
 								matchQualityInformation: {
 									matchGrade: "BFFAAZZAFAF",
 									confidenceCode: 6,
 									nameMatchScore: 37,
-									matchDataProfile:
-										"0000000000989800000000009898",
+									matchDataProfile: "0000000000989800000000009898",
 									matchGradeComponents: [
 										{
 											componentType: "Name",
@@ -10632,17 +10538,14 @@ export const mrm_credit_report = {
 										isMailUndeliverable: false,
 									},
 									registrationNumbers: [],
-									mostSeniorPrincipals: [
-										{ fullName: "MARISOL  MARRERO" },
-									],
+									mostSeniorPrincipals: [{ fullName: "MARISOL  MARRERO" }],
 								},
 								displaySequence: 3,
 								matchQualityInformation: {
 									matchGrade: "AFFFAZZFFAF",
 									confidenceCode: 6,
 									nameMatchScore: 80,
-									matchDataProfile:
-										"0000000000989800000000009898",
+									matchDataProfile: "0000000000989800000000009898",
 									matchGradeComponents: [
 										{
 											componentType: "Name",
@@ -10803,22 +10706,18 @@ export const mrm_credit_report = {
 									registrationNumbers: [
 										{
 											typeDnBCode: 6863,
-											typeDescription:
-												"Federal Taxpayer Identification Number (US)",
+											typeDescription: "Federal Taxpayer Identification Number (US)",
 											registrationNumber: "201699697",
 										},
 									],
-									mostSeniorPrincipals: [
-										{ fullName: "BILL  MOORE" },
-									],
+									mostSeniorPrincipals: [{ fullName: "BILL  MOORE" }],
 								},
 								displaySequence: 4,
 								matchQualityInformation: {
 									matchGrade: "BFFFAZZFFAA",
 									confidenceCode: 4,
 									nameMatchScore: 37,
-									matchDataProfile:
-										"0000000000989800000000000098",
+									matchDataProfile: "0000000000989800000000000098",
 									matchGradeComponents: [
 										{
 											componentType: "Name",
@@ -10979,8 +10878,7 @@ export const mrm_credit_report = {
 									matchGrade: "BFFFAZZBFAF",
 									confidenceCode: 4,
 									nameMatchScore: 37,
-									matchDataProfile:
-										"0000000000989800000000009898",
+									matchDataProfile: "0000000000989800000000009898",
 									matchGradeComponents: [
 										{
 											componentType: "Name",
@@ -11093,8 +10991,7 @@ export const mrm_credit_report = {
 								organization: {
 									duns: "060276522",
 									telephone: [],
-									primaryName:
-										"INNOVATION HOLDING CAPITAL LLC",
+									primaryName: "INNOVATION HOLDING CAPITAL LLC",
 									isStandalone: true,
 									mailingAddress: {
 										postalCode: null,
@@ -11142,8 +11039,7 @@ export const mrm_credit_report = {
 									matchGrade: "BFFFAZZFBAF",
 									confidenceCode: 4,
 									nameMatchScore: 37,
-									matchDataProfile:
-										"0000000000989800000000009898",
+									matchDataProfile: "0000000000989800000000009898",
 									matchGradeComponents: [
 										{
 											componentType: "Name",
@@ -11306,8 +11202,7 @@ export const mrm_credit_report = {
 									matchGrade: "BFFFAZZFBAF",
 									confidenceCode: 4,
 									nameMatchScore: 37,
-									matchDataProfile:
-										"0000000000989800000000009898",
+									matchDataProfile: "0000000000989800000000009898",
 									matchGradeComponents: [
 										{
 											componentType: "Name",
@@ -11420,8 +11315,7 @@ export const mrm_credit_report = {
 								organization: {
 									duns: "113324801",
 									telephone: [],
-									primaryName:
-										"HOLDINGS TRADERS CAPITAL INVESTMENTS L.L.C",
+									primaryName: "HOLDINGS TRADERS CAPITAL INVESTMENTS L.L.C",
 									isStandalone: true,
 									mailingAddress: {
 										postalCode: null,
@@ -11469,8 +11363,7 @@ export const mrm_credit_report = {
 									matchGrade: "BFFFAZZFBAF",
 									confidenceCode: 4,
 									nameMatchScore: 37,
-									matchDataProfile:
-										"0000000000989800000000009898",
+									matchDataProfile: "0000000000989800000000009898",
 									matchGradeComponents: [
 										{
 											componentType: "Name",
@@ -11583,8 +11476,7 @@ export const mrm_credit_report = {
 								organization: {
 									duns: "619697068",
 									telephone: [],
-									primaryName:
-										"FINANCIAL HOLDINGS CAPITAL MGT",
+									primaryName: "FINANCIAL HOLDINGS CAPITAL MGT",
 									isStandalone: true,
 									mailingAddress: {
 										postalCode: null,
@@ -11625,17 +11517,14 @@ export const mrm_credit_report = {
 										isMailUndeliverable: false,
 									},
 									registrationNumbers: [],
-									mostSeniorPrincipals: [
-										{ fullName: "CAESAR A VERBEL" },
-									],
+									mostSeniorPrincipals: [{ fullName: "CAESAR A VERBEL" }],
 								},
 								displaySequence: 9,
 								matchQualityInformation: {
 									matchGrade: "BFFFAZZFFAA",
 									confidenceCode: 4,
 									nameMatchScore: 37,
-									matchDataProfile:
-										"0000000000989800000000009898",
+									matchDataProfile: "0000000000989800000000009898",
 									matchGradeComponents: [
 										{
 											componentType: "Name",
@@ -11969,100 +11858,45 @@ export const Lendflow = {};
 Lendflow.experian = {};
 
 Lendflow.experian.score = tryCatch(
-	pipe(
-		get(
-			"data",
-			"commercial_data",
-			"experian",
-			"intelliscore",
-			"commercialScore",
-			"score"
-		)
-	),
+	pipe(get("data", "commercial_data", "experian", "intelliscore", "commercialScore", "score")),
 	always(0)
 );
 
 Lendflow.experian.risk_class = tryCatch(
-	pipe(
-		get(
-			"data",
-			"commercial_data",
-			"experian",
-			"intelliscore",
-			"commercialScore",
-			"riskClass"
-		)
-	),
+	pipe(get("data", "commercial_data", "experian", "intelliscore", "commercialScore", "riskClass")),
 	always({})
 );
 
 Lendflow.business = tryCatch(
-	pipe(
-		get(
-			"data",
-			"commercial_data",
-			"experian",
-			"business_match",
-			"response",
-			0
-		),
-		(business) => ({
-			name: pipe(get("businessName"))(business),
-			phone: pipe(get("phone"))(business),
-			address: pipe(get("address"))(business),
-		})
-	),
+	pipe(get("data", "commercial_data", "experian", "business_match", "response", 0), (business) => ({
+		name: pipe(get("businessName"))(business),
+		phone: pipe(get("phone"))(business),
+		address: pipe(get("address"))(business),
+	})),
 	always({})
 );
 
 Lendflow.experian.trade_payment_totals = tryCatch(
-	pipe(
-		get(
-			"data",
-			"commercial_data",
-			"experian",
-			"trades",
-			"tradePaymentTotals"
-		),
-		(totals) => ({
-			trade_lines: pipe(get("tradelines"))(totals),
-			combined_trade_lines: pipe(get("combinedTradelines"))(totals),
-			additional_trade_lines: pipe(get("additionalTradelines"))(totals),
-			newly_reported_trade_lines: pipe(get("newlyReportedTradelines"))(
-				totals
-			),
-			continuously_reported_trade_lines: pipe(
-				get("continuouslyReportedTradelines")
-			)(totals),
-		})
-	),
+	pipe(get("data", "commercial_data", "experian", "trades", "tradePaymentTotals"), (totals) => ({
+		trade_lines: pipe(get("tradelines"))(totals),
+		combined_trade_lines: pipe(get("combinedTradelines"))(totals),
+		additional_trade_lines: pipe(get("additionalTradelines"))(totals),
+		newly_reported_trade_lines: pipe(get("newlyReportedTradelines"))(totals),
+		continuously_reported_trade_lines: pipe(get("continuouslyReportedTradelines"))(totals),
+	})),
 	always({})
 );
 
 Lendflow.experian.trade_summary = tryCatch(
-	pipe(
-		get(
-			"data",
-			"commercial_data",
-			"experian",
-			"trades",
-			"tradePaymentSummary"
-		)
-	),
+	pipe(get("data", "commercial_data", "experian", "trades", "tradePaymentSummary")),
 	always({})
 );
 
 Lendflow.experian.trade_lines = tryCatch(
-	pipe(
-		get(
-			"data",
-			"commercial_data",
-			"experian",
-			"trades",
-			"tradePaymentExperiences"
-		),
-		(trades) => [...trades.tradeAdditional, ...trades.tradeNewAndContinuous]
-	),
+	pipe(get("data", "commercial_data", "experian", "trades", "tradePaymentExperiences"), (trades) => [
+		...trades.tradeAdditional,
+		...trades.tradeNewAndContinuous,
+	]),
 	always([])
 );
 
@@ -12111,16 +11945,7 @@ Lendflow.experian.derogatories = tryCatch(
 );
 
 Lendflow.experian.payment_trends = tryCatch(
-	pipe(
-		get(
-			"data",
-			"commercial_data",
-			"experian",
-			"trades",
-			"tradePaymentTrends",
-			"monthlyTrends"
-		)
-	),
+	pipe(get("data", "commercial_data", "experian", "trades", "tradePaymentTrends", "monthlyTrends")),
 	always([])
 );
 
@@ -12177,23 +12002,11 @@ Lendflow.dnb.total_balance_high = tryCatch(
 	)
 );
 
-Lendflow.dnb.duns_number = tryCatch(
-	pipe(get("data", "commercial_data", "dnb", "fi_l2", "organization", "duns"))
-);
+Lendflow.dnb.duns_number = tryCatch(pipe(get("data", "commercial_data", "dnb", "fi_l2", "organization", "duns")));
 
 Lendflow.dnb.payment_status = tryCatch(
 	pipe(
-		get(
-			"data",
-			"commercial_data",
-			"dnb",
-			"pi_l3",
-			"organization",
-			"businessTrading",
-			0,
-			"summary",
-			0
-		),
+		get("data", "commercial_data", "dnb", "pi_l3", "organization", "businessTrading", 0, "summary", 0),
 		(value) => ({
 			maximumOwedAmount: pipe(get("maximumOwedAmount"))(value),
 			totalPastDueAmount: pipe(get("totalPastDueAmount"))(value),
@@ -12201,48 +12014,20 @@ Lendflow.dnb.payment_status = tryCatch(
 			slowExperiencesCount: pipe(get("slowExperiencesCount"))(value),
 			negativePaymentsCount: pipe(get("negativePaymentsCount"))(value),
 			paymentBehaviorResult: pipe(get("paymentBehaviorResult"))(value),
-			badDebtExperiencesCount: pipe(get("badDebtExperiencesCount"))(
-				value
-			),
-			maximumHighCreditAmount: pipe(get("maximumHighCreditAmount"))(
-				value
-			),
-			badDebtExperiencesAmount: pipe(get("badDebtExperiencesAmount"))(
-				value
-			),
-			negativeExperiencesAmount: pipe(get("negativeExperiencesAmount"))(
-				value
-			),
-			slowExperiencesPercentage: pipe(get("slowExperiencesPercentage"))(
-				value
-			),
-			slowOrNegativePaymentsCount: pipe(
-				get("slowOrNegativePaymentsCount")
-			)(value),
-			unfavorableExperiencesCount: pipe(
-				get("unfavorableExperiencesCount")
-			)(value),
-			badDebtExperiencesPercentage: pipe(
-				get("badDebtExperiencesPercentage")
-			)(value),
-			unfavorableExperiencesAmount: pipe(
-				get("unfavorableExperiencesAmount")
-			)(value),
-			negativeExperiencesPercentage: pipe(
-				get("negativeExperiencesPercentage")
-			)(value),
-			slowAndNegativeExperiencesAmount: pipe(
-				get("slowAndNegativeExperiencesAmount")
-			)(value),
-			slowOrNegativePaymentsPercentage: pipe(
-				get("slowOrNegativePaymentsPercentage")
-			)(value),
-			unfavorableExperiencesPercentage: pipe(
-				get("unfavorableExperiencesPercentage")
-			)(value),
-			slowExperiencesHighestCreditAmount: pipe(
-				get("slowExperiencesHighestCreditAmount")
-			)(value),
+			badDebtExperiencesCount: pipe(get("badDebtExperiencesCount"))(value),
+			maximumHighCreditAmount: pipe(get("maximumHighCreditAmount"))(value),
+			badDebtExperiencesAmount: pipe(get("badDebtExperiencesAmount"))(value),
+			negativeExperiencesAmount: pipe(get("negativeExperiencesAmount"))(value),
+			slowExperiencesPercentage: pipe(get("slowExperiencesPercentage"))(value),
+			slowOrNegativePaymentsCount: pipe(get("slowOrNegativePaymentsCount"))(value),
+			unfavorableExperiencesCount: pipe(get("unfavorableExperiencesCount"))(value),
+			badDebtExperiencesPercentage: pipe(get("badDebtExperiencesPercentage"))(value),
+			unfavorableExperiencesAmount: pipe(get("unfavorableExperiencesAmount"))(value),
+			negativeExperiencesPercentage: pipe(get("negativeExperiencesPercentage"))(value),
+			slowAndNegativeExperiencesAmount: pipe(get("slowAndNegativeExperiencesAmount"))(value),
+			slowOrNegativePaymentsPercentage: pipe(get("slowOrNegativePaymentsPercentage"))(value),
+			unfavorableExperiencesPercentage: pipe(get("unfavorableExperiencesPercentage"))(value),
+			slowExperiencesHighestCreditAmount: pipe(get("slowExperiencesHighestCreditAmount"))(value),
 		})
 	),
 	always({})
@@ -12250,39 +12035,15 @@ Lendflow.dnb.payment_status = tryCatch(
 
 Lendflow.dnb.credit_utilization = tryCatch(
 	pipe(
-		get(
-			"data",
-			"commercial_data",
-			"dnb",
-			"pi_l3",
-			"organization",
-			"businessTrading",
-			0,
-			"summary",
-			0
-		),
+		get("data", "commercial_data", "dnb", "pi_l3", "organization", "businessTrading", 0, "summary", 0),
 		(value) => ({
-			averageHighCreditAmount: pipe(get("averageHighCreditAmount"))(
-				value
-			),
-			maximumHighCreditAmount: pipe(get("maximumHighCreditAmount"))(
-				value
-			),
-			highCreditExperiencesCount: pipe(get("highCreditExperiencesCount"))(
-				value
-			),
-			satisfactoryExperiencesCount: pipe(
-				get("satisfactoryExperiencesCount")
-			)(value),
-			satisfactoryExperiencesAmount: pipe(
-				get("satisfactoryExperiencesAmount")
-			)(value),
-			satisfactoryExperiencesPercentage: pipe(
-				get("satisfactoryExperiencesPercentage")
-			)(value),
-			slowExperiencesHighestCreditAmount: pipe(
-				get("slowExperiencesHighestCreditAmount")
-			)(value),
+			averageHighCreditAmount: pipe(get("averageHighCreditAmount"))(value),
+			maximumHighCreditAmount: pipe(get("maximumHighCreditAmount"))(value),
+			highCreditExperiencesCount: pipe(get("highCreditExperiencesCount"))(value),
+			satisfactoryExperiencesCount: pipe(get("satisfactoryExperiencesCount"))(value),
+			satisfactoryExperiencesAmount: pipe(get("satisfactoryExperiencesAmount"))(value),
+			satisfactoryExperiencesPercentage: pipe(get("satisfactoryExperiencesPercentage"))(value),
+			slowExperiencesHighestCreditAmount: pipe(get("slowExperiencesHighestCreditAmount"))(value),
 		})
 	),
 	always({})
@@ -12290,48 +12051,31 @@ Lendflow.dnb.credit_utilization = tryCatch(
 
 Lendflow.dnb.payment_trends = tryCatch(
 	pipe(
-		get(
-			"data",
-			"commercial_data",
-			"dnb",
-			"pi_l3",
-			"organization",
-			"businessTrading",
-			0,
-			"summary",
-			0
-		),
+		get("data", "commercial_data", "dnb", "pi_l3", "organization", "businessTrading", 0, "summary", 0),
 		(value) => ({
-			badDebtExperiencesCount: pipe(get("badDebtExperiencesCount"))(
-				value
-			),
-			totalPastDueExperiencesCount: pipe(
-				get("totalPastDueExperiencesCount")
-			)(value),
+			badDebtExperiencesCount: pipe(get("badDebtExperiencesCount"))(value),
+			totalPastDueExperiencesCount: pipe(get("totalPastDueExperiencesCount"))(value),
 		})
 	),
 	always({})
 );
 
 Lendflow.dnb.company_info = tryCatch(
-	pipe(
-		get("data", "commercial_data", "dnb", "ci_l2", "organization"),
-		(value) => ({
-			duns: pipe(get("duns"))(value),
-			legalForm: pipe(get("legalForm"))(value),
-			startDate: pipe(get("startDate"))(value),
-			telephone: pipe(get("telephone"))(value),
-			activities: pipe(get("activities"))(value),
-			financials: pipe(get("financials"))(value),
-			primaryName: pipe(get("primaryName"))(value),
-			primaryAddress: pipe(get("primaryAddress"))(value),
-			registeredName: pipe(get("registeredName"))(value),
-			websiteAddress: pipe(get("websiteAddress"))(value),
-			tradeStyleNames: pipe(get("tradeStyleNames"))(value),
-			incorporatedDate: pipe(get("incorporatedDate"))(value),
-			numberOfEmployees: pipe(get("numberOfEmployees"))(value),
-		})
-	),
+	pipe(get("data", "commercial_data", "dnb", "ci_l2", "organization"), (value) => ({
+		duns: pipe(get("duns"))(value),
+		legalForm: pipe(get("legalForm"))(value),
+		startDate: pipe(get("startDate"))(value),
+		telephone: pipe(get("telephone"))(value),
+		activities: pipe(get("activities"))(value),
+		financials: pipe(get("financials"))(value),
+		primaryName: pipe(get("primaryName"))(value),
+		primaryAddress: pipe(get("primaryAddress"))(value),
+		registeredName: pipe(get("registeredName"))(value),
+		websiteAddress: pipe(get("websiteAddress"))(value),
+		tradeStyleNames: pipe(get("tradeStyleNames"))(value),
+		incorporatedDate: pipe(get("incorporatedDate"))(value),
+		numberOfEmployees: pipe(get("numberOfEmployees"))(value),
+	})),
 	always({})
 );
 

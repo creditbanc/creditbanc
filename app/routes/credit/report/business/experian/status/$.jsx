@@ -1754,8 +1754,9 @@ export default function Container() {
 	let use_cache_client = use_cache((state) => state.set_dependencies);
 	let { dnb_business_score, experian_business_score } = scores;
 
-	let { dateOfIncorporation } = experian_facts;
+	let { dateOfIncorporation, businessHeader } = experian_facts;
 	let { recommendedCreditLimitAmount = 0 } = experian_commercial_score;
+	let { businessName } = businessHeader;
 
 	console.log("loader_data");
 	console.log(loader_data);
@@ -1790,9 +1791,7 @@ export default function Container() {
 					</div>
 				</div>
 				<div className="flex flex-col max-w-4xl text-center">
-					<h1 className="text-4xl font-bold tracking-tight text-gray-900 sm:text-6xl">
-						{loader_data?.business_info?.name}
-					</h1>
+					<h1 className="text-4xl font-bold tracking-tight text-gray-900 sm:text-6xl">{businessName}</h1>
 				</div>
 			</div>
 
