@@ -6,7 +6,7 @@ plan_product_requests.experian.essential = ["experian_intelliscore"];
 
 plan_product_requests.experian.builder = [
 	"experian_intelliscore",
-	"experian_business_match",
+	// "experian_business_match",
 	"experian_trades",
 	"experian_business_facts",
 	// "experian_fsr",
@@ -15,7 +15,7 @@ plan_product_requests.experian.builder = [
 
 plan_product_requests.experian.pro = [
 	"experian_intelliscore",
-	"experian_business_match",
+	// "experian_business_match",
 	"experian_trades",
 	"experian_business_facts",
 	// "experian_fsr",

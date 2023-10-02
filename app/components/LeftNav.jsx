@@ -2,18 +2,9 @@ import { useEffect, useState } from "react";
 import { useLocation, Link, useFetcher } from "@remix-run/react";
 import { useNavStore } from "~/stores/useNavStore";
 import { defaultTo, flatten, head, map, pipe, values } from "ramda";
-import {
-	to_group_pathname,
-	get_entity_id,
-	get_group_id,
-	mapIndexed,
-} from "~/utils/helpers";
+import { to_group_pathname, get_entity_id, get_group_id, mapIndexed } from "~/utils/helpers";
 import { filter } from "shades";
-import {
-	BanknotesIcon,
-	UserCircleIcon,
-	BriefcaseIcon,
-} from "@heroicons/react/24/outline";
+import { BanknotesIcon, UserCircleIcon, BriefcaseIcon } from "@heroicons/react/24/outline";
 import Cookies from "js-cookie";
 
 let ChevronLeftIcon = () => {
@@ -27,11 +18,7 @@ let ChevronLeftIcon = () => {
 			className="w-3 h-3"
 			strokeWidth="3"
 		>
-			<path
-				strokeLinecap="round"
-				strokeLinejoin="round"
-				d="M15.75 19.5L8.25 12l7.5-7.5"
-			/>
+			<path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
 		</svg>
 	);
 };
@@ -47,11 +34,7 @@ let ChevronRightIcon = () => {
 			className="w-3 h-3"
 			strokeWidth="3"
 		>
-			<path
-				strokeLinecap="round"
-				strokeLinejoin="round"
-				d="M8.25 4.5l7.5 7.5-7.5 7.5"
-			/>
+			<path strokeLinecap="round" strokeLinejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
 		</svg>
 	);
 };
@@ -66,11 +49,7 @@ let PlusIcon = () => {
 			stroke="currentColor"
 			className="w-4 h-4"
 		>
-			<path
-				strokeLinecap="round"
-				strokeLinejoin="round"
-				d="M12 4.5v15m7.5-7.5h-15"
-			/>
+			<path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
 		</svg>
 	);
 };
@@ -88,11 +67,7 @@ let DeleteIcon = () => {
 			onMouseEnter={(e) => setColor("red")}
 			onMouseLeave={(e) => setColor("currentColor")}
 		>
-			<path
-				strokeLinecap="round"
-				strokeLinejoin="round"
-				d="M15 12H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z"
-			/>
+			<path strokeLinecap="round" strokeLinejoin="round" d="M15 12H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z" />
 		</svg>
 	);
 };
@@ -166,11 +141,7 @@ export default function LeftNav({ data = {}, can_manage_roles } = {}) {
 		// 	file_id,
 		// });
 
-		let delete_resource_url =
-			"/credit/report/delete" +
-			to_group_pathname(location.pathname) +
-			"/" +
-			file_id;
+		let delete_resource_url = "/credit/report/delete" + to_group_pathname(location.pathname) + "/" + file_id;
 
 		fetcher.submit(
 			{ file_id, group_id, model, resource_id },
@@ -213,10 +184,7 @@ export default function LeftNav({ data = {}, can_manage_roles } = {}) {
 					<div className="pl-2 whitespace-nowrap">
 						<Link
 							className="border-gray-200 cursor-pointer flex flex-row border rounded-md hover:border-indigo-400"
-							to={
-								"/credit/personal/new" +
-								to_group_pathname(location.pathname)
-							}
+							to={"/credit/personal/new" + to_group_pathname(location.pathname)}
 						>
 							<div className="text-sm mx-2 text-gray-700 justify-start w-full ">
 								<div className="flex flex-row items-center justify-between py-1 rounded">
@@ -247,11 +215,7 @@ export default function LeftNav({ data = {}, can_manage_roles } = {}) {
 												<div className="mr-1">,</div>
 												<div>{report.first_name}</div>
 											</div>
-											<div
-												onClick={(e) =>
-													onDelete(report.id, e)
-												}
-											>
+											<div onClick={(e) => onDelete(report.id, e)}>
 												<DeleteIcon />
 											</div>
 										</div>
@@ -277,10 +241,7 @@ export default function LeftNav({ data = {}, can_manage_roles } = {}) {
 					<div className="pl-2">
 						<Link
 							className="border-gray-200 cursor-pointer flex flex-row border rounded-md hover:border-indigo-400"
-							to={
-								"/credit/business/new" +
-								to_group_pathname(location.pathname)
-							}
+							to={"/credit/business/new" + to_group_pathname(location.pathname)}
 						>
 							<div className="text-sm mx-2 text-gray-700 justify-start w-full ">
 								<div className="flex flex-row items-center justify-between py-1 rounded">
@@ -297,7 +258,7 @@ export default function LeftNav({ data = {}, can_manage_roles } = {}) {
 								<Link
 									key={report.id}
 									to={
-										"/credit/report/business/experian/overview" +
+										"/credit/report/business/experian/status" +
 										to_group_pathname(location.pathname) +
 										`/f/${report.id}` +
 										`?rand=${Math.random()}`
@@ -306,9 +267,7 @@ export default function LeftNav({ data = {}, can_manage_roles } = {}) {
 								>
 									{/* <div>{report.resource_id}</div> */}
 									<div>{report.business_legal_name}</div>
-									<div
-										onClick={(e) => onDelete(report.id, e)}
-									>
+									<div onClick={(e) => onDelete(report.id, e)}>
 										<DeleteIcon />
 									</div>
 								</Link>
@@ -330,11 +289,7 @@ export default function LeftNav({ data = {}, can_manage_roles } = {}) {
 							<div className="pl-2">
 								<Link
 									className="border-gray-200 cursor-pointer flex flex-row border rounded-md hover:border-indigo-400"
-									to={
-										"/plaid/oauth" +
-										to_group_pathname(location.pathname) +
-										location.search
-									}
+									to={"/plaid/oauth" + to_group_pathname(location.pathname) + location.search}
 								>
 									<div className="text-sm mx-2 text-gray-700 justify-start w-full ">
 										<div className="flex flex-row items-center justify-between py-1 rounded">

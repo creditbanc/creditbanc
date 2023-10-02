@@ -159,7 +159,7 @@ const credit_report = subject.pipe(
 			concatMap(({ entity_id, group_id }) =>
 				throwError(() =>
 					Response.redirect(
-						`${url.origin}/credit/report/business/experian/overview/resource/e/${entity_id}/g/${group_id}`
+						`${url.origin}/credit/report/business/experian/status/resource/e/${entity_id}/g/${group_id}`
 					)
 				)
 			)
@@ -216,7 +216,7 @@ export const action = async ({ request }) => {
 		let entity_id = await get_session_entity_id(request);
 		let group_id = get_group_id(request.url);
 
-		let redirect_url = `${origin}/credit/report/business/experian/overview/resource/e/${entity_id}/g/${group_id}`;
+		let redirect_url = `${origin}/credit/report/business/experian/status/resource/e/${entity_id}/g/${group_id}`;
 
 		subject.next({
 			id: "new_application_response",

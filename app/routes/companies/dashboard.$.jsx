@@ -133,7 +133,7 @@ const navigation = [
 	{
 		name: "Business Credit Report",
 		href: ({ entity_id, group_id }) =>
-			`/credit/report/business/experian/overview/resource/e/${entity_id}/g/${group_id}`,
+			`/credit/report/business/experian/status/resource/e/${entity_id}/g/${group_id}`,
 		icon: BriefcaseIcon,
 		current: false,
 	},

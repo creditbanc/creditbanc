@@ -80,26 +80,27 @@ export const loader = async ({ request }) => {
 	// DELETE THIS --- DELETE THIS --- DELETE THIS
 	// DELETE THIS --- DELETE THIS --- DELETE THIS
 	// DELETE THIS --- DELETE THIS --- DELETE THIS
-	let report = business_response.pipe(
-		concatMap((response) => {
-			let { application_id, data = undefined } = response;
-			if (data == undefined) {
-				return from(LendflowExternal.get_lendflow_report(application_id)).pipe(
-					rxmap(pipe(get("data", "data"))),
-					concatMap((report) =>
-						from(update_doc(["credit_reports", application_id], { data: report })).pipe(
-							rxmap(() => report),
-							tap(() => console.log("credit.report.business.LendflowExternal")),
-							tap(inspect)
+	let report = business_response
+		.pipe(
+			concatMap((response) => {
+				let { application_id, data = undefined } = response;
+				if (data == undefined) {
+					return from(LendflowExternal.get_lendflow_report(application_id)).pipe(
+						rxmap(pipe(get("data", "data"))),
+						concatMap((report) =>
+							from(update_doc(["credit_reports", application_id], { data: report })).pipe(
+								rxmap(() => report),
+								tap(() => console.log("credit.report.business.LendflowExternal")),
+								tap(inspect)
+							)
 						)
-					)
-				);
-			} else {
-				return rxof(response);
-			}
-		})
-	);
-	// .subscribe();
+					);
+				} else {
+					return rxof(response);
+				}
+			})
+		)
+		.subscribe();
 	// DELETE THIS --- DELETE THIS --- DELETE THIS
 	// DELETE THIS --- DELETE THIS --- DELETE THIS
 	// DELETE THIS --- DELETE THIS --- DELETE THIS

@@ -3,11 +3,7 @@ import { get_report_type, to_resource_pathname, trim } from "~/utils/helpers";
 import { useLocation } from "@remix-run/react";
 import { DocumentIcon, FolderIcon } from "@heroicons/react/24/outline";
 import { Listbox, Transition, Menu } from "@headlessui/react";
-import {
-	CheckIcon,
-	ChevronDownIcon,
-	ChevronUpDownIcon,
-} from "@heroicons/react/20/solid";
+import { CheckIcon, ChevronDownIcon, ChevronUpDownIcon } from "@heroicons/react/20/solid";
 import { filter, get, mod } from "shades";
 import { defaultTo, head, includes, pipe, split } from "ramda";
 import { Link } from "@remix-run/react";
@@ -16,8 +12,7 @@ import { create } from "zustand";
 const useReport = create((set) => ({
 	type: "personal",
 	selected: "report",
-	set_report: (path, value) =>
-		set((state) => pipe(mod(...path)(() => value))(state)),
+	set_report: (path, value) => set((state) => pipe(mod(...path)(() => value))(state)),
 }));
 
 function classNames(...classes) {
@@ -27,8 +22,7 @@ function classNames(...classes) {
 const business_tabs = [
 	{
 		name: "Documents",
-		href: (pathname) =>
-			`/credit/documents${to_resource_pathname(pathname)}`,
+		href: (pathname) => `/credit/documents${to_resource_pathname(pathname)}`,
 		icon: FolderIcon,
 		current: false,
 		id: "documents",
@@ -38,16 +32,14 @@ const business_tabs = [
 const personal_tabs = [
 	{
 		name: "Report",
-		href: (pathname) =>
-			`/credit/report/personal/personal${to_resource_pathname(pathname)}`,
+		href: (pathname) => `/credit/report/personal/personal${to_resource_pathname(pathname)}`,
 		icon: DocumentIcon,
 		current: true,
 		id: "report",
 	},
 	{
 		name: "Documents",
-		href: (pathname) =>
-			`/credit/documents${to_resource_pathname(pathname)}`,
+		href: (pathname) => `/credit/documents${to_resource_pathname(pathname)}`,
 		icon: FolderIcon,
 		current: false,
 		id: "documents",
@@ -57,20 +49,14 @@ const personal_tabs = [
 const reports_items = [
 	{
 		name: "Experian",
-		href: (pathname) =>
-			`/credit/report/business/experian/overview${to_resource_pathname(
-				pathname
-			)}`,
+		href: (pathname) => `/credit/report/business/experian/status${to_resource_pathname(pathname)}`,
 		icon: FolderIcon,
 		current: false,
 		id: "experian",
 	},
 	{
 		name: "Dun & Bradstreet",
-		href: (pathname) =>
-			`/credit/report/business/dnb/overview${to_resource_pathname(
-				pathname
-			)}`,
+		href: (pathname) => `/credit/report/business/experian/status${to_resource_pathname(pathname)}`,
 		icon: FolderIcon,
 		current: false,
 		id: "dnb",
@@ -92,14 +78,9 @@ function BusinessReportsDropdown() {
 					}`}
 				>
 					Business Reports
-					<ChevronDownIcon
-						className="-mr-1 h-5 w-5 text-gray-400"
-						aria-hidden="true"
-					/>
+					<ChevronDownIcon className="-mr-1 h-5 w-5 text-gray-400" aria-hidden="true" />
 				</Menu.Button>
-				{is_business_selected && (
-					<div className="h-[2px] bg-blue-500"></div>
-				)}
+				{is_business_selected && <div className="h-[2px] bg-blue-500"></div>}
 			</div>
 
 			<Transition
@@ -119,9 +100,7 @@ function BusinessReportsDropdown() {
 									<Link
 										to={item.href(location.pathname)}
 										className={classNames(
-											active
-												? "bg-gray-100 text-gray-900"
-												: "text-gray-700",
+											active ? "bg-gray-100 text-gray-900" : "text-gray-700",
 											"block px-4 py-2 text-sm"
 										)}
 									>
@@ -142,11 +121,7 @@ const ReportTabsSelect = ({ selected = "experian" }) => {
 	const location = useLocation();
 	const tabs = report_type === "business" ? reports_items : personal_tabs;
 
-	selected = pipe(
-		filter({ id: selected }),
-		head,
-		defaultTo("experian")
-	)(tabs);
+	selected = pipe(filter({ id: selected }), head, defaultTo("experian"))(tabs);
 
 	const onSetSelected = (value) => {
 		window.location = value.href(location.pathname);
@@ -159,10 +134,7 @@ const ReportTabsSelect = ({ selected = "experian" }) => {
 					<Listbox.Button className="relative w-full cursor-default rounded-md bg-white py-1.5 pl-3 pr-10 text-left text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-600 sm:text-sm sm:leading-6">
 						<span className="block truncate">{selected.name}</span>
 						<span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
-							<ChevronUpDownIcon
-								className="h-5 w-5 text-gray-400"
-								aria-hidden="true"
-							/>
+							<ChevronUpDownIcon className="h-5 w-5 text-gray-400" aria-hidden="true" />
 						</span>
 					</Listbox.Button>
 
@@ -185,9 +157,7 @@ const ReportTabsSelect = ({ selected = "experian" }) => {
 									>
 										<span
 											className={classNames(
-												tab.id == selected
-													? "font-semibold"
-													: "font-normal",
+												tab.id == selected ? "font-semibold" : "font-normal",
 												"block truncate"
 											)}
 										>
@@ -199,10 +169,7 @@ const ReportTabsSelect = ({ selected = "experian" }) => {
 													"absolute inset-y-0 right-0 flex items-center pr-4"
 												)}
 											>
-												<CheckIcon
-													className="h-5 w-5"
-													aria-hidden="true"
-												/>
+												<CheckIcon className="h-5 w-5" aria-hidden="true" />
 											</span>
 										)}
 									</Listbox.Option>

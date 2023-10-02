@@ -55,7 +55,7 @@ const BusinessDropdown = () => {
 						<Menu.Item>
 							{({ active }) => (
 								<Link
-									to={`/credit/report/business/dnb/overview/resource/e/${entity_id}/g/${group_id}`}
+									to={`/credit/report/business/experian/status/resource/e/${entity_id}/g/${group_id}`}
 									className={classNames(
 										active ? "bg-gray-100 text-gray-900" : "text-gray-700",
 										"block px-4 py-2 text-sm"
@@ -68,7 +68,7 @@ const BusinessDropdown = () => {
 						<Menu.Item>
 							{({ active }) => (
 								<Link
-									to={`/credit/report/business/experian/overview/resource/e/${entity_id}/g/${group_id}`}
+									to={`/credit/report/business/experian/status/resource/e/${entity_id}/g/${group_id}`}
 									className={classNames(
 										active ? "bg-gray-100 text-gray-900" : "text-gray-700",
 										"block px-4 py-2 text-sm"

@@ -18,14 +18,7 @@ import {
 	isNil,
 } from "ramda";
 import { get, filter, all, mod } from "shades";
-import {
-	map as rxmap,
-	filter as rxfilter,
-	concatMap,
-	tap,
-	take,
-	catchError,
-} from "rxjs/operators";
+import { map as rxmap, filter as rxfilter, concatMap, tap, take, catchError } from "rxjs/operators";
 import {
 	from,
 	lastValueFrom,
@@ -48,8 +41,7 @@ import moment from "moment";
 const useStateStore = create((set) => ({
 	entities: [],
 	entity: {},
-	set_state: (path, value) =>
-		set((state) => pipe(mod(...path)(() => value))(state)),
+	set_state: (path, value) => set((state) => pipe(mod(...path)(() => value))(state)),
 }));
 
 const subject = new ReplaySubject(1);
@@ -63,19 +55,7 @@ const loader_data = subject.pipe(
 				path: ["entity"],
 			})
 		).pipe(
-			rxmap(
-				map(
-					pickAll([
-						"id",
-						"first_name",
-						"last_name",
-						"email",
-						"plan_id",
-						"roles",
-						"created_at",
-					])
-				)
-			),
+			rxmap(map(pickAll(["id", "first_name", "last_name", "email", "plan_id", "roles", "created_at"]))),
 			rxmap((entities) => ({ entities }))
 		);
 
@@ -115,9 +95,7 @@ export const loader = async ({ request }) => {
 
 	loader_data.pipe(fold(on_success, on_error)).subscribe();
 
-	let response = await lastValueFrom(
-		subject.pipe(rxfilter(on_complete), take(1))
-	);
+	let response = await lastValueFrom(subject.pipe(rxfilter(on_complete), take(1)));
 
 	return response.next();
 };
@@ -125,24 +103,12 @@ export const loader = async ({ request }) => {
 const EntitiesTableHeader = () => {
 	return (
 		<div className="header flex flex-row sticky top-0 bg-white font-semibold">
-			<div className="flex flex-col min-w-[150px] border-b pb-3 bg-white ">
-				first name
-			</div>
-			<div className="flex flex-col min-w-[150px] border-b pb-3 bg-white ">
-				last name
-			</div>
-			<div className="flex flex-col min-w-[300px] border-b pb-3 bg-white ">
-				id
-			</div>
-			<div className="flex flex-col min-w-[100px] border-b pb-3 bg-white ">
-				plan
-			</div>
-			<div className="flex flex-col min-w-[200px] border-b pb-3 bg-white ">
-				email
-			</div>
-			<div className="flex flex-col min-w-[200px] border-b pb-3 bg-white ">
-				created
-			</div>
+			<div className="flex flex-col min-w-[150px] border-b pb-3 bg-white ">first name</div>
+			<div className="flex flex-col min-w-[150px] border-b pb-3 bg-white ">last name</div>
+			<div className="flex flex-col min-w-[300px] border-b pb-3 bg-white ">id</div>
+			<div className="flex flex-col min-w-[100px] border-b pb-3 bg-white ">plan</div>
+			<div className="flex flex-col min-w-[200px] border-b pb-3 bg-white ">email</div>
+			<div className="flex flex-col min-w-[200px] border-b pb-3 bg-white ">created</div>
 		</div>
 	);
 };
@@ -181,9 +147,7 @@ const EntitiesTable = () => {
 						</div>
 						<div className="flex flex-col min-w-[200px] border-b py-2 group-hover:bg-gray-100">
 							{entity.created_at &&
-								moment(
-									new Date(entity.created_at.seconds * 1000)
-								).format("MM-DD-YYYY")}
+								moment(new Date(entity.created_at.seconds * 1000)).format("MM-DD-YYYY")}
 						</div>
 					</div>
 				))
@@ -256,10 +220,7 @@ const BusinessReportStatus = () => {
 			);
 
 		rxof(group_id)
-			.pipe(
-				rxfilter(pipe(isNil, not)),
-				concatMap(get_business_credit_report)
-			)
+			.pipe(rxfilter(pipe(isNil, not)), concatMap(get_business_credit_report))
 			.subscribe((response) => {
 				if (response.length > 0) {
 					set_state(["entity", "has_business_credit_report"], true);
@@ -305,10 +266,7 @@ const PersonalReportStatus = () => {
 			);
 
 		rxof(group_id)
-			.pipe(
-				rxfilter(pipe(isNil, not)),
-				concatMap(get_personal_credit_report)
-			)
+			.pipe(rxfilter(pipe(isNil, not)), concatMap(get_personal_credit_report))
 			.subscribe((response) => {
 				if (response.length > 0) {
 					set_state(["entity", "has_personal_credit_report"], true);
@@ -361,9 +319,7 @@ const Entity = () => {
 	);
 
 	useEffect(() => {
-		group_id.subscribe((group_id) =>
-			set_state(["entity", "group_id"], group_id)
-		);
+		group_id.subscribe((group_id) => set_state(["entity", "group_id"], group_id));
 	}, [entity.id]);
 
 	return (
@@ -416,16 +372,12 @@ const Entity = () => {
 				<div className="font-semibold">Quick Links</div>
 				<div className="flex flex-col text-sm gap-y-2 py-2">
 					<div className="flex flex-row gap-x-2">
-						<Link
-							to={`/home/resource/e/${entity.id}/g/${entity.group_id}`}
-						>
-							Dashboard
-						</Link>
+						<Link to={`/home/resource/e/${entity.id}/g/${entity.group_id}`}>Dashboard</Link>
 					</div>
 
 					<div className="flex flex-row gap-x-2">
 						<Link
-							to={`/credit/report/business/experian/overview/resource/e/${entity.id}/g/${entity.group_id}`}
+							to={`/credit/report/business/experian/status/resource/e/${entity.id}/g/${entity.group_id}`}
 						>
 							Intelliscore business credit report
 						</Link>
@@ -433,15 +385,13 @@ const Entity = () => {
 
 					<div className="flex flex-row gap-x-2">
 						<Link
-							to={`/credit/report/business/dnb/overview/resource/e/${entity.id}/g/${entity.group_id}`}
+							to={`/credit/report/business/experian/status/resource/e/${entity.id}/g/${entity.group_id}`}
 						>
 							Dun & Bradstreet business credit report
 						</Link>
 					</div>
 					<div className="flex flex-row gap-x-2">
-						<Link
-							to={`/credit/report/personal/personal/resource/e/${entity.id}/g/${entity.group_id}`}
-						>
+						<Link to={`/credit/report/personal/personal/resource/e/${entity.id}/g/${entity.group_id}`}>
 							Personal credit report
 						</Link>
 					</div>

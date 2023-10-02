@@ -207,7 +207,7 @@ export const action = async ({ request }) => {
 		let entity_id = await get_session_entity_id(request);
 		let group_id = get_group_id(request.url);
 
-		let redirect_url = `${origin}/credit/report/business/experian/overview/resource/e/${entity_id}/g/${group_id}`;
+		let redirect_url = `${origin}/credit/report/business/experian/status/resource/e/${entity_id}/g/${group_id}`;
 
 		subject.next({
 			id: action_response,
@@ -249,7 +249,7 @@ export const loader = async ({ request }) => {
 		let entity_id = await get_session_entity_id(request);
 		let group_id = get_group_id(request.url);
 
-		let redirect_url = `${origin}/credit/report/business/experian/overview/resource/e/${entity_id}/g/${group_id}`;
+		let redirect_url = `${origin}/credit/report/business/experian/status/resource/e/${entity_id}/g/${group_id}`;
 
 		subject.next({
 			id: loader_response,

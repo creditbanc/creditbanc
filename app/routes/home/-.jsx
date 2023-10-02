@@ -191,7 +191,7 @@ const BusinessCredit = () => {
 			<div className="flex flex-col w-full py-3 border-b border-gray-200">
 				<Link
 					className="flex flex-row w-full"
-					to={`/credit/report/business/experian/overview/resource/e/${entity_id}/g/${group_id}`}
+					to={`/credit/report/business/experian/status/resource/e/${entity_id}/g/${group_id}`}
 				>
 					<div className="flex flex-col w-2/3">
 						<div className="font-semibold">Experian ®</div>
@@ -212,7 +212,7 @@ const BusinessCredit = () => {
 			<div className="flex flex-col w-full py-3 ">
 				<Link
 					className="flex flex-row w-full"
-					to={`/credit/report/business/dnb/overview/resource/e/${entity_id}/g/${group_id}`}
+					to={`/credit/report/business/experian/status/resource/e/${entity_id}/g/${group_id}`}
 				>
 					<div className="flex flex-col w-2/3">
 						<div className="font-semibold">Dun & Bradstreet ®</div>
@@ -1085,7 +1085,7 @@ const BusinessMatchSelect = () => {
 	const onSelectBusiness = (business) => {
 		console.log("onSelectBusiness");
 		// console.log(business);
-		let redirect_url = `/credit/report/business/experian/overview/resource/e/${entity_id}/g/${group_id}`;
+		let redirect_url = `/credit/report/business/experian/status/resource/e/${entity_id}/g/${group_id}`;
 		let bin_response = from(update_business_bin(business.bin)).pipe(
 			rxfilter((value) => value?.data?.status == "success"),
 			tap(() => console.log("update_business_bin.tap")),

@@ -149,7 +149,7 @@ const BusinessReports = ({ reports }) => {
 				mapIndexed((report, idx) => (
 					<Link
 						to={
-							"/credit/report/business/experian/overview" +
+							"/credit/report/business/experian/status" +
 							to_group_pathname(location.pathname) +
 							`/f/${report.id}` +
 							`?rand=${Math.random()}`
