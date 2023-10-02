@@ -903,7 +903,7 @@ const CreditUtilization = () => {
 };
 
 const BusinessFacts = () => {
-	let { experian_years_on_file = 0, experian_facts, dnb_duns_number } = useLoaderData();
+	let { experian_years_on_file = 0, experian_facts = {}, dnb_duns_number } = useLoaderData();
 
 	let {
 		businessType,
@@ -917,6 +917,11 @@ const BusinessFacts = () => {
 		naicsCodes = [],
 		sicCodes = [],
 	} = experian_facts;
+
+	// console.log("BusinessFacts");
+	// console.log(experian_facts);
+
+	let executive_information = executiveInformation ?? [];
 
 	let { businessName, taxId, address = {} } = businessHeader;
 
@@ -1018,7 +1023,7 @@ const BusinessFacts = () => {
 												</div>
 											</div>
 										))
-									)(executiveInformation)}
+									)(executive_information)}
 								</div>
 							</div>
 						</div>
