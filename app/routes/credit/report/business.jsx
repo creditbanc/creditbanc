@@ -151,23 +151,23 @@ export default function BusinessReport() {
 		);
 	};
 
-	useEffect(() => {
-		if (cache_dependencies !== undefined) {
-			use_cache_client({ path: `/credit/report/business`, dependencies: cache_dependencies });
-		}
-	}, []);
+	// useEffect(() => {
+	// 	if (cache_dependencies !== undefined) {
+	// 		use_cache_client({ path: `/credit/report/business`, dependencies: cache_dependencies });
+	// 	}
+	// }, []);
 
-	useEffect(() => {
-		business_report_shas_fetcher.submit(...fetcher_payload_maker(business_report_shas_url));
-	}, []);
+	// useEffect(() => {
+	// 	business_report_shas_fetcher.submit(...fetcher_payload_maker(business_report_shas_url));
+	// }, []);
 
-	useEffect(() => {
-		if (business_report_shas_fetcher.data) {
-			console.log("business_report_shas_fetcher.data");
-			console.log(business_report_shas_fetcher.data);
-			on_should_update_cache(business_report_shas_fetcher.data, "business_credit_report").subscribe();
-		}
-	}, [business_report_shas_fetcher.data]);
+	// useEffect(() => {
+	// 	if (business_report_shas_fetcher.data) {
+	// 		console.log("business_report_shas_fetcher.data");
+	// 		console.log(business_report_shas_fetcher.data);
+	// 		on_should_update_cache(business_report_shas_fetcher.data, "business_credit_report").subscribe();
+	// 	}
+	// }, [business_report_shas_fetcher.data]);
 
 	return (
 		<div className="flex flex-col flex-1 overflow-y-scroll overflow-hidden">

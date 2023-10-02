@@ -1,6 +1,6 @@
 import { useLoaderData } from "@remix-run/react";
 import { currency, get_group_id, mapIndexed, get, store } from "~/utils/helpers";
-import { is, map, pipe } from "ramda";
+import { is, map, pipe, sum } from "ramda";
 import { plans } from "~/data/plans";
 import AccountCard from "~/components/AccountCard";
 import DoughnutChart from "~/components/DoughnutChart";
@@ -22,6 +22,7 @@ import {
 } from "@heroicons/react/24/outline";
 import { ChevronDownIcon } from "@heroicons/react/20/solid";
 import { Popover } from "@headlessui/react";
+import { all } from "shades";
 
 const log_route = `credit.report.business.experian.status`;
 
@@ -36,7 +37,9 @@ export const loader = async ({ request }) => {
 	let url = new URL(request.url);
 	let group_id = get_group_id(url.pathname);
 	let report = new BusinessReport(group_id);
-	let payload = report.experian_trade_payment_totals.report_sha.experian_trade_lines.fold;
+	let payload =
+		report.scores.experian_trade_payment_totals.report_sha.experian_trade_lines.experian_employee_size
+			.experian_years_on_file.experian_facts.experian_trade_summary.business_info.experian_factors.fold;
 	let response = await lastValueFrom(payload.pipe(fold(on_success(request), on_error)));
 	return response;
 };
@@ -131,6 +134,7 @@ const ExplanationCard = () => {
 
 const TradeLine = ({ trade_line }) => {
 	let is_current = trade_line.dbt30 === 0 && trade_line.dbt60 === 0 && trade_line.dbt90 == 0;
+	let utilization_percentage = (trade_line?.accountBalance?.amount / trade_line?.recentHighCredit?.amount) * 100;
 
 	return (
 		<div className="flex flex-col items-start w-full text-sm">
@@ -169,7 +173,10 @@ const TradeLine = ({ trade_line }) => {
 									<div className="flex flex-col font-semibold text-black">Overview</div>
 									<div className="flex flex-col w-full h-[20px] relative">
 										<div className="absolute flex flex-col w-full bg-gray-100 h-full rounded"></div>
-										<div className="absolute flex flex-col w-[30%] bg-green-300 h-full rounded"></div>
+										<div
+											className={`absolute flex flex-col bg-green-300 h-full rounded`}
+											style={{ width: `${utilization_percentage}%` }}
+										></div>
 									</div>
 									<div className="flex flex-row justify-between my-1">
 										<div className="flex flex-row gap-x-1">
@@ -255,7 +262,7 @@ const TradeLines = () => {
 	);
 };
 
-let use_container_store = store({ selected_component: "derogatories" });
+let use_container_store = store({ selected_component: "legal" });
 
 const Derogatories = () => {
 	return (
@@ -294,7 +301,7 @@ const Derogatories = () => {
 							<div className="flex flex-col w-full items-center py-3">0</div>
 						</div>
 					</div>
-					<div className="flex flex-row w-full gap-x-3">
+					{/* <div className="flex flex-row w-full gap-x-3">
 						<div>
 							<PencilSquareIcon className="h-5 w-5 text-green-500" />
 						</div>
@@ -302,7 +309,7 @@ const Derogatories = () => {
 							<div className="font-semibold">Pro tips</div>
 							<div>Keep up the good work avoiding derogatory marks! Your score will thank you!</div>
 						</div>
-					</div>
+					</div> */}
 				</div>
 				<div className="flex flex-col w-[50%] gap-y-4">
 					<div className="flex flex-col w-full gap-y-2">
@@ -408,7 +415,7 @@ const Legal = () => {
 							<div className="flex flex-col w-full items-center py-3">0</div>
 						</div>
 					</div>
-					<div className="flex flex-row w-full gap-x-3">
+					{/* <div className="flex flex-row w-full gap-x-3">
 						<div>
 							<PencilSquareIcon className="h-5 w-5 text-green-500" />
 						</div>
@@ -416,25 +423,29 @@ const Legal = () => {
 							<div className="font-semibold">Pro tips</div>
 							<div>Keep up the good work avoiding derogatory marks! Your score will thank you!</div>
 						</div>
-					</div>
+					</div> */}
 				</div>
 				<div className="flex flex-col w-[50%] gap-y-4">
 					<div className="flex flex-col w-full gap-y-2">
-						<div className="flex flex-col text-lg font-semibold">All good here!</div>
+						<div className="flex flex-col text-lg font-semibold">Legal Filings Explained:</div>
 						<div className="text-gray-500">
-							Derogatory marks are good to avoid—they can stay on your report for 7-10 years.
+							Legal filings are public records that show a business's financial and legal history. They
+							include bankruptcies (when a business can't pay its bills), tax liens (when a business owes
+							taxes), and judgments (from lawsuits).
 						</div>
 					</div>
 					<div className="flex flex-col w-full gap-y-3">
-						<div className="flex flex-col text-md font-semibold">If you have a collection</div>
+						<div className="flex flex-col text-md font-semibold">Why it matters:</div>
 						<div className="flex flex-row w-full gap-x-3">
-							<div className="font-semibold">1.</div>
+							{/* <div className="font-semibold">1.</div> */}
 							<div className="text-gray-500">
-								Debt collectors are responsible for providing proof for claims against you. Make sure to
-								hold on to all documents that could help you in the case of a dispute.
+								Legal troubles are never a good look. Having these in your credit report or part of your
+								public record won't instill a lot of confidence in potential creditors that you'll be
+								financially responsible. This can lead to high interest rates or, worst case scenario,
+								inability to get credit at all.
 							</div>
 						</div>
-						<div className="flex flex-row w-full gap-x-3">
+						{/* <div className="flex flex-row w-full gap-x-3">
 							<div className="font-semibold">2.</div>
 							<div className="text-gray-500">
 								Brush up on your rights. Did you know that debt collectors aren’t allowed to keep
@@ -447,18 +458,20 @@ const Legal = () => {
 								Negotiate your debt if you can. Depending on its age, you could see some of it chopped
 								off.
 							</div>
-						</div>
+						</div> */}
 					</div>
 					<div className="flex flex-col w-full gap-y-3">
-						<div className="flex flex-col text-md font-semibold">If you have a public record</div>
+						<div className="flex flex-col text-md font-semibold">What to do about it:</div>
 						<div className="flex flex-row w-full gap-x-3">
-							<div className="font-semibold">1.</div>
+							{/* <div className="font-semibold">1.</div> */}
 							<div className="text-gray-500">
-								Unfortunately, events on the public record (bankruptcies, civil judgments, tax liens)
-								are hard to remove from your reports.
+								Depending on the nature of the legal filing, you can check for errors, dispute
+								inaccuracies, settle the debt and request a satisfaction document, petition the court to
+								vacate or set aside the judgment, or just wait it out (most legal filings have a set
+								duration).
 							</div>
 						</div>
-						<div className="flex flex-row w-full gap-x-3">
+						{/* <div className="flex flex-row w-full gap-x-3">
 							<div className="font-semibold">2.</div>
 							<div className="text-gray-500">
 								Make sure all of the events that appear on your record are correct. Save all necessary
@@ -471,7 +484,7 @@ const Legal = () => {
 								Reach out to the people involved in past issues about the possibility of removing events
 								from your record.
 							</div>
-						</div>
+						</div> */}
 					</div>
 				</div>
 			</div>
@@ -516,7 +529,7 @@ const Collections = () => {
 							<div className="flex flex-col w-full items-center py-3">0</div>
 						</div>
 					</div>
-					<div className="flex flex-row w-full gap-x-3">
+					{/* <div className="flex flex-row w-full gap-x-3">
 						<div>
 							<PencilSquareIcon className="h-5 w-5 text-green-500" />
 						</div>
@@ -524,60 +537,42 @@ const Collections = () => {
 							<div className="font-semibold">Pro tips</div>
 							<div>Keep up the good work avoiding derogatory marks! Your score will thank you!</div>
 						</div>
-					</div>
+					</div> */}
 				</div>
 				<div className="flex flex-col w-[50%] gap-y-4">
 					<div className="flex flex-col w-full gap-y-2">
-						<div className="flex flex-col text-lg font-semibold">All good here!</div>
+						<div className="flex flex-col text-lg font-semibold">Collections Explained</div>
 						<div className="text-gray-500">
-							Derogatory marks are good to avoid—they can stay on your report for 7-10 years.
+							Think of collections like that annoying friend who keeps bugging you for the money you owe
+							them. Same premise. When a business fails to cough up the cash it borrowed, the creditor
+							sends the debt to a collections agency.
 						</div>
 					</div>
 					<div className="flex flex-col w-full gap-y-3">
-						<div className="flex flex-col text-md font-semibold">If you have a collection</div>
+						<div className="flex flex-col text-md font-semibold">Why it matters:</div>
 						<div className="flex flex-row w-full gap-x-3">
-							<div className="font-semibold">1.</div>
 							<div className="text-gray-500">
-								Debt collectors are responsible for providing proof for claims against you. Make sure to
-								hold on to all documents that could help you in the case of a dispute.
+								If you've got these kinds of debts showing up on your credit report, your credit score
+								could take a hit and you might start getting a bunch of calls and collection attempts
+								from the creditor.
 							</div>
 						</div>
 						<div className="flex flex-row w-full gap-x-3">
-							<div className="font-semibold">2.</div>
 							<div className="text-gray-500">
 								Brush up on your rights. Did you know that debt collectors aren’t allowed to keep
 								calling you?
 							</div>
 						</div>
-						<div className="flex flex-row w-full gap-x-3">
-							<div className="font-semibold">3.</div>
-							<div className="text-gray-500">
-								Negotiate your debt if you can. Depending on its age, you could see some of it chopped
-								off.
-							</div>
-						</div>
 					</div>
 					<div className="flex flex-col w-full gap-y-3">
-						<div className="flex flex-col text-md font-semibold">If you have a public record</div>
+						<div className="flex flex-col text-md font-semibold">What to do about it:</div>
 						<div className="flex flex-row w-full gap-x-3">
-							<div className="font-semibold">1.</div>
 							<div className="text-gray-500">
-								Unfortunately, events on the public record (bankruptcies, civil judgments, tax liens)
-								are hard to remove from your reports.
-							</div>
-						</div>
-						<div className="flex flex-row w-full gap-x-3">
-							<div className="font-semibold">2.</div>
-							<div className="text-gray-500">
-								Make sure all of the events that appear on your record are correct. Save all necessary
-								documents you may need to authenticate your history.
-							</div>
-						</div>
-						<div className="flex flex-row w-full gap-x-3">
-							<div className="font-semibold">3.</div>
-							<div className="text-gray-500">
-								Reach out to the people involved in past issues about the possibility of removing events
-								from your record.
+								If you wanna get rid of those pesky collections on your credit report, disputing any
+								wrong info is the only reliable route to go. If you've already paid off a debt but the
+								collection account is still haunting your report, you can try asking your creditor for a
+								goodwill deletion. But just a heads up, there's no way to guarantee that your request
+								will be granted.
 							</div>
 						</div>
 					</div>
@@ -624,7 +619,7 @@ const Liens = () => {
 							<div className="flex flex-col w-full items-center py-3">0</div>
 						</div>
 					</div>
-					<div className="flex flex-row w-full gap-x-3">
+					{/* <div className="flex flex-row w-full gap-x-3">
 						<div>
 							<PencilSquareIcon className="h-5 w-5 text-green-500" />
 						</div>
@@ -632,60 +627,35 @@ const Liens = () => {
 							<div className="font-semibold">Pro tips</div>
 							<div>Keep up the good work avoiding derogatory marks! Your score will thank you!</div>
 						</div>
-					</div>
+					</div> */}
 				</div>
 				<div className="flex flex-col w-[50%] gap-y-4">
 					<div className="flex flex-col w-full gap-y-2">
-						<div className="flex flex-col text-lg font-semibold">All good here!</div>
+						<div className="flex flex-col text-lg font-semibold">Liens Explained</div>
 						<div className="text-gray-500">
-							Derogatory marks are good to avoid—they can stay on your report for 7-10 years.
+							Liens are legal claims on your stuff (property or assets) to cover a debt. There are two
+							types: You've got your tax liens (from unpaid taxes), and you've got your judgment liens
+							(due to court stuff).
 						</div>
 					</div>
 					<div className="flex flex-col w-full gap-y-3">
-						<div className="flex flex-col text-md font-semibold">If you have a collection</div>
+						<div className="flex flex-col text-md font-semibold">Why it matters:</div>
 						<div className="flex flex-row w-full gap-x-3">
-							<div className="font-semibold">1.</div>
 							<div className="text-gray-500">
-								Debt collectors are responsible for providing proof for claims against you. Make sure to
-								hold on to all documents that could help you in the case of a dispute.
-							</div>
-						</div>
-						<div className="flex flex-row w-full gap-x-3">
-							<div className="font-semibold">2.</div>
-							<div className="text-gray-500">
-								Brush up on your rights. Did you know that debt collectors aren’t allowed to keep
-								calling you?
-							</div>
-						</div>
-						<div className="flex flex-row w-full gap-x-3">
-							<div className="font-semibold">3.</div>
-							<div className="text-gray-500">
-								Negotiate your debt if you can. Depending on its age, you could see some of it chopped
-								off.
+								When liens gate-crash the credit party, your score can take a serious hit. Unpaid liens,
+								though not officially listed on your credit report, still hold a lot of sway because
+								lenders report your payment history (which is a key credit score component). Even after
+								you've settled the debt, the negative effects can linger for up to seven years or more.
 							</div>
 						</div>
 					</div>
 					<div className="flex flex-col w-full gap-y-3">
-						<div className="flex flex-col text-md font-semibold">If you have a public record</div>
+						<div className="flex flex-col text-md font-semibold">What to do about it:</div>
 						<div className="flex flex-row w-full gap-x-3">
-							<div className="font-semibold">1.</div>
 							<div className="text-gray-500">
-								Unfortunately, events on the public record (bankruptcies, civil judgments, tax liens)
-								are hard to remove from your reports.
-							</div>
-						</div>
-						<div className="flex flex-row w-full gap-x-3">
-							<div className="font-semibold">2.</div>
-							<div className="text-gray-500">
-								Make sure all of the events that appear on your record are correct. Save all necessary
-								documents you may need to authenticate your history.
-							</div>
-						</div>
-						<div className="flex flex-row w-full gap-x-3">
-							<div className="font-semibold">3.</div>
-							<div className="text-gray-500">
-								Reach out to the people involved in past issues about the possibility of removing events
-								from your record.
+								If you've got a lien on your credit report, it's best to take care of it ASAP. Pay off
+								the debt or work out a settlement with the creditor to get it removed or at least show
+								that it's been settled.
 							</div>
 						</div>
 					</div>
@@ -732,7 +702,7 @@ const Judgements = () => {
 							<div className="flex flex-col w-full items-center py-3">0</div>
 						</div>
 					</div>
-					<div className="flex flex-row w-full gap-x-3">
+					{/* <div className="flex flex-row w-full gap-x-3">
 						<div>
 							<PencilSquareIcon className="h-5 w-5 text-green-500" />
 						</div>
@@ -740,60 +710,36 @@ const Judgements = () => {
 							<div className="font-semibold">Pro tips</div>
 							<div>Keep up the good work avoiding derogatory marks! Your score will thank you!</div>
 						</div>
-					</div>
+					</div> */}
 				</div>
 				<div className="flex flex-col w-[50%] gap-y-4">
 					<div className="flex flex-col w-full gap-y-2">
-						<div className="flex flex-col text-lg font-semibold">All good here!</div>
+						<div className="flex flex-col text-lg font-semibold">Judgments Explained:</div>
 						<div className="text-gray-500">
-							Derogatory marks are good to avoid—they can stay on your report for 7-10 years.
+							A Judgment is basically a public record created after a lawsuit, typically for collecting a
+							debt, comes to an end. It's kind of like a legal receipt showing the court's final decision
+							regarding the debt collection.
 						</div>
 					</div>
 					<div className="flex flex-col w-full gap-y-3">
-						<div className="flex flex-col text-md font-semibold">If you have a collection</div>
+						<div className="flex flex-col text-md font-semibold">Why it matters:</div>
 						<div className="flex flex-row w-full gap-x-3">
-							<div className="font-semibold">1.</div>
+							{/* <div className="font-semibold">1.</div> */}
 							<div className="text-gray-500">
-								Debt collectors are responsible for providing proof for claims against you. Make sure to
-								hold on to all documents that could help you in the case of a dispute.
-							</div>
-						</div>
-						<div className="flex flex-row w-full gap-x-3">
-							<div className="font-semibold">2.</div>
-							<div className="text-gray-500">
-								Brush up on your rights. Did you know that debt collectors aren’t allowed to keep
-								calling you?
-							</div>
-						</div>
-						<div className="flex flex-row w-full gap-x-3">
-							<div className="font-semibold">3.</div>
-							<div className="text-gray-500">
-								Negotiate your debt if you can. Depending on its age, you could see some of it chopped
-								off.
+								A Judgment means a lender had to go to court to get back the money they lent you. This
+								isn't a good look; it warns future lenders that loaning you money could be risky
+								business. It'll be in your public record and can stay there for up to ten years, even if
+								you pay it back.
 							</div>
 						</div>
 					</div>
 					<div className="flex flex-col w-full gap-y-3">
-						<div className="flex flex-col text-md font-semibold">If you have a public record</div>
+						<div className="flex flex-col text-md font-semibold">What to do about it:</div>
 						<div className="flex flex-row w-full gap-x-3">
-							<div className="font-semibold">1.</div>
+							{/* <div className="font-semibold">1.</div> */}
 							<div className="text-gray-500">
-								Unfortunately, events on the public record (bankruptcies, civil judgments, tax liens)
-								are hard to remove from your reports.
-							</div>
-						</div>
-						<div className="flex flex-row w-full gap-x-3">
-							<div className="font-semibold">2.</div>
-							<div className="text-gray-500">
-								Make sure all of the events that appear on your record are correct. Save all necessary
-								documents you may need to authenticate your history.
-							</div>
-						</div>
-						<div className="flex flex-row w-full gap-x-3">
-							<div className="font-semibold">3.</div>
-							<div className="text-gray-500">
-								Reach out to the people involved in past issues about the possibility of removing events
-								from your record.
+								Once made public, court judgments cannot be removed from records, unless a judge seals
+								the case (which is highly unlikely) or you pay off the creditor satisfying the judgment.
 							</div>
 						</div>
 					</div>
@@ -808,7 +754,7 @@ const DerogatoriesContainer = () => {
 	let set_path = use_container_store((state) => state.set_path);
 
 	const container_components = {
-		derogatories: Derogatories,
+		// derogatories: Derogatories,
 		legal: Legal,
 		collections: Collections,
 		liens: Liens,
@@ -827,12 +773,12 @@ const DerogatoriesContainer = () => {
 	const Nav = () => {
 		return (
 			<div className="flex flex-row w-full border rounded bg-white h-[40px] items-center justify-between text-blue-600 text-sm font-semibold">
-				<div
+				{/* <div
 					className={`${nav_base_styles} ${selected_component == "derogatories" && selected_styles}`}
 					onClick={() => onSelectComponent("derogatories")}
 				>
 					Derogatories
-				</div>
+				</div> */}
 				<div
 					className={`${nav_base_styles} ${selected_component == "legal" && selected_styles}`}
 					onClick={() => onSelectComponent("legal")}
@@ -875,6 +821,13 @@ const CreditUtilization = () => {
 	let loader_data = useLoaderData();
 	let { experian_trade_lines = [] } = loader_data;
 
+	let total_credit_limit = pipe(get(all, "recentHighCredit", "amount"), sum)(experian_trade_lines);
+	let total_current_balance = pipe(get(all, "accountBalance", "amount"), sum)(experian_trade_lines);
+	let utilization_ratio = (total_current_balance / total_credit_limit) * 100;
+	// console.log("CreditUtilization");
+	// console.log(total_credit_limit);
+	// console.log(total_current_balance);
+
 	const TradeLine = ({ trade_line }) => {
 		let is_current = trade_line.dbt30 === 0 && trade_line.dbt60 === 0 && trade_line.dbt90 == 0;
 		let maybe_utilization_ratio = (trade_line?.accountBalance?.amount / trade_line?.recentHighCredit?.amount) * 100;
@@ -904,15 +857,15 @@ const CreditUtilization = () => {
 		<div className="flex flex-col w-full gap-y-4">
 			<div className="flex flex-row w-full divide-x">
 				<div className="flex flex-col w-1/3 items-center gap-y-2">
-					<div className="text-3xl font-semibold">$307,617</div>
-					<div className="text-sm">Total credit limit</div>
-				</div>
-				<div className="flex flex-col w-1/3 items-center gap-y-2">
-					<div className="text-3xl font-semibold">$30,617</div>
+					<div className="text-3xl font-semibold">{currency.format(total_current_balance)}</div>
 					<div className="text-sm">Total current balance</div>
 				</div>
 				<div className="flex flex-col w-1/3 items-center gap-y-2">
-					<div className="text-3xl font-semibold">14%</div>
+					<div className="text-3xl font-semibold">{currency.format(total_credit_limit)}</div>
+					<div className="text-sm">Total credit limit</div>
+				</div>
+				<div className="flex flex-col w-1/3 items-center gap-y-2">
+					<div className="text-3xl font-semibold">{utilization_ratio.toPrecision(2)}%</div>
 					<div className="text-sm">Credit utilization ratio</div>
 				</div>
 			</div>
@@ -936,60 +889,79 @@ const CreditUtilization = () => {
 };
 
 const BusinessFacts = () => {
+	let { experian_years_on_file = 0, experian_facts } = useLoaderData();
+
+	let {
+		businessType,
+		corporateLinkageType,
+		employeeSize,
+		executiveInformation,
+		salesRevenue,
+		dateOfIncorporation,
+		businessHeader = {},
+		stateOfIncorporation,
+		naicsCodes = [],
+		sicCodes = [],
+	} = experian_facts;
+
+	let { businessName, taxId, address = {} } = businessHeader;
+
 	return (
 		<div className="flex flex-col w-full gap-y-3">
 			<div className="flex flex-col w-full items-start bg-white border rounded text-sm my-1">
 				<Disclosure defaultOpen={true}>
 					<Disclosure.Button className="flex flex-col w-full py-4 border-b px-3 rounded">
-						MRM Capital Holdings, Inc.
+						{businessName}
 					</Disclosure.Button>
 					<Disclosure.Panel className="flex flex-col w-full text-gray-500 rounded overflow-hidden">
 						<div className="flex flex-col w-full rounded">
 							<div className="flex flex-row w-full border-b h-[100px] divide-x">
 								<div className="flex flex-col w-1/4 items-end justify-center px-5">
 									<div className="">Sales Revenue</div>
-									<div className="flex flex-col text-2xl font-semibold">$837,000</div>
+									<div className="flex flex-col text-2xl font-semibold">
+										{currency.format(salesRevenue)}
+									</div>
 								</div>
 								<div className="flex flex-col w-1/4 items-end justify-center px-5">
 									<div>Employee Size</div>
-									<div className="flex flex-col text-2xl font-semibold">1</div>
+									<div className="flex flex-col text-2xl font-semibold">{employeeSize}</div>
 								</div>
 								<div className="flex flex-col w-1/4 items-end justify-center px-5">
 									<div>Years on File</div>
-									<div className="flex flex-col text-2xl font-semibold">8</div>
+									<div className="flex flex-col text-2xl font-semibold">{experian_years_on_file}</div>
 								</div>
 								<div className="flex flex-col w-1/4 items-end justify-center px-5">
 									<div>Date of incorporation</div>
-									<div className="flex flex-col text-2xl font-semibold">11-12-2015</div>
+									<div className="flex flex-col text-2xl font-semibold">{dateOfIncorporation}</div>
 								</div>
 							</div>
 							<div className="flex flex-row w-full divide-x border-b">
 								<div className="flex flex-col w-1/2 ">
 									<div className="flex flex-row py-3 border-b justify-between px-3 last-of-type:border-b-0">
 										<div>Business Type</div>
-										<div className="flex flex-col font-semibold">Corporation</div>
+										<div className="flex flex-col font-semibold">{businessType}</div>
 									</div>
 									<div className="flex flex-row py-3 border-b justify-between px-3 last-of-type:border-b-0">
 										<div>Corporate Linkage Type</div>
-										<div className="flex flex-col font-semibold">Headquarters/Parent</div>
+										<div className="flex flex-col font-semibold">{corporateLinkageType}</div>
 									</div>
 									<div className="flex flex-row py-3 border-b justify-between px-3 last-of-type:border-b-0">
 										<div>State of Incorporation</div>
-										<div className="flex flex-col font-semibold">FL</div>
+										<div className="flex flex-col font-semibold">{stateOfIncorporation}</div>
 									</div>
 								</div>
 								<div className="flex flex-col w-1/2">
 									<div className="flex flex-row py-3 border-b justify-between px-3 last-of-type:border-b-0">
 										<div>Business name</div>
-										<div className="flex flex-col font-semibold">MRM CAPITAL HOLDINGS, INC</div>
+										<div className="flex flex-col font-semibold">{businessName}</div>
 									</div>
 									<div className="flex flex-row py-3 border-b justify-between px-3 last-of-type:border-b-0">
 										<div>Tax ID</div>
-										<div className="flex flex-col font-semibold">464612632</div>
+										<div className="flex flex-col font-semibold">{taxId}</div>
 									</div>
 									<div className="flex flex-row py-3 border-b justify-between px-3 last-of-type:border-b-0">
 										<div>DUNS</div>
-										<div className="flex flex-col font-semibold">464612632</div>
+										<div className="flex flex-col font-semibold"></div>
 									</div>
 								</div>
 							</div>
@@ -1000,36 +972,37 @@ const BusinessFacts = () => {
 									</div>
 									<div className="flex flex-col flex-1">
 										<div className="flex flex-row gap-x-4">
-											<div className="text-base font-semibold">9315 TRINANA CIR</div>
+											<div className="text-base font-semibold">{address?.street}</div>
 										</div>
-										<div>WINTER GARDEN, FL, 34787</div>
+										<div>
+											{address?.city}, {address?.state} {address?.zip}{" "}
+										</div>
 									</div>
 								</div>
-								<div className="flex flex-row w-full py-4 border-b last-of-type:border-b-0">
-									<div className="flex flex-col w-[50px] items-end pr-3">
-										<UserCircleIcon className="h-6 w-6 text-gray-500" />
-									</div>
-									<div className="flex flex-col flex-1">
-										<div className="flex flex-row gap-x-4">
-											<div className="text-base font-semibold">Mathew Meehan</div>
-											<div className="bg-slate-100 py-1 rounded-full text-xs px-4">CEO</div>
-										</div>
-										<div>Executive</div>
-									</div>
-								</div>
-								<div className="flex flex-row w-full py-4 border-b last-of-type:border-b-0">
-									<div className="flex flex-col w-[50px] items-end pr-3">
-										<UserCircleIcon className="h-6 w-6 text-gray-500" />
-									</div>
-									<div className="flex flex-col flex-1">
-										<div className="flex flex-row gap-x-4">
-											<div className="text-base font-semibold">Krissy Dascoli</div>
-											<div className="bg-slate-100 py-1 rounded-full text-xs px-4">
-												Vice President
+								<div className="flex flex-col w-full">
+									{pipe(
+										map((executive) => (
+											<div
+												className="flex flex-row w-full py-4 border-b last-of-type:border-b-0"
+												key={Math.random()}
+											>
+												<div className="flex flex-col w-[50px] items-end pr-3">
+													<UserCircleIcon className="h-6 w-6 text-gray-500" />
+												</div>
+												<div className="flex flex-col flex-1">
+													<div className="flex flex-row gap-x-4">
+														<div className="text-base font-semibold">
+															{executive?.firstName} {executive?.lastName}
+														</div>
+														<div className="bg-slate-100 py-1 rounded-full text-xs px-4">
+															{executive?.title}
+														</div>
+													</div>
+													<div>Executive</div>
+												</div>
 											</div>
-										</div>
-										<div>Executive</div>
-									</div>
+										))
+									)(executiveInformation)}
 								</div>
 							</div>
 						</div>
@@ -1044,16 +1017,20 @@ const BusinessFacts = () => {
 					</Disclosure.Button>
 					<Disclosure.Panel className="flex flex-col w-full text-gray-500 rounded overflow-hidden">
 						<div className="flex flex-col w-full rounded">
-							<div className="flex flex-col divide-y">
-								<div className="flex flex-row w-full h-[50px] items-center px-4">
-									<div className="flex flex-col w-[100px]">Code</div>
-									<div className="font-semibold">6719</div>
-								</div>
-								<div className="flex flex-row w-full h-[50px] items-center px-4">
-									<div className="flex flex-col w-[100px]">Description</div>
-									<div className="font-semibold">Offices of Holding Companies, NEC</div>
-								</div>
-							</div>
+							{pipe(
+								map((code) => (
+									<div className="flex flex-col divide-y" key={Math.random()}>
+										<div className="flex flex-row w-full h-[50px] items-center px-4">
+											<div className="flex flex-col w-[100px]">Code</div>
+											<div className="font-semibold">{code.code}</div>
+										</div>
+										<div className="flex flex-row w-full h-[50px] items-center px-4">
+											<div className="flex flex-col w-[100px]">Description</div>
+											<div className="font-semibold">{code.definition}</div>
+										</div>
+									</div>
+								))
+							)(sicCodes)}
 						</div>
 					</Disclosure.Panel>
 				</Disclosure>
@@ -1066,16 +1043,20 @@ const BusinessFacts = () => {
 					</Disclosure.Button>
 					<Disclosure.Panel className="flex flex-col w-full text-gray-500 rounded overflow-hidden">
 						<div className="flex flex-col w-full rounded">
-							<div className="flex flex-col divide-y">
-								<div className="flex flex-row w-full h-[50px] items-center px-4">
-									<div className="flex flex-col w-[100px]">Code</div>
-									<div className="font-semibold">6719</div>
-								</div>
-								<div className="flex flex-row w-full h-[50px] items-center px-4">
-									<div className="flex flex-col w-[100px]">Description</div>
-									<div className="font-semibold">Offices of Holding Companies, NEC</div>
-								</div>
-							</div>
+							{pipe(
+								map((code) => (
+									<div className="flex flex-col divide-y" key={Math.random()}>
+										<div className="flex flex-row w-full h-[50px] items-center px-4">
+											<div className="flex flex-col w-[100px]">Code</div>
+											<div className="font-semibold">{code.code}</div>
+										</div>
+										<div className="flex flex-row w-full h-[50px] items-center px-4">
+											<div className="flex flex-col w-[100px]">Description</div>
+											<div className="font-semibold">{code.definition}</div>
+										</div>
+									</div>
+								))
+							)(naicsCodes)}
 						</div>
 					</Disclosure.Panel>
 				</Disclosure>
@@ -1085,6 +1066,10 @@ const BusinessFacts = () => {
 };
 
 const TradePaymentTotals = () => {
+	let { experian_trade_payment_totals } = useLoaderData();
+	let { trade_lines, combined_trade_lines, additional_trade_lines, newly_reported_trade_lines } =
+		experian_trade_payment_totals;
+
 	return (
 		<div>
 			<div className="flex flex-col w-full items-start bg-white border rounded text-sm my-1">
@@ -1099,19 +1084,25 @@ const TradePaymentTotals = () => {
 								<div className="flex flex-row gap-x-4">
 									<div className="p-5 border w-1/4 rounded">
 										<div>Current Debt</div>
-										<div className="font-semibold text-2xl">0</div>
+										<div className="font-semibold text-2xl">
+											{currency.format(trade_lines?.currentDbt)}
+										</div>
 									</div>
 									<div className="p-5 border w-1/4 rounded">
-										<div>Current Debt</div>
-										<div className="font-semibold text-2xl">0</div>
+										<div>Current Percentage</div>
+										<div className="font-semibold text-2xl">{trade_lines?.currentPercentage}%</div>
 									</div>
 									<div className="p-5 border w-1/4 rounded">
-										<div>Current Debt</div>
-										<div className="font-semibold text-2xl">0</div>
+										<div>Total Account Balance</div>
+										<div className="font-semibold text-2xl">
+											{currency.format(trade_lines?.totalAccountBalance?.amount)}
+										</div>
 									</div>
 									<div className="p-5 border w-1/4 rounded">
-										<div>Current Debt</div>
-										<div className="font-semibold text-2xl">0</div>
+										<div>Total High Credit Amount</div>
+										<div className="font-semibold text-2xl">
+											{currency.format(trade_lines?.totalHighCreditAmount?.amount)}
+										</div>
 									</div>
 								</div>
 							</div>
@@ -1120,19 +1111,27 @@ const TradePaymentTotals = () => {
 								<div className="flex flex-row gap-x-4">
 									<div className="p-5 border w-1/4 rounded">
 										<div>Current Debt</div>
-										<div className="font-semibold text-2xl">0</div>
+										<div className="font-semibold text-2xl">
+											{currency.format(combined_trade_lines?.currentDbt)}
+										</div>
 									</div>
 									<div className="p-5 border w-1/4 rounded">
-										<div>Current Debt</div>
-										<div className="font-semibold text-2xl">0</div>
+										<div>Current Percentage</div>
+										<div className="font-semibold text-2xl">
+											{combined_trade_lines?.currentPercentage}%
+										</div>
 									</div>
 									<div className="p-5 border w-1/4 rounded">
-										<div>Current Debt</div>
-										<div className="font-semibold text-2xl">0</div>
+										<div>Total Account Balance</div>
+										<div className="font-semibold text-2xl">
+											{currency.format(combined_trade_lines?.totalAccountBalance?.amount)}
+										</div>
 									</div>
 									<div className="p-5 border w-1/4 rounded">
-										<div>Current Debt</div>
-										<div className="font-semibold text-2xl">0</div>
+										<div>Total High Credit Amount</div>
+										<div className="font-semibold text-2xl">
+											{currency.format(combined_trade_lines?.totalHighCreditAmount?.amount)}
+										</div>
 									</div>
 								</div>
 							</div>
@@ -1141,19 +1140,27 @@ const TradePaymentTotals = () => {
 								<div className="flex flex-row gap-x-4">
 									<div className="p-5 border w-1/4 rounded">
 										<div>Current Debt</div>
-										<div className="font-semibold text-2xl">0</div>
+										<div className="font-semibold text-2xl">
+											{currency.format(additional_trade_lines?.currentDbt)}
+										</div>
 									</div>
 									<div className="p-5 border w-1/4 rounded">
-										<div>Current Debt</div>
-										<div className="font-semibold text-2xl">0</div>
+										<div>Current Percentage</div>
+										<div className="font-semibold text-2xl">
+											{additional_trade_lines?.currentPercentage}%
+										</div>
 									</div>
 									<div className="p-5 border w-1/4 rounded">
-										<div>Current Debt</div>
-										<div className="font-semibold text-2xl">0</div>
+										<div>Total Account Balance</div>
+										<div className="font-semibold text-2xl">
+											{currency.format(additional_trade_lines?.totalAccountBalance?.amount)}
+										</div>
 									</div>
 									<div className="p-5 border w-1/4 rounded">
-										<div>Current Debt</div>
-										<div className="font-semibold text-2xl">0</div>
+										<div>Total High Credit Amount</div>
+										<div className="font-semibold text-2xl">
+											{currency.format(additional_trade_lines?.totalHighCreditAmount?.amount)}
+										</div>
 									</div>
 								</div>
 							</div>
@@ -1162,19 +1169,27 @@ const TradePaymentTotals = () => {
 								<div className="flex flex-row gap-x-4">
 									<div className="p-5 border w-1/4 rounded">
 										<div>Current Debt</div>
-										<div className="font-semibold text-2xl">0</div>
+										<div className="font-semibold text-2xl">
+											{currency.format(newly_reported_trade_lines?.currentDbt)}
+										</div>
 									</div>
 									<div className="p-5 border w-1/4 rounded">
-										<div>Current Debt</div>
-										<div className="font-semibold text-2xl">0</div>
+										<div>Current Percentage</div>
+										<div className="font-semibold text-2xl">
+											{newly_reported_trade_lines?.currentPercentage}%
+										</div>
 									</div>
 									<div className="p-5 border w-1/4 rounded">
-										<div>Current Debt</div>
-										<div className="font-semibold text-2xl">0</div>
+										<div>Total Account Balance</div>
+										<div className="font-semibold text-2xl">
+											{currency.format(newly_reported_trade_lines?.totalAccountBalance?.amount)}
+										</div>
 									</div>
 									<div className="p-5 border w-1/4 rounded">
-										<div>Current Debt</div>
-										<div className="font-semibold text-2xl">0</div>
+										<div>Total High Credit Amount</div>
+										<div className="font-semibold text-2xl">
+											{currency.format(newly_reported_trade_lines?.totalHighCreditAmount?.amount)}
+										</div>
 									</div>
 								</div>
 							</div>
@@ -1339,6 +1354,7 @@ const Paydexscore = () => {
 };
 
 const Factors = () => {
+	let { experian_factors } = useLoaderData();
 	return (
 		<div>
 			<div className="flex flex-col w-full items-start bg-white border rounded text-sm my-1">
@@ -1349,23 +1365,19 @@ const Factors = () => {
 					<Disclosure.Panel className="flex flex-col w-full text-gray-500">
 						<div className="flex flex-col w-full">
 							<div className="flex flex-row border-b p-3 font-semibold">
-								<div className="flex flex-col w-[150px]">Score</div>
+								<div className="flex flex-col w-[150px]">Code</div>
 								<div className="flex flex-col flex-1">Definition</div>
 							</div>
 
 							<div className="flex flex-col w-full divide-y">
-								<div className="flex flex-row p-3">
-									<div className="flex flex-col w-[150px]">045</div>
-									<div className="flex flex-col flex-1">NUMBER OF GOOD COMMERCIAL ACCOUNTS</div>
-								</div>
-								<div className="flex flex-row p-3">
-									<div className="flex flex-col w-[150px]">045</div>
-									<div className="flex flex-col flex-1">NUMBER OF GOOD COMMERCIAL ACCOUNTS</div>
-								</div>
-								<div className="flex flex-row p-3">
-									<div className="flex flex-col w-[150px]">045</div>
-									<div className="flex flex-col flex-1">NUMBER OF GOOD COMMERCIAL ACCOUNTS</div>
-								</div>
+								{pipe(
+									map((factor) => (
+										<div className="flex flex-row p-3" key={Math.random()}>
+											<div className="flex flex-col w-[150px]">{factor?.code}</div>
+											<div className="flex flex-col flex-1">{factor?.definition}</div>
+										</div>
+									))
+								)(experian_factors)}
 							</div>
 						</div>
 					</Disclosure.Panel>
@@ -1376,8 +1388,19 @@ const Factors = () => {
 };
 
 const TradeSummary = () => {
-	let trade_line = {};
-	// let is_current = trade_line.dbt30 === 0 && trade_line.dbt60 === 0 && trade_line.dbt90 == 0;
+	let { experian_trade_summary } = useLoaderData();
+	let {
+		currentDbt,
+		monthlyAverageDbt,
+		highestDbt6Months,
+		highestDbt5Quarters,
+		allTradelineCount,
+		allTradelineBalance,
+		currentTradelineCount,
+		medianCreditAmountExtended,
+		currentAccountBalance,
+		singleHighCredit,
+	} = experian_trade_summary;
 
 	return (
 		<div className="flex flex-col w-full items-start bg-white border rounded text-sm my-1">
@@ -1389,27 +1412,25 @@ const TradeSummary = () => {
 							<div className="flex flex-col w-full divide-y">
 								<div className="flex flex-row justify-between w-full py-3">
 									<div className="">Current Dbt</div>
-									<div className="text-black font-semibold">
-										{currency.format(trade_line?.accountBalance?.amount)}
-									</div>
+									<div className="text-black font-semibold">{currency.format(currentDbt)}</div>
 								</div>
 								<div className="flex flex-row justify-between w-full py-3">
 									<div className="">Monthly Average Dbt</div>
-									<div className="text-black font-semibold">
-										{currency.format(trade_line?.recentHighCredit?.amount)}
-									</div>
+									<div className="text-black font-semibold">{currency.format(monthlyAverageDbt)}</div>
 								</div>
 								<div className="flex flex-row justify-between w-full py-3">
 									<div className="">Highest Dbt 6 Months</div>
-									<div className="text-black font-semibold">{trade_line?.currentPercentage}%</div>
+									<div className="text-black font-semibold">{currency.format(highestDbt6Months)}</div>
 								</div>
 								<div className="flex flex-row justify-between w-full py-3">
 									<div className="">Highest Dbt 5 Quarters</div>
-									<div className="text-black font-semibold">{trade_line?.dateReported}</div>
+									<div className="text-black font-semibold">
+										{currency.format(highestDbt5Quarters)}
+									</div>
 								</div>
 								<div className="flex flex-row justify-between w-full py-3">
 									<div className="">All Tradeline Count</div>
-									<div className="text-black font-semibold">{trade_line?.dateLastActivity}</div>
+									<div className="text-black font-semibold">{allTradelineCount}</div>
 								</div>
 							</div>
 						</div>
@@ -1418,26 +1439,27 @@ const TradeSummary = () => {
 								<div className="flex flex-row justify-between w-full py-3">
 									<div className="">All Tradeline Balance</div>
 									<div className="text-black font-semibold">
-										{currency.format(trade_line?.accountBalance?.amount)}
+										{currency.format(allTradelineBalance)}
 									</div>
 								</div>
 								<div className="flex flex-row justify-between w-full py-3">
 									<div className="">Current Tradeline Count</div>
-									<div className="text-black font-semibold">
-										{currency.format(trade_line?.recentHighCredit?.amount)}
-									</div>
+									<div className="text-black font-semibold">{currentTradelineCount}</div>
 								</div>
 								<div className="flex flex-row justify-between w-full py-3">
 									<div className="">Current Account Balance</div>
-									<div className="text-black font-semibold">{trade_line?.currentPercentage}%</div>
+
+									<div className="text-black font-semibold">
+										{currency.format(currentAccountBalance)}
+									</div>
 								</div>
 								<div className="flex flex-row justify-between w-full py-3">
 									<div className="">Median Credit Amount Extended</div>
-									<div className="text-black font-semibold">{trade_line?.dateReported}</div>
+									<div className="text-black font-semibold">{medianCreditAmountExtended}</div>
 								</div>
 								<div className="flex flex-row justify-between w-full py-3">
 									<div className="">Single High Credit</div>
-									<div className="text-black font-semibold">{trade_line?.dateLastActivity}</div>
+									<div className="text-black font-semibold">{currency.format(singleHighCredit)}</div>
 								</div>
 							</div>
 						</div>
@@ -1450,26 +1472,26 @@ const TradeSummary = () => {
 
 let score_color = (score) => {
 	if (score < 10) {
-		return "red-500";
+		return "#ef4444";
 	}
 
 	if (score >= 10 && score < 25) {
-		return "orange-400";
+		return "#fb923c";
 	}
 
 	if (score >= 25 && score < 50) {
-		return "yellow-300";
+		return "#fde047";
 	}
 
 	if (score >= 50 && score < 75) {
-		return "green-600";
+		return "#16a34a";
 	}
 
 	if (score >= 75) {
-		return "green-700";
+		return "#15803d";
 	}
 
-	return "green-700";
+	return "#15803d";
 };
 
 const ScoreLinearRangeGraph = ({ score = 0 }) => {
@@ -1486,10 +1508,8 @@ const ScoreLinearRangeGraph = ({ score = 0 }) => {
 					<div className={`flex flex-col absolute w-[10%] bg-red-500`} style={{ height }}></div>
 				</div>
 				<div
-					className={`flex flex-col absolute w-[20px] h-[20px] rounded-full border-[3px] border-white shadow bg-${score_color(
-						score
-					)}`}
-					style={{ left: `calc(${score}% - 15px)` }}
+					className={`flex flex-col absolute w-[20px] h-[20px] rounded-full border-[3px] border-white shadow`}
+					style={{ left: `calc(${score}% - 15px)`, backgroundColor: score_color(score) }}
 				></div>
 			</div>
 			<div className="felx flex-col w-full relative text-xs mt-2 -ml-2">
@@ -1674,7 +1694,9 @@ const ScoreRangeGraph = ({ score, bureau = "" }) => {
 			</div>
 			<div className="flex flex-row justify-between items-end mb-3 font-semibold">
 				<div className="text-5xl">{score}</div>
-				<div className={`text-2xl ${"text-" + score_color(score)}`}>Low risk</div>
+				<div className={`text-2xl`} style={{ color: score_color(score) }}>
+					Low risk
+				</div>
 			</div>
 			<div>
 				<ScoreLinearRangeGraph score={score} />
@@ -1690,15 +1712,19 @@ export default function Container() {
 		plan_id,
 		report_plan_id = "builder",
 		cache_dependencies,
+		scores = {},
 	} = loader_data;
 	let use_cache_client = use_cache((state) => state.set_dependencies);
-	let score = 50;
+	let { dnb_business_score, experian_business_score } = scores;
 
-	useEffect(() => {
-		if (cache_dependencies !== undefined) {
-			use_cache_client({ path: `/credit/report/business/experian`, dependencies: cache_dependencies });
-		}
-	}, []);
+	// useEffect(() => {
+	// 	if (cache_dependencies !== undefined) {
+	// 		use_cache_client({ path: `/credit/report/business/experian`, dependencies: cache_dependencies });
+	// 	}
+	// }, []);
+
+	// console.log("loader_data");
+	// console.log(loader_data);
 
 	return (
 		<div className="flex flex-col w-full bg-white py-4 px-5 rounded">
@@ -1729,10 +1755,10 @@ export default function Container() {
 						</div> */}
 						<div className="flex flex-row w-full justify-between gap-x-[100px] px-[10px]">
 							<div className="flex flex-col w-[50%] ">
-								<ScoreRangeGraph score={74} bureau="experian" />
+								<ScoreRangeGraph score={experian_business_score} bureau="experian" />
 							</div>
 							<div className="flex flex-col w-[50%]">
-								<ScoreRangeGraph score={74} bureau="dnb" />
+								<ScoreRangeGraph score={dnb_business_score} bureau="dnb" />
 							</div>
 						</div>
 					</div>
