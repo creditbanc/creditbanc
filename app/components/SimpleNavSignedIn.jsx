@@ -362,9 +362,9 @@ export default function Nav({ entity_id, roles, companies }) {
 			</Modal>
 			<div className="flex flex-row justify-between">
 				<div className="flex flex-col justify-center w-[150px]">
-					<CacheLink to={`/home/resource/e/${entity_id}/g/${group_id}`}>
+					<Link to={`/home/resource/e/${entity_id}/g/${group_id}?rand=${Math.random()}`}>
 						<img src={cb_logo} className="hidden sm:block h-5 w-auto" />
-					</CacheLink>
+					</Link>
 				</div>
 
 				<div className="flex flex-row flex-1 justify-between  items-center mt-1">
