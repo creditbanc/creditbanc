@@ -124,6 +124,16 @@ export default class BusinessReport {
 		return this;
 	}
 
+	get experian_commercial_score() {
+		this.response = this.report.pipe(
+			rxmap((report) => ({ experian_commercial_score: report.experian_commercial_score() })),
+			catchError(catch_with_default({ experian_commercial_score: [] }, "experian_commercial_score")),
+			concatMap(merge_with_current(this.response))
+		);
+
+		return this;
+	}
+
 	get experian_derogatories() {
 		this.response = this.report.pipe(
 			rxmap((report) => ({ experian_derogatories: report.experian_derogatories() })),
@@ -208,6 +218,16 @@ export default class BusinessReport {
 		this.response = this.report.pipe(
 			rxmap((report) => ({ experian_facts: report.experian_facts() })),
 			catchError(catch_with_default({ experian_facts: [] }, "experian_facts")),
+			concatMap(merge_with_current(this.response))
+		);
+
+		return this;
+	}
+
+	get dnb_duns_number() {
+		this.response = this.report.pipe(
+			rxmap((report) => ({ dnb_duns_number: report.dnb_duns_number() })),
+			catchError(catch_with_default({ dnb_duns_number: 0 }, "dnb_duns_number")),
 			concatMap(merge_with_current(this.response))
 		);
 

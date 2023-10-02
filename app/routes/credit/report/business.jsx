@@ -194,8 +194,8 @@ export default function BusinessReport() {
 							<Outlet />
 						</div>
 
-						<div className="hidden @6xl:flex flex-col min-w-[330px] max-w-[350px] h-full bg-white border rounded">
-							<div className="p-5">
+						{/* <div className="hidden @6xl:flex flex-col min-w-[330px] max-w-[350px] h-full bg-white border rounded"> */}
+						{/* <div className="p-5">
 								<div className="flex flex-row space-x-3 items-center">
 									<div>
 										<span className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-gray-500">
@@ -206,8 +206,8 @@ export default function BusinessReport() {
 									</div>
 									<div>{business?.name}</div>
 								</div>
-							</div>
-							{/* <div className="flex flex-col py-2">
+							</div> */}
+						{/* <div className="flex flex-col py-2">
 									<Link
 										to={`/financial/transactions`}
 										className="px-5 mb-4 flex flex-row items-center space-x-3 text-blue-500 cursor-pointer text-sm"
@@ -221,7 +221,7 @@ export default function BusinessReport() {
 										</div>
 									</Link>
 								</div> */}
-							<div className="flex flex-col w-full overflow-scroll scrollbar-none">
+						{/* <div className="flex flex-col w-full overflow-scroll scrollbar-none">
 								<div className="border-t"></div>
 								<div className="flex flex-col w-full p-5 space-y-3">
 									<div className="text-gray-400 text-sm">Credit Scores</div>
@@ -245,8 +245,8 @@ export default function BusinessReport() {
 										report_plan_id={report_plan_id}
 									/>
 								</div>
-							</div>
-						</div>
+							</div> */}
+						{/* </div> */}
 					</div>
 				</div>
 			</div>

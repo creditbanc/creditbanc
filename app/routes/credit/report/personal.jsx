@@ -129,8 +129,8 @@ export default function CreditReport() {
 								<Outlet />
 							</div>
 
-							<div className="hidden @6xl:flex flex-col min-w-[330px] max-w-[350px] mr-2 h-full bg-white border rounded">
-								<div className="p-5">
+							{/* <div className="hidden @6xl:flex flex-col min-w-[330px] max-w-[350px] mr-2 h-full bg-white border rounded"> */}
+							{/* <div className="p-5">
 									<div className="flex flex-row space-x-3 items-center">
 										<div>
 											<span className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-gray-500">
@@ -143,8 +143,8 @@ export default function CreditReport() {
 											{first_name} {last_name}
 										</div>
 									</div>
-								</div>
-								{/* <div className="flex flex-col py-2">
+								</div> */}
+							{/* <div className="flex flex-col py-2">
 										<Link
 											to={`/financial/transactions`}
 											className="px-5 mb-4 flex flex-row items-center space-x-3 text-blue-500 cursor-pointer text-sm"
@@ -158,7 +158,7 @@ export default function CreditReport() {
 											</div>
 										</Link>
 									</div> */}
-								<div className="flex flex-col w-full overflow-scroll scrollbar-none">
+							{/* <div className="flex flex-col w-full overflow-scroll scrollbar-none">
 									<div className="border-t"></div>
 									<div className="flex flex-col w-full p-5 space-y-3">
 										<div className="text-gray-400 text-sm">Credit Scores</div>
@@ -182,8 +182,8 @@ export default function CreditReport() {
 										<div className=" text-gray-400">Quick Links</div>
 										<PersonalCreditTabsVertical selected={get_route_endpoint(location.pathname)} />
 									</div>
-								</div>
-							</div>
+								</div> */}
+							{/* </div> */}
 						</div>
 					</div>
 				</div>

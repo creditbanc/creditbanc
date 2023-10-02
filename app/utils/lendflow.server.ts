@@ -90,6 +90,11 @@ export class LendflowInternal {
 		return falsyTryCatch(pipe(get(...lens_path)), always(0))(this.report);
 	};
 
+	experian_commercial_score = () => {
+		const lens_path = ["commercial_data", "experian", "intelliscore", "commercialScore"];
+		return falsyTryCatch(pipe(get(...lens_path)), always(0))(this.report);
+	};
+
 	experian_risk_class = () => {
 		const lens_path = ["commercial_data", "experian", "intelliscore", "commercialScore", "riskClass"];
 		return falsyTryCatch(pipe(get(...lens_path)), always({}))(this.report);
@@ -163,8 +168,8 @@ export class LendflowInternal {
 			always([])
 		)(this.report);
 
-		console.log("utils.lendflow.experian_factors");
-		console.log(res);
+		// console.log("utils.lendflow.experian_factors");
+		// console.log(res);
 
 		return res;
 	};
@@ -212,9 +217,9 @@ export class LendflowInternal {
 		];
 		let res = falsyTryCatch(pipe(get(...lens_path)), always(""))(this.report);
 
-		console.log("utils.lendflow.dnb_delinquency_score");
+		// console.log("utils.lendflow.dnb_delinquency_score");
 
-		inspect(this.report);
+		// inspect(this.report);
 
 		// console.log(res);
 
@@ -237,7 +242,7 @@ export class LendflowInternal {
 	};
 
 	dnb_duns_number = () => {
-		let lens_path = ["commercial_data", "dnb", "fi_l2", "organization", "duns"];
+		let lens_path = ["commercial_data", "dnb", "pi_l3", "organization", "duns"];
 		return falsyTryCatch(pipe(get(...lens_path)), always(0))(this.report);
 	};
 

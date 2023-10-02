@@ -39,7 +39,8 @@ export const loader = async ({ request }) => {
 	let report = new BusinessReport(group_id);
 	let payload =
 		report.scores.experian_trade_payment_totals.report_sha.experian_trade_lines.experian_employee_size
-			.experian_years_on_file.experian_facts.experian_trade_summary.business_info.experian_factors.fold;
+			.experian_years_on_file.experian_facts.experian_trade_summary.business_info.experian_factors
+			.experian_commercial_score.dnb_duns_number.fold;
 	let response = await lastValueFrom(payload.pipe(fold(on_success(request), on_error)));
 	return response;
 };
@@ -889,7 +890,7 @@ const CreditUtilization = () => {
 };
 
 const BusinessFacts = () => {
-	let { experian_years_on_file = 0, experian_facts } = useLoaderData();
+	let { experian_years_on_file = 0, experian_facts, dnb_duns_number } = useLoaderData();
 
 	let {
 		businessType,
@@ -961,7 +962,7 @@ const BusinessFacts = () => {
 									</div>
 									<div className="flex flex-row py-3 border-b justify-between px-3 last-of-type:border-b-0">
 										<div>DUNS</div>
-										<div className="flex flex-col font-semibold"></div>
+										<div className="flex flex-col font-semibold">{dnb_duns_number}</div>
 									</div>
 								</div>
 							</div>
@@ -1713,9 +1714,12 @@ export default function Container() {
 		report_plan_id = "builder",
 		cache_dependencies,
 		scores = {},
+		experian_facts = {},
 	} = loader_data;
 	let use_cache_client = use_cache((state) => state.set_dependencies);
 	let { dnb_business_score, experian_business_score } = scores;
+
+	let { dateOfIncorporation } = experian_facts;
 
 	// useEffect(() => {
 	// 	if (cache_dependencies !== undefined) {
@@ -1742,7 +1746,7 @@ export default function Container() {
 					</h1>
 					<div className="flex flex-row w-full justify-center gap-x-2 mt-6 text-lg leading-8 text-gray-600">
 						<div>Date of incorporation:</div>
-						<div className="font-semibold">11-12-2015</div>
+						<div className="font-semibold">{dateOfIncorporation}</div>
 					</div>
 				</div>
 			</div>
@@ -1776,6 +1780,13 @@ export default function Container() {
 
 					<div className="flex flex-col w-full">
 						<div className="border-b border-gray-200 mb-5 pb-5">
+							<h3 className="text-2xl font-semibold leading-6 text-gray-900">Debt Analysis</h3>
+						</div>
+						<CreditUtilization />
+					</div>
+
+					<div className="flex flex-col w-full">
+						<div className="border-b border-gray-200 mb-5 pb-5">
 							<h3 className="text-2xl font-semibold leading-6 text-gray-900">Trade Lines</h3>
 						</div>
 						<TradeLines />
@@ -1801,13 +1812,6 @@ export default function Container() {
 
 					<div className="flex flex-col w-full">
 						<DerogatoriesContainer />
-					</div>
-
-					<div className="flex flex-col w-full">
-						<div className="border-b border-gray-200 mb-5 pb-5">
-							<h3 className="text-2xl font-semibold leading-6 text-gray-900">Debt Analysis</h3>
-						</div>
-						<CreditUtilization />
 					</div>
 				</div>
 			</div>
