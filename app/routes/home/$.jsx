@@ -1227,7 +1227,11 @@ export default function Home() {
 						)}
 
 						<div className="flex flex-col w-full h-full">
-							{!application_id && business_report_is_empty && <NewBusinessReportForm />}
+							{!application_id && business_report_is_empty && (
+								<div className="flex flex-col max-w-5xl">
+									<NewBusinessReportForm />
+								</div>
+							)}
 							{no_business_match && <BusinessMatchSelect />}
 							{!business_report_is_empty && (
 								<div className="flex flex-col h-full gap-x-5 gap-y-[100px] lg:space-y-0 border rounded bg-white items-center w-full py-10 overflow-auto scrollbar-none">
