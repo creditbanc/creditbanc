@@ -41,7 +41,7 @@ export const loader = async ({ request }) => {
 	let payload =
 		report.scores.experian_trade_payment_totals.report_sha.experian_trade_lines.experian_employee_size
 			.experian_years_on_file.experian_facts.experian_trade_summary.business_info.experian_factors
-			.experian_commercial_score.dnb_duns_number.fold;
+			.experian_commercial_score.dnb_duns_number.experian_derogatories.fold;
 	let response = await lastValueFrom(payload.pipe(fold(on_success(request), on_error)));
 	return response;
 };
@@ -375,6 +375,7 @@ const Derogatories = () => {
 };
 
 const Legal = () => {
+	let { experian_derogatories: derogatories } = useLoaderData();
 	return (
 		<div className="flex flex-col w-full border bg-white rounded text-sm p-4">
 			<div className="flex flex-row w-full justify-between items-center">
@@ -388,7 +389,9 @@ const Legal = () => {
 					<div className="flex flex-row w-full justify-center gap-x-12">
 						<div className="flex flex-col items-center gap-y-4">
 							<div className="flex flex-col items-center justify-center rounded-full border-4 border-green-500 w-[100px] h-[100px]">
-								<div className="flex flex-col text-4xl font-semibold text-green-500">0</div>
+								<div className="flex flex-col text-4xl font-semibold text-green-500">
+									{derogatories?.legalFilingsSummary?.legalCount || 0}
+								</div>
 							</div>
 							<div className="flex flex-col font-semibold">Legal</div>
 						</div>
@@ -495,6 +498,7 @@ const Legal = () => {
 };
 
 const Collections = () => {
+	let { experian_derogatories: derogatories } = useLoaderData();
 	return (
 		<div className="flex flex-col w-full border bg-white rounded text-sm p-4">
 			<div className="flex flex-row w-full justify-between items-center">
@@ -508,7 +512,9 @@ const Collections = () => {
 					<div className="flex flex-row w-full justify-center gap-x-12">
 						<div className="flex flex-col items-center gap-y-4">
 							<div className="flex flex-col items-center justify-center rounded-full border-4 border-green-500 w-[100px] h-[100px]">
-								<div className="flex flex-col text-4xl font-semibold text-green-500">0</div>
+								<div className="flex flex-col text-4xl font-semibold text-green-500">
+									{derogatories?.legalFilingsCollectionsSummary?.collectionCount || 0}
+								</div>
 							</div>
 							<div className="flex flex-col font-semibold">Collections</div>
 						</div>
@@ -585,6 +591,7 @@ const Collections = () => {
 };
 
 const Liens = () => {
+	let { experian_derogatories: derogatories } = useLoaderData();
 	return (
 		<div className="flex flex-col w-full border bg-white rounded text-sm p-4">
 			<div className="flex flex-row w-full justify-between items-center">
@@ -598,7 +605,9 @@ const Liens = () => {
 					<div className="flex flex-row w-full justify-center gap-x-12">
 						<div className="flex flex-col items-center gap-y-4">
 							<div className="flex flex-col items-center justify-center rounded-full border-4 border-green-500 w-[100px] h-[100px]">
-								<div className="flex flex-col text-4xl font-semibold text-green-500">0</div>
+								<div className="flex flex-col text-4xl font-semibold text-green-500">
+									{derogatories?.legalFilingsCollectionsSummary?.lienCount || 0}
+								</div>
 							</div>
 							<div className="flex flex-col font-semibold">Liens</div>
 						</div>
@@ -668,6 +677,7 @@ const Liens = () => {
 };
 
 const Judgements = () => {
+	let { experian_derogatories: derogatories } = useLoaderData();
 	return (
 		<div className="flex flex-col w-full border bg-white rounded text-sm p-4">
 			<div className="flex flex-row w-full justify-between items-center">
@@ -681,7 +691,9 @@ const Judgements = () => {
 					<div className="flex flex-row w-full justify-center gap-x-12">
 						<div className="flex flex-col items-center gap-y-4">
 							<div className="flex flex-col items-center justify-center rounded-full border-4 border-green-500 w-[100px] h-[100px]">
-								<div className="flex flex-col text-4xl font-semibold text-green-500">0</div>
+								<div className="flex flex-col text-4xl font-semibold text-green-500">
+									{derogatories?.legalFilingsCollectionsSummary?.judgmentCount || 0}
+								</div>
 							</div>
 							<div className="flex flex-col font-semibold">Judgements</div>
 						</div>
