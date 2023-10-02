@@ -1715,11 +1715,13 @@ export default function Container() {
 		cache_dependencies,
 		scores = {},
 		experian_facts = {},
+		experian_commercial_score,
 	} = loader_data;
 	let use_cache_client = use_cache((state) => state.set_dependencies);
 	let { dnb_business_score, experian_business_score } = scores;
 
 	let { dateOfIncorporation } = experian_facts;
+	let { recommendedCreditLimitAmount = 0 } = experian_commercial_score;
 
 	// useEffect(() => {
 	// 	if (cache_dependencies !== undefined) {
@@ -1739,15 +1741,21 @@ export default function Container() {
 				<ExplanationCard />
 			</div> */}
 
-			<div className="flex flex-col w-full items-center my-10 px-5">
+			<div className="flex flex-col w-full items-center mb-10 px-5">
+				<div className="flex flex-row justify-between mt-6 border-b max-w-7xl w-full text-gray-600 text-lg mb-12 pb-4">
+					<div className="flex flex-row justify-center gap-x-2">
+						<div>Recommended Credit Limit:</div>
+						<div className="font-semibold">{currency.format(recommendedCreditLimitAmount)}</div>
+					</div>
+					<div className="flex flex-row gap-x-2 ">
+						<div>Date of incorporation:</div>
+						<div className="font-semibold">{dateOfIncorporation}</div>
+					</div>
+				</div>
 				<div className="flex flex-col max-w-4xl text-center">
 					<h1 className="text-4xl font-bold tracking-tight text-gray-900 sm:text-6xl">
 						MRM Capital Holdings, Inc.
 					</h1>
-					<div className="flex flex-row w-full justify-center gap-x-2 mt-6 text-lg leading-8 text-gray-600">
-						<div>Date of incorporation:</div>
-						<div className="font-semibold">{dateOfIncorporation}</div>
-					</div>
 				</div>
 			</div>
 
