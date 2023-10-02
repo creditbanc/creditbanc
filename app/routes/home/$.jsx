@@ -35,6 +35,9 @@ import BusinessReport from "~/api/client/BusinessReport";
 import { fold } from "~/utils/operators";
 import Entity from "~/api/client/Entity";
 import { cache } from "~/utils/helpers.server";
+import { appKey } from "~/data/array";
+import BusinessScores from "../credit/report/business/components/scores";
+import { currency } from "~/utils/helpers";
 
 let use_view_store = store();
 
@@ -82,7 +85,7 @@ export const loader = async ({ request }) => {
 
 	let entity_response = entity.identity.plan_id.fold;
 	let business_entity_response = business_entity.identity.fold;
-	let personal_response = personal_report.scores.report_sha.fold;
+	let personal_response = personal_report.scores.report_sha.user_token.fold;
 	let business_response = business_report.business_info.scores.report_sha.fold;
 
 	let payload = forkJoin({ personal_response, business_response, entity_response, business_entity_response }).pipe(
@@ -100,6 +103,7 @@ export const loader = async ({ request }) => {
 				business_entity: business_entity_response.identity,
 				onboard,
 				business_report_is_empty: business_response.business_report_is_empty,
+				user_token: personal_response.user_token,
 			};
 		})
 	);
@@ -1062,6 +1066,7 @@ export default function Home() {
 	let loader_data = useLoaderData();
 	let set_view = use_view_store((state) => state.set_props);
 	let set_path = use_view_store((state) => state.set_state);
+	let { user_token } = loader_data;
 
 	let { pathname } = useLocation();
 	let {
@@ -1129,42 +1134,42 @@ export default function Home() {
 		}
 	}, []);
 
-	useEffect(() => {
-		run_fetchers();
-	}, []);
+	// useEffect(() => {
+	// 	run_fetchers();
+	// }, []);
 
-	useEffect(() => {
-		let fetcher_data = business_info_fetcher.data;
-		if (fetcher_data) {
-			// console.log("business_info_fetcher.data");
-			// console.log(fetcher_data);
-			// console.log(business_info);
-			// on_should_update_cache(business_info, fetcher_data, "business_credit_report").subscribe();
-			set_path(["business_info"], fetcher_data);
-		}
-	}, [business_info_fetcher.data]);
+	// useEffect(() => {
+	// 	let fetcher_data = business_info_fetcher.data;
+	// 	if (fetcher_data) {
+	// 		// console.log("business_info_fetcher.data");
+	// 		// console.log(fetcher_data);
+	// 		// console.log(business_info);
+	// 		// on_should_update_cache(business_info, fetcher_data, "business_credit_report").subscribe();
+	// 		set_path(["business_info"], fetcher_data);
+	// 	}
+	// }, [business_info_fetcher.data]);
 
-	useEffect(() => {
-		let fetcher_data = business_scores_fetcher.data;
-		if (fetcher_data) {
-			// console.log("business_scores_fetcher.data");
-			// console.log(fetcher_data);
-			// console.log(business_scores);
-			// on_should_update_cache(business_scores, fetcher_data, "business_credit_report").subscribe();
-			set_path(["business_scores"], fetcher_data);
-		}
-	}, [business_scores_fetcher.data]);
+	// useEffect(() => {
+	// 	let fetcher_data = business_scores_fetcher.data;
+	// 	if (fetcher_data) {
+	// 		// console.log("business_scores_fetcher.data");
+	// 		// console.log(fetcher_data);
+	// 		// console.log(business_scores);
+	// 		// on_should_update_cache(business_scores, fetcher_data, "business_credit_report").subscribe();
+	// 		set_path(["business_scores"], fetcher_data);
+	// 	}
+	// }, [business_scores_fetcher.data]);
 
-	useEffect(() => {
-		let fetcher_data = personal_scores_fetcher.data;
-		if (fetcher_data) {
-			// console.log("personal_scores_fetcher.data");
-			// console.log(fetcher_data);
-			// console.log(personal_scores);
-			// on_should_update_cache(personal_scores, fetcher_data, "personal_credit_report").subscribe();
-			set_path(["personal_scores"], fetcher_data);
-		}
-	}, [personal_scores_fetcher.data]);
+	// useEffect(() => {
+	// 	let fetcher_data = personal_scores_fetcher.data;
+	// 	if (fetcher_data) {
+	// 		// console.log("personal_scores_fetcher.data");
+	// 		// console.log(fetcher_data);
+	// 		// console.log(personal_scores);
+	// 		// on_should_update_cache(personal_scores, fetcher_data, "personal_credit_report").subscribe();
+	// 		set_path(["personal_scores"], fetcher_data);
+	// 	}
+	// }, [personal_scores_fetcher.data]);
 
 	// useEffect(() => {
 	// 	onboard = pipe(
@@ -1196,9 +1201,9 @@ export default function Home() {
 
 	let onboard_percent_completed = (onboard_steps_completed / onboard_num_of_steps) * 100;
 
-	console.log("home.NewBusinessReportForm");
-	console.log(application_id);
-	console.log(business_report_is_empty);
+	// console.log("home.NewBusinessReportForm");
+	// console.log(application_id);
+	// console.log(business_report_is_empty);
 
 	const no_business_match = pipe(anyPass([isNil, isEmpty]), not)(business_match);
 	const is_loading = new_application_is_submiting;
@@ -1206,14 +1211,14 @@ export default function Home() {
 	return (
 		<div className="w-full h-full flex flex-col overflow-hidden">
 			<div className="flex flex-row h-full w-full p-5 space-x-5">
-				<div className="flex flex-col h-full w-full lg:w-[70%] rounded overflow-y-scroll scrollbar-none ">
-					<div className="flex flex-col h-full max-w-7xl gap-y-5">
+				<div className="flex flex-col h-full w-full rounded overflow-y-scroll scrollbar-none ">
+					<div className="flex flex-col h-full w-full gap-y-5">
 						{/* {plan_id == "essential" && (
 							<div className="mb-5">
 								<UpgradeBanner />
 							</div>
 						)} */}
-						<HeadingTwo />
+						{/* <HeadingTwo /> */}
 
 						{is_loading && (
 							<div className="flex flex-col w-full">
@@ -1221,17 +1226,63 @@ export default function Home() {
 							</div>
 						)}
 
-						<div className="flex flex-col w-full">
+						<div className="flex flex-col w-full h-full">
 							{!application_id && business_report_is_empty && <NewBusinessReportForm />}
 							{no_business_match && <BusinessMatchSelect />}
 							{!business_report_is_empty && (
-								<div className="flex flex-col lg:flex-row gap-x-5 gap-y-3 lg:space-y-0">
-									<div className="flex flex-col w-full">
+								<div className="flex flex-col h-full gap-x-5 gap-y-[100px] lg:space-y-0 border rounded bg-white items-center w-full py-10 overflow-auto scrollbar-none">
+									<div className="flex flex-col max-w-4xl text-center mt-[10px]">
+										<h1 className="text-4xl font-bold tracking-tight text-gray-900 sm:text-6xl">
+											{loader_data?.business_info?.name}
+										</h1>
+									</div>
+
+									<div className="flex flex-col w-[1100px]">
+										<div className="border-b border-gray-200 pb-5 sm:flex sm:items-center sm:justify-between mb-6">
+											<h3 className="text-base font-semibold leading-6 text-gray-900">
+												Business Scores
+											</h3>
+											<div className="mt-3 sm:ml-4 sm:mt-0 text-sm">
+												<Link
+													to={`/credit/report/business/experian/status/resource/e/${entity_id}/g/${group_id}`}
+													className="inline-flex items-center rounded-full bg-blue-600 px-3 py-2 text-sm text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
+												>
+													View Full Report
+												</Link>
+											</div>
+										</div>
+										<div>
+											<BusinessScores experian_business_score={80} dnb_business_score={80} />
+										</div>
+									</div>
+									<div className="flex flex-col w-[1100px]">
+										<div className="border-b border-gray-200 pb-5 sm:flex sm:items-center sm:justify-between mb-6">
+											<h3 className="text-base font-semibold leading-6 text-gray-900">
+												Personal Scores
+											</h3>
+											<div className="mt-3 sm:ml-4 sm:mt-0 text-sm">
+												<Link
+													to={`/credit/report/personal/personal/resource/e/${entity_id}/g/${group_id}`}
+													className="inline-flex items-center rounded-full bg-blue-600 px-3 py-2 text-sm text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
+												>
+													View Full Report
+												</Link>
+											</div>
+										</div>
+										<array-credit-score
+											appKey={appKey}
+											userToken={user_token}
+											// sandbox="true"
+											bureau="all"
+											scoreTracker="true"
+										></array-credit-score>
+									</div>
+									{/* <div className="flex flex-col w-full">
 										<BusinessCredit />
 									</div>
 									<div className="flex flex-col w-full">
 										<PersonalCredit />
-									</div>
+									</div> */}
 								</div>
 							)}
 						</div>

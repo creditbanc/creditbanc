@@ -135,6 +135,7 @@ export default function App() {
 				<script src={`https://embed.array.io/cms/array-credit-score-factors.js?appKey=${appKey}`}></script>
 				<script src={`https://embed.array.io/cms/array-credit-score-simulator.js?appKey=${appKey}`}></script>
 				<script src={`https://embed.array.io/cms/array-identity-protect.js?appKey=${appKey}`}></script>
+				<script src={`https://embed.array.io/cms/array-credit-score.js?appKey=${appKey}`}></script>
 			</head>
 			<body className="flex flex-col relative">
 				{show_spinner && <Spinner />}

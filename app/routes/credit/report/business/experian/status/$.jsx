@@ -23,6 +23,7 @@ import {
 import { ChevronDownIcon } from "@heroicons/react/20/solid";
 import { Popover } from "@headlessui/react";
 import { all } from "shades";
+import Scores from "../../components/scores";
 
 const log_route = `credit.report.business.experian.status`;
 
@@ -1739,6 +1740,9 @@ export default function Container() {
 	let { dateOfIncorporation } = experian_facts;
 	let { recommendedCreditLimitAmount = 0 } = experian_commercial_score;
 
+	console.log("loader_data");
+	console.log(loader_data);
+
 	// useEffect(() => {
 	// 	if (cache_dependencies !== undefined) {
 	// 		use_cache_client({ path: `/credit/report/business/experian`, dependencies: cache_dependencies });
@@ -1770,26 +1774,14 @@ export default function Container() {
 				</div>
 				<div className="flex flex-col max-w-4xl text-center">
 					<h1 className="text-4xl font-bold tracking-tight text-gray-900 sm:text-6xl">
-						MRM Capital Holdings, Inc.
+						{loader_data?.business_info?.name}
 					</h1>
 				</div>
 			</div>
 
 			<div className="flex flex-col w-full items-center">
 				<div className="flex flex-col max-w-7xl gap-y-10">
-					<div className="flex flex-col w-full">
-						{/* <div className="border-b border-gray-200 mb-5 pb-5">
-							<h3 className="text-2xl font-semibold leading-6 text-gray-900">Scores</h3>
-						</div> */}
-						<div className="flex flex-row w-full justify-between gap-x-[100px] px-[10px]">
-							<div className="flex flex-col w-[50%] ">
-								<ScoreRangeGraph score={experian_business_score} bureau="experian" />
-							</div>
-							<div className="flex flex-col w-[50%]">
-								<ScoreRangeGraph score={dnb_business_score} bureau="dnb" />
-							</div>
-						</div>
-					</div>
+					<Scores experian_business_score={experian_business_score} dnb_business_score={dnb_business_score} />
 
 					{/* <div className="flex flex-col w-full">
 						<Paydexscore />
