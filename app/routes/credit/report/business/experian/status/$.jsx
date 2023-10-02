@@ -824,7 +824,7 @@ const CreditUtilization = () => {
 
 	let total_credit_limit = pipe(get(all, "recentHighCredit", "amount"), sum)(experian_trade_lines);
 	let total_current_balance = pipe(get(all, "accountBalance", "amount"), sum)(experian_trade_lines);
-	let utilization_ratio = (total_current_balance / total_credit_limit) * 100;
+	let utilization_ratio = ((total_current_balance / total_credit_limit) * 100 || 0).toFixed(2);
 	// console.log("CreditUtilization");
 	// console.log(total_credit_limit);
 	// console.log(total_current_balance);
@@ -866,7 +866,7 @@ const CreditUtilization = () => {
 					<div className="text-sm">Total credit limit</div>
 				</div>
 				<div className="flex flex-col w-1/3 items-center gap-y-2">
-					<div className="text-3xl font-semibold">{utilization_ratio.toPrecision(2)}%</div>
+					<div className="text-3xl font-semibold">{utilization_ratio}%</div>
 					<div className="text-sm">Credit utilization ratio</div>
 				</div>
 			</div>
@@ -896,7 +896,7 @@ const BusinessFacts = () => {
 		businessType,
 		corporateLinkageType,
 		employeeSize,
-		executiveInformation,
+		executiveInformation = [],
 		salesRevenue,
 		dateOfIncorporation,
 		businessHeader = {},
@@ -920,16 +920,18 @@ const BusinessFacts = () => {
 								<div className="flex flex-col w-1/4 items-end justify-center px-5">
 									<div className="">Sales Revenue</div>
 									<div className="flex flex-col text-2xl font-semibold">
-										{currency.format(salesRevenue)}
+										{currency.format(salesRevenue || 0)}
 									</div>
 								</div>
 								<div className="flex flex-col w-1/4 items-end justify-center px-5">
 									<div>Employee Size</div>
-									<div className="flex flex-col text-2xl font-semibold">{employeeSize}</div>
+									<div className="flex flex-col text-2xl font-semibold">{employeeSize || 0}</div>
 								</div>
 								<div className="flex flex-col w-1/4 items-end justify-center px-5">
 									<div>Years on File</div>
-									<div className="flex flex-col text-2xl font-semibold">{experian_years_on_file}</div>
+									<div className="flex flex-col text-2xl font-semibold">
+										{experian_years_on_file || 0}
+									</div>
 								</div>
 								<div className="flex flex-col w-1/4 items-end justify-center px-5">
 									<div>Date of incorporation</div>
@@ -976,7 +978,7 @@ const BusinessFacts = () => {
 											<div className="text-base font-semibold">{address?.street}</div>
 										</div>
 										<div>
-											{address?.city}, {address?.state} {address?.zip}{" "}
+											{address?.city}, {address?.state} {address?.zip}
 										</div>
 									</div>
 								</div>
@@ -1086,23 +1088,25 @@ const TradePaymentTotals = () => {
 									<div className="p-5 border w-1/4 rounded">
 										<div>Current Debt</div>
 										<div className="font-semibold text-2xl">
-											{currency.format(trade_lines?.currentDbt)}
+											{currency.format(trade_lines?.currentDbt || 0)}
 										</div>
 									</div>
 									<div className="p-5 border w-1/4 rounded">
 										<div>Current Percentage</div>
-										<div className="font-semibold text-2xl">{trade_lines?.currentPercentage}%</div>
+										<div className="font-semibold text-2xl">
+											{trade_lines?.currentPercentage || 0}%
+										</div>
 									</div>
 									<div className="p-5 border w-1/4 rounded">
 										<div>Total Account Balance</div>
 										<div className="font-semibold text-2xl">
-											{currency.format(trade_lines?.totalAccountBalance?.amount)}
+											{currency.format(trade_lines?.totalAccountBalance?.amount || 0)}
 										</div>
 									</div>
 									<div className="p-5 border w-1/4 rounded">
 										<div>Total High Credit Amount</div>
 										<div className="font-semibold text-2xl">
-											{currency.format(trade_lines?.totalHighCreditAmount?.amount)}
+											{currency.format(trade_lines?.totalHighCreditAmount?.amount || 0)}
 										</div>
 									</div>
 								</div>
@@ -1113,25 +1117,25 @@ const TradePaymentTotals = () => {
 									<div className="p-5 border w-1/4 rounded">
 										<div>Current Debt</div>
 										<div className="font-semibold text-2xl">
-											{currency.format(combined_trade_lines?.currentDbt)}
+											{currency.format(combined_trade_lines?.currentDbt || 0)}
 										</div>
 									</div>
 									<div className="p-5 border w-1/4 rounded">
 										<div>Current Percentage</div>
 										<div className="font-semibold text-2xl">
-											{combined_trade_lines?.currentPercentage}%
+											{combined_trade_lines?.currentPercentage || 0}%
 										</div>
 									</div>
 									<div className="p-5 border w-1/4 rounded">
 										<div>Total Account Balance</div>
 										<div className="font-semibold text-2xl">
-											{currency.format(combined_trade_lines?.totalAccountBalance?.amount)}
+											{currency.format(combined_trade_lines?.totalAccountBalance?.amount || 0)}
 										</div>
 									</div>
 									<div className="p-5 border w-1/4 rounded">
 										<div>Total High Credit Amount</div>
 										<div className="font-semibold text-2xl">
-											{currency.format(combined_trade_lines?.totalHighCreditAmount?.amount)}
+											{currency.format(combined_trade_lines?.totalHighCreditAmount?.amount || 0)}
 										</div>
 									</div>
 								</div>
@@ -1142,25 +1146,27 @@ const TradePaymentTotals = () => {
 									<div className="p-5 border w-1/4 rounded">
 										<div>Current Debt</div>
 										<div className="font-semibold text-2xl">
-											{currency.format(additional_trade_lines?.currentDbt)}
+											{currency.format(additional_trade_lines?.currentDbt || 0)}
 										</div>
 									</div>
 									<div className="p-5 border w-1/4 rounded">
 										<div>Current Percentage</div>
 										<div className="font-semibold text-2xl">
-											{additional_trade_lines?.currentPercentage}%
+											{additional_trade_lines?.currentPercentage || 0}%
 										</div>
 									</div>
 									<div className="p-5 border w-1/4 rounded">
 										<div>Total Account Balance</div>
 										<div className="font-semibold text-2xl">
-											{currency.format(additional_trade_lines?.totalAccountBalance?.amount)}
+											{currency.format(additional_trade_lines?.totalAccountBalance?.amount || 0)}
 										</div>
 									</div>
 									<div className="p-5 border w-1/4 rounded">
 										<div>Total High Credit Amount</div>
 										<div className="font-semibold text-2xl">
-											{currency.format(additional_trade_lines?.totalHighCreditAmount?.amount)}
+											{currency.format(
+												additional_trade_lines?.totalHighCreditAmount?.amount || 0
+											)}
 										</div>
 									</div>
 								</div>
@@ -1171,25 +1177,29 @@ const TradePaymentTotals = () => {
 									<div className="p-5 border w-1/4 rounded">
 										<div>Current Debt</div>
 										<div className="font-semibold text-2xl">
-											{currency.format(newly_reported_trade_lines?.currentDbt)}
+											{currency.format(newly_reported_trade_lines?.currentDbt || 0)}
 										</div>
 									</div>
 									<div className="p-5 border w-1/4 rounded">
 										<div>Current Percentage</div>
 										<div className="font-semibold text-2xl">
-											{newly_reported_trade_lines?.currentPercentage}%
+											{newly_reported_trade_lines?.currentPercentage || 0}%
 										</div>
 									</div>
 									<div className="p-5 border w-1/4 rounded">
 										<div>Total Account Balance</div>
 										<div className="font-semibold text-2xl">
-											{currency.format(newly_reported_trade_lines?.totalAccountBalance?.amount)}
+											{currency.format(
+												newly_reported_trade_lines?.totalAccountBalance?.amount || 0
+											)}
 										</div>
 									</div>
 									<div className="p-5 border w-1/4 rounded">
 										<div>Total High Credit Amount</div>
 										<div className="font-semibold text-2xl">
-											{currency.format(newly_reported_trade_lines?.totalHighCreditAmount?.amount)}
+											{currency.format(
+												newly_reported_trade_lines?.totalHighCreditAmount?.amount || 0
+											)}
 										</div>
 									</div>
 								</div>
@@ -1413,25 +1423,29 @@ const TradeSummary = () => {
 							<div className="flex flex-col w-full divide-y">
 								<div className="flex flex-row justify-between w-full py-3">
 									<div className="">Current Dbt</div>
-									<div className="text-black font-semibold">{currency.format(currentDbt)}</div>
+									<div className="text-black font-semibold">{currency.format(currentDbt || 0)}</div>
 								</div>
 								<div className="flex flex-row justify-between w-full py-3">
 									<div className="">Monthly Average Dbt</div>
-									<div className="text-black font-semibold">{currency.format(monthlyAverageDbt)}</div>
+									<div className="text-black font-semibold">
+										{currency.format(monthlyAverageDbt || 0)}
+									</div>
 								</div>
 								<div className="flex flex-row justify-between w-full py-3">
 									<div className="">Highest Dbt 6 Months</div>
-									<div className="text-black font-semibold">{currency.format(highestDbt6Months)}</div>
+									<div className="text-black font-semibold">
+										{currency.format(highestDbt6Months || 0)}
+									</div>
 								</div>
 								<div className="flex flex-row justify-between w-full py-3">
 									<div className="">Highest Dbt 5 Quarters</div>
 									<div className="text-black font-semibold">
-										{currency.format(highestDbt5Quarters)}
+										{currency.format(highestDbt5Quarters || 0)}
 									</div>
 								</div>
 								<div className="flex flex-row justify-between w-full py-3">
 									<div className="">All Tradeline Count</div>
-									<div className="text-black font-semibold">{allTradelineCount}</div>
+									<div className="text-black font-semibold">{allTradelineCount || 0}</div>
 								</div>
 							</div>
 						</div>
@@ -1440,27 +1454,29 @@ const TradeSummary = () => {
 								<div className="flex flex-row justify-between w-full py-3">
 									<div className="">All Tradeline Balance</div>
 									<div className="text-black font-semibold">
-										{currency.format(allTradelineBalance)}
+										{currency.format(allTradelineBalance || 0)}
 									</div>
 								</div>
 								<div className="flex flex-row justify-between w-full py-3">
 									<div className="">Current Tradeline Count</div>
-									<div className="text-black font-semibold">{currentTradelineCount}</div>
+									<div className="text-black font-semibold">{currentTradelineCount || 0}</div>
 								</div>
 								<div className="flex flex-row justify-between w-full py-3">
 									<div className="">Current Account Balance</div>
 
 									<div className="text-black font-semibold">
-										{currency.format(currentAccountBalance)}
+										{currency.format(currentAccountBalance || 0)}
 									</div>
 								</div>
 								<div className="flex flex-row justify-between w-full py-3">
 									<div className="">Median Credit Amount Extended</div>
-									<div className="text-black font-semibold">{medianCreditAmountExtended}</div>
+									<div className="text-black font-semibold">{medianCreditAmountExtended || 0}</div>
 								</div>
 								<div className="flex flex-row justify-between w-full py-3">
 									<div className="">Single High Credit</div>
-									<div className="text-black font-semibold">{currency.format(singleHighCredit)}</div>
+									<div className="text-black font-semibold">
+										{currency.format(singleHighCredit || 0)}
+									</div>
 								</div>
 							</div>
 						</div>
