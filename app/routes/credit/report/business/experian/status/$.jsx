@@ -1471,12 +1471,12 @@ const ScoreLinearRangeGraph = ({ score = 0 }) => {
 	return (
 		<div className="flex flex-col w-full relative">
 			<div className="flex flex-col w-full relative justify-center">
-				<div className={`flex flex-col w-full h-[${height}px] relative rounded overflow-hidden`}>
-					<div className={`flex flex-col absolute h-[${height}px] w-full bg-green-700`}></div>
-					<div className={`flex flex-col absolute h-[${height}px] w-[75%] bg-green-600`}></div>
-					<div className={`flex flex-col absolute h-[${height}px] w-[50%] bg-yellow-300`}></div>
-					<div className={`flex flex-col absolute h-[${height}px] w-[25%] bg-orange-400`}></div>
-					<div className={`flex flex-col absolute h-[${height}px] w-[10%] bg-red-500`}></div>
+				<div className={`flex flex-col w-full relative rounded overflow-hidden`} style={{ height }}>
+					<div className={`flex flex-col absolute w-full bg-green-700`} style={{ height }}></div>
+					<div className={`flex flex-col absolute w-[75%] bg-green-600`} style={{ height }}></div>
+					<div className={`flex flex-col absolute w-[50%] bg-yellow-300`} style={{ height }}></div>
+					<div className={`flex flex-col absolute w-[25%] bg-orange-400`} style={{ height }}></div>
+					<div className={`flex flex-col absolute w-[10%] bg-red-500`} style={{ height }}></div>
 				</div>
 				<div
 					className={`flex flex-col absolute w-[20px] h-[20px] rounded-full border-[3px] border-white shadow bg-${score_color(
