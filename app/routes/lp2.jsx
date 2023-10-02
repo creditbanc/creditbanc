@@ -103,11 +103,7 @@ function FooterTwo() {
 			<div className="mx-auto max-w-7xl py-6 md:flex md:items-center md:justify-between px-6">
 				<div className="flex justify-center space-x-6 md:order-2">
 					{footerNavigation.map((item) => (
-						<a
-							key={item.name}
-							href={item.href}
-							className="text-gray-400 hover:text-gray-500"
-						>
+						<a key={item.name} href={item.href} className="text-gray-400 hover:text-gray-500">
 							<span className="sr-only">{item.name}</span>
 							<item.icon className="h-6 w-6" aria-hidden="true" />
 						</a>
@@ -126,11 +122,7 @@ function FooterTwo() {
 const Single = () => {
 	return (
 		<div className="flex flex-col items-center">
-			<CreditScoreDoughnut
-				bureau={"Equifax"}
-				scoreClassNames="text-6xl"
-				bureauTitleClassNames="text-1xl"
-			>
+			<CreditScoreDoughnut bureau={"Equifax"} scoreClassNames="text-6xl" bureauTitleClassNames="text-1xl">
 				<div className="mt-[170px] font-bold text-5xl">750</div>
 			</CreditScoreDoughnut>
 		</div>
@@ -193,16 +185,9 @@ function Features() {
 				</div>
 				<dl className="mx-auto mt-6 text-base lg:mx-0 lg:max-w-none flex flex-row flex-wrap">
 					{features.map((feature) => (
-						<div
-							key={feature.name}
-							className="flex flex-col w-full px-3 py-3"
-						>
-							<dt className="font-semibold text-gray-900">
-								{feature.name}
-							</dt>
-							<dd className="mt-1 text-gray-600">
-								{feature.description}
-							</dd>
+						<div key={feature.name} className="flex flex-col w-full px-3 py-3">
+							<dt className="font-semibold text-gray-900">{feature.name}</dt>
+							<dd className="mt-1 text-gray-600">{feature.description}</dd>
 						</div>
 					))}
 				</dl>
@@ -217,8 +202,7 @@ const faqs = [
 		answer: "Not at all. In fact, you should regularly check your credit reports from TransUnion, Equifax and Experian to be sure there are no score-lowering errors or possible fraud. We make it easy to see monthly updates to your credit scores and review your reports from all three credit bureaus.",
 	},
 	{
-		question:
-			"Why do I need all three scores, when other companies only offer one or two?",
+		question: "Why do I need all three scores, when other companies only offer one or two?",
 		answer: "Lenders don’t all use the same credit bureau to check your credit – and your credit scores may not all be the same. We provide your scores from TransUnion, Equifax and Experian so you know where you stand no matter which bureau lenders use!",
 	},
 	{
@@ -241,11 +225,7 @@ function FAQ() {
 					</h2>
 					<dl className="mt-10 space-y-6 divide-y divide-gray-900/10">
 						{faqs.map((faq) => (
-							<Disclosure
-								as="div"
-								key={faq.question}
-								className="pt-6"
-							>
+							<Disclosure as="div" key={faq.question} className="pt-6">
 								{({ open }) => (
 									<>
 										<dt>
@@ -255,26 +235,15 @@ function FAQ() {
 												</span>
 												<span className="ml-6 flex h-7 items-center">
 													{open ? (
-														<MinusSmallIcon
-															className="h-6 w-6"
-															aria-hidden="true"
-														/>
+														<MinusSmallIcon className="h-6 w-6" aria-hidden="true" />
 													) : (
-														<PlusSmallIcon
-															className="h-6 w-6"
-															aria-hidden="true"
-														/>
+														<PlusSmallIcon className="h-6 w-6" aria-hidden="true" />
 													)}
 												</span>
 											</Disclosure.Button>
 										</dt>
-										<Disclosure.Panel
-											as="dd"
-											className="mt-2 pr-12"
-										>
-											<p className="text-base leading-7 text-gray-600">
-												{faq.answer}
-											</p>
+										<Disclosure.Panel as="dd" className="mt-2 pr-12">
+											<p className="text-base leading-7 text-gray-600">{faq.answer}</p>
 										</Disclosure.Panel>
 									</>
 								)}
@@ -374,17 +343,13 @@ function DiagonalFeatureSection() {
 								Quick and Easy Sign Up
 							</h1>
 							<h4 className="max-w-2xl text-2xl tracking-tight text-gray-900 lg:col-span-2 xl:col-auto my-4">
-								No credit card needed, just sign up to get
-								instant online access to your free Experian
+								No credit card needed, just sign up to get instant online access to your free Experian
 								credit report and FICO® Score.
 							</h4>
 							<div className="w-full my-4">
 								<div className="flex flex-row justify-between w-full">
 									{features_two.map((feature) => (
-										<div
-											key={feature.name}
-											className="flex flex-col mx-4"
-										>
+										<div key={feature.name} className="flex flex-col mx-4">
 											<div className="flex flex-col items-center gap-x-3 text-base font-semibold leading-7 text-white">
 												<feature.icon
 													className="h-8 w-8 flex-none text-gray-400"
@@ -392,9 +357,7 @@ function DiagonalFeatureSection() {
 												/>
 											</div>
 											<div className="mt-4 flex flex-col items-center text-base leading-7 text-gray-600 text-center">
-												<p className="flex-auto">
-													{feature.description}
-												</p>
+												<p className="flex-auto">{feature.description}</p>
 											</div>
 										</div>
 									))}
@@ -415,18 +378,11 @@ export default function LandingPage() {
 	return (
 		<div className="bg-white">
 			<header className="absolute inset-x-0 top-0 z-50">
-				<nav
-					className="flex items-center justify-between p-6 lg:px-8"
-					aria-label="Global"
-				>
+				<nav className="flex items-center justify-between p-6 lg:px-8" aria-label="Global">
 					<div className="flex lg:flex-1">
 						<a href="#" className="-m-1.5 p-1.5">
 							<span className="sr-only">Credit Banc</span>
-							<img
-								className="h-5 w-auto"
-								src={cb_logo_3}
-								alt=""
-							/>
+							<img className="h-5 w-auto" src={cb_logo_3} alt="" />
 						</a>
 					</div>
 					<div className="flex lg:hidden">
@@ -451,33 +407,18 @@ export default function LandingPage() {
 						))}
 					</div>
 					<div className="hidden lg:flex lg:flex-1 lg:justify-end">
-						<Link
-							to={"/signin"}
-							className="text-sm font-semibold leading-6 text-gray-900"
-						>
+						<Link to={"/signin"} className="text-sm font-semibold leading-6 text-gray-900">
 							Sign In <span aria-hidden="true">&rarr;</span>
 						</Link>
 					</div>
 				</nav>
-				<Dialog
-					as="div"
-					className="lg:hidden"
-					open={mobileMenuOpen}
-					onClose={setMobileMenuOpen}
-				>
+				<Dialog as="div" className="lg:hidden" open={mobileMenuOpen} onClose={setMobileMenuOpen}>
 					<div className="fixed inset-0 z-50" />
 					<Dialog.Panel className="fixed inset-y-0 right-0 z-50 w-full overflow-y-auto bg-white px-6 py-6 sm:max-w-sm sm:ring-1 sm:ring-gray-900/10">
 						<div className="flex items-center justify-between">
-							<a
-								href="#"
-								className="visible sm:invisible -m-1.5 p-1.5"
-							>
+							<a href="#" className="visible sm:invisible -m-1.5 p-1.5">
 								<span className="sr-only">Your Company</span>
-								<img
-									className="h-8 w-auto"
-									src={cb_logo_3}
-									alt=""
-								/>
+								<img className="h-8 w-auto" src={cb_logo_3} alt="" />
 							</a>
 							<button
 								type="button"
@@ -485,10 +426,7 @@ export default function LandingPage() {
 								onClick={() => setMobileMenuOpen(false)}
 							>
 								<span className="sr-only">Close menu</span>
-								<XMarkIcon
-									className="h-6 w-6"
-									aria-hidden="true"
-								/>
+								<XMarkIcon className="h-6 w-6" aria-hidden="true" />
 							</button>
 						</div>
 						<div className="mt-6 flow-root">
@@ -536,28 +474,23 @@ export default function LandingPage() {
 						<div className="flex flex-row max-w-7xl w-full">
 							<div className="flex flex-col w-3/5 space-y-10">
 								<div className="text-5xl text-gray-700 font-semibold">
-									Your Experian Credit Report and FICO® Score*
-									are completely free.
+									Your Experian Credit Report and FICO® Score* are completely free.
 								</div>
 
 								<div className="text-2xl text-gray-700">
-									No credit card required. Your free report
-									and score are updated every 30 days on sign
-									in.
+									No credit card required. Your free report and score are updated every 30 days on
+									sign in.
 								</div>
 
 								<div className="cta_lp1_top bg-[#55CF9E] px-5 py-5 flex flex-col items-center rounded-lg cursor-pointer">
 									<div className="text-white text-2xl">
-										Get your Free Credit Report and FICO
-										score
+										Get your Free Credit Report and FICO score
 									</div>
 								</div>
 
 								<div>
-									*Credit score calculated based on FICO®
-									Score 8 model. Your lender or insurer may
-									use a different FICO® Score than FICO® Score
-									8, or another type of credit score
+									*Credit score calculated based on FICO® Score 8 model. Your lender or insurer may
+									use a different FICO® Score than FICO® Score 8, or another type of credit score
 									altogether.
 								</div>
 							</div>
