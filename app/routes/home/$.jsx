@@ -86,7 +86,7 @@ export const loader = async ({ request }) => {
 	let entity_response = entity.identity.plan_id.fold;
 	let business_entity_response = business_entity.identity.fold;
 	let personal_response = personal_report.scores.report_sha.user_token.fold;
-	let business_response = business_report.business_info.scores.report_sha.fold;
+	let business_response = business_report.experian_facts.business_info.scores.report_sha.fold;
 
 	let payload = forkJoin({ personal_response, business_response, entity_response, business_entity_response }).pipe(
 		rxmap(({ personal_response, business_response, entity_response, business_entity_response }) => {
@@ -104,6 +104,7 @@ export const loader = async ({ request }) => {
 				onboard,
 				business_report_is_empty: business_response.business_report_is_empty,
 				user_token: personal_response.user_token,
+				experian_facts: business_response.experian_facts,
 			};
 		})
 	);
@@ -1066,7 +1067,10 @@ export default function Home() {
 	let loader_data = useLoaderData();
 	let set_view = use_view_store((state) => state.set_props);
 	let set_path = use_view_store((state) => state.set_state);
-	let { user_token } = loader_data;
+	let { user_token, experian_facts = {} } = loader_data;
+
+	let { businessHeader = {} } = experian_facts;
+	let { businessName } = businessHeader;
 
 	let { pathname } = useLocation();
 	let {
@@ -1213,13 +1217,6 @@ export default function Home() {
 			<div className="flex flex-row h-full w-full p-5 space-x-5">
 				<div className="flex flex-col h-full w-full rounded overflow-y-scroll scrollbar-none ">
 					<div className="flex flex-col h-full w-full gap-y-5">
-						{/* {plan_id == "essential" && (
-							<div className="mb-5">
-								<UpgradeBanner />
-							</div>
-						)} */}
-						{/* <HeadingTwo /> */}
-
 						{is_loading && (
 							<div className="flex flex-col w-full">
 								<Spinner />
@@ -1237,7 +1234,7 @@ export default function Home() {
 								<div className="flex flex-col h-full gap-x-5 gap-y-[100px] lg:space-y-0 border rounded bg-white items-center w-full py-10 overflow-auto scrollbar-none">
 									<div className="flex flex-col max-w-4xl text-center mt-[10px]">
 										<h1 className="text-4xl font-bold tracking-tight text-gray-900 sm:text-6xl">
-											{loader_data?.business_info?.name}
+											{businessName}
 										</h1>
 									</div>
 
@@ -1281,70 +1278,11 @@ export default function Home() {
 											scoreTracker="true"
 										></array-credit-score>
 									</div>
-									{/* <div className="flex flex-col w-full">
-										<BusinessCredit />
-									</div>
-									<div className="flex flex-col w-full">
-										<PersonalCredit />
-									</div> */}
 								</div>
 							)}
 						</div>
-						{/* <div className="flex flex-col w-full h-fit bg-white px-5 pt-5 border rounded">
-							<div className="border-b border-gray-200 pb-3 flex flex-col sticky top-0 bg-white z-10">
-								<div>
-									<h3 className="mt-2 text-base font-semibold leading-6 text-gray-900">Courses</h3>
-								</div>
-							</div>
-
-							<div className="flex flex-col w-full py-5 scrollbar-none">
-								<Courses />
-							</div>
-						</div> */}
 					</div>
 				</div>
-				{/* <div className="hidden lg:flex flex-col lg:w-[30%] rounded border bg-white">
-					<div className="flex flex-col w-full h-full rounded bg-white">
-						<div className="flex flex-row py-4 px-5 justify-between w-full items-center">
-							<div>Notifications</div>
-						</div>
-						<div className="flex flex-col w-full border-t"></div>
-						<div className="flex flex-col overflow-scroll scrollbar-none">
-							<div className="border-b border-gray-200 bg-white px-4 py-3 sm:px-6 sticky top-0 z-10">
-								<h3 className="text-base font-semibold leading-6 text-gray-900 my-2">
-									Complete Your Profile
-								</h3>
-
-								<div className="flex flex-col w-full space-y-5">
-									<p className="mt-1 text-sm text-gray-500">
-										Follow the steps below to complete your CreditBanc profile
-									</p>
-								</div>
-
-								<div className="my-2 flex flex-col w-full">
-									<div className="flex flex-row w-full justify-between my-2 text-sm text-gray-400">
-										<div>{onboard_percent_completed}%</div>
-										<div>
-											{onboard_steps_completed}/{onboard_num_of_steps} steps
-										</div>
-									</div>
-									<div className="w-full bg-gray-200 rounded-full h-2.5 dark:bg-gray-700">
-										<div
-											className={`flex flex-col bg-blue-600 h-2.5 rounded-full`}
-											style={{
-												width: `${onboard_percent_completed}%`,
-											}}
-										></div>
-									</div>
-								</div>
-							</div>
-
-							<div className="flex flex-col w-full my-3">
-								<Notifications />
-							</div>
-						</div>
-					</div>
-				</div> */}
 			</div>
 		</div>
 	);

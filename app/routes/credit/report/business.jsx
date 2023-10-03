@@ -152,102 +152,14 @@ export default function BusinessReport() {
 		);
 	};
 
-	// useEffect(() => {
-	// 	if (cache_dependencies !== undefined) {
-	// 		use_cache_client({ path: `/credit/report/business`, dependencies: cache_dependencies });
-	// 	}
-	// }, []);
-
-	// useEffect(() => {
-	// 	business_report_shas_fetcher.submit(...fetcher_payload_maker(business_report_shas_url));
-	// }, []);
-
-	// useEffect(() => {
-	// 	if (business_report_shas_fetcher.data) {
-	// 		console.log("business_report_shas_fetcher.data");
-	// 		console.log(business_report_shas_fetcher.data);
-	// 		on_should_update_cache(business_report_shas_fetcher.data, "business_credit_report").subscribe();
-	// 	}
-	// }, [business_report_shas_fetcher.data]);
-
 	return (
 		<div className="flex flex-col flex-1 overflow-y-scroll overflow-hidden">
-			{/* {plan_id == "essential" && (
-				<div className="flex flex-col w-full items-center">
-					<div className="flex flex-col w-full max-w-5xl">
-						<UpgradeBanner />
-					</div>
-				</div>
-			)}
-
-			{plans_index[report_plan_id] < plans_index[plan_id] && (
-				<div className="flex flex-col w-full items-center">
-					<div className="flex flex-col w-full max-w-5xl">
-						<UpgradeCard />
-					</div>
-				</div>
-			)} */}
-
 			<div className="flex flex-col w-full overflow-hidden h-full">
 				<div className="flex flex-col w-full mx-auto overflow-hidden h-full">
 					<div className={`@container flex overflow-hidden rounded h-full flex-row gap-x-5`}>
 						<div className="flex flex-col flex-1 overflow-y-scroll rounded-lg scrollbar-none border">
 							<Outlet />
 						</div>
-
-						{/* <div className="hidden @6xl:flex flex-col min-w-[330px] max-w-[350px] h-full bg-white border rounded"> */}
-						{/* <div className="p-5">
-								<div className="flex flex-row space-x-3 items-center">
-									<div>
-										<span className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-gray-500">
-											<span className="text-lg font-medium leading-none text-white">
-												{business?.name?.charAt(0)?.toUpperCase()}
-											</span>
-										</span>
-									</div>
-									<div>{business?.name}</div>
-								</div>
-							</div> */}
-						{/* <div className="flex flex-col py-2">
-									<Link
-										to={`/financial/transactions`}
-										className="px-5 mb-4 flex flex-row items-center space-x-3 text-blue-500 cursor-pointer text-sm"
-									>
-										<div>
-											<DocumentDuplicateIcon className="h-4 w-4 text-blue-500" />
-										</div>
-										<div>Copy report share link</div>
-										<div>
-											<LinkIcon className="h-4 w-4 text-blue-500" />
-										</div>
-									</Link>
-								</div> */}
-						{/* <div className="flex flex-col w-full overflow-scroll scrollbar-none">
-								<div className="border-t"></div>
-								<div className="flex flex-col w-full p-5 space-y-3">
-									<div className="text-gray-400 text-sm">Credit Scores</div>
-									<div className="flex flex-row">
-										<div className="flex flex-col w-1/2 text-sm space-y-1">
-											<div className="text-gray-400">Dun & Bradstreet</div>
-											<div className="text-lg">{dnb_business_score}</div>
-										</div>
-										<div className="flex flex-col w-1/2 text-sm space-y-1">
-											<div className="text-gray-400">Intelliscore</div>
-											<div className="text-lg">{experian_business_score}</div>
-										</div>
-									</div>
-								</div>
-								<div className="border-t"></div>
-								<div className="flex flex-col px-5 pt-5 text-sm space-y-3">
-									<div className=" text-gray-400">Quick Links</div>
-
-									<VerticalNav
-										selected={get_route_endpoint(pathname)}
-										report_plan_id={report_plan_id}
-									/>
-								</div>
-							</div> */}
-						{/* </div> */}
 					</div>
 				</div>
 			</div>
