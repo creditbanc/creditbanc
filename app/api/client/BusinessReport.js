@@ -282,8 +282,6 @@ export default class BusinessReport {
 					experian_business_score: report.experian_score(),
 				},
 			})),
-			tap(() => console.log(`BusinessReport.scores`)),
-			tap(inspect),
 			catchError(catch_with_default({ scores: { dnb_business_score: 0, experian_business_score: 0 } }, "scores")),
 			concatMap(merge_with_current(this.response))
 		);
