@@ -33,7 +33,7 @@ export const action = async ({ request }) => {
 		data: create_axios_form({ entity_id }),
 	});
 
-	return null;
+	return json({ message: "success" });
 	// return await signin({ email, password });
 };
 
@@ -42,6 +42,7 @@ export default function Recover() {
 	const [formError, setFormError] = useState(actionData?.error || "");
 	const [formData, setFormData] = useState({ email: "", password: "" });
 	const submit = useSubmit();
+	console.log("actionData", actionData);
 
 	const onSubmit = (event) => {
 		console.log("onSubmit");
@@ -60,41 +61,48 @@ export default function Recover() {
 				<div className="mx-auto w-full max-w-sm lg:w-96">
 					<div>
 						<img className="h-12 w-auto" src={cb_logo} alt="Your Company" />
-
-						<h2 className="my-3 text-3xl font-bold text-[#202536]">
-							Enter your email below to reset your password
-						</h2>
+						{actionData?.message == "success" && (
+							<h2 className="my-3 text-lg font-bold text-[#202536]">
+								Check your email for a link to reset your password.
+							</h2>
+						)}
+						{actionData?.message !== "success" && (
+							<h2 className="my-3 text-3xl font-bold text-[#202536]">
+								Enter your email below to reset your password
+							</h2>
+						)}
 					</div>
+					{actionData?.message !== "success" && (
+						<div className="mt-8 space-y-6">
+							<div>
+								<label htmlFor="email" className="block text-sm font-medium text-gray-700">
+									Email address
+								</label>
+								<div className="mt-1">
+									<input
+										id="email"
+										name="email"
+										type="email"
+										autoComplete="email"
+										required
+										className="block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
+										placeholder={"Email address"}
+										onChange={handleFormChange}
+										value={formData.email}
+									/>
+								</div>
+							</div>
 
-					<div className="mt-8 space-y-6">
-						<div>
-							<label htmlFor="email" className="block text-sm font-medium text-gray-700">
-								Email address
-							</label>
-							<div className="mt-1">
-								<input
-									id="email"
-									name="email"
-									type="email"
-									autoComplete="email"
-									required
-									className="block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
-									placeholder={"Email address"}
-									onChange={handleFormChange}
-									value={formData.email}
-								/>
+							<div>
+								<div
+									onClick={onSubmit}
+									className="flex w-full justify-center rounded-md border border-transparent bg-[#55CF9E] py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-[#55CF9E] focus:outline-none focus:ring-2 focus:ring-[#55CF9E] focus:ring-offset-2 cursor-pointer"
+								>
+									Send Reset Link
+								</div>
 							</div>
 						</div>
-
-						<div>
-							<div
-								onClick={onSubmit}
-								className="flex w-full justify-center rounded-md border border-transparent bg-[#55CF9E] py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-[#55CF9E] focus:outline-none focus:ring-2 focus:ring-[#55CF9E] focus:ring-offset-2 cursor-pointer"
-							>
-								Send Reset Link
-							</div>
-						</div>
-					</div>
+					)}
 				</div>
 			</div>
 			<div className="relative hidden w-0 flex-1 lg:block">
