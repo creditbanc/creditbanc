@@ -15,6 +15,7 @@ import { on_success } from "./personal/success";
 import { is_authorized } from "./personal/authorized";
 import { redirect } from "@remix-run/node";
 import { Group } from "~/api/client/Group";
+import { get_session_entity_id } from "~/utils/auth.server";
 
 const log_route = `credit.report.personal`;
 
@@ -28,6 +29,7 @@ export const loader = async ({ request }) => {
 	// if (!(await is_authorized(request))) return redirect("/home");
 	let url = new URL(request.url);
 	let group_id = get_group_id(url.pathname);
+	let entity_id = await get_session_entity_id(request);
 
 	let group = new Group(group_id);
 

@@ -99,9 +99,9 @@ export const loader = async ({ request }) => {
 						rxmap(pipe(get("data", "data"))),
 						concatMap((report) =>
 							from(update_doc(["credit_reports", application_id], { data: report })).pipe(
-								rxmap(() => report),
-								tap(() => console.log("credit.report.business.LendflowExternal")),
-								tap(inspect)
+								rxmap(() => report)
+								// tap(() => console.log("credit.report.business.LendflowExternal")),
+								// tap(inspect)
 							)
 						)
 					);

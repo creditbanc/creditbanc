@@ -208,18 +208,18 @@ const ScoreRangeGraph = ({ score, bureau = "" }) => {
 				<div>
 					<BureauLogo bureau={bureau} />
 				</div>
-				<div
-					onMouseEnter={() => setMoreInfoIsVisible(true)}
-					onMouseLeave={() => setMoreInfoIsVisible(false)}
-					className="absolute right-0 flex flex-row w-full justify-end z-10"
-				>
+				<div className="absolute right-0 flex flex-row w-full justify-end z-10">
 					{moreInfoIsVisible && (
 						<div className="flex flex-col flex-1 max-w-[400px] items-end bg-white -mt-[100px]">
 							<DNBScoreRange />
 						</div>
 					)}
 					<div className="flex flex-col w-[40px] items-end">
-						<InformationCircleIcon className="h-5 w-5 text-gray-400 cursor-pointer" />
+						<InformationCircleIcon
+							className="h-5 w-5 text-gray-400 cursor-pointer"
+							onMouseEnter={() => setMoreInfoIsVisible(true)}
+							onMouseLeave={() => setMoreInfoIsVisible(false)}
+						/>
 					</div>
 				</div>
 			</div>
