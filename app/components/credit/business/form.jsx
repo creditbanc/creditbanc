@@ -378,7 +378,7 @@ export const Form = ({ on_submit }) => {
 						</div>
 					</div>
 				</div>
-				<div className="flex flex-col w-full my-2">
+				<div className="flex flex-col w-full mt-2">
 					<div
 						className="flex flex-col w-full items-center justify-center py-2 rounded cursor-pointer bg-green-300 text-white"
 						onClick={on_submit}
