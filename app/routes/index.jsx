@@ -155,12 +155,24 @@ function LogoCloud() {
 }
 
 const bureau_logos = [
-	"https://www.fico.com/sites/default/files/fico-logo-blue-large.png",
-	"https://vantagescore.com/wp-content/uploads/2022/03/vantagescore-logo.svg",
-	"https://www.dnb.com/content/dam/english/image-library/dnb-mod/logo-dnb.svg",
-	"https://upload.wikimedia.org/wikipedia/commons/thumb/3/31/Experian_logo.svg/1280px-Experian_logo.svg.png",
-	"https://upload.wikimedia.org/wikipedia/en/thumb/b/ba/TransUnion_logo.svg/2560px-TransUnion_logo.svg.png",
-	"https://upload.wikimedia.org/wikipedia/commons/thumb/1/18/Equifax_Logo.svg/2560px-Equifax_Logo.svg.png",
+	{ img: "https://www.fico.com/sites/default/files/fico-logo-blue-large.png", url: "https://www.fico.com/" },
+	{
+		img: "https://vantagescore.com/wp-content/uploads/2022/03/vantagescore-logo.svg",
+		url: "https://www.vantagescore.com/",
+	},
+	{ img: "https://www.dnb.com/content/dam/english/image-library/dnb-mod/logo-dnb.svg", url: "https://www.dnb.com/" },
+	{
+		img: "https://upload.wikimedia.org/wikipedia/commons/thumb/3/31/Experian_logo.svg/1280px-Experian_logo.svg.png",
+		url: "https://www.experian.com/",
+	},
+	{
+		img: "https://upload.wikimedia.org/wikipedia/en/thumb/b/ba/TransUnion_logo.svg/2560px-TransUnion_logo.svg.png",
+		url: "https://www.transunion.com/",
+	},
+	{
+		img: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/18/Equifax_Logo.svg/2560px-Equifax_Logo.svg.png",
+		url: "https://www.equifax.com/",
+	},
 ];
 
 function PoweredBy() {
@@ -169,14 +181,13 @@ function PoweredBy() {
 			<div className="mx-auto max-w-7xl px-6 lg:px-8">
 				<h2 className="text-center text-lg font-semibold leading-8 text-gray-900">Powered By</h2>
 				<div className="mx-auto mt-10 w-full flex flex-col items-center justify-between space-y-10 md:flex-row flex-wrap">
-					{bureau_logos.map((logo_src, idx) => (
-						<img
-							key={idx}
-							className="col-span-2 max-h-12 w-4/6 md:w-1/2 lg:w-1/3 object-contain lg:col-span-1"
-							src={logo_src}
-							width={158}
-							height={48}
-						/>
+					{bureau_logos.map((logo, idx) => (
+						<a
+							href={logo.url}
+							className="flex flex-col col-span-2 max-h-12 w-4/6 md:w-1/2 lg:w-1/3 object-contain lg:col-span-1 items-center justify-center"
+						>
+							<img key={idx} src={logo.img} height={48} className="flex flex-col h-[48px]" />
+						</a>
 					))}
 				</div>
 			</div>
