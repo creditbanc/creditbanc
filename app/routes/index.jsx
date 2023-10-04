@@ -183,10 +183,11 @@ function PoweredBy() {
 				<div className="mx-auto mt-10 w-full flex flex-col items-center justify-between space-y-10 md:flex-row flex-wrap">
 					{bureau_logos.map((logo, idx) => (
 						<a
+							key={idx}
 							href={logo.url}
 							className="flex flex-col col-span-2 max-h-12 w-4/6 md:w-1/2 lg:w-1/3 object-contain lg:col-span-1 items-center justify-center"
 						>
-							<img key={idx} src={logo.img} height={48} className="flex flex-col h-[48px]" />
+							<img src={logo.img} height={48} className="flex flex-col h-[48px]" />
 						</a>
 					))}
 				</div>

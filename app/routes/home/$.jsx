@@ -472,7 +472,7 @@ export default function Home() {
 	let loader_data = useLoaderData();
 	let set_view = use_view_store((state) => state.set_props);
 	let set_path = use_view_store((state) => state.set_state);
-	let { user_token, experian_facts = {} } = loader_data;
+	let { user_token, experian_facts = {}, business_scores = {} } = loader_data;
 
 	let { businessHeader = {} } = experian_facts;
 	let { businessName } = businessHeader;
@@ -628,7 +628,10 @@ export default function Home() {
 										</div>
 									</div>
 									<div>
-										<BusinessScores experian_business_score={80} dnb_business_score={80} />
+										<BusinessScores
+											experian_business_score={business_scores?.experian_business_score}
+											dnb_business_score={business_scores?.dnb_business_score}
+										/>
 									</div>
 								</div>
 								<div className="flex flex-col w-[1100px]">
