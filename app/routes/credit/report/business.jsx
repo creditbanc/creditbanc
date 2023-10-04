@@ -70,6 +70,7 @@ export const loader = async ({ request }) => {
 	let url = new URL(request.url);
 	let entity_id = await get_session_entity_id(request);
 	let group_id = get_group_id(url.pathname);
+
 	let group = new Group(group_id);
 
 	let group_response = group.has_reports.fold;

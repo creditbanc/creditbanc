@@ -14,6 +14,7 @@ import { use_cache } from "~/components/CacheLink";
 import { on_success } from "./personal/success";
 import { is_authorized } from "./personal/authorized";
 import { redirect } from "@remix-run/node";
+import { Group } from "~/api/client/Group";
 
 const log_route = `credit.report.personal`;
 
@@ -27,6 +28,16 @@ export const loader = async ({ request }) => {
 	// if (!(await is_authorized(request))) return redirect("/home");
 	let url = new URL(request.url);
 	let group_id = get_group_id(url.pathname);
+
+	let group = new Group(group_id);
+
+	let group_response = group.has_reports.fold;
+	let group_payload = await lastValueFrom(group_response);
+
+	if (!group_payload.personal_report) {
+		return redirect(`/credit/personal/new/resource/e/${entity_id}/g/${group_id}`);
+	}
+
 	let report = new PersonalReport(group_id);
 	let payload = report.first_name.last_name.scores.fold;
 	let response = await lastValueFrom(payload.pipe(fold(on_success(request), on_error)));
