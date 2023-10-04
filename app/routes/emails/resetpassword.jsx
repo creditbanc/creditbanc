@@ -3,24 +3,17 @@ import sendgrid from "@sendgrid/mail";
 import { form_params } from "~/utils/helpers";
 const cb_logo = "/images/logos/cb_logo_3.png";
 
-let sg = "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";
-// sendgrid.setApiKey(process.env.SENDGRID);
-sendgrid.setApiKey(sg);
+sendgrid.setApiKey(process.env.SENDGRID);
+// sendgrid.setApiKey(sg);
 
 export const action = async ({ request }) => {
 	let location = new URL(request.url);
 
-	console.log("location_______");
-	console.log(location);
-
 	let form = await form_params(request);
-	console.log("form_______");
-	console.log(form);
+
 	let { entity_id } = form;
 
 	const emailHtml = render(<Email entity_id={entity_id} origin={location.origin} />);
-	console.log("emailHtml");
-	console.log(emailHtml);
 
 	const options = {
 		from: "1infiniteloop.end@gmail.com",
