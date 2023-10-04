@@ -1822,6 +1822,10 @@ video {
   width: 60px;
 }
 
+.w-\[700px\] {
+  width: 700px;
+}
+
 .w-\[75\%\] {
   width: 75%;
 }

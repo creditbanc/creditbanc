@@ -4,6 +4,7 @@ import { forkJoin, from, merge, of as rxof, throwError, zip } from "rxjs";
 import { map as rxmap, concatMap, catchError, reduce as rxreduce, filter as rxfilter, tap } from "rxjs/operators";
 import { get, inspect } from "~/utils/helpers";
 import { is_authorized_f } from "../auth";
+import { reset_password } from "~/utils/entity.server";
 
 const merge_with_current = curry((current, data) => {
 	return current.pipe(
@@ -270,6 +271,11 @@ export default class Entity {
 		);
 
 		return this;
+	}
+
+	async reset_password(password) {
+		await reset_password(this._entity_id, password);
+		return "";
 	}
 
 	get fold() {

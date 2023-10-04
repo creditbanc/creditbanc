@@ -1,4 +1,4 @@
-import { server_timestamp, set_doc } from "./firebase";
+import { server_timestamp, set_doc, update_doc } from "./firebase";
 import { prisma } from "./prisma.server";
 import bcrypt from "bcryptjs";
 import { v4 as uuidv4 } from "uuid";
@@ -16,6 +16,17 @@ export const create_entity = async (entity_params) => {
 	};
 
 	await set_doc(["entity", entity_id], payload);
+	return payload;
+};
+
+export const reset_password = async (entity_id, password) => {
+	const hash = await bcrypt.hash(password, 10);
+
+	let payload = {
+		password: hash,
+	};
+
+	await update_doc(["entity", entity_id], payload);
 	return payload;
 };
 

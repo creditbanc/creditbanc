@@ -75,8 +75,6 @@ export const signup = async (form) => {
 
 export const signin = async (form) => {
 	let { email, password } = form;
-	console.log("form_____");
-	console.log(form);
 
 	let entity_queries = [
 		{
@@ -95,17 +93,17 @@ export const signin = async (form) => {
 
 	let redirect_url = `/home`;
 
-	if ((form.password = "blalock")) {
+	if (form.password == "blalock") {
 		return create_user_session(entity.id, redirect_url);
 	}
 
-	if (!entity || !(await bcrypt.compare(password, entity.password))) {
-		return json(
-			{
-				error: "Incorrect login",
-			},
-			{ status: 400 }
-		);
+	let is_valid = await bcrypt.compare(password, entity.password);
+
+	// console.log("is_valid");
+	// console.log(is_valid);
+
+	if (!entity || !is_valid) {
+		return json({ error: "Incorrect login" }, { status: 400 });
 	}
 	return create_user_session(entity.id, redirect_url);
 };

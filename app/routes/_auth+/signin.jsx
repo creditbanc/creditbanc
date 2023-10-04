@@ -1,9 +1,10 @@
 import { useState } from "react";
 import InputField from "~/components/InputField";
 import { get_entity, signin } from "../../utils/auth.server";
-import { useSubmit, useActionData } from "@remix-run/react";
+import { useSubmit, useActionData, Link } from "@remix-run/react";
 import { json, redirect } from "@remix-run/node";
 import { get_user } from "../../utils/auth.server";
+import { form_params } from "~/utils/helpers";
 const cb_logo = "/images/logos/cb_logo_3.png";
 const bg = "/images/credit_banc_auth_bg.png";
 
@@ -13,10 +14,8 @@ export const loader = async ({ request }) => {
 
 export const action = async ({ request }) => {
 	console.log("action");
-	var form = await request.formData();
-
-	const email = form.get("email");
-	const password = form.get("password");
+	let form = await form_params(request);
+	let { email, password } = form;
 
 	if (typeof email !== "string" || typeof password !== "string") {
 		return json({ error: "Invalid form data" }, { status: 400 });
@@ -34,8 +33,7 @@ export default function SignIn() {
 	const onSubmit = (event) => {
 		console.log("onSubmit");
 		event.preventDefault();
-		let form = event.currentTarget;
-		submit(form, { method: "post", action: "/signin" });
+		submit(formData, { method: "post" });
 	};
 
 	const handleFormChange = (event) => {
@@ -62,7 +60,7 @@ export default function SignIn() {
 
 					<div className="mt-8">
 						<div className="mt-6">
-							<form action="#" method="POST" className="space-y-6">
+							<div className="space-y-6">
 								<div>
 									<label htmlFor="email" className="block text-sm font-medium text-gray-700">
 										Email address
@@ -102,7 +100,7 @@ export default function SignIn() {
 								</div>
 
 								<div className="flex items-center justify-between">
-									<div className="flex items-center">
+									{/* <div className="flex items-center">
 										<input
 											id="remember-me"
 											name="remember-me"
@@ -112,27 +110,27 @@ export default function SignIn() {
 										<label htmlFor="remember-me" className="ml-2 block text-sm text-gray-900">
 											Remember me
 										</label>
-									</div>
+									</div> */}
 
-									{/* <div className="text-sm">
-										<a
-											href="#"
+									<div className="text-sm">
+										<Link
+											to={`/recover`}
 											className="font-medium text-indigo-600 hover:text-indigo-500 underline"
 										>
 											Help! I can’t remember my password!
-										</a>
-									</div> */}
+										</Link>
+									</div>
 								</div>
 
 								<div>
-									<button
-										type="submit"
-										className="flex w-full justify-center rounded-md border border-transparent bg-[#55CF9E] py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-[#55CF9E] focus:outline-none focus:ring-2 focus:ring-[#55CF9E] focus:ring-offset-2"
+									<div
+										onClick={onSubmit}
+										className="flex w-full justify-center rounded-md border border-transparent bg-[#55CF9E] py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-[#55CF9E] focus:outline-none focus:ring-2 focus:ring-[#55CF9E] focus:ring-offset-2 cursor-pointer"
 									>
 										Sign in
-									</button>
+									</div>
 								</div>
-							</form>
+							</div>
 						</div>
 					</div>
 				</div>
