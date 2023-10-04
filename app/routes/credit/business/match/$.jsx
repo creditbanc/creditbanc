@@ -1,24 +1,25 @@
 import axios from "axios";
-import { head, pipe } from "ramda";
+import { head, pipe, map } from "ramda";
 import { get } from "shades";
 import {
 	get_group_id,
 	formData,
 	json_response,
-	validate_form,
-	from_validations,
 	inspect,
 	search_params,
+	get_entity_id,
+	store,
+	formatPhoneNumber,
 } from "~/utils/helpers";
 import { get_session_entity_id, get_user_id } from "~/utils/auth.server";
 import { LendflowExternal, LendflowInternal } from "~/utils/lendflow.server";
-import { get_collection } from "~/utils/firebase";
 import { map as rxmap, tap, filter as rxfilter, concatMap, take, delay, repeat } from "rxjs/operators";
 import { from, of as rxof, Subject, zip, lastValueFrom, throwError, forkJoin } from "rxjs";
-import Entity from "~/api/internal/entity";
+import Entity from "~/api/client/Entity";
 import { fold } from "~/utils/operators";
-import { lendflow_validator } from "../../helpers";
 import { json } from "@remix-run/node";
+import { useLoaderData, useLocation, useNavigate, useSubmit } from "@remix-run/react";
+import BusinessReport from "~/api/client/BusinessReport";
 
 let route_logger = `credit.business.match`;
 let action_start = "credit.business.match.action.start";
@@ -26,82 +27,39 @@ let action_response = "action.response";
 let loader_start = "credit.business.match.loader.start";
 let loader_response = "loader.response";
 
+let use_view_store = store();
 const subject = new Subject();
 
 const action_subject = subject.pipe(
 	rxfilter((event) => event.id === action_start),
 	concatMap(({ args: { request } }) => {
 		console.log(`${route_logger}.action_subject`);
-		let $formData = from(formData(request)).pipe(rxmap((form) => form.payload));
+		let url = new URL(request.url);
+		let form = from(formData(request)).pipe(rxmap((form) => form));
 
-		// let $application_id = "1bbb9ba5-50ec-4fc5-955c-43239198a8a5";
-		// let $application_id = from(get_doc(["credit_reports", application_id]));
+		let report = new BusinessReport(get_group_id(url.pathname));
+		let report_response = report.application_id.fold;
 
-		// return rxof({ test: "hi" });
-
-		let value_or_empty = (value) => (value ? value : "");
-
-		let $entity_id = from(get_session_entity_id(request)).pipe(rxmap(value_or_empty));
-
-		let $plan_id = $entity_id.pipe(
-			rxmap((entity_id) => new Entity(entity_id)),
-			concatMap((entity) => entity.plan_id())
+		let data = report_response.pipe(
+			concatMap((application) => from(form).pipe(rxmap((form) => ({ ...application, ...form }))))
 		);
 
-		let $group_id = rxof(get_group_id(request.url)).pipe(
-			concatMap((value) => {
-				if (value == undefined) {
-					return from($entity_id).pipe(
-						concatMap((entity_id) =>
-							from(
-								get_collection({
-									path: ["role_configs"],
-									queries: [
-										{
-											param: "entity_id",
-											predicate: "==",
-											value: entity_id,
-										},
-									],
-								})
-							)
-						),
-						rxmap(pipe(head, get("group_id")))
-					);
-				} else {
-					return rxof(value);
-				}
-			})
-		);
-
-		return from($formData).pipe(
-			concatMap((form) => from_validations(validate_form(lendflow_validator, form))),
-			concatMap(() => zip($plan_id, $formData)),
-			rxmap(([plan_id, form]) =>
-				LendflowExternal.new_application_request_creator({
-					...form,
-					requested_products: ["experian_business_match"],
-				})
+		return data.pipe(
+			concatMap((data) =>
+				from(LendflowExternal.update_application_bin(data.application_id, data.bin_id)).pipe(
+					concatMap((bin_update_response) => {
+						return from(LendflowExternal.update_lendflow_report(data.application_id));
+					}),
+					concatMap((application_response) =>
+						from(LendflowExternal.get_lendflow_report(data.application_id)).pipe(rxmap(get("data", "data")))
+					),
+					concatMap((report) =>
+						LendflowInternal.update_application({ application_id: data.application_id, ...report })
+					),
+					delay(10000)
+				)
 			),
-			concatMap((request) => from(axios(request))),
-			rxmap(pipe(get("data", "data", "application_id"))),
-			tap(() => console.log(`${route_logger}.match.tap.1`)),
-			tap(inspect),
-			concatMap((application_id) => zip($group_id, $entity_id, $plan_id, rxof(application_id), $formData)),
-			concatMap(([group_id, entity_id, plan_id, application_id, form]) =>
-				LendflowInternal.save_application({
-					group_id,
-					entity_id,
-					plan_id,
-					application_id,
-					type: "business_credit_report",
-					id: application_id,
-					form,
-				})
-			),
-			rxmap(pipe(get("application_id"))),
-			rxmap((application_id) => ({ application_id })),
-			tap(() => console.log(`${route_logger}.action_subject.value`)),
+			tap(() => console.log(`${route_logger}.application_bin_update_response`)),
 			tap(inspect)
 		);
 	})
@@ -112,88 +70,21 @@ const loader_subject = subject.pipe(
 	concatMap(({ args: { request } }) => {
 		console.log(`${route_logger}.loader_subject`);
 		let { application_id } = search_params(request);
-		console.log(application_id);
 
-		let application = from(LendflowExternal.get_lendflow_report(application_id)).pipe(
+		let application = rxof(null).pipe(
+			// delay(10000),
+			concatMap(() => from(LendflowExternal.get_lendflow_report(application_id))),
 			rxmap(get("data", "data")),
 			rxfilter((application) => application?.statuses?.experian?.business_match === "Success"),
-			tap(() => console.log(`${route_logger}.get_lendflow_report.1`)),
-			tap(inspect),
 			rxmap((application) => new LendflowInternal(application)),
 			rxmap((application) => ({ application_id, business_match: application.business_match() })),
 			take(1)
 		);
 
-		// return rxof({});
-
 		return application.pipe(
 			tap(() => console.log(`${route_logger}.get_lendflow_report`)),
 			tap(inspect)
 		);
-
-		// let value_or_empty = (value) => (value ? value : "");
-
-		// let $entity_id = from(get_session_entity_id(request)).pipe(rxmap(value_or_empty));
-
-		// let $plan_id = $entity_id.pipe(
-		// 	rxmap((entity_id) => new Entity(entity_id)),
-		// 	concatMap((entity) => entity.plan_id())
-		// );
-
-		// let $group_id = rxof(get_group_id(request.url)).pipe(
-		// 	concatMap((value) => {
-		// 		if (value == undefined) {
-		// 			return from($entity_id).pipe(
-		// 				concatMap((entity_id) =>
-		// 					from(
-		// 						get_collection({
-		// 							path: ["role_configs"],
-		// 							queries: [
-		// 								{
-		// 									param: "entity_id",
-		// 									predicate: "==",
-		// 									value: entity_id,
-		// 								},
-		// 							],
-		// 						})
-		// 					)
-		// 				),
-		// 				rxmap(pipe(head, get("group_id")))
-		// 			);
-		// 		} else {
-		// 			return rxof(value);
-		// 		}
-		// 	})
-		// );
-
-		// return from($formData).pipe(
-		// 	concatMap((form) => from_validations(validate_form(lendflow_validator, form))),
-		// 	concatMap(() => zip($plan_id, $formData)),
-		// 	rxmap(([plan_id, form]) =>
-		// 		LendflowExternal.new_application_request_creator({
-		// 			...form,
-		// 			requested_products: ["experian_business_match"],
-		// 		})
-		// 	),
-		// 	concatMap((request) => from(axios(request))),
-		// 	rxmap(pipe(get("data", "data", "application_id"))),
-		// 	tap(() => console.log(`${route_logger}.action_subject.value`)),
-		// 	tap(inspect),
-		// 	concatMap((application_id) => zip($group_id, $entity_id, $plan_id, rxof(application_id))),
-		// 	concatMap(([group_id, entity_id, plan_id, application_id]) =>
-		// 		LendflowInternal.save_application({
-		// 			group_id,
-		// 			entity_id,
-		// 			plan_id,
-		// 			application_id,
-		// 			type: "business_credit_report",
-		// 			id: application_id,
-		// 		})
-		// 	),
-		// 	// delay(10000),
-		// 	tap(() => console.log(`${route_logger}.action_subject.value`)),
-		// 	tap(inspect)
-		// );
 	})
 );
 
@@ -206,18 +97,12 @@ export const action = async ({ request }) => {
 
 		let entity_id = await get_session_entity_id(request);
 		let group_id = get_group_id(request.url);
-
 		let redirect_url = `${origin}/credit/report/business/experian/status/resource/e/${entity_id}/g/${group_id}`;
 
 		subject.next({
 			id: action_response,
-			next: () => value,
+			next: () => Response.redirect(redirect_url),
 		});
-
-		// subject.next({
-		// 	id: "new_application_response",
-		// 	next: () => Response.redirect(redirect_url),
-		// });
 	};
 
 	const on_error = (error) => {
@@ -235,7 +120,6 @@ export const action = async ({ request }) => {
 	action_subject.pipe(fold(on_success, on_error)).subscribe();
 	subject.next({ id: action_start, args: { request } });
 	let response = await lastValueFrom(subject.pipe(rxfilter(on_complete), take(1)));
-
 	return response.next();
 };
 
@@ -246,20 +130,10 @@ export const loader = async ({ request }) => {
 		console.log(`${route_logger}.loader.success`);
 		let { origin } = new URL(request.url);
 
-		let entity_id = await get_session_entity_id(request);
-		let group_id = get_group_id(request.url);
-
-		let redirect_url = `${origin}/credit/report/business/experian/status/resource/e/${entity_id}/g/${group_id}`;
-
 		subject.next({
 			id: loader_response,
 			next: () => value,
 		});
-
-		// subject.next({
-		// 	id: "new_application_response",
-		// 	next: () => Response.redirect(redirect_url),
-		// });
 	};
 
 	const on_error = (error) => {
@@ -277,9 +151,72 @@ export const loader = async ({ request }) => {
 	loader_subject.pipe(fold(on_success, on_error)).subscribe();
 	subject.next({ id: loader_start, args: { request } });
 
-	// return { test: "hi" };
-
 	let response = await lastValueFrom(subject.pipe(rxfilter(on_complete), take(1)));
-
 	return response.next();
 };
+
+const BusinessMatchSelect = () => {
+	let { business_match = [] } = useLoaderData();
+	let { pathname } = useLocation();
+	let entity_id = get_entity_id(pathname);
+	let group_id = get_group_id(pathname);
+	let submit = useSubmit();
+
+	const onSelectBusiness = (business) => {
+		console.log("onSelectBusiness");
+		// console.log(business);
+		let post_url = `/credit/business/match/resource/e/${entity_id}/g/${group_id}`;
+		submit({ bin_id: business.bin }, { method: "post", action: post_url });
+	};
+
+	return (
+		<div className="flex flex-col my-2 p-3 bg-white text-sm w-full">
+			<div className="flex flex-col space-y-3">
+				{pipe(
+					map((business) => (
+						<div
+							className="flex flex-col rounded bg-white px-3 text-sm cursor-pointer hover:border-green-300 border-2 hover:border-2"
+							key={business.bin}
+							onClick={() => onSelectBusiness(business)}
+						>
+							<div className="flex flex-row border-b py-2 font-semibold justify-between items-end mb-2">
+								<div>{business?.businessName}</div>
+								<div className="flex flex-col px-3 py-1 bg-gray-100 hover:bg-green-300 text-gray-700 hover:text-white rounded cursor-pointer">
+									Select
+								</div>
+							</div>
+							<div className="flex flex-col space-y-1 my-1 pb-1">
+								<div className="flex flex-col">{business?.address?.street}</div>
+								<div className="flex flex-row space-x-1">
+									<div>{business?.address?.city},</div>
+									<div> {business?.address?.state} </div>
+									<div> {business?.address?.zip} </div>
+								</div>
+								<div className="flex flex-col">{formatPhoneNumber(business?.phone)}</div>
+							</div>
+						</div>
+					))
+				)(business_match)}
+			</div>
+		</div>
+	);
+};
+
+export default function View() {
+	return (
+		<div className="flex flex-col w-full items-center overflow-y-scroll">
+			<div className="flex flex-col w-[900px] items-center">
+				<div className="bg-white px-6 py-10">
+					<div className="mx-auto max-w-2xl text-center">
+						<h2 className="text-4xl font-bold tracking-tight text-gray-900 sm:text-6xl">
+							Select your business
+						</h2>
+					</div>
+				</div>
+				<div className="flex flex-col w-full mb-5">
+					<BusinessMatchSelect />
+				</div>
+			</div>
+		</div>
+	);
+}

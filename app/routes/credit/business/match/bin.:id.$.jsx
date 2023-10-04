@@ -77,43 +77,43 @@ const action_subject = subject.pipe(
 	})
 );
 
-export const action = async ({ request, params }) => {
-	console.log(route_logger);
+// export const action = async ({ request, params }) => {
+// 	console.log(route_logger);
 
-	const on_success = async (value) => {
-		console.log(`${route_logger}.action.success`);
-		let { origin } = new URL(request.url);
-		let entity_id = await get_session_entity_id(request);
-		let group_id = get_group_id(request.url);
+// 	const on_success = async (value) => {
+// 		console.log(`${route_logger}.action.success`);
+// 		let { origin } = new URL(request.url);
+// 		let entity_id = await get_session_entity_id(request);
+// 		let group_id = get_group_id(request.url);
 
-		let redirect_url = `${origin}/credit/report/business/experian/status/resource/e/${entity_id}/g/${group_id}`;
+// 		let redirect_url = `${origin}/credit/report/business/experian/status/resource/e/${entity_id}/g/${group_id}`;
 
-		subject.next({
-			id: action_response,
-			next: () => value,
-		});
+// 		subject.next({
+// 			id: action_response,
+// 			next: () => value,
+// 		});
 
-		// subject.next({
-		// 	id: action_response,
-		// 	next: () => Response.redirect(redirect_url),
-		// });
-	};
+// 		// subject.next({
+// 		// 	id: action_response,
+// 		// 	next: () => Response.redirect(redirect_url),
+// 		// });
+// 	};
 
-	const on_error = (error) => {
-		console.log(`${route_logger}.action.error`);
-		console.log(error);
+// 	const on_error = (error) => {
+// 		console.log(`${route_logger}.action.error`);
+// 		console.log(error);
 
-		subject.next({
-			id: action_response,
-			next: () => json_response(error),
-		});
-	};
+// 		subject.next({
+// 			id: action_response,
+// 			next: () => json_response(error),
+// 		});
+// 	};
 
-	const on_complete = (value) => value.id === action_response;
+// 	const on_complete = (value) => value.id === action_response;
 
-	action_subject.pipe(fold(on_success, on_error)).subscribe();
-	subject.next({ id: action_start, args: { request, params } });
-	let response = await lastValueFrom(subject.pipe(rxfilter(on_complete), take(1)));
+// 	action_subject.pipe(fold(on_success, on_error)).subscribe();
+// 	subject.next({ id: action_start, args: { request, params } });
+// 	let response = await lastValueFrom(subject.pipe(rxfilter(on_complete), take(1)));
 
-	return response.next();
-};
+// 	return response.next();
+// };

@@ -410,15 +410,15 @@ export class LendflowExternal {
 			},
 			data: {
 				additional_business: {
-					additional_business_experian_bin: bin,
+					additional_business_experian_bin: `${bin}`,
 				},
 			},
 		};
 
 		let response = await axios(options);
 
-		// console.log("update_application_bin_response");
-		// inspect(response.data);
+		console.log("update_application_bin_response");
+		inspect(response.data);
 
 		return response;
 	};
@@ -435,8 +435,8 @@ export class LendflowExternal {
 				Authorization: `Bearer ${LENDFLOW_BEARER}`,
 				"Content-Type": "application/json",
 			},
-			// data: { requested_products: ["experian_business_facts"] },
-			data: { requested_products: LendflowExternal.plan_request_products("builder") },
+			data: { requested_products: ["dnb_ci_l2", "experian_business_facts"] },
+			// data: { requested_products: LendflowExternal.plan_request_products("builder") },
 		};
 
 		let response = await axios(options);

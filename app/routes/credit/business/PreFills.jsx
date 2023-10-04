@@ -1,4 +1,4 @@
-import { useReportStore } from "./new/$";
+import { useReportStore } from "./new/--";
 import {
 	test_identity_three,
 	test_identity_four,
@@ -9,11 +9,11 @@ import {
 	mrm_credit_report,
 } from "~/data/lendflow";
 
-export default function PreFills() {
-	let set_state = useReportStore((state) => state.set_state);
+export default function PreFills({ set }) {
+	// let set_state = useReportStore((state) => state.set_state);
 
 	const onPreFill = (identity) => {
-		set_state(["form"], identity);
+		set(["form"], identity);
 	};
 
 	return (

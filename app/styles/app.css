@@ -1822,6 +1822,10 @@ video {
   width: 90%;
 }
 
+.w-\[900px\] {
+  width: 900px;
+}
+
 .w-\[calc\(100\%\+11px\)\] {
   width: calc(100% + 11px);
 }

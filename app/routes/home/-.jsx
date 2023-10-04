@@ -60,7 +60,7 @@ import { CheckCircleIcon, XCircleIcon } from "@heroicons/react/24/outline";
 import { get_doc } from "~/utils/firebase";
 import { useOnboardingStore, default_onboard_state } from "~/stores/useOnboardingStore";
 import { encode } from "js-base64";
-import { BusinessEntity, useReportStore } from "../credit/business/new/$";
+import { BusinessEntity, useReportStore } from "../credit/business/new/--";
 import Spinner from "~/components/LoadingSpinner";
 import murmurhash from "murmurhash";
 import { concat, concatMap, delay, from, lastValueFrom, merge, of as rxof, tap, zip } from "rxjs";

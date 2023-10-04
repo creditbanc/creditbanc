@@ -24,7 +24,7 @@ import { Disclosure } from "@headlessui/react";
 import { CheckCircleIcon, XCircleIcon } from "@heroicons/react/24/outline";
 import { get_doc } from "~/utils/firebase";
 import { useOnboardingStore } from "~/stores/useOnboardingStore";
-import { BusinessEntity, useReportStore } from "../credit/business/new/$";
+import { BusinessEntity, useReportStore } from "../credit/business/new/--";
 import Spinner from "~/components/LoadingSpinner";
 import { concatMap, delay, forkJoin, from, lastValueFrom, of as rxof, tap, zip } from "rxjs";
 import { filter as rxfilter, map as rxmap } from "rxjs";
@@ -111,193 +111,6 @@ export const loader = async ({ request }) => {
 
 	let response = await lastValueFrom(payload.pipe(fold(on_success(request), on_error)));
 	return response;
-};
-
-const BusinessCredit = () => {
-	let { business_scores = {}, plan_id = "essential" } = use_view_store((state) => state);
-	let { pathname } = useLocation();
-	let entity_id = get_entity_id(pathname);
-	let group_id = get_group_id(pathname);
-	let { experian_business_score, dnb_business_score } = business_scores;
-
-	// console.log("business_scores");
-	// console.log(business_scores);
-
-	return (
-		<div className="flex flex-col border rounded px-4 bg-white min-h-[260px]">
-			<div className="border-b border-gray-200">
-				<h3 className="text-base font-semibold leading-6 text-gray-900 py-3">Business Credit</h3>
-			</div>
-			<div className="flex flex-col w-full py-3 border-b border-gray-200">
-				<Link
-					className="flex flex-row w-full"
-					to={`/credit/report/business/experian/status/resource/e/${entity_id}/g/${group_id}`}
-				>
-					<div className="flex flex-col w-2/3">
-						<div className="font-semibold">Experian ®</div>
-						<div className="text-gray-400 text-sm">Intelliscore</div>
-					</div>
-
-					<div className="flex flex-col w-1/3 text-2xl font-bold justify-center">
-						<div className="flex flex-row w-full justify-end items-center cursor-pointer">
-							<div className="flex flex-col">{experian_business_score}</div>
-							<div className="flex flex-col w-[30px] ">
-								<ChevronRightIcon />
-							</div>
-						</div>
-					</div>
-				</Link>
-			</div>
-
-			<div className="flex flex-col w-full py-3 ">
-				<Link
-					className="flex flex-row w-full"
-					to={`/credit/report/business/experian/status/resource/e/${entity_id}/g/${group_id}`}
-				>
-					<div className="flex flex-col w-2/3">
-						<div className="font-semibold">Dun & Bradstreet ®</div>
-						<div className="text-gray-400 text-sm">PAYDEX Score</div>
-					</div>
-
-					<div className="flex flex-col w-1/3 text-2xl font-bold justify-center">
-						<div className="flex flex-row w-full justify-end items-center cursor-pointer">
-							<div className="flex flex-col">{dnb_business_score}</div>
-							<div className="flex flex-col w-[30px] ">
-								<ChevronRightIcon />
-							</div>
-						</div>
-					</div>
-				</Link>
-			</div>
-		</div>
-	);
-};
-
-const PersonalCredit = () => {
-	let { personal_scores = {}, plan_id = "essential" } = use_view_store((state) => state);
-	let { pathname } = useLocation();
-	let entity_id = get_entity_id(pathname);
-	let group_id = get_group_id(pathname);
-	let { experian_personal_score, equifax_personal_score, transunion_personal_score } = personal_scores;
-
-	return (
-		<div className="flex flex-col rounded px-4 border bg-white min-h-[260px]">
-			<div className="border-b border-gray-200">
-				<h3 className="text-base font-semibold leading-6 text-gray-900 py-3">Personal Credit</h3>
-			</div>
-
-			<div className="flex flex-col w-full py-3 border-b border-gray-200">
-				<Link
-					className="flex flex-row w-full"
-					to={`/credit/report/personal/personal/resource/e/${entity_id}/g/${group_id}?rand=${Math.random()}`}
-				>
-					<div className="flex flex-col w-2/3">
-						<div className="font-semibold">Experian Personal ®</div>
-						<div className="text-gray-400 text-sm">VantageScore® 3.0</div>
-					</div>
-
-					<div className="flex flex-col w-1/3 text-2xl font-bold justify-center">
-						<div className="flex flex-row w-full justify-end items-center cursor-pointer">
-							<div className="flex flex-col">{experian_personal_score}</div>
-							<div className="flex flex-col w-[30px] ">
-								<ChevronRightIcon />
-							</div>
-						</div>
-					</div>
-				</Link>
-			</div>
-
-			<div className="flex flex-col w-full py-3 border-b border-gray-200">
-				<Link
-					className="flex flex-row w-full"
-					to={`/credit/report/personal/personal/resource/e/${entity_id}/g/${group_id}?rand=${Math.random()}`}
-				>
-					<div className="flex flex-col w-2/3">
-						<div className="font-semibold">TransUnion ®</div>
-						<div className="text-gray-400 text-sm">VantageScore® 3.0</div>
-					</div>
-
-					<div className="flex flex-col w-1/3 text-2xl font-bold justify-center">
-						<div className="flex flex-row w-full justify-end items-center cursor-pointer">
-							<div className="flex flex-col">{transunion_personal_score}</div>
-							<div className="flex flex-col w-[30px] ">
-								<ChevronRightIcon />
-							</div>
-						</div>
-					</div>
-				</Link>
-			</div>
-
-			<div className="flex flex-col w-full py-3">
-				<Link
-					className="flex flex-row w-full"
-					to={`/credit/report/personal/personal/resource/e/${entity_id}/g/${group_id}?rand=${Math.random()}`}
-				>
-					<div className="flex flex-col w-2/3">
-						<div className="font-semibold">Equifax ®</div>
-						<div className="text-gray-400 text-sm">VantageScore® 3.0</div>
-					</div>
-
-					<div className="flex flex-col w-1/3 text-2xl font-bold justify-center">
-						<div className="flex flex-row w-full justify-end items-center cursor-pointer">
-							<div className="flex flex-col">{equifax_personal_score}</div>
-							<div className="flex flex-col w-[30px] ">
-								<ChevronRightIcon />
-							</div>
-						</div>
-					</div>
-				</Link>
-			</div>
-		</div>
-	);
-};
-
-const HeadingTwo = () => {
-	let loader_data = use_view_store((state) => state);
-	let { entity, business_entity, business_info } = loader_data;
-
-	let EntityPersonalDetails = () => {
-		return (
-			<div>
-				<div className="flex flex-row space-x-1 font-semibold">
-					<div>{capitalize(business_entity?.first_name)}</div>
-					<div>{capitalize(business_entity?.last_name)}</div>
-				</div>
-				<div className="text-sm">{business_entity?.email}</div>
-			</div>
-		);
-	};
-
-	let BusinessDetails = () => {
-		return (
-			<div>
-				<div className="font-semibold">{business_info?.name}</div>
-			</div>
-		);
-	};
-
-	let EntityAccountDetails = () => {
-		return business_info?.name ? <BusinessDetails /> : <EntityPersonalDetails />;
-	};
-
-	return (
-		<div className="flex flex-col max-w-7xl w-full px-3 py-2">
-			<div className="flex  flex-row items-center justify-between gap-x-8 lg:mx-0 w-full">
-				<div className="flex items-center gap-x-6">
-					<img
-						src="https://tailwindui.com/img/logos/48x48/tuple.svg"
-						alt=""
-						className="h-16 w-16 flex-none rounded-full ring-1 ring-gray-900/10"
-					/>
-					<h1>
-						<div className="mt-1 text-base leading-6 text-gray-900">
-							<EntityAccountDetails />
-						</div>
-					</h1>
-				</div>
-			</div>
-		</div>
-	);
 };
 
 const posts = [
@@ -1132,11 +945,11 @@ export default function Home() {
 		set_view(loader_data);
 	}, []);
 
-	useEffect(() => {
-		if (cache_dependencies !== undefined) {
-			use_cache_client({ path: `/home`, dependencies: cache_dependencies });
-		}
-	}, []);
+	// useEffect(() => {
+	// 	if (cache_dependencies !== undefined) {
+	// 		use_cache_client({ path: `/home`, dependencies: cache_dependencies });
+	// 	}
+	// }, []);
 
 	// useEffect(() => {
 	// 	run_fetchers();
