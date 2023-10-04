@@ -34,15 +34,17 @@ export const signup = async (form) => {
 	let {
 		email,
 		password,
-		redirect_to = "/root",
+		redirect_to = "/home",
 		new_entity = false,
 		first_name,
 		last_name,
 		plan_id = "essential",
 	} = form;
-	// console.log(form);
+
+	let partition_id = uuidv4();
 
 	let entity = await create_entity({
+		partition_id,
 		email,
 		password,
 		first_name,
@@ -50,7 +52,7 @@ export const signup = async (form) => {
 		plan_id,
 	});
 
-	let partition = await create_partition({ entity_id: entity.id });
+	let partition = await create_partition({ entity_id: entity.id, partition_id });
 
 	let default_config = await create_role_config({
 		group_id: partition.id,
@@ -67,8 +69,6 @@ export const signup = async (form) => {
 	});
 
 	redirect_to = new_entity ? redirect_to + `/resource/e/${entity.id}/g/${partition.id}` : redirect_to;
-	// console.log("redirect_to");
-	// console.log(redirect_to);
 
 	return create_user_session(entity.id, redirect_to);
 };

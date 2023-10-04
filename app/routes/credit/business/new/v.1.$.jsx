@@ -249,7 +249,7 @@ export default function View() {
 
 	return (
 		<div className="flex flex-col w-full h-full overflow-y-scroll scrollbar-none items-center justify-center">
-			<WelcomeModal />
+			{/* <WelcomeModal /> */}
 			<div className="flex flex-col w-[900px]">
 				<div className="flex flex-col border rounded">
 					<div className="flex flex-col w-full border-b py-3 px-5">

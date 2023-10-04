@@ -2,10 +2,8 @@ import { pipe, head } from "ramda";
 import { get_collection, server_timestamp, set_doc } from "./firebase";
 import { v4 as uuidv4 } from "uuid";
 
-export const create_partition = async ({ entity_id }) => {
+export const create_partition = async ({ entity_id, partition_id }) => {
 	console.log("create_partition");
-
-	let partition_id = uuidv4();
 
 	let payload = {
 		id: partition_id,

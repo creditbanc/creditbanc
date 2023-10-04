@@ -23,48 +23,21 @@ const useForm = create((set) => ({
 
 export async function action({ request }) {
 	var form = await request.formData();
-	// console.log("actionaction");
-	// console.log(request.url);
+
 	const url = new URL(request.url);
 	let search = Object.fromEntries(url.searchParams);
 	let { displayToken, plan } = search;
-
-	// console.log("displayToken");
-	// console.log(plan);
-	// console.log(url.searchParams.toString());
 
 	const email = form.get("email");
 	const password = form.get("password");
 	const first_name = form.get("first_name");
 	const last_name = form.get("last_name");
 
-	// console.log("formform");
-	// console.log(email);
-	// console.log(password);
-
 	if (typeof email !== "string" || typeof password !== "string") {
 		return json({ error: "Invalid form data" }, { status: 400 });
 	}
 
-	// console.log("displayToken");
-	// console.log(displayToken);
-
-	// return null;
-
-	// if (!displayToken) {
-	// 	// console.log("yesDisplayToken");
-	// 	return await signup({ email, password, first_name, last_name });
-	// } else {
-	// 	// console.log("noDisplayToken");
-	// let redirect_to = `/credit/personal/create?${url.searchParams.toString()}`;
-	// let redirect_to = `/credit/personal/new${url.searchParams.toString()}`;
-	let redirect_to;
-
-	if (plan == "essential") {
-		redirect_to = `/credit/business/new`;
-	} else {
-		redirect_to = `/checkout/plans/${plan}`;
-	}
+	let redirect_to = `/checkout/plans/${plan}`;
 
 	return await signup({
 		email,
@@ -246,7 +219,7 @@ export default function SignUp() {
 	return (
 		<div className="flex flex-col w-full h-full">
 			<CreditNav />
-			{/* <CreditHeroGradient /> */}
+
 			<div className="flex flex-col w-full p-[20px] max-w-2xl mx-auto h-full">
 				<div className="flex flex-col justify-center h-full -mt-10">
 					<Heading />
