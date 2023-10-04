@@ -42,7 +42,6 @@ export default function Recover() {
 	const [formError, setFormError] = useState(actionData?.error || "");
 	const [formData, setFormData] = useState({ email: "", password: "" });
 	const submit = useSubmit();
-	console.log("actionData", actionData);
 
 	const onSubmit = (event) => {
 		console.log("onSubmit");
