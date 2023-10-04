@@ -19,6 +19,7 @@ import { on_success } from "./business/success";
 import { is_authorized } from "./business/authorized";
 import { pipe } from "ramda";
 import { update_doc } from "~/utils/firebase";
+import { Group } from "~/api/client/Group";
 
 const log_route = `credit.report.business`;
 
@@ -69,6 +70,14 @@ export const loader = async ({ request }) => {
 	let url = new URL(request.url);
 	let entity_id = await get_session_entity_id(request);
 	let group_id = get_group_id(url.pathname);
+	let group = new Group(group_id);
+
+	let group_response = group.has_reports.fold;
+	let group_payload = await lastValueFrom(group_response);
+
+	if (!group_payload.business_report) {
+		return redirect(`/credit/business/new/v/1/resource/e/${entity_id}/g/${group_id}`);
+	}
 
 	let entity = new Entity(entity_id);
 	let business_report = new Report(group_id);
