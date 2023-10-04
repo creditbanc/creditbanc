@@ -12,7 +12,6 @@ export const on_success = curry((request, response) => {
 
 	if (response.personal_report_is_empty == true) {
 		return redirect(`/credit/personal/new/resource/e/${entity_id}/g/${group_id}`);
-		return redirect("/credit/personal/new");
 	}
 
 	let with_cache = cache(request);

@@ -137,8 +137,17 @@ export default function View() {
 	};
 
 	return (
-		<div className="flex flex-col w-full overflow-y-scroll scrollbar-none">
-			<NewBusinessReportForm on_submit={onSubmit} />
+		<div className="flex flex-col w-full overflow-y-scroll scrollbar-none items-center">
+			<div className="flex flex-col w-[900px]">
+				<div className="bg-white my-8">
+					<div className="mx-auto max-w-2xl text-center">
+						<h2 className="text-4xl font-bold tracking-tight text-gray-900 sm:text-6xl">
+							Business Credit Report
+						</h2>
+					</div>
+				</div>
+				<NewBusinessReportForm on_submit={onSubmit} />
+			</div>
 		</div>
 	);
 }

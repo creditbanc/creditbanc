@@ -3,6 +3,8 @@ import { get_session_entity_id } from "~/utils/auth.server";
 import { get_partition_id } from "~/utils/group.server";
 import { redirect } from "@remix-run/node";
 import { Outlet } from "@remix-run/react";
+import { Group } from "~/api/client/Group";
+import { lastValueFrom } from "rxjs";
 
 export const loader = async ({ request }) => {
 	let url = new URL(request.url);
@@ -15,6 +17,14 @@ export const loader = async ({ request }) => {
 		});
 
 		return redirect(`/home/resource/e/${entity_id}/g/${partition_id}`);
+	}
+
+	let group = new Group(group_id);
+	let group_response = group.has_reports.fold;
+	let response = await lastValueFrom(group_response);
+
+	if (!response.business_report) {
+		return redirect(`/credit/business/new/v/1/resource/e/${entity_id}/g/${group_id}`);
 	}
 
 	return { entity_id };
