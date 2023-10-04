@@ -15,7 +15,7 @@ import axios from "axios";
 import { Fragment, useState } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 
-const welcome_img = "/images/Welcome.png";
+const business_report_img = "/images/business_report_screenshot.png";
 import { CloudArrowUpIcon, LockClosedIcon, ServerIcon, CheckCircleIcon } from "@heroicons/react/20/solid";
 
 let route_logger = `credit.business.new`;
@@ -163,7 +163,7 @@ const Features = () => {
 					</div>
 					<div className="flex flex-col w-full h-full justify-center">
 						<img
-							src="https://tailwindui.com/img/component-images/dark-project-app-screenshot.png"
+							src={business_report_img}
 							alt="Product screenshot"
 							className="w-[48rem] max-w-none rounded-xl shadow-xl ring-1 ring-gray-400/10 sm:w-[57rem] md:-ml-4 lg:-ml-0"
 							width={2432}

@@ -32,6 +32,9 @@ export default function Personal() {
 	let loader_data = useLoaderData();
 	let { user_token, first_name, last_name } = loader_data;
 
+	console.log("loader_data_____");
+	console.log(loader_data);
+
 	return (
 		<div>
 			<div className="flex flex-col w-full items-center my-10 px-5">
