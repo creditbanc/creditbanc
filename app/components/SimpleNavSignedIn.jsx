@@ -182,7 +182,7 @@ const ShareDropdown = () => {
 	}
 
 	return (
-		<Menu as="div" className="relative inline-block text-left">
+		<Menu as="div" className="lg:flex flex-col relative text-left">
 			<div className="flex flex-row divide-x bg-blue-600 text-white rounded-full px-3 py-1.5 text-sm cursor-pointer space-x-3">
 				<div className="flex flex-col w-full items-center " onClick={onShareModal}>
 					<div className="flex flex-row space-x-2">
@@ -355,45 +355,47 @@ export default function Nav({ entity_id, roles, companies }) {
 		set_roles(["roles"], roles);
 	}, [roles]);
 
+	const Nav = () => {
+		return (
+			<div className="flex flex-row space-x-3 text-xs lg:text-sm">
+				{/* <CreditDropdown /> */}
+				{pipe(
+					mapIndexed((item, key) => (
+						<CacheLink
+							to={item.href({
+								entity_id: entity_id,
+								group_id: get_group_id(pathname),
+							})}
+							key={key}
+							className={`px-4 py-2 rounded-full cursor-pointer hover:bg-gray-100 ${
+								item.current(pathname) && "bg-gray-100"
+							}`}
+						>
+							{item.name}
+						</CacheLink>
+					))
+				)(navigation)}
+			</div>
+		);
+	};
+
 	return (
-		<div className="flex flex-col w-full h-[65px] justify-center px-5">
+		<div className="flex flex-col w-full lg:h-[65px] justify-center ">
 			<Modal id="share_modal">
 				<Share session_entity_id={entity_id} roles={roles} />
 			</Modal>
-			<div className="flex flex-row justify-between">
-				<div className="flex flex-col justify-center w-[150px]">
+			<div className="flex flex-row justify-between px-5">
+				<div className="hidden sm:flex flex-col justify-center w-[150px]">
 					<Link to={`/home/resource/e/${entity_id}/g/${group_id}?rand=${Math.random()}`}>
-						<img src={cb_logo} className="hidden sm:block h-5 w-auto" />
+						<img src={cb_logo} className="block h-5 w-auto" />
 					</Link>
 				</div>
 
-				<div className="flex flex-row flex-1 justify-between  items-center mt-1">
+				<div className="flex flex-row flex-1 justify-between lg:items-center mt-1">
 					<div className="">
 						<Companies companies={companies} />
 					</div>
-					<div className="flex flex-col justify-center">
-						{!is_companies_dashboard && (
-							<div className="flex flex-row space-x-3 text-xs lg:text-sm">
-								{/* <CreditDropdown /> */}
-								{pipe(
-									mapIndexed((item, key) => (
-										<CacheLink
-											to={item.href({
-												entity_id: entity_id,
-												group_id: get_group_id(pathname),
-											})}
-											key={key}
-											className={`px-4 py-2 rounded-full cursor-pointer hover:bg-gray-100 ${
-												item.current(pathname) && "bg-gray-100"
-											}`}
-										>
-											{item.name}
-										</CacheLink>
-									))
-								)(navigation)}
-							</div>
-						)}
-					</div>
+					<div className="hidden lg:flex flex-col justify-center">{!is_companies_dashboard && <Nav />}</div>
 					<div className="flex flex-row items-center space-x-3">
 						{/* <div>
 							<div className="flex -space-x-1 overflow-hidden">
@@ -420,7 +422,9 @@ export default function Nav({ entity_id, roles, companies }) {
 							</div>
 						</div> */}
 						{!is_location("/companies/dashboard", pathname) && (
-							<ShareDropdown session_entity_id={entity_id} />
+							<div className="hidden lg:flex flex-col">
+								<ShareDropdown session_entity_id={entity_id} />
+							</div>
 						)}
 
 						{/* <Link
@@ -442,6 +446,16 @@ export default function Nav({ entity_id, roles, companies }) {
 						<UserAccountNavMenu />
 					</div>
 				)}
+			</div>
+			<div className="flex flex-col w-full lg:hidden items-center py-2 border-t">
+				<div className="flex w-full flex-row justify-between px-5">
+					<div>
+						<Nav />
+					</div>
+					<div className="flex flex-col w-[150px]">
+						<ShareDropdown />
+					</div>
+				</div>
 			</div>
 		</div>
 	);
