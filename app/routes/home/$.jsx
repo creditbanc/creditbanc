@@ -607,7 +607,7 @@ export default function Home() {
 					<div className="flex flex-col h-full w-full gap-y-5">
 						<div className="flex flex-col w-full h-full">
 							<div className="flex flex-col h-full gap-x-5 border rounded bg-white items-center w-full gap-y-[60px] overflow-auto scrollbar-none">
-								<div className="flex flex-col max-w-4xl text-center mt-[20px]">
+								<div className="flex flex-col max-w-4xl text-center mt-[40px]">
 									<h1 className="text-4xl font-bold tracking-tight text-gray-900 sm:text-6xl">
 										{businessName}
 									</h1>
