@@ -875,16 +875,20 @@ const CreditUtilization = () => {
 		return (
 			<div className="flex flex-row border-b bg-white last-of-type:border-b-0 rounded">
 				<div className="flex flex-col w-[5px] bg-green-500"></div>
-				<div className="flex flex-row w-full px-4 h-[60px]">
-					<div className="flex flex-col  w-[20%] h-full justify-center">{trade_line?.businessCategory}</div>
-					<div className="flex flex-col  w-[20%] h-full justify-center">
+				<div className="flex flex-row w-full px-4 h-[60px] gap-x-3">
+					<div className="flex flex-col w-[25%] lg:w-[20%] h-full justify-center text-xs lg:text-sm">
+						{trade_line?.businessCategory}
+					</div>
+					<div className="flex flex-col w-[25%] lg:w-[20%] h-full justify-center items-end lg:items-start">
 						{currency.format(trade_line?.accountBalance?.amount)}
 					</div>
-					<div className="flex flex-col  w-[20%] h-full justify-center">
+					<div className="flex flex-col w-[25%] lg:w-[20%] h-full justify-center items-end lg:items-start">
 						{currency.format(trade_line?.recentHighCredit?.amount)}
 					</div>
-					<div className="flex flex-col  w-[20%] h-full justify-center">{utilization_ratio.toFixed(2)}%</div>
-					<div className="flex flex-col  w-[20%] h-full justify-center">
+					<div className="flex flex-col w-[25%] lg:w-[20%] h-full justify-center items-end lg:items-start">
+						{utilization_ratio.toFixed(2)}%
+					</div>
+					<div className="hidden lg:flex flex-col w-[20%] h-full justify-center">
 						{is_current && <div className="flex flex-col text-green-500 ">in good standing</div>}
 					</div>
 				</div>
@@ -896,27 +900,30 @@ const CreditUtilization = () => {
 		<div className="flex flex-col w-full gap-y-4">
 			<div className="flex flex-row w-full divide-x">
 				<div className="flex flex-col w-1/3 items-center gap-y-2">
-					<div className="text-3xl font-semibold">{currency.format(total_current_balance)}</div>
-					<div className="text-sm">Total current balance</div>
+					<div className="text-lg lg:text-3xl font-semibold">{currency.format(total_current_balance)}</div>
+					<div className="hidden lg:flex flex-col text-sm">Total current balance</div>
+					<div className="lg:hidden flex-col text-xs">Current balance</div>
 				</div>
 				<div className="flex flex-col w-1/3 items-center gap-y-2">
-					<div className="text-3xl font-semibold">{currency.format(total_credit_limit)}</div>
-					<div className="text-sm">Total credit limit</div>
+					<div className="text-lg lg:text-3xl font-semibold">{currency.format(total_credit_limit)}</div>
+					<div className="hidden lg:flex flex-col text-sm">Total credit limit</div>
+					<div className="lg:hidden flex-col text-xs">Credit limit</div>
 				</div>
 				<div className="flex flex-col w-1/3 items-center gap-y-2">
-					<div className="text-3xl font-semibold">{utilization_ratio}%</div>
-					<div className="text-sm">Credit utilization ratio</div>
+					<div className="text-lg lg:text-3xl font-semibold">{utilization_ratio}%</div>
+					<div className="hidden lg:flex flex-col text-sm">Credit utilization ratio</div>
+					<div className="lg:hidden flex-col text-xs">Utilization ratio</div>
 				</div>
 			</div>
 			<div className="text-sm my-3 rounded border">
 				<div className="flex flex-row h-[40px] items-center border-b rounded bg-slate-50">
 					<div className="flex flex-col w-[5px]"></div>
-					<div className="flex flex-row h-full items-center px-4 w-full">
-						<div className="flex flex-col w-[20%]">Account</div>
-						<div className="flex flex-col w-[20%]">Balance</div>
-						<div className="flex flex-col w-[20%]">Credit limit</div>
-						<div className="flex flex-col w-[20%]">Usage</div>
-						<div className="flex flex-col w-[20%]">Status</div>
+					<div className="flex flex-row h-full items-center px-4 w-full gap-x-3 text-xs lg:text-sm">
+						<div className="flex flex-col w-[25%] lg:w-[20%]">Account</div>
+						<div className="flex flex-col w-[25%] lg:w-[20%] items-end lg:items-start">Balance</div>
+						<div className="flex flex-col w-[25%] lg:w-[20%] items-end lg:items-start">Credit limit</div>
+						<div className="flex flex-col w-[25%] lg:w-[20%] items-end lg:items-start">Usage</div>
+						<div className="hidden lg:flex flex-col w-[20%]">Status</div>
 					</div>
 				</div>
 				{pipe(map((trade_line) => <TradeLine key={trade_line?.businessCategory} trade_line={trade_line} />))(
@@ -959,44 +966,44 @@ const BusinessFacts = () => {
 					</Disclosure.Button>
 					<Disclosure.Panel className="flex flex-col w-full text-gray-500 rounded overflow-hidden">
 						<div className="flex flex-col w-full rounded">
-							<div className="flex flex-row w-full border-b h-[100px] divide-x">
-								<div className="flex flex-col w-1/4 items-end justify-center px-5">
+							<div className="flex flex-col lg:flex-row w-full border-b lg:h-[100px] divide-y lg:divide-y-0 lg:divide-x ">
+								<div className="flex flex-col w-full py-3 lg:py-0 lg:w-1/4 lg:items-end justify-center px-5">
 									<div className="">Sales Revenue</div>
 									<div className="flex flex-col text-2xl font-semibold">
 										{currency.format(salesRevenue || 0)}
 									</div>
 								</div>
-								<div className="flex flex-col w-1/4 items-end justify-center px-5">
+								<div className="flex flex-col w-full py-3 lg:py-0 lg:w-1/4 lg:items-end justify-center px-5">
 									<div>Employee Size</div>
 									<div className="flex flex-col text-2xl font-semibold">{employeeSize || 0}</div>
 								</div>
-								<div className="flex flex-col w-1/4 items-end justify-center px-5">
+								<div className="flex flex-col w-full py-3 lg:py-0 lg:w-1/4 lg:items-end justify-center px-5">
 									<div>Years on File</div>
 									<div className="flex flex-col text-2xl font-semibold">
 										{experian_years_on_file || 0}
 									</div>
 								</div>
-								<div className="flex flex-col w-1/4 items-end justify-center px-5">
+								<div className="flex flex-col w-full py-3 lg:py-0 lg:w-1/4 lg:items-end justify-center px-5">
 									<div>Date of incorporation</div>
 									<div className="flex flex-col text-2xl font-semibold">{dateOfIncorporation}</div>
 								</div>
 							</div>
-							<div className="flex flex-row w-full divide-x border-b">
-								<div className="flex flex-col w-1/2 ">
-									<div className="flex flex-row py-3 border-b justify-between px-3 last-of-type:border-b-0">
+							<div className="flex flex-col lg:flex-row w-full divide-x border-b">
+								<div className="flex flex-col w-full lg:w-1/2 ">
+									<div className="flex flex-row py-3 border-b justify-between px-3 lg:last-of-type:border-b-0">
 										<div>Business Type</div>
 										<div className="flex flex-col font-semibold">{businessType}</div>
 									</div>
-									<div className="flex flex-row py-3 border-b justify-between px-3 last-of-type:border-b-0">
+									<div className="flex flex-row py-3 border-b justify-between px-3 lg:last-of-type:border-b-0">
 										<div>Corporate Linkage Type</div>
 										<div className="flex flex-col font-semibold">{corporateLinkageType}</div>
 									</div>
-									<div className="flex flex-row py-3 border-b justify-between px-3 last-of-type:border-b-0">
+									<div className="flex flex-row py-3 border-b justify-between px-3 lg:last-of-type:border-b-0">
 										<div>State of Incorporation</div>
 										<div className="flex flex-col font-semibold">{stateOfIncorporation}</div>
 									</div>
 								</div>
-								<div className="flex flex-col w-1/2">
+								<div className="flex flex-col w-full lg:w-1/2">
 									<div className="flex flex-row py-3 border-b justify-between px-3 last-of-type:border-b-0">
 										<div>Business name</div>
 										<div className="flex flex-col font-semibold">{businessName}</div>
@@ -1798,12 +1805,12 @@ export default function Container() {
 	return (
 		<div className="flex flex-col w-full bg-white py-4 px-5 rounded">
 			<div className="flex flex-col w-full items-center mb-10 px-5">
-				<div className="flex flex-row justify-between mt-6 border-b max-w-7xl w-full text-gray-600 text-lg mb-12 pb-4">
-					<div className="flex flex-row justify-center gap-x-2">
+				<div className="flex flex-col lg:flex-row justify-between mt-6 border-b max-w-7xl w-full text-gray-600 text-base lg:text-lg mb-12 pb-4">
+					<div className="flex flex-row justify-between lg:justify-center gap-x-2">
 						<div>Recommended Credit Limit:</div>
 						<div className="font-semibold">{currency.format(recommendedCreditLimitAmount)}</div>
 					</div>
-					<div className="flex flex-row gap-x-2 ">
+					<div className="flex flex-row gap-x-2 justify-between">
 						<div>Date of incorporation:</div>
 						<div className="font-semibold">{dateOfIncorporation}</div>
 					</div>
