@@ -248,15 +248,13 @@ export default function View() {
 	};
 
 	return (
-		<div className="flex flex-col w-full h-full overflow-y-scroll scrollbar-none items-center justify-center">
+		<div className="flex flex-col w-full h-full overflow-y-scroll scrollbar-none items-center">
 			{/* <WelcomeModal /> */}
-			<div className="flex flex-col w-[900px]">
-				<div className="flex flex-col border rounded">
-					<div className="flex flex-col w-full border-b py-3 px-5">
-						<div className="font-bold tracking-tight text-gray-900">Business credit report</div>
-					</div>
-					<NewBusinessReportForm on_submit={onSubmit} />
+			<div className="flex flex-col w-full lg:w-[900px] border rounded lg:my-10">
+				<div className="flex flex-col w-full border-b py-3 px-5">
+					<div className="font-bold tracking-tight text-gray-900">Business credit report</div>
 				</div>
+				<NewBusinessReportForm on_submit={onSubmit} />
 			</div>
 		</div>
 	);

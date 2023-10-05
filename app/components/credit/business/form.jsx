@@ -332,8 +332,8 @@ export const Form = ({ on_submit }) => {
 								)}
 							</div>
 						</div>
-						<div className="flex flex-row gap-x-2">
-							<div className="flex flex-col w-1/3">
+						<div className="flex flex-col lg:flex-row gap-x-2 gap-y-2">
+							<div className="flex flex-col w-full lg:w-1/3">
 								<input
 									className="border rounded pl-2 py-1 shadow-sm"
 									type="text"
@@ -347,7 +347,7 @@ export const Form = ({ on_submit }) => {
 									<div className="text-xs text-red-500 py-1">City is required</div>
 								)}
 							</div>
-							<div className="flex flex-col w-1/3">
+							<div className="flex flex-col w-full lg:w-1/3">
 								<input
 									className="border rounded pl-2 py-1 shadow-sm"
 									type="text"
@@ -361,7 +361,7 @@ export const Form = ({ on_submit }) => {
 									<div className="text-xs text-red-500 py-1">State / Province is required</div>
 								)}
 							</div>
-							<div className="flex flex-col w-1/3">
+							<div className="flex flex-col w-full lg:w-1/3">
 								<input
 									className="border rounded pl-2 py-1 shadow-sm"
 									type="text"

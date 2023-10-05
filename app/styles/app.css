@@ -5051,6 +5051,11 @@ body {
     margin-right: 0px;
   }
 
+  .lg\:my-10 {
+    margin-top: 2.5rem;
+    margin-bottom: 2.5rem;
+  }
+
   .lg\:-ml-0 {
     margin-left: -0px;
   }
@@ -5155,6 +5160,10 @@ body {
     width: 100%;
   }
 
+  .lg\:w-\[900px\] {
+    width: 900px;
+  }
+
   .lg\:max-w-7xl {
     max-width: 80rem;
   }
@@ -5213,6 +5222,10 @@ body {
 
   .lg\:justify-end {
     justify-content: flex-end;
+  }
+
+  .lg\:justify-center {
+    justify-content: center;
   }
 
   .lg\:gap-x-12 {
