@@ -1534,10 +1534,6 @@ video {
   height: 100%;
 }
 
-.h-\[70px\] {
-  height: 70px;
-}
-
 .max-h-12 {
   max-height: 3rem;
 }
@@ -1901,10 +1897,6 @@ video {
 
 .w-screen {
   width: 100vw;
-}
-
-.w-\[350px\] {
-  width: 350px;
 }
 
 .min-w-0 {
@@ -5104,10 +5096,6 @@ body {
     display: block;
   }
 
-  .lg\:inline-block {
-    display: inline-block;
-  }
-
   .lg\:inline {
     display: inline;
   }
@@ -5132,12 +5120,12 @@ body {
     height: 100px;
   }
 
-  .lg\:h-auto {
-    height: auto;
-  }
-
   .lg\:h-\[65px\] {
     height: 65px;
+  }
+
+  .lg\:h-auto {
+    height: auto;
   }
 
   .lg\:w-1\/2 {

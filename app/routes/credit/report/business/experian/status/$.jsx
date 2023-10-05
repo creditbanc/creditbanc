@@ -1786,7 +1786,7 @@ export default function Container() {
 	let use_cache_client = use_cache((state) => state.set_dependencies);
 	let { dnb_business_score, experian_business_score } = scores;
 
-	let { dateOfIncorporation, businessHeader } = experian_facts;
+	let { dateOfIncorporation, businessHeader = {} } = experian_facts;
 	let { recommendedCreditLimitAmount = 0 } = experian_commercial_score;
 	let { businessName } = businessHeader;
 
