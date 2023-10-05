@@ -239,11 +239,11 @@ const ScoreRangeGraph = ({ score, bureau = "" }) => {
 export default function Scores({ experian_business_score = 0, dnb_business_score = 0 }) {
 	return (
 		<div className="flex flex-col w-full">
-			<div className="flex flex-row w-full justify-between gap-x-[100px] px-[10px]">
-				<div className="flex flex-col w-[50%] ">
+			<div className="flex flex-col gap-y-[100px] lg:gap-y-0 lg:flex-row w-full justify-between gap-x-[100px] px-[10px]">
+				<div className="flex lg:flex-col lg:w-[50%] ">
 					<ScoreRangeGraph score={experian_business_score} bureau="experian" />
 				</div>
-				<div className="flex flex-col w-[50%]">
+				<div className="flex lg:flex-col lg:w-[50%]">
 					<ScoreRangeGraph score={dnb_business_score} bureau="dnb" />
 				</div>
 			</div>

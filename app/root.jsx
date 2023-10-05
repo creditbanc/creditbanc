@@ -120,7 +120,10 @@ export default function App() {
 	}, [transition.state]);
 
 	useEffect(() => {
-		load_intercom();
+		let is_1b = is_location("/1b", pathname);
+		if (!is_1b) {
+			load_intercom();
+		}
 	}, []);
 
 	return (

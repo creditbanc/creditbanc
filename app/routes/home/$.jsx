@@ -606,55 +606,73 @@ export default function Home() {
 				<div className="flex flex-col h-full w-full rounded overflow-y-scroll scrollbar-none ">
 					<div className="flex flex-col h-full w-full gap-y-5">
 						<div className="flex flex-col w-full h-full">
-							<div className="flex flex-col h-full gap-x-5 gap-y-[100px] lg:space-y-0 border rounded bg-white items-center w-full py-10 overflow-auto scrollbar-none">
-								<div className="flex flex-col max-w-4xl text-center mt-[10px]">
+							<div className="flex flex-col h-full gap-x-5 border rounded bg-white items-center w-full gap-y-[60px] overflow-auto scrollbar-none">
+								<div className="flex flex-col max-w-4xl text-center mt-[20px]">
 									<h1 className="text-4xl font-bold tracking-tight text-gray-900 sm:text-6xl">
 										{businessName}
 									</h1>
 								</div>
-
-								<div className="flex flex-col w-[1100px]">
-									<div className="border-b border-gray-200 pb-5 sm:flex sm:items-center sm:justify-between mb-6">
-										<h3 className="text-base font-semibold leading-6 text-gray-900">
-											Business Scores
-										</h3>
-										<div className="mt-3 sm:ml-4 sm:mt-0 text-sm">
-											<Link
-												to={`/credit/report/business/experian/status/resource/e/${entity_id}/g/${group_id}`}
-												className="inline-flex items-center rounded-full bg-blue-600 px-3 py-2 text-sm text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
-											>
-												View Full Report
-											</Link>
+								<div className="flex flex-col w-full gap-y-[100px] items-center">
+									<div className="flex flex-col w-[100%] px-5 lg:w-screen-lg lg:min-w-screen-lg lg:max-w-screen-lg">
+										<div className="flex flex-row justify-between items-center border-b border-gray-200 pb-5 mb-6">
+											<h3 className="text-base font-semibold leading-6 text-gray-900">
+												Business Scores
+											</h3>
+											<div className="mt-3 sm:ml-4 sm:mt-0 text-sm">
+												<Link
+													to={`/credit/report/business/experian/status/resource/e/${entity_id}/g/${group_id}`}
+													className="inline-flex items-center rounded-full bg-blue-600 px-3 py-2 text-sm text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
+												>
+													View Full Report
+												</Link>
+											</div>
+										</div>
+										<div>
+											<BusinessScores
+												experian_business_score={business_scores?.experian_business_score}
+												dnb_business_score={business_scores?.dnb_business_score}
+											/>
 										</div>
 									</div>
-									<div>
-										<BusinessScores
-											experian_business_score={business_scores?.experian_business_score}
-											dnb_business_score={business_scores?.dnb_business_score}
-										/>
-									</div>
-								</div>
-								<div className="flex flex-col w-[1100px]">
-									<div className="border-b border-gray-200 pb-5 sm:flex sm:items-center sm:justify-between mb-6">
-										<h3 className="text-base font-semibold leading-6 text-gray-900">
-											Personal Scores
-										</h3>
-										<div className="mt-3 sm:ml-4 sm:mt-0 text-sm">
-											<Link
-												to={`/credit/report/personal/personal/resource/e/${entity_id}/g/${group_id}`}
-												className="inline-flex items-center rounded-full bg-blue-600 px-3 py-2 text-sm text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
-											>
-												View Full Report
-											</Link>
+									<div className="flex flex-col w-[100%] px-5 lg:w-screen-lg lg:min-w-screen-lg lg:max-w-screen-lg">
+										<div className="flex flex-row justify-between items-center border-b border-gray-200 pb-5 mb-6">
+											<h3 className="text-base font-semibold leading-6 text-gray-900">
+												Personal Scores
+											</h3>
+											<div className="mt-3 sm:ml-4 sm:mt-0 text-sm">
+												<Link
+													to={`/credit/report/personal/personal/resource/e/${entity_id}/g/${group_id}`}
+													className="inline-flex items-center rounded-full bg-blue-600 px-3 py-2 text-sm text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
+												>
+													View Full Report
+												</Link>
+											</div>
+										</div>
+										<div className="flex flex-col w-full">
+											<div className="hidden lg:flex lg:flex-col lg:w-full">
+												<array-credit-score
+													appKey={appKey}
+													userToken={user_token}
+													bureau="all"
+													scoreTracker="true"
+												></array-credit-score>
+											</div>
+											<div className="lg:hidden flex flex-col w-full">
+												<iframe
+													src={`http://localhost:3000/1b?bureau=tui&user_token=${user_token}`}
+													className="flex flex-col w-full h-[530px]"
+												></iframe>
+												<iframe
+													src={`http://localhost:3000/1b?bureau=efx&user_token=${user_token}`}
+													className="flex flex-col w-full h-[530px]"
+												></iframe>
+												<iframe
+													src={`http://localhost:3000/1b?bureau=exp&user_token=${user_token}`}
+													className="flex flex-col w-full h-[530px]"
+												></iframe>
+											</div>
 										</div>
 									</div>
-									<array-credit-score
-										appKey={appKey}
-										userToken={user_token}
-										// sandbox="true"
-										bureau="all"
-										scoreTracker="true"
-									></array-credit-score>
 								</div>
 							</div>
 						</div>
