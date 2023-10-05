@@ -143,16 +143,17 @@ const TradeLine = ({ trade_line }) => {
 			<Disclosure defaultOpen={true}>
 				<Disclosure.Button className="flex flex-row w-full h-[80px] bg-white border rounded">
 					<div className="flex flex-col w-[5px] bg-green-500 h-full rounded-l"></div>
-					<div className="flex flex-row w-full px-5 justify-between items-center h-full">
-						<div className="flex flex-col items-start gap-y-1">
+					<div className="flex flex-row w-full h-full px-3 lg:px-5 justify-between items-center">
+						<div className="flex flex-col items-start gap-y-1 w-[50%]">
 							<div className="flex flex-col font-semibold">{trade_line?.businessCategory}</div>
 							<div className="flex flex-row gap-x-1">
 								<div className="flex flex-col">Reported:</div>
 								<div className="flex flex-col">{trade_line?.dateReported}</div>
 							</div>
 						</div>
-						<div className="flex flex-row gap-x-5 items-center">
-							<div className="flex flex-col items-end gap-y-1">
+
+						<div className="flex flex-col lg:flex-row gap-x-5 w-[50%] items-end lg:items-center lg:justify-end">
+							<div className="flex flex-col gap-y-1 items-end">
 								<div className="flex flex-col font-semibold">
 									{currency.format(trade_line?.accountBalance?.amount)}
 								</div>
@@ -161,15 +162,15 @@ const TradeLine = ({ trade_line }) => {
 									{!is_current && <div className="flex flex-col text-red-500">Past due</div>}
 								</div>
 							</div>
-							<div className="flex flex-col">
+							<div className="hidden lg:flex flex-col ">
 								<MinusCircleIcon className="w-4 h-4 stroke-slate-400" />
 							</div>
 						</div>
 					</div>
 				</Disclosure.Button>
 				<Disclosure.Panel className="flex flex-col w-full text-gray-500">
-					<div className="flex flex-row w-full gap-x-5 bg-white border -mt-2 rounded-b px-6 py-2 text-xs">
-						<div className="flex flex-col w-[50%]">
+					<div className="flex flex-col lg:flex-row w-full gap-x-5 bg-white border -mt-2 rounded-b px-6 py-2 text-xs">
+						<div className="flex flex-col w-full lg:w-[50%]">
 							<div className="flex flex-col w-full py-3">
 								<div className="flex flex-col w-full gap-y-2">
 									<div className="flex flex-col font-semibold text-black">Overview</div>
@@ -193,7 +194,7 @@ const TradeLine = ({ trade_line }) => {
 								</div>
 							</div>
 						</div>
-						<div className="flex flex-col w-[50%]">
+						<div className="flex flex-col w-full lg:w-[50%]">
 							<div className="flex flex-col w-full divide-y">
 								<div className="flex flex-row justify-between w-full py-3">
 									<div className="font-semibold text-black">Account details</div>
@@ -384,8 +385,8 @@ const Legal = () => {
 					<div className="flex flex-col px-3 py-1.5 bg-gray-100 rounded">High impact</div>
 				</div>
 			</div>
-			<div className="flex flex-row w-full my-5 gap-x-10">
-				<div className="flex flex-col w-[50%] px-10 gap-y-8 justify-center">
+			<div className="flex flex-col lg:flex-row w-full my-5 gap-x-10">
+				<div className="flex flex-col w-full lg:w-[50%] px-10 gap-y-8 justify-center">
 					<div className="flex flex-row w-full justify-center gap-x-12">
 						<div className="flex flex-col items-center gap-y-4">
 							<div className="flex flex-col items-center justify-center rounded-full border-4 border-green-500 w-[100px] h-[100px]">
@@ -430,7 +431,7 @@ const Legal = () => {
 						</div>
 					</div> */}
 				</div>
-				<div className="flex flex-col w-[50%] gap-y-4">
+				<div className="flex flex-col w-full lg:w-[50%] gap-y-4">
 					<div className="flex flex-col w-full gap-y-2">
 						<div className="flex flex-col text-lg font-semibold">Legal Filings Explained:</div>
 						<div className="text-gray-500">
@@ -507,8 +508,8 @@ const Collections = () => {
 					<div className="flex flex-col px-3 py-1.5 bg-gray-100 rounded">High impact</div>
 				</div>
 			</div>
-			<div className="flex flex-row w-full my-5 gap-x-10">
-				<div className="flex flex-col w-[50%] px-10 gap-y-8 justify-center">
+			<div className="flex flex-col lg:flex-row w-full my-5 gap-x-10">
+				<div className="flex flex-col w-full lg:w-[50%] px-10 gap-y-8 justify-center">
 					<div className="flex flex-row w-full justify-center gap-x-12">
 						<div className="flex flex-col items-center gap-y-4">
 							<div className="flex flex-col items-center justify-center rounded-full border-4 border-green-500 w-[100px] h-[100px]">
@@ -547,7 +548,7 @@ const Collections = () => {
 						</div>
 					</div> */}
 				</div>
-				<div className="flex flex-col w-[50%] gap-y-4">
+				<div className="flex flex-col w-full lg:w-[50%] gap-y-4">
 					<div className="flex flex-col w-full gap-y-2">
 						<div className="flex flex-col text-lg font-semibold">Collections Explained</div>
 						<div className="text-gray-500">
@@ -600,8 +601,8 @@ const Liens = () => {
 					<div className="flex flex-col px-3 py-1.5 bg-gray-100 rounded">High impact</div>
 				</div>
 			</div>
-			<div className="flex flex-row w-full my-5 gap-x-10">
-				<div className="flex flex-col w-[50%] px-10 gap-y-8 justify-center">
+			<div className="flex flex-col lg:flex-row w-full my-5 gap-x-10">
+				<div className="flex flex-col w-full lg:w-[50%] px-10 gap-y-8 justify-center">
 					<div className="flex flex-row w-full justify-center gap-x-12">
 						<div className="flex flex-col items-center gap-y-4">
 							<div className="flex flex-col items-center justify-center rounded-full border-4 border-green-500 w-[100px] h-[100px]">
@@ -640,7 +641,7 @@ const Liens = () => {
 						</div>
 					</div> */}
 				</div>
-				<div className="flex flex-col w-[50%] gap-y-4">
+				<div className="flex flex-col w-full lg:w-[50%] gap-y-4">
 					<div className="flex flex-col w-full gap-y-2">
 						<div className="flex flex-col text-lg font-semibold">Liens Explained</div>
 						<div className="text-gray-500">
@@ -686,8 +687,8 @@ const Judgements = () => {
 					<div className="flex flex-col px-3 py-1.5 bg-gray-100 rounded">High impact</div>
 				</div>
 			</div>
-			<div className="flex flex-row w-full my-5 gap-x-10">
-				<div className="flex flex-col w-[50%] px-10 gap-y-8 justify-center">
+			<div className="flex flex-col lg:flex-row w-full my-5 gap-x-10">
+				<div className="flex flex-col w-full lg:w-[50%] px-10 gap-y-8 justify-center">
 					<div className="flex flex-row w-full justify-center gap-x-12">
 						<div className="flex flex-col items-center gap-y-4">
 							<div className="flex flex-col items-center justify-center rounded-full border-4 border-green-500 w-[100px] h-[100px]">
@@ -726,7 +727,7 @@ const Judgements = () => {
 						</div>
 					</div> */}
 				</div>
-				<div className="flex flex-col w-[50%] gap-y-4">
+				<div className="flex flex-col w-full lg:w-[50%] gap-y-4">
 					<div className="flex flex-col w-full gap-y-2">
 						<div className="flex flex-col text-lg font-semibold">Judgments Explained:</div>
 						<div className="text-gray-500">
@@ -821,9 +822,33 @@ const DerogatoriesContainer = () => {
 		);
 	};
 
+	const SelectNav = () => {
+		return (
+			<div className="flex flex-col w-full border rounded px-3">
+				<select
+					className="block w-full border-0 py-2 text-gray-900 sm:text-sm"
+					defaultValue="legal"
+					onChange={(e) => onSelectComponent(e.target.value)}
+				>
+					<option value="legal">Legal</option>
+					<option value="collections">Collections</option>
+					<option value="liens">Liens</option>
+					<option value="judgements">Judgements</option>
+				</select>
+			</div>
+		);
+	};
+
 	return (
 		<div>
-			<Nav />
+			<div className="hidden lg:flex flex-col w-full">
+				<Nav />
+			</div>
+
+			<div className="flex flex-col w-full lg:hidden">
+				<SelectNav />
+			</div>
+
 			<div className="flex flex-col w-full my-3">
 				<SelectedComponet />
 			</div>
@@ -1102,26 +1127,26 @@ const TradePaymentTotals = () => {
 						<div className="flex flex-col w-full gap-y-4 p-3 ">
 							<div className="flex flex-col w-full gap-y-3">
 								<div className="font-semibold">Trade Lines</div>
-								<div className="flex flex-row gap-x-4">
-									<div className="p-5 border w-1/4 rounded">
+								<div className="flex flex-col lg:flex-row gap-x-4 gap-y-3 lg:gap-y-0">
+									<div className="p-5 border w-full lg:w-1/4 rounded">
 										<div>Current Debt</div>
 										<div className="font-semibold text-2xl">
 											{currency.format(trade_lines?.currentDbt || 0)}
 										</div>
 									</div>
-									<div className="p-5 border w-1/4 rounded">
+									<div className="p-5 border w-full lg:w-1/4 rounded">
 										<div>Current Percentage</div>
 										<div className="font-semibold text-2xl">
 											{trade_lines?.currentPercentage || 0}%
 										</div>
 									</div>
-									<div className="p-5 border w-1/4 rounded">
+									<div className="p-5 border w-full lg:w-1/4 rounded">
 										<div>Total Account Balance</div>
 										<div className="font-semibold text-2xl">
 											{currency.format(trade_lines?.totalAccountBalance?.amount || 0)}
 										</div>
 									</div>
-									<div className="p-5 border w-1/4 rounded">
+									<div className="p-5 border w-full lg:w-1/4 rounded">
 										<div>Total High Credit Amount</div>
 										<div className="font-semibold text-2xl">
 											{currency.format(trade_lines?.totalHighCreditAmount?.amount || 0)}
@@ -1131,26 +1156,26 @@ const TradePaymentTotals = () => {
 							</div>
 							<div className="flex flex-col w-full gap-y-3">
 								<div className="font-semibold">Combined Trade Lines</div>
-								<div className="flex flex-row gap-x-4">
-									<div className="p-5 border w-1/4 rounded">
+								<div className="flex flex-col lg:flex-row gap-x-4 gap-y-3 lg:gap-y-0">
+									<div className="p-5 border w-full lg:w-1/4 rounded">
 										<div>Current Debt</div>
 										<div className="font-semibold text-2xl">
 											{currency.format(combined_trade_lines?.currentDbt || 0)}
 										</div>
 									</div>
-									<div className="p-5 border w-1/4 rounded">
+									<div className="p-5 border w-full lg:w-1/4 rounded">
 										<div>Current Percentage</div>
 										<div className="font-semibold text-2xl">
 											{combined_trade_lines?.currentPercentage || 0}%
 										</div>
 									</div>
-									<div className="p-5 border w-1/4 rounded">
+									<div className="p-5 border w-full lg:w-1/4 rounded">
 										<div>Total Account Balance</div>
 										<div className="font-semibold text-2xl">
 											{currency.format(combined_trade_lines?.totalAccountBalance?.amount || 0)}
 										</div>
 									</div>
-									<div className="p-5 border w-1/4 rounded">
+									<div className="p-5 border w-full lg:w-1/4 rounded">
 										<div>Total High Credit Amount</div>
 										<div className="font-semibold text-2xl">
 											{currency.format(combined_trade_lines?.totalHighCreditAmount?.amount || 0)}
@@ -1160,26 +1185,26 @@ const TradePaymentTotals = () => {
 							</div>
 							<div className="flex flex-col w-full gap-y-3">
 								<div className="font-semibold">Additional Trade Lines</div>
-								<div className="flex flex-row gap-x-4">
-									<div className="p-5 border w-1/4 rounded">
+								<div className="flex flex-col lg:flex-row gap-x-4 gap-y-3 lg:gap-y-0">
+									<div className="p-5 border w-full lg:w-1/4 rounded">
 										<div>Current Debt</div>
 										<div className="font-semibold text-2xl">
 											{currency.format(additional_trade_lines?.currentDbt || 0)}
 										</div>
 									</div>
-									<div className="p-5 border w-1/4 rounded">
+									<div className="p-5 border w-full lg:w-1/4 rounded">
 										<div>Current Percentage</div>
 										<div className="font-semibold text-2xl">
 											{additional_trade_lines?.currentPercentage || 0}%
 										</div>
 									</div>
-									<div className="p-5 border w-1/4 rounded">
+									<div className="p-5 border w-full lg:w-1/4 rounded">
 										<div>Total Account Balance</div>
 										<div className="font-semibold text-2xl">
 											{currency.format(additional_trade_lines?.totalAccountBalance?.amount || 0)}
 										</div>
 									</div>
-									<div className="p-5 border w-1/4 rounded">
+									<div className="p-5 border w-full lg:w-1/4 rounded">
 										<div>Total High Credit Amount</div>
 										<div className="font-semibold text-2xl">
 											{currency.format(
@@ -1191,20 +1216,20 @@ const TradePaymentTotals = () => {
 							</div>
 							<div className="flex flex-col w-full gap-y-3">
 								<div className="font-semibold">Newly Reported Trade Lines</div>
-								<div className="flex flex-row gap-x-4">
-									<div className="p-5 border w-1/4 rounded">
+								<div className="flex flex-col lg:flex-row gap-x-4 gap-y-3 lg:gap-y-0">
+									<div className="p-5 border w-full lg:w-1/4 rounded">
 										<div>Current Debt</div>
 										<div className="font-semibold text-2xl">
 											{currency.format(newly_reported_trade_lines?.currentDbt || 0)}
 										</div>
 									</div>
-									<div className="p-5 border w-1/4 rounded">
+									<div className="p-5 border w-full lg:w-1/4 rounded">
 										<div>Current Percentage</div>
 										<div className="font-semibold text-2xl">
 											{newly_reported_trade_lines?.currentPercentage || 0}%
 										</div>
 									</div>
-									<div className="p-5 border w-1/4 rounded">
+									<div className="p-5 border w-full lg:w-1/4 rounded">
 										<div>Total Account Balance</div>
 										<div className="font-semibold text-2xl">
 											{currency.format(
@@ -1212,7 +1237,7 @@ const TradePaymentTotals = () => {
 											)}
 										</div>
 									</div>
-									<div className="p-5 border w-1/4 rounded">
+									<div className="p-5 border w-full lg:w-1/4 rounded">
 										<div>Total High Credit Amount</div>
 										<div className="font-semibold text-2xl">
 											{currency.format(
@@ -1772,13 +1797,6 @@ export default function Container() {
 
 	return (
 		<div className="flex flex-col w-full bg-white py-4 px-5 rounded">
-			{/* <div>
-				<PaymentStatus />
-			</div>
-			<div>
-				<ExplanationCard />
-			</div> */}
-
 			<div className="flex flex-col w-full items-center mb-10 px-5">
 				<div className="flex flex-row justify-between mt-6 border-b max-w-7xl w-full text-gray-600 text-lg mb-12 pb-4">
 					<div className="flex flex-row justify-center gap-x-2">
@@ -1796,12 +1814,8 @@ export default function Container() {
 			</div>
 
 			<div className="flex flex-col w-full items-center">
-				<div className="flex flex-col max-w-7xl gap-y-10">
+				<div className="flex flex-col w-full lg:max-w-7xl gap-y-10">
 					<Scores experian_business_score={experian_business_score} dnb_business_score={dnb_business_score} />
-
-					{/* <div className="flex flex-col w-full">
-						<Paydexscore />
-					</div> */}
 
 					<div className="flex flex-col w-full">
 						<div className="border-b border-gray-200 mb-5 pb-5">
@@ -1847,14 +1861,6 @@ export default function Container() {
 					</div>
 				</div>
 			</div>
-
-			{/* <div className="flex flex-col gap-y-4">
-				{pipe(
-					mapIndexed((trade_line, idx) => (
-						<AccountCard trade_line={trade_line} key={idx} plan_id={report_plan_id} />
-					))
-				)(trade_lines)}
-			</div> */}
 		</div>
 	);
 }
