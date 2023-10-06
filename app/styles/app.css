@@ -929,6 +929,16 @@ video {
   margin-bottom: 5px;
 }
 
+.my-\[50px\] {
+  margin-top: 50px;
+  margin-bottom: 50px;
+}
+
+.my-\[150px\] {
+  margin-top: 150px;
+  margin-bottom: 150px;
+}
+
 .-mb-6 {
   margin-bottom: -1.5rem;
 }
@@ -1279,6 +1289,10 @@ video {
 
 .mt-\[50px\] {
   margin-top: 50px;
+}
+
+.mb-\[150px\] {
+  margin-bottom: 150px;
 }
 
 .block {

@@ -29,14 +29,7 @@ import { useEffect, Fragment, useState } from "react";
 import { Link, useLoaderData, useLocation } from "@remix-run/react";
 import { useFilesStore } from "~/hooks/useFiles";
 import { delete_doc, get_collection, get_doc, storage } from "~/utils/firebase";
-import {
-	ref,
-	getDownloadURL,
-	uploadBytesResumable,
-	getStorage,
-	uploadBytes,
-	listAll,
-} from "firebase/storage";
+import { ref, getDownloadURL, uploadBytesResumable, getStorage, uploadBytes, listAll } from "firebase/storage";
 import {
 	findIndex,
 	map,
@@ -64,14 +57,12 @@ import { redirect } from "@remix-run/node";
 
 export const useFileStore = create((set) => ({
 	file: {},
-	set_file: (path, value) =>
-		set((state) => pipe(mod(...path)(() => value))(state)),
+	set_file: (path, value) => set((state) => pipe(mod(...path)(() => value))(state)),
 }));
 
 export const useSideNavStore = create((set) => ({
 	selected: "all",
-	set_state: (path, value) =>
-		set((state) => pipe(mod(...path)(() => value))(state)),
+	set_state: (path, value) => set((state) => pipe(mod(...path)(() => value))(state)),
 }));
 
 const navigation = [
@@ -121,22 +112,14 @@ export const loader = async ({ request }) => {
 	let entity_id = await get_session_entity_id(request);
 	let group_id = get_group_id(request.url);
 
-	let is_authorized = await is_authorized_f(
-		entity_id,
-		group_id,
-		"vault",
-		"read"
-	);
+	let is_authorized = await is_authorized_f(entity_id, group_id, "vault", "read");
 
 	if (!is_authorized) {
 		return redirect(`/home/resource/e/${entity_id}/g/${group_id}`);
 	}
 
 	let onboard_state = await get_doc(["onboard", entity_id]);
-	onboard_state = pipe(
-		omit(["group_id", "entity_id"]),
-		values
-	)(onboard_state);
+	onboard_state = pipe(omit(["group_id", "entity_id"]), values)(onboard_state);
 
 	console.log("onboard_state_____");
 	console.log(onboard_state);
@@ -166,12 +149,10 @@ const Heading = () => {
 	};
 
 	return (
-		<div className="border-b border-gray-200 pb-5">
+		<div className="border-b border-gray-200 pb-5 top-0 sticky bg-white">
 			<div className="flex flex-row justify-between items-end">
 				<div className="flex flex-col">
-					<h3 className="text-base font-semibold leading-6 text-gray-900">
-						Documents
-					</h3>
+					<h3 className="text-base font-semibold leading-6 text-gray-900">Documents</h3>
 				</div>
 				<div className="flex flex-col">
 					<button
@@ -197,8 +178,7 @@ const HeaderFilters = () => {
 			["files"],
 			pipe(
 				filter({
-					tags: (tags) =>
-						pipe(filter({ id: tag_id }), isEmpty, not)(tags),
+					tags: (tags) => pipe(filter({ id: tag_id }), isEmpty, not)(tags),
 				})
 			)(documents)
 		);
@@ -270,7 +250,7 @@ const HeaderFilters = () => {
 
 const FilesTableHeader = () => {
 	return (
-		<div className="flex flex-col w-full pt-5">
+		<div className="flex flex-col w-full pt-5 bg-white top-0 sticky z-20">
 			<div className="flex flex-row w-full text-sm text-gray-400 items-center border-b pb-5">
 				<div className="flex flex-col w-[40px]">
 					{/* <input
@@ -328,11 +308,7 @@ const TableRow = ({ document }) => {
 				/>
 			</div>
 			<div className="flex flex-col w-[250px]">
-				<Link
-					target="_blank"
-					to={download_url}
-					className="flex flex-row items-center space-x-3"
-				>
+				<Link target="_blank" to={download_url} className="flex flex-row items-center space-x-3">
 					<div className="flex flex-col ">
 						<DocumentIcon className="h-4 w-4 text-red-400" />
 					</div>
@@ -341,11 +317,7 @@ const TableRow = ({ document }) => {
 			</div>
 			<div className="hidden md:flex flex-col flex-1">
 				<div className="flex flex-row w-full">
-					{pipe(
-						mapIndexed((tag, tag_index) => (
-							<Category category={tag.id} key={tag_index} />
-						))
-					)(tags)}
+					{pipe(mapIndexed((tag, tag_index) => <Category category={tag.id} key={tag_index} />))(tags)}
 				</div>
 			</div>
 			<div className="hidden lg:flex flex-col w-[80px]">
@@ -389,9 +361,7 @@ const SideNav = () => {
 						<div
 							onClick={() => onsNavSelect(item.id)}
 							className={classNames(
-								item.current
-									? "bg-gray-50"
-									: "hover:bg-gray-50",
+								item.current ? "bg-gray-50" : "hover:bg-gray-50",
 								"flex items-center w-full text-left rounded-md gap-x-3 text-sm leading-6 font-semibold text-gray-700 px-2 my-1 py-2 cursor-pointer"
 							)}
 						>
@@ -404,43 +374,28 @@ const SideNav = () => {
 								<>
 									<Disclosure.Button
 										className={classNames(
-											item.current
-												? "bg-gray-50"
-												: "hover:bg-gray-50",
+											item.current ? "bg-gray-50" : "hover:bg-gray-50",
 											"flex items-center w-full text-left rounded-md gap-x-3 text-sm leading-6 font-semibold text-gray-700 py-2 px-2 my-1"
 										)}
 									>
-										{open && (
-											<NavIcon icon={ChevronDownIcon} />
-										)}
+										{open && <NavIcon icon={ChevronDownIcon} />}
 
-										{!open && (
-											<NavIcon icon={ChevronRightIcon} />
-										)}
+										{!open && <NavIcon icon={ChevronRightIcon} />}
 
 										{item.name}
 									</Disclosure.Button>
-									<Disclosure.Panel
-										as="ul"
-										className="mt-1 px-2 space-y-2"
-									>
+									<Disclosure.Panel as="ul" className="mt-1 px-2 space-y-2">
 										{tags.map((tag, index) => (
 											<li key={index}>
 												<div
-													onClick={() =>
-														onsNavSelect(tag.id)
-													}
+													onClick={() => onsNavSelect(tag.id)}
 													className={classNames(
-														selected == tag.id
-															? "bg-gray-50"
-															: "hover:bg-gray-50",
+														selected == tag.id ? "bg-gray-50" : "hover:bg-gray-50",
 														"flex flex-row items-center rounded-md py-2 pr-2 pl-4 text-sm leading-6 text-gray-700 cursor-pointer"
 													)}
 												>
 													<div className="mr-2">
-														<NavIcon
-															icon={DocumentIcon}
-														/>
+														<NavIcon icon={DocumentIcon} />
 													</div>
 													{tag.label}
 												</div>
@@ -473,13 +428,9 @@ const FileActionsDropdown = ({ document }) => {
 	};
 
 	const onDownloadFileClick = async () => {
-		let blob = await fetch(document.download_url).then((response) =>
-			response.blob()
-		);
+		let blob = await fetch(document.download_url).then((response) => response.blob());
 
-		const url = window.URL.createObjectURL(
-			new Blob([blob], { type: blob.type })
-		);
+		const url = window.URL.createObjectURL(new Blob([blob], { type: blob.type }));
 
 		const link = window.document.createElement("a");
 		link.href = url;
@@ -525,9 +476,7 @@ const FileActionsDropdown = ({ document }) => {
 									to={document.download_url}
 									target="_blank"
 									className={classNames(
-										active
-											? "bg-gray-100 text-gray-900"
-											: "text-gray-700",
+										active ? "bg-gray-100 text-gray-900" : "text-gray-700",
 										"flex flex-row px-4 py-2 text-sm cursor-pointer items-center space-x-3"
 									)}
 								>
@@ -543,9 +492,7 @@ const FileActionsDropdown = ({ document }) => {
 								<div
 									onClick={onEditFileClick}
 									className={classNames(
-										active
-											? "bg-gray-100 text-gray-900"
-											: "text-gray-700",
+										active ? "bg-gray-100 text-gray-900" : "text-gray-700",
 										"flex flex-row px-4 py-2 text-sm cursor-pointer items-center space-x-3"
 									)}
 								>
@@ -561,9 +508,7 @@ const FileActionsDropdown = ({ document }) => {
 								<div
 									onClick={onDownloadFileClick}
 									className={classNames(
-										active
-											? "bg-gray-100 text-gray-900"
-											: "text-gray-700",
+										active ? "bg-gray-100 text-gray-900" : "text-gray-700",
 										"flex flex-row px-4 py-2 text-sm cursor-pointer items-center space-x-3"
 									)}
 								>
@@ -579,9 +524,7 @@ const FileActionsDropdown = ({ document }) => {
 								<div
 									onClick={onDeleteFileClick}
 									className={classNames(
-										active
-											? "bg-gray-100 text-gray-900"
-											: "text-gray-700",
+										active ? "bg-gray-100 text-gray-900" : "text-gray-700",
 										"flex flex-row px-4 py-2 text-sm cursor-pointer items-center space-x-3"
 									)}
 								>
@@ -660,21 +603,14 @@ const EditFileModal = () => {
 				<div className="flex flex-col w-full space-y-2">
 					<div className="text-gray-400">Document name</div>
 					<div className="flex flex-col w-full border-2 rounded h-[50px] justify-center px-2 text-lg font-light">
-						<input
-							type="text"
-							className="outline-none w-full"
-							value={name}
-							onChange={onChangeName}
-						/>
+						<input type="text" className="outline-none w-full" value={name} onChange={onChangeName} />
 					</div>
 				</div>
 
 				<div className="flex flex-col w-full space-y-3">
 					<div className="flex flex-row justify-between">
 						<div className="text-gray-400">Tags</div>
-						<div className="text-gray-400 cursor-pointer">
-							Clear
-						</div>
+						<div className="text-gray-400 cursor-pointer">Clear</div>
 					</div>
 					<div className="flex flex-col w-full text-sm">
 						<div className="flex flex-row w-full space-x-3">
@@ -697,33 +633,25 @@ const EditFileModal = () => {
 						<div className="flex flex-row w-full space-x-3">
 							<div
 								className="flex flex-col justify-center px-3 py-1 border rounded-full text-gray-500  cursor-pointer"
-								onClick={() =>
-									onAddTag({ id: "1040", label: "Form 1040" })
-								}
+								onClick={() => onAddTag({ id: "1040", label: "Form 1040" })}
 							>
 								Form 1040 +
 							</div>
 							<div
 								className="flex flex-col justify-center px-3 py-1 border rounded-full text-gray-500  cursor-pointer"
-								onClick={() =>
-									onAddTag({ id: "W-2", label: "Form W-2" })
-								}
+								onClick={() => onAddTag({ id: "W-2", label: "Form W-2" })}
 							>
 								Form W-2 +
 							</div>
 							<div
 								className="flex flex-col justify-center px-3 py-1 border rounded-full text-gray-500  cursor-pointer"
-								onClick={() =>
-									onAddTag({ id: "1099", label: "Form 1099" })
-								}
+								onClick={() => onAddTag({ id: "1099", label: "Form 1099" })}
 							>
 								Form 1099 +
 							</div>
 							<div
 								className="flex flex-col justify-center px-3 py-1 border rounded-full text-gray-500  cursor-pointer"
-								onClick={() =>
-									onAddTag({ id: "other", label: "Other" })
-								}
+								onClick={() => onAddTag({ id: "other", label: "Other" })}
 							>
 								Other +
 							</div>
@@ -759,16 +687,10 @@ const UploadForm = () => {
 	let group_id = get_group_id(pathname);
 	let entity_id = get_entity_id(pathname);
 	const [file_name, set_file_name] = useState("");
-	const [progress, set_progress] = useState(0);
+	const [progress, set_progress] = useState(undefined);
 	const set_modal = useModalStore((state) => state.set_modal);
 	const files = useFilesStore((state) => state.files);
 	const set_files = useFilesStore((state) => state.set_files);
-
-	useEffect(() => {
-		if (file_name === "") {
-			set_progress(0);
-		}
-	}, [file_name]);
 
 	useEffect(() => {
 		if (progress === 100) {
@@ -788,9 +710,9 @@ const UploadForm = () => {
 		const uploadTask = uploadBytesResumable(storageRef, file);
 
 		const next = (snapshot) => {
-			const current_progress = Math.round(
-				(snapshot.bytesTransferred / snapshot.totalBytes) * 100
-			);
+			const current_progress = Math.round((snapshot.bytesTransferred / snapshot.totalBytes) * 100);
+			// console.log("current_progress");
+			// console.log(current_progress);
 
 			set_progress(current_progress);
 		};
@@ -834,12 +756,7 @@ const UploadForm = () => {
 
 	return (
 		<form className="flex flex-col h-full" onSubmit={onUpload}>
-			<input
-				id="file-upload"
-				type="file"
-				className="hidden"
-				onChange={onSelectFile}
-			/>
+			<input id="file-upload" type="file" className="hidden" onChange={onSelectFile} />
 
 			{file_name === "" && (
 				<label
@@ -878,9 +795,8 @@ const UploadForm = () => {
 					<div className="flex flex-col w-full px-2">
 						<div className="w-full bg-gray-200 rounded-full h-2.5 dark:bg-gray-700">
 							<div
-								className={`bg-blue-600 h-2.5 rounded-full ${
-									progress > 0 ? `w-[${progress}%]` : "w-0"
-								}`}
+								className={`bg-blue-600 h-2.5 rounded-full w-0`}
+								style={{ width: `${progress}%` }}
 							></div>
 						</div>
 					</div>
@@ -889,12 +805,12 @@ const UploadForm = () => {
 
 			<button
 				className={`flex flex-row py-1 px-2 rounded justify-center items-center mt-1 ${
-					file_name == ""
+					progress !== undefined
 						? "cursor-not-allowed bg-gray-100 text-gray-400"
 						: "text-white cursor-pointer bg-[#55CF9E]"
 				}`}
 				type="submit"
-				disabled={file_name == ""}
+				disabled={progress !== undefined}
 			>
 				{file_name !== "" && (
 					<div className="w-[20px] mr-2 flex flex-col justify-center items-center h-full">
@@ -902,9 +818,7 @@ const UploadForm = () => {
 					</div>
 				)}
 
-				<div className="flex flex-col justify-center h-[40px]">
-					Upload
-				</div>
+				<div className="flex flex-col justify-center h-[40px]">Upload {progress}</div>
 			</button>
 		</form>
 	);
@@ -953,18 +867,14 @@ export default function Files() {
 		}
 
 		if (selected_nav == "untagged") {
-			return set_files(
-				["files"],
-				filter({ tags: (tags) => isEmpty(tags) })(documents)
-			);
+			return set_files(["files"], filter({ tags: (tags) => isEmpty(tags) })(documents));
 		}
 
 		set_files(
 			["files"],
 			pipe(
 				filter({
-					tags: (tags) =>
-						pipe(filter({ id: selected_nav }), isEmpty, not)(tags),
+					tags: (tags) => pipe(filter({ id: selected_nav }), isEmpty, not)(tags),
 				})
 			)(documents)
 		);
@@ -979,18 +889,15 @@ export default function Files() {
 					<div className="hidden lg:flex flex-col w-[250px] border-r">
 						<SideNav />
 					</div>
-					<div className="flex flex-col flex-1 p-5">
+					<div className="flex flex-col flex-1 px-5 pb-5 overflow-y-scroll relative mt-2 scrollbar-none">
 						<Heading />
 						<HeaderFilters />
 						<FilesTableHeader />
-						<div className="flex flex-col w-full">
+						<div className="flex flex-col w-full mb-[50px]">
 							{pipe(
 								// filter({ visible: true }),
 								mapIndexed((document, document_index) => (
-									<TableRow
-										key={document_index}
-										document={document}
-									/>
+									<TableRow key={document_index} document={document} />
 								))
 							)(files)}
 						</div>
