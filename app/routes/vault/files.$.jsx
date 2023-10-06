@@ -149,7 +149,7 @@ const Heading = () => {
 	};
 
 	return (
-		<div className="border-b border-gray-200 pb-5 top-0 sticky bg-white">
+		<div className="border-b border-gray-200 pb-2 bg-white py-3">
 			<div className="flex flex-row justify-between items-end">
 				<div className="flex flex-col">
 					<h3 className="text-base font-semibold leading-6 text-gray-900">Documents</h3>
@@ -250,8 +250,8 @@ const HeaderFilters = () => {
 
 const FilesTableHeader = () => {
 	return (
-		<div className="flex flex-col w-full pt-5 bg-white top-0 sticky z-20">
-			<div className="flex flex-row w-full text-sm text-gray-400 items-center border-b pb-5">
+		<div className="flex flex-col w-full bg-white top-0 sticky z-20">
+			<div className="flex flex-row w-full text-sm text-gray-400 items-center border-b py-3">
 				<div className="flex flex-col w-[40px]">
 					{/* <input
 						type="checkbox"
@@ -889,7 +889,7 @@ export default function Files() {
 					<div className="hidden lg:flex flex-col w-[250px] border-r">
 						<SideNav />
 					</div>
-					<div className="flex flex-col flex-1 px-5 pb-5 overflow-y-scroll relative mt-2 scrollbar-none">
+					<div className="flex flex-col flex-1 px-5 pb-5 overflow-y-scroll relative  scrollbar-none bg-white">
 						<Heading />
 						<HeaderFilters />
 						<FilesTableHeader />
