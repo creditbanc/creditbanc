@@ -259,9 +259,9 @@ const FilesTableHeader = () => {
 					/> */}
 				</div>
 				<div className="flex flex-col w-[250px]">Name</div>
-				<div className="hidden md:flex flex-col flex-1">Tags</div>
+				<div className="hidden lg:flex flex-col w-[300px]">Tags</div>
 				<div className="hidden lg:flex flex-col w-[80px]">Year</div>
-				<div className="flex flex-col w-[100px]">Uploaded</div>
+				<div className="hidden lg:flex flex-col w-[100px]">Uploaded</div>
 				<div className="flex flex-col w-[50px]"></div>
 			</div>
 		</div>
@@ -315,7 +315,7 @@ const TableRow = ({ document }) => {
 					<div className="flex flex-col">{truncate(20, name)}</div>
 				</Link>
 			</div>
-			<div className="hidden md:flex flex-col flex-1">
+			<div className="hidden lg:flex flex-col w-[300px]">
 				<div className="flex flex-row w-full">
 					{pipe(mapIndexed((tag, tag_index) => <Category category={tag.id} key={tag_index} />))(tags)}
 				</div>
@@ -325,10 +325,10 @@ const TableRow = ({ document }) => {
 					2022
 				</div>
 			</div>
-			<div className="flex flex-col w-[100px]">
+			<div className="hidden lg:flex flex-col w-[100px]">
 				<div>{moment(created_at).format("MMM D, YYYY")}</div>
 			</div>
-			<div className="flex flex-col w-[50px]">
+			<div className="flex flex-col flex-1">
 				<FileActionsDropdown document={document} />
 			</div>
 		</div>
@@ -452,7 +452,7 @@ const FileActionsDropdown = ({ document }) => {
 	};
 
 	return (
-		<Menu as="div" className="relative inline-block text-left">
+		<Menu as="div" className="flex flex-col items-end relative text-left">
 			<div>
 				<Menu.Button className="flex items-center rounded-full bg-gray-100 text-gray-400 hover:text-gray-600 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-gray-100">
 					<EllipsisHorizontalIcon className="h-5 w-5" />
