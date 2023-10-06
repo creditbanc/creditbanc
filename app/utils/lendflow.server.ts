@@ -5,7 +5,6 @@ import { pipe, always, identity, tryCatch, curry, applySpec } from "ramda";
 import { get } from "shades";
 import Entity from "~/api/internal/entity";
 import { set_doc, update_doc } from "./firebase";
-import { data } from "autoprefixer";
 import { inspect } from "./helpers";
 
 const anyfy = (fn: any): any => fn;
@@ -343,7 +342,6 @@ export class LendflowInternal {
 export class LendflowExternal {
 	static plan_request_products = (plan_id) => {
 		let experian_requested_products = pipe(get(plan_id))(plan_product_requests.experian);
-
 		let dnb_requested_products = pipe(get(plan_id))(plan_product_requests.dnb);
 
 		let request_products = [...experian_requested_products, ...dnb_requested_products];
@@ -435,8 +433,8 @@ export class LendflowExternal {
 				Authorization: `Bearer ${LENDFLOW_BEARER}`,
 				"Content-Type": "application/json",
 			},
-			// data: { requested_products: ["dnb_ci_l2", "experian_business_facts"] },
-			data: { requested_products: LendflowExternal.plan_request_products("builder") },
+			data: { requested_products: ["experian_intelliscore", "dnb_pi_l3"] },
+			// data: { requested_products: LendflowExternal.plan_request_products("builder") },
 		};
 
 		let response = await axios(options);
