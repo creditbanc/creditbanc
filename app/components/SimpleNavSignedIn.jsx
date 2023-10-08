@@ -31,7 +31,7 @@ const Companies = ({ companies: all_companies = {} }) => {
 	let { pathname } = useLocation();
 	let entity_id = get_entity_id(pathname);
 	let group_id = get_group_id(pathname);
-	let { shared_companies, owner_companies } = all_companies;
+	let { shared_companies = [], owner_companies = [] } = all_companies;
 	let companies = pipe(uniqBy(prop("id")))([...shared_companies, ...owner_companies]);
 
 	return (

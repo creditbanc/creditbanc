@@ -1,5 +1,5 @@
 import SimpleNav from "~/components/SimpleNav";
-import { get_collection, get_doc, set_doc, update_doc } from "~/utils/firebase";
+import { delete_doc, get_collection, get_doc, set_doc, update_doc } from "~/utils/firebase";
 import {
 	head,
 	pipe,
@@ -32,11 +32,14 @@ import {
 	firstValueFrom,
 } from "rxjs";
 import { fold, ifFalse, ifEmpty } from "~/utils/operators";
-import { Link, useLoaderData } from "@remix-run/react";
+import { Link, useFetcher, useLoaderData } from "@remix-run/react";
 import { create } from "zustand";
-import { truncate } from "~/utils/helpers";
+import { truncate, classNames, form_params } from "~/utils/helpers";
 import { useEffect } from "react";
 import moment from "moment";
+import { EllipsisHorizontalCircleIcon } from "@heroicons/react/24/outline";
+import { Fragment } from "react";
+import { Menu, Transition } from "@headlessui/react";
 
 const useStateStore = create((set) => ({
 	entities: [],
@@ -67,6 +70,20 @@ const loader_data = subject.pipe(
 		);
 	})
 );
+
+export const action = async ({ request }) => {
+	let { data } = await form_params(request);
+	let { action, args } = JSON.parse(data);
+	switch (action) {
+		case "delete":
+			let { entiy_id } = args;
+			await delete_doc(["entity", entiy_id]);
+			break;
+		default:
+			break;
+	}
+	return null;
+};
 
 export const loader = async ({ request }) => {
 	subject.next({ id: "load", args: { request } });
@@ -102,14 +119,71 @@ export const loader = async ({ request }) => {
 
 const EntitiesTableHeader = () => {
 	return (
-		<div className="header flex flex-row sticky top-0 bg-white font-semibold">
-			<div className="flex flex-col min-w-[150px] border-b pb-3 bg-white ">first name</div>
-			<div className="flex flex-col min-w-[150px] border-b pb-3 bg-white ">last name</div>
-			<div className="flex flex-col min-w-[300px] border-b pb-3 bg-white ">id</div>
-			<div className="flex flex-col min-w-[100px] border-b pb-3 bg-white ">plan</div>
-			<div className="flex flex-col min-w-[200px] border-b pb-3 bg-white ">email</div>
-			<div className="flex flex-col min-w-[200px] border-b pb-3 bg-white ">created</div>
+		<div className="flex flex-col w-full h-[40px]">
+			<div className="flex flex-row bg-white font-semibold h-full">
+				<div className="flex flex-col min-w-[150px] border-b pb-3 bg-white ">first name</div>
+				<div className="flex flex-col min-w-[150px] border-b pb-3 bg-white ">last name</div>
+				<div className="flex flex-col min-w-[100px] border-b pb-3 bg-white ">plan</div>
+				<div className="flex flex-col min-w-[250px] border-b pb-3 bg-white ">email</div>
+				<div className="flex flex-col min-w-[200px] border-b pb-3 bg-white ">created</div>
+				<div className="flex flex-col flex-1 border-b justify-center items-end min-w-[50px]"></div>
+			</div>
 		</div>
+	);
+};
+
+const ActionsDropdown = () => {
+	let fetcher = useFetcher();
+	let entity = useStateStore((state) => state.entity);
+
+	const onDelete = () => {
+		console.log("onDelete");
+
+		let data = JSON.stringify({
+			action: "delete",
+			args: { entiy_id: entity.id },
+		});
+
+		fetcher.submit({ data }, { method: "POST" });
+		// delete_doc(["entity", entity.id]);
+	};
+
+	return (
+		<Menu as="div" className="relative inline-block text-left">
+			<div>
+				<Menu.Button className="inline-flex w-full justify-center gap-x-1.5 px-3 py-2 text-sm font-semibold text-gray-900">
+					<EllipsisHorizontalCircleIcon className="-mr-1 h-5 w-5 text-gray-400" aria-hidden="true" />
+				</Menu.Button>
+			</div>
+
+			<Transition
+				as={Fragment}
+				enter="transition ease-out duration-100"
+				enterFrom="transform opacity-0 scale-95"
+				enterTo="transform opacity-100 scale-100"
+				leave="transition ease-in duration-75"
+				leaveFrom="transform opacity-100 scale-100"
+				leaveTo="transform opacity-0 scale-95"
+			>
+				<Menu.Items className="absolute right-0 z-10 mt-1 w-56 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+					<div className="py-1">
+						<Menu.Item>
+							{({ active }) => (
+								<div
+									onClick={onDelete}
+									className={classNames(
+										active ? "bg-gray-100 text-gray-900" : "text-gray-700",
+										"block px-4 py-2 text-sm"
+									)}
+								>
+									Delete
+								</div>
+							)}
+						</Menu.Item>
+					</div>
+				</Menu.Items>
+			</Transition>
+		</Menu>
 	);
 };
 
@@ -130,24 +204,24 @@ const EntitiesTable = () => {
 						className="flex flex-row text-sm cursor-pointer group"
 						onClick={() => onSelectEntity(entity)}
 					>
-						<div className="flex flex-col min-w-[150px] border-b py-2 group-hover:bg-gray-100">
+						<div className="flex flex-col min-w-[150px] border-b p-2 group-hover:bg-gray-100">
 							{truncate(15, entity.first_name)}
 						</div>
-						<div className="flex flex-col min-w-[150px] border-b py-2 group-hover:bg-gray-100">
+						<div className="flex flex-col min-w-[150px] border-b p-2 group-hover:bg-gray-100">
 							{truncate(15, entity.last_name)}
 						</div>
-						<div className="flex flex-col min-w-[300px] border-b py-2 group-hover:bg-gray-100">
-							{truncate(30, entity.id)}
-						</div>
-						<div className="flex flex-col min-w-[100px] border-b py-2 group-hover:bg-gray-100">
+						<div className="flex flex-col min-w-[100px] border-b p-2 group-hover:bg-gray-100">
 							{entity.plan_id}
 						</div>
-						<div className="flex flex-col min-w-[200px] border-b py-2 group-hover:bg-gray-100">
+						<div className="flex flex-col min-w-[250px] border-b p-2 group-hover:bg-gray-100">
 							{entity.email}
 						</div>
-						<div className="flex flex-col min-w-[200px] border-b py-2 group-hover:bg-gray-100">
+						<div className="flex flex-col min-w-[200px] border-b p-2 group-hover:bg-gray-100">
 							{entity.created_at &&
 								moment(new Date(entity.created_at.seconds * 1000)).format("MM-DD-YYYY")}
+						</div>
+						<div className="flex flex-col flex-1 border-b justify-center items-end group-hover:bg-gray-100 min-w-[50px]">
+							<ActionsDropdown />
 						</div>
 					</div>
 				))
