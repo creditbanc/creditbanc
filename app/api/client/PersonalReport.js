@@ -372,18 +372,27 @@ export default class PersonalReport {
 			catchError((error) => {
 				console.log("PersonalReport.error");
 				console.log(error);
-				if (error == undefined) {
-					return rxof({
+
+				let empty_response_error = (error) =>
+					rxof({
 						personal_report_is_empty: true,
 						scores: {
 							experian_personal_score: 0,
 							equifax_personal_score: 0,
 							transunion_personal_score: 0,
 						},
+						error,
 					});
-				} else {
-					return throwError(() => error);
+
+				if (error == undefined) {
+					return empty_response_error("empty");
 				}
+
+				if (error?.response.status == 403) {
+					return empty_response_error({ message: "Forbidden" });
+				}
+
+				return throwError(() => error);
 			}),
 			tap(() => console.log(`PersonalReport.fold`)),
 			tap(console.log)

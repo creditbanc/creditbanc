@@ -39,14 +39,10 @@ export const action = async ({ request }) => {
 		`,
 		html: `
 			<div style="width:100%; display:flex; flex-direction:column; align-items:center; ">
-				<div style=" width: 580px; border:1px solid #eee; display:flex-root; flex-direction:column; border-radius:5px; padding:20px;">
+				<div style=" width: 100%; border:1px solid #eee; display:flex-root; flex-direction:column; border-radius:5px; padding:20px;">
 
 					<div style="margin:15px 10px;">
-						${
-							first_name
-								? `${first_name} has shared a credit report with you`
-								: `Someone has shared a credit report with you`
-						}
+						${first_name ? `${first_name} has shared a credit report with you` : `Someone has shared a credit report with you`}
 					</div>	
 
 					<a href=${invite_link} style="text-align:center; display:flex; flex-direction:column; background:#2563eb; align-items:center; justify-content:center; padding: 10px 10px; border-radius: 5px; width: 200px; align-self:center; color:#fff; margin:20px 0px; cursor:pointer; margin:20px auto;">
