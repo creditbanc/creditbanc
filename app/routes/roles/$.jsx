@@ -1,12 +1,6 @@
 import { Link, useLoaderData, useLocation } from "@remix-run/react";
 import { get_session_entity_id, get_user_id } from "~/utils/auth.server";
-import {
-	classNames,
-	get_config_id,
-	get_entity_id,
-	get_group_id,
-	mapIndexed,
-} from "~/utils/helpers";
+import { classNames, get_config_id, get_entity_id, get_group_id, mapIndexed } from "~/utils/helpers";
 import {
 	Cog6ToothIcon,
 	EllipsisHorizontalIcon,
@@ -31,22 +25,8 @@ import { redirect } from "react-router-dom";
 import { create_role_config } from "~/api/authorization";
 import copy from "copy-to-clipboard";
 
-import {
-	map as rxmap,
-	filter as rxfilter,
-	concatMap,
-	tap,
-	take,
-} from "rxjs/operators";
-import {
-	from,
-	lastValueFrom,
-	forkJoin,
-	Subject,
-	of as rxof,
-	merge,
-	throwError,
-} from "rxjs";
+import { map as rxmap, filter as rxfilter, concatMap, tap, take } from "rxjs/operators";
+import { from, lastValueFrom, forkJoin, Subject, of as rxof, merge, throwError } from "rxjs";
 import { fold, ifFalse } from "~/utils/operators";
 import { is_authorized_f } from "~/api/auth";
 
@@ -68,11 +48,7 @@ const $loader = subject.pipe(
 
 		let redirect_home = entity_group_id.pipe(
 			concatMap(({ entity_id, group_id }) =>
-				throwError(() =>
-					Response.redirect(
-						`${url.origin}/home/resource/e/${entity_id}/g/${group_id}`
-					)
-				)
+				throwError(() => Response.redirect(`${url.origin}/home/resource/e/${entity_id}/g/${group_id}`))
 			)
 		);
 
@@ -96,9 +72,7 @@ const $loader = subject.pipe(
 			);
 
 		let is_authorized = entity_group_id.pipe(
-			concatMap(({ entity_id, group_id }) =>
-				is_authorized_f(entity_id, group_id, "share", "edit")
-			),
+			concatMap(({ entity_id, group_id }) => is_authorized_f(entity_id, group_id, "share", "edit")),
 			concatMap(ifFalse(redirect_home)),
 			concatMap(() => group_id),
 			concatMap(edit_roles),
@@ -116,14 +90,12 @@ const $loader = subject.pipe(
 
 export const useRoleStore = create((set) => ({
 	role: {},
-	set_role: (path, value) =>
-		set((state) => pipe(mod(...path)(() => value))(state)),
+	set_role: (path, value) => set((state) => pipe(mod(...path)(() => value))(state)),
 }));
 
 export const useRolesStore = create((set) => ({
 	roles: [],
-	set_roles: (path, value) =>
-		set((state) => pipe(mod(...path)(() => value))(state)),
+	set_roles: (path, value) => set((state) => pipe(mod(...path)(() => value))(state)),
 }));
 
 // export const loader = async ({ request }) => {
@@ -172,9 +144,7 @@ export const loader = async ({ request }) => {
 
 	subject.next({ id: "load", args: { request } });
 
-	let response = await lastValueFrom(
-		subject.pipe(rxfilter(on_complete), take(1))
-	);
+	let response = await lastValueFrom(subject.pipe(rxfilter(on_complete), take(1)));
 
 	return response.next();
 };
@@ -201,19 +171,14 @@ const RoleActions = ({ role }) => {
 	const onCopyShareLink = () => {
 		let { origin } = window.location;
 
-		copy(
-			`${origin}/links/resource/e/${entity_id}/g/${group_id}?config_id=${role.id}`
-		);
+		copy(`${origin}/links/resource/e/${entity_id}/g/${group_id}?config_id=${role.id}`);
 	};
 
 	return (
 		<Menu as="div" className="relative inline-block text-left">
 			<div>
 				<Menu.Button className="flex flex-col rounded-full w-full justify-center items-center gap-x-1.5 bg-white text-sm hover:bg-white p-1">
-					<EllipsisHorizontalIcon
-						className="h-5 w-5 text-gray-700"
-						aria-hidden="true"
-					/>
+					<EllipsisHorizontalIcon className="h-5 w-5 text-gray-700" aria-hidden="true" />
 				</Menu.Button>
 			</div>
 
@@ -233,9 +198,7 @@ const RoleActions = ({ role }) => {
 								<Link
 									to={`/role/${role.id}/permissions/resource/e/${entity_id}/g/${group_id}`}
 									className={classNames(
-										active
-											? "bg-gray-100 text-gray-900"
-											: "text-gray-700",
+										active ? "bg-gray-100 text-gray-900" : "text-gray-700",
 										"block px-4 py-2 text-sm"
 									)}
 								>
@@ -253,9 +216,7 @@ const RoleActions = ({ role }) => {
 								<div
 									onClick={onCopyShareLink}
 									className={classNames(
-										active
-											? "bg-gray-100 text-gray-900"
-											: "text-gray-700",
+										active ? "bg-gray-100 text-gray-900" : "text-gray-700",
 										"block px-4 py-2 text-sm"
 									)}
 								>
@@ -273,9 +234,7 @@ const RoleActions = ({ role }) => {
 								<div
 									onClick={onDeleteRole}
 									className={classNames(
-										active
-											? "bg-gray-100 text-gray-900"
-											: "text-gray-700",
+										active ? "bg-gray-100 text-gray-900" : "text-gray-700",
 										"block px-4 py-2 text-sm"
 									)}
 								>
@@ -304,22 +263,15 @@ const EmptyRolesState = () => {
 	return (
 		<div className="text-center border-dashed p-3 py-5 border-2 rounded">
 			<UserPlusIcon className="h-8 w-8 text-gray-400 mx-auto" />
-			<h3 className="mt-2 text-sm font-semibold text-gray-900">
-				No roles yet
-			</h3>
-			<p className="mt-1 text-sm text-gray-500">
-				Get started by creating a new role.
-			</p>
+			<h3 className="mt-2 text-sm font-semibold text-gray-900">No roles yet</h3>
+			<p className="mt-1 text-sm text-gray-500">Get started by creating a new role.</p>
 			<div className="mt-6">
 				<button
 					type="button"
 					className="inline-flex items-center rounded-md bg-blue-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
 					onClick={onCreateNewRoleModal}
 				>
-					<PlusIcon
-						className="-ml-0.5 mr-1.5 h-5 w-5"
-						aria-hidden="true"
-					/>
+					<PlusIcon className="-ml-0.5 mr-1.5 h-5 w-5" aria-hidden="true" />
 					New Role
 				</button>
 			</div>
@@ -350,9 +302,7 @@ const RolesList = () => {
 	const onCopyShareLink = (config_id) => {
 		let { origin } = window.location;
 
-		copy(
-			`${origin}/links/resource/e/${entity_id}/g/${group_id}?config_id=${config_id}`
-		);
+		copy(`${origin}/links/resource/e/${entity_id}/g/${group_id}?config_id=${config_id}`);
 	};
 
 	return (
@@ -376,9 +326,7 @@ const RolesList = () => {
 										className="flex flex-col space-y-3 flex-1"
 									>
 										<div className="flex flex-row items-center space-x-2 text-gray-700 font-semibold">
-											<div className="pl-1">
-												{role.name}
-											</div>
+											<div className="pl-1">{role.name}</div>
 										</div>
 										<div className="flex flex-row items-center -space-x-1 overflow-hidden">
 											<img
@@ -404,11 +352,7 @@ const RolesList = () => {
 										</div>
 									</Link>
 									<div className="flex flex-row h-full items-center space-x-3">
-										<div
-											onClick={() =>
-												onCopyShareLink(role.id)
-											}
-										>
+										<div onClick={() => onCopyShareLink(role.id)}>
 											<LinkIcon className="h-4 w-4 text-blue-600 cursor-pointer" />
 										</div>
 										<div>
@@ -507,14 +451,9 @@ const SectionHeading = () => {
 		<div className="border-b border-gray-200 py-2 px-6">
 			<div className="flex flex-row w-full justify-between items-center">
 				<div>
-					<h3 className="text-base font-semibold leading-6 text-gray-900">
-						Roles
-					</h3>
+					<h3 className="text-base font-semibold leading-6 text-gray-900">Roles</h3>
 				</div>
-				<div
-					className="flex flex-row items-center gap-x-3 cursor-pointer"
-					onClick={onCreateNewRoleModal}
-				>
+				<div className="flex flex-row items-center gap-x-3 cursor-pointer" onClick={onCreateNewRoleModal}>
 					<div>New Role</div>
 					<div>
 						<PlusIcon className="h-5 w-5 text-gray-700 " />

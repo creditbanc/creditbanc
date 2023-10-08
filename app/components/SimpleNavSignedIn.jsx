@@ -211,7 +211,7 @@ const ShareDropdown = () => {
 				leaveFrom="transform opacity-100 scale-100"
 				leaveTo="transform opacity-0 scale-95"
 			>
-				<Menu.Items className="absolute right-0 z-20 mt-2 w-56 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+				<Menu.Items className="absolute right-0 z-20 mt-2  origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
 					<div className="py-1">
 						<Link
 							to={`/roles/resource/e/${entity_id}/g/${group_id}`}
@@ -385,9 +385,11 @@ export default function Nav({ entity_id, roles, companies }) {
 	};
 
 	return (
-		<div className="flex flex-col w-full lg:h-[65px] justify-center ">
+		<div className="flex flex-col w-full lg:h-[65px] justify-center">
 			<Modal id="share_modal">
-				<Share session_entity_id={entity_id} roles={roles} />
+				<div className="flex flex-col bg-white rounded-lg w-full lg:w-[600px] p-[20px]">
+					<Share session_entity_id={entity_id} roles={roles} />
+				</div>
 			</Modal>
 			<div className="flex flex-row justify-between px-5">
 				<div className="hidden sm:flex flex-col justify-center w-[150px]">

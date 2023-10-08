@@ -587,94 +587,96 @@ const EditFileModal = () => {
 	};
 
 	return (
-		<Modal id="file_edit_modal" classes="min-w-[700px] min-h-[200px]">
-			<div className="flex flex-row w-full py-5 px-5 border-b text-2xl items-center">
-				<div className="flex flex-row w-full items-center space-x-3">
-					<div className="">
-						<DocumentIcon className="h-6 w-6 text-red-400" />
+		<Modal id="file_edit_modal">
+			<div className="w-[calc(100vw-30px)] md:w-[700px] min-h-[200px] bg-white rounded-lg">
+				<div className="flex flex-row w-full py-5 px-5 border-b text-2xl items-center">
+					<div className="flex flex-row w-full items-center space-x-3">
+						<div className="">
+							<DocumentIcon className="h-6 w-6 text-red-400" />
+						</div>
+						<div>{truncate(30, name)}</div>
 					</div>
-					<div>{truncate(30, name)}</div>
-				</div>
-				<div onClick={onCloseModal}>
-					<XMarkIcon className="h-6 w-6 text-gray-400 cursor-pointer" />
-				</div>
-			</div>
-			<div className="flex flex-col w-full p-5 text-sm space-y-5">
-				<div className="flex flex-col w-full space-y-2">
-					<div className="text-gray-400">Document name</div>
-					<div className="flex flex-col w-full border-2 rounded h-[50px] justify-center px-2 text-lg font-light">
-						<input type="text" className="outline-none w-full" value={name} onChange={onChangeName} />
+					<div onClick={onCloseModal}>
+						<XMarkIcon className="h-6 w-6 text-gray-400 cursor-pointer" />
 					</div>
 				</div>
-
-				<div className="flex flex-col w-full space-y-3">
-					<div className="flex flex-row justify-between">
-						<div className="text-gray-400">Tags</div>
-						<div className="text-gray-400 cursor-pointer">Clear</div>
-					</div>
-					<div className="flex flex-col w-full text-sm">
-						<div className="flex flex-row w-full space-x-3">
-							{pipe(
-								mapIndexed((tag, tag_index) => (
-									<div
-										className="flex flex-col px-3 py-1 border rounded-full text-gray-500 bg-gray-50 cursor-pointer"
-										key={tag_index}
-										onClick={() => onRemoveTag(tag_index)}
-									>
-										{tag.label}
-									</div>
-								))
-							)(tags)}
+				<div className="flex flex-col w-full p-5 text-sm space-y-5">
+					<div className="flex flex-col w-full space-y-2">
+						<div className="text-gray-400">Document name</div>
+						<div className="flex flex-col w-full border-2 rounded h-[50px] justify-center px-2 text-lg font-light">
+							<input type="text" className="outline-none w-full" value={name} onChange={onChangeName} />
 						</div>
 					</div>
-				</div>
-				<div className="flex flex-col w-full space-y-2 border-t pt-3">
-					<div className="flex flex-col w-full text-sm">
-						<div className="flex flex-row w-full space-x-3">
-							<div
-								className="flex flex-col justify-center px-3 py-1 border rounded-full text-gray-500  cursor-pointer"
-								onClick={() => onAddTag({ id: "1040", label: "Form 1040" })}
-							>
-								Form 1040 +
-							</div>
-							<div
-								className="flex flex-col justify-center px-3 py-1 border rounded-full text-gray-500  cursor-pointer"
-								onClick={() => onAddTag({ id: "W-2", label: "Form W-2" })}
-							>
-								Form W-2 +
-							</div>
-							<div
-								className="flex flex-col justify-center px-3 py-1 border rounded-full text-gray-500  cursor-pointer"
-								onClick={() => onAddTag({ id: "1099", label: "Form 1099" })}
-							>
-								Form 1099 +
-							</div>
-							<div
-								className="flex flex-col justify-center px-3 py-1 border rounded-full text-gray-500  cursor-pointer"
-								onClick={() => onAddTag({ id: "other", label: "Other" })}
-							>
-								Other +
+
+					<div className="flex flex-col w-full space-y-3">
+						<div className="flex flex-row justify-between">
+							<div className="text-gray-400">Tags</div>
+							<div className="text-gray-400 cursor-pointer">Clear</div>
+						</div>
+						<div className="flex flex-col w-full text-sm">
+							<div className="flex flex-row w-full space-x-3">
+								{pipe(
+									mapIndexed((tag, tag_index) => (
+										<div
+											className="flex flex-col px-3 py-1 border rounded-full text-gray-500 bg-gray-50 cursor-pointer"
+											key={tag_index}
+											onClick={() => onRemoveTag(tag_index)}
+										>
+											{tag.label}
+										</div>
+									))
+								)(tags)}
 							</div>
 						</div>
 					</div>
-				</div>
+					<div className="flex flex-col w-full space-y-2 border-t pt-3">
+						<div className="flex flex-col w-full text-xs md:text-sm">
+							<div className="flex flex-row w-full space-x-3">
+								<div
+									className="flex flex-col justify-center px-3 py-1 border rounded-full text-gray-500  cursor-pointer"
+									onClick={() => onAddTag({ id: "1040", label: "Form 1040" })}
+								>
+									Form 1040 +
+								</div>
+								<div
+									className="flex flex-col justify-center px-3 py-1 border rounded-full text-gray-500  cursor-pointer"
+									onClick={() => onAddTag({ id: "W-2", label: "Form W-2" })}
+								>
+									Form W-2 +
+								</div>
+								<div
+									className="flex flex-col justify-center px-3 py-1 border rounded-full text-gray-500  cursor-pointer"
+									onClick={() => onAddTag({ id: "1099", label: "Form 1099" })}
+								>
+									Form 1099 +
+								</div>
+								<div
+									className="flex flex-col justify-center px-3 py-1 border rounded-full text-gray-500  cursor-pointer"
+									onClick={() => onAddTag({ id: "other", label: "Other" })}
+								>
+									Other +
+								</div>
+							</div>
+						</div>
+					</div>
 
-				<div className="flex flex-col w-full">
-					<div className="flex flex-row justify-end space-x-3">
-						<button
-							onClick={onCloseModal}
-							type="button"
-							className="bg-white text-gray-700 py-2 px-3 rounded border border-gray-700"
-						>
-							Cancel
-						</button>
-						<button
-							type="button"
-							className="bg-gray-700 text-white py-2 px-3 rounded"
-							onClick={onSaveFileChanges}
-						>
-							Save
-						</button>
+					<div className="flex flex-col w-full">
+						<div className="flex flex-row justify-end space-x-3">
+							<button
+								onClick={onCloseModal}
+								type="button"
+								className="bg-white text-gray-700 py-2 px-3 rounded border border-gray-700"
+							>
+								Cancel
+							</button>
+							<button
+								type="button"
+								className="bg-gray-700 text-white py-2 px-3 rounded"
+								onClick={onSaveFileChanges}
+							>
+								Save
+							</button>
+						</div>
 					</div>
 				</div>
 			</div>
@@ -832,20 +834,22 @@ const UploadFileModal = () => {
 	};
 
 	return (
-		<Modal id="upload_file_modal" classes="min-w-[700px]">
-			<div className="flex flex-row w-full py-5 px-5 border-b text-2xl items-center">
-				<div className="flex flex-row w-full items-center space-x-3 text-gray-400">
-					<div className="">
-						<DocumentIcon className="h-6 w-6 " />
+		<Modal id="upload_file_modal">
+			<div className="flex flex-col h-full w-[calc(100vw-30px)] md:w-[700px] rounded-lg bg-white">
+				<div className="flex flex-row w-full py-5 px-5 border-b text-2xl items-center">
+					<div className="flex flex-row w-full items-center space-x-3 text-gray-400">
+						<div className="">
+							<DocumentIcon className="h-6 w-6 " />
+						</div>
+						<div>Upload File</div>
 					</div>
-					<div>Upload File</div>
+					<div onClick={onCloseModal}>
+						<XMarkIcon className="h-6 w-6 text-gray-400 cursor-pointer" />
+					</div>
 				</div>
-				<div onClick={onCloseModal}>
-					<XMarkIcon className="h-6 w-6 text-gray-400 cursor-pointer" />
+				<div className="flex flex-col p-5 ">
+					<UploadForm />
 				</div>
-			</div>
-			<div className="flex flex-col p-5 ">
-				<UploadForm />
 			</div>
 		</Modal>
 	);

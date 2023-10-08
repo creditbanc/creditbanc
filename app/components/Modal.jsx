@@ -9,7 +9,7 @@ export default function Modal({ children, id, classes = "" }) {
 
 	return (
 		<Transition.Root show={is_open && modal_id == id} as={Fragment}>
-			<Dialog as="div" className="relative z-10" onClose={set_open}>
+			<Dialog as="div" className="relative z-[99]" onClose={set_open}>
 				<Transition.Child
 					as={Fragment}
 					enter="ease-out duration-300"
@@ -22,8 +22,8 @@ export default function Modal({ children, id, classes = "" }) {
 					<div className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" />
 				</Transition.Child>
 
-				<div className="fixed inset-0 z-10 overflow-y-auto">
-					<div className="flex min-h-full items-center justify-center p-4 text-center">
+				<div className="flex flex-col justify-center fixed inset-0 z-10 overflow-y-auto">
+					<div className="flex flex-col items-center justify-center p-4 text-center">
 						<Transition.Child
 							as={Fragment}
 							enter="ease-out duration-300"
@@ -34,7 +34,7 @@ export default function Modal({ children, id, classes = "" }) {
 							leaveTo="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
 						>
 							<Dialog.Panel
-								className={`relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-sm min-w-[350px] ${classes}`}
+								className={`flex flex-col items-center relative transform overflow-hidden text-left transition-all ${classes}`}
 							>
 								{children}
 							</Dialog.Panel>
