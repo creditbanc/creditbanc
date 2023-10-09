@@ -5,7 +5,7 @@ import UserAccountNavMenu from "./UserAccountNavMenu";
 import { classNames, get_entity_id, get_group_id, is_location, mapIndexed } from "~/utils/helpers";
 import { Menu, Transition } from "@headlessui/react";
 import { ChevronDownIcon } from "@heroicons/react/20/solid";
-import { always, equals, includes, isEmpty, map, not, pipe, prop, set, tryCatch, uniqBy } from "ramda";
+import { always, equals, head, includes, isEmpty, map, not, pipe, prop, set, tryCatch, uniqBy } from "ramda";
 import {
 	ChatBubbleLeftEllipsisIcon,
 	Cog6ToothIcon,
@@ -14,7 +14,7 @@ import {
 	PlusIcon,
 	UsersIcon,
 } from "@heroicons/react/24/outline";
-import { all, get, mod } from "shades";
+import { all, filter, get, mod } from "shades";
 import { create } from "zustand";
 import copy from "copy-to-clipboard";
 import Share from "~/routes/invites/new/$.jsx";
@@ -33,12 +33,13 @@ const Companies = ({ companies: all_companies = {} }) => {
 	let group_id = get_group_id(pathname);
 	let { shared_companies = [], owner_companies = [] } = all_companies;
 	let companies = pipe(uniqBy(prop("id")))([...shared_companies, ...owner_companies]);
+	let company = pipe(filter({ group_id }), head)(companies);
 
 	return (
 		<Menu as="div" className="relative inline-block text-left z-50">
 			<div>
 				<Menu.Button className="inline-flex w-full justify-center gap-x-1.5 rounded-full bg-white px-4 py-2 text-sm font-semibold text-gray-900 hover:bg-gray-100">
-					Companies
+					{company.email}
 					<ChevronDownIcon className="-mr-1 h-5 w-5 text-gray-400" aria-hidden="true" />
 				</Menu.Button>
 			</div>
@@ -52,7 +53,7 @@ const Companies = ({ companies: all_companies = {} }) => {
 				leaveFrom="transform opacity-100 scale-100"
 				leaveTo="transform opacity-0 scale-95"
 			>
-				<Menu.Items className="absolute left-0 z-50 mt-2 w-56 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none ">
+				<Menu.Items className="absolute left-0 z-50 mt-2  origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none ">
 					<div className="py-1">
 						<Menu.Item className="border-b">
 							{({ active }) => (

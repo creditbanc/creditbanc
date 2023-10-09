@@ -3388,8 +3388,8 @@ video {
   padding-left: 1rem;
 }
 
-.pl-8 {
-  padding-left: 2rem;
+.pl-6 {
+  padding-left: 1.5rem;
 }
 
 .pl-9 {
@@ -3502,10 +3502,6 @@ video {
 
 .pt-\[calc\(23\/318\*100\%\)\] {
   padding-top: calc(23 / 318 * 100%);
-}
-
-.pl-6 {
-  padding-left: 1.5rem;
 }
 
 .text-left {
