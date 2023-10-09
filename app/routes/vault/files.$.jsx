@@ -11,6 +11,7 @@ import {
 	TrashIcon,
 	ArrowUpOnSquareIcon,
 	EyeIcon,
+	FolderIcon,
 } from "@heroicons/react/24/outline";
 import {
 	sample,
@@ -21,6 +22,7 @@ import {
 	get_group_id,
 	get_entity_id,
 	use_client_search_params,
+	is_location,
 } from "~/utils/helpers";
 import { Disclosure, Menu, Transition } from "@headlessui/react";
 import Modal from "~/components/Modal";
@@ -65,18 +67,43 @@ export const useSideNavStore = create((set) => ({
 	set_state: (path, value) => set((state) => pipe(mod(...path)(() => value))(state)),
 }));
 
-const navigation = [
-	{ name: "All", id: "all", current: true, icon: ListBulletIcon },
-	{ name: "Untagged", id: "untagged", current: false, icon: TagIcon },
+let default_folders = [
 	{
-		name: "Tags",
+		name: "Balance sheets",
+		href: ({ group_id, entity_id }) => `/vault/files/resource/e/${entity_id}/g/${group_id}/f/balancesheet`,
+	},
+	{
+		name: "Income statements",
+		href: ({ group_id, entity_id }) => `/vault/files/resource/e/${entity_id}/g/${group_id}/f/incomestatement`,
+	},
+	{
+		name: "Tax returns",
+		href: ({ group_id, entity_id }) => `/vault/files/resource/e/${entity_id}/g/${group_id}/f/taxreturns`,
+	},
+	{
+		name: "Bank statements",
+		href: ({ group_id, entity_id }) => `/vault/files/resource/e/${entity_id}/g/${group_id}/f/bankstatements`,
+	},
+	{
+		name: "Corporate documents",
+		href: ({ group_id, entity_id }) => `/vault/files/resource/e/${entity_id}/g/${group_id}/f/corporatedocuments`,
+	},
+];
+
+const navigation = [
+	{
+		name: "All",
+		id: "all",
+		current: true,
+		icon: ListBulletIcon,
+		href: ({ group_id, entity_id }) => `/vault/files/resource/e/${entity_id}/g/${group_id}/f/documents`,
+	},
+	// { name: "Untagged", id: "untagged", current: false, icon: TagIcon },
+	{
+		name: "Folders",
 		current: false,
 		icon: ListBulletIcon,
-		children: [
-			// { name: "Form 1040", href: "#" },
-			// { name: "Form W-2", href: "#" },
-			// { name: "Form 1099", href: "#" },
-		],
+		children: default_folders,
 	},
 ];
 
@@ -111,6 +138,10 @@ const category_styles = [
 export const loader = async ({ request }) => {
 	let entity_id = await get_session_entity_id(request);
 	let group_id = get_group_id(request.url);
+	let resource_id = get_file_id(request.url);
+
+	console.log("resource_id");
+	console.log(resource_id);
 
 	let is_authorized = await is_authorized_f(entity_id, group_id, "vault", "read");
 
@@ -118,17 +149,22 @@ export const loader = async ({ request }) => {
 		return redirect(`/home/resource/e/${entity_id}/g/${group_id}`);
 	}
 
-	let onboard_state = await get_doc(["onboard", entity_id]);
-	onboard_state = pipe(omit(["group_id", "entity_id"]), values)(onboard_state);
+	// let onboard_state = await get_doc(["onboard", entity_id]);
+	// onboard_state = pipe(omit(["group_id", "entity_id"]), values)(onboard_state);
 
-	console.log("onboard_state_____");
-	console.log(onboard_state);
+	// console.log("onboard_state_____");
+	// console.log(onboard_state);
 
 	let queries = [
 		{
 			param: "group_id",
 			predicate: "==",
 			value: group_id,
+		},
+		{
+			param: "resource_id",
+			predicate: "==",
+			value: resource_id,
 		},
 	];
 
@@ -260,7 +296,7 @@ const FilesTableHeader = () => {
 				</div>
 				<div className="flex flex-col w-[250px]">Name</div>
 				<div className="hidden lg:flex flex-col w-[300px]">Tags</div>
-				<div className="hidden lg:flex flex-col w-[80px]">Year</div>
+				{/* <div className="hidden lg:flex flex-col w-[80px]">Year</div> */}
 				<div className="hidden lg:flex flex-col w-[100px]">Uploaded</div>
 				<div className="flex flex-col w-[50px]"></div>
 			</div>
@@ -320,11 +356,11 @@ const TableRow = ({ document }) => {
 					{pipe(mapIndexed((tag, tag_index) => <Category category={tag.id} key={tag_index} />))(tags)}
 				</div>
 			</div>
-			<div className="hidden lg:flex flex-col w-[80px]">
+			{/* <div className="hidden lg:flex flex-col w-[80px]">
 				<div className="flex flex-col px-3 py-1 border rounded-full text-gray-500 bg-gray-50 cursor-pointer items-center w-[60px]">
 					2022
 				</div>
-			</div>
+			</div> */}
 			<div className="hidden lg:flex flex-col w-[100px]">
 				<div>{moment(created_at).format("MMM D, YYYY")}</div>
 			</div>
@@ -340,7 +376,9 @@ const NavIcon = ({ icon: Icon }) => {
 };
 
 const SideNav = () => {
-	let { pathname } = useLocation();
+	const { pathname } = useLocation();
+	let group_id = get_group_id(pathname);
+	let entity_id = get_entity_id(pathname);
 	let { documents } = useLoaderData();
 
 	let params = use_client_search_params(pathname);
@@ -358,8 +396,9 @@ const SideNav = () => {
 			{navigation.map((item) => (
 				<li key={item.name}>
 					{!item.children ? (
-						<div
-							onClick={() => onsNavSelect(item.id)}
+						<Link
+							to={item.href({ entity_id, group_id })}
+							// onClick={() => onsNavSelect(item.id)}
 							className={classNames(
 								item.current ? "bg-gray-50" : "hover:bg-gray-50",
 								"flex items-center w-full text-left rounded-md gap-x-3 text-sm leading-6 font-semibold text-gray-700 px-2 my-1 py-2 cursor-pointer"
@@ -367,7 +406,7 @@ const SideNav = () => {
 						>
 							<NavIcon icon={item.icon} />
 							{item.name}
-						</div>
+						</Link>
 					) : (
 						<Disclosure as="div" defaultOpen={true}>
 							{({ open }) => (
@@ -384,22 +423,16 @@ const SideNav = () => {
 
 										{item.name}
 									</Disclosure.Button>
-									<Disclosure.Panel as="ul" className="mt-1 px-2 space-y-2">
-										{tags.map((tag, index) => (
-											<li key={index}>
-												<div
-													onClick={() => onsNavSelect(tag.id)}
-													className={classNames(
-														selected == tag.id ? "bg-gray-50" : "hover:bg-gray-50",
-														"flex flex-row items-center rounded-md py-2 pr-2 pl-4 text-sm leading-6 text-gray-700 cursor-pointer"
-													)}
-												>
-													<div className="mr-2">
-														<NavIcon icon={DocumentIcon} />
+									<Disclosure.Panel as="ul" className="flex flex-col mt-1 pl-10 text-sm">
+										{item.children.map((folder) => (
+											<Link to={folder.href({ entity_id, group_id })}>
+												<div className="flex flex-row w-full justify-between items-center hover:bg-gray-50 py-2 px-2 rounded">
+													<div>{folder.name}</div>
+													<div>
+														<ChevronRightIcon className="h-4 w-4 text-gray-400" />
 													</div>
-													{tag.label}
 												</div>
-											</li>
+											</Link>
 										))}
 									</Disclosure.Panel>
 								</>
@@ -629,6 +662,7 @@ const EditFileModal = () => {
 							</div>
 						</div>
 					</div>
+
 					<div className="flex flex-col w-full space-y-2 border-t pt-3">
 						<div className="flex flex-col w-full text-xs md:text-sm">
 							<div className="flex flex-row w-full space-x-3">
@@ -706,6 +740,9 @@ const UploadForm = () => {
 		const file = e.target[0]?.files[0];
 		if (!file) return;
 
+		console.log("onuploadfile");
+		console.log(file);
+
 		let id = uuidv4();
 
 		const storageRef = ref(storage, `files/${group_id}`);
@@ -726,6 +763,7 @@ const UploadForm = () => {
 
 		const complete = async () => {
 			let download_url = await getDownloadURL(uploadTask.snapshot.ref);
+			let resource_id = get_file_id(pathname);
 
 			// console.log("download_url");
 			// console.log(download_url);
@@ -738,7 +776,13 @@ const UploadForm = () => {
 				group_id,
 				entity_id,
 				id,
+				resource_id,
+				type: file.type,
+				size: file.size,
 			};
+
+			console.log("onuploadpayload");
+			console.log(payload);
 
 			await set_doc(["vault", id], payload);
 
@@ -855,7 +899,28 @@ const UploadFileModal = () => {
 	);
 };
 
+const FolderRow = ({ folder }) => {
+	const { pathname } = useLocation();
+	let group_id = get_group_id(pathname);
+	let entity_id = get_entity_id(pathname);
+
+	return (
+		<Link
+			to={folder.href({ group_id, entity_id })}
+			className="flex flex-row w-full border-b py-3 items-center text-sm cursor-pointer"
+		>
+			<div className="flex flex-col w-[40px]">
+				<FolderIcon className="h-4 w-4 text-blue-400" />
+			</div>
+			<div className="flex flex-col w-[250px]">
+				<div className="flex flex-col">{folder.name}</div>
+			</div>
+		</Link>
+	);
+};
+
 export default function Files() {
+	const { pathname } = useLocation();
 	let { documents = [] } = useLoaderData();
 	const files = useFilesStore((state) => state.files);
 	const set_files = useFilesStore((state) => state.set_files);
@@ -895,8 +960,15 @@ export default function Files() {
 					</div>
 					<div className="flex flex-col flex-1 px-5 pb-5 overflow-y-scroll relative  scrollbar-none bg-white">
 						<Heading />
-						<HeaderFilters />
+						{/* <HeaderFilters /> */}
 						<FilesTableHeader />
+						{is_location("/documents", pathname) && (
+							<div>
+								{pipe(mapIndexed((folder, index) => <FolderRow key={index} folder={folder} />))(
+									default_folders
+								)}
+							</div>
+						)}
 						<div className="flex flex-col w-full mb-[50px]">
 							{pipe(
 								// filter({ visible: true }),
@@ -907,7 +979,6 @@ export default function Files() {
 						</div>
 					</div>
 				</div>
-				{/* <div className="flex flex-col w-[25%] border h-full rounded bg-white"></div> */}
 			</div>
 		</div>
 	);
