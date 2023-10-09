@@ -441,11 +441,16 @@ const SideNav = () => {
 
 										{item.name}
 									</Disclosure.Button>
-									<Disclosure.Panel as="ul" className="flex flex-col mt-1 pl-8 text-sm">
+									<Disclosure.Panel as="ul" className="flex flex-col mt-1 pl-6 text-sm">
 										{item.children.map((folder, index) => (
 											<Link key={index} to={folder.href({ entity_id, group_id })}>
 												<div className="flex flex-row w-full justify-between items-center hover:bg-gray-50 py-2 px-2 rounded">
-													<div>{folder.name}</div>
+													<div className="flex flex-row items-center gap-x-2">
+														<div>
+															<FolderIcon className="h-4 w-4 text-blue-400" />
+														</div>
+														<div>{folder.name}</div>
+													</div>
 													<div>
 														<ChevronRightIcon className="h-4 w-4 text-gray-400" />
 													</div>
