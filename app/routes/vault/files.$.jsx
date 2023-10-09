@@ -206,7 +206,7 @@ const Heading = () => {
 		<div className="border-b border-gray-200 pb-2 bg-white py-3">
 			<div className="flex flex-row justify-between items-end">
 				<div className="flex flex-col">
-					<h3 className="text-base font-semibold leading-6 text-gray-900">{selected.name}</h3>
+					<h3 className="text-base font-semibold leading-6 text-gray-900">{selected?.name}</h3>
 				</div>
 				<div className="flex flex-col">
 					<button
@@ -449,7 +449,7 @@ const SideNav = () => {
 														<div>
 															<FolderIcon className="h-4 w-4 text-blue-400" />
 														</div>
-														<div>{folder.name}</div>
+														<div>{folder?.name}</div>
 													</div>
 													<div>
 														<ChevronRightIcon className="h-4 w-4 text-gray-400" />

@@ -203,10 +203,10 @@ const Single = () => {
 				bureau={"Equifax"}
 				scoreClassNames="text-6xl"
 				bureauTitleClassNames="text-1xl"
-				score={750}
+				score={850}
 				customChartStyles={{ width: 300, height: 280 }}
 			>
-				<div className="mt-[170px] font-bold text-5xl">780</div>
+				<div className="mt-[170px] font-bold text-5xl">850</div>
 			</CreditScoreDoughnut>
 		</div>
 	);

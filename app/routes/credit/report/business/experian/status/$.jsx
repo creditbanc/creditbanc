@@ -375,8 +375,18 @@ const Derogatories = () => {
 	);
 };
 
+let score_classes = (score, prefix) => {
+	if (score == 0) return `${prefix}` + `-green-500`;
+	if (score == 1) return `${prefix}` + `-yellow-300`;
+	if (score >= 2 && score <= 3) return `${prefix}` + `-red-500`;
+	if (score >= 4) return `${prefix}` + `-red-800`;
+};
+
 const Legal = () => {
 	let { experian_derogatories: derogatories } = useLoaderData();
+
+	let score = derogatories?.legalFilingsSummary?.legalCount || 0;
+
 	return (
 		<div className="flex flex-col w-full border bg-white rounded text-sm p-4">
 			<div className="flex flex-row w-full justify-between items-center">
@@ -389,9 +399,14 @@ const Legal = () => {
 				<div className="flex flex-col w-full lg:w-[50%] px-10 gap-y-8 justify-center">
 					<div className="flex flex-row w-full justify-center gap-x-12">
 						<div className="flex flex-col items-center gap-y-4">
-							<div className="flex flex-col items-center justify-center rounded-full border-4 border-green-500 w-[100px] h-[100px]">
-								<div className="flex flex-col text-4xl font-semibold text-green-500">
-									{derogatories?.legalFilingsSummary?.legalCount || 0}
+							<div
+								className={`flex flex-col items-center justify-center rounded-full border-4 w-[100px] h-[100px] ${score_classes(
+									score,
+									"border"
+								)}`}
+							>
+								<div className={`flex flex-col text-4xl font-semibold ${score_classes(score, "text")}`}>
+									{score}
 								</div>
 							</div>
 							<div className="flex flex-col font-semibold">Legal</div>
@@ -500,6 +515,7 @@ const Legal = () => {
 
 const Collections = () => {
 	let { experian_derogatories: derogatories } = useLoaderData();
+	let score = derogatories?.legalFilingsCollectionsSummary?.collectionCount || 0;
 	return (
 		<div className="flex flex-col w-full border bg-white rounded text-sm p-4">
 			<div className="flex flex-row w-full justify-between items-center">
@@ -512,9 +528,14 @@ const Collections = () => {
 				<div className="flex flex-col w-full lg:w-[50%] px-10 gap-y-8 justify-center">
 					<div className="flex flex-row w-full justify-center gap-x-12">
 						<div className="flex flex-col items-center gap-y-4">
-							<div className="flex flex-col items-center justify-center rounded-full border-4 border-green-500 w-[100px] h-[100px]">
-								<div className="flex flex-col text-4xl font-semibold text-green-500">
-									{derogatories?.legalFilingsCollectionsSummary?.collectionCount || 0}
+							<div
+								className={`flex flex-col items-center justify-center rounded-full border-4 w-[100px] h-[100px] ${score_classes(
+									score,
+									"border"
+								)}`}
+							>
+								<div className={`flex flex-col text-4xl font-semibold ${score_classes(score, "text")}`}>
+									{score}
 								</div>
 							</div>
 							<div className="flex flex-col font-semibold">Collections</div>
@@ -593,6 +614,8 @@ const Collections = () => {
 
 const Liens = () => {
 	let { experian_derogatories: derogatories } = useLoaderData();
+	let score = derogatories?.legalFilingsCollectionsSummary?.lienCount || 0;
+
 	return (
 		<div className="flex flex-col w-full border bg-white rounded text-sm p-4">
 			<div className="flex flex-row w-full justify-between items-center">
@@ -605,9 +628,14 @@ const Liens = () => {
 				<div className="flex flex-col w-full lg:w-[50%] px-10 gap-y-8 justify-center">
 					<div className="flex flex-row w-full justify-center gap-x-12">
 						<div className="flex flex-col items-center gap-y-4">
-							<div className="flex flex-col items-center justify-center rounded-full border-4 border-green-500 w-[100px] h-[100px]">
-								<div className="flex flex-col text-4xl font-semibold text-green-500">
-									{derogatories?.legalFilingsCollectionsSummary?.lienCount || 0}
+							<div
+								className={`flex flex-col items-center justify-center rounded-full border-4 w-[100px] h-[100px] ${score_classes(
+									score,
+									"border"
+								)}`}
+							>
+								<div className={`flex flex-col text-4xl font-semibold ${score_classes(score, "text")}`}>
+									{score}
 								</div>
 							</div>
 							<div className="flex flex-col font-semibold">Liens</div>
@@ -679,6 +707,7 @@ const Liens = () => {
 
 const Judgements = () => {
 	let { experian_derogatories: derogatories } = useLoaderData();
+	let score = derogatories?.legalFilingsCollectionsSummary?.judgmentCount || 0;
 	return (
 		<div className="flex flex-col w-full border bg-white rounded text-sm p-4">
 			<div className="flex flex-row w-full justify-between items-center">
@@ -691,9 +720,14 @@ const Judgements = () => {
 				<div className="flex flex-col w-full lg:w-[50%] px-10 gap-y-8 justify-center">
 					<div className="flex flex-row w-full justify-center gap-x-12">
 						<div className="flex flex-col items-center gap-y-4">
-							<div className="flex flex-col items-center justify-center rounded-full border-4 border-green-500 w-[100px] h-[100px]">
-								<div className="flex flex-col text-4xl font-semibold text-green-500">
-									{derogatories?.legalFilingsCollectionsSummary?.judgmentCount || 0}
+							<div
+								className={`flex flex-col items-center justify-center rounded-full border-4 w-[100px] h-[100px] ${score_classes(
+									score,
+									"border"
+								)}`}
+							>
+								<div className={`flex flex-col text-4xl font-semibold ${score_classes(score, "text")}`}>
+									{score}
 								</div>
 							</div>
 							<div className="flex flex-col font-semibold">Judgements</div>

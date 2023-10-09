@@ -8,19 +8,15 @@ function classNames(...classes) {
 export const Plans = ({ plans }) => {
 	return (
 		<div className="mx-auto max-w-7xl px-6 lg:px-8 -mt-[40px]">
-			<div className="isolate mx-auto mt-16 grid max-w-xl grid-cols-1 gap-y-8 lg:mx-0 lg:max-w-none lg:grid-cols-3">
+			<div className="isolate mx-auto mt-16 grid max-w-xl grid-cols-1 gap-y-8 lg:mx-0 lg:max-w-none lg:grid-cols-4">
 				{plans.map((tier, tierIdx) => (
 					<div
 						key={tier.id}
 						className={classNames(
-							tier.mostPopular
-								? "lg:z-10 lg:rounded-b-none"
-								: "lg:mt-8",
-							tierIdx === 0 ? "lg:rounded-r-none" : "",
-							tierIdx === plans.length - 1
-								? "lg:rounded-l-none"
-								: "",
-							"flex flex-col justify-between rounded-3xl bg-white p-8 ring-1 ring-gray-200 xl:p-10"
+							"flex flex-col justify-between rounded-3xl bg-white p-8 ring-1 ring-gray-200 xl:p-10",
+							tier.mostPopular ? "lg:z-10 lg:rounded-b-none lg:rounded-3xl" : "lg:mt-8 lg:rounded-none",
+							tierIdx === 0 ? "lg:rounded-l-3xl" : "",
+							tierIdx === plans.length - 1 ? "lg:rounded-r-3xl" : ""
 						)}
 					>
 						<div>
@@ -28,9 +24,7 @@ export const Plans = ({ plans }) => {
 								<h3
 									id={tier.id}
 									className={classNames(
-										tier.mostPopular
-											? "text-[#55CF9E]"
-											: "text-gray-900",
+										tier.mostPopular ? "text-[#55CF9E]" : "text-gray-900",
 										"text-lg font-semibold"
 									)}
 								>
@@ -44,21 +38,14 @@ export const Plans = ({ plans }) => {
 									</div>
 								) : null}
 							</div>
-							<p className="mt-4 text-sm leading-6 text-gray-600">
-								{tier.description}
-							</p>
+							<p className="mt-4 text-sm leading-6 text-gray-600">{tier.description}</p>
 							<p className="mt-6 flex items-baseline gap-x-1">
 								<span className="text-4xl font-bold tracking-tight text-gray-900">
 									{tier.priceMonthly}
 								</span>
-								<span className="text-sm font-semibold leading-6 text-gray-600">
-									/month
-								</span>
+								<span className="text-sm font-semibold leading-6 text-gray-600">/month</span>
 							</p>
-							<ul
-								role="list"
-								className="mt-8 space-y-3 text-sm leading-6 text-gray-600"
-							>
+							<ul role="list" className="mt-8 space-y-3 text-sm leading-6 text-gray-600">
 								{tier.features.map((feature) => (
 									<li key={feature} className="flex gap-x-3">
 										{feature.included && (
@@ -69,10 +56,7 @@ export const Plans = ({ plans }) => {
 										)}
 
 										{!feature.included && (
-											<XMarkIcon
-												className="h-6 w-5 flex-none text-red-500"
-												aria-hidden="true"
-											/>
+											<XMarkIcon className="h-6 w-5 flex-none text-red-500" aria-hidden="true" />
 										)}
 										{feature.text}
 									</li>

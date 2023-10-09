@@ -139,7 +139,8 @@ let navigation = [
 	},
 	{
 		name: "Vault",
-		href: ({ entity_id, group_id }) => `/vault/files/resource/e/${entity_id}/g/${group_id}?rand=${Math.random()}`,
+		href: ({ entity_id, group_id }) =>
+			`/vault/files/resource/e/${entity_id}/g/${group_id}/f/documents?rand=${Math.random()}`,
 		current: (pathname) => is_location("/vault", pathname),
 	},
 ];
