@@ -23,6 +23,7 @@ import {
 	get_entity_id,
 	use_client_search_params,
 	is_location,
+	inspect,
 } from "~/utils/helpers";
 import { Disclosure, Menu, Transition } from "@headlessui/react";
 import Modal from "~/components/Modal";
@@ -47,6 +48,11 @@ import {
 	filter as rfilter,
 	omit,
 	values,
+	pickAll,
+	trim,
+	identity,
+	hasPath,
+	head,
 } from "ramda";
 import { set_doc } from "~/utils/firebase";
 import moment from "moment";
@@ -69,22 +75,27 @@ export const useSideNavStore = create((set) => ({
 
 let default_folders = [
 	{
+		id: "balancesheet",
 		name: "Balance sheets",
 		href: ({ group_id, entity_id }) => `/vault/files/resource/e/${entity_id}/g/${group_id}/f/balancesheet`,
 	},
 	{
+		id: "incomestatement",
 		name: "Income statements",
 		href: ({ group_id, entity_id }) => `/vault/files/resource/e/${entity_id}/g/${group_id}/f/incomestatement`,
 	},
 	{
+		id: "taxreturns",
 		name: "Tax returns",
 		href: ({ group_id, entity_id }) => `/vault/files/resource/e/${entity_id}/g/${group_id}/f/taxreturns`,
 	},
 	{
+		id: "bankstatements",
 		name: "Bank statements",
 		href: ({ group_id, entity_id }) => `/vault/files/resource/e/${entity_id}/g/${group_id}/f/bankstatements`,
 	},
 	{
+		id: "corporatedocuments",
 		name: "Corporate documents",
 		href: ({ group_id, entity_id }) => `/vault/files/resource/e/${entity_id}/g/${group_id}/f/corporatedocuments`,
 	},
@@ -92,13 +103,12 @@ let default_folders = [
 
 const navigation = [
 	{
-		name: "All",
-		id: "all",
+		name: "All documents",
+		id: "documents",
 		current: true,
 		icon: ListBulletIcon,
 		href: ({ group_id, entity_id }) => `/vault/files/resource/e/${entity_id}/g/${group_id}/f/documents`,
 	},
-	// { name: "Untagged", id: "untagged", current: false, icon: TagIcon },
 	{
 		name: "Folders",
 		current: false,
@@ -140,9 +150,6 @@ export const loader = async ({ request }) => {
 	let group_id = get_group_id(request.url);
 	let resource_id = get_file_id(request.url);
 
-	console.log("resource_id");
-	console.log(resource_id);
-
 	let is_authorized = await is_authorized_f(entity_id, group_id, "vault", "read");
 
 	if (!is_authorized) {
@@ -178,7 +185,18 @@ export const loader = async ({ request }) => {
 };
 
 const Heading = () => {
+	let { pathname } = useLocation();
+	let resource_id = get_file_id(pathname);
+
 	let set_modal = useModalStore((state) => state.set_modal);
+
+	let top_level_folders = pipe(filter(pipe(hasPath(["children"]), not)), map(pickAll(["id", "name"])))(navigation);
+	let children = pipe(get(all, "children", all), flatten, filter(identity), map(pickAll(["id", "name"])))(navigation);
+	let nav_folders = [...top_level_folders, ...children];
+	let selected = pipe(
+		filter((resource) => resource.id == resource_id),
+		head
+	)(nav_folders);
 
 	const onUploadFileModalOpen = () => {
 		set_modal({ id: "upload_file_modal", is_open: true });
@@ -188,7 +206,7 @@ const Heading = () => {
 		<div className="border-b border-gray-200 pb-2 bg-white py-3">
 			<div className="flex flex-row justify-between items-end">
 				<div className="flex flex-col">
-					<h3 className="text-base font-semibold leading-6 text-gray-900">Documents</h3>
+					<h3 className="text-base font-semibold leading-6 text-gray-900">{selected.name}</h3>
 				</div>
 				<div className="flex flex-col">
 					<button
@@ -424,8 +442,8 @@ const SideNav = () => {
 										{item.name}
 									</Disclosure.Button>
 									<Disclosure.Panel as="ul" className="flex flex-col mt-1 pl-10 text-sm">
-										{item.children.map((folder) => (
-											<Link to={folder.href({ entity_id, group_id })}>
+										{item.children.map((folder, index) => (
+											<Link key={index} to={folder.href({ entity_id, group_id })}>
 												<div className="flex flex-row w-full justify-between items-center hover:bg-gray-50 py-2 px-2 rounded">
 													<div>{folder.name}</div>
 													<div>
