@@ -11,7 +11,6 @@ import {
 	TrashIcon,
 	ArrowUpOnSquareIcon,
 	EyeIcon,
-	FolderIcon,
 } from "@heroicons/react/24/outline";
 import {
 	sample,
@@ -62,6 +61,7 @@ import { filter, matching, mod, get, all } from "shades";
 import { is_authorized_f } from "~/api/auth";
 import { get_session_entity_id, get_user_id } from "~/utils/auth.server";
 import { redirect } from "@remix-run/node";
+import { FolderIcon } from "@heroicons/react/20/solid";
 
 export const useFileStore = create((set) => ({
 	file: {},
@@ -441,7 +441,7 @@ const SideNav = () => {
 
 										{item.name}
 									</Disclosure.Button>
-									<Disclosure.Panel as="ul" className="flex flex-col mt-1 pl-10 text-sm">
+									<Disclosure.Panel as="ul" className="flex flex-col mt-1 pl-8 text-sm">
 										{item.children.map((folder, index) => (
 											<Link key={index} to={folder.href({ entity_id, group_id })}>
 												<div className="flex flex-row w-full justify-between items-center hover:bg-gray-50 py-2 px-2 rounded">
@@ -928,7 +928,7 @@ const FolderRow = ({ folder }) => {
 			className="flex flex-row w-full border-b py-3 items-center text-sm cursor-pointer"
 		>
 			<div className="flex flex-col w-[40px]">
-				<FolderIcon className="h-4 w-4 text-blue-400" />
+				<FolderIcon className="h-5 w-5 text-blue-400" />
 			</div>
 			<div className="flex flex-col w-[250px]">
 				<div className="flex flex-col">{folder.name}</div>
