@@ -73,33 +73,182 @@ export const useSideNavStore = create((set) => ({
 	set_state: (path, value) => set((state) => pipe(mod(...path)(() => value))(state)),
 }));
 
-let default_folders = [
+const balance_sheet_folders = [
+	{
+		parent: "balancesheet",
+		id: "balancesheet2023",
+		name: "2023",
+		href: ({ group_id, entity_id }) => `/vault/files/resource/e/${entity_id}/g/${group_id}/f/balancesheet2023`,
+	},
+	{
+		parent: "balancesheet",
+		id: "balancesheet2022",
+		name: "2022",
+		href: ({ group_id, entity_id }) => `/vault/files/resource/e/${entity_id}/g/${group_id}/f/balancesheet2022`,
+	},
+	{
+		parent: "balancesheet",
+		id: "balancesheet2021",
+		name: "2021",
+		href: ({ group_id, entity_id }) => `/vault/files/resource/e/${entity_id}/g/${group_id}/f/balancesheet2021`,
+	},
+];
+
+const income_statement_folders = [
+	{
+		parent: "incomestatement",
+		id: "incomestatement2023",
+		name: "2023",
+		href: ({ group_id, entity_id }) => `/vault/files/resource/e/${entity_id}/g/${group_id}/f/incomestatement2023`,
+	},
+	{
+		parent: "incomestatement",
+		id: "incomestatement2022",
+		name: "2022",
+		href: ({ group_id, entity_id }) => `/vault/files/resource/e/${entity_id}/g/${group_id}/f/incomestatement2022`,
+	},
+	{
+		parent: "incomestatement",
+		id: "incomestatement2021",
+		name: "2021",
+		href: ({ group_id, entity_id }) => `/vault/files/resource/e/${entity_id}/g/${group_id}/f/incomestatement2021`,
+	},
+];
+
+const tax_returns_folders = [
+	{
+		parent: "taxreturns",
+		id: "taxreturns2023",
+		name: "2023",
+		href: ({ group_id, entity_id }) => `/vault/files/resource/e/${entity_id}/g/${group_id}/f/taxreturns2023`,
+	},
+	{
+		parent: "taxreturns",
+		id: "taxreturns2022",
+		name: "2022",
+		href: ({ group_id, entity_id }) => `/vault/files/resource/e/${entity_id}/g/${group_id}/f/taxreturns2022`,
+	},
+	{
+		parent: "taxreturns",
+		id: "taxreturns2021",
+		name: "2021",
+		href: ({ group_id, entity_id }) => `/vault/files/resource/e/${entity_id}/g/${group_id}/f/taxreturns2021`,
+	},
+];
+
+const bank_statements_folders = [
+	{
+		parent: "bankstatements",
+		id: "bankstatements2023",
+		name: "2023",
+		href: ({ group_id, entity_id }) => `/vault/files/resource/e/${entity_id}/g/${group_id}/f/bankstatements2023`,
+	},
+	{
+		parent: "bankstatements",
+		id: "bankstatements2022",
+		name: "2022",
+		href: ({ group_id, entity_id }) => `/vault/files/resource/e/${entity_id}/g/${group_id}/f/bankstatements2022`,
+	},
+	{
+		parent: "bankstatements",
+		id: "bankstatements2021",
+		name: "2021",
+		href: ({ group_id, entity_id }) => `/vault/files/resource/e/${entity_id}/g/${group_id}/f/bankstatements2021`,
+	},
+];
+
+const corporate_documents_folders = [
+	{
+		parent: "corporatedocuments",
+		id: "corporatedocuments2023",
+		name: "2023",
+		href: ({ group_id, entity_id }) =>
+			`/vault/files/resource/e/${entity_id}/g/${group_id}/f/corporatedocuments2023`,
+	},
+	{
+		parent: "corporatedocuments",
+		id: "corporatedocuments2022",
+		name: "2022",
+		href: ({ group_id, entity_id }) =>
+			`/vault/files/resource/e/${entity_id}/g/${group_id}/f/corporatedocuments2022`,
+	},
+	{
+		parent: "corporatedocuments",
+		id: "corporatedocuments2021",
+		name: "2021",
+		href: ({ group_id, entity_id }) =>
+			`/vault/files/resource/e/${entity_id}/g/${group_id}/f/corporatedocuments2021`,
+	},
+];
+
+let folders = [
 	{
 		id: "balancesheet",
 		name: "Balance sheets",
 		href: ({ group_id, entity_id }) => `/vault/files/resource/e/${entity_id}/g/${group_id}/f/balancesheet`,
+		children: balance_sheet_folders,
 	},
 	{
 		id: "incomestatement",
 		name: "Income statements",
 		href: ({ group_id, entity_id }) => `/vault/files/resource/e/${entity_id}/g/${group_id}/f/incomestatement`,
+		children: income_statement_folders,
 	},
 	{
 		id: "taxreturns",
 		name: "Tax returns",
 		href: ({ group_id, entity_id }) => `/vault/files/resource/e/${entity_id}/g/${group_id}/f/taxreturns`,
+		children: tax_returns_folders,
 	},
 	{
 		id: "bankstatements",
 		name: "Bank statements",
 		href: ({ group_id, entity_id }) => `/vault/files/resource/e/${entity_id}/g/${group_id}/f/bankstatements`,
+		children: bank_statements_folders,
 	},
 	{
 		id: "corporatedocuments",
 		name: "Corporate documents",
 		href: ({ group_id, entity_id }) => `/vault/files/resource/e/${entity_id}/g/${group_id}/f/corporatedocuments`,
+		children: corporate_documents_folders,
 	},
 ];
+
+let folders_path_map = {
+	documents: folders,
+	balancesheet: balance_sheet_folders,
+	incomestatement: income_statement_folders,
+	taxreturns: tax_returns_folders,
+	bankstatements: bank_statements_folders,
+	corporatedocuments: corporate_documents_folders,
+};
+
+let parent_links = {
+	balancesheet: ({ entity_id, group_id }) => (
+		<Link to={`/vault/files/resource/e/${entity_id}/g/${group_id}/f/balancesheet`}>Balance sheets</Link>
+	),
+	incomestatement: ({ entity_id, group_id }) => (
+		<Link to={`/vault/files/resource/e/${entity_id}/g/${group_id}/f/incomestatement`}>Income statements</Link>
+	),
+	taxreturns: ({ entity_id, group_id }) => (
+		<Link to={`/vault/files/resource/e/${entity_id}/g/${group_id}/f/taxreturns`}>Tax returns</Link>
+	),
+	bankstatements: ({ entity_id, group_id }) => (
+		<Link to={`/vault/files/resource/e/${entity_id}/g/${group_id}/f/bankstatements`}>Bank statements</Link>
+	),
+	corporatedocuments: ({ entity_id, group_id }) => (
+		<Link to={`/vault/files/resource/e/${entity_id}/g/${group_id}/f/corporatedocuments`}>Corporate documents</Link>
+	),
+};
+
+let ParentLink = ({ parent }) => {
+	let { pathname } = useLocation();
+	let group_id = get_group_id(pathname);
+	let entity_id = get_entity_id(pathname);
+	if (hasPath([parent], parent_links)) {
+		return parent_links[parent]({ entity_id, group_id });
+	}
+};
 
 const navigation = [
 	{
@@ -113,7 +262,7 @@ const navigation = [
 		name: "Folders",
 		current: false,
 		icon: ListBulletIcon,
-		children: default_folders,
+		children: folders,
 	},
 ];
 
@@ -178,10 +327,6 @@ export const loader = async ({ request }) => {
 	let documents = await get_collection({ path: ["vault"], queries });
 
 	return { documents };
-
-	return {
-		documents: pipe(map((doc) => ({ ...doc, visible: true })))(documents),
-	};
 };
 
 const Heading = () => {
@@ -191,8 +336,21 @@ const Heading = () => {
 	let set_modal = useModalStore((state) => state.set_modal);
 
 	let top_level_folders = pipe(filter(pipe(hasPath(["children"]), not)), map(pickAll(["id", "name"])))(navigation);
-	let children = pipe(get(all, "children", all), flatten, filter(identity), map(pickAll(["id", "name"])))(navigation);
-	let nav_folders = [...top_level_folders, ...children];
+	let children = pipe(
+		get(all, "children", all),
+		flatten,
+		filter(identity),
+		map(pickAll(["id", "name", "children"]))
+	)(navigation);
+
+	let sub_children = pipe(
+		get(all, "children", all),
+		flatten,
+		filter(identity),
+		map(pickAll(["id", "name", "parent"]))
+	)(children);
+
+	let nav_folders = [...top_level_folders, ...children, ...sub_children];
 	let selected = pipe(
 		filter((resource) => resource.id == resource_id),
 		head
@@ -205,16 +363,29 @@ const Heading = () => {
 	return (
 		<div className="border-b border-gray-200 pb-2 bg-white py-3">
 			<div className="flex flex-row justify-between items-end">
-				<div className="flex flex-col">
+				<div className="flex flex-row gap-x-2">
+					{selected?.parent && (
+						<div className="flex flex-row gap-x-2">
+							<h3 className="text-base font-semibold leading-6 text-gray-900">
+								<ParentLink parent={selected?.parent} />
+							</h3>
+							<div>/</div>
+						</div>
+					)}
 					<h3 className="text-base font-semibold leading-6 text-gray-900">{selected?.name}</h3>
 				</div>
 				<div className="flex flex-col">
 					<button
 						onClick={onUploadFileModalOpen}
 						type="button"
-						className="rounded-md bg-gray-700 px-3 py-2 text-xs font-semibold text-white shadow-sm hover:bg-gray-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+						className="rounded-full bg-blue-600 px-3 py-2 text-xs font-semibold text-white shadow-sm"
 					>
-						Upload
+						<div className="flex flex-row items-center gap-x-2">
+							<div>
+								<ArrowUpOnSquareIcon className="h-4 w-4" />
+							</div>
+							<div>Upload</div>
+						</div>
 					</button>
 				</div>
 			</div>
@@ -409,6 +580,67 @@ const SideNav = () => {
 
 	let tags = pipe(get(all, "tags"), flatten, uniqBy(prop("id")))(documents);
 
+	const RenderFolderChild = ({ item }) => {
+		if (!item.children)
+			return (
+				<Link key={index} to={item.href({ entity_id, group_id })}>
+					<div className="flex flex-row w-full justify-between items-center hover:bg-gray-50 py-2 px-2 rounded">
+						<div className="flex flex-row items-center gap-x-2">
+							<div>
+								<FolderIcon className="h-4 w-4 text-blue-400" />
+							</div>
+							<div>{item?.name}</div>
+						</div>
+						<div>
+							<ChevronRightIcon className="h-4 w-4 text-gray-400" />
+						</div>
+					</div>
+				</Link>
+			);
+
+		return (
+			<Disclosure as="div" defaultOpen={false}>
+				{({ open }) => (
+					<div className="flex flex-col w-full">
+						<div className="flex flex-row w-full items-center gap-x-1">
+							<Disclosure.Button
+								className={classNames(
+									item.current ? "bg-gray-50" : "hover:bg-gray-50",
+									"flex items-center text-left rounded-md gap-x-3 text-sm leading-6 text-gray-700 py-1 px-1 my-1"
+								)}
+							>
+								{open && <ChevronDownIcon className="h-3 w-3 text-gray-400" />}
+
+								{!open && <ChevronRightIcon className="h-3 w-3 text-gray-400" />}
+							</Disclosure.Button>
+							<Link to={item.href({ entity_id, group_id })}>
+								<div className="flex flex-row w-full justify-between items-center hover:bg-gray-50 py-2 px-2 rounded">
+									<div className="flex flex-row items-center gap-x-2">
+										<div>{item?.name}</div>
+									</div>
+								</div>
+							</Link>
+						</div>
+						<Disclosure.Panel as="ul" className="flex flex-col mt-1 pl-6 text-sm">
+							{item.children.map((folder, index) => (
+								<Link key={index} to={folder.href({ entity_id, group_id })}>
+									<div className="flex flex-row w-full justify-between items-center hover:bg-gray-50 py-2 px-2 rounded">
+										<div className="flex flex-row items-center gap-x-2">
+											<div>
+												<FolderIcon className="h-4 w-4 text-blue-400" />
+											</div>
+											<div>{folder?.name}</div>
+										</div>
+									</div>
+								</Link>
+							))}
+						</Disclosure.Panel>
+					</div>
+				)}
+			</Disclosure>
+		);
+	};
+
 	return (
 		<ul role="list" className="flex flex-1 flex-col px-2 mt-2">
 			{navigation.map((item) => (
@@ -443,19 +675,7 @@ const SideNav = () => {
 									</Disclosure.Button>
 									<Disclosure.Panel as="ul" className="flex flex-col mt-1 pl-6 text-sm">
 										{item.children.map((folder, index) => (
-											<Link key={index} to={folder.href({ entity_id, group_id })}>
-												<div className="flex flex-row w-full justify-between items-center hover:bg-gray-50 py-2 px-2 rounded">
-													<div className="flex flex-row items-center gap-x-2">
-														<div>
-															<FolderIcon className="h-4 w-4 text-blue-400" />
-														</div>
-														<div>{folder?.name}</div>
-													</div>
-													<div>
-														<ChevronRightIcon className="h-4 w-4 text-gray-400" />
-													</div>
-												</div>
-											</Link>
+											<RenderFolderChild item={folder} />
 										))}
 									</Disclosure.Panel>
 								</>
@@ -948,6 +1168,9 @@ export default function Files() {
 	const files = useFilesStore((state) => state.files);
 	const set_files = useFilesStore((state) => state.set_files);
 	const selected_nav = useSideNavStore((state) => state.selected);
+	const resource_id = get_file_id(pathname);
+	console.log("resource_id");
+	console.log(resource_id);
 
 	useEffect(() => {
 		set_files(["files"], documents);
@@ -972,6 +1195,12 @@ export default function Files() {
 		);
 	}, [selected_nav]);
 
+	const DefaultFolders = ({ resource_id }) => {
+		let path = folders_path_map[resource_id];
+		if (!path) return null;
+		return <div>{pipe(mapIndexed((folder, index) => <FolderRow key={index} folder={folder} />))(path)}</div>;
+	};
+
 	return (
 		<div className="flex flex-col w-full h-full p-5">
 			<EditFileModal />
@@ -985,13 +1214,8 @@ export default function Files() {
 						<Heading />
 						{/* <HeaderFilters /> */}
 						<FilesTableHeader />
-						{is_location("/documents", pathname) && (
-							<div>
-								{pipe(mapIndexed((folder, index) => <FolderRow key={index} folder={folder} />))(
-									default_folders
-								)}
-							</div>
-						)}
+						<DefaultFolders resource_id={resource_id} />
+
 						<div className="flex flex-col w-full mb-[50px]">
 							{pipe(
 								// filter({ visible: true }),
