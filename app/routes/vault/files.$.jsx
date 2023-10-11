@@ -89,7 +89,6 @@ export const useSideNavStore = create((set) => ({
 export const loader = async ({ request }) => {
 	let entity_id = await get_session_entity_id(request);
 	let group_id = get_group_id(request.url);
-	let resource_id = get_file_id(request.url);
 	let path = get_file_resource_path(request.url);
 
 	let is_authorized = await is_authorized_f(entity_id, group_id, "vault", "read");
@@ -97,12 +96,6 @@ export const loader = async ({ request }) => {
 	if (!is_authorized) {
 		return redirect(`/home/resource/e/${entity_id}/g/${group_id}`);
 	}
-
-	// let onboard_state = await get_doc(["onboard", entity_id]);
-	// onboard_state = pipe(omit(["group_id", "entity_id"]), values)(onboard_state);
-
-	// console.log("onboard_state_____");
-	// console.log(onboard_state);
 
 	let queries = [
 		{
@@ -290,39 +283,6 @@ let folders_path_map = {
 	corporatedocuments: corporate_documents_folders,
 };
 
-let parent_links = {
-	balancesheet: ({ entity_id, group_id }) => (
-		<Link to={`/vault/files/resource/e/${entity_id}/g/${group_id}/f/documents/f/balancesheet`}>Balance sheets</Link>
-	),
-	incomestatement: ({ entity_id, group_id }) => (
-		<Link to={`/vault/files/resource/e/${entity_id}/g/${group_id}/f/documents/f/incomestatement`}>
-			Income statements
-		</Link>
-	),
-	taxreturns: ({ entity_id, group_id }) => (
-		<Link to={`/vault/files/resource/e/${entity_id}/g/${group_id}/f/documents/f/taxreturns`}>Tax returns</Link>
-	),
-	bankstatements: ({ entity_id, group_id }) => (
-		<Link to={`/vault/files/resource/e/${entity_id}/g/${group_id}/f/documents/f/bankstatements`}>
-			Bank statements
-		</Link>
-	),
-	corporatedocuments: ({ entity_id, group_id }) => (
-		<Link to={`/vault/files/resource/e/${entity_id}/g/${group_id}/f/documents/f/corporatedocuments`}>
-			Corporate documents
-		</Link>
-	),
-};
-
-let ParentLink = ({ parent }) => {
-	let { pathname } = useLocation();
-	let group_id = get_group_id(pathname);
-	let entity_id = get_entity_id(pathname);
-	if (hasPath([parent], parent_links)) {
-		return parent_links[parent]({ entity_id, group_id });
-	}
-};
-
 const navigation = [
 	{
 		name: "All documents",
@@ -370,7 +330,6 @@ const category_styles = [
 const Heading = () => {
 	let { pathname } = useLocation();
 	let resource_id = get_file_id(pathname);
-	let resource_path = get_file_resource_path(pathname);
 	let entity_id = get_entity_id(pathname);
 	let group_id = get_group_id(pathname);
 
@@ -397,8 +356,8 @@ const Heading = () => {
 		let paths = resource_paths(pathname);
 		let payload = pipe(
 			map((path) => ({
-				id: pipe(split("/"), last)(path),
-				href: `/vault/files/resource/e/${entity_id}/g/${group_id}/${path}`,
+				id: pipe(split("/"), last, decodeURI)(path),
+				href: decodeURI(`/vault/files/resource/e/${entity_id}/g/${group_id}/${path}`),
 			}))
 		)(paths);
 
@@ -425,10 +384,6 @@ const Heading = () => {
 	)(children);
 
 	let nav_folders = [...top_level_folders, ...children, ...sub_children];
-	let selected = pipe(
-		filter((resource) => resource.id == resource_id),
-		head
-	)(nav_folders);
 
 	const onUploadFileModalOpen = () => {
 		set_modal({ id: "upload_file_modal", is_open: true });
@@ -445,7 +400,10 @@ const Heading = () => {
 					<div className="flex flex-row gap-x-2">
 						{pipe(
 							mapIndexed((path, index) => (
-								<div className="flex flex-row gap-x-2 text-base font-semibold leading-6 text-gray-900">
+								<div
+									key={index}
+									className="flex flex-row gap-x-2 text-base font-semibold leading-6 text-gray-900"
+								>
 									<div>
 										<Link to={path.href}>{path.id}</Link>
 									</div>
@@ -639,7 +597,7 @@ const TableRow = ({ document }) => {
 							split("."),
 							intersperse("f"),
 							join("/"),
-							(value) => `/vault/files/resource/e/${entity_id}/g/${group_id}/f/${value}/f/${id}`
+							(value) => `/vault/files/resource/e/${entity_id}/g/${group_id}/f/${value}/f/${name}`
 						)(path)}
 						className="flex flex-row items-center space-x-3"
 					>

@@ -42,6 +42,7 @@ import { get as sget, mod } from "shades";
 import { flatten as objflat } from "flat";
 import murmurhash from "murmurhash";
 import { create } from "zustand";
+import { de } from "@faker-js/faker";
 
 export const fetcher_payload_maker = (url) => [{}, { method: "post", action: url }];
 
@@ -338,18 +339,15 @@ export const get_file_resource_id = (uri) => {
 };
 
 export const get_file_resource_path_array = (uri) => {
-	let path = pipe(to_resource_path_array)(uri);
-	let index_of_f = pipe(indexOf("f"))(path);
+	let path = pipe(to_resource_path_array, map(decodeURI))(uri);
 
-	// console.log("get_resource_id____");
-	// console.log(path);
-	// console.log(index_of_f);
+	let index_of_f = pipe(indexOf("f"))(path);
 	let result = pipe(drop(index_of_f), without("f"))(path);
 	return result;
 };
 
 export const get_file_resource_path = (uri) => {
-	let path = get_file_resource_path_array(uri);
+	let path = pipe(get_file_resource_path_array)(uri);
 	return pipe(join("."))(path);
 };
 
