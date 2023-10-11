@@ -385,8 +385,6 @@ let score_classes = (score, prefix) => {
 const Legal = () => {
 	let { experian_derogatories: derogatories } = useLoaderData();
 	let score = derogatories?.legalFilingsSummary?.legalCount || 0;
-	console.log("score");
-	console.log(score);
 
 	return (
 		<div className="flex flex-col w-full border bg-white rounded text-sm p-4">

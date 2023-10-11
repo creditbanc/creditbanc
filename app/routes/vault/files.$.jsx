@@ -64,6 +64,7 @@ import {
 	split,
 	reduce,
 	last,
+	set,
 } from "ramda";
 import { set_doc } from "~/utils/firebase";
 import moment from "moment";
@@ -112,7 +113,17 @@ export const loader = async ({ request }) => {
 
 	let documents = await get_collection({ path: ["vault"], queries });
 
-	return { documents };
+	let tag_queries = [
+		{
+			param: "group_id",
+			predicate: "==",
+			value: group_id,
+		},
+	];
+
+	let tags = await get_collection({ path: ["tags"], tag_queries });
+
+	return { documents, all_tags: tags };
 };
 
 const balance_sheet_folders = [
@@ -892,13 +903,37 @@ const FileActionsDropdown = ({ document }) => {
 	);
 };
 
+const use_tag_store = store({ name: "" });
+const use_tags_store = store({ all_tags: [], file_tags: [] });
+
 const EditFileModal = () => {
+	let { pathname } = useLocation();
+	let entity_id = get_entity_id(pathname);
+	let group_id = get_group_id(pathname);
+	let resource_path = get_file_resource_path(pathname);
+
 	let set_modal = useModalStore((state) => state.set_modal);
 	let set_file = useFileStore((state) => state.set_file);
 	let set_files = useFilesStore((state) => state.set_files);
 	let files = useFilesStore((state) => state.files);
 	let file = useFileStore((state) => state.file);
-	let { name = "", id, tags = [] } = file;
+	let { name = "", id } = file;
+
+	let tag = use_tag_store((state) => state.name);
+	let set_tag_path = use_tag_store((state) => state.set_path);
+
+	let { all_tags = [], file_tags = [] } = use_tags_store((state) => state);
+	let set_tags = use_tags_store((state) => state.set_path);
+
+	useEffect(() => {
+		let tags = pipe(filter((tag) => tag.resource_id == file.id))(all_tags);
+
+		console.log("tags");
+		console.log(all_tags);
+		console.log(tags);
+		console.log(file);
+		set_tags(["file_tags"], tags);
+	}, [file.id, all_tags]);
 
 	const onCloseModal = () => {
 		set_modal({
@@ -928,13 +963,64 @@ const EditFileModal = () => {
 		});
 	};
 
-	const onAddTag = (tag) => {
-		set_file(["file", "tags"], uniqBy(prop("id"), [...file.tags, tag]));
+	const onAddTag = async () => {
+		let tag_id = uuidv4();
+		let payload = {
+			id: tag_id,
+			name: tag,
+			entity_id,
+			group_id,
+			path: resource_path,
+			resource_id: file.id,
+		};
+
+		console.log("onAddTag");
+		console.log(payload);
+		console.log(file);
+
+		set_tag_path(["name"], "");
+		await set_doc(["tags", tag_id], payload);
+		set_tags(["all_tags"], [...all_tags, payload]);
 	};
 
 	const onRemoveTag = (tag_index) => {
-		set_file(["file", "tags"], remove(tag_index, 1, file.tags));
+		// set_file(["file", "tags"], remove(tag_index, 1, file.tags));
 	};
+
+	// const DefaultTags = () => {
+	// 	return (
+	// 		<div className="flex flex-col w-full space-y-2 border-t pt-3">
+	// 			<div className="flex flex-col w-full text-xs md:text-sm">
+	// 				<div className="flex flex-row w-full space-x-3">
+	// 					<div
+	// 						className="flex flex-col justify-center px-3 py-1 border rounded-full text-gray-500  cursor-pointer"
+	// 						onClick={() => onAddTag({ id: "1040", label: "Form 1040" })}
+	// 					>
+	// 						Form 1040 +
+	// 					</div>
+	// 					<div
+	// 						className="flex flex-col justify-center px-3 py-1 border rounded-full text-gray-500  cursor-pointer"
+	// 						onClick={() => onAddTag({ id: "W-2", label: "Form W-2" })}
+	// 					>
+	// 						Form W-2 +
+	// 					</div>
+	// 					<div
+	// 						className="flex flex-col justify-center px-3 py-1 border rounded-full text-gray-500  cursor-pointer"
+	// 						onClick={() => onAddTag({ id: "1099", label: "Form 1099" })}
+	// 					>
+	// 						Form 1099 +
+	// 					</div>
+	// 					<div
+	// 						className="flex flex-col justify-center px-3 py-1 border rounded-full text-gray-500  cursor-pointer"
+	// 						onClick={() => onAddTag({ id: "other", label: "Other" })}
+	// 					>
+	// 						Other +
+	// 					</div>
+	// 				</div>
+	// 			</div>
+	// 		</div>
+	// 	);
+	// };
 
 	return (
 		<Modal id="file_edit_modal">
@@ -970,44 +1056,32 @@ const EditFileModal = () => {
 										<div
 											className="flex flex-col px-3 py-1 border rounded-full text-gray-500 bg-gray-50 cursor-pointer"
 											key={tag_index}
-											onClick={() => onRemoveTag(tag_index)}
+											onClick={() => onRemoveTag(tag.id)}
 										>
-											{tag.label}
+											{tag.name}
 										</div>
 									))
-								)(tags)}
+								)(file_tags)}
 							</div>
 						</div>
 					</div>
 
-					<div className="flex flex-col w-full space-y-2 border-t pt-3">
-						<div className="flex flex-col w-full text-xs md:text-sm">
-							<div className="flex flex-row w-full space-x-3">
-								<div
-									className="flex flex-col justify-center px-3 py-1 border rounded-full text-gray-500  cursor-pointer"
-									onClick={() => onAddTag({ id: "1040", label: "Form 1040" })}
-								>
-									Form 1040 +
-								</div>
-								<div
-									className="flex flex-col justify-center px-3 py-1 border rounded-full text-gray-500  cursor-pointer"
-									onClick={() => onAddTag({ id: "W-2", label: "Form W-2" })}
-								>
-									Form W-2 +
-								</div>
-								<div
-									className="flex flex-col justify-center px-3 py-1 border rounded-full text-gray-500  cursor-pointer"
-									onClick={() => onAddTag({ id: "1099", label: "Form 1099" })}
-								>
-									Form 1099 +
-								</div>
-								<div
-									className="flex flex-col justify-center px-3 py-1 border rounded-full text-gray-500  cursor-pointer"
-									onClick={() => onAddTag({ id: "other", label: "Other" })}
-								>
-									Other +
-								</div>
-							</div>
+					<div className="flex flex-row w-full border-t pt-3 gap-x-3">
+						<div className="flex flex-col flex-1 border rounded p-1 px-3 text-base">
+							<input
+								type="text"
+								name="tag"
+								id="tag"
+								value={tag}
+								onChange={(e) => set_tag_path(["name"], e.target.value)}
+								className="flex flex-col w-full h-full outline-none"
+							/>
+						</div>
+						<div
+							className="flex flex-col w-[100px] items-center py-2 px-3 bg-blue-600 text-white cursor-pointer"
+							onClick={onAddTag}
+						>
+							Add Tag
 						</div>
 					</div>
 
@@ -1324,12 +1398,21 @@ const FolderRow = ({ folder }) => {
 
 export default function Files() {
 	const { pathname } = useLocation();
-	let { documents = [] } = useLoaderData();
+	let { documents = [], all_tags = [] } = useLoaderData();
 	const files = useFilesStore((state) => state.files);
 	const set_files = useFilesStore((state) => state.set_files);
 	const selected_nav = useSideNavStore((state) => state.selected);
 	const resource_id = get_file_resource_id(pathname);
 	const file_path = get_file_resource_path(pathname);
+	const set_tags = use_tags_store((state) => state.set_path);
+
+	useEffect(() => {
+		// console.log("all_tags");
+		// console.log(all_tags);
+		if (!isEmpty(all_tags)) {
+			set_tags(["all_tags"], all_tags);
+		}
+	}, [all_tags]);
 
 	useEffect(() => {
 		set_files(["files"], documents);
