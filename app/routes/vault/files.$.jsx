@@ -11,6 +11,7 @@ import {
 	TrashIcon,
 	ArrowUpOnSquareIcon,
 	EyeIcon,
+	FolderPlusIcon,
 } from "@heroicons/react/24/outline";
 import {
 	sample,
@@ -23,6 +24,12 @@ import {
 	use_client_search_params,
 	is_location,
 	inspect,
+	get_file_resource_path,
+	get_file_resource_id,
+	store,
+	jsreduce,
+	jsreduce_with_initial,
+	get_file_resource_path_array,
 } from "~/utils/helpers";
 import { Disclosure, Menu, Transition } from "@headlessui/react";
 import Modal from "~/components/Modal";
@@ -52,6 +59,11 @@ import {
 	identity,
 	hasPath,
 	head,
+	intersperse,
+	join,
+	split,
+	reduce,
+	last,
 } from "ramda";
 import { set_doc } from "~/utils/firebase";
 import moment from "moment";
@@ -62,6 +74,7 @@ import { is_authorized_f } from "~/api/auth";
 import { get_session_entity_id, get_user_id } from "~/utils/auth.server";
 import { redirect } from "@remix-run/node";
 import { FolderIcon } from "@heroicons/react/20/solid";
+import { get_resource } from "~/utils/resource.server";
 
 export const useFileStore = create((set) => ({
 	file: {},
@@ -73,24 +86,63 @@ export const useSideNavStore = create((set) => ({
 	set_state: (path, value) => set((state) => pipe(mod(...path)(() => value))(state)),
 }));
 
+export const loader = async ({ request }) => {
+	let entity_id = await get_session_entity_id(request);
+	let group_id = get_group_id(request.url);
+	let resource_id = get_file_id(request.url);
+	let path = get_file_resource_path(request.url);
+
+	let is_authorized = await is_authorized_f(entity_id, group_id, "vault", "read");
+
+	if (!is_authorized) {
+		return redirect(`/home/resource/e/${entity_id}/g/${group_id}`);
+	}
+
+	// let onboard_state = await get_doc(["onboard", entity_id]);
+	// onboard_state = pipe(omit(["group_id", "entity_id"]), values)(onboard_state);
+
+	// console.log("onboard_state_____");
+	// console.log(onboard_state);
+
+	let queries = [
+		{
+			param: "group_id",
+			predicate: "==",
+			value: group_id,
+		},
+		{
+			param: "path",
+			predicate: "==",
+			value: path,
+		},
+	];
+
+	let documents = await get_collection({ path: ["vault"], queries });
+
+	return { documents };
+};
+
 const balance_sheet_folders = [
 	{
 		parent: "balancesheet",
 		id: "balancesheet2023",
 		name: "2023",
-		href: ({ group_id, entity_id }) => `/vault/files/resource/e/${entity_id}/g/${group_id}/f/balancesheet2023`,
+		href: ({ group_id, entity_id }) =>
+			`/vault/files/resource/e/${entity_id}/g/${group_id}/f/documents/f/balancesheet/f/2023`,
 	},
 	{
 		parent: "balancesheet",
 		id: "balancesheet2022",
 		name: "2022",
-		href: ({ group_id, entity_id }) => `/vault/files/resource/e/${entity_id}/g/${group_id}/f/balancesheet2022`,
+		href: ({ group_id, entity_id }) =>
+			`/vault/files/resource/e/${entity_id}/g/${group_id}/f/documents/f/balancesheet/f/2022`,
 	},
 	{
 		parent: "balancesheet",
 		id: "balancesheet2021",
 		name: "2021",
-		href: ({ group_id, entity_id }) => `/vault/files/resource/e/${entity_id}/g/${group_id}/f/balancesheet2021`,
+		href: ({ group_id, entity_id }) =>
+			`/vault/files/resource/e/${entity_id}/g/${group_id}/f/documents/f/balancesheet/f/2021`,
 	},
 ];
 
@@ -99,19 +151,22 @@ const income_statement_folders = [
 		parent: "incomestatement",
 		id: "incomestatement2023",
 		name: "2023",
-		href: ({ group_id, entity_id }) => `/vault/files/resource/e/${entity_id}/g/${group_id}/f/incomestatement2023`,
+		href: ({ group_id, entity_id }) =>
+			`/vault/files/resource/e/${entity_id}/g/${group_id}/f/documents/f/incomestatement/f/2023`,
 	},
 	{
 		parent: "incomestatement",
 		id: "incomestatement2022",
 		name: "2022",
-		href: ({ group_id, entity_id }) => `/vault/files/resource/e/${entity_id}/g/${group_id}/f/incomestatement2022`,
+		href: ({ group_id, entity_id }) =>
+			`/vault/files/resource/e/${entity_id}/g/${group_id}/f/documents/f/incomestatement/f/2022`,
 	},
 	{
 		parent: "incomestatement",
 		id: "incomestatement2021",
 		name: "2021",
-		href: ({ group_id, entity_id }) => `/vault/files/resource/e/${entity_id}/g/${group_id}/f/incomestatement2021`,
+		href: ({ group_id, entity_id }) =>
+			`/vault/files/resource/e/${entity_id}/g/${group_id}/f/documents/f/incomestatement/f/2021`,
 	},
 ];
 
@@ -120,19 +175,22 @@ const tax_returns_folders = [
 		parent: "taxreturns",
 		id: "taxreturns2023",
 		name: "2023",
-		href: ({ group_id, entity_id }) => `/vault/files/resource/e/${entity_id}/g/${group_id}/f/taxreturns2023`,
+		href: ({ group_id, entity_id }) =>
+			`/vault/files/resource/e/${entity_id}/g/${group_id}/f/documents/f/taxreturns/f/2023`,
 	},
 	{
 		parent: "taxreturns",
 		id: "taxreturns2022",
 		name: "2022",
-		href: ({ group_id, entity_id }) => `/vault/files/resource/e/${entity_id}/g/${group_id}/f/taxreturns2022`,
+		href: ({ group_id, entity_id }) =>
+			`/vault/files/resource/e/${entity_id}/g/${group_id}/f/documents/f/taxreturns/f/2022`,
 	},
 	{
 		parent: "taxreturns",
 		id: "taxreturns2021",
 		name: "2021",
-		href: ({ group_id, entity_id }) => `/vault/files/resource/e/${entity_id}/g/${group_id}/f/taxreturns2021`,
+		href: ({ group_id, entity_id }) =>
+			`/vault/files/resource/e/${entity_id}/g/${group_id}/f/documents/f/taxreturns/f/2021`,
 	},
 ];
 
@@ -141,19 +199,22 @@ const bank_statements_folders = [
 		parent: "bankstatements",
 		id: "bankstatements2023",
 		name: "2023",
-		href: ({ group_id, entity_id }) => `/vault/files/resource/e/${entity_id}/g/${group_id}/f/bankstatements2023`,
+		href: ({ group_id, entity_id }) =>
+			`/vault/files/resource/e/${entity_id}/g/${group_id}/f/documents/f/bankstatements/f/2023`,
 	},
 	{
 		parent: "bankstatements",
 		id: "bankstatements2022",
 		name: "2022",
-		href: ({ group_id, entity_id }) => `/vault/files/resource/e/${entity_id}/g/${group_id}/f/bankstatements2022`,
+		href: ({ group_id, entity_id }) =>
+			`/vault/files/resource/e/${entity_id}/g/${group_id}/f/documents/f/bankstatements/f/2022`,
 	},
 	{
 		parent: "bankstatements",
 		id: "bankstatements2021",
 		name: "2021",
-		href: ({ group_id, entity_id }) => `/vault/files/resource/e/${entity_id}/g/${group_id}/f/bankstatements2021`,
+		href: ({ group_id, entity_id }) =>
+			`/vault/files/resource/e/${entity_id}/g/${group_id}/f/documents/f/bankstatements/f/2021`,
 	},
 ];
 
@@ -162,22 +223,23 @@ const corporate_documents_folders = [
 		parent: "corporatedocuments",
 		id: "corporatedocuments2023",
 		name: "2023",
+
 		href: ({ group_id, entity_id }) =>
-			`/vault/files/resource/e/${entity_id}/g/${group_id}/f/corporatedocuments2023`,
+			`/vault/files/resource/e/${entity_id}/g/${group_id}/f/documents/f/corporatedocuments/f/2023`,
 	},
 	{
 		parent: "corporatedocuments",
 		id: "corporatedocuments2022",
 		name: "2022",
 		href: ({ group_id, entity_id }) =>
-			`/vault/files/resource/e/${entity_id}/g/${group_id}/f/corporatedocuments2022`,
+			`/vault/files/resource/e/${entity_id}/g/${group_id}/f/documents/f/corporatedocuments/f/2022`,
 	},
 	{
 		parent: "corporatedocuments",
 		id: "corporatedocuments2021",
 		name: "2021",
 		href: ({ group_id, entity_id }) =>
-			`/vault/files/resource/e/${entity_id}/g/${group_id}/f/corporatedocuments2021`,
+			`/vault/files/resource/e/${entity_id}/g/${group_id}/f/documents/f/corporatedocuments/f/2021`,
 	},
 ];
 
@@ -185,31 +247,36 @@ let folders = [
 	{
 		id: "balancesheet",
 		name: "Balance sheets",
-		href: ({ group_id, entity_id }) => `/vault/files/resource/e/${entity_id}/g/${group_id}/f/balancesheet`,
+		href: ({ group_id, entity_id }) =>
+			`/vault/files/resource/e/${entity_id}/g/${group_id}/f/documents/f/balancesheet`,
 		children: balance_sheet_folders,
 	},
 	{
 		id: "incomestatement",
 		name: "Income statements",
-		href: ({ group_id, entity_id }) => `/vault/files/resource/e/${entity_id}/g/${group_id}/f/incomestatement`,
+		href: ({ group_id, entity_id }) =>
+			`/vault/files/resource/e/${entity_id}/g/${group_id}/f/documents/f/incomestatement`,
 		children: income_statement_folders,
 	},
 	{
 		id: "taxreturns",
 		name: "Tax returns",
-		href: ({ group_id, entity_id }) => `/vault/files/resource/e/${entity_id}/g/${group_id}/f/taxreturns`,
+		href: ({ group_id, entity_id }) =>
+			`/vault/files/resource/e/${entity_id}/g/${group_id}/f/documents/f/taxreturns`,
 		children: tax_returns_folders,
 	},
 	{
 		id: "bankstatements",
 		name: "Bank statements",
-		href: ({ group_id, entity_id }) => `/vault/files/resource/e/${entity_id}/g/${group_id}/f/bankstatements`,
+		href: ({ group_id, entity_id }) =>
+			`/vault/files/resource/e/${entity_id}/g/${group_id}/f/documents/f/bankstatements`,
 		children: bank_statements_folders,
 	},
 	{
 		id: "corporatedocuments",
 		name: "Corporate documents",
-		href: ({ group_id, entity_id }) => `/vault/files/resource/e/${entity_id}/g/${group_id}/f/corporatedocuments`,
+		href: ({ group_id, entity_id }) =>
+			`/vault/files/resource/e/${entity_id}/g/${group_id}/f/documents/f/corporatedocuments`,
 		children: corporate_documents_folders,
 	},
 ];
@@ -225,19 +292,25 @@ let folders_path_map = {
 
 let parent_links = {
 	balancesheet: ({ entity_id, group_id }) => (
-		<Link to={`/vault/files/resource/e/${entity_id}/g/${group_id}/f/balancesheet`}>Balance sheets</Link>
+		<Link to={`/vault/files/resource/e/${entity_id}/g/${group_id}/f/documents/f/balancesheet`}>Balance sheets</Link>
 	),
 	incomestatement: ({ entity_id, group_id }) => (
-		<Link to={`/vault/files/resource/e/${entity_id}/g/${group_id}/f/incomestatement`}>Income statements</Link>
+		<Link to={`/vault/files/resource/e/${entity_id}/g/${group_id}/f/documents/f/incomestatement`}>
+			Income statements
+		</Link>
 	),
 	taxreturns: ({ entity_id, group_id }) => (
-		<Link to={`/vault/files/resource/e/${entity_id}/g/${group_id}/f/taxreturns`}>Tax returns</Link>
+		<Link to={`/vault/files/resource/e/${entity_id}/g/${group_id}/f/documents/f/taxreturns`}>Tax returns</Link>
 	),
 	bankstatements: ({ entity_id, group_id }) => (
-		<Link to={`/vault/files/resource/e/${entity_id}/g/${group_id}/f/bankstatements`}>Bank statements</Link>
+		<Link to={`/vault/files/resource/e/${entity_id}/g/${group_id}/f/documents/f/bankstatements`}>
+			Bank statements
+		</Link>
 	),
 	corporatedocuments: ({ entity_id, group_id }) => (
-		<Link to={`/vault/files/resource/e/${entity_id}/g/${group_id}/f/corporatedocuments`}>Corporate documents</Link>
+		<Link to={`/vault/files/resource/e/${entity_id}/g/${group_id}/f/documents/f/corporatedocuments`}>
+			Corporate documents
+		</Link>
 	),
 };
 
@@ -294,44 +367,45 @@ const category_styles = [
 	},
 ];
 
-export const loader = async ({ request }) => {
-	let entity_id = await get_session_entity_id(request);
-	let group_id = get_group_id(request.url);
-	let resource_id = get_file_id(request.url);
-
-	let is_authorized = await is_authorized_f(entity_id, group_id, "vault", "read");
-
-	if (!is_authorized) {
-		return redirect(`/home/resource/e/${entity_id}/g/${group_id}`);
-	}
-
-	// let onboard_state = await get_doc(["onboard", entity_id]);
-	// onboard_state = pipe(omit(["group_id", "entity_id"]), values)(onboard_state);
-
-	// console.log("onboard_state_____");
-	// console.log(onboard_state);
-
-	let queries = [
-		{
-			param: "group_id",
-			predicate: "==",
-			value: group_id,
-		},
-		{
-			param: "resource_id",
-			predicate: "==",
-			value: resource_id,
-		},
-	];
-
-	let documents = await get_collection({ path: ["vault"], queries });
-
-	return { documents };
-};
-
 const Heading = () => {
 	let { pathname } = useLocation();
 	let resource_id = get_file_id(pathname);
+	let resource_path = get_file_resource_path(pathname);
+	let entity_id = get_entity_id(pathname);
+	let group_id = get_group_id(pathname);
+
+	let resource_paths = (pathname) => {
+		let resource_path_array = get_file_resource_path_array(pathname);
+
+		if (resource_path_array.length == 1) {
+			return [`f/${resource_path_array[0]}`];
+		}
+
+		let paths = pipe(
+			jsreduce((acc, curr, index) => {
+				if (index == 1) {
+					return [`f/${acc}`, `f/${acc}/f/${curr}`];
+				}
+
+				return [...acc, `${last(acc)}/f/${curr}`];
+			})
+		)(resource_path_array);
+		return paths;
+	};
+
+	let resource_path_links = (pathname, entity_id, group_id) => {
+		let paths = resource_paths(pathname);
+		let payload = pipe(
+			map((path) => ({
+				id: pipe(split("/"), last)(path),
+				href: `/vault/files/resource/e/${entity_id}/g/${group_id}/${path}`,
+			}))
+		)(paths);
+
+		return payload;
+	};
+
+	let paths = resource_path_links(pathname, entity_id, group_id);
 
 	let set_modal = useModalStore((state) => state.set_modal);
 
@@ -360,33 +434,56 @@ const Heading = () => {
 		set_modal({ id: "upload_file_modal", is_open: true });
 	};
 
+	const onNewFolderModalOpen = () => {
+		set_modal({ id: "new_folder_modal", is_open: true });
+	};
+
 	return (
 		<div className="border-b border-gray-200 pb-2 bg-white py-3">
 			<div className="flex flex-row justify-between items-end">
 				<div className="flex flex-row gap-x-2">
-					{selected?.parent && (
-						<div className="flex flex-row gap-x-2">
-							<h3 className="text-base font-semibold leading-6 text-gray-900">
-								<ParentLink parent={selected?.parent} />
-							</h3>
-							<div>/</div>
-						</div>
-					)}
-					<h3 className="text-base font-semibold leading-6 text-gray-900">{selected?.name}</h3>
+					<div className="flex flex-row gap-x-2">
+						{pipe(
+							mapIndexed((path, index) => (
+								<div className="flex flex-row gap-x-2 text-base font-semibold leading-6 text-gray-900">
+									<div>
+										<Link to={path.href}>{path.id}</Link>
+									</div>
+									{index !== paths.length - 1 && <div>/</div>}
+								</div>
+							))
+						)(paths)}
+					</div>
 				</div>
-				<div className="flex flex-col">
-					<button
-						onClick={onUploadFileModalOpen}
-						type="button"
-						className="rounded-full bg-blue-600 px-3 py-2 text-xs font-semibold text-white shadow-sm"
-					>
-						<div className="flex flex-row items-center gap-x-2">
-							<div>
-								<ArrowUpOnSquareIcon className="h-4 w-4" />
+				<div className="flex flex-row gap-x-3">
+					<div className="flex flex-col">
+						<button
+							onClick={onNewFolderModalOpen}
+							type="button"
+							className="rounded-full bg-gray-100 px-3 py-2 text-xs font-semibold text-gray-500 shadow-sm"
+						>
+							<div className="flex flex-row items-center gap-x-2">
+								<div>
+									<FolderPlusIcon className="h-4 w-4" />
+								</div>
+								<div>New Folder</div>
 							</div>
-							<div>Upload</div>
-						</div>
-					</button>
+						</button>
+					</div>
+					<div className="flex flex-col">
+						<button
+							onClick={onUploadFileModalOpen}
+							type="button"
+							className="rounded-full bg-gray-100 px-3 py-2 text-xs font-semibold text-gray-500 shadow-sm"
+						>
+							<div className="flex flex-row items-center gap-x-2">
+								<div>
+									<ArrowUpOnSquareIcon className="h-4 w-4" />
+								</div>
+								<div>Upload</div>
+							</div>
+						</button>
+					</div>
 				</div>
 			</div>
 		</div>
@@ -508,7 +605,10 @@ let Category = ({ category }) => {
 };
 
 const TableRow = ({ document }) => {
-	let { name, tags, created_at, download_url } = document;
+	let { pathname } = useLocation();
+	let entity_id = get_entity_id(pathname);
+	let group_id = get_group_id(pathname);
+	let { name, tags, created_at, download_url, path, id } = document;
 	let set_modal = useModalStore((state) => state.set_modal);
 	let set_file = useFileStore((state) => state.set_file);
 
@@ -533,12 +633,31 @@ const TableRow = ({ document }) => {
 				/>
 			</div>
 			<div className="flex flex-col w-[250px]">
-				<Link target="_blank" to={download_url} className="flex flex-row items-center space-x-3">
-					<div className="flex flex-col ">
-						<DocumentIcon className="h-4 w-4 text-red-400" />
-					</div>
-					<div className="flex flex-col">{truncate(20, name)}</div>
-				</Link>
+				{document.type == "folder" && (
+					<Link
+						to={pipe(
+							split("."),
+							intersperse("f"),
+							join("/"),
+							(value) => `/vault/files/resource/e/${entity_id}/g/${group_id}/f/${value}/f/${id}`
+						)(path)}
+						className="flex flex-row items-center space-x-3"
+					>
+						<div className="flex flex-col ">
+							<FolderIcon className="h-4 w-4 text-blue-400" />
+						</div>
+						<div className="flex flex-col">{truncate(20, name)}</div>
+					</Link>
+				)}
+
+				{document.type != "folder" && (
+					<Link target="_blank" to={download_url} className="flex flex-row items-center space-x-3">
+						<div className="flex flex-col ">
+							<DocumentIcon className="h-4 w-4 text-red-400" />
+						</div>
+						<div className="flex flex-col">{truncate(20, name)}</div>
+					</Link>
+				)}
 			</div>
 			<div className="hidden lg:flex flex-col w-[300px]">
 				<div className="flex flex-row w-full">
@@ -983,9 +1102,6 @@ const UploadForm = () => {
 		const file = e.target[0]?.files[0];
 		if (!file) return;
 
-		console.log("onuploadfile");
-		console.log(file);
-
 		let id = uuidv4();
 
 		const storageRef = ref(storage, `files/${group_id}`);
@@ -1007,9 +1123,7 @@ const UploadForm = () => {
 		const complete = async () => {
 			let download_url = await getDownloadURL(uploadTask.snapshot.ref);
 			let resource_id = get_file_id(pathname);
-
-			// console.log("download_url");
-			// console.log(download_url);
+			let path = get_file_resource_path(pathname);
 
 			let payload = {
 				name: file.name,
@@ -1022,10 +1136,8 @@ const UploadForm = () => {
 				resource_id,
 				type: file.type,
 				size: file.size,
+				path,
 			};
-
-			console.log("onuploadpayload");
-			console.log(payload);
 
 			await set_doc(["vault", id], payload);
 
@@ -1142,6 +1254,99 @@ const UploadFileModal = () => {
 	);
 };
 
+const use_folder_store = store({ name: "" });
+
+const NewFolderForm = () => {
+	let name = use_folder_store((state) => state.name);
+	let set_path = use_folder_store((state) => state.set_path);
+	let { pathname } = useLocation();
+	let group_id = get_group_id(pathname);
+	let entity_id = get_entity_id(pathname);
+	let resource_id = get_file_resource_id(pathname);
+	let file_path = get_file_resource_path(pathname);
+	let files = useFilesStore((state) => state.files);
+	let set_files = useFilesStore((state) => state.set_files);
+	let set_modal = useModalStore((state) => state.set_modal);
+
+	const onCreateNewFolder = async () => {
+		let id = uuidv4();
+
+		let payload = {
+			name,
+			tags: [],
+			created_at: new Date().toISOString(),
+			group_id,
+			entity_id,
+			id,
+			type: "folder",
+			path: file_path,
+		};
+
+		await set_doc(["vault", id], payload);
+
+		set_files(["files"], [...files, payload]);
+
+		set_modal({
+			id: "new_folder_modal",
+			is_open: false,
+		});
+	};
+
+	return (
+		<div className="flex flex-col w-full gap-y-3">
+			<div className="flex flex-col w-full gap-y-2">
+				<div className="text-gray-400">Folder name</div>
+				<div className="flex flex-col w-full border-2 rounded h-[50px] justify-center px-2 text-lg font-light">
+					<input
+						type="text"
+						className="outline-none w-full"
+						placeholder="name"
+						value={name}
+						onChange={(e) => set_path(["name"], e.target.value)}
+					/>
+				</div>
+			</div>
+			<div className="flex flex-col w-full border-t items-end pt-3 mt-3 text-sm">
+				<div
+					className="flex flex-col px-5 py-1 bg-blue-600 text-white rounded-full cursor-pointer"
+					onClick={onCreateNewFolder}
+				>
+					Save
+				</div>
+			</div>
+		</div>
+	);
+};
+
+const NewFolderModal = () => {
+	let set_modal = useModalStore((state) => state.set_modal);
+
+	const onCloseModal = () => {
+		set_modal({ id: "new_folder_modal", is_open: false });
+	};
+
+	return (
+		<Modal id="new_folder_modal">
+			<div className="flex flex-col h-full w-[calc(100vw-30px)] md:w-[700px] rounded-lg bg-white">
+				<div className="flex flex-row w-full py-5 px-5 border-b text-2xl items-center">
+					<div className="flex flex-row w-full items-center space-x-3 text-gray-400">
+						<div className="">
+							<DocumentIcon className="h-6 w-6 " />
+						</div>
+						<div>Create New Folder</div>
+					</div>
+					<div onClick={onCloseModal}>
+						<XMarkIcon className="h-6 w-6 text-gray-400 cursor-pointer" />
+					</div>
+				</div>
+				<div className="flex flex-col p-5 ">
+					<NewFolderForm />
+				</div>
+			</div>
+		</Modal>
+	);
+};
+
 const FolderRow = ({ folder }) => {
 	const { pathname } = useLocation();
 	let group_id = get_group_id(pathname);
@@ -1168,9 +1373,8 @@ export default function Files() {
 	const files = useFilesStore((state) => state.files);
 	const set_files = useFilesStore((state) => state.set_files);
 	const selected_nav = useSideNavStore((state) => state.selected);
-	const resource_id = get_file_id(pathname);
-	console.log("resource_id");
-	console.log(resource_id);
+	const resource_id = get_file_resource_id(pathname);
+	const file_path = get_file_resource_path(pathname);
 
 	useEffect(() => {
 		set_files(["files"], documents);
@@ -1205,6 +1409,7 @@ export default function Files() {
 		<div className="flex flex-col w-full h-full p-5">
 			<EditFileModal />
 			<UploadFileModal />
+			<NewFolderModal />
 			<div className="flex flex-row h-full space-x-4">
 				<div className="flex flex-row w-full border rounded h-full bg-white flex-1">
 					<div className="hidden lg:flex flex-col w-[250px] border-r">

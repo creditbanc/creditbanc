@@ -32,6 +32,9 @@ import {
 	sort,
 	always,
 	keys,
+	drop,
+	dropLast,
+	without,
 } from "ramda";
 import { iif, of as rxof, throwError } from "rxjs";
 const util = require("util");
@@ -320,6 +323,34 @@ export const get_resource_id = (uri) => {
 
 	if (index_of_f === -1) return undefined;
 	return pipe((index) => path[index + 1])(index_of_f);
+};
+
+export const get_file_resource_id = (uri) => {
+	let path = pipe(to_resource_path_array)(uri);
+	let index_of_f = pipe(lastIndexOf("f"))(path);
+
+	// console.log("get_resource_id____");
+	// console.log(path);
+	// console.log(index_of_f);
+
+	if (index_of_f === -1) return undefined;
+	return pipe((index) => path[index + 1])(index_of_f);
+};
+
+export const get_file_resource_path_array = (uri) => {
+	let path = pipe(to_resource_path_array)(uri);
+	let index_of_f = pipe(indexOf("f"))(path);
+
+	// console.log("get_resource_id____");
+	// console.log(path);
+	// console.log(index_of_f);
+	let result = pipe(drop(index_of_f), without("f"))(path);
+	return result;
+};
+
+export const get_file_resource_path = (uri) => {
+	let path = get_file_resource_path_array(uri);
+	return pipe(join("."))(path);
 };
 
 export const get_entity_id = (uri) => {

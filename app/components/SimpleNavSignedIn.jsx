@@ -39,7 +39,7 @@ const Companies = ({ companies: all_companies = {} }) => {
 		<Menu as="div" className="relative inline-block text-left z-50">
 			<div>
 				<Menu.Button className="inline-flex w-full justify-center gap-x-1.5 rounded-full bg-white px-4 py-2 text-sm font-semibold text-gray-900 hover:bg-gray-100">
-					{company.email}
+					{company?.email}
 					<ChevronDownIcon className="-mr-1 h-5 w-5 text-gray-400" aria-hidden="true" />
 				</Menu.Button>
 			</div>

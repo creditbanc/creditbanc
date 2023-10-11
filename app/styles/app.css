@@ -4097,6 +4097,10 @@ body {
   transition-duration: 150ms;
 }
 
+.last\:invisible:last-child {
+  visibility: hidden;
+}
+
 .last\:border-b-0:last-child {
   border-bottom-width: 0px;
 }
@@ -4112,6 +4116,10 @@ body {
 
 .first-of-type\:border-l:first-of-type {
   border-left-width: 1px;
+}
+
+.last-of-type\:invisible:last-of-type {
+  visibility: hidden;
 }
 
 .last-of-type\:rounded-r:last-of-type {
@@ -4251,6 +4259,14 @@ body {
   --tw-ring-opacity: 0.75;
 }
 
+.group:last-child .group-last\:invisible {
+  visibility: hidden;
+}
+
+.group:last-of-type .group-last-of-type\:invisible {
+  visibility: hidden;
+}
+
 .group:hover .group-hover\:bg-gray-100 {
   --tw-bg-opacity: 1;
   background-color: rgb(243 244 246 / var(--tw-bg-opacity));
@@ -4327,11 +4343,6 @@ body {
 .hover\:bg-gray-50:hover {
   --tw-bg-opacity: 1;
   background-color: rgb(249 250 251 / var(--tw-bg-opacity));
-}
-
-.hover\:bg-gray-600:hover {
-  --tw-bg-opacity: 1;
-  background-color: rgb(75 85 99 / var(--tw-bg-opacity));
 }
 
 .hover\:bg-gray-900:hover {

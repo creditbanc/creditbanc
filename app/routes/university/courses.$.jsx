@@ -1,9 +1,5 @@
 import { FolderIcon, PlayIcon, ChevronUpIcon } from "@heroicons/react/20/solid";
-import {
-	DocumentIcon,
-	ListBulletIcon,
-	PlayCircleIcon,
-} from "@heroicons/react/24/outline";
+import { DocumentIcon, ListBulletIcon, PlayCircleIcon } from "@heroicons/react/24/outline";
 import { Link, useLocation } from "@remix-run/react";
 import { classNames, get_entity_id, get_group_id } from "~/utils/helpers";
 import { Disclosure } from "@headlessui/react";
@@ -12,18 +8,14 @@ const UniversityHeader = () => {
 	return (
 		<div className="px-5 mb-5">
 			<div className="mx-auto max-w-2xl lg:mx-0">
-				<p className="text-base font-semibold leading-7 text-blue-600">
-					Online Finance Courses
-				</p>
+				<p className="text-base font-semibold leading-7 text-blue-600">Online Finance Courses</p>
 				<h2 className="mt-2 text-4xl font-bold tracking-tight text-gray-900 sm:text-6xl">
 					Credit Banc University
 				</h2>
 				<p className="mt-6 text-lg leading-8 text-gray-600">
-					Gain instant access to a library of online finance courses
-					utilized by top global banks and financial institutions.
-					Develop a comprehensive understanding of practical skills to
-					enhance your career or excel in interviews, whether you’re
-					an intern, analyst or associate.
+					Gain instant access to a library of online finance courses utilized by top global banks and
+					financial institutions. Develop a comprehensive understanding of practical skills to enhance your
+					career or excel in interviews, whether you’re an intern, analyst or associate.
 				</p>
 			</div>
 		</div>
@@ -181,10 +173,7 @@ const Accounts = () => {
 	return (
 		<div className="mx-auto  grid max-w-2xl grid-cols-1 gap-x-8 gap-y-20 lg:mx-0 lg:max-w-none lg:grid-cols-3">
 			{posts.map((post) => (
-				<article
-					key={post.id}
-					className="flex flex-col items-start justify-between"
-				>
+				<article key={post.id} className="flex flex-col items-start justify-between">
 					<div className="relative w-full">
 						<img
 							src={post.imageUrl}
@@ -206,10 +195,7 @@ const Accounts = () => {
 					</div>
 					<div className="max-w-xl">
 						<div className="mt-2 flex items-center gap-x-4 text-xs">
-							<time
-								dateTime={post.datetime}
-								className="text-gray-500"
-							>
+							<time dateTime={post.datetime} className="text-gray-500">
 								{post.date}
 							</time>
 							<a
@@ -226,9 +212,7 @@ const Accounts = () => {
 									{post.title}
 								</a>
 							</h3>
-							<p className="mt-5 line-clamp-3 text-sm leading-6 text-gray-600">
-								{post.description}
-							</p>
+							<p className="mt-5 line-clamp-3 text-sm leading-6 text-gray-600">{post.description}</p>
 						</div>
 
 						<div className="my-2 flex flex-col w-full">
@@ -242,10 +226,7 @@ const Accounts = () => {
 						</div>
 
 						<div className="relative mt-6 flex items-center gap-x-4">
-							<img
-								src={post.author.imageUrl}
-								className="h-10 w-10 rounded-full bg-gray-100"
-							/>
+							<img src={post.author.imageUrl} className="h-10 w-10 rounded-full bg-gray-100" />
 							<div className="text-sm leading-6">
 								<p className="font-semibold text-gray-900">
 									<a href={post.author.href}>
@@ -253,9 +234,7 @@ const Accounts = () => {
 										{post.author.name}
 									</a>
 								</p>
-								<p className="text-gray-600">
-									{post.author.role}
-								</p>
+								<p className="text-gray-600">{post.author.role}</p>
 							</div>
 						</div>
 					</div>
@@ -273,11 +252,7 @@ const CurriculumAccordion = () => {
 					<>
 						<Disclosure.Button className="flex w-full justify-between rounded-lg  px-4 py-2 text-left text-sm font-medium   focus:outline-none focus-visible:ring  focus-visible:ring-opacity-75">
 							<span>THE INVESTMENT MANAGEMENT INDUSTRY</span>
-							<ChevronUpIcon
-								className={`${
-									open ? "rotate-180 transform" : ""
-								} h-5 w-5 text-gray-500`}
-							/>
+							<ChevronUpIcon className={`${open ? "rotate-180 transform" : ""} h-5 w-5 text-gray-500`} />
 						</Disclosure.Button>
 						<Disclosure.Panel className="px-4  pb-2 text-gray-500 space-y-3 text-sm">
 							<div className="flex flex-row w-full border p-2 rounded">
@@ -316,11 +291,7 @@ const CurriculumAccordion = () => {
 					<>
 						<Disclosure.Button className="flex w-full justify-between rounded-lg  px-4 py-2 text-left text-sm font-medium   focus:outline-none focus-visible:ring  focus-visible:ring-opacity-75">
 							<span>ECONOMIC ANALYSIS & ASSET ALLOCATION</span>
-							<ChevronUpIcon
-								className={`${
-									open ? "rotate-180 transform" : ""
-								} h-5 w-5 text-gray-500`}
-							/>
+							<ChevronUpIcon className={`${open ? "rotate-180 transform" : ""} h-5 w-5 text-gray-500`} />
 						</Disclosure.Button>
 						<Disclosure.Panel className="px-4  pb-2 text-gray-500 space-y-3 text-sm">
 							<div className="flex flex-row w-full border p-2 rounded">
@@ -359,11 +330,7 @@ const CurriculumAccordion = () => {
 					<>
 						<Disclosure.Button className="flex w-full justify-between rounded-lg  px-4 py-2 text-left text-sm font-medium   focus:outline-none focus-visible:ring  focus-visible:ring-opacity-75">
 							<span>SECURITY SELECTION</span>
-							<ChevronUpIcon
-								className={`${
-									open ? "rotate-180 transform" : ""
-								} h-5 w-5 text-gray-500`}
-							/>
+							<ChevronUpIcon className={`${open ? "rotate-180 transform" : ""} h-5 w-5 text-gray-500`} />
 						</Disclosure.Button>
 						<Disclosure.Panel className="px-4  pb-2 text-gray-500 space-y-3 text-sm">
 							<div className="flex flex-row w-full border p-2 rounded">
@@ -404,25 +371,6 @@ const CurriculumAccordion = () => {
 export default function Courses() {
 	return (
 		<div className="flex flex-row w-full h-full overflow-hiddens gap-x-5 overflow-hidden">
-			<div className="flex flex-col w-full lg:w-[70%] h-full rounded overflow-scroll scrollbar-none">
-				<UniversityHeader />
-				<div className="flex flex-col w-full h-fit bg-white rounded px-5 pt-5">
-					<div className="border-b border-gray-200 pb-3 flex flex-col sticky top-0 bg-white z-10">
-						<div>
-							<h3 className="mt-2 text-base font-semibold leading-6 text-gray-900">
-								Courses
-							</h3>
-						</div>
-						<div>
-							<HeaderFilters />
-						</div>
-					</div>
-
-					<div className="flex flex-col w-full py-5 scrollbar-none">
-						<Accounts />
-					</div>
-				</div>
-			</div>
 			<div className="hidden lg:flex flex-col w-[30%]">
 				<div className="flex flex-col bg-white border rounded overflow-scroll scrollbar-none">
 					<div className="p-3">
@@ -433,21 +381,16 @@ export default function Courses() {
 					</div>
 
 					<div className="border-b border-gray-200 bg-white px-4 py-5 sm:px-6 sticky top-0 z-10">
-						<h3 className="text-base font-semibold leading-6 text-gray-900 my-2">
-							Portfolio Manager
-						</h3>
+						<h3 className="text-base font-semibold leading-6 text-gray-900 my-2">Portfolio Manager</h3>
 
 						<div className="flex flex-col w-full space-y-5">
 							<p className="mt-1 text-sm text-gray-500">
-								Deep dive into the portfolio management process
-								& earn your certification with new topics on the
-								latest trends in ESG, active vs passive
-								investing, and more!
+								Deep dive into the portfolio management process & earn your certification with new
+								topics on the latest trends in ESG, active vs passive investing, and more!
 							</p>
 
 							<p className="mt-1 text-sm text-gray-500">
-								New content – discover our expert interview with
-								a wealth manager!
+								New content – discover our expert interview with a wealth manager!
 							</p>
 						</div>
 
@@ -464,6 +407,23 @@ export default function Courses() {
 
 					<div className="flex flex-col w-full my-3">
 						<CurriculumAccordion />
+					</div>
+				</div>
+			</div>
+			<div className="flex flex-col w-full lg:w-[70%] h-full rounded overflow-scroll scrollbar-none">
+				<UniversityHeader />
+				<div className="flex flex-col w-full h-fit bg-white rounded px-5 pt-5">
+					<div className="border-b border-gray-200 pb-3 flex flex-col sticky top-0 bg-white z-10">
+						<div>
+							<h3 className="mt-2 text-base font-semibold leading-6 text-gray-900">Courses</h3>
+						</div>
+						<div>
+							<HeaderFilters />
+						</div>
+					</div>
+
+					<div className="flex flex-col w-full py-5 scrollbar-none">
+						<Accounts />
 					</div>
 				</div>
 			</div>
