@@ -376,16 +376,17 @@ const Derogatories = () => {
 };
 
 let score_classes = (score, prefix) => {
-	if (score == 0) return `${prefix}` + `-green-500`;
-	if (score == 1) return `${prefix}` + `-yellow-300`;
-	if (score >= 2 && score <= 3) return `${prefix}` + `-red-500`;
-	if (score >= 4) return `${prefix}` + `-red-800`;
+	if (score == 0) return prefix + `-green-500`;
+	if (score == 1) return prefix + `-yellow-300`;
+	if (score >= 2 && score <= 3) return prefix + `-red-500`;
+	if (score >= 4) return prefix + `-red-800`;
 };
 
 const Legal = () => {
 	let { experian_derogatories: derogatories } = useLoaderData();
-
 	let score = derogatories?.legalFilingsSummary?.legalCount || 0;
+	console.log("score");
+	console.log(score);
 
 	return (
 		<div className="flex flex-col w-full border bg-white rounded text-sm p-4">
