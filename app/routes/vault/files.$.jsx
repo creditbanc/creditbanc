@@ -646,10 +646,7 @@ const SideNav = () => {
 	let group_id = get_group_id(pathname);
 	let entity_id = get_entity_id(pathname);
 	let { documents } = useLoaderData();
-
-	let params = use_client_search_params(pathname);
 	let set_nav = useSideNavStore((state) => state.set_state);
-	let selected = useSideNavStore((state) => state.selected);
 
 	const onsNavSelect = (param) => {
 		set_nav(["selected"], param);
@@ -752,7 +749,7 @@ const SideNav = () => {
 									</Disclosure.Button>
 									<Disclosure.Panel as="ul" className="flex flex-col mt-1 pl-6 text-sm">
 										{item.children.map((folder, index) => (
-											<RenderFolderChild item={folder} />
+											<RenderFolderChild key={index} item={folder} />
 										))}
 									</Disclosure.Panel>
 								</>
