@@ -1,6 +1,6 @@
 import CreditNav from "~/components/CreditNav";
 import SimpleNav from "~/components/SimpleNav";
-import { isEmpty, join, equals, tryCatch, is, has } from "ramda";
+import { isEmpty, join, equals, tryCatch, is, has, filter as rfilter } from "ramda";
 import axios from "axios";
 import { useLoaderData, useFetcher, useLocation } from "@remix-run/react";
 import { useSearchParams } from "react-router-dom";
@@ -71,7 +71,7 @@ export const action = async ({ request }) => {
 	console.log("new_report_payload______");
 	console.log(new_report_payload);
 
-	await set_doc(["credit_reports", report_id], new_report_payload);
+	await set_doc(["credit_reports", report_id], pipe(rfilter((v) => v !== undefined))(new_report_payload));
 
 	return redirect(`/credit/report/personal/personal/resource/e/${entity_id}/g/${group_id}`);
 
