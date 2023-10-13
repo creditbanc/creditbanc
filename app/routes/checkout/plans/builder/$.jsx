@@ -20,7 +20,7 @@ export const action = async ({ request }) => {
 	let stripe = new Stripe(entity_id);
 	let stripe_customer = await stripe.create_customer(card);
 	let { id: stripe_customer_id } = stripe_customer;
-	let price_id = "price_1O0erpJlRXkfyebsoSSVfo7E";
+	let price_id = "price_1O0nG5JlRXkfyebsCf8zp4sY";
 	let stripe_subscription = await stripe.subscribe_customer(price_id, stripe_customer_id);
 	let { id: stripe_subscription_id } = stripe_subscription;
 
