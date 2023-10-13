@@ -19,8 +19,8 @@ export default class Stripe {
 		return token;
 	}
 
-	async create_customer() {
-		let token = await this.create_token();
+	async create_customer(card) {
+		let token = await this.create_token(card);
 		let { id: token_id } = token;
 		let entity_id = this.entity_id;
 
@@ -35,12 +35,12 @@ export default class Stripe {
 		return customer;
 	}
 
-	async subscribe_customer(customer_id) {
+	async subscribe_customer(price_id, customer_id) {
 		let entity_id = this.entity_id;
 
 		const subscription = await this.stripe.subscriptions.create({
 			customer: customer_id,
-			items: [{ price: "price_1N61DjJlRXkfyebsWDaUadR0" }],
+			items: [{ price: price_id }],
 			metadata: {
 				entity_id,
 				customer_id,

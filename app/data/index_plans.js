@@ -2,8 +2,9 @@ export const plans = [
 	{
 		name: "Banc Essentials",
 		id: "essential",
-		href: `/signup?plan=essential`,
+		href: "/signup?plan=essential",
 		priceMonthly: "$0",
+		price: { monthly: "$0", annually: "$0" },
 		description: "The essentials to provide your best work for clients.",
 		features: [
 			{ included: true, text: "Business & Personal Scores" },
@@ -34,9 +35,11 @@ export const plans = [
 	},
 	{
 		name: "Banc Plus",
-		id: "essential",
-		href: `/signup?plan=plus`,
+		id: "plus",
+		href: "/signup?plan=plus",
+
 		priceMonthly: "$29",
+		price: { monthly: "$29", annually: "$348" },
 		description: "The essentials to provide your best work for clients.",
 		features: [
 			{ included: true, text: "MONTHLY 3-Bureau Personal Credit Reports & Scores" },
@@ -75,8 +78,9 @@ export const plans = [
 	{
 		name: "Banc Builder",
 		id: "builder",
-		href: `/signup?plan=builder`,
+		href: "/signup?plan=builder",
 		priceMonthly: "$49",
+		price: { monthly: "$49", annually: "$588" },
 		description: "A plan that scales with your rapidly growing business.",
 		features: [
 			{ included: true, text: "MONTHLY 3-Bureau Personal Credit Reports & Scores" },
@@ -123,8 +127,9 @@ export const plans = [
 	{
 		name: "Banc Pro",
 		id: "pro",
-		href: `/signup?plan=pro`,
+		href: "/signup?plan=pro",
 		priceMonthly: "$85",
+		price: { monthly: "$85", annually: "$1020" },
 		description: "Dedicated support and infrastructure for your company.",
 		features: [
 			{ included: true, text: "MONTHLY 3-Bureau Personal Credit Reports & Scores" },

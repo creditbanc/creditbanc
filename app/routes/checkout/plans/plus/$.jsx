@@ -4,8 +4,8 @@ import { get_session_entity_id } from "~/utils/auth.server";
 import { head, pipe } from "ramda";
 import { filter } from "shades";
 import { redirect } from "@remix-run/node";
-import { plans } from "~/data/upgrade_plans";
-import { form_params as form_params_f, store } from "~/utils/helpers";
+import { plans } from "~/data/index_plans";
+import { form_params as form_params_f } from "~/utils/helpers";
 import Stripe from "~/api/client/Stripe";
 import Subscription from "~/api/client/Subscription";
 import StripeForm, { use_stripe_store } from "~/components/StripeForm";
@@ -13,14 +13,14 @@ import StripeForm, { use_stripe_store } from "~/components/StripeForm";
 export const action = async ({ request }) => {
 	console.log("action____");
 	let referer = request.headers.get("Referer");
-	let plan = { plan_id: "builder", plan_name: "builder" };
+	let plan = { plan_id: "plus", plan_name: "plus" };
 	let entity_id = await get_session_entity_id(request);
 	let card = await form_params_f(request);
 
 	let stripe = new Stripe(entity_id);
 	let stripe_customer = await stripe.create_customer(card);
 	let { id: stripe_customer_id } = stripe_customer;
-	let price_id = "price_1O0erpJlRXkfyebsoSSVfo7E";
+	let price_id = "price_1O0esRJlRXkfyebsMbDVpd29";
 	let stripe_subscription = await stripe.subscribe_customer(price_id, stripe_customer_id);
 	let { id: stripe_subscription_id } = stripe_subscription;
 
@@ -34,7 +34,7 @@ export const action = async ({ request }) => {
 };
 
 export default function Checkout() {
-	let plan_id = "builder";
+	let plan_id = "plus";
 	let plan = pipe(filter({ id: plan_id }), head)(plans);
 	let card = use_stripe_store((state) => state.card);
 
