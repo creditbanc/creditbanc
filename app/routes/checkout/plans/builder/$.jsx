@@ -1,24 +1,16 @@
 import { Fragment } from "react";
-import {
-	ChevronRightIcon,
-	ChevronUpIcon,
-	CheckIcon,
-} from "@heroicons/react/20/solid";
+import { ChevronRightIcon, ChevronUpIcon, CheckIcon } from "@heroicons/react/20/solid";
 import { Popover, Transition } from "@headlessui/react";
 const cb_logo = "/images/logos/cb_logo_3.png";
 import { Link, useLoaderData, useSubmit } from "@remix-run/react";
-import {
-	get_user_id,
-	get_user,
-	get_entity,
-	get_session_entity_id,
-} from "~/utils/auth.server";
+import { get_user_id, get_user, get_entity, get_session_entity_id } from "~/utils/auth.server";
 import { hasPath, head, length, pipe } from "ramda";
 import { filter, get, has } from "shades";
 import { prisma } from "~/utils/prisma.server";
 import { redirect } from "@remix-run/node";
 import { plans } from "~/data/upgrade_plans";
 import { update_doc } from "~/utils/firebase";
+import { form_params } from "~/utils/helpers";
 var stripe = require("stripe");
 
 const steps = [
@@ -31,6 +23,8 @@ export const action = async ({ request }) => {
 	// stripe = stripe(process.env.STRIPE);
 	let entity_id = await get_session_entity_id(request);
 	var form = await request.formData();
+
+	let { email, password } = await form_params(request);
 
 	// const email = form.get("email");
 	// const password = form.get("password");
@@ -156,39 +150,22 @@ export default function Checkout() {
 
 	return (
 		<div className="bg-white">
-			<div
-				className="fixed left-0 top-0 hidden h-full w-1/2 bg-white lg:block"
-				aria-hidden="true"
-			/>
-			<div
-				className="fixed right-0 top-0 hidden h-full w-1/2 bg-gray-50 lg:block"
-				aria-hidden="true"
-			/>
+			<div className="fixed left-0 top-0 hidden h-full w-1/2 bg-white lg:block" aria-hidden="true" />
+			<div className="fixed right-0 top-0 hidden h-full w-1/2 bg-gray-50 lg:block" aria-hidden="true" />
 
 			<header className="relative border-b border-gray-200 bg-white text-sm font-medium text-gray-700">
 				<div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
 					<div className="relative flex justify-end sm:justify-center">
 						<Link to="/" className="absolute left-0 top-1/2 -mt-4">
 							<span className="sr-only">Credit Banc</span>
-							<img
-								src={cb_logo}
-								alt=""
-								className="hidden sm:block h-5 w-auto"
-							/>
+							<img src={cb_logo} alt="" className="hidden sm:block h-5 w-auto" />
 						</Link>
 						<nav aria-label="Progress" className="hidden sm:block ">
 							<ol role="list" className="flex space-x-4">
 								{steps.map((step, stepIdx) => (
-									<li
-										key={step.name}
-										className="flex items-center"
-									>
+									<li key={step.name} className="flex items-center">
 										{step.status === "current" ? (
-											<a
-												href={step.href}
-												aria-current="page"
-												className="text-indigo-600"
-											>
+											<a href={step.href} aria-current="page" className="text-indigo-600">
 												{step.name}
 											</a>
 										) : (
@@ -218,10 +195,7 @@ export default function Checkout() {
 					className="bg-gray-50 px-4 pb-10 pt-16 sm:px-6 lg:col-start-2 lg:row-start-1 lg:bg-transparent lg:px-0 lg:pb-16"
 				>
 					<div className="mx-auto max-w-lg lg:max-w-none">
-						<h2
-							id="summary-heading"
-							className="text-lg font-medium text-gray-900"
-						>
+						<h2 id="summary-heading" className="text-lg font-medium text-gray-900">
 							Order summary
 						</h2>
 
@@ -242,10 +216,7 @@ export default function Checkout() {
 					<div className="mx-auto max-w-lg lg:max-w-none">
 						<section aria-labelledby="payment-heading" className="">
 							<div className="flex flex-row justify-between">
-								<h2
-									id="payment-heading"
-									className="text-lg font-medium text-gray-900"
-								>
+								<h2 id="payment-heading" className="text-lg font-medium text-gray-900">
 									Payment details
 								</h2>
 
@@ -257,10 +228,7 @@ export default function Checkout() {
 
 							<div className="mt-6 grid grid-cols-3 gap-x-4 gap-y-6 sm:grid-cols-4">
 								<div className="col-span-3 sm:col-span-4">
-									<label
-										htmlFor="name-on-card"
-										className="block text-sm font-medium text-gray-700"
-									>
+									<label htmlFor="name-on-card" className="block text-sm font-medium text-gray-700">
 										Name on card
 									</label>
 									<div className="mt-1">
@@ -275,10 +243,7 @@ export default function Checkout() {
 								</div>
 
 								<div className="col-span-3 sm:col-span-4">
-									<label
-										htmlFor="card-number"
-										className="block text-sm font-medium text-gray-700"
-									>
+									<label htmlFor="card-number" className="block text-sm font-medium text-gray-700">
 										Card number
 									</label>
 									<div className="mt-1">
@@ -311,10 +276,7 @@ export default function Checkout() {
 								</div>
 
 								<div>
-									<label
-										htmlFor="cvc"
-										className="block text-sm font-medium text-gray-700"
-									>
+									<label htmlFor="cvc" className="block text-sm font-medium text-gray-700">
 										CVC
 									</label>
 									<div className="mt-1">
@@ -336,17 +298,12 @@ export default function Checkout() {
 								<div>{plan.price.monthly}</div>
 							</div>
 						</div>
-						<div
-							className="border-gray-200 pt-6 w-full"
-							onClick={onSubmit}
-						>
+						<div className="border-gray-200 pt-6 w-full" onClick={onSubmit}>
 							<button
 								type="submit"
 								className="flex flex-col w-full items-center rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-gray-50 sm:order-last"
 							>
-								{stripe_subscription_id
-									? "Change Plan"
-									: "Continue"}
+								{stripe_subscription_id ? "Change Plan" : "Continue"}
 							</button>
 						</div>
 					</div>
