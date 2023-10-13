@@ -4,118 +4,53 @@ import { Popover, Transition } from "@headlessui/react";
 const cb_logo = "/images/logos/cb_logo_3.png";
 import { Link, useLoaderData, useSubmit } from "@remix-run/react";
 import { get_user_id, get_user, get_entity, get_session_entity_id } from "~/utils/auth.server";
-import { hasPath, head, length, pipe } from "ramda";
-import { filter, get, has } from "shades";
+import { hasPath, head, keys, length, pipe } from "ramda";
+import { cons, filter, get, has } from "shades";
 import { prisma } from "~/utils/prisma.server";
 import { redirect } from "@remix-run/node";
 import { plans } from "~/data/upgrade_plans";
 import { update_doc } from "~/utils/firebase";
-import { form_params } from "~/utils/helpers";
-var stripe = require("stripe");
+import { form_params as form_params_f, store } from "~/utils/helpers";
+// var stripe = require("stripe");
+// import Stripe from "stripe";
+import Stripe from "~/api/client/Stripe";
+import Subscription from "~/api/client/Subscription";
 
 const steps = [
 	{ name: "Billing Information", href: "#", status: "current" },
 	{ name: "Confirmation", href: "#", status: "upcoming" },
 ];
 
+let use_stripe_store = store({
+	card: {
+		name: "",
+		number: "",
+		exp_month: "",
+		exp_year: "",
+		cvc: "",
+	},
+});
+
 export const action = async ({ request }) => {
 	console.log("action____");
-	// stripe = stripe(process.env.STRIPE);
+	let referer = request.headers.get("Referer");
+	let plan = { plan_id: "builder", plan_name: "builder" };
 	let entity_id = await get_session_entity_id(request);
-	var form = await request.formData();
+	let card = await form_params_f(request);
 
-	let { email, password } = await form_params(request);
+	let stripe = new Stripe(entity_id);
+	let stripe_customer = await stripe.create_customer(card);
+	let { id: stripe_customer_id } = stripe_customer;
+	let stripe_subscription = await stripe.subscribe_customer(stripe_customer_id);
+	let { id: stripe_subscription_id } = stripe_subscription;
 
-	// const email = form.get("email");
-	// const password = form.get("password");
+	if (stripe_subscription_id) {
+		let _subscription_ = new Subscription(entity_id);
+		let subscription = await _subscription_.create({ plan, stripe_customer_id, stripe_subscription_id });
+		return redirect("/home");
+	}
 
-	// const customer_search_response = await stripe.customers.search({
-	// 	query: `metadata["entity_id"]: "${entity_id}"`,
-	// });
-
-	// let has_customer = pipe(has({ data: (data) => length(data) > 0 }))(
-	// 	customer_search_response
-	// );
-
-	// // console.log("has_customer");
-	// // console.log(has_customer);
-
-	// const create_token = async () => {
-	// 	const token = await stripe.tokens.create({
-	// 		card: {
-	// 			number: "4242424242424242",
-	// 			exp_month: 5,
-	// 			exp_year: 2024,
-	// 			cvc: "314",
-	// 		},
-	// 	});
-
-	// 	return token;
-	// };
-
-	// const create_customer = async (entity_id) => {
-	// 	let token = await create_token();
-	// 	let { id: token_id } = token;
-
-	// 	const customer = await stripe.customers.create({
-	// 		name: entity_id,
-	// 		metadata: {
-	// 			entity_id,
-	// 		},
-	// 		source: token_id,
-	// 	});
-
-	// 	return customer;
-	// };
-
-	// const subscribe_customer = async (customer_id) => {
-	// 	const subscription = await stripe.subscriptions.create({
-	// 		customer: customer_id,
-	// 		items: [{ price: "price_1N61DjJlRXkfyebsWDaUadR0" }],
-	// 		metadata: {
-	// 			entity_id,
-	// 			customer_id,
-	// 		},
-	// 	});
-	// 	return subscription;
-	// };
-
-	// if (has_customer) {
-	// 	let customer = pipe(get("data", 0))(customer_search_response);
-	// 	let { id: customer_id } = customer;
-	// 	let subscription = await subscribe_customer(customer_id);
-
-	// 	// console.log("subscription");
-	// 	// console.log(subscription);
-
-	// 	await update_doc(["entity", entity_id], { plan_id: "builder" });
-
-	// 	// await prisma.entity.update({
-	// 	// 	where: {
-	// 	// 		id: entity_id,
-	// 	// 	},
-	// 	// 	data: {
-	// 	// 		plan_id: "builder",
-	// 	// 	},
-	// 	// });
-
-	// 	return redirect("/home");
-	// }
-
-	// let customer = await create_customer(entity_id);
-	// let { id: customer_id } = customer;
-	// let subscription = await subscribe_customer(customer_id);
-
-	// await update_doc(["entity", entity_id], {
-	// 	plan_id: "builder",
-	// 	stripe_customer_id: customer_id,
-	// 	stripe_subscription_id: subscription.id,
-	// });
-
-	return redirect("/home");
-
-	console.log("subscription");
-	console.log(subscription);
+	return redirect(referer);
 };
 
 export const loader = async ({ request }) => {
@@ -132,60 +67,25 @@ export const loader = async ({ request }) => {
 export default function Checkout() {
 	let { stripe_subscription_id } = useLoaderData();
 	let plan = pipe(filter({ id: "builder" }), head)(plans);
+	let card = use_stripe_store((state) => state.card);
+	let set_card = use_stripe_store((state) => state.set_path);
 
 	const submit = useSubmit();
 
 	const onSubmit = (event) => {
 		console.log("onSubmit");
 		event.preventDefault();
-		let form = event.currentTarget;
-		submit(
-			{},
-			{
-				method: "post",
-				action: "/checkout/plans/builder" + window.location.search,
-			}
-		);
+
+		submit(card, {
+			method: "post",
+			action: "/checkout/plans/builder" + window.location.search,
+		});
 	};
 
 	return (
 		<div className="bg-white">
 			<div className="fixed left-0 top-0 hidden h-full w-1/2 bg-white lg:block" aria-hidden="true" />
 			<div className="fixed right-0 top-0 hidden h-full w-1/2 bg-gray-50 lg:block" aria-hidden="true" />
-
-			<header className="relative border-b border-gray-200 bg-white text-sm font-medium text-gray-700">
-				<div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
-					<div className="relative flex justify-end sm:justify-center">
-						<Link to="/" className="absolute left-0 top-1/2 -mt-4">
-							<span className="sr-only">Credit Banc</span>
-							<img src={cb_logo} alt="" className="hidden sm:block h-5 w-auto" />
-						</Link>
-						<nav aria-label="Progress" className="hidden sm:block ">
-							<ol role="list" className="flex space-x-4">
-								{steps.map((step, stepIdx) => (
-									<li key={step.name} className="flex items-center">
-										{step.status === "current" ? (
-											<a href={step.href} aria-current="page" className="text-indigo-600">
-												{step.name}
-											</a>
-										) : (
-											<a href={step.href}>{step.name}</a>
-										)}
-
-										{stepIdx !== steps.length - 1 ? (
-											<ChevronRightIcon
-												className="ml-4 h-5 w-5 text-gray-300"
-												aria-hidden="true"
-											/>
-										) : null}
-									</li>
-								))}
-							</ol>
-						</nav>
-						<p className="sm:hidden">Step 2 of 4</p>
-					</div>
-				</div>
-			</header>
 
 			<main className="relative mx-auto grid max-w-7xl grid-cols-1 gap-x-16 lg:grid-cols-2 lg:px-8 xl:gap-x-48">
 				<h1 className="sr-only">Order information</h1>
@@ -226,8 +126,8 @@ export default function Checkout() {
 								</div>
 							</div>
 
-							<div className="mt-6 grid grid-cols-3 gap-x-4 gap-y-6 sm:grid-cols-4">
-								<div className="col-span-3 sm:col-span-4">
+							<div className="mt-6 flex flex-col gap-x-4 w-full gap-y-6">
+								<div className="flex flex-col w-full">
 									<label htmlFor="name-on-card" className="block text-sm font-medium text-gray-700">
 										Name on card
 									</label>
@@ -237,12 +137,14 @@ export default function Checkout() {
 											id="name-on-card"
 											name="name-on-card"
 											autoComplete="cc-name"
-											className="block w-full rounded-md h-[35px] border border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+											className="block w-full rounded-md h-[35px] border border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm px-3"
+											value={card.name}
+											onChange={(e) => set_card(["card", "name"], e.target.value)}
 										/>
 									</div>
 								</div>
 
-								<div className="col-span-3 sm:col-span-4">
+								<div className="flex flex-col w-full">
 									<label htmlFor="card-number" className="block text-sm font-medium text-gray-700">
 										Card number
 									</label>
@@ -252,41 +154,69 @@ export default function Checkout() {
 											id="card-number"
 											name="card-number"
 											autoComplete="cc-number"
-											className="block w-full rounded-md h-[35px] border border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+											className="block w-full rounded-md h-[35px] border border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm px-3"
+											value={card.number}
+											onChange={(e) => set_card(["card", "number"], e.target.value)}
 										/>
 									</div>
 								</div>
 
-								<div className="col-span-2 sm:col-span-3">
-									<label
-										htmlFor="expiration-date"
-										className="block text-sm font-medium text-gray-700"
-									>
-										Expiration date (MM/YY)
-									</label>
-									<div className="mt-1">
-										<input
-											type="text"
-											name="expiration-date"
-											id="expiration-date"
-											autoComplete="cc-exp"
-											className="block w-full rounded-md h-[35px] border border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-										/>
+								<div className="flex flex-row w-full gap-x-3">
+									<div className="flex flex-col w-1/3">
+										<label
+											htmlFor="expiration-date"
+											className="block text-sm font-medium text-gray-700"
+										>
+											Exp month (MM)
+										</label>
+										<div className="mt-1">
+											<input
+												type="text"
+												name="expiration-date"
+												id="expiration-date"
+												autoComplete="cc-exp"
+												className="block w-full rounded-md h-[35px] border border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm px-3"
+												value={card.exp_month}
+												onChange={(e) => set_card(["card", "exp_month"], e.target.value)}
+											/>
+										</div>
 									</div>
-								</div>
 
-								<div>
-									<label htmlFor="cvc" className="block text-sm font-medium text-gray-700">
-										CVC
-									</label>
-									<div className="mt-1">
-										<input
-											type="text"
-											name="cvc"
-											id="cvc"
-											autoComplete="csc"
-											className="block w-full rounded-md h-[35px] border border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-										/>
+									<div className="flex flex-col w-1/3">
+										<label
+											htmlFor="expiration-date"
+											className="block text-sm font-medium text-gray-700"
+										>
+											Exp year (YY)
+										</label>
+										<div className="mt-1">
+											<input
+												type="text"
+												name="expiration-date"
+												id="expiration-date"
+												autoComplete="cc-exp"
+												className="block w-full rounded-md h-[35px] border border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm px-3"
+												value={card.exp_year}
+												onChange={(e) => set_card(["card", "exp_year"], e.target.value)}
+											/>
+										</div>
+									</div>
+
+									<div className="flex flex-col w-1/3">
+										<label htmlFor="cvc" className="block text-sm font-medium text-gray-700">
+											CVC
+										</label>
+										<div className="mt-1">
+											<input
+												type="text"
+												name="cvc"
+												id="cvc"
+												autoComplete="csc"
+												className="block w-full rounded-md h-[35px] border border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm px-3"
+												value={card.cvc}
+												onChange={(e) => set_card(["card", "cvc"], e.target.value)}
+											/>
+										</div>
 									</div>
 								</div>
 							</div>

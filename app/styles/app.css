@@ -929,6 +929,11 @@ video {
   margin-bottom: 5px;
 }
 
+.mx-3 {
+  margin-left: 0.75rem;
+  margin-right: 0.75rem;
+}
+
 .-mb-6 {
   margin-bottom: -1.5rem;
 }
