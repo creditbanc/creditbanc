@@ -3,6 +3,7 @@ import {
 	currency_precise,
 	get_entity_id,
 	get_group_id,
+	inspect,
 	jsreduce,
 	use_search_params,
 } from "~/utils/helpers";
@@ -43,34 +44,51 @@ import {
 	map as rxmap,
 	lastValueFrom,
 	withLatestFrom,
+	tap,
 } from "rxjs";
 import moment from "moment";
 
 import { get_balances } from "~/api/plaid.server";
 import axios from "axios";
 import { get_session_entity_id } from "~/utils/auth.server";
+import Plaid from "~/api/client/plaid";
+import { json } from "@remix-run/node";
 
 export const loader = async ({ request }) => {
 	console.log("cashflow_loader");
 
+	let group_id = get_group_id(request.url);
+
+	let plaid = new Plaid(group_id);
+	let res = await plaid.transactions();
+
+	console.log("res_____");
+	console.log(res);
+
+	res.pipe(
+		tap(() => console.log("_plaid_res_")),
+		tap(inspect)
+	).subscribe();
+
+	return {};
+
 	let { origin } = new URL(request.url);
 	let { income: income_start_month = 12 } = use_search_params(request);
 	let entity_id = await get_session_entity_id(request);
-	let group_id = get_group_id(request.url);
 
 	let { data: accounts } = await axios({
 		method: "get",
 		url: `${origin}/financial/api/accounts/resource/e/${entity_id}/g/${group_id}`,
 	});
 
+	console.log("accounts");
+	console.log(accounts);
+
 	if (isEmpty(accounts)) {
 		return {};
 	}
 
-	let account_balance = pipe(
-		get(all, "balances", "available"),
-		sum
-	)(accounts);
+	let account_balance = pipe(get(all, "balances", "available"), sum)(accounts);
 
 	const is_expense = (transaction) => {
 		return transaction.amount >= 0;
@@ -85,10 +103,7 @@ export const loader = async ({ request }) => {
 		};
 	};
 
-	let orderBy = [
-		{ field: "date", direction: "desc" },
-		{ field: "transaction_id" },
-	];
+	let orderBy = [{ field: "date", direction: "desc" }, { field: "transaction_id" }];
 
 	transactions_queries = [
 		{
@@ -106,6 +121,9 @@ export const loader = async ({ request }) => {
 		// limit,
 	});
 
+	console.log("transactions");
+	console.log(transactions);
+
 	let $transactions = of(transactions);
 
 	let with_daily_balance = curry((ending_balance, transactions) => {
@@ -122,8 +140,7 @@ export const loader = async ({ request }) => {
 
 				let last_transaction = last(curr);
 
-				next.balance =
-					last_transaction.balance + last_transaction.amount;
+				next.balance = last_transaction.balance + last_transaction.amount;
 
 				let payload = [...curr, next];
 
@@ -138,62 +155,33 @@ export const loader = async ({ request }) => {
 				sortBy(get("date")),
 				reverse,
 				take(20),
-				mod(all)(
-					pipe(
-						pick(["name", "date", "amount"]),
-						with_transaction_type
-					)
-				),
+				mod(all)(pipe(pick(["name", "date", "amount"]), with_transaction_type)),
 				with_daily_balance(account_balance)
 			)
 		)
 	);
 
-	let $expenses = (transactions) =>
-		of(transactions).pipe(
-			concatMap(identity),
-			rxfilter(is_expense),
-			toArray()
-		);
+	let $expenses = (transactions) => of(transactions).pipe(concatMap(identity), rxfilter(is_expense), toArray());
 
-	let $revenues = (transactions) =>
-		of(transactions).pipe(
-			concatMap(identity),
-			rxfilter(is_revenue),
-			toArray()
-		);
+	let $revenues = (transactions) => of(transactions).pipe(concatMap(identity), rxfilter(is_revenue), toArray());
 
 	let transactions_by_date = curry((start_date, end_date, transactions) => {
-		return pipe(
-			filter({ date: (date) => date > start_date && date < end_date })
-		)(transactions);
+		return pipe(filter({ date: (date) => date > start_date && date < end_date }))(transactions);
 	});
 
 	let transactions_by_month = curry((year, month, transactions) => {
-		let days_in_month = moment(
-			`${moment().year()}-${month}`,
-			"YYYY-MM"
-		).daysInMonth();
+		let days_in_month = moment(`${moment().year()}-${month}`, "YYYY-MM").daysInMonth();
 
 		return pipe(
 			filter({
 				date: (date) =>
-					date >
-						moment(`${year}-${month}-01`, "YYYY-MM-DD").format(
-							"YYYY-MM-DD"
-						) &&
-					date <
-						moment(
-							`${year}-${month}-${days_in_month}`,
-							"YYYY-MM-DD"
-						).format("YYYY-MM-DD"),
+					date > moment(`${year}-${month}-01`, "YYYY-MM-DD").format("YYYY-MM-DD") &&
+					date < moment(`${year}-${month}-${days_in_month}`, "YYYY-MM-DD").format("YYYY-MM-DD"),
 			})
 		)(transactions);
 	});
 
-	let start_date = moment()
-		.subtract(income_start_month, "months")
-		.format("YYYY-MM-DD");
+	let start_date = moment().subtract(income_start_month, "months").format("YYYY-MM-DD");
 
 	let end_date = moment().format("YYYY-MM-DD");
 
@@ -208,10 +196,7 @@ export const loader = async ({ request }) => {
 		end_date = moment(end_date);
 
 		while (start_date < end_date) {
-			months = [
-				...months,
-				start_date.startOf("month").format("YYYY-MM-DD"),
-			];
+			months = [...months, start_date.startOf("month").format("YYYY-MM-DD")];
 
 			start_date.add(1, "month");
 		}
@@ -226,11 +211,7 @@ export const loader = async ({ request }) => {
 				of(
 					pipe(
 						map((date) =>
-							transactions_by_month(
-								moment(date).year(),
-								moment(date).month() + 1,
-								transactions
-							)
+							transactions_by_month(moment(date).year(), moment(date).month() + 1, transactions)
 						)
 					)(start_date_of_months(start_date, end_date))
 				)
@@ -297,10 +278,7 @@ export const loader = async ({ request }) => {
 	let $annual_revenue = $transactions.pipe(
 		rxmap(
 			pipe(
-				transactions_by_date(
-					moment().subtract(12, "months").format("YYYY-MM-DD"),
-					end_date
-				),
+				transactions_by_date(moment().subtract(12, "months").format("YYYY-MM-DD"), end_date),
 				filter(is_revenue),
 				get(all, "amount"),
 				sum,
@@ -395,64 +373,49 @@ export const loader = async ({ request }) => {
 
 	const $highest_income = $monthly_incomes.pipe(
 		rxmap(
-			pipe(
-				takeLast(6),
-				sort(descend(identity)),
-				take(2),
-				([curr, prev]) => {
-					let change = percentage_change(prev, curr);
+			pipe(takeLast(6), sort(descend(identity)), take(2), ([curr, prev]) => {
+				let change = percentage_change(prev, curr);
 
-					return {
-						name: "Highest net income in last 6 months",
-						stat: currency_precise(2).format(curr.toFixed(2)),
-						previousStat: prev.toFixed(2),
-						change: `${change.toFixed(2)}%`,
-						changeType: change_type(change),
-					};
-				}
-			)
+				return {
+					name: "Highest net income in last 6 months",
+					stat: currency_precise(2).format(curr.toFixed(2)),
+					previousStat: prev.toFixed(2),
+					change: `${change.toFixed(2)}%`,
+					changeType: change_type(change),
+				};
+			})
 		)
 	);
 
 	const $highest_expense = $monthly_expenses.pipe(
 		rxmap(
-			pipe(
-				takeLast(6),
-				sort(ascend(identity)),
-				take(2),
-				([curr, prev]) => {
-					let change = percentage_change(prev, curr);
+			pipe(takeLast(6), sort(ascend(identity)), take(2), ([curr, prev]) => {
+				let change = percentage_change(prev, curr);
 
-					return {
-						name: "Highest spending in last 6 months",
-						stat: currency_precise(2).format(curr.toFixed(2)),
-						previousStat: prev.toFixed(2),
-						change: `${change.toFixed(2)}%`,
-						changeType: change_type(change),
-					};
-				}
-			)
+				return {
+					name: "Highest spending in last 6 months",
+					stat: currency_precise(2).format(curr.toFixed(2)),
+					previousStat: prev.toFixed(2),
+					change: `${change.toFixed(2)}%`,
+					changeType: change_type(change),
+				};
+			})
 		)
 	);
 
 	const $highest_revenue = $monthly_revenues.pipe(
 		rxmap(
-			pipe(
-				takeLast(6),
-				sort(descend(identity)),
-				take(2),
-				([curr, prev]) => {
-					let change = percentage_change(prev, curr);
+			pipe(takeLast(6), sort(descend(identity)), take(2), ([curr, prev]) => {
+				let change = percentage_change(prev, curr);
 
-					return {
-						name: "Highest revenue in last 6 months",
-						stat: currency_precise(2).format(curr.toFixed(2)),
-						previousStat: prev.toFixed(2),
-						change: `${change.toFixed(2)}%`,
-						changeType: change_type(change),
-					};
-				}
-			)
+				return {
+					name: "Highest revenue in last 6 months",
+					stat: currency_precise(2).format(curr.toFixed(2)),
+					previousStat: prev.toFixed(2),
+					change: `${change.toFixed(2)}%`,
+					changeType: change_type(change),
+				};
+			})
 		)
 	);
 
@@ -467,9 +430,7 @@ export const loader = async ({ request }) => {
 	let highest_expense = await lastValueFrom($highest_expense);
 	let highest_revenue = await lastValueFrom($highest_revenue);
 	let average_daily_balance = await lastValueFrom($average_daily_balance);
-	let num_of_negative_balance_days = await lastValueFrom(
-		$num_of_negative_balance_days
-	);
+	let num_of_negative_balance_days = await lastValueFrom($num_of_negative_balance_days);
 	let annual_revenue = await lastValueFrom($annual_revenue);
 
 	let payload = {
@@ -486,9 +447,7 @@ export const loader = async ({ request }) => {
 		monthly_expenses,
 		monthly_revenues,
 		monthly_incomes,
-		month_labels: pipe(map((date) => moment(date).format("MMM")))(
-			start_date_of_months(start_date, end_date)
-		),
+		month_labels: pipe(map((date) => moment(date).format("MMM")))(start_date_of_months(start_date, end_date)),
 	};
 
 	// console.log("payload");

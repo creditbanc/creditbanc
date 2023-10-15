@@ -7,22 +7,11 @@ import {
 	use_client_search_params,
 	use_search_params,
 } from "~/utils/helpers";
-import {
-	Chart as ChartJS,
-	CategoryScale,
-	LinearScale,
-	BarElement,
-	Title,
-	Tooltip,
-	Legend,
-} from "chart.js";
+import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend } from "chart.js";
 import { Bar } from "react-chartjs-2";
 import { faker } from "@faker-js/faker";
 import "chart.js/auto";
-import {
-	ArrowDownCircleIcon,
-	ArrowUpCircleIcon,
-} from "@heroicons/react/24/outline";
+import { ArrowDownCircleIcon, ArrowUpCircleIcon } from "@heroicons/react/24/outline";
 import { pipe, values, sum, mapObjIndexed, join, isEmpty } from "ramda";
 import { mod } from "shades";
 import { redirect } from "@remix-run/node";
@@ -34,14 +23,7 @@ import { useCashflowStore } from "~/stores/useCashflowStore";
 import { useEffect } from "react";
 import { get_session_entity_id, get_user_id } from "~/utils/auth.server";
 
-ChartJS.register(
-	CategoryScale,
-	LinearScale,
-	BarElement,
-	Title,
-	Tooltip,
-	Legend
-);
+ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
 export const loader = async ({ request }) => {
 	let { origin } = new URL(request.url);
@@ -49,22 +31,21 @@ export const loader = async ({ request }) => {
 	let group_id = get_group_id(request.url);
 	let entity_id = await get_session_entity_id(request);
 
-	let is_authorized = await is_authorized_f(
-		entity_id,
-		group_id,
-		"cashflow",
-		"read"
-	);
+	// let is_authorized = await is_authorized_f(entity_id, group_id, "cashflow", "read");
 
-	if (!is_authorized) {
-		return redirect(`/home/resource/e/${entity_id}/g/${group_id}`);
-	}
+	// if (!is_authorized) {
+	// 	return redirect(`/home/resource/e/${entity_id}/g/${group_id}`);
+	// }
 
 	let cashflow_api_response = await axios({
 		method: "get",
 		url: `${origin}/financial/api/cashflow/resource/e/${entity_id}/g/${group_id}?income=${income_start_month}`,
 	});
 
+	// console.log("cashflow_api_response");
+	// console.log(cashflow_api_response);
+
+	return {};
 	let { data: financials } = cashflow_api_response;
 
 	// console.log("financials");
@@ -84,9 +65,7 @@ const ActivityFeed = () => {
 					<li key={activityItemIdx} className="relative flex gap-x-4">
 						<div
 							className={classNames(
-								activityItemIdx === recent_activity.length - 1
-									? "h-6"
-									: "-bottom-6",
+								activityItemIdx === recent_activity.length - 1 ? "h-6" : "-bottom-6",
 								"absolute left-0 top-0 flex w-6 justify-center"
 							)}
 						>
@@ -96,9 +75,7 @@ const ActivityFeed = () => {
 						<>
 							<div
 								className={`rounded-full h-8 w-8 flex flex-col items-center justify-center z-10 -ml-1 ${
-									activityItem.type == "expense"
-										? "bg-gray-100"
-										: "bg-blue-100"
+									activityItem.type == "expense" ? "bg-gray-100" : "bg-blue-100"
 								}`}
 							>
 								{activityItem.type === "expense" && (
@@ -113,12 +90,8 @@ const ActivityFeed = () => {
 							<div className="flex-auto rounded p-2 px-3 ">
 								<div className="flex flex-row w-full justify-between text-xs h-full">
 									<div className="space-y-1 flex flex-col h-full justify-between">
-										<div className="font-medium">
-											{activityItem.name}
-										</div>
-										<div className="text-gray-400">
-											{activityItem.date}
-										</div>
+										<div className="font-medium">{activityItem.name}</div>
+										<div className="text-gray-400">{activityItem.date}</div>
 									</div>
 									<div className="flex flex-col items-end space-y-2 ">
 										<div
@@ -128,22 +101,12 @@ const ActivityFeed = () => {
 													: "text-blue-600 bg-blue-100 px-3 py-1 rounded"
 											}`}
 										>
-											{activityItem.type ===
-												"expense" && <div>-</div>}
-											{activityItem.type ===
-												"revenue" && <div>+</div>}
-											<div>
-												{currency.format(
-													Math.abs(
-														activityItem.amount
-													)
-												)}
-											</div>
+											{activityItem.type === "expense" && <div>-</div>}
+											{activityItem.type === "revenue" && <div>+</div>}
+											<div>{currency.format(Math.abs(activityItem.amount))}</div>
 										</div>
 										<div className="text-gray-400">
-											{Number(
-												activityItem.balance
-											).toLocaleString("en-US", {
+											{Number(activityItem.balance).toLocaleString("en-US", {
 												style: "currency",
 												currency: "USD",
 											})}
@@ -292,22 +255,16 @@ const HealthStats = ({ type = "revenue" }) => {
 	return (
 		<div className="bg-white divide-y rounded">
 			<div className="border-b border-gray-200 pb-3 px-5">
-				<h3 className="text-base font-semibold leading-6 text-gray-900">
-					How you’re doing
-				</h3>
+				<h3 className="text-base font-semibold leading-6 text-gray-900">How you’re doing</h3>
 			</div>
 
 			{stats.map((item) => (
 				<div key={item.name} className="px-4 py-3 sm:p-6">
-					<div className="text-sm font-normal text-gray-900">
-						{item.name}
-					</div>
+					<div className="text-sm font-normal text-gray-900">{item.name}</div>
 					<div className="mt-1 flex flex-row justify-between">
 						<div className="flex items-baseline text-xl font-semibold text-blue-600">
 							{item.stat}
-							<span className="ml-2 text-sm font-medium text-gray-500">
-								from {item.previousStat}
-							</span>
+							<span className="ml-2 text-sm font-medium text-gray-500">from {item.previousStat}</span>
 						</div>
 
 						<div
@@ -346,11 +303,7 @@ const RevenueChart = () => {
 
 	let total_revenue = sum(monthly_revenues);
 
-	let {
-		income = 12,
-		expenses = 12,
-		revenues = 12,
-	} = use_client_search_params(search);
+	let { income = 12, expenses = 12, revenues = 12 } = use_client_search_params(search);
 
 	let use_chart_date_link = (key, value) => {
 		let search_params = { income, expenses, revenues };
@@ -366,33 +319,24 @@ const RevenueChart = () => {
 
 	return (
 		<div className="flex flex-col w-full h-full">
-			<div className="px-5 pt-5 text-base font-semibold leading-6 text-gray-900">
-				Revenue
-			</div>
+			<div className="px-5 pt-5 text-base font-semibold leading-6 text-gray-900">Revenue</div>
 			<div className="flex flex-col w-full border-t my-3"></div>
 
 			<div className="flex flex-row justify-between px-5">
 				<div className="flex flex-col mb-3 space-y-2 my-2">
 					<div className="text-gray-700">Total revenue</div>
-					<div className="text-3xl">
-						{currency.format(total_revenue)}
-					</div>
+					<div className="text-3xl">{currency.format(total_revenue)}</div>
 				</div>
 			</div>
 
 			<div className="flex flex-col w-full h-[250px] p-3 overflow-hidden">
-				<Bar
-					options={options}
-					data={revenue_data(month_labels, monthly_revenues)}
-				/>
+				<Bar options={options} data={revenue_data(month_labels, monthly_revenues)} />
 			</div>
 
 			<div className="flex flex-row justify-center gap-x-5 py-6 text-sm">
 				<Link
 					className={`flex flex-col  px-3 rounded-full cursor-pointer ${
-						income == 1
-							? "bg-blue-600 text-white"
-							: "hover:bg-gray-100 text-gray-600"
+						income == 1 ? "bg-blue-600 text-white" : "hover:bg-gray-100 text-gray-600"
 					}`}
 					to={use_chart_date_link("income", 1)}
 				>
@@ -400,9 +344,7 @@ const RevenueChart = () => {
 				</Link>
 				<Link
 					className={`flex flex-col  px-3 rounded-full cursor-pointer ${
-						income == 3
-							? "bg-blue-600 text-white"
-							: "hover:bg-gray-100 text-gray-600"
+						income == 3 ? "bg-blue-600 text-white" : "hover:bg-gray-100 text-gray-600"
 					}`}
 					to={use_chart_date_link("income", 3)}
 				>
@@ -410,9 +352,7 @@ const RevenueChart = () => {
 				</Link>
 				<Link
 					className={`flex flex-col  px-3 rounded-full cursor-pointer ${
-						income == 6
-							? "bg-blue-600 text-white"
-							: "hover:bg-gray-100 text-gray-600"
+						income == 6 ? "bg-blue-600 text-white" : "hover:bg-gray-100 text-gray-600"
 					}`}
 					to={use_chart_date_link("income", 6)}
 				>
@@ -420,9 +360,7 @@ const RevenueChart = () => {
 				</Link>
 				<Link
 					className={`flex flex-col  px-3 rounded-full cursor-pointer ${
-						income == 12
-							? "bg-blue-600 text-white"
-							: "hover:bg-gray-100 text-gray-600"
+						income == 12 ? "bg-blue-600 text-white" : "hover:bg-gray-100 text-gray-600"
 					}`}
 					to={use_chart_date_link("income", 12)}
 				>
@@ -444,11 +382,7 @@ const ExpensesChart = () => {
 
 	let total_expenses = sum(monthly_expenses);
 
-	let {
-		income = 12,
-		expenses = 12,
-		revenues = 12,
-	} = use_client_search_params(search);
+	let { income = 12, expenses = 12, revenues = 12 } = use_client_search_params(search);
 
 	let use_chart_date_link = (key, value) => {
 		let search_params = { income, expenses, revenues };
@@ -464,33 +398,24 @@ const ExpensesChart = () => {
 
 	return (
 		<div className="flex flex-col w-full h-full">
-			<div className="px-5 pt-5 text-base font-semibold leading-6 text-gray-900">
-				Expenses
-			</div>
+			<div className="px-5 pt-5 text-base font-semibold leading-6 text-gray-900">Expenses</div>
 			<div className="flex flex-col w-full border-t my-3"></div>
 
 			<div className="flex flex-row justify-between px-5">
 				<div className="flex flex-col mb-3 space-y-2 my-2">
 					<div className="text-gray-700">Total spending</div>
-					<div className="text-3xl">
-						{currency.format(total_expenses)}
-					</div>
+					<div className="text-3xl">{currency.format(total_expenses)}</div>
 				</div>
 			</div>
 
 			<div className="flex flex-col w-full h-[250px] p-3 overflow-hidden">
-				<Bar
-					options={options}
-					data={expenses_data(month_labels, monthly_expenses)}
-				/>
+				<Bar options={options} data={expenses_data(month_labels, monthly_expenses)} />
 			</div>
 
 			<div className="flex flex-row justify-center gap-x-5 py-6 text-sm">
 				<Link
 					className={`flex flex-col  px-3 rounded-full cursor-pointer ${
-						income == 1
-							? "bg-blue-600 text-white"
-							: "hover:bg-gray-100 text-gray-600"
+						income == 1 ? "bg-blue-600 text-white" : "hover:bg-gray-100 text-gray-600"
 					}`}
 					to={use_chart_date_link("income", 1)}
 				>
@@ -498,9 +423,7 @@ const ExpensesChart = () => {
 				</Link>
 				<Link
 					className={`flex flex-col  px-3 rounded-full cursor-pointer ${
-						income == 3
-							? "bg-blue-600 text-white"
-							: "hover:bg-gray-100 text-gray-600"
+						income == 3 ? "bg-blue-600 text-white" : "hover:bg-gray-100 text-gray-600"
 					}`}
 					to={use_chart_date_link("income", 3)}
 				>
@@ -508,9 +431,7 @@ const ExpensesChart = () => {
 				</Link>
 				<Link
 					className={`flex flex-col  px-3 rounded-full cursor-pointer ${
-						income == 6
-							? "bg-blue-600 text-white"
-							: "hover:bg-gray-100 text-gray-600"
+						income == 6 ? "bg-blue-600 text-white" : "hover:bg-gray-100 text-gray-600"
 					}`}
 					to={use_chart_date_link("income", 6)}
 				>
@@ -518,9 +439,7 @@ const ExpensesChart = () => {
 				</Link>
 				<Link
 					className={`flex flex-col  px-3 rounded-full cursor-pointer ${
-						income == 12
-							? "bg-blue-600 text-white"
-							: "hover:bg-gray-100 text-gray-600"
+						income == 12 ? "bg-blue-600 text-white" : "hover:bg-gray-100 text-gray-600"
 					}`}
 					to={use_chart_date_link("income", 12)}
 				>
@@ -537,17 +456,9 @@ const ExpensesChart = () => {
 
 const Stats = () => {
 	let { financials = {} } = useLoaderData();
-	let {
-		annual_revenue = 0,
-		average_daily_balance = 0,
-		num_of_negative_balance_days = 0,
-	} = financials;
+	let { annual_revenue = 0, average_daily_balance = 0, num_of_negative_balance_days = 0 } = financials;
 
-	let stats = [
-		annual_revenue,
-		average_daily_balance,
-		num_of_negative_balance_days,
-	];
+	let stats = [annual_revenue, average_daily_balance, num_of_negative_balance_days];
 
 	return (
 		<div className="flex flex-wrap w-full rounded-lg gap-x-3 gap-y-3 justify-between">
@@ -556,14 +467,10 @@ const Stats = () => {
 					key={index}
 					className="flex flex-col w-full md:w-[48%] lg:w-[32%] justify-between gap-x-4 gap-y-2 bg-white px-4 py-10 border rounded-lg"
 				>
-					<div className="text-sm font-medium leading-6 text-gray-500">
-						{stat.name}
-					</div>
+					<div className="text-sm font-medium leading-6 text-gray-500">{stat.name}</div>
 					<div
 						className={classNames(
-							stat.changeType === "negative"
-								? "text-rose-600"
-								: "text-gray-700",
+							stat.changeType === "negative" ? "text-rose-600" : "text-gray-700",
 							"text-xs font-medium"
 						)}
 					>
@@ -581,18 +488,16 @@ const Stats = () => {
 const FinancialHealthEvaluationHeading = () => {
 	return (
 		<div className="flex flex-col">
-			<h3 className="text-base font-semibold leading-6 text-gray-900">
-				Financial Health Evaluation
-			</h3>
+			<h3 className="text-base font-semibold leading-6 text-gray-900">Financial Health Evaluation</h3>
 			<p className="mt-1 text-sm text-gray-500">
-				The 6 key data points lenders may review in their evaluation of
-				your business:
+				The 6 key data points lenders may review in their evaluation of your business:
 			</p>
 		</div>
 	);
 };
 
 export default function Cashflow() {
+	return <div>cashflow</div>;
 	let { financials = {} } = useLoaderData();
 	let set_financials = useCashflowStore((state) => state.set_state);
 
@@ -630,9 +535,7 @@ export default function Cashflow() {
 				<div className="flex flex-col w-full h-full rounded bg-white">
 					<div className="flex flex-row py-4 px-5 justify-between w-full items-center">
 						<div>Recent transactions</div>
-						<div className="text-blue-500 text-sm cursor-pointer">
-							See all
-						</div>
+						<div className="text-blue-500 text-sm cursor-pointer">See all</div>
 					</div>
 					<div className="flex flex-col w-full border-t"></div>
 					<div className="flex flex-col p-5 overflow-scroll scrollbar-none">
