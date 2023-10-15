@@ -71,7 +71,7 @@ export const loader = async ({ request }) => {
 	// console.log(accounts);
 
 	let finance = new Finance(entity_id, group_id);
-	let response = finance.recent_activty().fold;
+	let response = finance.annual_revenue();
 
 	// console.log("plaid_transactions");
 	// console.log(plaid_transactions);
