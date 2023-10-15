@@ -52,37 +52,36 @@ import { get_balances } from "~/api/plaid.server";
 import axios from "axios";
 import { get_session_entity_id } from "~/utils/auth.server";
 import Plaid from "~/api/client/plaid";
-import { json } from "@remix-run/node";
+import Finance from "~/api/client/Finance";
 
 export const loader = async ({ request }) => {
 	console.log("cashflow_loader");
 
-	let group_id = get_group_id(request.url);
-
-	let plaid = new Plaid(group_id);
-	let res = await plaid.transactions();
-
-	console.log("res_____");
-	console.log(res);
-
-	res.pipe(
-		tap(() => console.log("_plaid_res_")),
-		tap(inspect)
-	).subscribe();
-
-	return {};
-
 	let { origin } = new URL(request.url);
 	let { income: income_start_month = 12 } = use_search_params(request);
 	let entity_id = await get_session_entity_id(request);
+	let group_id = get_group_id(request.url);
 
 	let { data: accounts } = await axios({
 		method: "get",
 		url: `${origin}/financial/api/accounts/resource/e/${entity_id}/g/${group_id}`,
 	});
 
-	console.log("accounts");
-	console.log(accounts);
+	// console.log("accounts______");
+	// console.log(accounts);
+
+	let finance = new Finance(entity_id, group_id);
+	let response = finance.recent_activty().fold;
+
+	// console.log("plaid_transactions");
+	// console.log(plaid_transactions);
+
+	response
+		.pipe(
+			tap(() => console.log("plaid_res")),
+			tap(inspect)
+		)
+		.subscribe();
 
 	if (isEmpty(accounts)) {
 		return {};
@@ -120,9 +119,6 @@ export const loader = async ({ request }) => {
 		// cursors: trim([start_cursor]),
 		// limit,
 	});
-
-	console.log("transactions");
-	console.log(transactions);
 
 	let $transactions = of(transactions);
 

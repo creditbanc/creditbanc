@@ -13,20 +13,9 @@ const get_plaid_accounts = async ({ access_token }) => {
 		numbers: { ach, bacs, eft, international },
 	} = auth_accounts;
 
-	let all_accounts = [
-		...accounts,
-		...identities,
-		...ach,
-		...bacs,
-		...eft,
-		...international,
-	];
+	let all_accounts = [...accounts, ...identities, ...ach, ...bacs, ...eft, ...international];
 
-	let accounts_payload = pipe(
-		groupBy(prop("account_id")),
-		map(mergeAll),
-		values
-	)(all_accounts);
+	let accounts_payload = pipe(groupBy(prop("account_id")), map(mergeAll), values)(all_accounts);
 
 	return accounts_payload;
 };
@@ -37,11 +26,7 @@ const set_plaid_account = async (account) => {
 	return account;
 };
 
-export const set_plaid_accounts = async ({
-	access_token,
-	entity_id,
-	group_id,
-}) => {
+export const set_plaid_accounts = async ({ access_token, entity_id, group_id }) => {
 	let accounts = await get_plaid_accounts({ access_token });
 
 	await Promise.all(
@@ -80,7 +65,11 @@ export const loader = async ({ request }) => {
 
 	let accounts = await get_plaid_accounts_from_db(group_id);
 
+	console.log("get_plaid_accounts_from_db");
+	console.log(accounts);
+
 	if (isEmpty(accounts)) {
+		// return [];
 		let plaid_credentials = await get_doc(["plaid_credentials", group_id]);
 		let { access_token } = plaid_credentials;
 

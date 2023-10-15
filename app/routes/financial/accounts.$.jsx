@@ -29,15 +29,7 @@ import {
 } from "~/utils/helpers";
 import { useEffect, useState, Fragment } from "react";
 import { get_collection, get_doc, set_doc } from "~/utils/firebase";
-import {
-	Link,
-	useActionData,
-	useFetcher,
-	useLoaderData,
-	useLocation,
-	useNavigate,
-	useSubmit,
-} from "@remix-run/react";
+import { Link, useActionData, useFetcher, useLoaderData, useLocation, useNavigate, useSubmit } from "@remix-run/react";
 import {
 	prop,
 	pipe,
@@ -93,14 +85,12 @@ ChartJS.register(ArcElement, Tooltip, Legend);
 export const useAccountStore = create((set) => ({
 	account: {},
 	is_loading: false,
-	set_account: (path, value) =>
-		set((state) => pipe(mod(...path)(() => value))(state)),
+	set_account: (path, value) => set((state) => pipe(mod(...path)(() => value))(state)),
 }));
 
 export const useAccounstStore = create((set) => ({
 	accounts: [],
-	set_accounts: (path, value) =>
-		set((state) => pipe(mod(...path)(() => value))(state)),
+	set_accounts: (path, value) => set((state) => pipe(mod(...path)(() => value))(state)),
 }));
 
 export const loader = async ({ request }) => {
@@ -108,22 +98,26 @@ export const loader = async ({ request }) => {
 	let entity_id = await get_session_entity_id(request);
 	let group_id = get_group_id(request.url);
 
-	let is_authorized = await is_authorized_f(
-		entity_id,
-		group_id,
-		"accounts",
-		"read"
-	);
+	// let is_authorized = await is_authorized_f(
+	// 	entity_id,
+	// 	group_id,
+	// 	"accounts",
+	// 	"read"
+	// );
 
-	if (!is_authorized) {
-		return redirect(`/home/resource/e/${entity_id}/g/${group_id}`);
-	}
+	// if (!is_authorized) {
+	// 	return redirect(`/home/resource/e/${entity_id}/g/${group_id}`);
+	// }
 
 	let plaid_credentials = await get_doc(["plaid_credentials", group_id]);
+
+	console.log("plaid_credentials");
+	console.log(plaid_credentials);
 
 	if (isEmpty(plaid_credentials)) {
 		console.log("origin");
 		console.log(origin);
+
 		let config = {
 			method: "post",
 			maxBodyLength: Infinity,
@@ -131,6 +125,10 @@ export const loader = async ({ request }) => {
 		};
 
 		let link_token_response = await axios(config);
+
+		console.log("link_token_response");
+		console.log(link_token_response.data);
+
 		let { data: link_token = "" } = link_token_response;
 		return { link_token };
 	} else {
@@ -171,9 +169,7 @@ const AccountActionsDropdown = ({ document }) => {
 									to={`/financial/transactions`}
 									// onClick={onDownloadFileClick}
 									className={classNames(
-										active
-											? "bg-gray-100 text-gray-900"
-											: "text-gray-700",
+										active ? "bg-gray-100 text-gray-900" : "text-gray-700",
 										"flex flex-row px-4 py-2 text-sm cursor-pointer items-center space-x-3"
 									)}
 								>
@@ -189,9 +185,7 @@ const AccountActionsDropdown = ({ document }) => {
 								<div
 									// onClick={onEditFileClick}
 									className={classNames(
-										active
-											? "bg-gray-100 text-gray-900"
-											: "text-gray-700",
+										active ? "bg-gray-100 text-gray-900" : "text-gray-700",
 										"flex flex-row px-4 py-2 text-sm cursor-pointer items-center space-x-3"
 									)}
 								>
@@ -212,8 +206,7 @@ const AccountActionsDropdown = ({ document }) => {
 const TableRow = ({ account }) => {
 	let selected_account = useAccountStore((state) => state.account);
 	const set_account = useAccountStore((state) => state.set_account);
-	const [is_account_number_visible, set_is_account_number_visible] =
-		useState(false);
+	const [is_account_number_visible, set_is_account_number_visible] = useState(false);
 
 	const onSelectAccount = () => {
 		if (selected_account.account_id !== account.account_id) {
@@ -257,22 +250,14 @@ const TableRow = ({ account }) => {
 							className="bg-transparent w-[130px] border-none p-0 cursor-default focus:ring-0 outline-none"
 						></input>
 					)}
-					{is_account_number_visible && (
-						<div className="w-[130px]">{account.account}</div>
-					)}
+					{is_account_number_visible && <div className="w-[130px]">{account.account}</div>}
 					<div>
 						{is_account_number_visible && (
-							<EyeSlashIcon
-								className="h-5 w-5 text-gray-400"
-								onClick={onToggleAccountNumberVisibility}
-							/>
+							<EyeSlashIcon className="h-5 w-5 text-gray-400" onClick={onToggleAccountNumberVisibility} />
 						)}
 
 						{!is_account_number_visible && (
-							<EyeIcon
-								className="h-5 w-5 text-gray-400"
-								onClick={onToggleAccountNumberVisibility}
-							/>
+							<EyeIcon className="h-5 w-5 text-gray-400" onClick={onToggleAccountNumberVisibility} />
 						)}
 					</div>
 				</div>
@@ -284,9 +269,7 @@ const TableRow = ({ account }) => {
 			<div className="flex flex-row lg:flex-1 items-center justify-between pt-2 lg:pt-2">
 				<div className="lg:hidden">Balance:</div>
 				<div className="flex flex-row">
-					<div className="flex flex-col lg:w-[200px]">
-						{currency.format(account.balances.available)}
-					</div>
+					<div className="flex flex-col lg:w-[200px]">{currency.format(account.balances.available)}</div>
 					<div className="hidden lg:flex flex-col w-[50px] ">
 						<AccountActionsDropdown />
 					</div>
@@ -358,6 +341,8 @@ const balances_data = (daily_balances) => ({
 export default function Accounts() {
 	let { pathname } = useLocation();
 	const { link_token, accounts: accounts_data, balances } = useLoaderData();
+	console.log("link_token");
+	console.log(link_token);
 	let has_credentials = link_token == null;
 	const accounts = useAccounstStore((state) => state.accounts);
 	const set_accounts = useAccounstStore((state) => state.set_accounts);
@@ -433,9 +418,7 @@ export default function Accounts() {
 
 		let account_balance = pipe(get("balances", "available"))(account);
 
-		let $transactions = from(
-			get_account_transactions(account.account_id)
-		).pipe(
+		let $transactions = from(get_account_transactions(account.account_id)).pipe(
 			rxmap((value) => {
 				console.log("rxmap");
 				if (value == "four") {
@@ -487,8 +470,7 @@ export default function Accounts() {
 
 					let last_transaction = last(curr);
 
-					next.balance =
-						last_transaction.balance + last_transaction.amount;
+					next.balance = last_transaction.balance + last_transaction.amount;
 
 					let payload = [...curr, next];
 
@@ -515,20 +497,13 @@ export default function Accounts() {
 					sortBy(prop("date")),
 					reverse,
 					take(30),
-					mod(all)(
-						pipe(
-							pick(["name", "date", "amount"]),
-							with_transaction_type
-						)
-					),
+					mod(all)(pipe(pick(["name", "date", "amount"]), with_transaction_type)),
 					with_daily_balance(account_balance)
 				)
 			)
 		);
 
-		let $balances = $recent_activity.pipe(
-			rxmap(pipe(mod(all)(pick(["balance", "date"])), reverse))
-		);
+		let $balances = $recent_activity.pipe(rxmap(pipe(mod(all)(pick(["balance", "date"])), reverse)));
 
 		let daily_balances = await lastValueFrom($balances);
 
@@ -567,9 +542,7 @@ export default function Accounts() {
 			<div className="flex flex-col w-full lg:w-[70%] h-full bg-white rounded p-5 overflow-y-scroll scrollbar-none">
 				<div className="border-b border-gray-200 pb-3 flex flex-row justify-between mb-3">
 					<div>
-						<h3 className="mt-2 text-base font-semibold leading-6 text-gray-900">
-							Accounts
-						</h3>
+						<h3 className="mt-2 text-base font-semibold leading-6 text-gray-900">Accounts</h3>
 					</div>
 					<div>
 						{!has_credentials && (
@@ -595,19 +568,13 @@ export default function Accounts() {
 				<div className="flex flex-row justify-between">
 					<div className="flex flex-col mb-7 space-y-2 my-2">
 						<div className="text-gray-700">Total Balance</div>
-						<div className="text-4xl">
-							{currency.format(total_balance)}
-						</div>
+						<div className="text-4xl">{currency.format(total_balance)}</div>
 					</div>
 				</div>
 				<div className="hidden lg:flex flex-row text-sm border-b pb-3 text-gray-400">
 					<div className="flex flex-col w-[300px]">Account</div>
-					<div className="flex flex-col w-[250px]">
-						Account number
-					</div>
-					<div className="flex flex-col w-[200px]">
-						Routing number
-					</div>
+					<div className="flex flex-col w-[250px]">Account number</div>
+					<div className="flex flex-col w-[200px]">Routing number</div>
 					<div className="flex flex-row flex-1 justify-end">
 						<div className="flex flex-col w-[200px]">Balance</div>
 						<div className="flex flex-col w-[50px]"></div>
@@ -617,16 +584,8 @@ export default function Accounts() {
 					<div className="flex flex-col w-full pb-3 lg:pb-0 gap-y-5 lg:gap-y-0 lg:last-of-type:border-b">
 						{pipe(
 							mapIndexed((account, index) => (
-								<div
-									key={index}
-									onClick={(e) =>
-										on_account_click(account, e)
-									}
-								>
-									<TableRow
-										key={account.account_id}
-										account={account}
-									/>
+								<div key={index} onClick={(e) => on_account_click(account, e)}>
+									<TableRow key={account.account_id} account={account} />
 								</div>
 							))
 						)(accounts)}
@@ -655,9 +614,7 @@ export default function Accounts() {
 								<div>
 									<span className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-gray-500">
 										<span className="text-lg font-medium leading-none text-white">
-											{account?.official_name
-												?.charAt(0)
-												.toUpperCase()}
+											{account?.official_name?.charAt(0).toUpperCase()}
 										</span>
 									</span>
 								</div>
@@ -683,28 +640,17 @@ export default function Accounts() {
 						<div className="flex flex-row px-5 pb-5">
 							<div className="flex flex-col w-1/2 text-sm space-y-1">
 								<div className="text-gray-400">Available</div>
-								<div className="text-lg">
-									{currency.format(
-										account?.balances?.available || 0
-									)}
-								</div>
+								<div className="text-lg">{currency.format(account?.balances?.available || 0)}</div>
 							</div>
 							<div className="flex flex-col w-1/2 text-sm space-y-1">
 								<div className="text-gray-400">Current</div>
-								<div className="text-lg">
-									{currency.format(
-										account?.balances?.current || 0
-									)}
-								</div>
+								<div className="text-lg">{currency.format(account?.balances?.current || 0)}</div>
 							</div>
 						</div>
 
 						{account?.daily_balances !== undefined && (
 							<div className="flex flex-col w-[calc(100%+11px)] h-[150px] -ml-[5px] -mb-[5px]">
-								<Line
-									options={options}
-									data={balances_data(account.daily_balances)}
-								/>
+								<Line options={options} data={balances_data(account.daily_balances)} />
 							</div>
 						)}
 
@@ -717,16 +663,11 @@ export default function Accounts() {
 									defaultTo([]),
 									flatten,
 									mapIndexed((phone, index) => (
-										<div
-											className="flex flex-row items-center space-x-2"
-											key={index}
-										>
+										<div className="flex flex-row items-center space-x-2" key={index}>
 											<div>
 												<PhoneIcon className="h-4 w-4 text-gray-400" />
 											</div>
-											<div>
-												{formatPhoneNumber(phone.data)}
-											</div>
+											<div>{formatPhoneNumber(phone.data)}</div>
 										</div>
 									))
 								)(account)}
@@ -741,16 +682,11 @@ export default function Accounts() {
 									defaultTo([]),
 									flatten,
 									mapIndexed((email, index) => (
-										<div
-											className="flex flex-row items-center space-x-2"
-											key={index}
-										>
+										<div className="flex flex-row items-center space-x-2" key={index}>
 											<div>
 												<AtSymbolIcon className="h-4 w-4 text-gray-400" />
 											</div>
-											<div>
-												{truncate(30, email.data)}
-											</div>
+											<div>{truncate(30, email.data)}</div>
 										</div>
 									))
 								)(account)}

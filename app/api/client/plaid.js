@@ -17,8 +17,10 @@ import {
 	mergeAll,
 	map,
 	sortBy,
+	sum,
 } from "ramda";
 import moment from "moment";
+import { all } from "shades";
 
 export const configuration = new Configuration({
 	basePath: PlaidEnvironments.sandbox,
@@ -89,7 +91,13 @@ export default class Plaid {
 		return rxof(accounts_payload);
 	};
 
+	get current_balance() {
+		let accounts = from(this.accounts());
+		return accounts.pipe(concatMap(identity), rxmap(pipe(get(all, "balances", "available"), sum)));
+	}
+
 	async transactions({ months = 12 } = {}) {
+		console.log("transactions");
 		let { access_token } = await lastValueFrom(this._credentials_);
 		let start_date = moment().subtract(months, "months").format("YYYY-MM-DD");
 		let end_date = moment().format("YYYY-MM-DD");

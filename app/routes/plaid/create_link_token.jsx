@@ -15,9 +15,12 @@ export const action = async ({ request }) => {
 		client_name: "Plaid Test App",
 		products: ["auth", "transactions"],
 		language: "en",
-		redirect_uri: `${origin}/plaid/oauth`,
+		// redirect_uri: `${origin}/plaid/oauth`,
 		country_codes: ["US"],
 	};
+
+	console.log("plaid_request");
+	console.log(plaid_request);
 
 	try {
 		const response = await PlaidClient.linkTokenCreate(plaid_request);

@@ -45,7 +45,6 @@ export const loader = async ({ request }) => {
 	// console.log("cashflow_api_response");
 	// console.log(cashflow_api_response);
 
-	return {};
 	let { data: financials } = cashflow_api_response;
 
 	// console.log("financials");
@@ -497,7 +496,6 @@ const FinancialHealthEvaluationHeading = () => {
 };
 
 export default function Cashflow() {
-	return <div>cashflow</div>;
 	let { financials = {} } = useLoaderData();
 	let set_financials = useCashflowStore((state) => state.set_state);
 
