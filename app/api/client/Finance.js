@@ -23,6 +23,7 @@ import {
 	descend,
 	ascend,
 	length,
+	isEmpty,
 } from "ramda";
 import { set_doc, get_doc, get_collection } from "~/utils/firebase";
 import { forkJoin, from, merge, of as rxof, throwError, zip as rxzip } from "rxjs";
@@ -87,6 +88,10 @@ const transactions_by_month = curry((year, month, transactions) => {
 
 const with_daily_balance = curry((account_balance, transactions) => {
 	console.log("with_daily_balance");
+	// console.log(account_balance);
+	// console.log(transactions);
+
+	if (isEmpty(transactions)) return transactions;
 
 	return pipe(
 		jsreduce((curr, next, index) => {
@@ -447,7 +452,7 @@ export default class Finance {
 	}
 
 	get highest_revenue() {
-		this.response = this._monthly_revenues_(this.month).pipe(
+		this.response = this._monthly_revenues_(this.months).pipe(
 			rxmap(
 				pipe(takeLast(6), sort(descend(identity)), take(2), ([curr, prev]) => {
 					let change = percentage_change(prev, curr);
@@ -470,7 +475,7 @@ export default class Finance {
 	}
 
 	get average_daily_balance() {
-		let start_date = moment().subtract(this.month, "months").format("YYYY-MM-DD");
+		let start_date = moment().subtract(this.months, "months").format("YYYY-MM-DD");
 		let end_date = moment().format("YYYY-MM-DD");
 
 		let plaid = new Plaid(this.group_id);
@@ -502,8 +507,6 @@ export default class Finance {
 					};
 				})
 			),
-			tap(() => console.log("___average_daily_balance____")),
-			tap(inspect),
 			rxmap((average_daily_balance) => ({ average_daily_balance })),
 			catchError(catch_with_default({ average_daily_balance: {} }, "average_daily_balance")),
 			concatMap(merge_with_current(this.response))
@@ -513,7 +516,7 @@ export default class Finance {
 	}
 
 	get num_of_negative_balance_days() {
-		let start_date = moment().subtract(this.month, "months").format("YYYY-MM-DD");
+		let start_date = moment().subtract(this.months, "months").format("YYYY-MM-DD");
 		let end_date = moment().format("YYYY-MM-DD");
 
 		let plaid = new Plaid(this.group_id);
@@ -559,7 +562,7 @@ export default class Finance {
 	}
 
 	get annual_revenue() {
-		let start_date = moment().subtract(this.month, "months").format("YYYY-MM-DD");
+		let start_date = moment().subtract(this.months, "months").format("YYYY-MM-DD");
 		let end_date = moment().format("YYYY-MM-DD");
 
 		this.response = this._transactions_.pipe(

@@ -24,6 +24,9 @@ export const loader = async ({ request }) => {
 	// console.log("accounts______");
 	// console.log(accounts);
 
+	let plaid = new Plaid(group_id);
+	let current_balance = plaid.current_balance;
+
 	let finance = new Finance(entity_id, group_id);
 
 	if (isEmpty(accounts)) {
@@ -48,13 +51,13 @@ export const loader = async ({ request }) => {
 	};
 
 	let response =
-		finance.monthly_expenses.monthly_revenues.monthly_transactions.monthly_incomes.recent_activity().incomes_change
-			.expenses_change.revenues_change.highest_income.highest_expense.highest_revenue.average_daily_balance
+		finance.average_daily_balance.monthly_expenses.monthly_revenues.monthly_transactions.monthly_incomes.recent_activity()
+			.incomes_change.expenses_change.revenues_change.highest_income.highest_expense.highest_revenue
 			.num_of_negative_balance_days.annual_revenue.fold;
 
 	let data = response.pipe(
-		tap(() => console.log("plaid_res")),
-		tap(console.log),
+		// tap(() => console.log("plaid_res")),
+		// tap(console.log),
 		rxmap((response) => ({
 			...response,
 			stats_data: {
