@@ -69,11 +69,11 @@ const with_transaction_type = (transaction) => {
 	};
 };
 
-let transactions_by_date = curry((start_date, end_date, transactions) => {
+const transactions_by_date = curry((start_date, end_date, transactions) => {
 	return pipe(filter({ date: (date) => date > start_date && date < end_date }))(transactions);
 });
 
-let transactions_by_month = curry((year, month, transactions) => {
+const transactions_by_month = curry((year, month, transactions) => {
 	let days_in_month = moment(`${moment().year()}-${month}`, "YYYY-MM").daysInMonth();
 
 	return pipe(
@@ -85,7 +85,7 @@ let transactions_by_month = curry((year, month, transactions) => {
 	)(transactions);
 });
 
-let with_daily_balance = curry((account_balance, transactions) => {
+const with_daily_balance = curry((account_balance, transactions) => {
 	console.log("with_daily_balance");
 
 	return pipe(
@@ -110,7 +110,7 @@ let with_daily_balance = curry((account_balance, transactions) => {
 	)(transactions);
 });
 
-let start_date_of_months = (start_date, end_date) => {
+const start_date_of_months = (start_date, end_date) => {
 	let months = [];
 	start_date = moment(start_date);
 	end_date = moment(end_date);
@@ -134,14 +134,15 @@ const change_type = (change) => {
 	return change > 0 ? "increase" : "decrease";
 };
 
-let average = (arr) => {
+const average = (arr) => {
 	return sum(arr) / arr.length;
 };
 
 export default class Finance {
-	constructor(entity_id, group_id) {
+	constructor(entity_id, group_id, months = 12) {
 		this.entity_id = entity_id;
 		this.group_id = group_id;
+		this.months = months;
 
 		this.response = rxof({});
 	}
@@ -194,7 +195,7 @@ export default class Finance {
 		return this;
 	}
 
-	recent_activty = (num_of_transactions = 20) => {
+	recent_activity = (num_of_transactions = 20) => {
 		let plaid = new Plaid(this.group_id);
 		let current_balance = plaid.current_balance;
 
@@ -213,12 +214,11 @@ export default class Finance {
 					current_balance,
 				})
 			),
-
 			rxmap(({ transactions, current_balance }) => with_daily_balance(current_balance, transactions)),
-			tap(() => console.log("___recent_activty____")),
-			tap(inspect),
-			rxmap((recent_activty) => ({ recent_activty })),
-			catchError(catch_with_default({ recent_activty: [] }, "recent_activty")),
+			// tap(() => console.log("___recent_activity____")),
+			// tap(inspect),
+			rxmap((recent_activity) => ({ recent_activity })),
+			catchError(catch_with_default({ recent_activity: [] }, "recent_activity")),
 			concatMap(merge_with_current(this.response))
 		);
 
@@ -241,8 +241,8 @@ export default class Finance {
 		}
 	}
 
-	_monthly_transactions_(months = 12) {
-		let start_date = moment().subtract(months, "months").format("YYYY-MM-DD");
+	_monthly_transactions_() {
+		let start_date = moment().subtract(this.months, "months").format("YYYY-MM-DD");
 		let end_date = moment().format("YYYY-MM-DD");
 
 		return this._transactions_
@@ -260,8 +260,18 @@ export default class Finance {
 			);
 	}
 
-	_monthly_expenses_(months = 12) {
-		return this._monthly_transactions_(months).pipe(
+	get monthly_transactions() {
+		this.response = this._monthly_transactions_().pipe(
+			rxmap((monthly_transactions) => ({ monthly_transactions })),
+			catchError(catch_with_default({ monthly_transactions: [] }, "monthly_transactions")),
+			concatMap(merge_with_current(this.response))
+		);
+
+		return this;
+	}
+
+	_monthly_expenses_() {
+		return this._monthly_transactions_(this.months).pipe(
 			concatMap(identity),
 			concatMap(this._expenses_),
 			rxmap(pipe(mod(all)(pick(["amount"])))),
@@ -270,8 +280,18 @@ export default class Finance {
 		);
 	}
 
-	_monthly_revenues_(months = 12) {
-		return this._monthly_transactions_(months).pipe(
+	get monthly_expenses() {
+		this.response = this._monthly_expenses_().pipe(
+			rxmap((monthly_expenses) => ({ monthly_expenses })),
+			catchError(catch_with_default({ monthly_expenses: [] }, "monthly_expenses")),
+			concatMap(merge_with_current(this.response))
+		);
+
+		return this;
+	}
+
+	_monthly_revenues_() {
+		return this._monthly_transactions_(this.months).pipe(
 			concatMap(identity),
 			concatMap(this._revenues_),
 			rxmap(pipe(mod(all)(pick(["amount"])))),
@@ -280,8 +300,18 @@ export default class Finance {
 		);
 	}
 
-	_monthly_incomes_(months = 12) {
-		return rxzip(this._monthly_revenues_(months), this._monthly_expenses_(months)).pipe(
+	get monthly_revenues() {
+		this.response = this._monthly_revenues_().pipe(
+			rxmap((monthly_revenues) => ({ monthly_revenues })),
+			catchError(catch_with_default({ monthly_revenues: [] }, "monthly_revenues")),
+			concatMap(merge_with_current(this.response))
+		);
+
+		return this;
+	}
+
+	_monthly_incomes_() {
+		return rxzip(this._monthly_revenues_(this.months), this._monthly_expenses_(this.months)).pipe(
 			rxmap((transactions) =>
 				pipe(
 					zip,
@@ -291,8 +321,18 @@ export default class Finance {
 		);
 	}
 
-	incomes_change(months = 12) {
-		return this._monthly_incomes_(months).pipe(
+	get monthly_incomes() {
+		this.response = this._monthly_incomes_().pipe(
+			rxmap((monthly_incomes) => ({ monthly_incomes })),
+			catchError(catch_with_default({ monthly_incomes: [] }, "monthly_incomes")),
+			concatMap(merge_with_current(this.response))
+		);
+
+		return this;
+	}
+
+	get incomes_change() {
+		this.response = this._monthly_incomes_(this.months).pipe(
 			rxmap(
 				pipe(takeLast(2), ([prev, curr]) => {
 					let change = percentage_change(prev, curr);
@@ -305,12 +345,17 @@ export default class Finance {
 						changeType: change_type(change),
 					};
 				})
-			)
+			),
+			rxmap((incomes_change) => ({ incomes_change })),
+			catchError(catch_with_default({ incomes_change: {} }, "incomes_change")),
+			concatMap(merge_with_current(this.response))
 		);
+
+		return this;
 	}
 
-	expenses_change(months = 12) {
-		return this._monthly_expenses_(months).pipe(
+	get expenses_change() {
+		this.response = this._monthly_expenses_(this.months).pipe(
 			rxmap(
 				pipe(takeLast(2), ([prev, curr]) => {
 					let change = percentage_change(prev, curr);
@@ -323,12 +368,17 @@ export default class Finance {
 						changeType: change_type(change),
 					};
 				})
-			)
+			),
+			rxmap((expenses_change) => ({ expenses_change })),
+			catchError(catch_with_default({ expenses_change: {} }, "expenses_change")),
+			concatMap(merge_with_current(this.response))
 		);
+
+		return this;
 	}
 
-	revenues_change(months = 12) {
-		return this._monthly_revenues_(months).pipe(
+	get revenues_change() {
+		this.response = this._monthly_revenues_(this.months).pipe(
 			rxmap(
 				pipe(takeLast(2), ([prev, curr]) => {
 					let change = percentage_change(prev, curr);
@@ -341,12 +391,17 @@ export default class Finance {
 						changeType: change_type(change),
 					};
 				})
-			)
+			),
+			rxmap((revenues_change) => ({ revenues_change })),
+			catchError(catch_with_default({ revenues_change: {} }, "revenues_change")),
+			concatMap(merge_with_current(this.response))
 		);
+
+		return this;
 	}
 
-	highest_income(months = 12) {
-		return this._monthly_incomes_(months).pipe(
+	get highest_income() {
+		this.response = this._monthly_incomes_(this.months).pipe(
 			rxmap(
 				pipe(takeLast(6), sort(descend(identity)), take(2), ([curr, prev]) => {
 					let change = percentage_change(prev, curr);
@@ -359,12 +414,17 @@ export default class Finance {
 						changeType: change_type(change),
 					};
 				})
-			)
+			),
+			rxmap((highest_income) => ({ highest_income })),
+			catchError(catch_with_default({ highest_income: {} }, "highest_income")),
+			concatMap(merge_with_current(this.response))
 		);
+
+		return this;
 	}
 
-	highest_expense(months = 12) {
-		return this._monthly_expenses_(months).pipe(
+	get highest_expense() {
+		this.response = this._monthly_expenses_(this.months).pipe(
 			rxmap(
 				pipe(takeLast(6), sort(ascend(identity)), take(2), ([curr, prev]) => {
 					let change = percentage_change(prev, curr);
@@ -377,12 +437,17 @@ export default class Finance {
 						changeType: change_type(change),
 					};
 				})
-			)
+			),
+			rxmap((highest_expense) => ({ highest_expense })),
+			catchError(catch_with_default({ highest_expense: {} }, "highest_expense")),
+			concatMap(merge_with_current(this.response))
 		);
+
+		return this;
 	}
 
-	highest_revenue(months = 12) {
-		return this._monthly_revenues_(months).pipe(
+	get highest_revenue() {
+		this.response = this._monthly_revenues_(this.month).pipe(
 			rxmap(
 				pipe(takeLast(6), sort(descend(identity)), take(2), ([curr, prev]) => {
 					let change = percentage_change(prev, curr);
@@ -395,18 +460,23 @@ export default class Finance {
 						changeType: change_type(change),
 					};
 				})
-			)
+			),
+			rxmap((highest_revenue) => ({ highest_revenue })),
+			catchError(catch_with_default({ highest_revenue: {} }, "highest_revenue")),
+			concatMap(merge_with_current(this.response))
 		);
+
+		return this;
 	}
 
-	average_daily_balance(months = 12) {
-		let start_date = moment().subtract(months, "months").format("YYYY-MM-DD");
+	get average_daily_balance() {
+		let start_date = moment().subtract(this.month, "months").format("YYYY-MM-DD");
 		let end_date = moment().format("YYYY-MM-DD");
 
 		let plaid = new Plaid(this.group_id);
 		let current_balance = plaid.current_balance;
 
-		return this._transactions_.pipe(
+		this.response = this._transactions_.pipe(
 			rxmap(
 				pipe(
 					transactions_by_date(start_date, end_date),
@@ -422,7 +492,6 @@ export default class Finance {
 				})
 			),
 			rxmap(({ transactions, current_balance }) => with_daily_balance(current_balance, transactions)),
-
 			rxmap(
 				pipe(get(all, "balance"), average, (value) => {
 					return {
@@ -432,18 +501,25 @@ export default class Finance {
 						changeType: "negative",
 					};
 				})
-			)
+			),
+			tap(() => console.log("___average_daily_balance____")),
+			tap(inspect),
+			rxmap((average_daily_balance) => ({ average_daily_balance })),
+			catchError(catch_with_default({ average_daily_balance: {} }, "average_daily_balance")),
+			concatMap(merge_with_current(this.response))
 		);
+
+		return this;
 	}
 
-	num_of_negative_balance_days(months = 12) {
-		let start_date = moment().subtract(months, "months").format("YYYY-MM-DD");
+	get num_of_negative_balance_days() {
+		let start_date = moment().subtract(this.month, "months").format("YYYY-MM-DD");
 		let end_date = moment().format("YYYY-MM-DD");
 
 		let plaid = new Plaid(this.group_id);
 		let current_balance = plaid.current_balance;
 
-		return this._transactions_.pipe(
+		this.response = this._transactions_.pipe(
 			rxmap(
 				pipe(
 					transactions_by_date(start_date, end_date),
@@ -473,15 +549,20 @@ export default class Finance {
 						};
 					}
 				)
-			)
+			),
+			rxmap((num_of_negative_balance_days) => ({ num_of_negative_balance_days })),
+			catchError(catch_with_default({ num_of_negative_balance_days: {} }, "num_of_negative_balance_days")),
+			concatMap(merge_with_current(this.response))
 		);
+
+		return this;
 	}
 
-	annual_revenue(months = 12) {
-		let start_date = moment().subtract(months, "months").format("YYYY-MM-DD");
+	get annual_revenue() {
+		let start_date = moment().subtract(this.month, "months").format("YYYY-MM-DD");
 		let end_date = moment().format("YYYY-MM-DD");
 
-		return this._transactions_.pipe(
+		this.response = this._transactions_.pipe(
 			rxmap(
 				pipe(
 					transactions_by_date(start_date, end_date),
@@ -498,8 +579,13 @@ export default class Finance {
 						};
 					}
 				)
-			)
+			),
+			rxmap((annual_revenue) => ({ annual_revenue })),
+			catchError(catch_with_default({ annual_revenue: {} }, "annual_revenue")),
+			concatMap(merge_with_current(this.response))
 		);
+
+		return this;
 	}
 
 	get fold() {
