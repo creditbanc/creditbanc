@@ -89,6 +89,9 @@ export const signin = async (form) => {
 		queries: entity_queries,
 	});
 
+	console.log("entity_response");
+	console.log(entity_response);
+
 	let entity = pipe(head)(entity_response);
 
 	let redirect_url = `/home`;
