@@ -1,3 +1,4 @@
+import moment from "moment";
 import StripeClient from "stripe";
 let stripe_token = process.env.STRIPE;
 
@@ -50,5 +51,39 @@ export default class Stripe {
 		return subscription;
 	}
 
-	// other methods...
+	async subscribe_trial_customer(trial_price_id, price_id, customer_id) {
+		let entity_id = this.entity_id;
+
+		const subscription = await this.stripe.subscriptionSchedules.create({
+			customer: customer_id,
+			start_date: "now",
+			end_behavior: "release",
+			phases: [
+				{
+					items: [
+						{
+							price: trial_price_id,
+							quantity: 1,
+						},
+					],
+					iterations: 1,
+				},
+				{
+					items: [
+						{
+							price: price_id,
+							quantity: 1,
+						},
+					],
+					iterations: 11,
+				},
+			],
+			metadata: {
+				entity_id,
+				customer_id,
+			},
+		});
+
+		return subscription;
+	}
 }

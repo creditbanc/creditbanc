@@ -15,18 +15,43 @@ export const action = async ({ request }) => {
 	let referer = request.headers.get("Referer");
 	let plan = { plan_id: "builder", plan_name: "builder" };
 	let entity_id = await get_session_entity_id(request);
-	let card = await form_params_f(request);
+	let form = await form_params_f(request);
+	let { card, coupon_code } = form;
+	card = JSON.parse(card);
+
+	// card = {
+	// 	name: "test",
+	// 	number: "4242424242424242",
+	// 	exp_month: "12",
+	// 	exp_year: "2025",
+	// 	cvc: "123",
+	// };
+
+	// live prices
+	let trial_price_id = "price_1O29RkJlRXkfyebso7Dk5ndd";
+	let price_id = "price_1O29RkJlRXkfyebsdxMrbZB4";
+
+	// test prices
+	// let trial_price_id = "price_1O28UEJlRXkfyebs3eCEsreO";
+	// let price_id = "price_1O0erpJlRXkfyebsoSSVfo7E";
 
 	let stripe = new Stripe(entity_id);
 	let stripe_customer = await stripe.create_customer(card);
 	let { id: stripe_customer_id } = stripe_customer;
-	let price_id = "price_1O0nG5JlRXkfyebsCf8zp4sY";
-	let stripe_subscription = await stripe.subscribe_customer(price_id, stripe_customer_id);
+
+	let stripe_subscription;
+	if (coupon_code == "sag") {
+		stripe_subscription = await stripe.subscribe_trial_customer(trial_price_id, price_id, stripe_customer_id);
+	} else {
+		stripe_subscription = await stripe.subscribe_customer(price_id, stripe_customer_id);
+	}
+
 	let { id: stripe_subscription_id } = stripe_subscription;
 
 	if (stripe_subscription_id) {
 		let _subscription_ = new Subscription(entity_id);
 		let subscription = await _subscription_.create({ plan, stripe_customer_id, stripe_subscription_id });
+
 		return redirect("/home");
 	}
 
@@ -37,6 +62,7 @@ export default function Checkout() {
 	let plan_id = "builder";
 	let plan = pipe(filter({ id: plan_id }), head)(plans);
 	let card = use_stripe_store((state) => state.card);
+	let coupon_code = use_stripe_store((state) => state.coupon_code);
 
 	const submit = useSubmit();
 
@@ -44,24 +70,23 @@ export default function Checkout() {
 		console.log("onSubmit");
 		event.preventDefault();
 
-		submit(card, {
-			method: "post",
-			action: `/checkout/plans/${plan_id}` + window.location.search,
-		});
+		submit(
+			{ card: JSON.stringify(card), coupon_code },
+			{
+				method: "post",
+				action: `/checkout/plans/${plan_id}` + window.location.search,
+			}
+		);
 	};
 
 	return (
-		<div className="bg-white">
-			<div className="fixed left-0 top-0 hidden h-full w-1/2 bg-white lg:block" aria-hidden="true" />
-			<div className="fixed right-0 top-0 hidden h-full w-1/2 bg-gray-50 lg:block" aria-hidden="true" />
+		<div className="flex flex-col w-full h-full bg-white">
+			<main className="relative flex flex-row w-full h-full">
+				<div className="flex flex-col flex-1 justify-center">
+					<StripeForm onSubmit={onSubmit} plan_id={plan_id} />
+				</div>
 
-			<main className="relative mx-auto grid max-w-7xl grid-cols-1 gap-x-16 lg:grid-cols-2 lg:px-8 xl:gap-x-48">
-				<h1 className="sr-only">Order information</h1>
-
-				<section
-					aria-labelledby="summary-heading"
-					className="bg-gray-50 px-4 pb-10 pt-16 sm:px-6 lg:col-start-2 lg:row-start-1 lg:bg-transparent lg:px-0 lg:pb-16"
-				>
+				<div className="flex flex-col h-full w-[40%] bg-gray-50 pt-16">
 					<div className="mx-auto max-w-lg lg:max-w-none">
 						<h2 id="summary-heading" className="text-lg font-medium text-gray-900">
 							Order summary
@@ -78,9 +103,7 @@ export default function Checkout() {
 							))}
 						</div>
 					</div>
-				</section>
-
-				<StripeForm onSubmit={onSubmit} plan_id={plan_id} />
+				</div>
 			</main>
 		</div>
 	);

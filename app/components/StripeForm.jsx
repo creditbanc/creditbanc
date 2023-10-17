@@ -1,9 +1,11 @@
-import { head, pipe } from "ramda";
+import { useLocation } from "@remix-run/react";
+import { defaultTo, head, pipe } from "ramda";
 import { filter } from "shades";
 import { plans } from "~/data/index_plans";
-import { store } from "~/utils/helpers";
+import { currency, is_location, store } from "~/utils/helpers";
 
 export const use_stripe_store = store({
+	coupon_code: "",
 	card: {
 		name: "",
 		number: "",
@@ -13,13 +15,24 @@ export const use_stripe_store = store({
 	},
 });
 
+let coupon_codes = [
+	{
+		code: "sag",
+		discount: 48,
+	},
+];
+
 export default function StripeForm({ onSubmit, plan_id }) {
+	let { pathname } = useLocation();
+
 	let plan = pipe(filter({ id: plan_id }), head)(plans);
+	let coupon_code = use_stripe_store((state) => state.coupon_code);
 	let card = use_stripe_store((state) => state.card);
 	let set_card = use_stripe_store((state) => state.set_path);
+	let selected_coupon_code = pipe(filter({ code: coupon_code }), head, defaultTo(null))(coupon_codes);
 
 	return (
-		<form className="px-4 pb-36 pt-16 sm:px-6 lg:col-start-1 lg:row-start-1 lg:px-0 lg:pb-16">
+		<form className="flex flex-col w-full h-full px-4 pb-36 pt-16 sm:px-6 lg:px-0 lg:pb-16">
 			<div className="mx-auto max-w-lg lg:max-w-none">
 				<section aria-labelledby="payment-heading" className="">
 					<div className="flex flex-row justify-between">
@@ -120,14 +133,51 @@ export default function StripeForm({ onSubmit, plan_id }) {
 								</div>
 							</div>
 						</div>
+
+						{is_location("checkout/plans/builder", pathname) && (
+							<div className="flex flex-col w-full">
+								<label htmlFor="name-on-card" className="block text-sm font-medium text-gray-700">
+									Coupon Code
+								</label>
+								<div className="mt-1">
+									<input
+										type="text"
+										className="block w-full rounded-md h-[35px] border border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm px-3"
+										value={coupon_code}
+										onChange={(e) => set_card(["coupon_code"], e.target.value)}
+									/>
+								</div>
+							</div>
+						)}
 					</div>
 				</section>
 
-				<div className="flex flex-col w-full border-t border-gray-200 mt-10 pt-2">
-					<div className="flex flex-row w-full justify-between font-semibold">
-						<div>Total</div>
-						<div>{plan.price.monthly}</div>
-					</div>
+				<div className="flex flex-col w-full border-t border-gray-200 mt-10 pt-4">
+					{selected_coupon_code && (
+						<div className="flex flex-col w-full gap-y-3">
+							<div className="flex flex-row w-full justify-between border-[2px] border-dashed border-green-500 rounded-full h-[45px] overflow-hidden items-center">
+								<div className="flex flex-col bg-green-500 h-full justify-center px-3 text-white">
+									Coupon code applied
+								</div>
+								<div className="flex flex-col px-2">
+									{currency.format(selected_coupon_code?.discount)}
+								</div>
+							</div>
+							<div className="flex flex-row w-full justify-between font-semibold px-2">
+								<div>Total</div>
+								<div>{currency.format(plan.price.monthly - selected_coupon_code?.discount)}</div>
+							</div>
+						</div>
+					)}
+
+					{!selected_coupon_code && (
+						<div className="flex flex-col w-full gap-y-3">
+							<div className="flex flex-row w-full justify-between font-semibold px-2">
+								<div>Total</div>
+								<div>{currency.format(plan.price.monthly)}</div>
+							</div>
+						</div>
+					)}
 				</div>
 				<div className="border-gray-200 pt-6 w-full" onClick={onSubmit}>
 					<button
