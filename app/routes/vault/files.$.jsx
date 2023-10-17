@@ -148,6 +148,13 @@ const balance_sheet_folders = [
 		href: ({ group_id, entity_id }) =>
 			`/vault/files/resource/e/${entity_id}/g/${group_id}/f/documents/f/balancesheet/f/2021`,
 	},
+	{
+		parent: "balancesheet",
+		id: "balancesheet2020",
+		name: "2020",
+		href: ({ group_id, entity_id }) =>
+			`/vault/files/resource/e/${entity_id}/g/${group_id}/f/documents/f/balancesheet/f/2020`,
+	},
 ];
 
 const income_statement_folders = [
@@ -171,6 +178,13 @@ const income_statement_folders = [
 		name: "2021",
 		href: ({ group_id, entity_id }) =>
 			`/vault/files/resource/e/${entity_id}/g/${group_id}/f/documents/f/incomestatement/f/2021`,
+	},
+	{
+		parent: "incomestatement",
+		id: "incomestatement2020",
+		name: "2020",
+		href: ({ group_id, entity_id }) =>
+			`/vault/files/resource/e/${entity_id}/g/${group_id}/f/documents/f/incomestatement/f/2020`,
 	},
 ];
 
@@ -196,6 +210,13 @@ const tax_returns_folders = [
 		href: ({ group_id, entity_id }) =>
 			`/vault/files/resource/e/${entity_id}/g/${group_id}/f/documents/f/taxreturns/f/2021`,
 	},
+	{
+		parent: "taxreturns",
+		id: "taxreturns2020",
+		name: "2020",
+		href: ({ group_id, entity_id }) =>
+			`/vault/files/resource/e/${entity_id}/g/${group_id}/f/documents/f/taxreturns/f/2020`,
+	},
 ];
 
 const bank_statements_folders = [
@@ -220,30 +241,36 @@ const bank_statements_folders = [
 		href: ({ group_id, entity_id }) =>
 			`/vault/files/resource/e/${entity_id}/g/${group_id}/f/documents/f/bankstatements/f/2021`,
 	},
+	{
+		parent: "bankstatements",
+		id: "bankstatements2020",
+		name: "2020",
+		href: ({ group_id, entity_id }) =>
+			`/vault/files/resource/e/${entity_id}/g/${group_id}/f/documents/f/bankstatements/f/2020`,
+	},
 ];
 
 const corporate_documents_folders = [
 	{
 		parent: "corporatedocuments",
 		id: "corporatedocuments2023",
-		name: "2023",
-
+		name: "operating agreement",
 		href: ({ group_id, entity_id }) =>
-			`/vault/files/resource/e/${entity_id}/g/${group_id}/f/documents/f/corporatedocuments/f/2023`,
+			`/vault/files/resource/e/${entity_id}/g/${group_id}/f/documents/f/corporatedocuments/f/oa`,
 	},
 	{
 		parent: "corporatedocuments",
 		id: "corporatedocuments2022",
-		name: "2022",
+		name: "business owner id",
 		href: ({ group_id, entity_id }) =>
-			`/vault/files/resource/e/${entity_id}/g/${group_id}/f/documents/f/corporatedocuments/f/2022`,
+			`/vault/files/resource/e/${entity_id}/g/${group_id}/f/documents/f/corporatedocuments/f/boid`,
 	},
 	{
 		parent: "corporatedocuments",
-		id: "corporatedocuments2021",
+		id: "business voided check",
 		name: "2021",
 		href: ({ group_id, entity_id }) =>
-			`/vault/files/resource/e/${entity_id}/g/${group_id}/f/documents/f/corporatedocuments/f/2021`,
+			`/vault/files/resource/e/${entity_id}/g/${group_id}/f/documents/f/corporatedocuments/f/bvc`,
 	},
 ];
 
