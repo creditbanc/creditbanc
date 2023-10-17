@@ -253,22 +253,22 @@ const bank_statements_folders = [
 const corporate_documents_folders = [
 	{
 		parent: "corporatedocuments",
-		id: "corporatedocuments2023",
+		id: "oa",
 		name: "operating agreement",
 		href: ({ group_id, entity_id }) =>
 			`/vault/files/resource/e/${entity_id}/g/${group_id}/f/documents/f/corporatedocuments/f/oa`,
 	},
 	{
 		parent: "corporatedocuments",
-		id: "corporatedocuments2022",
+		id: "boid",
 		name: "business owner id",
 		href: ({ group_id, entity_id }) =>
 			`/vault/files/resource/e/${entity_id}/g/${group_id}/f/documents/f/corporatedocuments/f/boid`,
 	},
 	{
 		parent: "corporatedocuments",
-		id: "business voided check",
-		name: "2021",
+		id: "bvc",
+		name: "business voided check",
 		href: ({ group_id, entity_id }) =>
 			`/vault/files/resource/e/${entity_id}/g/${group_id}/f/documents/f/corporatedocuments/f/bvc`,
 	},
