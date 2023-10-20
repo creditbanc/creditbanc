@@ -32,12 +32,14 @@ export const loader = async ({ request }) => {
 const tabs = [
 	{
 		name: "Cashflow",
-		href: ({ entity_id, group_id }) => `/financial/cashflow/resource/e/${entity_id}/g/${group_id}`,
+		href: ({ entity_id, group_id }) =>
+			`/financial/cashflow/resource/e/${entity_id}/g/${group_id}?rand=${Math.random()}`,
 		current: (pathname) => is_location("/financial/cashflow", pathname),
 	},
 	{
 		name: "Accounts",
-		href: ({ entity_id, group_id }) => `/financial/accounts/resource/e/${entity_id}/g/${group_id}`,
+		href: ({ entity_id, group_id }) =>
+			`/financial/accounts/resource/e/${entity_id}/g/${group_id}?rand=${Math.random()}`,
 		current: (pathname) => is_location("/financial/accounts", pathname),
 	},
 	// {
@@ -139,24 +141,25 @@ const SubNav = () => {
 			</div>
 			<div className="hidden sm:flex sm:flex-row bg-white px-5 border-b border-gray-200">
 				<div className="flex flex-row justify-between w-full items-center">
-					<nav className="-mb-px flex space-x-5" aria-label="Tabs">
-						{tabs.map((tab) => (
-							<Link
-								key={tab.name}
-								to={tab.href({ entity_id, group_id })}
-								className={classNames(
-									tab.current(pathname)
-										? "border-blue-500 text-blue-600"
-										: "border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700",
-									"border-b-2 py-2 px-1 text-center text-sm cursor-pointer"
-								)}
-								aria-current={tab.current(pathname) ? "page" : undefined}
-							>
-								{tab.name}
-							</Link>
-						))}
+					<div className="-mb-px flex space-x-5" aria-label="Tabs">
+						{pipe(
+							map((tab) => (
+								<a
+									key={tab.name}
+									href={tab.href({ entity_id, group_id })}
+									className={classNames(
+										tab.current(pathname)
+											? "border-blue-500 text-blue-600"
+											: "border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700",
+										"border-b-2 py-2 px-1 text-center text-sm cursor-pointer"
+									)}
+								>
+									{tab.name}
+								</a>
+							))
+						)(tabs)}
 						<TransactionsDropdown />
-					</nav>
+					</div>
 					<div>
 						<EllipsisHorizontalIcon className="h-6 w-6 text-gray-400 cursor-pointer" />
 					</div>

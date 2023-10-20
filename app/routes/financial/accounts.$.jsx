@@ -13,7 +13,7 @@ import {
 } from "@heroicons/react/24/outline";
 import { Menu, Transition } from "@headlessui/react";
 import axios from "axios";
-import { usePlaidLink } from "react-plaid-link";
+// import { usePlaidLink } from "react-plaid-link";
 import {
 	create_axios_form,
 	currency,
@@ -78,7 +78,7 @@ import { is_authorized_f } from "~/api/auth";
 import { redirect } from "@remix-run/node";
 import { get_session_entity_id, get_user_id } from "~/utils/auth.server";
 import LoadingSpinner from "~/components/LoadingSpinner";
-import { disconnect_plaid } from "~/api/client/plaid";
+// import { disconnect_plaid } from "~/api/client/plaid";
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
@@ -136,6 +136,9 @@ export const loader = async ({ request }) => {
 			method: "get",
 			url: `${origin}/financial/api/accounts/resource/e/${entity_id}/g/${group_id}`,
 		});
+
+		console.log("____accounts____");
+		console.log(accounts);
 
 		return {
 			accounts,
@@ -341,8 +344,7 @@ const balances_data = (daily_balances) => ({
 export default function Accounts() {
 	let { pathname } = useLocation();
 	const { link_token, accounts: accounts_data, balances } = useLoaderData();
-	console.log("link_token");
-	console.log(link_token);
+
 	let has_credentials = link_token == null;
 	const accounts = useAccounstStore((state) => state.accounts);
 	const set_accounts = useAccounstStore((state) => state.set_accounts);
@@ -354,9 +356,9 @@ export default function Accounts() {
 
 	let total_balance = pipe(get(all, "balances", "available"), sum)(accounts);
 
-	useEffect(() => {
-		set_accounts(["accounts"], []);
-	}, []);
+	// useEffect(() => {
+	// 	set_accounts(["accounts"], []);
+	// }, []);
 
 	useEffect(() => {
 		if (!isEmpty(fetcher.data) && fetcher.type == "done") {
@@ -368,7 +370,7 @@ export default function Accounts() {
 		if (accounts_data && !isEmpty(accounts_data)) {
 			set_accounts(["accounts"], accounts_data);
 		}
-	}, []);
+	}, [accounts_data]);
 
 	let get_account_transactions = async (account_id) => {
 		console.log("get_account_transactions");
@@ -528,7 +530,7 @@ export default function Accounts() {
 	// }, [account.account_id]);
 
 	const onDisconnectPlaid = async () => {
-		await disconnect_plaid({ group_id });
+		// await disconnect_plaid({ group_id });
 
 		set_account(["account"], {});
 		set_accounts(["accounts"], []);
