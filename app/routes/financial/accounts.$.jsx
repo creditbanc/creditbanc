@@ -110,40 +110,11 @@ export const loader = async ({ request }) => {
 	// 	return redirect(`/home/resource/e/${entity_id}/g/${group_id}`);
 	// }
 
-	// return redirect(`/plaid/oauth/resources/e/${entity_id}/g/${group_id}`);
-
 	let finance = new Finance(entity_id, group_id);
 	let has_credentials = await lastValueFrom(finance.has_plaid_credentials);
 
-	console.log("has_credentials");
-	console.log(has_credentials);
-
-	// if (!has_credentials) {
-	// 	return { error: "no credentials" };
-	// }
-
-	console.log("plaid_credentials");
-	console.log(has_credentials);
-
 	if (!has_credentials) {
 		return redirect(`/plaid/oauth/resources/e/${entity_id}/g/${group_id}`);
-
-		// console.log("origin");
-		// console.log(origin);
-
-		// let config = {
-		// 	method: "post",
-		// 	maxBodyLength: Infinity,
-		// 	url: `${origin}/plaid/create_link_token`,
-		// };
-
-		// let link_token_response = await axios(config);
-
-		// console.log("link_token_response");
-		// console.log(link_token_response.data);
-
-		// let { data: link_token = "" } = link_token_response;
-		// return { link_token };
 	} else {
 		let { data = {} } = await axios({
 			method: "get",
@@ -152,12 +123,7 @@ export const loader = async ({ request }) => {
 
 		let { accounts = [] } = data;
 
-		console.log("____accounts____");
-		console.log(accounts);
-
-		return {
-			accounts,
-		};
+		return { accounts };
 	}
 };
 

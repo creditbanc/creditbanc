@@ -220,6 +220,8 @@ export default class Finance {
 		let current_balance = plaid.current_balance;
 
 		this.response = this._transactions_.pipe(
+			// tap(() => console.log("___recent_activity____1")),
+			// tap(inspect),
 			rxmap(
 				pipe(
 					sortBy(get("date")),
@@ -228,15 +230,18 @@ export default class Finance {
 					mod(all)(pipe(pick(["name", "date", "amount"]), with_transaction_type))
 				)
 			),
+			// tap(() => console.log("___recent_activity____2")),
+			// tap(inspect),
 			concatMap((transactions) =>
 				forkJoin({
 					transactions: rxof(transactions),
 					current_balance,
 				})
 			),
-			rxmap(({ transactions, current_balance }) => with_daily_balance(current_balance, transactions)),
-			// tap(() => console.log("___recent_activity____")),
+			// tap(() => console.log("___recent_activity____3")),
 			// tap(inspect),
+			rxmap(({ transactions, current_balance }) => with_daily_balance(current_balance, transactions)),
+
 			rxmap((recent_activity) => ({ recent_activity })),
 			catchError(catch_with_default({ recent_activity: [] }, "recent_activity")),
 			concatMap(merge_with_current(this.response))

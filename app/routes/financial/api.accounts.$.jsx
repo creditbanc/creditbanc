@@ -71,23 +71,17 @@ export const loader = async ({ request }) => {
 	let finance = new Finance(entity_id, group_id);
 	let accounts = await lastValueFrom(finance.plaid_accounts);
 
-	console.log("plaid_accounts______");
-	console.log(accounts);
-
 	if (isEmpty(accounts)) {
 		let finance = new Finance(entity_id, group_id);
 		let has_credentials = await lastValueFrom(finance.has_plaid_credentials);
 
 		if (has_credentials) {
-			console.log("api.accounts.$.has_credentials______");
 			let plaid = new Plaid(group_id);
 			let plaid_accounts = await lastValueFrom(await plaid.accounts());
-			console.log("no_credentials.plaid_accounts______");
-			console.log(plaid_accounts);
+
 			if (!isEmpty(plaid_accounts)) {
 				let accounts = await lastValueFrom(finance.set_accounts(plaid_accounts));
-				console.log("no_credentials.accounts______");
-				console.log(accounts);
+
 				return accounts;
 			}
 		} else {

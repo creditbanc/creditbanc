@@ -8,6 +8,20 @@ import { get_session_entity_id } from "~/utils/auth.server";
 import Plaid from "~/api/client/plaid";
 import Finance from "~/api/client/Finance";
 
+let start_date_of_months = (start_date, end_date) => {
+	let months = [];
+	start_date = moment(start_date);
+	end_date = moment(end_date);
+
+	while (start_date < end_date) {
+		months = [...months, start_date.startOf("month").format("YYYY-MM-DD")];
+
+		start_date.add(1, "month");
+	}
+
+	return months;
+};
+
 export const loader = async ({ request }) => {
 	console.log("cashflow_loader");
 
@@ -16,10 +30,10 @@ export const loader = async ({ request }) => {
 	let entity_id = await get_session_entity_id(request);
 	let group_id = get_group_id(request.url);
 
-	// let plaid = new Plaid(group_id);
+	let plaid = new Plaid(group_id);
 	// return { error: "no credentials" };
 	// let current_balance = plaid.current_balance;
-	// let transactions = await plaid.transactions();
+	let transactions = await plaid.transactions();
 	let finance = new Finance(entity_id, group_id);
 	let has_credentials = await lastValueFrom(finance.has_plaid_credentials);
 
@@ -39,31 +53,8 @@ export const loader = async ({ request }) => {
 		return { error: "no accounts" };
 	}
 
-	transactions.pipe(
-		tap(() => console.log("transactions______")),
-		tap(console.log)
-		// concatMap(({ transactions }) => {
-		// 	return from(finance.set_transactions({ transactions }));
-		// }),
-	);
-	// .subscribe();
-
 	let start_date = moment().subtract(income_start_month, "months").format("YYYY-MM-DD");
 	let end_date = moment().format("YYYY-MM-DD");
-
-	let start_date_of_months = (start_date, end_date) => {
-		let months = [];
-		start_date = moment(start_date);
-		end_date = moment(end_date);
-
-		while (start_date < end_date) {
-			months = [...months, start_date.startOf("month").format("YYYY-MM-DD")];
-
-			start_date.add(1, "month");
-		}
-
-		return months;
-	};
 
 	let response =
 		finance.average_daily_balance.monthly_expenses.monthly_revenues.monthly_transactions.monthly_incomes.recent_activity()

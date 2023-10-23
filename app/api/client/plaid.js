@@ -105,7 +105,14 @@ export default class Plaid {
 
 	get current_balance() {
 		let accounts = from(this.accounts());
-		return accounts.pipe(concatMap(identity), rxmap(pipe(get(all, "balances", "available"), sum)));
+		// console.log("current_balance");
+		// console.log(accounts);
+		return accounts.pipe(
+			concatMap(identity),
+			// tap(() => console.log("current_balance")),
+			// tap(console.log),
+			rxmap(pipe(prop("accounts"), get(all, "balances", "available"), sum))
+		);
 	}
 
 	async transactions({ months = 12 } = {}) {
