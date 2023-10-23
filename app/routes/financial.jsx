@@ -144,9 +144,9 @@ const SubNav = () => {
 					<div className="-mb-px flex space-x-5" aria-label="Tabs">
 						{pipe(
 							map((tab) => (
-								<a
+								<Link
 									key={tab.name}
-									href={tab.href({ entity_id, group_id })}
+									to={tab.href({ entity_id, group_id })}
 									className={classNames(
 										tab.current(pathname)
 											? "border-blue-500 text-blue-600"
@@ -155,7 +155,7 @@ const SubNav = () => {
 									)}
 								>
 									{tab.name}
-								</a>
+								</Link>
 							))
 						)(tabs)}
 						<TransactionsDropdown />

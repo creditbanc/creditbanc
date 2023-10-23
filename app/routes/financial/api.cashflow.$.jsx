@@ -33,7 +33,7 @@ export const loader = async ({ request }) => {
 	let plaid = new Plaid(group_id);
 	// return { error: "no credentials" };
 	// let current_balance = plaid.current_balance;
-	let transactions = await plaid.transactions();
+	// let transactions = await plaid.transactions();
 	let finance = new Finance(entity_id, group_id);
 	let has_credentials = await lastValueFrom(finance.has_plaid_credentials);
 
@@ -52,6 +52,16 @@ export const loader = async ({ request }) => {
 	if (isEmpty(accounts)) {
 		return { error: "no accounts" };
 	}
+
+	let {
+		data: { transactions = [] },
+	} = await axios({
+		method: "get",
+		url: `${origin}/financial/api/transactions/resource/e/${entity_id}/g/${group_id}`,
+	});
+
+	console.log("api.cashflow.transactions______");
+	console.log(transactions);
 
 	let start_date = moment().subtract(income_start_month, "months").format("YYYY-MM-DD");
 	let end_date = moment().format("YYYY-MM-DD");

@@ -6,6 +6,7 @@ import { get_session_entity_id } from "~/utils/auth.server";
 import { lastValueFrom } from "rxjs";
 import Finance from "~/api/client/Finance";
 import Plaid from "~/api/client/plaid";
+import { cons } from "shades";
 
 // const get_plaid_accounts = async ({ access_token }) => {
 // 	let { accounts: identities } = await get_identities({ access_token });
@@ -69,7 +70,10 @@ export const loader = async ({ request }) => {
 	// let accounts = await get_plaid_accounts_from_db(group_id);
 
 	let finance = new Finance(entity_id, group_id);
-	let accounts = await lastValueFrom(finance.plaid_accounts);
+	let { accounts } = await lastValueFrom(finance.plaid_accounts);
+
+	console.log("api.accounts______");
+	console.log(accounts);
 
 	if (isEmpty(accounts)) {
 		let finance = new Finance(entity_id, group_id);
@@ -80,14 +84,14 @@ export const loader = async ({ request }) => {
 			let plaid_accounts = await lastValueFrom(await plaid.accounts());
 
 			if (!isEmpty(plaid_accounts)) {
-				let accounts = await lastValueFrom(finance.set_accounts(plaid_accounts));
+				let accounts = await finance.set_accounts(plaid_accounts);
 
 				return accounts;
 			}
 		} else {
-			return [];
+			return { accounts: [] };
 		}
 	}
 
-	return accounts;
+	return { accounts };
 };

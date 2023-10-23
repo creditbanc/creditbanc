@@ -120,7 +120,11 @@ export default class Plaid {
 		let { access_token } = await lastValueFrom(this._credentials_);
 		let start_date = moment().subtract(months, "months").format("YYYY-MM-DD");
 		let end_date = moment().format("YYYY-MM-DD");
-		let accounts = await lastValueFrom(await this.accounts());
+		let { accounts = [] } = await lastValueFrom(await this.accounts());
+
+		console.log("plaid.accounts");
+		console.log(accounts);
+
 		let account_ids = pipe(map(prop("account_id")))(accounts);
 
 		const request = {
@@ -133,6 +137,9 @@ export default class Plaid {
 				include_original_description: true,
 			},
 		};
+
+		console.log("transactions.request");
+		console.log(request);
 
 		try {
 			const response = await this.plaid.transactionsGet(request);

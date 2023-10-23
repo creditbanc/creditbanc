@@ -164,7 +164,7 @@ export default class Finance {
 		console.log("set_transactions");
 
 		await Promise.all(pipe(map(this.set_transaction))(transactions));
-		return transactions;
+		return { transactions };
 	};
 
 	set_account = async (account) => {
@@ -175,11 +175,11 @@ export default class Finance {
 		return account;
 	};
 
-	set_accounts = async ({ accounts }) => {
+	set_accounts = async ({ accounts = [] }) => {
 		console.log("set_accounts");
 
 		await Promise.all(pipe(map(this.set_account))(accounts));
-		return accounts;
+		return { accounts };
 	};
 
 	get _transactions_() {

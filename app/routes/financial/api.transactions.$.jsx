@@ -1,19 +1,15 @@
 import moment from "moment";
 import { isEmpty, pipe } from "ramda";
+import { lastValueFrom } from "rxjs";
 import { mod, all } from "shades";
+import Finance from "~/api/client/Finance";
+import Plaid from "~/api/client/plaid";
 import { get_transactions } from "~/api/plaid.server";
 import { get_session_entity_id } from "~/utils/auth.server";
 import { get_collection, get_doc, set_doc } from "~/utils/firebase";
-import {
-	get_entity_id,
-	get_group_id,
-	use_search_params,
-} from "~/utils/helpers";
+import { get_entity_id, get_group_id, use_search_params } from "~/utils/helpers";
 
-let get_plaid_account_transactions_from_db = async ({
-	group_id,
-	account_id,
-}) => {
+let get_plaid_account_transactions_from_db = async ({ group_id, account_id }) => {
 	let transactions_queries = [
 		{
 			param: "group_id",
@@ -56,67 +52,37 @@ export const loader = async ({ request }) => {
 	let { pathname } = new URL(request.url);
 	let entity_id = await get_session_entity_id(request);
 	let group_id = get_group_id(pathname);
-	let { account_id } = use_search_params(request);
+	// let { account_id } = use_search_params(request);
 
 	// console.log("params");
 	// console.log({ account_id, group_id, entity_id });
 
-	let transactions;
+	let finance = new Finance(entity_id, group_id);
+	let transactions = await lastValueFrom(finance._transactions_);
 
-	if (account_id) {
-		transactions = await get_plaid_account_transactions_from_db({
-			group_id,
-			account_id,
-		});
-	} else {
-		transactions = await get_plaid_transactions_from_db({ group_id });
-	}
-
-	console.log("transactions1______");
-	console.log(transactions.length);
+	console.log("api.transactions______");
+	console.log(transactions);
 
 	if (isEmpty(transactions)) {
-		let plaid_credentials = await get_doc(["plaid_credentials", group_id]);
-		let { access_token } = plaid_credentials;
+		// let finance = new Finance(entity_id, group_id);
+		let has_credentials = await lastValueFrom(finance.has_plaid_credentials);
 
-		let end_date = moment().format("YYYY-MM-DD");
-		let start_date = moment().subtract(12, "months").format("YYYY-MM-DD");
+		if (has_credentials) {
+			let plaid = new Plaid(group_id);
+			let plaid_transactions = await lastValueFrom(await plaid.transactions());
 
-		let {
-			transactions,
-			is_error = false,
-			error = undefined,
-		} = await get_transactions({
-			start_date,
-			end_date,
-			access_token,
-			account_ids: [account_id],
-		});
+			// console.log("api.plaid_transactions______");
+			// console.log(plaid_transactions);
 
-		console.log("transactions2______");
+			if (!isEmpty(plaid_transactions)) {
+				let transactions = await finance.set_transactions(plaid_transactions);
 
-		if (error) {
-			console.log("transactions_error2______");
-			// throw new Error({ test: "hi" });
-			return { error };
+				return transactions;
+			}
+		} else {
+			return { transactions: [] };
 		}
-
-		// console.log(is_error);
-		// console.log(error);
-		// console.log(transactions.length);
-
-		transactions = await Promise.all(
-			pipe(
-				mod(all)(async (transaction) => {
-					await set_doc(
-						["transactions", transaction.transaction_id],
-						{ ...transaction, entity_id, group_id }
-					);
-					return transaction;
-				})
-			)(transactions)
-		);
 	}
 
-	return transactions;
+	return { transactions };
 };
