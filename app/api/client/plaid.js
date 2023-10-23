@@ -18,6 +18,8 @@ import {
 	map,
 	sortBy,
 	sum,
+	isEmpty,
+	not,
 } from "ramda";
 import moment from "moment";
 import { all } from "shades";
@@ -59,6 +61,10 @@ export default class Plaid {
 
 	get _credentials_() {
 		return from(get_doc(["plaid_credentials", this.group_id]));
+	}
+
+	get has_credentials() {
+		return this._credentials_.pipe(rxmap(pipe(isEmpty, not)));
 	}
 
 	auths = async () => {

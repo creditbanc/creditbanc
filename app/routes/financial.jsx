@@ -16,18 +16,18 @@ export const useAccountsStore = create((set) => ({
 	set_accounts: (path, value) => set((state) => pipe(mod(...path)(() => value))(state)),
 }));
 
-export const loader = async ({ request }) => {
-	let { origin, pathname } = new URL(request.url);
-	let entity_id = await get_session_entity_id(request);
-	let group_id = get_group_id(pathname);
+// export const loader = async ({ request }) => {
+// 	let { origin, pathname } = new URL(request.url);
+// 	let entity_id = await get_session_entity_id(request);
+// 	let group_id = get_group_id(pathname);
 
-	let { data: accounts = [] } = await axios({
-		method: "get",
-		url: `${origin}/financial/api/accounts/resource/e/${entity_id}/g/${group_id}`,
-	});
+// 	let { data: accounts = [] } = await axios({
+// 		method: "get",
+// 		url: `${origin}/financial/api/accounts/resource/e/${entity_id}/g/${group_id}`,
+// 	});
 
-	return { entity_id, accounts };
-};
+// 	return { entity_id, accounts };
+// };
 
 const tabs = [
 	{
@@ -170,7 +170,8 @@ const SubNav = () => {
 };
 
 export default function Financial() {
-	let { entity_id, accounts: db_accounts = [] } = useLoaderData();
+	// let {  accounts: db_accounts = [] } = useLoaderData();
+	let db_accounts = [];
 	let set_accounts = useAccountsStore((state) => state.set_accounts);
 
 	useEffect(() => {

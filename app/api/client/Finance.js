@@ -591,6 +591,11 @@ export default class Finance {
 		return this;
 	}
 
+	get has_plaid_credentials() {
+		let plaid = new Plaid(this.group_id);
+		return plaid.has_credentials;
+	}
+
 	get plaid_accounts() {
 		let accounts_queries = [
 			{

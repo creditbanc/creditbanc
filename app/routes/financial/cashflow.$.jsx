@@ -22,6 +22,8 @@ import axios from "axios";
 import { useCashflowStore } from "~/stores/useCashflowStore";
 import { useEffect } from "react";
 import { get_session_entity_id, get_user_id } from "~/utils/auth.server";
+import Finance from "~/api/client/Finance";
+import { lastValueFrom, tap } from "rxjs";
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
@@ -31,22 +33,33 @@ export const loader = async ({ request }) => {
 	let group_id = get_group_id(request.url);
 	let entity_id = await get_session_entity_id(request);
 
-	// let is_authorized = await is_authorized_f(entity_id, group_id, "cashflow", "read");
-
-	// if (!is_authorized) {
-	// 	return redirect(`/home/resource/e/${entity_id}/g/${group_id}`);
-	// }
-
-	// return { financials: {} };
-
 	let cashflow_api_response = await axios({
 		method: "get",
 		url: `${origin}/financial/api/cashflow/resource/e/${entity_id}/g/${group_id}?income=${income_start_month}`,
 	});
 
+	// return { financials: {} };
+
+	// if (true) {
+	// 	return redirect(`/financial/accounts/resource/e/${entity_id}/g/${group_id}`);
+	// }
+
 	let { data: financials = {} } = cashflow_api_response;
-	console.log("cashflow_api_response");
-	console.log(data);
+
+	let { error = false } = financials;
+
+	console.log("financials");
+	console.log(financials);
+
+	if (error == "no credentials") {
+		console.log("no credentials");
+		return redirect(`/financial/accounts/resource/e/${entity_id}/g/${group_id}`);
+	}
+
+	if (error == "no accounts") {
+		console.log("no accounts");
+		return redirect(`/financial/accounts/resource/e/${entity_id}/g/${group_id}`);
+	}
 
 	// console.log("financials");
 	// console.log(financials);

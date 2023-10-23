@@ -109,6 +109,8 @@ export const loader = async ({ request }) => {
 	// 	return redirect(`/home/resource/e/${entity_id}/g/${group_id}`);
 	// }
 
+	return redirect(`/plaid/oauth/resources/e/${entity_id}/g/${group_id}`);
+
 	let plaid_credentials = await get_doc(["plaid_credentials", group_id]);
 
 	console.log("plaid_credentials");
