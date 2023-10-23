@@ -122,8 +122,8 @@ export default class Plaid {
 		let end_date = moment().format("YYYY-MM-DD");
 		let { accounts = [] } = await lastValueFrom(await this.accounts());
 
-		console.log("plaid.accounts");
-		console.log(accounts);
+		// console.log("plaid.accounts");
+		// console.log(accounts);
 
 		let account_ids = pipe(map(prop("account_id")))(accounts);
 
@@ -138,15 +138,15 @@ export default class Plaid {
 			},
 		};
 
-		console.log("transactions.request");
-		console.log(request);
+		// console.log("transactions.request");
+		// console.log(request);
 
 		try {
 			const response = await this.plaid.transactionsGet(request);
 			let transactions = response.data.transactions;
 
-			console.log("transactions.length");
-			console.log(transactions);
+			// console.log("transactions.length");
+			// console.log(transactions);
 
 			const total_transactions = response.data.total_transactions;
 
