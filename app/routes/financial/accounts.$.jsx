@@ -78,6 +78,7 @@ import { is_authorized_f } from "~/api/auth";
 import { redirect } from "@remix-run/node";
 import { get_session_entity_id, get_user_id } from "~/utils/auth.server";
 import LoadingSpinner from "~/components/LoadingSpinner";
+import Finance from "~/api/client/Finance";
 // import { disconnect_plaid } from "~/api/client/plaid";
 
 ChartJS.register(ArcElement, Tooltip, Legend);
@@ -109,35 +110,47 @@ export const loader = async ({ request }) => {
 	// 	return redirect(`/home/resource/e/${entity_id}/g/${group_id}`);
 	// }
 
-	return redirect(`/plaid/oauth/resources/e/${entity_id}/g/${group_id}`);
+	// return redirect(`/plaid/oauth/resources/e/${entity_id}/g/${group_id}`);
 
-	let plaid_credentials = await get_doc(["plaid_credentials", group_id]);
+	let finance = new Finance(entity_id, group_id);
+	let has_credentials = await lastValueFrom(finance.has_plaid_credentials);
+
+	console.log("has_credentials");
+	console.log(has_credentials);
+
+	// if (!has_credentials) {
+	// 	return { error: "no credentials" };
+	// }
 
 	console.log("plaid_credentials");
-	console.log(plaid_credentials);
+	console.log(has_credentials);
 
-	if (isEmpty(plaid_credentials)) {
-		console.log("origin");
-		console.log(origin);
+	if (!has_credentials) {
+		return redirect(`/plaid/oauth/resources/e/${entity_id}/g/${group_id}`);
 
-		let config = {
-			method: "post",
-			maxBodyLength: Infinity,
-			url: `${origin}/plaid/create_link_token`,
-		};
+		// console.log("origin");
+		// console.log(origin);
 
-		let link_token_response = await axios(config);
+		// let config = {
+		// 	method: "post",
+		// 	maxBodyLength: Infinity,
+		// 	url: `${origin}/plaid/create_link_token`,
+		// };
 
-		console.log("link_token_response");
-		console.log(link_token_response.data);
+		// let link_token_response = await axios(config);
 
-		let { data: link_token = "" } = link_token_response;
-		return { link_token };
+		// console.log("link_token_response");
+		// console.log(link_token_response.data);
+
+		// let { data: link_token = "" } = link_token_response;
+		// return { link_token };
 	} else {
-		let { data: accounts } = await axios({
+		let { data = {} } = await axios({
 			method: "get",
 			url: `${origin}/financial/api/accounts/resource/e/${entity_id}/g/${group_id}`,
 		});
+
+		let { accounts = [] } = data;
 
 		console.log("____accounts____");
 		console.log(accounts);

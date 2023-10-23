@@ -16,7 +16,7 @@ export const loader = async ({ request }) => {
 	let entity_id = await get_session_entity_id(request);
 	let group_id = get_group_id(request.url);
 
-	let plaid = new Plaid(group_id);
+	// let plaid = new Plaid(group_id);
 	// return { error: "no credentials" };
 	// let current_balance = plaid.current_balance;
 	// let transactions = await plaid.transactions();
@@ -39,49 +39,49 @@ export const loader = async ({ request }) => {
 		return { error: "no accounts" };
 	}
 
-	// transactions.pipe(
-	// 	tap(() => console.log("transactions______")),
-	// 	tap(console.log)
-	// 	// concatMap(({ transactions }) => {
-	// 	// 	return from(finance.set_transactions({ transactions }));
-	// 	// }),
-	// );
-	// // .subscribe();
+	transactions.pipe(
+		tap(() => console.log("transactions______")),
+		tap(console.log)
+		// concatMap(({ transactions }) => {
+		// 	return from(finance.set_transactions({ transactions }));
+		// }),
+	);
+	// .subscribe();
 
-	// let start_date = moment().subtract(income_start_month, "months").format("YYYY-MM-DD");
-	// let end_date = moment().format("YYYY-MM-DD");
+	let start_date = moment().subtract(income_start_month, "months").format("YYYY-MM-DD");
+	let end_date = moment().format("YYYY-MM-DD");
 
-	// let start_date_of_months = (start_date, end_date) => {
-	// 	let months = [];
-	// 	start_date = moment(start_date);
-	// 	end_date = moment(end_date);
+	let start_date_of_months = (start_date, end_date) => {
+		let months = [];
+		start_date = moment(start_date);
+		end_date = moment(end_date);
 
-	// 	while (start_date < end_date) {
-	// 		months = [...months, start_date.startOf("month").format("YYYY-MM-DD")];
+		while (start_date < end_date) {
+			months = [...months, start_date.startOf("month").format("YYYY-MM-DD")];
 
-	// 		start_date.add(1, "month");
-	// 	}
+			start_date.add(1, "month");
+		}
 
-	// 	return months;
-	// };
+		return months;
+	};
 
-	// let response =
-	// 	finance.average_daily_balance.monthly_expenses.monthly_revenues.monthly_transactions.monthly_incomes.recent_activity()
-	// 		.incomes_change.expenses_change.revenues_change.highest_income.highest_expense.highest_revenue
-	// 		.num_of_negative_balance_days.annual_revenue.fold;
+	let response =
+		finance.average_daily_balance.monthly_expenses.monthly_revenues.monthly_transactions.monthly_incomes.recent_activity()
+			.incomes_change.expenses_change.revenues_change.highest_income.highest_expense.highest_revenue
+			.num_of_negative_balance_days.annual_revenue.fold;
 
-	// let data = response.pipe(
-	// 	// tap(() => console.log("plaid_res")),
-	// 	// tap(console.log),
-	// 	rxmap((response) => ({
-	// 		...response,
-	// 		stats_data: {
-	// 			revenues: [response.highest_revenue, response.revenues_change],
-	// 			expenses: [response.highest_expense, response.expenses_change],
-	// 		},
-	// 		month_labels: pipe(map((date) => moment(date).format("MMM")))(start_date_of_months(start_date, end_date)),
-	// 	}))
-	// );
+	let data = response.pipe(
+		// tap(() => console.log("plaid_res")),
+		// tap(console.log),
+		rxmap((response) => ({
+			...response,
+			stats_data: {
+				revenues: [response.highest_revenue, response.revenues_change],
+				expenses: [response.highest_expense, response.expenses_change],
+			},
+			month_labels: pipe(map((date) => moment(date).format("MMM")))(start_date_of_months(start_date, end_date)),
+		}))
+	);
 
-	// return lastValueFrom(data);
+	return lastValueFrom(data);
 };

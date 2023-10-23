@@ -1,28 +1,17 @@
-import {
-	useFetcher,
-	useLoaderData,
-	useLocation,
-	useNavigate,
-} from "@remix-run/react";
+import { useFetcher, useLoaderData, useLocation, useNavigate } from "@remix-run/react";
 import axios from "axios";
 import { length, map, pipe } from "ramda";
 import { mod } from "shades";
 import { create } from "zustand";
 import { usePlaidLink } from "react-plaid-link";
-import {
-	create_axios_form,
-	get_entity_id,
-	get_group_id,
-	inspect,
-} from "~/utils/helpers";
+import { create_axios_form, get_entity_id, get_group_id, inspect } from "~/utils/helpers";
 import { useEffect, useState } from "react";
 import { set_doc } from "~/utils/firebase";
 
 const usePlaidStore = create((set) => ({
 	link_token: "",
 	public_token: "",
-	set_state: (path, value) =>
-		set((state) => pipe(mod(...path)(() => value))(state)),
+	set_state: (path, value) => set((state) => pipe(mod(...path)(() => value))(state)),
 }));
 
 export const loader = async ({ request }) => {
@@ -57,9 +46,11 @@ export default function PlaidOauth() {
 	useEffect(() => setLocation(window.location), []);
 
 	const save_plaid_credentials = async (public_token, metadata) => {
+		console.log("save_plaid_credentials");
 		set_plaid(["public_token"], public_token);
 		let plaid_exchange_public_token_url = `${location.origin}/plaid/exchange_public_token`;
 		let data = create_axios_form({ public_token });
+
 		let config = {
 			method: "post",
 			maxBodyLength: Infinity,
@@ -69,17 +60,17 @@ export default function PlaidOauth() {
 		};
 		let response = await axios(config);
 		let { access_token } = response?.data;
+
 		if (access_token) {
 			let payload = {
 				entity_id,
 				group_id,
 				...response.data,
 			};
+
 			await set_doc(["plaid_credentials", group_id], payload);
 			console.log("plaid_credentials_saved");
-			navigate(
-				`/financial/accounts/resource/e/${entity_id}/g/${group_id}`
-			);
+			navigate(`/financial/accounts/resource/e/${entity_id}/g/${group_id}`);
 		}
 	};
 
@@ -88,9 +79,5 @@ export default function PlaidOauth() {
 		onSuccess: save_plaid_credentials,
 	});
 
-	return (
-		<div className="h-full w-full flex flex-col items-center justify-center">
-			{open()}
-		</div>
-	);
+	return <div className="h-full w-full flex flex-col items-center justify-center">{open()}</div>;
 }

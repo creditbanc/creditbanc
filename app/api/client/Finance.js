@@ -167,6 +167,21 @@ export default class Finance {
 		return transactions;
 	};
 
+	set_account = async (account) => {
+		console.log("set_account");
+
+		let { entity_id, group_id } = this;
+		await set_doc(["plaid_accounts", account.account_id], { ...account, entity_id, group_id });
+		return account;
+	};
+
+	set_accounts = async ({ accounts }) => {
+		console.log("set_accounts");
+
+		await Promise.all(pipe(map(this.set_account))(accounts));
+		return accounts;
+	};
+
 	get _transactions_() {
 		let { entity_id, group_id } = this;
 		let transactions_queries = [
@@ -610,7 +625,7 @@ export default class Finance {
 			queries: accounts_queries,
 		});
 
-		return from(accounts);
+		return from(accounts).pipe(rxmap((accounts) => ({ accounts })));
 	}
 
 	get fold() {

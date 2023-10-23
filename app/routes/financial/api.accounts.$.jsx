@@ -5,6 +5,7 @@ import { groupBy, isEmpty, map, mergeAll, pipe, prop, values } from "ramda";
 import { get_session_entity_id } from "~/utils/auth.server";
 import { lastValueFrom } from "rxjs";
 import Finance from "~/api/client/Finance";
+import Plaid from "~/api/client/plaid";
 
 // const get_plaid_accounts = async ({ access_token }) => {
 // 	let { accounts: identities } = await get_identities({ access_token });
@@ -69,26 +70,30 @@ export const loader = async ({ request }) => {
 
 	let finance = new Finance(entity_id, group_id);
 	let accounts = await lastValueFrom(finance.plaid_accounts);
+
 	console.log("plaid_accounts______");
 	console.log(accounts);
 
-	return accounts;
-
 	if (isEmpty(accounts)) {
-		// return [];
-		let plaid_credentials = await get_doc(["plaid_credentials", group_id]);
-		let { access_token } = plaid_credentials;
+		let finance = new Finance(entity_id, group_id);
+		let has_credentials = await lastValueFrom(finance.has_plaid_credentials);
 
-		if (!access_token) return [];
-
-		let accounts = await set_plaid_accounts({
-			access_token,
-			entity_id,
-			group_id,
-		});
-
-		return accounts;
-	} else {
-		return accounts;
+		if (has_credentials) {
+			console.log("api.accounts.$.has_credentials______");
+			let plaid = new Plaid(group_id);
+			let plaid_accounts = await lastValueFrom(await plaid.accounts());
+			console.log("no_credentials.plaid_accounts______");
+			console.log(plaid_accounts);
+			if (!isEmpty(plaid_accounts)) {
+				let accounts = await lastValueFrom(finance.set_accounts(plaid_accounts));
+				console.log("no_credentials.accounts______");
+				console.log(accounts);
+				return accounts;
+			}
+		} else {
+			return [];
+		}
 	}
+
+	return accounts;
 };

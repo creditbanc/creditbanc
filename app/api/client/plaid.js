@@ -86,6 +86,9 @@ export default class Plaid {
 		let { accounts: identities } = await lastValueFrom(await this.identities());
 		let auth_accounts = await lastValueFrom(await this.auths());
 
+		console.log("auth_accounts");
+		console.log(auth_accounts);
+
 		let {
 			accounts,
 			numbers: { ach, bacs, eft, international },
@@ -94,7 +97,10 @@ export default class Plaid {
 		let all_accounts = [...accounts, ...identities, ...ach, ...bacs, ...eft, ...international];
 		let accounts_payload = pipe(groupBy(prop("account_id")), map(mergeAll), values)(all_accounts);
 
-		return rxof(accounts_payload);
+		console.log("accounts_payload");
+		console.log(accounts_payload);
+
+		return rxof({ accounts: accounts_payload });
 	};
 
 	get current_balance() {
