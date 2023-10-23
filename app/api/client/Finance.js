@@ -591,6 +591,23 @@ export default class Finance {
 		return this;
 	}
 
+	get plaid_accounts() {
+		let accounts_queries = [
+			{
+				param: "group_id",
+				predicate: "==",
+				value: this.group_id,
+			},
+		];
+
+		let accounts = get_collection({
+			path: ["plaid_accounts"],
+			queries: accounts_queries,
+		});
+
+		return from(accounts);
+	}
+
 	get fold() {
 		return this.response.pipe(
 			catchError((error) => {

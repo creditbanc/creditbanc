@@ -37,14 +37,14 @@ export const loader = async ({ request }) => {
 	// 	return redirect(`/home/resource/e/${entity_id}/g/${group_id}`);
 	// }
 
-	return { financials: {} };
+	// return { financials: {} };
 
 	let cashflow_api_response = await axios({
 		method: "get",
 		url: `${origin}/financial/api/cashflow/resource/e/${entity_id}/g/${group_id}?income=${income_start_month}`,
 	});
 
-	let { data: financials } = cashflow_api_response;
+	let { data: financials = {} } = cashflow_api_response;
 	console.log("cashflow_api_response");
 	console.log(data);
 

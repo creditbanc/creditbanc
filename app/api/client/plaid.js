@@ -119,6 +119,9 @@ export default class Plaid {
 			const response = await this.plaid.transactionsGet(request);
 			let transactions = response.data.transactions;
 
+			console.log("transactions.length");
+			console.log(transactions);
+
 			const total_transactions = response.data.total_transactions;
 
 			while (transactions.length < total_transactions) {

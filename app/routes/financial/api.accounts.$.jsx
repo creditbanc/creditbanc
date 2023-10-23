@@ -3,6 +3,8 @@ import { form_params, get_entity_id, get_group_id } from "~/utils/helpers";
 import { get_auths, get_identities } from "~/api/plaid.server";
 import { groupBy, isEmpty, map, mergeAll, pipe, prop, values } from "ramda";
 import { get_session_entity_id } from "~/utils/auth.server";
+import { lastValueFrom } from "rxjs";
+import Finance from "~/api/client/Finance";
 
 const get_plaid_accounts = async ({ access_token }) => {
 	let { accounts: identities } = await get_identities({ access_token });
@@ -63,10 +65,14 @@ export const loader = async ({ request }) => {
 	let entity_id = await get_session_entity_id(request);
 	let group_id = get_group_id(pathname);
 
-	let accounts = await get_plaid_accounts_from_db(group_id);
+	// let accounts = await get_plaid_accounts_from_db(group_id);
 
-	console.log("get_plaid_accounts_from_db");
+	let finance = new Finance(entity_id, group_id);
+	let accounts = await lastValueFrom(finance.plaid_accounts);
+	console.log("plaid_accounts______");
 	console.log(accounts);
+
+	return accounts;
 
 	if (isEmpty(accounts)) {
 		// return [];

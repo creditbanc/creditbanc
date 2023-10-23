@@ -1,7 +1,7 @@
 import { get_group_id, use_search_params } from "~/utils/helpers";
 import { pipe, map, isEmpty } from "ramda";
-import { lastValueFrom, tap } from "rxjs";
-import { map as rxmap } from "rxjs/operators";
+import { from, lastValueFrom, tap } from "rxjs";
+import { concatMap, map as rxmap } from "rxjs/operators";
 import moment from "moment";
 import axios from "axios";
 import { get_session_entity_id } from "~/utils/auth.server";
@@ -16,7 +16,7 @@ export const loader = async ({ request }) => {
 	let entity_id = await get_session_entity_id(request);
 	let group_id = get_group_id(request.url);
 
-	let { data: accounts } = await axios({
+	let { data: accounts = [] } = await axios({
 		method: "get",
 		url: `${origin}/financial/api/accounts/resource/e/${entity_id}/g/${group_id}`,
 	});
@@ -24,14 +24,23 @@ export const loader = async ({ request }) => {
 	// console.log("accounts______");
 	// console.log(accounts);
 
-	let plaid = new Plaid(group_id);
-	let current_balance = plaid.current_balance;
-
-	let finance = new Finance(entity_id, group_id);
-
 	if (isEmpty(accounts)) {
 		return {};
 	}
+
+	let plaid = new Plaid(group_id);
+	let current_balance = plaid.current_balance;
+	let transactions = await plaid.transactions();
+	let finance = new Finance(entity_id, group_id);
+
+	transactions.pipe(
+		tap(() => console.log("transactions______")),
+		tap(console.log)
+		// concatMap(({ transactions }) => {
+		// 	return from(finance.set_transactions({ transactions }));
+		// }),
+	);
+	// .subscribe();
 
 	let start_date = moment().subtract(income_start_month, "months").format("YYYY-MM-DD");
 	let end_date = moment().format("YYYY-MM-DD");
