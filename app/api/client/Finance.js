@@ -25,7 +25,7 @@ import {
 	length,
 	isEmpty,
 } from "ramda";
-import { set_doc, get_doc, get_collection } from "~/utils/firebase";
+import { set_doc, get_doc, get_collection, delete_collection, delete_doc } from "~/utils/firebase";
 import { forkJoin, from, merge, of as rxof, throwError, zip as rxzip } from "rxjs";
 import {
 	map as rxmap,
@@ -41,6 +41,7 @@ import { currency_precise, get, inspect, jsreduce, currency } from "~/utils/help
 import { all, filter, mod } from "shades";
 import Plaid from "./plaid";
 import moment from "moment";
+import { de } from "@faker-js/faker";
 
 const merge_with_current = curry((current, data) => {
 	return current.pipe(
@@ -180,6 +181,40 @@ export default class Finance {
 
 		await Promise.all(pipe(map(this.set_account))(accounts));
 		return { accounts };
+	};
+
+	unlink = async () => {
+		console.log("unlink");
+		let group_id = this.group_id;
+		console.log(group_id);
+
+		let transactions_path = ["transactions"];
+
+		let transactions_queries = [
+			{
+				param: "group_id",
+				predicate: "==",
+				value: group_id,
+			},
+		];
+
+		let credentials_path = ["plaid_credentials", group_id];
+
+		let accounts_path = ["plaid_accounts"];
+
+		let accounts_queries = [
+			{
+				param: "group_id",
+				predicate: "==",
+				value: group_id,
+			},
+		];
+
+		await delete_collection({ path: transactions_path, queries: transactions_queries });
+		await delete_doc(credentials_path);
+		await delete_collection({ path: accounts_path, queries: accounts_queries });
+
+		return { group_id };
 	};
 
 	get _transactions_() {

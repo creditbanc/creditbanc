@@ -22,7 +22,7 @@ import {
 	not,
 } from "ramda";
 import moment from "moment";
-import { all } from "shades";
+import { all, cons } from "shades";
 
 export const configuration = new Configuration({
 	basePath: PlaidEnvironments.sandbox,
@@ -82,7 +82,17 @@ export default class Plaid {
 	};
 
 	accounts = async () => {
-		console.log("accounts");
+		console.log("plaid.accounts");
+
+		let has_credentials = await lastValueFrom(this.has_credentials);
+
+		console.log("has_credentials");
+		console.log(has_credentials);
+
+		if (!has_credentials) {
+			return rxof({ accounts: [] });
+		}
+
 		let { accounts: identities } = await lastValueFrom(await this.identities());
 		let auth_accounts = await lastValueFrom(await this.auths());
 

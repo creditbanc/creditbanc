@@ -1,7 +1,7 @@
-import { ArrowDownIcon, ArrowUpIcon } from "@heroicons/react/20/solid";
 import {
 	classNames,
 	currency,
+	form_params,
 	get_entity_id,
 	get_group_id,
 	use_client_search_params,
@@ -15,7 +15,7 @@ import { ArrowDownCircleIcon, ArrowUpCircleIcon, Cog6ToothIcon } from "@heroicon
 import { pipe, values, sum, mapObjIndexed, join, isEmpty, map } from "ramda";
 import { get, mod } from "shades";
 import { redirect } from "@remix-run/node";
-import { Link, useLoaderData, useLocation } from "@remix-run/react";
+import { Link, useFetcher, useLoaderData, useLocation, useSubmit } from "@remix-run/react";
 import { is_authorized_f } from "~/api/auth";
 import CashflowChart from "~/components/CashflowChart";
 import axios from "axios";
@@ -25,8 +25,27 @@ import { get_session_entity_id, get_user_id } from "~/utils/auth.server";
 import PersonalReport from "~/api/client/PersonalReport";
 import { forkJoin, lastValueFrom, map as rxmap } from "rxjs";
 import BusinessReport from "~/api/client/BusinessReport";
+import { Fragment } from "react";
+import { Menu, Transition } from "@headlessui/react";
+import { ChevronDownIcon } from "@heroicons/react/20/solid";
+import Finance from "~/api/client/Finance";
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
+
+export const action = async ({ request }) => {
+	console.log("cashflow.$.action");
+	let form = await form_params(request);
+	let group_id = get_group_id(request.url);
+	let entity_id = get_entity_id(request.url);
+	console.log("form");
+	console.log(form);
+
+	let finance = new Finance(entity_id, group_id);
+	await finance.unlink();
+	console.log("unlinked");
+
+	return redirect(`/home/resource/e/${entity_id}/g/${group_id}`);
+};
 
 export const loader = async ({ request }) => {
 	let { origin } = new URL(request.url);
@@ -600,6 +619,57 @@ const FinancialHealthEvaluationHeading = () => {
 	);
 };
 
+const BankAccountActions = () => {
+	let { pathname } = useLocation();
+	let group_id = get_group_id(pathname);
+	const submit = useSubmit();
+
+	const onDisconnectBankAccount = () => {
+		console.log("onDisconnectBankAccount");
+		console.log("location");
+		console.log(pathname);
+		submit({ group_id }, { method: "post", action: pathname });
+	};
+
+	return (
+		<Menu as="div" className="relative inline-block text-left">
+			<div>
+				<Menu.Button className="inline-flex w-full justify-center gap-x-1.5 rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50">
+					<Cog6ToothIcon className="h-4 w-4 text-gray-500" />
+				</Menu.Button>
+			</div>
+
+			<Transition
+				as={Fragment}
+				enter="transition ease-out duration-100"
+				enterFrom="transform opacity-0 scale-95"
+				enterTo="transform opacity-100 scale-100"
+				leave="transition ease-in duration-75"
+				leaveFrom="transform opacity-100 scale-100"
+				leaveTo="transform opacity-0 scale-95"
+			>
+				<Menu.Items className="absolute right-0 z-10 mt-2 w-56 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+					<div className="py-1">
+						<Menu.Item>
+							{({ active }) => (
+								<div
+									onClick={onDisconnectBankAccount}
+									className={classNames(
+										active ? "bg-gray-100 text-gray-900" : "text-gray-700",
+										"block px-4 py-2 text-sm cursor-pointer"
+									)}
+								>
+									Disconnect Bank Account
+								</div>
+							)}
+						</Menu.Item>
+					</div>
+				</Menu.Items>
+			</Transition>
+		</Menu>
+	);
+};
+
 const BankAccount = () => {
 	let {
 		financials: {
@@ -611,9 +681,7 @@ const BankAccount = () => {
 		<div className="flex flex-col w-full bg-white rounded">
 			<div className="flex flex-row justify-between items-center px-5 pt-5 text-base font-semibold leading-6 text-gray-900">
 				<div>Bank Account</div>
-				<div className="cursor-pointer">
-					<Cog6ToothIcon className="h-5 w-5 text-gray-500" />
-				</div>
+				<BankAccountActions />
 			</div>
 			<div className="flex flex-col w-full border-t mt-3">
 				{pipe(
