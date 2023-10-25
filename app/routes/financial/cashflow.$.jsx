@@ -517,9 +517,9 @@ const Stats = () => {
 		scores: { personal, business },
 	} = reports;
 
-	console.log("reports_____");
-	console.log(business);
-	console.log(personal);
+	// console.log("reports_____");
+	// console.log(business);
+	// console.log(personal);
 
 	let { annual_revenue = 0, average_daily_balance = 0, num_of_negative_balance_days = 0 } = financials;
 
@@ -630,9 +630,12 @@ const BankAccount = () => {
 							</div>
 							<div className="flex flex-row justify-between text-sm">
 								<div className="flex flex-row gap-x-2">
-									<div className="flex flex-col">{account?.official_name}</div>
+									<div className="flex flex-row gap-x-2">
+										<div className="flex flex-col font-semibold">name: </div>
+										<div>{account?.official_name}</div>
+									</div>
 								</div>
-								<div className="flex flex-col">balance</div>
+								<div className="flex flex-col">current balance</div>
 							</div>
 						</div>
 					))

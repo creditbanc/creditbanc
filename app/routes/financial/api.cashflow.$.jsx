@@ -61,7 +61,7 @@ export const loader = async ({ request }) => {
 		total_balance: accounts.reduce((acc, { balances }) => acc + balances.current, 0),
 	}))(plaid_accounts);
 
-	console.log("current_balance______");
+	// console.log("current_balance______");
 	// console.log(current_balance);
 	// inspect(plaid_accounts);
 

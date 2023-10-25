@@ -72,8 +72,8 @@ export const loader = async ({ request }) => {
 	let finance = new Finance(entity_id, group_id);
 	let { accounts } = await lastValueFrom(finance.plaid_accounts);
 
-	console.log("api.accounts______");
-	console.log(accounts);
+	// console.log("api.accounts______");
+	// console.log(accounts);
 
 	if (isEmpty(accounts)) {
 		let finance = new Finance(entity_id, group_id);
