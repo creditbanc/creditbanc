@@ -11,7 +11,7 @@ import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Toolti
 import { Bar } from "react-chartjs-2";
 import { faker } from "@faker-js/faker";
 import "chart.js/auto";
-import { ArrowDownCircleIcon, ArrowUpCircleIcon } from "@heroicons/react/24/outline";
+import { ArrowDownCircleIcon, ArrowUpCircleIcon, Cog6ToothIcon } from "@heroicons/react/24/outline";
 import { pipe, values, sum, mapObjIndexed, join, isEmpty, map } from "ramda";
 import { get, mod } from "shades";
 import { redirect } from "@remix-run/node";
@@ -85,13 +85,13 @@ export const loader = async ({ request }) => {
 		)
 	);
 
-	console.log("personal_scores_____");
-	console.log(reports);
+	// console.log("personal_scores_____");
+	// console.log(reports);
 
 	let { error = false } = financials;
 
-	console.log("financials");
-	console.log(financials);
+	// console.log("financials");
+	// console.log(financials);
 
 	if (error == "no credentials") {
 		console.log("no credentials");
@@ -600,6 +600,48 @@ const FinancialHealthEvaluationHeading = () => {
 	);
 };
 
+const BankAccount = () => {
+	let {
+		financials: {
+			bank_accounts: { accounts = [] },
+		},
+	} = useLoaderData();
+
+	return (
+		<div className="flex flex-col w-full bg-white rounded">
+			<div className="flex flex-row justify-between items-center px-5 pt-5 text-base font-semibold leading-6 text-gray-900">
+				<div>Bank Account</div>
+				<div className="cursor-pointer">
+					<Cog6ToothIcon className="h-5 w-5 text-gray-500" />
+				</div>
+			</div>
+			<div className="flex flex-col w-full border-t mt-3">
+				{pipe(
+					map((account) => (
+						<div className="flex flex-col px-5 py-3 gap-y-1" key={account.account}>
+							<div className="flex flex-row justify-between">
+								<div className="flex flex-row gap-x-2">
+									<div className="flex flex-col font-semibold">{account?.name}</div>
+									<div>({account?.mask})</div>
+								</div>
+								<div className="flex flex-col font-semibold">
+									{currency.format(account?.balance || 0)}
+								</div>
+							</div>
+							<div className="flex flex-row justify-between text-sm">
+								<div className="flex flex-row gap-x-2">
+									<div className="flex flex-col">{account?.official_name}</div>
+								</div>
+								<div className="flex flex-col">balance</div>
+							</div>
+						</div>
+					))
+				)(accounts)}
+			</div>
+		</div>
+	);
+};
+
 export default function Cashflow() {
 	let { financials = {} } = useLoaderData();
 	let set_financials = useCashflowStore((state) => state.set_state);
@@ -611,6 +653,7 @@ export default function Cashflow() {
 	return (
 		<div className="flex flex-row h-full w-full space-x-5">
 			<div className="flex flex-col h-full w-full lg:w-[70%] rounded  gap-y-5 overflow-y-scroll scrollbar-none overflow-x-hidden">
+				<BankAccount />
 				<div className="flex flex-col w-full max-h-[600px] bg-white rounded">
 					<CashflowChart />
 				</div>

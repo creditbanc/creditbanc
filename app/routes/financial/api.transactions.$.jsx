@@ -60,8 +60,8 @@ export const loader = async ({ request }) => {
 	let finance = new Finance(entity_id, group_id);
 	let transactions = await lastValueFrom(finance._transactions_);
 
-	console.log("api.transactions______");
-	console.log(transactions);
+	// console.log("api.transactions______");
+	// console.log(transactions);
 
 	if (isEmpty(transactions)) {
 		// let finance = new Finance(entity_id, group_id);
