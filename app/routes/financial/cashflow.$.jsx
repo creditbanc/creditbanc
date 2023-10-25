@@ -12,8 +12,8 @@ import { Bar } from "react-chartjs-2";
 import { faker } from "@faker-js/faker";
 import "chart.js/auto";
 import { ArrowDownCircleIcon, ArrowUpCircleIcon } from "@heroicons/react/24/outline";
-import { pipe, values, sum, mapObjIndexed, join, isEmpty } from "ramda";
-import { mod } from "shades";
+import { pipe, values, sum, mapObjIndexed, join, isEmpty, map } from "ramda";
+import { get, mod } from "shades";
 import { redirect } from "@remix-run/node";
 import { Link, useLoaderData, useLocation } from "@remix-run/react";
 import { is_authorized_f } from "~/api/auth";
@@ -22,8 +22,9 @@ import axios from "axios";
 import { useCashflowStore } from "~/stores/useCashflowStore";
 import { useEffect } from "react";
 import { get_session_entity_id, get_user_id } from "~/utils/auth.server";
-import Finance from "~/api/client/Finance";
-import { lastValueFrom, tap } from "rxjs";
+import PersonalReport from "~/api/client/PersonalReport";
+import { forkJoin, lastValueFrom, map as rxmap } from "rxjs";
+import BusinessReport from "~/api/client/BusinessReport";
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
@@ -46,6 +47,47 @@ export const loader = async ({ request }) => {
 
 	let { data: financials = {} } = cashflow_api_response;
 
+	let personal_report = new PersonalReport(group_id);
+	let business_report = new BusinessReport(group_id);
+
+	let personal_report_payload = personal_report.scores.fold;
+	let business_report_payload = business_report.experian_score.dnb_score.experian_years_on_file.fold;
+
+	let reports = await lastValueFrom(
+		forkJoin({
+			personal: personal_report_payload,
+			business: business_report_payload,
+		}).pipe(
+			rxmap(({ personal, business }) => {
+				return {
+					years_on_file: { name: "Years in business", value: business.experian_years_on_file },
+					scores: {
+						personal: {
+							name: "Personal Credit",
+							id: "personalcredit",
+							value: {
+								experian: personal.scores.experian_personal_score,
+								equifax: personal.scores.equifax_personal_score,
+								transunion: personal.scores.transunion_personal_score,
+							},
+						},
+						business: {
+							name: "Business Credit",
+							id: "businesscredit",
+							value: {
+								experian: business.experian_score,
+								dnb: business.dnb_score,
+							},
+						},
+					},
+				};
+			})
+		)
+	);
+
+	console.log("personal_scores_____");
+	console.log(reports);
+
 	let { error = false } = financials;
 
 	console.log("financials");
@@ -64,7 +106,7 @@ export const loader = async ({ request }) => {
 	// console.log("financials");
 	// console.log(financials);
 
-	return { financials };
+	return { financials, reports };
 };
 
 const ActivityFeed = () => {
@@ -280,7 +322,7 @@ const HealthStats = ({ type = "revenue" }) => {
 							<span className="ml-2 text-sm font-medium text-gray-500">from {item.previousStat}</span>
 						</div>
 
-						<div
+						{/* <div
 							className={classNames(
 								item.changeType === "increase"
 									? "bg-green-100 text-green-800"
@@ -301,7 +343,7 @@ const HealthStats = ({ type = "revenue" }) => {
 							)}
 
 							{item.change}
-						</div>
+						</div> */}
 					</div>
 				</div>
 			))}
@@ -468,17 +510,34 @@ const ExpensesChart = () => {
 };
 
 const Stats = () => {
-	let { financials = {} } = useLoaderData();
+	let { financials = {}, reports } = useLoaderData();
+
+	let {
+		years_on_file = 0,
+		scores: { personal, business },
+	} = reports;
+
+	console.log("reports_____");
+	console.log(business);
+	console.log(personal);
+
 	let { annual_revenue = 0, average_daily_balance = 0, num_of_negative_balance_days = 0 } = financials;
 
-	let stats = [annual_revenue, average_daily_balance, num_of_negative_balance_days];
+	let stats = [
+		annual_revenue,
+		average_daily_balance,
+		num_of_negative_balance_days,
+		years_on_file,
+		personal,
+		business,
+	];
 
 	return (
 		<div className="flex flex-wrap w-full rounded-lg gap-x-3 gap-y-3 justify-between">
 			{stats.map((stat, index) => (
 				<div
 					key={index}
-					className="flex flex-col w-full md:w-[48%] lg:w-[32%] justify-between gap-x-4 gap-y-2 bg-white px-4 py-10 border rounded-lg"
+					className="flex flex-col w-full md:w-[48%] lg:w-[32%] gap-x-4 gap-y-2 bg-white px-4 py-4 border rounded-lg"
 				>
 					<div className="text-sm font-medium leading-6 text-gray-500">{stat.name}</div>
 					<div
@@ -489,9 +548,41 @@ const Stats = () => {
 					>
 						{stat.change}
 					</div>
-					<div className="w-full flex-none text-3xl font-medium leading-10 tracking-tight text-gray-900">
-						{stat.value}
-					</div>
+					{!stat.id && (
+						<div className="w-full flex-none text-3xl font-medium leading-10 tracking-tight text-gray-900">
+							{stat.value}
+						</div>
+					)}
+
+					{stat.id === "personalcredit" && (
+						<div className="w-full flex flex-col text-3xl text-gray-900 gap-y-3">
+							<div className="flex flex-row justify-between text-lg">
+								<div className="font-medium">Experian: </div>
+								<div>{pipe(get("experian"))(stat.value)}</div>
+							</div>
+							<div className="flex flex-row justify-between text-lg">
+								<div className="font-medium">Equifax: </div>
+								<div>{pipe(get("equifax"))(stat.value)}</div>
+							</div>
+							<div className="flex flex-row justify-between text-lg">
+								<div className="font-medium">Transunion: </div>
+								<div>{pipe(get("transunion"))(stat.value)}</div>
+							</div>
+						</div>
+					)}
+
+					{stat.id === "businesscredit" && (
+						<div className="w-full flex flex-col text-3xl text-gray-900 gap-y-3">
+							<div className="flex flex-row justify-between text-lg">
+								<div className="font-medium">Experian: </div>
+								<div>{pipe(get("experian"))(stat.value)}</div>
+							</div>
+							<div className="flex flex-row justify-between text-lg">
+								<div className="font-medium">D&B: </div>
+								<div>{pipe(get("dnb"))(stat.value)}</div>
+							</div>
+						</div>
+					)}
 				</div>
 			))}
 		</div>

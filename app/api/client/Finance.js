@@ -522,8 +522,8 @@ export default class Finance {
 					return {
 						name: "Average daily balance",
 						value: currency.format(value),
-						change: "+54.02%",
-						changeType: "negative",
+						// change: "+54.02%",
+						// changeType: "negative",
 					};
 				})
 			),
@@ -567,8 +567,8 @@ export default class Finance {
 						return {
 							name: "Number of negative balance days",
 							value,
-							change: "-1.39%",
-							changeType: "positive",
+							// change: "-1.39%",
+							// changeType: "positive",
 						};
 					}
 				)
@@ -597,8 +597,8 @@ export default class Finance {
 						return {
 							name: "Lender-recognized annual revenue",
 							value: currency.format(value),
-							change: "+4.75%",
-							changeType: "positive",
+							// change: "+4.75%",
+							// changeType: "positive",
 						};
 					}
 				)
