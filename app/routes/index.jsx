@@ -326,7 +326,7 @@ export default function LandingPage() {
 						</div>
 						<div className="flex flex-col w-full items-center py-3 sm:py-5 text-center text-4xl sm:text-5xl text-[#202536] font-bold">
 							<p className="py-2">Pick Your Plan</p>
-							<p>And We’ll Do The Rest.</p>
+							<p>And We’ll Do The Rest</p>
 						</div>
 					</div>
 				</div>

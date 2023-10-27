@@ -4,6 +4,7 @@ import {
 	form_params,
 	get_entity_id,
 	get_group_id,
+	mapIndexed,
 	use_client_search_params,
 	use_search_params,
 } from "~/utils/helpers";
@@ -689,8 +690,8 @@ const BankAccount = () => {
 			</div>
 			<div className="flex flex-col w-full border-t mt-3">
 				{pipe(
-					map((account) => (
-						<div className="flex flex-col px-5 py-3 gap-y-1" key={account.account}>
+					mapIndexed((account, index) => (
+						<div className="flex flex-col px-5 py-3 gap-y-1" key={index}>
 							<div className="flex flex-row justify-between">
 								<div className="flex flex-row gap-x-2">
 									<div className="flex flex-col font-semibold">{account?.name}</div>
