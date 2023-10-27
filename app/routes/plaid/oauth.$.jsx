@@ -7,6 +7,7 @@ import { usePlaidLink } from "react-plaid-link";
 import { create_axios_form, get_entity_id, get_group_id, inspect } from "~/utils/helpers";
 import { useEffect, useState } from "react";
 import { set_doc } from "~/utils/firebase";
+import { get_session_entity_id } from "~/utils/auth.server";
 
 const usePlaidStore = create((set) => ({
 	link_token: "",
@@ -17,8 +18,15 @@ const usePlaidStore = create((set) => ({
 export const loader = async ({ request }) => {
 	let location = new URL(request.url);
 	let { origin } = location;
+	let entity_id = await get_session_entity_id(request);
+	let group_id = get_group_id(location.pathname);
 
-	let plaid_create_link_token_url = `${origin}/plaid/create_link_token`;
+	console.log("loader_entity_id");
+	console.log(entity_id);
+	console.log("loader_group_id");
+	console.log(group_id);
+
+	let plaid_create_link_token_url = `${origin}/plaid/create_link_token/resource/e/${entity_id}/g/${group_id}`;
 
 	let config = {
 		method: "post",
@@ -48,7 +56,7 @@ export default function PlaidOauth() {
 	const save_plaid_credentials = async (public_token, metadata) => {
 		console.log("save_plaid_credentials");
 		set_plaid(["public_token"], public_token);
-		let plaid_exchange_public_token_url = `${location.origin}/plaid/exchange_public_token`;
+		let plaid_exchange_public_token_url = `${window?.location?.origin}/plaid/exchange_public_token`;
 		let data = create_axios_form({ public_token });
 
 		let config = {
@@ -61,12 +69,18 @@ export default function PlaidOauth() {
 		let response = await axios(config);
 		let { access_token } = response?.data;
 
+		console.log("response.data");
+		console.log(response.data);
+
 		if (access_token) {
 			let payload = {
 				entity_id,
 				group_id,
 				...response.data,
 			};
+
+			console.log("payload______");
+			console.log(payload);
 
 			await set_doc(["plaid_credentials", group_id], payload);
 			console.log("plaid_credentials_saved");

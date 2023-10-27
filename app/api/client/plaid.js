@@ -22,14 +22,14 @@ import {
 	not,
 } from "ramda";
 import moment from "moment";
-import { all, cons } from "shades";
+import { all } from "shades";
 
 export const configuration = new Configuration({
-	basePath: PlaidEnvironments.sandbox,
+	basePath: PlaidEnvironments.production,
 	baseOptions: {
 		headers: {
-			"PLAID-CLIENT-ID": process?.env?.PLAID_CLIENT_ID,
-			"PLAID-SECRET": process?.env?.PLAID_SECRET,
+			"PLAID-CLIENT-ID": process.env.PLAID_CLIENT_ID,
+			"PLAID-SECRET": process.env.PLAID_SECRET,
 		},
 	},
 });
