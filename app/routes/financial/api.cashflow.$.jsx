@@ -88,8 +88,8 @@ export const loader = async ({ request }) => {
 			.num_of_negative_balance_days.annual_revenue.fold;
 
 	let data = response.pipe(
-		tap(() => console.log("plaid_res")),
-		tap(console.log),
+		// tap(() => console.log("plaid_res")),
+		// tap(console.log),
 
 		rxmap((response) => ({
 			...response,

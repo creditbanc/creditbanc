@@ -153,11 +153,15 @@ const ActivityFeed = () => {
 								}`}
 							>
 								{activityItem.type === "expense" && (
-									<ArrowDownCircleIcon className="h-5 w-5 text-gray-500 " />
+									<div className="flex flex-col w-[40px] h-[40px] items-center justify-center">
+										<ArrowDownCircleIcon className="h-5 w-5 text-gray-500 " />
+									</div>
 								)}
 
 								{activityItem.type === "revenue" && (
-									<ArrowUpCircleIcon className="h-5 w-5 text-blue-500 " />
+									<div className="flex flex-col w-[40px] h-[40px] items-center justify-center">
+										<ArrowUpCircleIcon className="h-5 w-5 text-blue-500 " />
+									</div>
 								)}
 							</div>
 

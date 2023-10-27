@@ -32,8 +32,8 @@ export const action = async ({ request }) => {
 	try {
 		const response = await PlaidClient.linkTokenCreate(plaid_request);
 
-		console.log("create_link_token_action_response");
-		console.log(response);
+		// console.log("create_link_token_action_response");
+		// console.log(response);
 		let { data } = response;
 		return data;
 	} catch (error) {
