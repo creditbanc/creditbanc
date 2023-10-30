@@ -12,6 +12,8 @@ import {
 	formatPhoneNumber,
 	inspect,
 	fetcher_payload_maker,
+	mapIndexed,
+	currency,
 } from "~/utils/helpers";
 import { __, anyPass, curry, isEmpty, isNil, length, map, not, omit, pipe, values } from "ramda";
 import { all, filter } from "shades";
@@ -493,6 +495,49 @@ const Notifications = () => {
 	);
 };
 
+const BankAccount = () => {
+	let {
+		financials: {
+			bank_accounts: { accounts = [] },
+		},
+	} = useLoaderData();
+
+	return (
+		<div className="flex flex-col w-full bg-white rounded">
+			<div className="flex flex-row justify-between items-center px-5 pt-5 text-base font-semibold leading-6 text-gray-900">
+				<div>Bank Account</div>
+				{/* <BankAccountActions /> */}
+			</div>
+			<div className="flex flex-col w-full border-t mt-3">
+				{pipe(
+					mapIndexed((account, index) => (
+						<div className="flex flex-col px-5 py-3 gap-y-1" key={index}>
+							<div className="flex flex-row justify-between">
+								<div className="flex flex-row gap-x-2">
+									<div className="flex flex-col font-semibold">{account?.name}</div>
+									<div>({account?.mask})</div>
+								</div>
+								<div className="flex flex-col font-semibold">
+									{currency.format(account?.balance || 0)}
+								</div>
+							</div>
+							<div className="flex flex-row justify-between text-sm">
+								<div className="flex flex-row gap-x-2">
+									<div className="flex flex-row gap-x-2">
+										<div className="flex flex-col font-semibold">name: </div>
+										<div>{account?.official_name}</div>
+									</div>
+								</div>
+								<div className="flex flex-col">current balance</div>
+							</div>
+						</div>
+					))
+				)(accounts)}
+			</div>
+		</div>
+	);
+};
+
 export default function Home() {
 	// return null;
 	let loader_data = useLoaderData();
@@ -645,6 +690,7 @@ export default function Home() {
 								</div>
 								<div className="flex flex-col w-full gap-y-[100px] items-center">
 									<div className="flex flex-col w-[100%] px-5 lg:w-screen-lg lg:min-w-screen-lg lg:max-w-screen-lg">
+										<BankAccount />
 										<div className="flex flex-col w-full max-h-[600px] bg-white rounded">
 											<CashflowChart />
 										</div>
