@@ -59,12 +59,6 @@ export const loader = async ({ request }) => {
 		url: `${origin}/financial/api/cashflow/resource/e/${entity_id}/g/${group_id}?income=${income_start_month}`,
 	});
 
-	// return { financials: {} };
-
-	// if (true) {
-	// 	return redirect(`/financial/accounts/resource/e/${entity_id}/g/${group_id}`);
-	// }
-
 	let { data: financials = {} } = cashflow_api_response;
 
 	let personal_report = new PersonalReport(group_id);

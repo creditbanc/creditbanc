@@ -34,7 +34,8 @@ import Entity from "~/api/client/Entity";
 import { cache } from "~/utils/helpers.server";
 import { appKey } from "~/data/array";
 import BusinessScores from "../credit/report/business/components/scores";
-import { currency } from "~/utils/helpers";
+import CashflowChart from "~/components/CashflowChart";
+import { useCashflowStore } from "~/stores/useCashflowStore";
 
 let use_view_store = store();
 
@@ -43,6 +44,10 @@ const log_route = `home.$`;
 const on_success = curry((request, response) => {
 	console.log(`${log_route}.success`);
 	let with_cache = cache(request);
+
+	console.log("responsesssss");
+	console.log(response);
+
 	return with_cache({
 		...response,
 		cache_dependencies: [
@@ -65,8 +70,8 @@ const on_error = (error) => {
 };
 
 export const loader = async ({ request }) => {
-	// return null;
 	let url = new URL(request.url);
+	let { origin } = url;
 	let entity_id = await get_session_entity_id(request);
 	let business_entity_id = get_entity_id(url.pathname);
 	let group_id = get_group_id(url.pathname);
@@ -83,9 +88,26 @@ export const loader = async ({ request }) => {
 	let personal_response = personal_report.scores.report_sha.user_token.fold;
 	let business_response = business_report.experian_facts.business_info.scores.report_sha.fold;
 
-	let payload = forkJoin({ personal_response, business_response, entity_response, business_entity_response }).pipe(
-		rxmap(({ personal_response, business_response, entity_response, business_entity_response }) => {
+	let cashflow_api_response = await axios({
+		method: "get",
+		url: `${origin}/financial/api/cashflow/resource/e/${entity_id}/g/${group_id}?income=${12}`,
+	});
+
+	let { data: financials = {} } = cashflow_api_response;
+
+	// console.log("responsesssss1");
+	// console.log(financials);
+
+	let payload = forkJoin({
+		personal_response,
+		business_response,
+		entity_response,
+		business_entity_response,
+		financials: rxof(financials),
+	}).pipe(
+		rxmap(({ personal_response, business_response, entity_response, business_entity_response, financials }) => {
 			return {
+				financials,
 				business_info: business_response.business_info,
 				business_scores: business_response.scores,
 				business_report_sha: business_response.report_sha,
@@ -105,6 +127,10 @@ export const loader = async ({ request }) => {
 	);
 
 	let response = await lastValueFrom(payload.pipe(fold(on_success(request), on_error)));
+
+	// console.log("responsesssss1");
+	// console.log(response);
+
 	return response;
 };
 
@@ -470,9 +496,10 @@ const Notifications = () => {
 export default function Home() {
 	// return null;
 	let loader_data = useLoaderData();
+	let set_financials = useCashflowStore((state) => state.set_state);
 	let set_view = use_view_store((state) => state.set_props);
 	let set_path = use_view_store((state) => state.set_state);
-	let { user_token, experian_facts = {}, business_scores = {} } = loader_data;
+	let { user_token, experian_facts = {}, business_scores = {}, financials = {} } = loader_data;
 
 	let { businessHeader = {} } = experian_facts;
 	let { businessName } = businessHeader;
@@ -522,6 +549,10 @@ export default function Home() {
 			tap(update_cache)
 		);
 	};
+
+	useEffect(() => {
+		set_financials(["financials"], financials);
+	}, []);
 
 	useEffect(() => {
 		// console.log("loader_data");
@@ -613,6 +644,12 @@ export default function Home() {
 									</h1>
 								</div>
 								<div className="flex flex-col w-full gap-y-[100px] items-center">
+									<div className="flex flex-col w-[100%] px-5 lg:w-screen-lg lg:min-w-screen-lg lg:max-w-screen-lg">
+										<div className="flex flex-col w-full max-h-[600px] bg-white rounded">
+											<CashflowChart />
+										</div>
+									</div>
+
 									<div className="flex flex-col w-[100%] px-5 lg:w-screen-lg lg:min-w-screen-lg lg:max-w-screen-lg">
 										<div className="flex flex-row justify-between items-center border-b border-gray-200 pb-5 mb-6">
 											<h3 className="text-base font-semibold leading-6 text-gray-900">
