@@ -1,4 +1,5 @@
 import {
+	__,
 	curry,
 	head,
 	identity,
@@ -24,6 +25,8 @@ import {
 	ascend,
 	length,
 	isEmpty,
+	tap as rtap,
+	divide,
 } from "ramda";
 import { set_doc, get_doc, get_collection, delete_collection, delete_doc } from "~/utils/firebase";
 import { forkJoin, from, merge, of as rxof, throwError, zip as rxzip } from "rxjs";
@@ -483,6 +486,35 @@ export default class Finance {
 		return this;
 	}
 
+	get average_income() {
+		this.response = this._monthly_incomes_(this.months).pipe(
+			rxmap(
+				pipe(
+					takeLast(6),
+					average,
+					// rtap(() => console.log("averagevaluetap")),
+					// rtap((value) => console.log(value)),
+					(curr) => {
+						// let change = percentage_change(prev, curr);
+
+						return {
+							name: "Average income in last 6 months",
+							stat: currency_precise(2).format(curr.toFixed(2)),
+							// previousStat: prev.toFixed(2),
+							// change: `${change.toFixed(2)}%`,
+							// changeType: change_type(change),
+						};
+					}
+				)
+			),
+			rxmap((average_income) => ({ average_income })),
+			catchError(catch_with_default({ average_income: {} }, "average_income")),
+			concatMap(merge_with_current(this.response))
+		);
+
+		return this;
+	}
+
 	get highest_expense() {
 		this.response = this._monthly_expenses_(this.months).pipe(
 			rxmap(
@@ -506,6 +538,30 @@ export default class Finance {
 		return this;
 	}
 
+	get average_expense() {
+		this.response = this._monthly_expenses_(this.months).pipe(
+			rxmap(
+				pipe(
+					takeLast(6),
+					average,
+					// rtap(() => console.log("averagevaluetap")),
+					// rtap((value) => console.log(value)),
+					(curr) => {
+						return {
+							name: "Average spending in last 6 months",
+							stat: currency_precise(2).format(curr.toFixed(2)),
+						};
+					}
+				)
+			),
+			rxmap((average_expense) => ({ average_expense })),
+			catchError(catch_with_default({ average_expense: {} }, "average_expense")),
+			concatMap(merge_with_current(this.response))
+		);
+
+		return this;
+	}
+
 	get highest_revenue() {
 		this.response = this._monthly_revenues_(this.months).pipe(
 			rxmap(
@@ -523,6 +579,30 @@ export default class Finance {
 			),
 			rxmap((highest_revenue) => ({ highest_revenue })),
 			catchError(catch_with_default({ highest_revenue: {} }, "highest_revenue")),
+			concatMap(merge_with_current(this.response))
+		);
+
+		return this;
+	}
+
+	get average_revenue() {
+		this.response = this._monthly_revenues_(this.months).pipe(
+			rxmap(
+				pipe(
+					takeLast(6),
+					average,
+					// rtap(() => console.log("averagevaluetap")),
+					// rtap((value) => console.log(value)),
+					(curr) => {
+						return {
+							name: "Average revenue in last 6 months",
+							stat: currency_precise(2).format(curr.toFixed(2)),
+						};
+					}
+				)
+			),
+			rxmap((average_revenue) => ({ average_revenue })),
+			catchError(catch_with_default({ average_revenue: {} }, "average_revenue")),
 			concatMap(merge_with_current(this.response))
 		);
 

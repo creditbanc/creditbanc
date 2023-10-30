@@ -327,6 +327,9 @@ const HealthStats = ({ type = "revenue" }) => {
 	let { stats_data = {} } = financials;
 	let stats = stats_data[type] ?? [];
 
+	console.log("stats_____");
+	console.log(stats);
+
 	if (isEmpty(stats)) {
 		return <div></div>;
 	}

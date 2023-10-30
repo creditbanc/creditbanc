@@ -134,9 +134,9 @@ export const expenses_data = (labels, expenses) => {
 
 const IncomeStats = () => {
 	let financials = useCashflowStore((state) => state.financials);
-	let { highest_income = 0, incomes_change = 0 } = financials;
+	let { highest_income = 0, incomes_change = 0, average_income = 0 } = financials;
 
-	let income_stats_data = [highest_income, incomes_change];
+	let income_stats_data = [highest_income, incomes_change, average_income];
 
 	return (
 		<div className="flex flex-row lg:flex-col w-full justify-between bg-white lg:divide-y rounded px-5 lg:px-0 gap-x-5 mb-5">
@@ -149,9 +149,11 @@ const IncomeStats = () => {
 					<div className="mt-1 flex flex-row justify-between w-full">
 						<div className="flex flex-col items-baseline text-xl font-semibold text-blue-600">
 							{item.stat}
-							<span className="ml-2 text-sm font-medium text-gray-500 w-full">
-								from {item.previousStat}
-							</span>
+							{item?.previousStat && (
+								<span className="ml-2 text-sm font-medium text-gray-500 w-full">
+									from {item.previousStat}
+								</span>
+							)}
 						</div>
 
 						{/* <div

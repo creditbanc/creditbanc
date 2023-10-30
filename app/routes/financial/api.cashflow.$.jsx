@@ -85,7 +85,7 @@ export const loader = async ({ request }) => {
 	let response =
 		finance.average_daily_balance.monthly_expenses.monthly_revenues.monthly_transactions.monthly_incomes.recent_activity()
 			.incomes_change.expenses_change.revenues_change.highest_income.highest_expense.highest_revenue
-			.num_of_negative_balance_days.annual_revenue.fold;
+			.average_revenue.average_expense.average_income.num_of_negative_balance_days.annual_revenue.fold;
 
 	let data = response.pipe(
 		// tap(() => console.log("plaid_res")),
@@ -95,8 +95,8 @@ export const loader = async ({ request }) => {
 			...response,
 			bank_accounts,
 			stats_data: {
-				revenues: [response.highest_revenue, response.revenues_change],
-				expenses: [response.highest_expense, response.expenses_change],
+				revenues: [response.highest_revenue, response.revenues_change, response.average_revenue],
+				expenses: [response.highest_expense, response.expenses_change, response.average_expense],
 			},
 			month_labels: pipe(map((date) => moment(date).format("MMM")))(start_date_of_months(start_date, end_date)),
 		}))
