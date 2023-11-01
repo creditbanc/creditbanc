@@ -1,5 +1,5 @@
 import { ChevronRightIcon, ListBulletIcon } from "@heroicons/react/20/solid";
-import { Link, useFetcher, useLocation, useNavigate } from "@remix-run/react";
+import { Link, useFetcher, useLocation, useNavigate, useRevalidator } from "@remix-run/react";
 import { get_session_entity_id } from "~/utils/auth.server";
 import {
 	capitalize,
@@ -19,7 +19,7 @@ import { __, anyPass, curry, isEmpty, isNil, length, map, not, omit, pipe, value
 import { all, filter } from "shades";
 import { useLoaderData } from "@remix-run/react";
 import axios from "axios";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { ChevronUpIcon } from "@heroicons/react/20/solid";
 import { Disclosure } from "@headlessui/react";
 import { CheckCircleIcon, XCircleIcon } from "@heroicons/react/24/outline";
@@ -68,12 +68,9 @@ const on_error = (error) => {
 
 export const loader = async ({ request }) => {
 	let url = new URL(request.url);
-	let { origin } = url;
 	let entity_id = await get_session_entity_id(request);
 	let business_entity_id = get_entity_id(url.pathname);
 	let group_id = get_group_id(url.pathname);
-	let onboard_state = await get_doc(["onboard", entity_id]);
-	let onboard = pipe(omit(["group_id", "entity_id"]), values)(onboard_state);
 
 	let entity = new Entity(entity_id);
 	let business_entity = new Entity(business_entity_id);
@@ -84,16 +81,6 @@ export const loader = async ({ request }) => {
 	let business_entity_response = business_entity.identity.fold;
 	let personal_response = personal_report.scores.report_sha.user_token.fold;
 	let business_response = business_report.experian_facts.business_info.scores.report_sha.fold;
-
-	// let cashflow_api_response = await axios({
-	// 	method: "get",
-	// 	url: `${origin}/financial/api/cashflow/resource/e/${entity_id}/g/${group_id}?income=${12}`,
-	// });
-
-	// let { data: financials = {} } = cashflow_api_response;
-
-	// console.log("responsesssss1");
-	// console.log(financials);
 
 	let payload = forkJoin({
 		personal_response,
@@ -113,7 +100,7 @@ export const loader = async ({ request }) => {
 				plan_id: entity_response.plan_id,
 				business_entity_id,
 				business_entity: business_entity_response.identity,
-				onboard,
+
 				business_report_is_empty: business_response.business_report_is_empty,
 				user_token: personal_response.user_token,
 				experian_facts: business_response.experian_facts,
@@ -169,19 +156,25 @@ const BankAccount = ({ loader = {} }) => {
 	);
 };
 
+let use_loader_store = store();
+
 export default function Home() {
-	// return null;
 	let { pathname } = useLocation();
-	let fetcher = useFetcher();
-	let loader_data = useLoaderData();
+
+	let server_data = useLoaderData();
+	let loader = use_loader_store((state) => state);
 
 	let entity_id = get_entity_id(pathname);
 	let group_id = get_group_id(pathname);
 
-	let { user_token, experian_facts = {}, business_scores = {}, financials = {} } = loader_data;
+	let { user_token, experian_facts = {}, business_scores = {} } = loader;
+
+	useEffect(() => loader.set_props(server_data), []);
 
 	useEffect(() => {
-		fetcher.load(`/financial/api/cashflow/resource/e/${entity_id}/g/${group_id}?income=${12}`);
+		let { origin } = new URL(window.location);
+		let fetcher_url = `${origin}/financial/api/cashflow/resource/e/${entity_id}/g/${group_id}?income=${12}`;
+		from(axios.get(fetcher_url)).pipe(rxmap(loader.set_props)).subscribe();
 	}, []);
 
 	let { businessHeader = {} } = experian_facts;
@@ -201,9 +194,9 @@ export default function Home() {
 								</div>
 								<div className="flex flex-col w-full gap-y-[100px] items-center">
 									<div className="flex flex-col w-[100%] px-5 lg:w-screen-lg lg:min-w-screen-lg lg:max-w-screen-lg">
-										<BankAccount loader={fetcher} />
+										<BankAccount loader={loader} />
 										<div className="flex flex-col w-full max-h-[600px] bg-white rounded">
-											<CashflowChart loader={fetcher} />
+											<CashflowChart loader={loader} />
 										</div>
 									</div>
 

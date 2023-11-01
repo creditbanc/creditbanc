@@ -1,6 +1,6 @@
 import { get_group_id, inspect, use_search_params } from "~/utils/helpers";
 import { pipe, map, isEmpty, last } from "ramda";
-import { from, lastValueFrom, tap } from "rxjs";
+import { from, lastValueFrom, of as rxof, tap, timeout } from "rxjs";
 import { concatMap, map as rxmap } from "rxjs/operators";
 import moment from "moment";
 import axios from "axios";
@@ -25,7 +25,7 @@ let start_date_of_months = (start_date, end_date) => {
 
 export const loader = async ({ request }) => {
 	console.log("cashflow_loader");
-
+	// return {};
 	let { origin } = new URL(request.url);
 	let { income: income_start_month = 12 } = use_search_params(request);
 	let entity_id = await get_session_entity_id(request);
@@ -88,9 +88,7 @@ export const loader = async ({ request }) => {
 			.average_revenue.average_expense.average_income.num_of_negative_balance_days.annual_revenue.fold;
 
 	let data = response.pipe(
-		// tap(() => console.log("plaid_res")),
-		// tap(console.log),
-
+		timeout({ each: 5000, with: () => rxof({}) }),
 		rxmap((response) => ({
 			...response,
 			bank_accounts,
@@ -100,6 +98,7 @@ export const loader = async ({ request }) => {
 			},
 			month_labels: pipe(map((date) => moment(date).format("MMM")))(start_date_of_months(start_date, end_date)),
 		}))
+		// timeout({ each: 1000, with: () => rxof({}) })
 	);
 
 	return lastValueFrom(data);

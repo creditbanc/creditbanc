@@ -20,6 +20,7 @@ import {
 	sum,
 	isEmpty,
 	not,
+	defaultTo,
 } from "ramda";
 import moment from "moment";
 import { all } from "shades";
@@ -71,14 +72,28 @@ export default class Plaid {
 		console.log("auths");
 		let { access_token } = await lastValueFrom(this._credentials_);
 		const request = { access_token };
-		return from(this.plaid.authGet(request)).pipe(rxmap(prop("data")));
+		return from(this.plaid.authGet(request)).pipe(
+			rxmap(prop("data")),
+			catchError((error) => {
+				console.log("auths.error");
+				console.log(error);
+				return rxof({});
+			})
+		);
 	};
 
 	identities = async () => {
 		console.log("identities");
 		let { access_token } = await lastValueFrom(this._credentials_);
 		const request = { access_token };
-		return from(this.plaid.identityGet(request)).pipe(rxmap(prop("data")));
+		return from(this.plaid.identityGet(request)).pipe(
+			rxmap(prop("data")),
+			catchError((error) => {
+				console.log("identities.error");
+				console.log(error);
+				return rxof({});
+			})
+		);
 	};
 
 	accounts = async () => {
@@ -93,19 +108,20 @@ export default class Plaid {
 			return rxof({ accounts: [] });
 		}
 
-		let { accounts: identities } = await lastValueFrom(await this.identities());
+		let { accounts: identities = [] } = await lastValueFrom(await this.identities());
 		let auth_accounts = await lastValueFrom(await this.auths());
 
 		// console.log("auth_accounts");
 		// console.log(auth_accounts);
 
-		let {
-			accounts,
-			numbers: { ach, bacs, eft, international },
-		} = auth_accounts;
+		let { accounts = [], numbers: { ach = [], bacs = [], eft = [], international = [] } = {} } = auth_accounts;
 
 		let all_accounts = [...accounts, ...identities, ...ach, ...bacs, ...eft, ...international];
-		let accounts_payload = pipe(groupBy(prop("account_id")), map(mergeAll), values)(all_accounts);
+
+		console.log("all_accounts");
+		console.log(all_accounts);
+
+		let accounts_payload = pipe(defaultTo([]), groupBy(prop("account_id")), map(mergeAll), values)(all_accounts);
 
 		// console.log("accounts_payload");
 		// console.log(accounts_payload);

@@ -1,52 +1,9 @@
-import moment from "moment";
 import { isEmpty, pipe } from "ramda";
-import { lastValueFrom } from "rxjs";
-import { mod, all } from "shades";
+import { lastValueFrom, of as rxof, timeout } from "rxjs";
 import Finance from "~/api/client/Finance";
 import Plaid from "~/api/client/plaid";
-import { get_transactions } from "~/api/plaid.server";
 import { get_session_entity_id } from "~/utils/auth.server";
-import { get_collection, get_doc, set_doc } from "~/utils/firebase";
-import { get_entity_id, get_group_id, use_search_params } from "~/utils/helpers";
-
-let get_plaid_account_transactions_from_db = async ({ group_id, account_id }) => {
-	let transactions_queries = [
-		{
-			param: "group_id",
-			predicate: "==",
-			value: group_id,
-		},
-		{
-			param: "account_id",
-			predicate: "==",
-			value: account_id,
-		},
-	];
-
-	let transactions = await get_collection({
-		path: ["transactions"],
-		queries: transactions_queries,
-	});
-
-	return transactions;
-};
-
-let get_plaid_transactions_from_db = async ({ group_id }) => {
-	let transactions_queries = [
-		{
-			param: "group_id",
-			predicate: "==",
-			value: group_id,
-		},
-	];
-
-	let transactions = await get_collection({
-		path: ["transactions"],
-		queries: transactions_queries,
-	});
-
-	return transactions;
-};
+import { get_group_id } from "~/utils/helpers";
 
 export const loader = async ({ request }) => {
 	let { pathname } = new URL(request.url);
@@ -58,7 +15,7 @@ export const loader = async ({ request }) => {
 	// console.log({ account_id, group_id, entity_id });
 
 	let finance = new Finance(entity_id, group_id);
-	let transactions = await lastValueFrom(finance._transactions_);
+	let transactions = await lastValueFrom(finance._transactions_.pipe(timeout({ each: 5000, with: () => rxof({}) })));
 
 	// console.log("api.transactions______");
 	// console.log(transactions);

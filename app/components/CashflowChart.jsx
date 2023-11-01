@@ -7,7 +7,6 @@ import "chart.js/auto";
 import { pipe, values, sum, mapObjIndexed, join, isEmpty } from "ramda";
 import { mod } from "shades";
 import { Link, useLocation } from "@remix-run/react";
-import { useCashflowStore } from "~/stores/useCashflowStore";
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
