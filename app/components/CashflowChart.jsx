@@ -132,8 +132,8 @@ export const expenses_data = (labels, expenses) => {
 	};
 };
 
-const IncomeStats = () => {
-	let financials = useCashflowStore((state) => state.financials);
+const IncomeStats = ({ loader = {} }) => {
+	let financials = loader.data || {};
 	let { highest_income = 0, incomes_change = 0, average_income = 0 } = financials;
 
 	let income_stats_data = [highest_income, incomes_change, average_income];
@@ -185,9 +185,10 @@ const IncomeStats = () => {
 	);
 };
 
-export default function CashflowChart() {
+export default function CashflowChart({ loader = {} }) {
 	let { search, pathname } = useLocation();
-	let financials = useCashflowStore((state) => state.financials);
+	let financials = loader.data || {};
+
 	let { monthly_expenses = [], monthly_revenues = [], monthly_incomes = [], month_labels = [] } = financials;
 
 	let net_income = sum(monthly_incomes);
@@ -262,7 +263,7 @@ export default function CashflowChart() {
 						<div className="pb-3 px-5 lg:px-3">
 							<h3 className="text-base font-semibold leading-6 text-gray-900">How you’re doing</h3>
 						</div>
-						<IncomeStats />
+						<IncomeStats loader={loader} />
 					</div>
 				</div>
 				<div className="flex flex-col lg:flex-1 h-[350px] p-3 overflow-hidden">
