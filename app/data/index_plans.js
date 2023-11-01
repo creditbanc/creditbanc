@@ -128,8 +128,8 @@ export const plans = [
 		name: "Banc Pro",
 		id: "pro",
 		href: "/signup?plan=pro",
-		priceMonthly: 85,
-		price: { monthly: 85, annually: 1020 },
+		priceMonthly: 97,
+		price: { monthly: 97, annually: 1164 },
 		description: "Dedicated support and infrastructure for your company.",
 		features: [
 			{ included: true, text: "MONTHLY 3-Bureau Personal Credit Reports & Scores" },

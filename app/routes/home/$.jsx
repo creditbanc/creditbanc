@@ -1,32 +1,12 @@
-import { ChevronRightIcon, ListBulletIcon } from "@heroicons/react/20/solid";
-import { Link, useFetcher, useLocation, useNavigate, useRevalidator } from "@remix-run/react";
+import { Link, useLocation } from "@remix-run/react";
 import { get_session_entity_id } from "~/utils/auth.server";
-import {
-	capitalize,
-	get_entity_id,
-	get_group_id,
-	get_search_params_obj,
-	normalize_id,
-	store,
-	get,
-	formatPhoneNumber,
-	inspect,
-	fetcher_payload_maker,
-	mapIndexed,
-	currency,
-} from "~/utils/helpers";
-import { __, anyPass, curry, isEmpty, isNil, length, map, not, omit, pipe, values } from "ramda";
-import { all, filter } from "shades";
+import { get_entity_id, get_group_id, store, mapIndexed, currency } from "~/utils/helpers";
+import { __, curry, pipe } from "ramda";
 import { useLoaderData } from "@remix-run/react";
 import axios from "axios";
-import { useEffect, useRef, useState } from "react";
-import { ChevronUpIcon } from "@heroicons/react/20/solid";
-import { Disclosure } from "@headlessui/react";
-import { CheckCircleIcon, XCircleIcon } from "@heroicons/react/24/outline";
-import { get_doc } from "~/utils/firebase";
-import { useOnboardingStore } from "~/stores/useOnboardingStore";
-import { concatMap, delay, forkJoin, from, lastValueFrom, of as rxof, tap, zip } from "rxjs";
-import { filter as rxfilter, map as rxmap } from "rxjs";
+import { useEffect } from "react";
+import { forkJoin, from, lastValueFrom } from "rxjs";
+import { map as rxmap } from "rxjs";
 import PersonalReport from "~/api/client/PersonalReport";
 import BusinessReport from "~/api/client/BusinessReport";
 import { fold } from "~/utils/operators";
