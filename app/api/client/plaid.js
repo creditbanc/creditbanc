@@ -101,8 +101,8 @@ export default class Plaid {
 
 		let has_credentials = await lastValueFrom(this.has_credentials);
 
-		console.log("has_credentials");
-		console.log(has_credentials);
+		// console.log("has_credentials");
+		// console.log(has_credentials);
 
 		if (!has_credentials) {
 			return rxof({ accounts: [] });
@@ -118,8 +118,8 @@ export default class Plaid {
 
 		let all_accounts = [...accounts, ...identities, ...ach, ...bacs, ...eft, ...international];
 
-		console.log("all_accounts");
-		console.log(all_accounts);
+		// console.log("all_accounts");
+		// console.log(all_accounts);
 
 		let accounts_payload = pipe(defaultTo([]), groupBy(prop("account_id")), map(mergeAll), values)(all_accounts);
 

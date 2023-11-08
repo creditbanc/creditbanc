@@ -22,8 +22,8 @@ const on_success = curry((request, response) => {
 	console.log(`${log_route}.success`);
 	let with_cache = cache(request);
 
-	console.log("responsesssss");
-	console.log(response);
+	// console.log("responsesssss");
+	// console.log(response);
 
 	return with_cache({
 		...response,

@@ -3,9 +3,10 @@ import { DocumentIcon, PlayCircleIcon, PlayIcon, BackwardIcon, ForwardIcon } fro
 import { Link, useLoaderData, useLocation } from "@remix-run/react";
 import { classNames, get, get_course_id, get_entity_id, get_group_id, get_resource_id } from "~/utils/helpers";
 import { Disclosure } from "@headlessui/react";
-import { course as curriculum } from "./data";
+import { course as curriculum } from "../data";
 import { head, map, pipe } from "ramda";
 import { filter } from "shades";
+import { CalendarDaysIcon, CreditCardIcon, UserCircleIcon } from "@heroicons/react/20/solid";
 
 export const loader = async ({ request }) => {
 	console.log("course_loader");
@@ -42,7 +43,7 @@ const CurriculumAccordion = () => {
 									{pipe(
 										map((resource) => (
 											<Link
-												to={`/university/course/resource/resource/e/${entity_id}/g/${group_id}/f/${resource.id}`}
+												to={`/university/creditbuilder/${resource.id}/resource/e/${entity_id}/g/${group_id}/f/${resource.id}`}
 												className="flex flex-row w-full border p-2 rounded"
 											>
 												<div className="flex flex-row w-full space-x-2 items-center space-between cursor-pointer">
@@ -61,138 +62,9 @@ const CurriculumAccordion = () => {
 					</Disclosure>
 				))
 			)(curriculum)}
-			{/* <Disclosure defaultOpen={true}>
-				{({ open }) => (
-					<>
-						<Disclosure.Button className="flex w-full justify-between rounded-lg  px-4 py-2 text-left text-sm font-medium   focus:outline-none focus-visible:ring  focus-visible:ring-opacity-75">
-							<span>What is your refund policy?</span>
-							<ChevronUpIcon className={`${open ? "rotate-180 transform" : ""} h-5 w-5 text-gray-500`} />
-						</Disclosure.Button>
-						<Disclosure.Panel className="px-4  pb-2 text-gray-500 space-y-3 text-sm">
-							<div className="flex flex-row w-full border p-2 rounded">
-								<div className="flex flex-row w-full space-x-2 items-center space-between cursor-pointer">
-									<div>
-										<PlayCircleIcon className="h-5 w-5 text-gray-500" />
-									</div>
-									<div>Modern Portfolio Theory</div>
-								</div>
-								<div>2:45</div>
-							</div>
-							<div className="flex flex-row w-full border p-2 rounded">
-								<div className="flex flex-row w-full space-x-2 items-center space-between cursor-pointer">
-									<div>
-										<DocumentIcon className="h-5 w-5 text-gray-500" />
-									</div>
-									<div>Modern Portfolio Theory</div>
-								</div>
-								<div>2:45</div>
-							</div>
-							<div className="flex flex-row w-full border p-2 rounded">
-								<div className="flex flex-row w-full space-x-2 items-center space-between cursor-pointer">
-									<div>
-										<PlayCircleIcon className="h-5 w-5 text-gray-500" />
-									</div>
-									<div>Modern Portfolio Theory</div>
-								</div>
-								<div>2:45</div>
-							</div>
-						</Disclosure.Panel>
-					</>
-				)}
-			</Disclosure>
-			<Disclosure defaultOpen={true}>
-				{({ open }) => (
-					<>
-						<Disclosure.Button className="flex w-full justify-between rounded-lg  px-4 py-2 text-left text-sm font-medium   focus:outline-none focus-visible:ring  focus-visible:ring-opacity-75">
-							<span>What is your refund policy?</span>
-							<ChevronUpIcon className={`${open ? "rotate-180 transform" : ""} h-5 w-5 text-gray-500`} />
-						</Disclosure.Button>
-						<Disclosure.Panel className="px-4  pb-2 text-gray-500 space-y-3 text-sm">
-							<div className="flex flex-row w-full border p-2 rounded">
-								<div className="flex flex-row w-full space-x-2 items-center space-between cursor-pointer">
-									<div>
-										<PlayCircleIcon className="h-5 w-5 text-gray-500" />
-									</div>
-									<div>Modern Portfolio Theory</div>
-								</div>
-								<div>2:45</div>
-							</div>
-							<div className="flex flex-row w-full border p-2 rounded">
-								<div className="flex flex-row w-full space-x-2 items-center space-between cursor-pointer">
-									<div>
-										<DocumentIcon className="h-5 w-5 text-gray-500" />
-									</div>
-									<div>Modern Portfolio Theory</div>
-								</div>
-								<div>2:45</div>
-							</div>
-							<div className="flex flex-row w-full border p-2 rounded">
-								<div className="flex flex-row w-full space-x-2 items-center space-between cursor-pointer">
-									<div>
-										<PlayCircleIcon className="h-5 w-5 text-gray-500" />
-									</div>
-									<div>Modern Portfolio Theory</div>
-								</div>
-								<div>2:45</div>
-							</div>
-						</Disclosure.Panel>
-					</>
-				)}
-			</Disclosure> */}
 		</div>
 	);
 };
-
-const tabs = [
-	{ name: "Description", href: "#", current: true },
-	{ name: "Resources", href: "#", current: false },
-];
-
-const CourseTabs = () => {
-	return (
-		<div>
-			<div className="sm:hidden">
-				<label htmlFor="tabs" className="sr-only">
-					Select a tab
-				</label>
-
-				<select
-					id="tabs"
-					name="tabs"
-					className="block w-full rounded-md border-gray-300 py-2 pl-3 pr-10 text-base focus:border-blue-500 focus:outline-none focus:ring-blue-500 sm:text-sm"
-					defaultValue={tabs.find((tab) => tab.current).name}
-				>
-					{tabs.map((tab) => (
-						<option key={tab.name}>{tab.name}</option>
-					))}
-				</select>
-			</div>
-			<div className="hidden sm:block">
-				<div className="border-b border-gray-200">
-					<nav className="-mb-px flex space-x-8" aria-label="Tabs">
-						{tabs.map((tab) => (
-							<a
-								key={tab.name}
-								href={tab.href}
-								className={classNames(
-									tab.current
-										? "border-blue-500 text-blue-600"
-										: "border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700",
-									"whitespace-nowrap border-b-2 py-4 px-1 text-sm font-medium"
-								)}
-								aria-current={tab.current ? "page" : undefined}
-							>
-								{tab.name}
-							</a>
-						))}
-					</nav>
-				</div>
-			</div>
-		</div>
-	);
-};
-
-import { CalendarDaysIcon, CreditCardIcon, UserCircleIcon } from "@heroicons/react/20/solid";
 
 const Resource = () => {
 	return (
@@ -244,48 +116,23 @@ const Resource = () => {
 	);
 };
 
-const BusinessName = () => {
+const Content = () => {
 	return (
 		<div className="w-full text-base leading-7 text-gray-700 px-3 my-4">
 			<div className="mt-10 max-w-2xl">
-				{/* <p className="mt-8">
-					There is a lot that goes into a name! Have you selected your business name? Make sure your business
-					name can be trademarked, doesn't include any high-risk industries, and can be, or is filed with the
-					state before you build your business further.
-				</p> */}
-				<h2 className="mt-8 text-2xl font-bold tracking-tight text-gray-900">ENTER BUSINESS NAME</h2>
-				<p className="mt-6">
-					Please enter the Business Name as it is listed with the Secretary of State and IRS. Keep in mind
-					this will be the permanent Business Name for duration of the program.
-				</p>
-				<figure className="mt-10 border-l border-blue-600 pl-9">
-					<blockquote className="font-semibold text-gray-900">
-						<p>
-							There is a lot that goes into a name! Make sure your business name can be trademarked,
-							doesn’t include any high-risk industries and can be or is filed with the state before you
-							build your business further.
-						</p>
-					</blockquote>
-					{/* <figcaption className="mt-6 flex gap-x-4">
-						<img
-							className="h-6 w-6 flex-none rounded-full bg-gray-50"
-							src="https://images.unsplash.com/photo-1502685104226-ee32379fefbe?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
-							alt=""
-						/>
-						<div className="text-sm leading-6">
-							<strong className="font-semibold text-gray-900">Maria Hill</strong> – Marketing Manager
-						</div>
-					</figcaption> */}
-				</figure>
-				{/* <p className="mt-10">
-					Faucibus commodo massa rhoncus, volutpat. Dignissim sed eget risus enim. Mattis mauris semper sed
-					amet vitae sed turpis id. Id dolor praesent donec est. Odio penatibus risus viverra tellus varius
-					sit neque erat velit.
-				</p> */}
+				<h2 className="mt-8 text-2xl font-bold tracking-tight text-gray-900 my-3">
+					GET YOUR REQUIRED BUSINESS LICENSES
+				</h2>
+				<div className="flex flex-col gap-y-5">
+					<p>
+						Every city, state and county within the United States has different licensing requirements. Make
+						sure you have all the required licenses.
+					</p>
+				</div>
 			</div>
 			<div className="mt-10">
 				<div className="border-b border-gray-200 pb-3 my-5">
-					<h3 className="text-base font-semibold leading-6 text-gray-900">Job Postings</h3>
+					<h3 className="text-base font-semibold leading-6 text-gray-900">Resources</h3>
 				</div>
 				<div className="flex flex-row gap-x-5">
 					<div className="flex flex-col w-1/3">
@@ -315,17 +162,6 @@ export default function Course() {
 				<div className="flex flex-col w-full h-fit bg-white rounded px-5">
 					<div className="flex flex-row justify-between items-center border-b border-gray-200 bg-white py-1 sticky top-0 z-10">
 						<h3 className="text-base font-semibold leading-6 text-gray-900 my-2">{resource.title}</h3>
-						{/* <div className="flex flex-row items-center space-x-3">
-							<div className="cursor-pointer">
-								<BackwardIcon className="h-5 w-5 text-gray-400" />
-							</div>
-							<div className="flex flex-col items-center justify-center rounded-full bg-gray-100 p-2 cursor-pointer">
-								<PlayIcon className="h-5 w-5 text-gray-400" />
-							</div>
-							<div className="cursor-pointer">
-								<ForwardIcon className="h-5 w-5 text-gray-400" />
-							</div>
-						</div> */}
 					</div>
 					{resource?.type === "video" && (
 						<div className="flex flex-col w-full scrollbar-none">
@@ -348,8 +184,7 @@ export default function Course() {
 					*/}
 
 					<div className="">
-						<BusinessName />
-						{/* <CourseDescription /> */}
+						<Content />
 					</div>
 				</div>
 			</div>

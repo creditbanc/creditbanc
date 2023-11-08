@@ -3,9 +3,10 @@ import { DocumentIcon, PlayCircleIcon, PlayIcon, BackwardIcon, ForwardIcon } fro
 import { Link, useLoaderData, useLocation } from "@remix-run/react";
 import { classNames, get, get_course_id, get_entity_id, get_group_id, get_resource_id } from "~/utils/helpers";
 import { Disclosure } from "@headlessui/react";
-import { course as curriculum } from "./data";
+import { course as curriculum } from "../data";
 import { head, map, pipe } from "ramda";
 import { filter } from "shades";
+import { CalendarDaysIcon, CreditCardIcon, UserCircleIcon } from "@heroicons/react/20/solid";
 
 export const loader = async ({ request }) => {
 	console.log("course_loader");
@@ -42,7 +43,7 @@ const CurriculumAccordion = () => {
 									{pipe(
 										map((resource) => (
 											<Link
-												to={`/university/course/resource/resource/e/${entity_id}/g/${group_id}/f/${resource.id}`}
+												to={`/university/creditbuilder/${resource.id}/resource/e/${entity_id}/g/${group_id}/f/${resource.id}`}
 												className="flex flex-row w-full border p-2 rounded"
 											>
 												<div className="flex flex-row w-full space-x-2 items-center space-between cursor-pointer">
@@ -143,99 +144,62 @@ const CurriculumAccordion = () => {
 	);
 };
 
-const tabs = [
-	{ name: "Description", href: "#", current: true },
-	{ name: "Resources", href: "#", current: false },
+const resources = [
+	{
+		img: "https://www.northwestregisteredagent.com/wp-content/themes/nwra/assets/img/NW-logo-web-final-01.svg",
+		name: "Northwest Registered Agent",
+		url: "https://www.northwestregisteredagent.com/northwest-39-package-landing-page",
+		cost: "Varies",
+	},
+	{
+		img: "https://cdn.mycorporation.com/www/img/common/mycorpLogo.svg",
+		name: "My Corporation",
+		url: "https://www.mycorporation.com/",
+		cost: "Varies",
+	},
 ];
 
-const CourseTabs = () => {
-	return (
-		<div>
-			<div className="sm:hidden">
-				<label htmlFor="tabs" className="sr-only">
-					Select a tab
-				</label>
-
-				<select
-					id="tabs"
-					name="tabs"
-					className="block w-full rounded-md border-gray-300 py-2 pl-3 pr-10 text-base focus:border-blue-500 focus:outline-none focus:ring-blue-500 sm:text-sm"
-					defaultValue={tabs.find((tab) => tab.current).name}
-				>
-					{tabs.map((tab) => (
-						<option key={tab.name}>{tab.name}</option>
-					))}
-				</select>
-			</div>
-			<div className="hidden sm:block">
-				<div className="border-b border-gray-200">
-					<nav className="-mb-px flex space-x-8" aria-label="Tabs">
-						{tabs.map((tab) => (
-							<a
-								key={tab.name}
-								href={tab.href}
-								className={classNames(
-									tab.current
-										? "border-blue-500 text-blue-600"
-										: "border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700",
-									"whitespace-nowrap border-b-2 py-4 px-1 text-sm font-medium"
-								)}
-								aria-current={tab.current ? "page" : undefined}
-							>
-								{tab.name}
-							</a>
-						))}
-					</nav>
-				</div>
-			</div>
-		</div>
-	);
-};
-
-import { CalendarDaysIcon, CreditCardIcon, UserCircleIcon } from "@heroicons/react/20/solid";
-
-const Resource = () => {
+const Resource = ({ resource }) => {
 	return (
 		<div className="flex flex-col w-full">
-			<h2 className="sr-only">Summary</h2>
 			<div className="rounded-lg shadow-sm ring-1 ring-gray-900/5">
 				<dl className="flex flex-wrap">
-					<div className="flex-auto pl-6 pt-6">
-						<dt className="text-sm font-semibold leading-6 text-gray-900">Amount</dt>
-						<dd className="mt-1 text-base font-semibold leading-6 text-gray-900">$10,560.00</dd>
-					</div>
-					<div className="flex-none self-end px-6 pt-4">
-						<dt className="sr-only">Status</dt>
-						<dd className="inline-flex items-center rounded-md bg-green-50 px-2 py-1 text-xs font-medium text-green-700 ring-1 ring-inset ring-green-600/20">
-							Paid
-						</dd>
+					<div className="flex flex-row w-full">
+						<div className="flex-auto pl-6 pt-6">
+							<img src={resource.img} alt="" />
+						</div>
+						<div className="flex flex-col justify-center px-6 pt-4">
+							<dd className="inline-flex items-center rounded-md bg-green-50 px-2 py-1 text-xs font-medium text-green-700 ring-1 ring-inset ring-green-600/20">
+								Paid
+							</dd>
+						</div>
 					</div>
 					<div className="mt-6 flex w-full flex-none gap-x-4 border-t border-gray-900/5 px-6 pt-6">
 						<dt className="flex-none">
-							<span className="sr-only">Client</span>
 							<UserCircleIcon className="h-6 w-5 text-gray-400" aria-hidden="true" />
 						</dt>
-						<dd className="text-sm font-medium leading-6 text-gray-900">Alex Curren</dd>
+						<dd className="text-sm font-medium leading-6 text-gray-900">{resource.name}</dd>
 					</div>
-					<div className="mt-4 flex w-full flex-none gap-x-4 px-6">
+					{/* <div className="mt-4 flex w-full flex-none gap-x-4 px-6">
 						<dt className="flex-none">
-							<span className="sr-only">Due date</span>
 							<CalendarDaysIcon className="h-6 w-5 text-gray-400" aria-hidden="true" />
 						</dt>
 						<dd className="text-sm leading-6 text-gray-500">
 							<time dateTime="2023-01-31">January 31, 2023</time>
 						</dd>
-					</div>
+					</div> */}
 					<div className="mt-4 flex w-full flex-none gap-x-4 px-6">
 						<dt className="flex-none">
-							<span className="sr-only">Status</span>
 							<CreditCardIcon className="h-6 w-5 text-gray-400" aria-hidden="true" />
 						</dt>
-						<dd className="text-sm leading-6 text-gray-500">Paid with MasterCard</dd>
+						<dd className="flex flex-row text-sm leading-6 text-gray-500 gap-x-1">
+							<div>Cost:</div>
+							<div>{resource.cost}</div>
+						</dd>
 					</div>
 				</dl>
 				<div className="mt-6 border-t border-gray-900/5 px-6 py-6">
-					<a href="#" className="text-sm font-semibold leading-6 text-gray-900">
+					<a href={resource.url} target="_blank" className="text-sm font-semibold leading-6 text-gray-900">
 						Go to website <span aria-hidden="true">&rarr;</span>
 					</a>
 				</div>
@@ -285,18 +249,16 @@ const BusinessName = () => {
 			</div>
 			<div className="mt-10">
 				<div className="border-b border-gray-200 pb-3 my-5">
-					<h3 className="text-base font-semibold leading-6 text-gray-900">Job Postings</h3>
+					<h3 className="text-base font-semibold leading-6 text-gray-900">Resources</h3>
 				</div>
 				<div className="flex flex-row gap-x-5">
-					<div className="flex flex-col w-1/3">
-						<Resource />
-					</div>
-					<div className="flex flex-col w-1/3">
-						<Resource />
-					</div>
-					<div className="flex flex-col w-1/3">
-						<Resource />
-					</div>
+					{pipe(
+						map((resource) => (
+							<div className="flex flex-col w-1/3">
+								<Resource resource={resource} />
+							</div>
+						))
+					)(resources)}
 				</div>
 			</div>
 		</div>
