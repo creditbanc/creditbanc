@@ -70,48 +70,80 @@ const CurriculumAccordion = () => {
 	);
 };
 
-const Resource = () => {
+const resources = [
+	{
+		img: "https://consent.trustarc.com/v2/asset/23:19:56.535ialy6v_DB_WORDMARK_Pantone.png",
+		name: "Dun & Bradstreet",
+		url: "https://www.dnb.com/",
+		cost: "Varies",
+	},
+	{
+		img: "https://assets.experiancs.com/images/logo-experian.svg?hs=2c108564c86d0b65336076616b44b886",
+		name: "Experian",
+		url: "https://www.smartbusinessreports.com/",
+		cost: "Monthly Fee",
+	},
+	{
+		img: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/18/Equifax_Logo.svg/1280px-Equifax_Logo.svg.png",
+		name: "Equifax",
+		url: "https://www.equifax.com/business/",
+		cost: "Monthly Fee",
+	},
+	// {
+	// 	img: "https://www.takecardstoday.com/img/logo.png",
+	// 	name: "Capital Merchant Solutions",
+	// 	url: "https://www.takecardstoday.com/",
+	// 	cost: "Varies",
+	// },
+	// {
+	// 	img: "http://www.edigitalagency.com.au/wp-content/uploads/square-payments-logo-png-transparent-background-vertical.png",
+	// 	name: "Square",
+	// 	url: "https://squareup.com/us/en/campaign/cross-product-center",
+	// 	cost: "Varies",
+	// },
+];
+
+const Resource = ({ resource }) => {
 	return (
 		<div className="flex flex-col w-full">
-			<h2 className="sr-only">Summary</h2>
 			<div className="rounded-lg shadow-sm ring-1 ring-gray-900/5">
 				<dl className="flex flex-wrap">
-					<div className="flex-auto pl-6 pt-6">
-						<dt className="text-sm font-semibold leading-6 text-gray-900">Amount</dt>
-						<dd className="mt-1 text-base font-semibold leading-6 text-gray-900">$10,560.00</dd>
-					</div>
-					<div className="flex-none self-end px-6 pt-4">
-						<dt className="sr-only">Status</dt>
-						<dd className="inline-flex items-center rounded-md bg-green-50 px-2 py-1 text-xs font-medium text-green-700 ring-1 ring-inset ring-green-600/20">
-							Paid
-						</dd>
+					<div className="flex flex-row w-full h-[150px] items-center">
+						<div className="flex-auto pl-6 pt-6">
+							<img src={resource.img} alt="" />
+						</div>
+						<div className="flex flex-col justify-center px-6 pt-4">
+							<dd className="inline-flex items-center rounded-md bg-green-50 px-2 py-1 text-xs font-medium text-green-700 ring-1 ring-inset ring-green-600/20">
+								Paid
+							</dd>
+						</div>
 					</div>
 					<div className="mt-6 flex w-full flex-none gap-x-4 border-t border-gray-900/5 px-6 pt-6">
 						<dt className="flex-none">
-							<span className="sr-only">Client</span>
 							<UserCircleIcon className="h-6 w-5 text-gray-400" aria-hidden="true" />
 						</dt>
-						<dd className="text-sm font-medium leading-6 text-gray-900">Alex Curren</dd>
+						<dd className="text-sm font-medium leading-6 text-gray-900">{resource.name}</dd>
 					</div>
-					<div className="mt-4 flex w-full flex-none gap-x-4 px-6">
+					{/* <div className="mt-4 flex w-full flex-none gap-x-4 px-6">
 						<dt className="flex-none">
-							<span className="sr-only">Due date</span>
 							<CalendarDaysIcon className="h-6 w-5 text-gray-400" aria-hidden="true" />
 						</dt>
 						<dd className="text-sm leading-6 text-gray-500">
 							<time dateTime="2023-01-31">January 31, 2023</time>
 						</dd>
-					</div>
+					</div> */}
 					<div className="mt-4 flex w-full flex-none gap-x-4 px-6">
 						<dt className="flex-none">
-							<span className="sr-only">Status</span>
 							<CreditCardIcon className="h-6 w-5 text-gray-400" aria-hidden="true" />
 						</dt>
-						<dd className="text-sm leading-6 text-gray-500">Paid with MasterCard</dd>
+						<dd className="flex flex-row text-sm leading-6 text-gray-500 gap-x-1">
+							<div>Cost:</div>
+							<div>{resource.cost}</div>
+						</dd>
 					</div>
 				</dl>
 				<div className="mt-6 border-t border-gray-900/5 px-6 py-6">
-					<a href="#" className="text-sm font-semibold leading-6 text-gray-900">
+					<a href={resource.url} target="_blank" className="text-sm font-semibold leading-6 text-gray-900">
 						Go to website <span aria-hidden="true">&rarr;</span>
 					</a>
 				</div>
@@ -144,16 +176,14 @@ const Content = () => {
 				<div className="border-b border-gray-200 pb-3 my-5">
 					<h3 className="text-base font-semibold leading-6 text-gray-900">Resources</h3>
 				</div>
-				<div className="flex flex-row gap-x-5">
-					<div className="flex flex-col w-1/3">
-						<Resource />
-					</div>
-					<div className="flex flex-col w-1/3">
-						<Resource />
-					</div>
-					<div className="flex flex-col w-1/3">
-						<Resource />
-					</div>
+				<div className="flex flex-row flex-wrap gap-x-5 gap-y-5">
+					{pipe(
+						map((resource) => (
+							<div className="flex flex-col w-[31%]">
+								<Resource resource={resource} />
+							</div>
+						))
+					)(resources)}
 				</div>
 			</div>
 		</div>
