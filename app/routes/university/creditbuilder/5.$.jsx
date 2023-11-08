@@ -76,7 +76,7 @@ const resources = [
 	{
 		img: "https://1000logos.net/wp-content/uploads/2022/03/IRS-Logo-1862.png",
 		name: "IRS",
-		url: "https://www.davincivirtual.com/",
+		url: "https://www.irs.gov/businesses/small-businesses-self-employed/apply-for-an-employer-identification-number-ein-online",
 		cost: "Free",
 	},
 ];
