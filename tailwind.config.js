@@ -8,6 +8,7 @@ module.exports = {
 		require("tailwind-scrollbar"),
 		require("tailwind-scrollbar-hide"),
 		require("@tailwindcss/container-queries"),
+		require("@tailwindcss/aspect-ratio"),
 		// require("@tailwindcss/forms"),
 	],
 	variants: {
