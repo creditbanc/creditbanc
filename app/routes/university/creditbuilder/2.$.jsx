@@ -70,20 +70,24 @@ const BusinessName = () => {
 	return (
 		<div className="w-full text-base leading-7 text-gray-700 px-3 my-4">
 			<div className="mt-10 max-w-2xl">
-				<h2 className="mt-8 text-2xl font-bold tracking-tight text-gray-900">ENTER BUSINESS NAME</h2>
+				<h2 className="mt-8 text-2xl font-bold tracking-tight text-gray-900">YOUR BUSINESS NAME</h2>
 				<p className="mt-6">
-					Please enter the Business Name as it is listed with the Secretary of State and IRS. Keep in mind
-					this will be the permanent Business Name for duration of the program.
+					We know Willy Shakespeare said a rose by any other name would smell just as good (i.e., a name
+					doesn't matter), but this isn't English 101. Choosing the right business name is a crucial step in
+					building credibility.
 				</p>
 				<figure className="mt-10 border-l border-blue-600 pl-9">
-					<blockquote className="font-semibold text-gray-900">
-						<p>
-							There is a lot that goes into a name! Make sure your business name can be trademarked,
-							doesn’t include any high-risk industries and can be or is filed with the state before you
-							build your business further.
-						</p>
+					<blockquote className=" text-gray-900">
+						<div className="font-semibold">It should:</div>
+						<ul>
+							<li>Be trademark worthy</li>
+							<li>Be usable across all your business records</li>
+							<li>Avoid high-risk industry descriptions</li>
+							<li>Not include your personal name</li>
+						</ul>
 					</blockquote>
 				</figure>
+				<p className="mt-6">Research your name to prevent conflicts and secure it quickly once decided.</p>
 			</div>
 			<div className="mt-10">
 				<div className="border-b border-gray-200 pb-3 my-5">
@@ -148,27 +152,6 @@ export default function Course() {
 				<div className="flex flex-col bg-white border rounded overflow-scroll scrollbar-none">
 					<div className="border-b border-gray-200 bg-white px-4 py-5 sm:px-6 sticky top-0 z-10">
 						<h3 className="text-base font-semibold leading-6 text-gray-900 my-2">Credit Builder</h3>
-
-						{/* <div className="flex flex-col w-full space-y-5">
-							<p className="mt-1 text-sm text-gray-500">
-								Deep dive into the portfolio management process & earn your certification with new
-								topics on the latest trends in ESG, active vs passive investing, and more!
-							</p>
-
-							<p className="mt-1 text-sm text-gray-500">
-								New content – discover our expert interview with a wealth manager!
-							</p>
-						</div>
-
-						<div className="my-2 flex flex-col w-full">
-							<div className="flex flex-row w-full justify-between my-2 text-sm text-gray-400">
-								<div>45%</div>
-								<div>4/20 lessons</div>
-							</div>
-							<div className="w-full bg-gray-200 rounded-full h-2.5 dark:bg-gray-700">
-								<div className="bg-blue-600 h-2.5 rounded-full w-[45%]"></div>
-							</div>
-						</div> */}
 					</div>
 
 					<div className="flex flex-col w-full my-3">
