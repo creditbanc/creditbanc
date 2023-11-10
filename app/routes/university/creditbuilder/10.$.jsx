@@ -47,38 +47,35 @@ const Resource = ({ resource }) => {
 	return (
 		<div className="flex flex-col w-full">
 			<div className="rounded-lg shadow-sm ring-1 ring-gray-900/5">
-				<dl className="flex flex-wrap">
-					<div className="flex flex-row w-full h-[150px] items-center">
-						<div className="flex-auto px-6 pt-6">
-							<img src={resource.img} alt="" />
+				<div className="flex flex-col">
+					<div className="flex flex-row w-full h-[150px] p-4">
+						<img src={resource.img} alt="" />
+					</div>
+					<div className="flex flex-col h-[120px]">
+						<div className="mt-6 flex w-full flex-none gap-x-4 border-t border-gray-900/5 px-6 pt-6">
+							<dt className="flex-none">
+								<UserCircleIcon className="h-6 w-5 text-gray-400" aria-hidden="true" />
+							</dt>
+							<dd className="text-sm font-medium leading-6 text-gray-900">{resource.name}</dd>
+						</div>
+
+						<div className="mt-4 flex w-full flex-none gap-x-4 px-6">
+							<dt className="flex-none">
+								<CreditCardIcon className="h-6 w-5 text-gray-400" aria-hidden="true" />
+							</dt>
+							<dd className="flex flex-row text-sm leading-6 text-gray-500 gap-x-1">
+								<div>Cost:</div>
+								<div>{resource.cost}</div>
+							</dd>
 						</div>
 					</div>
-					<div className="mt-6 flex w-full flex-none gap-x-4 border-t border-gray-900/5 px-6 pt-6">
-						<dt className="flex-none">
-							<UserCircleIcon className="h-6 w-5 text-gray-400" aria-hidden="true" />
-						</dt>
-						<dd className="text-sm font-medium leading-6 text-gray-900">{resource.name}</dd>
-					</div>
-					{/* <div className="mt-4 flex w-full flex-none gap-x-4 px-6">
-						<dt className="flex-none">
-							<CalendarDaysIcon className="h-6 w-5 text-gray-400" aria-hidden="true" />
-						</dt>
-						<dd className="text-sm leading-6 text-gray-500">
-							<time dateTime="2023-01-31">January 31, 2023</time>
-						</dd>
-					</div> */}
-					<div className="mt-4 flex w-full flex-none gap-x-4 px-6">
-						<dt className="flex-none">
-							<CreditCardIcon className="h-6 w-5 text-gray-400" aria-hidden="true" />
-						</dt>
-						<dd className="flex flex-row text-sm leading-6 text-gray-500 gap-x-1">
-							<div>Cost:</div>
-							<div>{resource.cost}</div>
-						</dd>
-					</div>
-				</dl>
-				<div className="mt-6 border-t border-gray-900/5 px-6 py-6">
-					<a href={resource.url} target="_blank" className="text-sm font-semibold leading-6 text-gray-900">
+				</div>
+				<div className="flex flex-col items-end mt-6 border-t border-gray-900/5 px-6 py-6">
+					<a
+						href={resource.url}
+						target="_blank"
+						className="text-sm font-semibold text-gray-900 bg-green-400 px-3 py-2 rounded-full hover:bg-green-500"
+					>
 						Go to website <span aria-hidden="true">&rarr;</span>
 					</a>
 				</div>
