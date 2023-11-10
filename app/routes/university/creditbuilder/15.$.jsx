@@ -38,12 +38,12 @@ const Resource = ({ resource }) => {
 							<img src={resource.img} alt="" />
 						</div>
 					</div>
-					<div className="mt-6 flex w-full flex-none gap-x-4 border-t border-gray-900/5 px-6 pt-6">
+					{/* <div className="mt-6 flex w-full flex-none gap-x-4 border-t border-gray-900/5 px-6 pt-6">
 						<dt className="flex-none">
 							<UserCircleIcon className="h-6 w-5 text-gray-400" aria-hidden="true" />
 						</dt>
 						<dd className="text-sm font-medium leading-6 text-gray-900">{resource.name}</dd>
-					</div>
+					</div> */}
 					{/* <div className="mt-4 flex w-full flex-none gap-x-4 px-6">
 						<dt className="flex-none">
 							<CalendarDaysIcon className="h-6 w-5 text-gray-400" aria-hidden="true" />
@@ -260,7 +260,7 @@ const SidePanel = () => {
 													href={resource?.url}
 													target="_blank"
 													type="button"
-													className="flex flex-col w-1/2 items-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+													className="flex flex-col w-1/2 items-center rounded-md bg-green-300 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-gree-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gree-400"
 												>
 													Apply
 												</a>
