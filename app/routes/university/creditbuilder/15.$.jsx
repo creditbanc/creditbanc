@@ -24,7 +24,11 @@ export const loader = async ({ request }) => {
 	return { resource, curriculum };
 };
 
+let useSliderStore = store({ is_open: false, selected_id: "KeyBank Business Rewards Mastercard" });
+
 const Resource = ({ resource }) => {
+	let { set_props } = useSliderStore();
+
 	return (
 		<div className="flex flex-col w-full">
 			<div className="rounded-lg shadow-sm ring-1 ring-gray-900/5">
@@ -48,7 +52,7 @@ const Resource = ({ resource }) => {
 							<time dateTime="2023-01-31">January 31, 2023</time>
 						</dd>
 					</div> */}
-					<div className="mt-4 flex w-full flex-none gap-x-4 px-6">
+					{/* <div className="mt-4 flex w-full flex-none gap-x-4 px-6">
 						<dt className="flex-none">
 							<CreditCardIcon className="h-6 w-5 text-gray-400" aria-hidden="true" />
 						</dt>
@@ -56,12 +60,15 @@ const Resource = ({ resource }) => {
 							<div>Cost:</div>
 							<div>{resource.cost}</div>
 						</dd>
-					</div>
+					</div> */}
 				</dl>
 				<div className="mt-6 border-t border-gray-900/5 px-6 py-6">
-					<a href={resource?.url} target="_blank" className="text-sm font-semibold leading-6 text-gray-900">
+					<div
+						className="text-sm font-semibold leading-6 text-gray-900 cursor-pointer"
+						onClick={() => set_props({ selected_id: resource.name, is_open: true })}
+					>
 						Learn More <span aria-hidden="true">&rarr;</span>
-					</a>
+					</div>
 				</div>
 			</div>
 		</div>
@@ -118,11 +125,15 @@ const Content = () => {
 };
 
 const SidePanel = () => {
-	const [open, setOpen] = useState(false);
-	const resource = all_resources[2];
+	let { is_open, selected_id, set_props } = useSliderStore();
+	const resource = pipe(filter({ name: selected_id }), head)(all_resources);
+
+	const setOpen = () => {
+		set_props({ is_open: !is_open });
+	};
 
 	return (
-		<Transition.Root show={open} as={Fragment}>
+		<Transition.Root show={is_open} as={Fragment}>
 			<Dialog as="div" className="relative z-[99]" onClose={setOpen}>
 				<Transition.Child
 					as={Fragment}
