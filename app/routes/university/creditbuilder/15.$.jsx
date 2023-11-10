@@ -62,9 +62,9 @@ const Resource = ({ resource }) => {
 						</dd>
 					</div> */}
 				</dl>
-				<div className="mt-6 border-t border-gray-900/5 px-6 py-6">
+				<div className="flex flex-col items-end mt-6 border-t border-gray-900/5 px-6 py-6">
 					<div
-						className="text-sm font-semibold leading-6 text-gray-900 cursor-pointer"
+						className="flex flex-row text-sm font-semibold text-gray-900 bg-green-400 px-3 py-2 rounded-full hover:bg-green-500 cusor-pointer justify-end gap-x-3 w-[150px]"
 						onClick={() => set_props({ selected_id: resource.name, is_open: true })}
 					>
 						Learn More <span aria-hidden="true">&rarr;</span>
