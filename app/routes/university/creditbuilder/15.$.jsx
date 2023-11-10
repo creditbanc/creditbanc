@@ -1,32 +1,13 @@
-import { ChevronUpIcon, PencilIcon, PlusIcon } from "@heroicons/react/20/solid";
-import {
-	DocumentIcon,
-	PlayCircleIcon,
-	PlayIcon,
-	BackwardIcon,
-	ForwardIcon,
-	HeartIcon,
-	XMarkIcon,
-} from "@heroicons/react/24/outline";
-import { Link, useLoaderData, useLocation } from "@remix-run/react";
-import {
-	classNames,
-	get,
-	get_course_id,
-	get_entity_id,
-	get_group_id,
-	get_resource_id,
-	mapIndexed,
-} from "~/utils/helpers";
-import { Disclosure } from "@headlessui/react";
+import { XMarkIcon } from "@heroicons/react/24/outline";
+import { useLoaderData } from "@remix-run/react";
+import { get, get_resource_id } from "~/utils/helpers";
 import { course as curriculum, resources as all_resources } from "../data";
 import { flatten, head, map, pipe } from "ramda";
 import { all, filter } from "shades";
-import { CalendarDaysIcon, CreditCardIcon, UserCircleIcon } from "@heroicons/react/20/solid";
+import { CreditCardIcon, UserCircleIcon } from "@heroicons/react/20/solid";
 import { Fragment, useState } from "react";
 import { Dialog, Transition } from "@headlessui/react";
-// import { HeartIcon, XMarkIcon } from '@heroicons/react/24/outline'
-// import { PencilIcon, PlusIcon } from '@heroicons/react/20/solid'
+import CurriculumAccordion from "~/components/CurriculumAccordion";
 
 export const loader = async ({ request }) => {
 	console.log("course_loader");
@@ -41,53 +22,6 @@ export const loader = async ({ request }) => {
 	// console.log("resource");
 	// console.log(resource);
 	return { resource, curriculum };
-};
-
-const CurriculumAccordion = () => {
-	let { pathname } = useLocation();
-	let entity_id = get_entity_id(pathname);
-	let group_id = get_group_id(pathname);
-	let { curriculum } = useLoaderData();
-
-	return (
-		<div className="mx-auto w-full max-w-md rounded-2xl bg-white p-2 space-y-3 ">
-			{pipe(
-				get("sections"),
-				mapIndexed((section, index) => (
-					<Disclosure defaultOpen={true} key={index}>
-						{({ open }) => (
-							<>
-								<Disclosure.Button className="flex w-full justify-between rounded-lg  px-4 py-2 text-left text-sm font-medium   focus:outline-none focus-visible:ring  focus-visible:ring-opacity-75">
-									<span>{section.title}</span>
-									<ChevronUpIcon
-										className={`${open ? "rotate-180 transform" : ""} h-5 w-5 text-gray-500`}
-									/>
-								</Disclosure.Button>
-								<Disclosure.Panel className="px-4  pb-2 text-gray-500 space-y-3 text-sm">
-									{pipe(
-										map((resource) => (
-											<Link
-												to={`/university/creditbuilder/${resource.id}/resource/e/${entity_id}/g/${group_id}/f/${resource.id}`}
-												className="flex flex-row w-full border p-2 rounded"
-											>
-												<div className="flex flex-row w-full space-x-2 items-center space-between cursor-pointer">
-													<div>
-														<PlayCircleIcon className="h-5 w-5 text-gray-500" />
-													</div>
-													<div>{resource.title}</div>
-												</div>
-												<div>{resource.duration}</div>
-											</Link>
-										))
-									)(section.resources)}
-								</Disclosure.Panel>
-							</>
-						)}
-					</Disclosure>
-				))
-			)(curriculum)}
-		</div>
-	);
 };
 
 const Resource = ({ resource }) => {
@@ -136,8 +70,6 @@ const Resource = ({ resource }) => {
 
 const Content = () => {
 	let resources = pipe(filter({ step: 15 }))(all_resources);
-	console.log("content_resources");
-	console.log(resources);
 
 	return (
 		<div className="w-full text-base leading-7 text-gray-700 px-3 my-4">
@@ -186,7 +118,7 @@ const Content = () => {
 };
 
 const SidePanel = () => {
-	const [open, setOpen] = useState(true);
+	const [open, setOpen] = useState(false);
 	const resource = all_resources[2];
 
 	return (
@@ -340,7 +272,7 @@ const SidePanel = () => {
 };
 
 export default function Course() {
-	let { resource } = useLoaderData();
+	let { resource, curriculum = [] } = useLoaderData();
 
 	return (
 		<div className="flex flex-row w-full h-full overflow-hiddens gap-x-5 overflow-hidden">
@@ -398,7 +330,7 @@ export default function Course() {
 					</div>
 
 					<div className="flex flex-col w-full my-3">
-						<CurriculumAccordion />
+						<CurriculumAccordion curriculum={curriculum} />
 					</div>
 				</div>
 			</div>
