@@ -3,17 +3,13 @@ import { DocumentIcon, PlayCircleIcon } from "@heroicons/react/24/outline";
 import { Link, useLocation } from "@remix-run/react";
 import { get, get_entity_id, get_file_id, get_group_id, mapIndexed } from "~/utils/helpers";
 import { Disclosure } from "@headlessui/react";
-
-import { map, pipe } from "ramda";
+import { pipe } from "ramda";
 
 export default function CurriculumAccordion({ curriculum }) {
 	let { pathname } = useLocation();
 	let entity_id = get_entity_id(pathname);
 	let group_id = get_group_id(pathname);
-	// let { curriculum } = useLoaderData();
 	let resource_path = get_file_id(pathname);
-	console.log("resource_path");
-	console.log(resource_path);
 
 	return (
 		<div className="mx-auto w-full max-w-md rounded-2xl bg-white p-2 space-y-3 ">
