@@ -9,7 +9,15 @@ import {
 	XMarkIcon,
 } from "@heroicons/react/24/outline";
 import { Link, useLoaderData, useLocation } from "@remix-run/react";
-import { classNames, get, get_course_id, get_entity_id, get_group_id, get_resource_id } from "~/utils/helpers";
+import {
+	classNames,
+	get,
+	get_course_id,
+	get_entity_id,
+	get_group_id,
+	get_resource_id,
+	mapIndexed,
+} from "~/utils/helpers";
 import { Disclosure } from "@headlessui/react";
 import { course as curriculum } from "../data";
 import { flatten, head, map, pipe } from "ramda";
@@ -22,7 +30,7 @@ import { Dialog, Transition } from "@headlessui/react";
 
 export const loader = async ({ request }) => {
 	console.log("course_loader");
-	let course_id = get_resource_id(request.url);
+	let course_id = get_resource_id(request?.url);
 	// console.log("course_id");
 	// console.log(course_id);
 	let resource = pipe(get("sections", all, "resources", all), flatten)(curriculum);
@@ -45,8 +53,8 @@ const CurriculumAccordion = () => {
 		<div className="mx-auto w-full max-w-md rounded-2xl bg-white p-2 space-y-3 ">
 			{pipe(
 				get("sections"),
-				map((section) => (
-					<Disclosure defaultOpen={true}>
+				mapIndexed((section, index) => (
+					<Disclosure defaultOpen={true} key={index}>
 						{({ open }) => (
 							<>
 								<Disclosure.Button className="flex w-full justify-between rounded-lg  px-4 py-2 text-left text-sm font-medium   focus:outline-none focus-visible:ring  focus-visible:ring-opacity-75">
@@ -84,15 +92,39 @@ const CurriculumAccordion = () => {
 
 const resources = [
 	{
+		name: "KeyBank Business Rewards Mastercard",
 		status: "Recommended",
 		reports_to: ["Experian", "Equifax"],
-		terms: "revolving",
+		terms: "Revolving",
 		is_pg_required: true,
-		name: "KeyBank Business Rewards Mastercard",
 		img: "https://www.key.com/content/experience-fragments/kco/header/personal/_jcr_content/header/logo.coreimg.svg/1644846310200/kb-logo.svg",
 		url: "https://www.key.com/small-business/banking/credit-cards/mastercard-small-business-credit-card.html",
 		phone: "888-539-4249",
-		site: "https://www.key.com/small-business/index.html",
+		description: `Since our earliest days, we’ve strived to find new ways to enrich our customers’ lives, have their backs, and provide our special brand of service, in ways both big and small. Our business is helping small businesses grow theirs. KeyBank offers the KeyBank Business Card, KeyBank Business Reward Card, and KeyBank Business Reward Cash card. You can choose the best card for your business needs.`,
+		instructions: [
+			`Cash advances are available with business credit card approval, the amount of cash advance depends upon the approval amount.`,
+			`Key Bank considers both business and personal credit histories. An inquiry may occur, but it will not be reflected as a hard or soft pull on personal credit.`,
+		],
+		qualifications: [
+			"Entity in good standing with the Secretary of State",
+			"EIN number with IRS",
+			"Business address- matching everywhere.",
+			"D & B number",
+			"Business phone number listed to 411",
+			"Business license- if applicable",
+			"Business bank account",
+			"2 years in business, can apply with a personal guarantee(PG) if less than 2 years in business.",
+		],
+	},
+	{
+		name: "Kum & Go",
+		status: "Recommended",
+		reports_to: ["D&B", "Experian", "Equifax"],
+		terms: "Net 15",
+		is_pg_required: true,
+		img: "https://cdn.brandfolder.io/9I9LN923/at/3tf6xqncpw4tx6pg6x5r3/kumandgo-500x250.png",
+		phone: "888-539-4249",
+		url: "https://www.key.com/small-business/index.html",
 		description: `Since our earliest days, we’ve strived to find new ways to enrich our customers’ lives, have their backs, and provide our special brand of service, in ways both big and small. Our business is helping small businesses grow theirs. KeyBank offers the KeyBank Business Card, KeyBank Business Reward Card, and KeyBank Business Reward Cash card. You can choose the best card for your business needs.`,
 		instructions: [
 			`Cash advances are available with business credit card approval, the amount of cash advance depends upon the approval amount.`,
@@ -146,8 +178,8 @@ const Resource = ({ resource }) => {
 					</div>
 				</dl>
 				<div className="mt-6 border-t border-gray-900/5 px-6 py-6">
-					<a href={resource.url} target="_blank" className="text-sm font-semibold leading-6 text-gray-900">
-						Go to website <span aria-hidden="true">&rarr;</span>
+					<a href={resource?.url} target="_blank" className="text-sm font-semibold leading-6 text-gray-900">
+						Learn More <span aria-hidden="true">&rarr;</span>
 					</a>
 				</div>
 			</div>
@@ -204,7 +236,7 @@ const Content = () => {
 
 const SidePanel = () => {
 	const [open, setOpen] = useState(true);
-	const resource = resources[0];
+	const resource = resources[1];
 
 	return (
 		<Transition.Root show={open} as={Fragment}>
@@ -257,8 +289,8 @@ const SidePanel = () => {
 									</Transition.Child>
 									<div className="h-full overflow-y-auto bg-white p-8 w-[700px]">
 										<div className="space-y-6">
-											<div className="aspect-w-10 block w-full h-[400px]">
-												<img src={resource.img} className="" />
+											<div className="flex flex-col items-center h-full">
+												<img src={resource.img} />
 											</div>
 
 											<div>
@@ -372,7 +404,7 @@ export default function Course() {
 							<div className="relative pb-[56.25%] h-0 overflow-hidden">
 								<iframe
 									className="absolute top-0 left-0 w-full h-full"
-									src={resource.url}
+									src={resource?.url}
 									title="YouTube video player"
 									frameBorder="0"
 									allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
