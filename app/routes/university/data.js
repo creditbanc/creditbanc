@@ -66,6 +66,13 @@ export const course = {
 			id: "establishbusinessreports",
 			resources: [
 				{
+					title: "Establishing Credit Reports",
+					id: "23",
+					type: "video",
+					duration: "9:17",
+					url: "https://player.vimeo.com/video/877041039",
+				},
+				{
 					title: "Dun & Bradstreet",
 					id: "11",
 					type: "",
