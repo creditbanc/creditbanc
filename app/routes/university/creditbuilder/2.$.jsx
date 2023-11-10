@@ -1,5 +1,5 @@
-import { useLoaderData } from "@remix-run/react";
-import { get, get_resource_id } from "~/utils/helpers";
+import { Link, useLoaderData, useLocation } from "@remix-run/react";
+import { get, get_entity_id, get_group_id, get_resource_id } from "~/utils/helpers";
 import { course as curriculum } from "../data";
 import { flatten, head, map, pipe } from "ramda";
 import { all, filter } from "shades";
@@ -45,14 +45,7 @@ const Resource = ({ resource }) => {
 						</dt>
 						<dd className="text-sm font-medium leading-6 text-gray-900">{resource.name}</dd>
 					</div>
-					{/* <div className="mt-4 flex w-full flex-none gap-x-4 px-6">
-						<dt className="flex-none">
-							<CalendarDaysIcon className="h-6 w-5 text-gray-400" aria-hidden="true" />
-						</dt>
-						<dd className="text-sm leading-6 text-gray-500">
-							<time dateTime="2023-01-31">January 31, 2023</time>
-						</dd>
-					</div> */}
+
 					<div className="mt-4 flex w-full flex-none gap-x-4 px-6">
 						<dt className="flex-none">
 							<CreditCardIcon className="h-6 w-5 text-gray-400" aria-hidden="true" />
@@ -77,11 +70,6 @@ const BusinessName = () => {
 	return (
 		<div className="w-full text-base leading-7 text-gray-700 px-3 my-4">
 			<div className="mt-10 max-w-2xl">
-				{/* <p className="mt-8">
-					There is a lot that goes into a name! Have you selected your business name? Make sure your business
-					name can be trademarked, doesn't include any high-risk industries, and can be, or is filed with the
-					state before you build your business further.
-				</p> */}
 				<h2 className="mt-8 text-2xl font-bold tracking-tight text-gray-900">ENTER BUSINESS NAME</h2>
 				<p className="mt-6">
 					Please enter the Business Name as it is listed with the Secretary of State and IRS. Keep in mind
@@ -95,22 +83,7 @@ const BusinessName = () => {
 							build your business further.
 						</p>
 					</blockquote>
-					{/* <figcaption className="mt-6 flex gap-x-4">
-						<img
-							className="h-6 w-6 flex-none rounded-full bg-gray-50"
-							src="https://images.unsplash.com/photo-1502685104226-ee32379fefbe?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
-							alt=""
-						/>
-						<div className="text-sm leading-6">
-							<strong className="font-semibold text-gray-900">Maria Hill</strong> – Marketing Manager
-						</div>
-					</figcaption> */}
 				</figure>
-				{/* <p className="mt-10">
-					Faucibus commodo massa rhoncus, volutpat. Dignissim sed eget risus enim. Mattis mauris semper sed
-					amet vitae sed turpis id. Id dolor praesent donec est. Odio penatibus risus viverra tellus varius
-					sit neque erat velit.
-				</p> */}
 			</div>
 			<div className="mt-10">
 				<div className="border-b border-gray-200 pb-3 my-5">
@@ -132,6 +105,10 @@ const BusinessName = () => {
 
 export default function Course() {
 	let { resource, curriculum } = useLoaderData();
+	let { pathname } = useLocation();
+	let entity_id = get_entity_id(pathname);
+	let group_id = get_group_id(pathname);
+	let next_id = Number(resource.id) + 1;
 
 	return (
 		<div className="flex flex-row w-full h-full overflow-hiddens gap-x-5 overflow-hidden">
@@ -139,17 +116,13 @@ export default function Course() {
 				<div className="flex flex-col w-full h-fit bg-white rounded px-5">
 					<div className="flex flex-row justify-between items-center border-b border-gray-200 bg-white py-1 sticky top-0 z-10">
 						<h3 className="text-base font-semibold leading-6 text-gray-900 my-2">{resource.title}</h3>
-						{/* <div className="flex flex-row items-center space-x-3">
-							<div className="cursor-pointer">
-								<BackwardIcon className="h-5 w-5 text-gray-400" />
-							</div>
-							<div className="flex flex-col items-center justify-center rounded-full bg-gray-100 p-2 cursor-pointer">
-								<PlayIcon className="h-5 w-5 text-gray-400" />
-							</div>
-							<div className="cursor-pointer">
-								<ForwardIcon className="h-5 w-5 text-gray-400" />
-							</div>
-						</div> */}
+						<Link
+							to={`/university/creditbuilder/${next_id}/resource/e/${entity_id}/g/${group_id}/f/${next_id}`}
+							type="button"
+							className="rounded-full bg-green-400 px-2.5 py-1 text-xs font-semibold text-white shadow-sm hover:bg-green-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-500"
+						>
+							Continue
+						</Link>
 					</div>
 					{resource?.type === "video" && (
 						<div className="flex flex-col w-full scrollbar-none">
@@ -166,14 +139,8 @@ export default function Course() {
 						</div>
 					)}
 
-					{/* <div className="flex flex-col w-full mt-4 sticky top-[60px] z-10 bg-white">
-						<CourseTabs />
-					</div>
-					*/}
-
 					<div className="">
 						<BusinessName />
-						{/* <CourseDescription /> */}
 					</div>
 				</div>
 			</div>

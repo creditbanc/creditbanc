@@ -1,7 +1,7 @@
 import { ChevronUpIcon } from "@heroicons/react/20/solid";
 import { DocumentIcon, PlayCircleIcon, PlayIcon, BackwardIcon, ForwardIcon } from "@heroicons/react/24/outline";
 import { Link, useLoaderData, useLocation } from "@remix-run/react";
-import { classNames, get, get_course_id, get_entity_id, get_group_id, get_resource_id } from "~/utils/helpers";
+import { classNames, get, get_entity_id, get_group_id, get_resource_id, store } from "~/utils/helpers";
 import { Disclosure } from "@headlessui/react";
 import { course as curriculum } from "../data";
 import { flatten, head, map, pipe } from "ramda";
@@ -24,53 +24,6 @@ export const loader = async ({ request }) => {
 	return { resource, curriculum };
 };
 
-// const CurriculumAccordion = () => {
-// 	let { pathname } = useLocation();
-// 	let entity_id = get_entity_id(pathname);
-// 	let group_id = get_group_id(pathname);
-// 	let { curriculum } = useLoaderData();
-
-// 	return (
-// 		<div className="mx-auto w-full max-w-md rounded-2xl bg-white p-2 space-y-3 ">
-// 			{pipe(
-// 				get("sections"),
-// 				map((section) => (
-// 					<Disclosure defaultOpen={true}>
-// 						{({ open }) => (
-// 							<>
-// 								<Disclosure.Button className="flex w-full justify-between rounded-lg  px-4 py-2 text-left text-sm font-medium   focus:outline-none focus-visible:ring  focus-visible:ring-opacity-75">
-// 									<span>{section.title}</span>
-// 									<ChevronUpIcon
-// 										className={`${open ? "rotate-180 transform" : ""} h-5 w-5 text-gray-500`}
-// 									/>
-// 								</Disclosure.Button>
-// 								<Disclosure.Panel className="px-4  pb-2 text-gray-500 space-y-3 text-sm">
-// 									{pipe(
-// 										map((resource) => (
-// 											<Link
-// 												to={`/university/creditbuilder/${resource.id}/resource/e/${entity_id}/g/${group_id}/f/${resource.id}`}
-// 												className="flex flex-row w-full border p-2 rounded"
-// 											>
-// 												<div className="flex flex-row w-full space-x-2 items-center space-between cursor-pointer">
-// 													<div>
-// 														<PlayCircleIcon className="h-5 w-5 text-gray-500" />
-// 													</div>
-// 													<div>{resource.title}</div>
-// 												</div>
-// 												<div>{resource.duration}</div>
-// 											</Link>
-// 										))
-// 									)(section.resources)}
-// 								</Disclosure.Panel>
-// 							</>
-// 						)}
-// 					</Disclosure>
-// 				))
-// 			)(curriculum)}
-// 		</div>
-// 	);
-// };
-
 const resources = [
 	{
 		img: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/18/Equifax_Logo.svg/1280px-Equifax_Logo.svg.png",
@@ -78,18 +31,6 @@ const resources = [
 		url: "https://www.equifax.com/business/",
 		cost: "Monthly Fee",
 	},
-	// {
-	// 	img: "https://www.takecardstoday.com/img/logo.png",
-	// 	name: "Capital Merchant Solutions",
-	// 	url: "https://www.takecardstoday.com/",
-	// 	cost: "Varies",
-	// },
-	// {
-	// 	img: "http://www.edigitalagency.com.au/wp-content/uploads/square-payments-logo-png-transparent-background-vertical.png",
-	// 	name: "Square",
-	// 	url: "https://squareup.com/us/en/campaign/cross-product-center",
-	// 	cost: "Varies",
-	// },
 ];
 
 const Resource = ({ resource }) => {
@@ -173,6 +114,10 @@ const Content = () => {
 
 export default function Course() {
 	let { resource, curriculum } = useLoaderData();
+	let { pathname } = useLocation();
+	let entity_id = get_entity_id(pathname);
+	let group_id = get_group_id(pathname);
+	let next_id = Number(resource.id) + 1;
 
 	return (
 		<div className="flex flex-row w-full h-full overflow-hiddens gap-x-5 overflow-hidden">
@@ -180,6 +125,13 @@ export default function Course() {
 				<div className="flex flex-col w-full h-fit bg-white rounded px-5">
 					<div className="flex flex-row justify-between items-center border-b border-gray-200 bg-white py-1 sticky top-0 z-10">
 						<h3 className="text-base font-semibold leading-6 text-gray-900 my-2">{resource?.title}</h3>
+						<Link
+							to={`/university/creditbuilder/${next_id}/resource/e/${entity_id}/g/${group_id}/f/${next_id}`}
+							type="button"
+							className="rounded-full bg-green-400 px-2.5 py-1 text-xs font-semibold text-white shadow-sm hover:bg-green-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-500"
+						>
+							Continue
+						</Link>
 					</div>
 					{resource?.type === "video" && (
 						<div className="flex flex-col w-full scrollbar-none">

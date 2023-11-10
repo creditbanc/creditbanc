@@ -1,5 +1,6 @@
-import { useLoaderData } from "@remix-run/react";
-import { classNames, get, get_resource_id, store } from "~/utils/helpers";
+import { Link, useLoaderData, useLocation } from "@remix-run/react";
+import { classNames, get, get_entity_id, get_group_id, get_resource_id, store } from "~/utils/helpers";
+
 import { course as curriculum, secretary_of_state } from "../data";
 import { flatten, head, map, pipe } from "ramda";
 import { all, filter } from "shades";
@@ -271,6 +272,10 @@ const Content = () => {
 
 export default function Course() {
 	let { resource, curriculum } = useLoaderData();
+	let { pathname } = useLocation();
+	let entity_id = get_entity_id(pathname);
+	let group_id = get_group_id(pathname);
+	let next_id = Number(resource.id) + 1;
 
 	// console.log("resource");
 	// console.log(resource);
@@ -282,6 +287,13 @@ export default function Course() {
 				<div className="flex flex-col w-full h-fit bg-white rounded px-5">
 					<div className="flex flex-row justify-between items-center border-b border-gray-200 bg-white py-1 sticky top-0 z-10">
 						<h3 className="text-base font-semibold leading-6 text-gray-900 my-2">{resource.title}</h3>
+						<Link
+							to={`/university/creditbuilder/${next_id}/resource/e/${entity_id}/g/${group_id}/f/${next_id}`}
+							type="button"
+							className="rounded-full bg-green-400 px-2.5 py-1 text-xs font-semibold text-white shadow-sm hover:bg-green-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-500"
+						>
+							Continue
+						</Link>
 					</div>
 					{resource?.type === "video" && (
 						<div className="flex flex-col w-full scrollbar-none">
