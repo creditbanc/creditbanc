@@ -116,10 +116,13 @@ export const course = {
 			title: "Monitor",
 			id: "monitor",
 			resources: [
-				// {
-				// 	title: "Credit Monitoring",
-				// 	id: "17",
-				// },
+				{
+					title: "Read and Monitor Credit Reports",
+					id: "24",
+					type: "video",
+					duration: "7:18",
+					url: "https://player.vimeo.com/video/883239127",
+				},
 				{
 					title: "Monitor Dun & Bradstreet",
 					id: "18",
