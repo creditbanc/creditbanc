@@ -31,8 +31,9 @@ export default function CurriculumAccordion({ curriculum }) {
 								</Disclosure.Button>
 								<Disclosure.Panel className="px-4  pb-2 text-gray-500 space-y-3 text-sm">
 									{pipe(
-										map((resource) => (
+										mapIndexed((resource, index) => (
 											<Link
+												key={index}
 												to={`/university/creditbuilder/${resource.id}/resource/e/${entity_id}/g/${group_id}/f/${resource.id}`}
 												className="flex flex-row w-full border p-2 rounded"
 												style={{
