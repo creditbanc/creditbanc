@@ -9,7 +9,7 @@ export const course = {
 			resources: [
 				{
 					title: "Fundability",
-					id: "fundability",
+					id: "1",
 					type: "video",
 					duration: "15:07",
 					url: `https://player.vimeo.com/video/874826758`,
