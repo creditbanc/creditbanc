@@ -816,12 +816,12 @@ video {
   z-index: 99;
 }
 
-.col-span-2 {
-  grid-column: span 2 / span 2;
-}
-
 .col-span-1 {
   grid-column: span 1 / span 1;
+}
+
+.col-span-2 {
+  grid-column: span 2 / span 2;
 }
 
 .-m-1 {
@@ -1291,18 +1291,6 @@ video {
   margin-top: 50px;
 }
 
-.-ml-4 {
-  margin-left: -1rem;
-}
-
-.mr-8 {
-  margin-right: 2rem;
-}
-
-.mt-16 {
-  margin-top: 4rem;
-}
-
 .block {
   display: block;
 }
@@ -1554,10 +1542,6 @@ video {
 
 .h-full {
   height: 100%;
-}
-
-.h-0\.5 {
-  height: 0.125rem;
 }
 
 .max-h-12 {
@@ -2199,10 +2183,6 @@ video {
           appearance: none;
 }
 
-.auto-rows-fr {
-  grid-auto-rows: minmax(0, 1fr);
-}
-
 .grid-cols-1 {
   grid-template-columns: repeat(1, minmax(0, 1fr));
 }
@@ -2273,10 +2253,6 @@ video {
 
 .gap-8 {
   gap: 2rem;
-}
-
-.gap-5 {
-  gap: 1.25rem;
 }
 
 .gap-x-1 {
@@ -2390,11 +2366,6 @@ video {
 
 .gap-y-\[60px\] {
   row-gap: 60px;
-}
-
-.gap-x-2\.5 {
-  -moz-column-gap: 0.625rem;
-       column-gap: 0.625rem;
 }
 
 .-space-x-1 > :not([hidden]) ~ :not([hidden]) {
@@ -2665,6 +2636,11 @@ video {
   border-bottom-left-radius: 0.25rem;
 }
 
+.rounded-l-md {
+  border-top-left-radius: 0.375rem;
+  border-bottom-left-radius: 0.375rem;
+}
+
 .rounded-r-md {
   border-top-right-radius: 0.375rem;
   border-bottom-right-radius: 0.375rem;
@@ -2678,11 +2654,6 @@ video {
 .rounded-t-2xl {
   border-top-left-radius: 1rem;
   border-top-right-radius: 1rem;
-}
-
-.rounded-l-md {
-  border-top-left-radius: 0.375rem;
-  border-bottom-left-radius: 0.375rem;
 }
 
 .border {
@@ -3074,25 +3045,6 @@ video {
   background-color: rgb(253 224 71 / var(--tw-bg-opacity));
 }
 
-.bg-white\/10 {
-  background-color: rgb(255 255 255 / 0.1);
-}
-
-.bg-pink-600 {
-  --tw-bg-opacity: 1;
-  background-color: rgb(219 39 119 / var(--tw-bg-opacity));
-}
-
-.bg-purple-600 {
-  --tw-bg-opacity: 1;
-  background-color: rgb(147 51 234 / var(--tw-bg-opacity));
-}
-
-.bg-yellow-500 {
-  --tw-bg-opacity: 1;
-  background-color: rgb(234 179 8 / var(--tw-bg-opacity));
-}
-
 .bg-opacity-20 {
   --tw-bg-opacity: 0.2;
 }
@@ -3125,17 +3077,6 @@ video {
   --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to);
 }
 
-.from-gray-900 {
-  --tw-gradient-from: #111827;
-  --tw-gradient-to: rgb(17 24 39 / 0);
-  --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to);
-}
-
-.via-gray-900\/40 {
-  --tw-gradient-to: rgb(17 24 39 / 0);
-  --tw-gradient-stops: var(--tw-gradient-from), rgb(17 24 39 / 0.4), var(--tw-gradient-to);
-}
-
 .fill-blue-300 {
   fill: #93c5fd;
 }
@@ -3150,10 +3091,6 @@ video {
 
 .fill-none {
   fill: none;
-}
-
-.fill-white\/50 {
-  fill: rgb(255 255 255 / 0.5);
 }
 
 .stroke-gray-300\/70 {
@@ -3411,11 +3348,6 @@ video {
   padding-bottom: calc(0.5rem - 1px);
 }
 
-.py-24 {
-  padding-top: 6rem;
-  padding-bottom: 6rem;
-}
-
 .pb-0 {
   padding-bottom: 0px;
 }
@@ -3614,10 +3546,6 @@ video {
 
 .pt-\[calc\(23\/318\*100\%\)\] {
   padding-top: calc(23 / 318 * 100%);
-}
-
-.pt-80 {
-  padding-top: 20rem;
 }
 
 .text-left {
@@ -4362,12 +4290,12 @@ body {
   outline-width: 2px;
 }
 
-.focus-visible\:outline-offset-2:focus-visible {
-  outline-offset: 2px;
-}
-
 .focus-visible\:outline-offset-0:focus-visible {
   outline-offset: 0px;
+}
+
+.focus-visible\:outline-offset-2:focus-visible {
+  outline-offset: 2px;
 }
 
 .focus-visible\:outline-blue-600:focus-visible {
@@ -4878,10 +4806,6 @@ body {
     grid-template-columns: repeat(6, minmax(0, 1fr));
   }
 
-  .sm\:grid-cols-2 {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
   .sm\:flex-row {
     flex-direction: row;
   }
@@ -4924,10 +4848,6 @@ body {
 
   .sm\:gap-4 {
     gap: 1rem;
-  }
-
-  .sm\:gap-6 {
-    gap: 1.5rem;
   }
 
   .sm\:gap-y-20 {
@@ -5020,10 +4940,6 @@ body {
 
   .sm\:pt-80 {
     padding-top: 20rem;
-  }
-
-  .sm\:pt-48 {
-    padding-top: 12rem;
   }
 
   .sm\:text-3xl {
@@ -5402,10 +5318,6 @@ body {
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 
-  .lg\:grid-cols-4 {
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-  }
-
   .lg\:flex-row {
     flex-direction: row;
   }
@@ -5605,10 +5517,6 @@ body {
 
   .lg\:pt-6 {
     padding-top: 1.5rem;
-  }
-
-  .lg\:pt-80 {
-    padding-top: 20rem;
   }
 
   .lg\:text-left {

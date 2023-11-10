@@ -99,13 +99,8 @@ const Resource = ({ resource }) => {
 			<div className="rounded-lg shadow-sm ring-1 ring-gray-900/5">
 				<dl className="flex flex-wrap">
 					<div className="flex flex-row w-full h-[150px] items-center">
-						<div className="flex-auto pl-6 pt-6">
+						<div className="flex-auto px-6 pt-6">
 							<img src={resource.img} alt="" />
-						</div>
-						<div className="flex flex-col justify-center px-6 pt-4">
-							<dd className="inline-flex items-center rounded-md bg-green-50 px-2 py-1 text-xs font-medium text-green-700 ring-1 ring-inset ring-green-600/20">
-								Paid
-							</dd>
 						</div>
 					</div>
 					<div className="mt-6 flex w-full flex-none gap-x-4 border-t border-gray-900/5 px-6 pt-6">
