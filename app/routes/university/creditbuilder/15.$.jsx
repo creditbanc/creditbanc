@@ -1,6 +1,6 @@
 import { XMarkIcon } from "@heroicons/react/24/outline";
 import { useLoaderData } from "@remix-run/react";
-import { get, get_resource_id } from "~/utils/helpers";
+import { get, get_resource_id, mapIndexed } from "~/utils/helpers";
 import { course as curriculum, resources as all_resources } from "../data";
 import { flatten, head, map, pipe } from "ramda";
 import { all, filter } from "shades";
@@ -199,9 +199,11 @@ const SidePanel = () => {
 													<div className="flex justify-between py-3 text-sm font-medium">
 														<dt className="text-gray-500">Reports to:</dt>
 														<div className="text-gray-900 flex flex-row gap-x-5">
-															{pipe(map((bureau) => <div>{bureau}</div>))(
-																resource?.reports_to
-															)}
+															{pipe(
+																mapIndexed((bureau, index) => (
+																	<div key={index}>{bureau}</div>
+																))
+															)(resource?.reports_to)}
 														</div>
 													</div>
 
@@ -217,8 +219,8 @@ const SidePanel = () => {
 												<div className="mt-2 flex items-center justify-between">
 													<div className="overflow-hidden rounded-md bg-white border list-none divide-y w-full">
 														{pipe(
-															map((item) => (
-																<li key={item.id} className="px-6 py-4">
+															mapIndexed((item, index) => (
+																<li key={index} className="px-6 py-4">
 																	{item}
 																</li>
 															))
@@ -232,8 +234,8 @@ const SidePanel = () => {
 												<div className="mt-2 flex items-center justify-between">
 													<div className="overflow-hidden rounded-md bg-white border list-none divide-y w-full">
 														{pipe(
-															map((item) => (
-																<li key={item.id} className="px-6 py-4">
+															mapIndexed((item, index) => (
+																<li key={index} className="px-6 py-4">
 																	{item}
 																</li>
 															))
