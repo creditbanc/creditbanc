@@ -699,3 +699,210 @@ export const resources = [
 		],
 	},
 ];
+
+export const secretary_of_state = [
+	{
+		state: "Alabama",
+		url: "https://www.sos.alabama.gov/business-entities",
+	},
+	{
+		state: "Alaska",
+		url: "https://www.commerce.alaska.gov/web/cbpl/Corporations.aspx",
+	},
+	{
+		state: "Arizona",
+		url: "https://ecorp.azcc.gov/EntitySearch/Index",
+	},
+	{
+		state: "Arkansas",
+		url: "https://www.ark.org/corp-search/index.php",
+	},
+	{
+		state: "California",
+		url: "https://bizfileonline.sos.ca.gov/search/business",
+	},
+	{
+		state: "Colorado",
+		url: "https://www.sos.state.co.us/biz/BusinessEntityCriteriaExt.do",
+	},
+	{
+		state: "Connecticut",
+		url: "https://service.ct.gov/business/s/onlinebusinesssearch?language=en_US",
+	},
+	{
+		state: "Delaware",
+		url: "https://icis.corp.delaware.gov/Ecorp/EntitySearch/NameSearch.aspx",
+	},
+	{
+		state: "District of Columbia",
+		url: "https://corponline.dcra.dc.gov/Home.aspx/Landing",
+	},
+	{
+		state: "Florida",
+		url: "https://search.sunbiz.org/Inquiry/CorporationSearch/ByName",
+	},
+	{
+		state: "Georgia",
+		url: "https://ecorp.sos.ga.gov/BusinessSearch",
+	},
+	{
+		state: "Hawaii",
+		url: "https://hbe.ehawaii.gov/documents/search.html",
+	},
+	{
+		state: "Idaho",
+		url: "https://sosbiz.idaho.gov/search/business",
+	},
+	{
+		state: "Illinois",
+		url: "https://apps.ilsos.gov/businessentitysearch/",
+	},
+	{
+		state: "Indiana",
+		url: "https://bsd.sos.in.gov/publicbusinesssearch",
+	},
+	{
+		state: "Iowa",
+		url: "https://sos.iowa.gov/search/business/search.aspx",
+	},
+	{
+		state: "Kansas",
+		url: "https://www.kansas.gov/bess/flow/main;jsessionid=3EFB13BAF85034E3B4593C5D5ED51A40.aptcs03-inst0?execution=e1s1",
+	},
+	{
+		state: "Kentucky",
+		url: "https://www.sos.ky.gov/bus/business-filings/OnlineServices/Pages/default.aspx",
+	},
+	{
+		state: "Louisiana",
+		url: "https://coraweb.sos.la.gov/CommercialSearch/CommercialSearch.aspx",
+	},
+	{
+		state: "Maine",
+		url: "https://apps1.web.maine.gov/nei-sos-icrs/ICRS?MainPage=x",
+	},
+	{
+		state: "Maryland",
+		url: "https://egov.maryland.gov/BusinessExpress/EntitySearch",
+	},
+	{
+		state: "Massachusetts",
+		url: "https://corp.sec.state.ma.us/corpweb/corpsearch/CorpSearch.aspx",
+	},
+	{
+		state: "Michigan",
+		url: "https://cofs.lara.state.mi.us/SearchApi/Search/Search",
+	},
+	{
+		state: "Minnesota",
+		url: "https://mblsportal.sos.state.mn.us/Business/Search",
+	},
+	{
+		state: "Mississippi",
+		url: "https://corp.sos.ms.gov/corp/portal/c/page/corpBusinessIdSearch/portal.aspx",
+	},
+	{
+		state: "Missouri",
+		url: "https://bsd.sos.mo.gov/BusinessEntity/BESearch.aspx?SearchType=0",
+	},
+	{
+		state: "Montana",
+		url: "https://biz.sosmt.gov/search/business",
+	},
+	{
+		state: "Nebraska",
+		url: "https://www.nebraska.gov/sos/corp/corpsearch.cgi",
+	},
+	{
+		state: "Nevada",
+		url: "https://esos.nv.gov/EntitySearch/OnlineEntitySearch",
+	},
+	{
+		state: "New Hampshire",
+		url: "https://quickstart.sos.nh.gov/online/BusinessInquire",
+	},
+	{
+		state: "New Jersey",
+		url: "https://www.njportal.com/DOR/businessrecords/EntityDocs/BusinessStatCopies.aspx",
+	},
+	{
+		state: "New Mexico",
+		url: "https://portal.sos.state.nm.us/BFS/online/CorporationBusinessSearch",
+	},
+	{
+		state: "New York",
+		url: "https://apps.dos.ny.gov/publicInquiry/",
+	},
+	{
+		state: "North Carolina",
+		url: "https://www.sosnc.gov/search/index/corp",
+	},
+	{
+		state: "North Dakota",
+		url: "https://firststop.sos.nd.gov/search/business",
+	},
+	{
+		state: "Ohio",
+		url: "https://businesssearch.ohiosos.gov/",
+	},
+	{
+		state: "Oklahoma",
+		url: "https://www.sos.ok.gov/corp/corpInquiryFind.aspx",
+	},
+	{
+		state: "Oregon",
+		url: "https://egov.sos.state.or.us/br/pkg_web_name_srch_inq.login",
+	},
+	{
+		state: "Pennsylvania",
+		url: "https://file.dos.pa.gov/",
+	},
+	{
+		state: "Rhode Island",
+		url: "https://business.sos.ri.gov/CorpWeb/CorpSearch/CorpSearch.aspx",
+	},
+	{
+		state: "South Carolina",
+		url: "https://businessfilings.sc.gov/BusinessFiling/Entity/Search",
+	},
+	{
+		state: "South Dakota",
+		url: "https://sosenterprise.sd.gov/BusinessServices/Business/FilingSearch.aspx",
+	},
+	{
+		state: "Tennessee",
+		url: "https://tnbear.tn.gov/ECommerce/FilingSearch.aspx",
+	},
+	{
+		state: "Texas",
+		url: "https://mycpa.cpa.state.tx.us/coa/Index.html",
+	},
+	{
+		state: "Utah",
+		url: "https://secure.utah.gov/bes/index.html",
+	},
+	{
+		state: "Vermont",
+		url: "https://bizfilings.vermont.gov/online/BusinessInquire",
+	},
+	{
+		state: "Virginia",
+		url: "https://www.corporationsandtrademarks.vi.gov/usvi-master/viewInstance/view.html",
+	},
+	{
+		state: "Washington",
+		url: "https://ccfs.sos.wa.gov/#/",
+	},
+	{
+		state: "West Virginia",
+		url: "https://apps.wv.gov/SOS/BusinessEntitySearch/",
+	},
+	{
+		state: "Wisconsin",
+		url: "https://www.wdfi.org/apps/CorpSearch/Search.aspx",
+	},
+	{
+		state: "Wyoming",
+		url: "https://wyobiz.wyo.gov/Business/FilingSearch.aspx",
+	},
+];
