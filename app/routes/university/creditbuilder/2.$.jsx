@@ -147,9 +147,9 @@ export default function Course() {
 			<div className="hidden lg:flex flex-col w-[30%]">
 				<div className="flex flex-col bg-white border rounded overflow-scroll scrollbar-none">
 					<div className="border-b border-gray-200 bg-white px-4 py-5 sm:px-6 sticky top-0 z-10">
-						<h3 className="text-base font-semibold leading-6 text-gray-900 my-2">Portfolio Manager</h3>
+						<h3 className="text-base font-semibold leading-6 text-gray-900 my-2">Credit Builder</h3>
 
-						<div className="flex flex-col w-full space-y-5">
+						{/* <div className="flex flex-col w-full space-y-5">
 							<p className="mt-1 text-sm text-gray-500">
 								Deep dive into the portfolio management process & earn your certification with new
 								topics on the latest trends in ESG, active vs passive investing, and more!
@@ -168,7 +168,7 @@ export default function Course() {
 							<div className="w-full bg-gray-200 rounded-full h-2.5 dark:bg-gray-700">
 								<div className="bg-blue-600 h-2.5 rounded-full w-[45%]"></div>
 							</div>
-						</div>
+						</div> */}
 					</div>
 
 					<div className="flex flex-col w-full my-3">
