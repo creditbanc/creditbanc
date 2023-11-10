@@ -1,12 +1,9 @@
-import { ChevronUpIcon } from "@heroicons/react/20/solid";
-import { DocumentIcon, PlayCircleIcon, PlayIcon, BackwardIcon, ForwardIcon } from "@heroicons/react/24/outline";
-import { Link, useLoaderData, useLocation } from "@remix-run/react";
-import { classNames, get, get_course_id, get_entity_id, get_group_id, get_resource_id } from "~/utils/helpers";
-import { Disclosure } from "@headlessui/react";
+import { useLoaderData } from "@remix-run/react";
+import { get, get_resource_id } from "~/utils/helpers";
 import { course as curriculum } from "../data";
 import { flatten, head, map, pipe } from "ramda";
 import { all, filter } from "shades";
-import { CalendarDaysIcon, CreditCardIcon, UserCircleIcon } from "@heroicons/react/20/solid";
+import { CreditCardIcon, UserCircleIcon } from "@heroicons/react/20/solid";
 import CurriculumAccordion from "~/components/CurriculumAccordion";
 
 export const loader = async ({ request }) => {
@@ -21,53 +18,6 @@ export const loader = async ({ request }) => {
 	// console.log(resource);
 	return { resource, curriculum };
 };
-
-// const CurriculumAccordion = () => {
-// 	let { pathname } = useLocation();
-// 	let entity_id = get_entity_id(pathname);
-// 	let group_id = get_group_id(pathname);
-// 	let { curriculum } = useLoaderData();
-
-// 	return (
-// 		<div className="mx-auto w-full max-w-md rounded-2xl bg-white p-2 space-y-3 ">
-// 			{pipe(
-// 				get("sections"),
-// 				map((section) => (
-// 					<Disclosure defaultOpen={true}>
-// 						{({ open }) => (
-// 							<>
-// 								<Disclosure.Button className="flex w-full justify-between rounded-lg  px-4 py-2 text-left text-sm font-medium   focus:outline-none focus-visible:ring  focus-visible:ring-opacity-75">
-// 									<span>{section.title}</span>
-// 									<ChevronUpIcon
-// 										className={`${open ? "rotate-180 transform" : ""} h-5 w-5 text-gray-500`}
-// 									/>
-// 								</Disclosure.Button>
-// 								<Disclosure.Panel className="px-4  pb-2 text-gray-500 space-y-3 text-sm">
-// 									{pipe(
-// 										map((resource) => (
-// 											<Link
-// 												to={`/university/creditbuilder/${resource.id}/resource/e/${entity_id}/g/${group_id}/f/${resource.id}`}
-// 												className="flex flex-row w-full border p-2 rounded"
-// 											>
-// 												<div className="flex flex-row w-full space-x-2 items-center space-between cursor-pointer">
-// 													<div>
-// 														<PlayCircleIcon className="h-5 w-5 text-gray-500" />
-// 													</div>
-// 													<div>{resource.title}</div>
-// 												</div>
-// 												<div>{resource.duration}</div>
-// 											</Link>
-// 										))
-// 									)(section.resources)}
-// 								</Disclosure.Panel>
-// 							</>
-// 						)}
-// 					</Disclosure>
-// 				))
-// 			)(curriculum)}
-// 		</div>
-// 	);
-// };
 
 const resources = [
 	{
@@ -192,9 +142,6 @@ const Content = () => {
 export default function Course() {
 	let { resource, curriculum } = useLoaderData();
 
-	// console.log("resource");
-	// console.log(resource);
-
 	return (
 		<div className="flex flex-row w-full h-full overflow-hiddens gap-x-5 overflow-hidden">
 			<div className="flex flex-col w-full lg:w-[70%] h-full rounded overflow-scroll scrollbar-none">
@@ -216,11 +163,6 @@ export default function Course() {
 							</div>
 						</div>
 					)}
-
-					{/* <div className="flex flex-col w-full mt-4 sticky top-[60px] z-10 bg-white">
-						<CourseTabs />
-					</div>
-					*/}
 
 					<div className="">
 						<Content />

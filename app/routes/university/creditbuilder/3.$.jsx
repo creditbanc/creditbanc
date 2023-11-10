@@ -1,12 +1,9 @@
-import { ChevronUpIcon } from "@heroicons/react/20/solid";
-import { DocumentIcon, PlayCircleIcon, PlayIcon, BackwardIcon, ForwardIcon } from "@heroicons/react/24/outline";
-import { Link, useLoaderData, useLocation } from "@remix-run/react";
-import { classNames, get, get_course_id, get_entity_id, get_group_id, get_resource_id } from "~/utils/helpers";
-import { Disclosure } from "@headlessui/react";
+import { useLoaderData } from "@remix-run/react";
+import { get, get_resource_id } from "~/utils/helpers";
 import { course as curriculum } from "../data";
 import { flatten, head, map, pipe } from "ramda";
 import { all, filter } from "shades";
-import { CalendarDaysIcon, CreditCardIcon, UserCircleIcon } from "@heroicons/react/20/solid";
+import { CreditCardIcon, UserCircleIcon } from "@heroicons/react/20/solid";
 import CurriculumAccordion from "~/components/CurriculumAccordion";
 
 export const loader = async ({ request }) => {

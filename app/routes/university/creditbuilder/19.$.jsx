@@ -145,7 +145,7 @@ const Content = () => {
 				<div className="border-b border-gray-200 pb-3 my-5">
 					<h3 className="text-base font-semibold leading-6 text-gray-900">Resources</h3>
 				</div>
-				<div className="flex flex-row gap-x-5">
+				{/* <div className="flex flex-row gap-x-5">
 					<div className="flex flex-col w-1/3">
 						<Resource />
 					</div>
@@ -155,7 +155,7 @@ const Content = () => {
 					<div className="flex flex-col w-1/3">
 						<Resource />
 					</div>
-				</div>
+				</div> */}
 			</div>
 		</div>
 	);

@@ -1,13 +1,13 @@
-import { ChevronUpIcon } from "@heroicons/react/20/solid";
-import { DocumentIcon, PlayCircleIcon, PlayIcon, BackwardIcon, ForwardIcon } from "@heroicons/react/24/outline";
-import { Link, useLoaderData, useLocation } from "@remix-run/react";
-import { classNames, get, get_course_id, get_entity_id, get_group_id, get_resource_id } from "~/utils/helpers";
-import { Disclosure } from "@headlessui/react";
-import { course as curriculum } from "../data";
+import { useLoaderData } from "@remix-run/react";
+import { classNames, get, get_resource_id, store } from "~/utils/helpers";
+import { course as curriculum, secretary_of_state } from "../data";
 import { flatten, head, map, pipe } from "ramda";
 import { all, filter } from "shades";
-import { CalendarDaysIcon, CreditCardIcon, UserCircleIcon } from "@heroicons/react/20/solid";
+import { CreditCardIcon, UserCircleIcon } from "@heroicons/react/20/solid";
 import CurriculumAccordion from "~/components/CurriculumAccordion";
+import { XMarkIcon } from "@heroicons/react/24/outline";
+import { Dialog, Transition } from "@headlessui/react";
+import { Fragment } from "react";
 
 export const loader = async ({ request }) => {
 	console.log("course_loader");
@@ -21,53 +21,6 @@ export const loader = async ({ request }) => {
 	// console.log(resource);
 	return { resource, curriculum };
 };
-
-// const CurriculumAccordion = () => {
-// 	let { pathname } = useLocation();
-// 	let entity_id = get_entity_id(pathname);
-// 	let group_id = get_group_id(pathname);
-// 	let { curriculum } = useLoaderData();
-
-// 	return (
-// 		<div className="mx-auto w-full max-w-md rounded-2xl bg-white p-2 space-y-3 ">
-// 			{pipe(
-// 				get("sections"),
-// 				map((section) => (
-// 					<Disclosure defaultOpen={true}>
-// 						{({ open }) => (
-// 							<>
-// 								<Disclosure.Button className="flex w-full justify-between rounded-lg  px-4 py-2 text-left text-sm font-medium   focus:outline-none focus-visible:ring  focus-visible:ring-opacity-75">
-// 									<span>{section.title}</span>
-// 									<ChevronUpIcon
-// 										className={`${open ? "rotate-180 transform" : ""} h-5 w-5 text-gray-500`}
-// 									/>
-// 								</Disclosure.Button>
-// 								<Disclosure.Panel className="px-4  pb-2 text-gray-500 space-y-3 text-sm">
-// 									{pipe(
-// 										map((resource) => (
-// 											<Link
-// 												to={`/university/creditbuilder/${resource.id}/resource/e/${entity_id}/g/${group_id}/f/${resource.id}`}
-// 												className="flex flex-row w-full border p-2 rounded"
-// 											>
-// 												<div className="flex flex-row w-full space-x-2 items-center space-between cursor-pointer">
-// 													<div>
-// 														<PlayCircleIcon className="h-5 w-5 text-gray-500" />
-// 													</div>
-// 													<div>{resource.title}</div>
-// 												</div>
-// 												<div>{resource.duration}</div>
-// 											</Link>
-// 										))
-// 									)(section.resources)}
-// 								</Disclosure.Panel>
-// 							</>
-// 						)}
-// 					</Disclosure>
-// 				))
-// 			)(curriculum)}
-// 		</div>
-// 	);
-// };
 
 const resources = [
 	{
@@ -133,6 +86,156 @@ const Resource = ({ resource }) => {
 	);
 };
 
+const projects = [{ name: "Secretaries of State", initials: "SOS", bgColor: "bg-green-400" }];
+
+const useSliderStore = store({ is_opened: false });
+
+const CTASection = () => {
+	let { is_opened, set_props } = useSliderStore();
+
+	const onViewSecretaryOfState = () => {
+		set_props({ is_opened: !is_opened });
+	};
+
+	return (
+		<div className="flex flex-col my-5">
+			<ul role="list" className="mt-3 flex flex-col">
+				{projects.map((project) => (
+					<li
+						key={project.name}
+						className="col-span-1 flex rounded-md shadow-sm h-[60px] cursor-pointer"
+						onClick={onViewSecretaryOfState}
+					>
+						<div
+							className={classNames(
+								project.bgColor,
+								"flex w-16 flex-shrink-0 items-center justify-center rounded-l-md text-sm font-medium text-white"
+							)}
+						>
+							{project.initials}
+						</div>
+						<div className="flex flex-col w-full h-full items-center justify-between truncate rounded-r-md border-b border-r border-t border-gray-200 bg-white">
+							<div className="flex flex-row h-full w-full items-center justify-between truncate px-4 py-2 text-sm">
+								<div>
+									<a href={project.href} className="font-medium text-gray-900 hover:text-gray-600">
+										{project.name}
+									</a>
+								</div>
+								<div>View</div>
+							</div>
+						</div>
+					</li>
+				))}
+			</ul>
+		</div>
+	);
+};
+
+const SOSList = () => {
+	return (
+		<div>
+			<ul role="list" className="divide-y divide-gray-100">
+				<div className="border-b border-gray-200 bg-white pb-5">
+					<h3 className="text-base font-semibold text-gray-900">Secretaries of State</h3>
+				</div>
+				{secretary_of_state.map((person) => (
+					<li key={person.email} className="flex items-center justify-between gap-x-6 py-5">
+						<div className="flex min-w-0 gap-x-4">
+							{/* <img className="h-12 w-12 flex-none rounded-full bg-gray-50" src={person.imageUrl} alt="" /> */}
+							<div className="min-w-0 flex-auto">
+								<p className="text-sm font-semibold leading-6 text-gray-900">{person.state}</p>
+								<p className="mt-1 truncate text-xs leading-5 text-gray-500">{person.url}</p>
+							</div>
+						</div>
+						<a
+							href={person.url}
+							target="_blank"
+							className="rounded-full bg-white px-2.5 py-1 text-xs font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
+						>
+							View
+						</a>
+					</li>
+				))}
+			</ul>
+			{/* <a
+				href="#"
+				className="flex w-full items-center justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus-visible:outline-offset-0"
+			>
+				View all
+			</a> */}
+		</div>
+	);
+};
+
+const SidePanel = () => {
+	const { is_opened, set_props } = useSliderStore();
+
+	const setOpen = () => {
+		set_props({ is_opened: !is_opened });
+	};
+
+	return (
+		<Transition.Root show={is_opened} as={Fragment}>
+			<Dialog as="div" className="relative z-[99]" onClose={setOpen}>
+				<Transition.Child
+					as={Fragment}
+					enter="ease-in-out duration-500"
+					enterFrom="opacity-0"
+					enterTo="opacity-100"
+					leave="ease-in-out duration-500"
+					leaveFrom="opacity-100"
+					leaveTo="opacity-0"
+				>
+					<div className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" />
+				</Transition.Child>
+
+				<div className="fixed inset-0 overflow-hidden">
+					<div className="absolute inset-0 overflow-hidden">
+						<div className="pointer-events-none fixed inset-y-0 right-0 flex max-w-full pl-10">
+							<Transition.Child
+								as={Fragment}
+								enter="transform transition ease-in-out duration-500 sm:duration-700"
+								enterFrom="translate-x-full"
+								enterTo="translate-x-0"
+								leave="transform transition ease-in-out duration-500 sm:duration-700"
+								leaveFrom="translate-x-0"
+								leaveTo="translate-x-full"
+							>
+								<Dialog.Panel className="pointer-events-auto relative">
+									<Transition.Child
+										as={Fragment}
+										enter="ease-in-out duration-500"
+										enterFrom="opacity-0"
+										enterTo="opacity-100"
+										leave="ease-in-out duration-500"
+										leaveFrom="opacity-100"
+										leaveTo="opacity-0"
+									>
+										<div className="absolute left-0 top-0 -ml-8 flex pr-2 pt-4 sm:-ml-10 sm:pr-4">
+											<button
+												type="button"
+												className="relative rounded-md text-gray-300 hover:text-white focus:outline-none"
+												onClick={() => setOpen(false)}
+											>
+												<span className="absolute -inset-2.5" />
+												<span className="sr-only">Close panel</span>
+												<XMarkIcon className="h-6 w-6" aria-hidden="true" />
+											</button>
+										</div>
+									</Transition.Child>
+									<div className="h-full overflow-y-auto bg-white p-8 w-[700px]">
+										<SOSList />
+									</div>
+								</Dialog.Panel>
+							</Transition.Child>
+						</div>
+					</div>
+				</div>
+			</Dialog>
+		</Transition.Root>
+	);
+};
+
 const Content = () => {
 	return (
 		<div className="w-full text-base leading-7 text-gray-700 px-3 my-4">
@@ -151,6 +254,7 @@ const Content = () => {
 					</p>
 					<p>What’s most important is that your business address shows the same on ALL business records.</p>
 				</div>
+				<CTASection />
 			</div>
 			<div className="mt-10">
 				<div className="border-b border-gray-200 pb-3 my-5">
@@ -178,6 +282,7 @@ export default function Course() {
 
 	return (
 		<div className="flex flex-row w-full h-full overflow-hiddens gap-x-5 overflow-hidden">
+			<SidePanel />
 			<div className="flex flex-col w-full lg:w-[70%] h-full rounded overflow-scroll scrollbar-none">
 				<div className="flex flex-col w-full h-fit bg-white rounded px-5">
 					<div className="flex flex-row justify-between items-center border-b border-gray-200 bg-white py-1 sticky top-0 z-10">
@@ -197,11 +302,6 @@ export default function Course() {
 							</div>
 						</div>
 					)}
-
-					{/* <div className="flex flex-col w-full mt-4 sticky top-[60px] z-10 bg-white">
-						<CourseTabs />
-					</div>
-					*/}
 
 					<div className="">
 						<Content />
