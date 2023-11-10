@@ -99,6 +99,13 @@ export const course = {
 			id: "buildingcredit",
 			resources: [
 				{
+					title: "Building Business Credit",
+					id: "16",
+					type: "video",
+					duration: "7:37",
+					url: "https://player.vimeo.com/video/877045815",
+				},
+				{
 					title: "Apply with 3 trade accounts",
 					id: "15",
 					type: "",
@@ -109,13 +116,6 @@ export const course = {
 			title: "Monitor",
 			id: "monitor",
 			resources: [
-				{
-					title: "Building Business Credit",
-					id: "16",
-					type: "video",
-					duration: "7:37",
-					url: "https://player.vimeo.com/video/877045815",
-				},
 				// {
 				// 	title: "Credit Monitoring",
 				// 	id: "17",
