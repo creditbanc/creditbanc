@@ -1,8 +1,10 @@
 import { FolderIcon, PlayIcon, ChevronUpIcon } from "@heroicons/react/20/solid";
 import { DocumentIcon, ListBulletIcon, PlayCircleIcon } from "@heroicons/react/24/outline";
 import { Link, useLocation } from "@remix-run/react";
-import { classNames, get_entity_id, get_group_id } from "~/utils/helpers";
 import { Disclosure } from "@headlessui/react";
+import { course as curriculum } from "./data";
+import { pipe, map, prop } from "ramda";
+import { classNames, get, get_entity_id, get_group_id } from "~/utils/helpers";
 
 const UniversityHeader = () => {
 	return (
@@ -242,126 +244,53 @@ const Accounts = () => {
 	);
 };
 
-const CurriculumAccordion = () => {
+const CurriculumAccordion = ({ sections = [] }) => {
+	let { pathname } = useLocation();
+	let entity_id = get_entity_id(pathname);
+	let group_id = get_group_id(pathname);
+
 	return (
-		<div className="mx-auto w-full max-w-md rounded-2xl bg-white p-2 space-y-3 ">
-			<Disclosure defaultOpen={true}>
-				{({ open }) => (
-					<>
-						<Disclosure.Button className="flex w-full justify-between rounded-lg  px-4 py-2 text-left text-sm font-medium   focus:outline-none focus-visible:ring  focus-visible:ring-opacity-75">
-							<span>THE INVESTMENT MANAGEMENT INDUSTRY</span>
-							<ChevronUpIcon className={`${open ? "rotate-180 transform" : ""} h-5 w-5 text-gray-500`} />
-						</Disclosure.Button>
-						<Disclosure.Panel className="px-4  pb-2 text-gray-500 space-y-3 text-sm">
-							<div className="flex flex-row w-full border p-2 rounded">
-								<div className="flex flex-row w-full space-x-2 items-center space-between cursor-pointer">
-									<div>
-										<PlayCircleIcon className="h-5 w-5 text-gray-500" />
-									</div>
-									<div>Modern Portfolio Theory</div>
-								</div>
-								<div>2:45</div>
-							</div>
-							<div className="flex flex-row w-full border p-2 rounded">
-								<div className="flex flex-row w-full space-x-2 items-center space-between cursor-pointer">
-									<div>
-										<DocumentIcon className="h-5 w-5 text-gray-500" />
-									</div>
-									<div>Modern Portfolio Theory</div>
-								</div>
-								<div>2:45</div>
-							</div>
-							<div className="flex flex-row w-full border p-2 rounded">
-								<div className="flex flex-row w-full space-x-2 items-center space-between cursor-pointer">
-									<div>
-										<PlayCircleIcon className="h-5 w-5 text-gray-500" />
-									</div>
-									<div>Modern Portfolio Theory</div>
-								</div>
-								<div>2:45</div>
-							</div>
-						</Disclosure.Panel>
-					</>
-				)}
-			</Disclosure>
-			<Disclosure defaultOpen={true}>
-				{({ open }) => (
-					<>
-						<Disclosure.Button className="flex w-full justify-between rounded-lg  px-4 py-2 text-left text-sm font-medium   focus:outline-none focus-visible:ring  focus-visible:ring-opacity-75">
-							<span>ECONOMIC ANALYSIS & ASSET ALLOCATION</span>
-							<ChevronUpIcon className={`${open ? "rotate-180 transform" : ""} h-5 w-5 text-gray-500`} />
-						</Disclosure.Button>
-						<Disclosure.Panel className="px-4  pb-2 text-gray-500 space-y-3 text-sm">
-							<div className="flex flex-row w-full border p-2 rounded">
-								<div className="flex flex-row w-full space-x-2 items-center space-between cursor-pointer">
-									<div>
-										<PlayCircleIcon className="h-5 w-5 text-gray-500" />
-									</div>
-									<div>Modern Portfolio Theory</div>
-								</div>
-								<div>2:45</div>
-							</div>
-							<div className="flex flex-row w-full border p-2 rounded">
-								<div className="flex flex-row w-full space-x-2 items-center space-between cursor-pointer">
-									<div>
-										<DocumentIcon className="h-5 w-5 text-gray-500" />
-									</div>
-									<div>Modern Portfolio Theory</div>
-								</div>
-								<div>2:45</div>
-							</div>
-							<div className="flex flex-row w-full border p-2 rounded">
-								<div className="flex flex-row w-full space-x-2 items-center space-between cursor-pointer">
-									<div>
-										<PlayCircleIcon className="h-5 w-5 text-gray-500" />
-									</div>
-									<div>Modern Portfolio Theory</div>
-								</div>
-								<div>2:45</div>
-							</div>
-						</Disclosure.Panel>
-					</>
-				)}
-			</Disclosure>
-			<Disclosure defaultOpen={true}>
-				{({ open }) => (
-					<>
-						<Disclosure.Button className="flex w-full justify-between rounded-lg  px-4 py-2 text-left text-sm font-medium   focus:outline-none focus-visible:ring  focus-visible:ring-opacity-75">
-							<span>SECURITY SELECTION</span>
-							<ChevronUpIcon className={`${open ? "rotate-180 transform" : ""} h-5 w-5 text-gray-500`} />
-						</Disclosure.Button>
-						<Disclosure.Panel className="px-4  pb-2 text-gray-500 space-y-3 text-sm">
-							<div className="flex flex-row w-full border p-2 rounded">
-								<div className="flex flex-row w-full space-x-2 items-center space-between cursor-pointer">
-									<div>
-										<PlayCircleIcon className="h-5 w-5 text-gray-500" />
-									</div>
-									<div>Modern Portfolio Theory</div>
-								</div>
-								<div>2:45</div>
-							</div>
-							<div className="flex flex-row w-full border p-2 rounded">
-								<div className="flex flex-row w-full space-x-2 items-center space-between cursor-pointer">
-									<div>
-										<DocumentIcon className="h-5 w-5 text-gray-500" />
-									</div>
-									<div>Modern Portfolio Theory</div>
-								</div>
-								<div>2:45</div>
-							</div>
-							<div className="flex flex-row w-full border p-2 rounded">
-								<div className="flex flex-row w-full space-x-2 items-center space-between cursor-pointer">
-									<div>
-										<PlayCircleIcon className="h-5 w-5 text-gray-500" />
-									</div>
-									<div>Modern Portfolio Theory</div>
-								</div>
-								<div>2:45</div>
-							</div>
-						</Disclosure.Panel>
-					</>
-				)}
-			</Disclosure>
+		<div className="flex flex-col w-full rounded-2xl bg-white p-2 space-y-3 ">
+			{pipe(
+				get("sections"),
+				map((section) => (
+					<Disclosure defaultOpen={true}>
+						{({ open }) => (
+							<>
+								<Disclosure.Button className="flex w-full justify-between rounded-lg  px-4 py-2 text-left text-sm font-medium   focus:outline-none focus-visible:ring  focus-visible:ring-opacity-75">
+									<span>{section?.title}</span>
+									<ChevronUpIcon
+										className={`${open ? "rotate-180 transform" : ""} h-5 w-5 text-gray-500`}
+									/>
+								</Disclosure.Button>
+								<Disclosure.Panel className="px-4  pb-2 text-gray-500 space-y-3 text-sm">
+									{pipe(
+										map((resource) => (
+											<Link
+												to={`${resource.href}/resource/e/${entity_id}/g/${group_id}/f/${resource.id}`}
+												className="flex flex-row w-full border p-2 rounded"
+											>
+												<div className="flex flex-row w-full space-x-2 items-center space-between cursor-pointer">
+													<div>
+														{resource.type == "video" && (
+															<PlayCircleIcon className="h-5 w-5 text-gray-500" />
+														)}
+														{resource.type !== "video" && (
+															<DocumentIcon className="h-4 w-4 text-gray-500" />
+														)}
+													</div>
+													<div>{resource?.title}</div>
+												</div>
+												<div>{resource?.duration}</div>
+											</Link>
+										))
+									)(section?.resources)}
+								</Disclosure.Panel>
+							</>
+						)}
+					</Disclosure>
+				))
+			)(curriculum)}
 		</div>
 	);
 };
@@ -379,9 +308,9 @@ export default function Courses() {
 					</div>
 
 					<div className="border-b border-gray-200 bg-white px-4 py-5 sm:px-6 sticky top-0 z-10">
-						<h3 className="text-base font-semibold leading-6 text-gray-900 my-2">Portfolio Manager</h3>
+						<h3 className="text-base font-semibold leading-6 text-gray-900 my-2">Credit Builder</h3>
 
-						<div className="flex flex-col w-full space-y-5">
+						{/* <div className="flex flex-col w-full space-y-5">
 							<p className="mt-1 text-sm text-gray-500">
 								Deep dive into the portfolio management process & earn your certification with new
 								topics on the latest trends in ESG, active vs passive investing, and more!
@@ -400,7 +329,7 @@ export default function Courses() {
 							<div className="w-full bg-gray-200 rounded-full h-2.5 dark:bg-gray-700">
 								<div className="bg-blue-600 h-2.5 rounded-full w-[45%]"></div>
 							</div>
-						</div>
+						</div> */}
 					</div>
 
 					<div className="flex flex-col w-full my-3">

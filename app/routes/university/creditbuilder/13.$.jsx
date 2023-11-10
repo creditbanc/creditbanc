@@ -16,8 +16,8 @@ export const loader = async ({ request }) => {
 	// console.log(course_id);
 	let resource = pipe(get("sections", all, "resources", all), flatten)(curriculum);
 	resource = pipe(filter({ id: course_id }), head)(resource);
-	console.log("resource______");
-	console.log(resource);
+	// console.log("resource______");
+	// console.log(resource);
 
 	// console.log("resource");
 	// console.log(resource);

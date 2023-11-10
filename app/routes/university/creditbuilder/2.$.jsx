@@ -1,5 +1,5 @@
 import { Link, useLoaderData, useLocation } from "@remix-run/react";
-import { get, get_entity_id, get_group_id, get_resource_id } from "~/utils/helpers";
+import { get, get_entity_id, get_group_id, get_resource_id, mapIndexed } from "~/utils/helpers";
 import { course as curriculum } from "../data";
 import { flatten, head, map, pipe } from "ramda";
 import { all, filter } from "shades";
@@ -95,8 +95,8 @@ const BusinessName = () => {
 				</div>
 				<div className="flex flex-row gap-x-5">
 					{pipe(
-						map((resource) => (
-							<div className="flex flex-col w-1/3">
+						mapIndexed((resource, index) => (
+							<div className="flex flex-col w-1/3" key={index}>
 								<Resource resource={resource} />
 							</div>
 						))
