@@ -52,6 +52,12 @@ export default function Course() {
 							</div>
 						</div>
 					)}
+					<p className="my-5">
+						Lesson One is all about getting your business looking top-notch! We'll walk you through the
+						steps to develop a great name, an actual address, the proper structure, and getting an important
+						EIN. Plus, we'll help you set up a phone number, get listed on 411, create a slick website, and
+						open a business bank account. It's all part of the process of establishing business credibility.
+					</p>
 				</div>
 			</div>
 			<div className="hidden lg:flex flex-col w-[30%]">

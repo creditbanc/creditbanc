@@ -1556,6 +1556,10 @@ video {
   max-height: 15rem;
 }
 
+.max-h-\[150px\] {
+  max-height: 150px;
+}
+
 .max-h-\[30px\] {
   max-height: 30px;
 }
@@ -1566,10 +1570,6 @@ video {
 
 .max-h-\[600px\] {
   max-height: 600px;
-}
-
-.max-h-\[150px\] {
-  max-height: 150px;
 }
 
 .min-h-\[200px\] {
@@ -2028,14 +2028,6 @@ video {
 
 .max-w-xl {
   max-width: 36rem;
-}
-
-.max-w-\[150px\] {
-  max-width: 150px;
-}
-
-.max-w-\[250px\] {
-  max-width: 250px;
 }
 
 .flex-1 {
