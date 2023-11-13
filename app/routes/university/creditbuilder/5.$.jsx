@@ -74,19 +74,15 @@ const Content = () => {
 	return (
 		<div className="w-full text-base leading-7 text-gray-700 px-3 my-4">
 			<div className="mt-10 max-w-2xl">
-				<h2 className="mt-8 text-2xl font-bold tracking-tight text-gray-900 my-3">
-					DO YOU HAVE AN EIN NUMBER?
-				</h2>
+				<h2 className="mt-8 text-2xl font-bold tracking-tight text-gray-900 my-3">Your Business EIN Number</h2>
 				<div className="flex flex-col gap-y-5">
+					<p>People have Social Security Numbers.</p>
+					<p>Businesses have EIN Numbers.</p>
 					<p>
-						The United States requires all business entities to file for an EIN#. Like a social security
-						number is to an individual an EIN# is to a business.
+						This nine-digit identity number is what allows you to open business bank accounts, establish
+						credit, and hire employees. (Plus, it's required by law.)
 					</p>
-					<Link
-						to={`https://www.irs.gov/businesses/small-businesses-self-employed/apply-for-an-employer-identification-number-ein-online`}
-					>
-						https://www.irs.gov/businesses/small-businesses-self-employed/apply-for-an-employer-identification-number-ein-online
-					</Link>
+					<p>Getting an EIN is pretty simple. Just head over to IRS.gov to apply and follow the prompts.</p>
 				</div>
 			</div>
 			<div className="mt-10">

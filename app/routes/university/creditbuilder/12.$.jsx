@@ -80,14 +80,18 @@ const Content = () => {
 		<div className="w-full text-base leading-7 text-gray-700 px-3 my-4">
 			<div className="mt-10 max-w-2xl">
 				<h2 className="mt-8 text-2xl font-bold tracking-tight text-gray-900 my-3">
-					SEARCH TO SEE IF YOUR BUSINESS HAS A BUSINESS EXPERIAN REPORT
+					Your Business Experian Report
 				</h2>
 				<div className="flex flex-col gap-y-5">
 					<p>
-						If you are unsure no need to worry, use the below link to see if your company has a profile with
-						Business Experian. No need to purchase monitoring now, we will guide you in setting up
-						monitoring in Step 4. If your company isn’t listed, no need to sweat this it will be created as
-						you get business credit accounts in Step 3/Tier 1.
+						Business Experian is another of "The Big Three" business credit bureaus and is created
+						automatically as business creditors report activity.
+					</p>
+					<p>
+						Not sure if your business has an Experian report? Use the link below to see if your company has
+						a profile with Business Experian. You don't need to purchase monitoring now (that comes later in
+						Step 4). And if your company isn't listed, don't sweat it; it will be created once you set up
+						business credit accounts in Step 3.
 					</p>
 					<a href={`https://www.smartbusinessreports.com/ExperianBIN/`} target="_blank">
 						https://www.smartbusinessreports.com/ExperianBIN/

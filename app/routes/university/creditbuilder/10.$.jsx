@@ -49,7 +49,7 @@ const Resource = ({ resource }) => {
 			<div className="rounded-lg shadow-sm ring-1 ring-gray-900/5">
 				<div className="flex flex-col">
 					<div className="flex flex-col items-center justify-center w-full h-[150px] p-4">
-						<img src={resource.img} className="object-contain" />
+						<img src={resource.img} className="object-contain max-h-[150px]" />
 					</div>
 					<div className="flex flex-col h-[120px]">
 						<div className="mt-6 flex w-full flex-none gap-x-4 border-t border-gray-900/5 px-6 pt-6">
@@ -89,13 +89,18 @@ const Content = () => {
 		<div className="w-full text-base leading-7 text-gray-700 px-3 my-4">
 			<div className="mt-10 max-w-2xl">
 				<h2 className="mt-8 text-2xl font-bold tracking-tight text-gray-900 my-3">
-					DO YOU HAVE A BUSINESS MERCHANT ACCOUNT?
+					Your Business Merchant Account
 				</h2>
 				<div className="flex flex-col gap-y-5">
 					<p>
-						A Merchant accounts allows your business to accept credit cards and debit cards. Statistically
-						customers will spend more if they can purchase by card. Merchant processing under your business
-						name also increases your finance options.
+						Want to get paid for your services or products? (Obviously.) Then you'll want to set up a
+						business merchant account. It's what's going to enable your business to accept credit cards and
+						debit card payments. Statistically, customers will spend more if they can use plastic, so give
+						'em the option to swipe!
+					</p>
+					<p>
+						But more to the point, merchant processing under your business name increases credibility AND
+						finance options.
 					</p>
 				</div>
 			</div>

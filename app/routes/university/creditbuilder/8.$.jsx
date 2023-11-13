@@ -76,13 +76,12 @@ const Content = () => {
 	return (
 		<div className="w-full text-base leading-7 text-gray-700 px-3 my-4">
 			<div className="mt-10 max-w-2xl">
-				<h2 className="mt-8 text-2xl font-bold tracking-tight text-gray-900 my-3">
-					GET YOUR REQUIRED BUSINESS LICENSES
-				</h2>
+				<h2 className="mt-8 text-2xl font-bold tracking-tight text-gray-900 my-3">Your Business License</h2>
 				<div className="flex flex-col gap-y-5">
 					<p>
-						Every city, state and county within the United States has different licensing requirements. Make
-						sure you have all the required licenses.
+						Every city, state, and county within the United States has its own licensing requirements, so do
+						your due diligence. Visit your state or city’s official website or the Small Business Associate
+						website for guidance.
 					</p>
 				</div>
 			</div>

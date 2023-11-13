@@ -90,21 +90,20 @@ const Content = () => {
 		<div className="w-full text-base leading-7 text-gray-700 px-3 my-4">
 			<div className="mt-10 max-w-2xl">
 				<h2 className="mt-8 text-2xl font-bold tracking-tight text-gray-900 my-3">
-					SET UP BUSINESS WEBSITE & EMAIL
+					Your Business Website and Email Address
 				</h2>
 				<div className="flex flex-col gap-y-5">
+					<p>Is a business website and email required for building credibility? No.</p>
+					<p>But do we recommend both? Hell yes.</p>
 					<p>
-						A business website can drastically affect your growth. Clients and lenders are looking for your
-						business online. What message are you sending online? Do you have an established website that
-						portrays the image you want?
+						In this day and age, both clients and lenders are checking out your business online, and if they
+						don't see anything...well, it's not a good look. You're trying to establish credibility,
+						remember? Same goes for your email address. George@gmail.com doesn't look as professional as
+						George@MyBusinessName.com.
 					</p>
 					<p>
-						For example: george@gmail.com as a business email address doesn’t look as professional as
-						george@mybusinessname.com.
-					</p>
-					<p>
-						Having a business website and email can build credibility. Though not required we recommend that
-						you have a business website and email.
+						It's all about image, folks. Make sure you present your business as a legit, credible entity -
+						not some fly-by-night operation.
 					</p>
 				</div>
 			</div>

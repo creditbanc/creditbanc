@@ -86,30 +86,28 @@ const Content = () => {
 		<div className="w-full text-base leading-7 text-gray-700 px-3 my-4">
 			<div className="mt-10 max-w-2xl">
 				<h2 className="mt-8 text-2xl font-bold tracking-tight text-gray-900 my-3">
-					WHAT IS IMPORTANT WHEN IT COMES TO YOUR BUSINESS PHONE?
+					Your Business Phone Number & 411 Listing
 				</h2>
 				<div className="flex flex-col gap-y-5">
 					<p>
-						Does your business have a phone number? Creditors prefer to see actual business phone numbers
-						opposed to personal cell phones or residential phones. It’s important to also list your business
-						phone number in the National 411 directory. Keep in mind that unfortunately cell phone numbers
-						can’t be listed in the National 411 directory.
+						It's time to ditch the personal number and residential phone lines and snag yourself a dedicated
+						business phone number. And while you're at it, make sure it gets listed on the National 411
+						directory. (Note: Cell phone numbers can NOT be listed.) This is an easy way to boost your
+						credibility - not to mention it makes for easy verification by trade vendors when seeking credit
+						accounts; if they don't see you listed, some of 'em will decline you out the gate.
 					</p>
 					<p>
-						We can list your Business Phone number if you choose one of our recommendations below. The
-						companies we recommend allow us to list your number in the National 411 directory. All you have
-						to do is choose Yes below and fill in the information requested.
+						Need some help? We got you. Credit Banc can list your business phone number if you choose one of
+						our recommendations below. It's easy; just select "Yes" and fill in the info requested.
 					</p>
 					<p>
-						If you want to use a different Business Phone provider that is completely your choice. You can
-						contact your Business Phone provider to confirm that the number can be listed in the National
-						411 directory and if there is any specific criteria to do so. If they allow a third party to
-						list it on your behalf please choose Yes below and fill in the information requested.
+						Got another provider in mind? Contact your Business Phone provider to confirm the number can be
+						listed on the National 411 directory and what criteria are required. If they allow a third party
+						to list it on your behalf, select "Yes" below and fill in the info requested.
 					</p>
 					<p>
-						Some vendors will check to make sure your Business Phone number is listed in the National 411
-						directory and if not they might choose to decline you for the account. We want you to have the
-						best success so that is why we wanted to inform you of all the above information.
+						A dedicated business phone number is a simple thing, but could make or break your credibility.
+						Don't skip this step.
 					</p>
 				</div>
 			</div>

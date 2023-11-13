@@ -79,15 +79,18 @@ const Content = () => {
 		<div className="w-full text-base leading-7 text-gray-700 px-3 my-4">
 			<div className="mt-10 max-w-2xl">
 				<h2 className="mt-8 text-2xl font-bold tracking-tight text-gray-900 my-3">
-					SEE IF YOUR BUSINESS HAS A BUSINESS EQUIFAX REPORT
+					Business Equifax rounds out our "Big Three" trio, and like Experian, your report is automatically
+					created as creditors report activity.
 				</h2>
 				<div className="flex flex-col gap-y-5">
 					<p>
-						If you are unsure no need to worry, you can call Equifax 888-407-0359 (choose option 2, 2, then
-						4). They will ask you for your EIN number, Business name and business address then they are
-						going to send by mail the business credit report and it should be received within 7-10 business
-						days. If your company has a profile with Business Equifax. No need to purchase monitoring now,
-						we will guide you in setting up monitoring in Step 4
+						To find out if your business has an Equifax report, call 888-407-0359. (Choose option 2, 2, then
+						4.) They'll want your EIN, business name, and business address, and you should get your report
+						by snail mail within 7-10 business days.
+					</p>
+					<p>
+						If your company already has a profile with Business Equifax, no need to purchase monitoring
+						quite yet; we'll guide you through that in Step 4.
 					</p>
 				</div>
 			</div>

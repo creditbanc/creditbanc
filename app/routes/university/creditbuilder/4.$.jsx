@@ -9,14 +9,6 @@ import { XMarkIcon } from "@heroicons/react/24/outline";
 import { Dialog, Transition, Listbox } from "@headlessui/react";
 import { Fragment, useState } from "react";
 import { CheckCircleIcon } from "@heroicons/react/24/solid";
-import {
-	FaceFrownIcon,
-	FaceSmileIcon,
-	FireIcon,
-	HandThumbUpIcon,
-	HeartIcon,
-	PaperClipIcon,
-} from "@heroicons/react/20/solid";
 
 export const loader = async ({ request }) => {
 	console.log("course_loader");

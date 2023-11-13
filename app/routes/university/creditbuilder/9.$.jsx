@@ -77,13 +77,16 @@ const Content = () => {
 		<div className="w-full text-base leading-7 text-gray-700 px-3 my-4">
 			<div className="mt-10 max-w-2xl">
 				<h2 className="mt-8 text-2xl font-bold tracking-tight text-gray-900 my-3">
-					SET UP YOUR BUSINESS BANK ACCOUNT
+					Your Business Bank Account
 				</h2>
 				<div className="flex flex-col gap-y-5">
 					<p>
-						All businesses big or small, new or established should set up a business bank account. A
-						business bank account opens up financing options. Additionally, a business bank account affects
-						the business in both accounting and legal departments.
+						Whether your business is big or small, has been around for years, or is still wearing training
+						wheels, you need to set up a business bank account.
+					</p>
+					<p>
+						It shows lenders you mean business (no pun intended), can significantly expand your financing
+						options, and has a significant impact on both the accounting and legal aspects of the business.
 					</p>
 				</div>
 			</div>

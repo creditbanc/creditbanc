@@ -79,24 +79,26 @@ const Content = () => {
 	return (
 		<div className="w-full text-base leading-7 text-gray-700 px-3 my-4">
 			<div className="mt-10 max-w-2xl">
-				<h2 className="mt-8 text-2xl font-bold tracking-tight text-gray-900 my-3">ESTABLISH YOUR DUNS #</h2>
+				<h2 className="mt-8 text-2xl font-bold tracking-tight text-gray-900 my-3">
+					Your Dun & Bradstreet Number
+				</h2>
 				<div className="flex flex-col gap-y-5">
+					<p>No DUNS number yet? No problem. Just click the link below and apply for free.</p>
 					<p>
-						If you don’t have a DUNS number yet, don’t worry we are here to help. Below is a link that you
-						will bring you to the section where you can apply for it for free. Dun & Bradstreet is one of
-						the business credit bureaus. Your business’s profile is set up with Dun & Bradstreet when you
-						apply for a DUNS number, which in turn allows trade accounts you establish that should report to
-						Dun & Bradstreet to report.
+						Dun & Bradstreet is one of “The Big Three" business credit bureaus and the only business credit
+						reporting agency focusing exclusively on business credit. Your business profile is created with
+						Dun & Bradstreet when you apply for a DUNS number. This makes it possible for certain trade and
+						credit accounts to report your business credit payments.
 					</p>
 					<p>
-						VERY IMPORTANT when applying for your DUNS number to use the exact same company name and
-						business address as the Secretary of State and IRS. Creditors will check the business
-						information on your report against public record. If there are any variances, it can lead to a
-						decline.
+						IMPORTANT: When applying for your DUNS number, use the exact same company name and business
+						address as the Secretary of State and IRS. Creditors will check the business information on your
+						report against public records. If they find any discrepancies, it can lead to a decline in
+						credit.
 					</p>
 					<p>
-						As always feel free to call or email your advisor we want to make this as easy as possible for
-						you.
+						As always, feel free to call or email your advisor. We're here to make this process as easy as
+						possible for you.
 					</p>
 				</div>
 			</div>

@@ -89,19 +89,19 @@ const Content = () => {
 		<div className="w-full text-base leading-7 text-gray-700 px-3 my-4">
 			<div className="mt-10 max-w-2xl">
 				<h2 className="mt-8 text-2xl font-bold tracking-tight text-gray-900 my-3">
-					FIX ANY INACCURACIES ON YOUR BUSINESS CREDIT REPORTS
+					Your Business Credit Reports
 				</h2>
 				<div className="flex flex-col gap-y-5">
 					<p>
-						Just like personal credit, sometimes credit information is reported incorrectly onto your
-						business credit reports. The process to update and correct your reports is different than
-						personal credit. Business credit reports aren’t regulated like personal credit reporting is, but
-						you’ll find that the business credit bureaus are fairly responsive.
+						Sometimes sh*t happens, and just like like personal credit, incorrect info gets reported onto
+						your business credit reports.
 					</p>
 					<p>
-						It’s always important to make sure any information reporting on your credit reports is correct.
-						It is worth taking the time to correct any inaccuracies.
+						Just keep in mind that business credit reports aren't regulated like personal credit reports,
+						and the process of updating and correcting them is different. (The good news is that credit
+						bureaus are fairly responsive)
 					</p>
+					<p>Inaccuracies can lead to trouble, so stay vigilant. Regularly review and fix errors ASAP.</p>
 				</div>
 			</div>
 			<div className="mt-10">
