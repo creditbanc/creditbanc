@@ -85,21 +85,15 @@ const Content = () => {
 	return (
 		<div className="w-full text-base leading-7 text-gray-700 px-3 my-4">
 			<div className="mt-10 max-w-2xl">
-				<h2 className="mt-8 text-2xl font-bold tracking-tight text-gray-900 my-3">
-					DO YOU HAVE A BUSINESS ADDRESS?
-				</h2>
+				<h2 className="mt-8 text-2xl font-bold tracking-tight text-gray-900 my-3">Your Business Address</h2>
 				<div className="flex flex-col gap-y-5">
-					<p>It’s important for a business to have a business address.</p>
+					<p>Location, location, location!</p>
 					<p>
-						In order to have a strong business foundation, your business should use a physical business
-						address. Most lenders prefer that you have a business address but, you can use your residential
-						address.
+						Having a business address isn't mandatory, but it's a credibility booster lenders love. Avoid
+						using a PO box (they can seem low-key shady), and only use a residential address as a last
+						resort. But above all, make sure it's listed with the US postal service and is the same across
+						ALL your business records.
 					</p>
-					<p>
-						Do NOT use any type of PO Box for your business address. Many lenders see this as a higher risk
-						business address.
-					</p>
-					<p>What’s most important is that your business address shows the same on ALL business records.</p>
 				</div>
 			</div>
 			<div className="mt-10">

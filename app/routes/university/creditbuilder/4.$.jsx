@@ -1,14 +1,22 @@
 import { Link, useLoaderData, useLocation } from "@remix-run/react";
 import { classNames, get, get_entity_id, get_group_id, get_resource_id, mapIndexed, store } from "~/utils/helpers";
-
 import { course as curriculum, secretary_of_state } from "../data";
 import { flatten, head, map, pipe } from "ramda";
 import { all, filter } from "shades";
 import { CreditCardIcon, UserCircleIcon } from "@heroicons/react/20/solid";
 import CurriculumAccordion from "~/components/CurriculumAccordion";
 import { XMarkIcon } from "@heroicons/react/24/outline";
-import { Dialog, Transition } from "@headlessui/react";
-import { Fragment } from "react";
+import { Dialog, Transition, Listbox } from "@headlessui/react";
+import { Fragment, useState } from "react";
+import { CheckCircleIcon } from "@heroicons/react/24/solid";
+import {
+	FaceFrownIcon,
+	FaceSmileIcon,
+	FireIcon,
+	HandThumbUpIcon,
+	HeartIcon,
+	PaperClipIcon,
+} from "@heroicons/react/20/solid";
 
 export const loader = async ({ request }) => {
 	console.log("course_loader");
@@ -223,23 +231,71 @@ const SidePanel = () => {
 	);
 };
 
+const activity = [
+	{
+		item: "Corporations are great for complex organizations.",
+	},
+	{
+		item: "LLCs offer tax efficiency and partnership-like flexibility.",
+	},
+	{
+		item: "Partnerships mean shared profits and responsibilities.",
+	},
+	{
+		item: "Sole proprietorships put all the responsibility on you.",
+	},
+];
+
+const Feed = () => {
+	return (
+		<>
+			<ul role="list" className="space-y-6">
+				{activity.map((activityItem, activityItemIdx) => (
+					<li key={activityItemIdx} className="relative flex gap-x-4">
+						<div
+							className={classNames(
+								activityItemIdx === activity.length - 1 ? "h-6" : "-bottom-6",
+								"absolute left-0 top-0 flex w-6 justify-center"
+							)}
+						>
+							<div className="w-px bg-gray-200" />
+						</div>
+
+						<>
+							<div className="relative flex h-6 w-6 flex-none items-center justify-center bg-white">
+								{activityItem.type === "paid" ? (
+									<CheckCircleIcon className="h-6 w-6 text-indigo-600" aria-hidden="true" />
+								) : (
+									<div className="h-1.5 w-1.5 rounded-full bg-gray-100 ring-1 ring-gray-300" />
+								)}
+							</div>
+							<p className="flex-auto py-0.5 text-sm leading-5 text-gray-500">
+								<span className="font-medium text-gray-900">{activityItem.item}</span>
+							</p>
+						</>
+					</li>
+				))}
+			</ul>
+		</>
+	);
+};
+
 const Content = () => {
 	return (
 		<div className="w-full text-base leading-7 text-gray-700 px-3 my-4">
 			<div className="mt-10 max-w-2xl">
-				<h2 className="mt-8 text-2xl font-bold tracking-tight text-gray-900 my-3">FILE A BUSINESS ENTITY</h2>
+				<h2 className="mt-8 text-2xl font-bold tracking-tight text-gray-900 my-3">Your Business Entity</h2>
 				<div className="flex flex-col gap-y-5">
-					<p>It’s important for a business to have a business address.</p>
 					<p>
-						In order to have a strong business foundation, your business should use a physical business
-						address. Most lenders prefer that you have a business address but, you can use your residential
-						address.
+						Time to select your business entity. (Please don't play Eenie, Meenie, Miney, Mo.) You've got
+						four options, each with its own tax and legal benefits to consider.
 					</p>
+					<Feed />
+
 					<p>
-						Do NOT use any type of PO Box for your business address. Many lenders see this as a higher risk
-						business address.
+						On the fence? Consult your accountant or visit SBA.gov for guidance. Once you've decided, file
+						with your state's Secretary of State.
 					</p>
-					<p>What’s most important is that your business address shows the same on ALL business records.</p>
 				</div>
 				<CTASection />
 			</div>
