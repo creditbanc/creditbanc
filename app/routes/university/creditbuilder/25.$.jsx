@@ -47,100 +47,11 @@ const Resource = ({ resource }) => {
 	);
 };
 
-const list_one = [
-	{
-		item: "When you apply, make sure the information matches what's on your business records. Check and double-check.",
-	},
-	{
-		item: "Make purchases over $50 to ensure the vendor reports it",
-	},
-	{
-		item: "It typically takes 30-90 days for payments to show up on your business credit reports. (Remember, patience is a virtue.)",
-	},
-];
-
-const list_two = [
-	{
-		item: "Monitoring Dun & Bradstreet",
-	},
-	{
-		item: "Monitoring Business Experian",
-	},
-	{
-		item: "Monitoring Business Equifax",
-	},
-	{
-		item: "Requesting LexisNexis Report",
-	},
-	{
-		item: "Requesting Chex Systems",
-	},
-];
-
-const Feed = ({ activity }) => {
-	return (
-		<>
-			<ul role="list" className="space-y-6">
-				{activity.map((activityItem, activityItemIdx) => (
-					<li key={activityItemIdx} className="relative flex gap-x-4">
-						<div
-							className={classNames(
-								activityItemIdx === activity.length - 1 ? "h-6" : "-bottom-6",
-								"absolute left-0 top-0 flex w-6 justify-center"
-							)}
-						>
-							<div className="w-px bg-gray-200" />
-						</div>
-
-						<>
-							<div className="relative flex h-6 w-6 flex-none items-center justify-center bg-white">
-								{activityItem.type === "paid" ? (
-									<CheckCircleIcon className="h-6 w-6 text-indigo-600" aria-hidden="true" />
-								) : (
-									<div className="h-1.5 w-1.5 rounded-full bg-gray-100 ring-1 ring-gray-300" />
-								)}
-							</div>
-							<p className="flex-auto py-0.5 text-sm leading-5 text-gray-500">
-								<span className="font-medium text-gray-900">{activityItem.item}</span>
-							</p>
-						</>
-					</li>
-				))}
-			</ul>
-		</>
-	);
-};
-
 const Content = () => {
-	let resources = pipe(filter({ step: 15 }))(all_resources);
+	let resources = pipe(filter({ tier: 2 }))(all_resources);
 
 	return (
 		<div className="w-full text-base leading-7 text-gray-700 px-3 my-4">
-			<div className="mt-10 max-w-2xl">
-				<h2 className="mt-8 text-2xl font-bold tracking-tight text-gray-900 my-3">
-					Applying for Trade Accounts
-				</h2>
-				<div className="flex flex-col gap-y-5">
-					<p>First things first: What is a Trade Account?</p>
-					<p>
-						A Trade Account (sometimes called a Vendor Account or Net 30 Account) allows you to buy things
-						on credit and set up net terms for repayment without any extra interest charges. These payments
-						are then reported to business credit bureaus.
-					</p>
-					<p>A few things to note:</p>
-					<p>
-						If you have any questions reach out to our Advisor Team. Once you have applied for your trade
-						accounts submit the information by clicking on the button below.
-					</p>
-					<Feed activity={list_one} />
-					<p>
-						Review your reports regularly so you are aware of when they start reporting. Once you have
-						applied for your trade accounts, submit the information by clicking the button below. As always,
-						if you have any questions, reach out to our Advisory Team.
-					</p>
-					<Feed activity={list_two} />
-				</div>
-			</div>
 			<div className="mt-10">
 				<div className="border-b border-gray-200 pb-3 my-5">
 					<h3 className="text-base font-semibold leading-6 text-gray-900">Resources</h3>
