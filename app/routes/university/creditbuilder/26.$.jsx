@@ -48,7 +48,7 @@ const Resource = ({ resource }) => {
 };
 
 const Content = () => {
-	let resources = pipe(filter({ tier: 2 }))(all_resources);
+	let resources = pipe(filter({ tier: 3 }))(all_resources);
 
 	return (
 		<div className="w-full text-base leading-7 text-gray-700 px-3 my-4">
@@ -235,7 +235,7 @@ export default function Course() {
 	let { pathname } = useLocation();
 	let entity_id = get_entity_id(pathname);
 	let group_id = get_group_id(pathname);
-	let next_id = 26;
+	let next_id = 27;
 
 	return (
 		<div className="flex flex-row w-full h-full overflow-hiddens gap-x-5 overflow-hidden">

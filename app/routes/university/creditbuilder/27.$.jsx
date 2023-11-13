@@ -48,7 +48,7 @@ const Resource = ({ resource }) => {
 };
 
 const Content = () => {
-	let resources = pipe(filter({ tier: 2 }))(all_resources);
+	let resources = pipe(filter({ tier: 4 }))(all_resources);
 
 	return (
 		<div className="w-full text-base leading-7 text-gray-700 px-3 my-4">
@@ -235,7 +235,7 @@ export default function Course() {
 	let { pathname } = useLocation();
 	let entity_id = get_entity_id(pathname);
 	let group_id = get_group_id(pathname);
-	let next_id = 26;
+	let next_id = undefined;
 
 	return (
 		<div className="flex flex-row w-full h-full overflow-hiddens gap-x-5 overflow-hidden">
@@ -244,13 +244,15 @@ export default function Course() {
 				<div className="flex flex-col w-full h-fit bg-white rounded px-5">
 					<div className="flex flex-row justify-between items-center border-b border-gray-200 bg-white py-1 sticky top-0 z-10">
 						<h3 className="text-base font-semibold leading-6 text-gray-900 my-2">{resource?.title}</h3>
-						<Link
-							to={`/university/creditbuilder/${next_id}/resource/e/${entity_id}/g/${group_id}/f/${next_id}`}
-							type="button"
-							className="rounded-full bg-green-400 px-2.5 py-1 text-xs font-semibold text-white shadow-sm hover:bg-green-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-500"
-						>
-							Continue
-						</Link>
+						{next_id && (
+							<Link
+								to={`/university/creditbuilder/${next_id}/resource/e/${entity_id}/g/${group_id}/f/${next_id}`}
+								type="button"
+								className="rounded-full bg-green-400 px-2.5 py-1 text-xs font-semibold text-white shadow-sm hover:bg-green-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-500"
+							>
+								Continue
+							</Link>
+						)}
 					</div>
 					{resource?.type === "video" && (
 						<div className="flex flex-col w-full scrollbar-none">
