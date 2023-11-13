@@ -35,7 +35,7 @@ const Resource = ({ resource }) => {
 				<dl className="flex flex-wrap">
 					<div className="flex flex-row w-full h-[150px] items-center">
 						<div className="flex-auto px-6 py-6">
-							<img src={resource.img} alt="" />
+							<img src={resource.img} />
 						</div>
 					</div>
 					{/* <div className="mt-6 flex w-full flex-none gap-x-4 border-t border-gray-900/5 px-6 pt-6">

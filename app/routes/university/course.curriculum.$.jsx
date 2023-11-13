@@ -1,7 +1,7 @@
 import { FolderIcon, PlayIcon, ChevronUpIcon } from "@heroicons/react/20/solid";
 import { DocumentIcon, ListBulletIcon, PlayCircleIcon } from "@heroicons/react/24/outline";
 import { Link, useLocation } from "@remix-run/react";
-import { classNames, get, get_entity_id, get_group_id } from "~/utils/helpers";
+import { classNames, get, get_entity_id, get_group_id, mapIndexed } from "~/utils/helpers";
 import { Disclosure } from "@headlessui/react";
 import { course as curriculum } from "./data";
 import { pipe, map, prop } from "ramda";
@@ -30,8 +30,8 @@ const CurriculumAccordion = ({ sections = [] }) => {
 		<div className="flex flex-col w-full rounded-2xl bg-white p-2 space-y-3 ">
 			{pipe(
 				get("sections"),
-				map((section) => (
-					<Disclosure defaultOpen={true}>
+				mapIndexed((section, index) => (
+					<Disclosure defaultOpen={true} key={index}>
 						{({ open }) => (
 							<>
 								<Disclosure.Button className="flex w-full justify-between rounded-lg  px-4 py-2 text-left text-sm font-medium   focus:outline-none focus-visible:ring  focus-visible:ring-opacity-75">
@@ -79,12 +79,6 @@ export default function Courses() {
 
 	return (
 		<div className="flex flex-row w-full h-full overflow-hiddens gap-x-5 overflow-hidden">
-			<div className="flex flex-col w-full lg:w-[70%] h-full rounded overflow-scroll scrollbar-none">
-				<UniversityHeader />
-				<div className="flex flex-col w-full h-fit bg-white rounded pt-5">
-					<CurriculumAccordion />
-				</div>
-			</div>
 			<div className="hidden lg:flex flex-col w-[30%]">
 				<div className="flex flex-col bg-white border rounded overflow-scroll scrollbar-none">
 					<div className="p-3">
@@ -114,6 +108,12 @@ export default function Courses() {
 							Start
 						</Link>
 					</div>
+				</div>
+			</div>
+			<div className="flex flex-col w-full lg:w-[70%] h-full rounded overflow-scroll scrollbar-none">
+				<UniversityHeader />
+				<div className="flex flex-col w-full h-fit bg-white rounded pt-5">
+					<CurriculumAccordion />
 				</div>
 			</div>
 		</div>
