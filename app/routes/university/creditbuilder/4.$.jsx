@@ -150,12 +150,6 @@ const SOSList = () => {
 					</li>
 				))}
 			</ul>
-			{/* <a
-				href="#"
-				className="flex w-full items-center justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus-visible:outline-offset-0"
-			>
-				View all
-			</a> */}
 		</div>
 	);
 };
@@ -256,7 +250,7 @@ const Content = () => {
 				<div className="flex flex-row gap-x-5">
 					{pipe(
 						mapIndexed((resource, index) => (
-							<div className="flex flex-col w-[31%]">
+							<div className="flex flex-col w-[31%]" key={index}>
 								<Resource resource={resource} />
 							</div>
 						))
