@@ -36,8 +36,8 @@ const Resource = ({ resource }) => {
 		<div className="flex flex-col w-full">
 			<div className="rounded-lg shadow-sm ring-1 ring-gray-900/5">
 				<div className="flex flex-col">
-					<div className="flex flex-row w-full h-[150px] p-4">
-						<img src={resource.img} alt="" />
+					<div className="flex flex-col items-center justify-center w-full h-[150px] p-4">
+						<img src={resource.img} className="object-contain" />
 					</div>
 					<div className="flex flex-col h-[120px]">
 						<div className="mt-6 flex w-full flex-none gap-x-4 border-t border-gray-900/5 px-6 pt-6">
@@ -62,7 +62,7 @@ const Resource = ({ resource }) => {
 					<a
 						href={resource.url}
 						target="_blank"
-						className="text-sm font-semibold text-gray-900 bg-green-400 px-3 py-2 rounded-full hover:bg-green-500"
+						className="text-sm font-semibold text-white bg-green-400 px-3 py-2 rounded-full hover:bg-green-500"
 					>
 						Go to website <span aria-hidden="true">&rarr;</span>
 					</a>
