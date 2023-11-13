@@ -108,8 +108,8 @@ const Content = () => {
 				</div>
 				<div className="flex flex-row gap-x-5">
 					{pipe(
-						map((resource) => (
-							<div className="flex flex-col w-1/3">
+						mapIndexed((resource, index) => (
+							<div className="flex flex-col w-[31%]">
 								<Resource resource={resource} />
 							</div>
 						))

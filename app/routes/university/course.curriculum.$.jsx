@@ -88,18 +88,6 @@ export default function Courses() {
 						/>
 					</div>
 
-					{/* <div className="border-gray-200 bg-white px-6 border-b pb-5">
-						<div className="flex flex-col w-full">
-							<div className="flex flex-row w-full justify-between my-2 text-sm text-gray-400">
-								<div>45%</div>
-								<div>4/20 lessons</div>
-							</div>
-							<div className="w-full bg-gray-200 rounded-full h-2.5 dark:bg-gray-700">
-								<div className="bg-blue-600 h-2.5 rounded-full w-[45%]"></div>
-							</div>
-						</div>
-					</div> */}
-
 					<div className="flex flex-col w-full h-[90px] px-5 justify-center">
 						<Link
 							to={`/university/creditbuilder/1/resource/e/${entity_id}/g/${group_id}/f/1`}
