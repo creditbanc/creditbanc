@@ -1,5 +1,5 @@
 import { Link, useLoaderData, useLocation } from "@remix-run/react";
-import { get, get_entity_id, get_group_id, get_resource_id } from "~/utils/helpers";
+import { get, get_entity_id, get_group_id, get_resource_id, mapIndexed } from "~/utils/helpers";
 import { course as curriculum } from "../data";
 import { head, pipe } from "ramda";
 import { filter } from "shades";

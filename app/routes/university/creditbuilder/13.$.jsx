@@ -1,7 +1,7 @@
 import { ChevronUpIcon } from "@heroicons/react/20/solid";
 import { DocumentIcon, PlayCircleIcon, PlayIcon, BackwardIcon, ForwardIcon } from "@heroicons/react/24/outline";
 import { Link, useLoaderData, useLocation } from "@remix-run/react";
-import { classNames, get, get_entity_id, get_group_id, get_resource_id, store } from "~/utils/helpers";
+import { classNames, get, get_entity_id, get_group_id, get_resource_id, mapIndexed, store } from "~/utils/helpers";
 import { Disclosure } from "@headlessui/react";
 import { course as curriculum } from "../data";
 import { flatten, head, map, pipe } from "ramda";

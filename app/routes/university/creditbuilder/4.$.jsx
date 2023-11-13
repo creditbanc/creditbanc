@@ -1,5 +1,5 @@
 import { Link, useLoaderData, useLocation } from "@remix-run/react";
-import { classNames, get, get_entity_id, get_group_id, get_resource_id, store } from "~/utils/helpers";
+import { classNames, get, get_entity_id, get_group_id, get_resource_id, mapIndexed, store } from "~/utils/helpers";
 
 import { course as curriculum, secretary_of_state } from "../data";
 import { flatten, head, map, pipe } from "ramda";
