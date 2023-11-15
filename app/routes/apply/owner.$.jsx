@@ -1,9 +1,10 @@
-import { classNames, mapIndexed } from "~/utils/helpers";
+import { classNames, get_entity_id, get_group_id, mapIndexed } from "~/utils/helpers";
 import { pipe, map } from "ramda";
 import useStore from "./store";
 import { useState } from "react";
 import { RadioGroup } from "@headlessui/react";
 import { PhotoIcon, UserCircleIcon } from "@heroicons/react/24/solid";
+import { Link, useLocation } from "@remix-run/react";
 
 const steps = [
 	{ id: "Financing Needs", name: "Job details", href: "#", status: "complete" },
@@ -186,6 +187,10 @@ const OwnerForm = () => {
 };
 
 export default function Container() {
+	let { pathname } = useLocation();
+	let entity_id = get_entity_id(pathname);
+	let group_id = get_group_id(pathname);
+
 	return (
 		<div className="flex flex-col items-center w-full h-full overflow-y-scroll pb-10">
 			<div className="flex flex-col w-full">
@@ -207,9 +212,12 @@ export default function Container() {
 					<OwnerForm />
 				</div>
 				<div className="flex flex-col w-full items-center gap-y-4 my-5">
-					<div className="flex flex-col bg-blue-600 py-3 px-4 rounded-full text-white w-[450px] items-center cursor-pointer">
+					<Link
+						to={`/apply/social/resource/e/${entity_id}/g/${group_id}`}
+						className="flex flex-col bg-blue-600 py-3 px-4 rounded-full text-white w-[450px] items-center cursor-pointer"
+					>
 						Continue to pre-qualify
-					</div>
+					</Link>
 				</div>
 			</div>
 		</div>

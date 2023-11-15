@@ -1,9 +1,11 @@
-import { classNames, mapIndexed } from "~/utils/helpers";
+import { classNames, get_entity_id, get_group_id, mapIndexed } from "~/utils/helpers";
 import { pipe, map } from "ramda";
 import { Fragment, useState } from "react";
 import { Listbox, Transition, RadioGroup } from "@headlessui/react";
 import { CheckIcon, ChevronUpDownIcon } from "@heroicons/react/20/solid";
 import useStore from "./store";
+import { useLocation } from "@remix-run/react";
+import { Link } from "react-router-dom";
 
 const steps = [
 	{ id: "Financing Needs", name: "Job details", href: "#", status: "complete" },
@@ -147,6 +149,10 @@ const TimeInBusiness = () => {
 };
 
 export default function Container() {
+	let { pathname } = useLocation();
+	let entity_id = get_entity_id(pathname);
+	let group_id = get_group_id(pathname);
+
 	return (
 		<div className="flex flex-col items-center w-full h-full overflow-y-scroll pb-10">
 			<div className="flex flex-col w-full">
@@ -171,9 +177,12 @@ export default function Container() {
 					<div className="flex flex-col py-3 px-4 rounded-full text-blue-600 w-1/2 items-center cursor-pointer border-2 border-blue-600">
 						Back
 					</div>
-					<div className="flex flex-col bg-blue-600 py-3 px-4 rounded-full text-white w-1/2 items-center cursor-pointer">
+					<Link
+						to={`/apply/industry/resource/e/${entity_id}/g/${group_id}`}
+						className="flex flex-col bg-blue-600 py-3 px-4 rounded-full text-white w-1/2 items-center cursor-pointer"
+					>
 						Continue to pre-qualify
-					</div>
+					</Link>
 				</div>
 			</div>
 		</div>

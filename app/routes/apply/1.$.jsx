@@ -1,9 +1,10 @@
 import useStore from "./store";
 import { useState } from "react";
 import { RadioGroup } from "@headlessui/react";
-import { classNames, currency, mapIndexed } from "~/utils/helpers";
+import { classNames, currency, get_entity_id, get_group_id, mapIndexed } from "~/utils/helpers";
 import { pipe } from "ramda";
 import { StarIcon } from "@heroicons/react/20/solid";
+import { Link, useLocation } from "@remix-run/react";
 
 const Header = () => {
 	return (
@@ -244,6 +245,10 @@ const Testimonial = () => {
 };
 
 export default function Container() {
+	let { pathname } = useLocation();
+	let entity_id = get_entity_id(pathname);
+	let group_id = get_group_id(pathname);
+
 	return (
 		<div className="flex flex-col items-center w-full h-full overflow-y-scroll pb-10">
 			<Header />
@@ -274,9 +279,12 @@ export default function Container() {
 						<PersonalInfoForm />
 					</div>
 					<div className="flex flex-col w-full items-center gap-y-4">
-						<div className="flex flex-col bg-blue-600 py-3 px-4 rounded-full text-white w-[400px] items-center cursor-pointer">
+						<Link
+							to={`/apply/financing_needs/resource/e/${entity_id}/g/${group_id}`}
+							className="flex flex-col bg-blue-600 py-3 px-4 rounded-full text-white w-[400px] items-center cursor-pointer"
+						>
 							Continue to pre-qualify
-						</div>
+						</Link>
 						<div className="flex flex-row w-full justify-center items-center text-sm gap-x-2">
 							<svg
 								xmlns="http://www.w3.org/2000/svg"
