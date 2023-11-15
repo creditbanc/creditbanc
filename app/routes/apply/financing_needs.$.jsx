@@ -133,18 +133,25 @@ export default function Container() {
 			<div className="flex flex-col w-full">
 				<Progress />
 			</div>
-			<div>
-				<SectionHeading
-					headline={<div>First, how soon do you need funding?</div>}
-					subheadline={
-						<div className="flex flex-row gap-x-2">
-							<div>This helps us find the best loan for your needs.</div>
-							<div className="font-semibold">Learn more ›</div>
-						</div>
-					}
-				/>
+			<div className="flex flex-col justify-center h-full">
+				<div className="flex flex-col my-4">
+					<SectionHeading
+						headline={<div>First, how soon do you need funding?</div>}
+						subheadline={
+							<div className="flex flex-row gap-x-2">
+								<div>This helps us find the best loan for your needs.</div>
+								<div className="font-semibold">Learn more ›</div>
+							</div>
+						}
+					/>
+				</div>
 				<div className="flex flex-col w-full">
 					<TimelineOptions />
+				</div>
+				<div className="flex flex-col w-full items-center gap-y-4 my-5">
+					<div className="flex flex-col bg-blue-600 py-3 px-4 rounded-full text-white w-[450px] items-center cursor-pointer">
+						Continue to pre-qualify
+					</div>
 				</div>
 			</div>
 		</div>
