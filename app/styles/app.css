@@ -4898,12 +4898,12 @@ body {
     max-width: 24rem;
   }
 
-  .sm\:max-w-md {
-    max-width: 28rem;
-  }
-
   .sm\:max-w-xs {
     max-width: 20rem;
+  }
+
+  .sm\:max-w-md {
+    max-width: 28rem;
   }
 
   .sm\:flex-auto {
