@@ -3,16 +3,17 @@ import { useState } from "react";
 import { RadioGroup } from "@headlessui/react";
 import { classNames, currency, mapIndexed } from "~/utils/helpers";
 import { pipe } from "ramda";
+import { PhotoIcon, UserCircleIcon } from "@heroicons/react/24/solid";
 
 const Header = () => {
 	return (
 		<div className="flex flex-col w-full bg-[#2C81AB] items-center text-white">
 			<div className="flex flex-col w-[1100px] items-center my-10 mb-20 gap-y-5 text-center">
 				<div className="flex flex-col text-3xl">
-					The right financing. The right bank loan. One fast and simple application
+					The best financing. The best bank loan. One fast and simple application.
 				</div>
 				<div className="flex flex-col text-xl">
-					Our online lending network matches you with the right bank or lending partner to meet your business
+					Our online lending network matches you with the best bank or lending partner to meet your business
 					needs. See if you pre-qualify for up to $500,000 in 5 minutes. No impact to your credit score
 				</div>
 			</div>
@@ -156,6 +157,59 @@ const LoanStats = () => {
 	);
 };
 
+const PersonalInfoForm = () => {
+	return (
+		<form>
+			<div className="flex flex-col gap-y-5">
+				<div className="flex flex-col w-full">
+					<label htmlFor="first-name" className="block text-sm font-medium leading-6 text-gray-900">
+						First name
+					</label>
+					<div className="mt-2">
+						<input
+							type="text"
+							name="first-name"
+							id="first-name"
+							autoComplete="given-name"
+							className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+						/>
+					</div>
+				</div>
+
+				<div className="flex flex-col w-full">
+					<label htmlFor="last-name" className="block text-sm font-medium leading-6 text-gray-900">
+						Last name
+					</label>
+					<div className="mt-2">
+						<input
+							type="text"
+							name="last-name"
+							id="last-name"
+							autoComplete="family-name"
+							className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+						/>
+					</div>
+				</div>
+
+				<div className="flex flex-col w-full">
+					<label htmlFor="email" className="block text-sm font-medium leading-6 text-gray-900">
+						Email address
+					</label>
+					<div className="mt-2">
+						<input
+							id="email"
+							name="email"
+							type="email"
+							autoComplete="email"
+							className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+						/>
+					</div>
+				</div>
+			</div>
+		</form>
+	);
+};
+
 export default function Container() {
 	return (
 		<div className="flex flex-col items-center w-full h-full overflow-y-scroll pb-10">
@@ -181,6 +235,10 @@ export default function Container() {
 						<div className="my-5">
 							<LoanStats />
 						</div>
+					</div>
+					<div className="flex flex-col bg-white p-5 shadow rounded border">
+						<SectionHeading headline={`Step 3: Tell us a bit about you`} />
+						<PersonalInfoForm />
 					</div>
 				</div>
 				<div className="flex flex-col w-[30%]"></div>
