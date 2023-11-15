@@ -1860,6 +1860,10 @@ video {
   width: 45%;
 }
 
+.w-\[450px\] {
+  width: 450px;
+}
+
 .w-\[48rem\] {
   width: 48rem;
 }
@@ -1955,10 +1959,6 @@ video {
 
 .w-screen {
   width: 100vw;
-}
-
-.w-\[450px\] {
-  width: 450px;
 }
 
 .min-w-0 {
