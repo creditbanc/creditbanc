@@ -283,11 +283,11 @@ const NewChannelModal = () => {
 	};
 
 	return (
-		<Modal id="new_channel_modal" classes="min-w-[500px]">
-			<div className="flex flex-row w-full py-5 px-5 border-b text-2xl items-center">
+		<Modal id="new_channel_modal" classes="min-w-[500px] bg-white rounded">
+			<div className="flex flex-row w-full py-5 px-5 border-b items-center">
 				<div className="flex flex-row w-full items-center space-x-3 text-gray-400">
 					<div className="">
-						<HashtagIcon className="h-6 w-6 " />
+						<HashtagIcon className="h-6 w-6" />
 					</div>
 					<div>Create Channel</div>
 				</div>
@@ -312,7 +312,7 @@ const NewChannelModal = () => {
 			</div>
 			<div className="flex flex-row border-t w-full px-5 py-4 justify-end">
 				<div
-					className="flex flex-col px-3 py-3 bg-blue-600 rounded-lg text-white text-sm cursor-pointer"
+					className="flex flex-col px-4 py-2 bg-blue-600 rounded-full text-white text-sm cursor-pointer"
 					onClick={onCreateChannel}
 				>
 					Create Channel

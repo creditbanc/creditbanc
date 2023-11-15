@@ -94,9 +94,6 @@ export const loader = async ({ request }) => {
 
 	messages = pipe(sortBy(prop("created_at")))(messages);
 
-	console.log("messages");
-	console.log(messages);
-
 	let channel = await get_doc(["chats", chat_id]);
 
 	let members_queries = [
@@ -201,7 +198,7 @@ const Message = ({ message }) => {
 	let avatar = avatars(email, { size: 35 });
 
 	let message_text = spipe(fns(get("message"), split("\n"), ifElse(pipe(last, equals("")), init, identity)), () => [
-		"testingspipe",
+		"",
 	])(message);
 
 	return (
