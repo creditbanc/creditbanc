@@ -10,7 +10,16 @@ import {
 } from "@heroicons/react/24/outline";
 import { useLoaderData, useLocation, useNavigate } from "@remix-run/react";
 import { get_session_entity_id, get_user_id } from "~/utils/auth.server";
-import { classNames, get_entity_id, get_group_id, get_resource_id, mapIndexed } from "~/utils/helpers";
+import {
+	classNames,
+	fns,
+	get_entity_id,
+	get_group_id,
+	get_resource_id,
+	inspect,
+	mapIndexed,
+	spipe,
+} from "~/utils/helpers";
 import { Menu, Transition } from "@headlessui/react";
 import { create } from "zustand";
 import {
@@ -28,6 +37,7 @@ import {
 	sortBy,
 	split,
 	tail,
+	tryCatch,
 	uniqBy,
 } from "ramda";
 import { get, mod } from "shades";
@@ -67,9 +77,9 @@ export const loader = async ({ request }) => {
 	let chat_id = get_resource_id(pathname);
 	let chat_state_id = `${entity_id}${group_id}`;
 
-	await update_doc(["chat_state", chat_state_id], {
-		current_chat_id: chat_id,
-	});
+	// await update_doc(["chat_state", chat_state_id], {
+	// 	current_chat_id: chat_id,
+	// });
 
 	let messages = await get_collection({
 		path: ["messages"],
@@ -83,6 +93,9 @@ export const loader = async ({ request }) => {
 	});
 
 	messages = pipe(sortBy(prop("created_at")))(messages);
+
+	console.log("messages");
+	console.log(messages);
 
 	let channel = await get_doc(["chats", chat_id]);
 
@@ -184,9 +197,12 @@ const MessageActions = () => {
 };
 
 const Message = ({ message }) => {
-	let avatar = avatars(message.user.email, { size: 35 });
+	let email = message?.user?.email || "";
+	let avatar = avatars(email, { size: 35 });
 
-	let message_text = pipe(get("message"), split("\n"), ifElse(pipe(last, equals("")), init, identity))(message);
+	let message_text = spipe(fns(get("message"), split("\n"), ifElse(pipe(last, equals("")), init, identity)), () => [
+		"testingspipe",
+	])(message);
 
 	return (
 		<div className="flex flex-row w-full py-3">
@@ -198,7 +214,7 @@ const Message = ({ message }) => {
 				<div dangerouslySetInnerHTML={{ __html: avatar }} />
 			</div>
 			<div className="text-sm flex flex-col flex-1 space-y-1">
-				<div className="font-semibold">{message.user.name}</div>
+				<div className="font-semibold">{message?.user?.name}</div>
 				<div className="flex flex-col text-gray-500 space-y-2">
 					<div className="bg-gray-100 w-fit rounded-3xl px-4 py-2">
 						{pipe(
@@ -210,7 +226,7 @@ const Message = ({ message }) => {
 				</div>
 			</div>
 			<div className="flex flex-row w-[100px] text-xs  justify-end space-x-3 text-gray-600">
-				<div>{moment(message.created_at).format("h:mm A")}</div>
+				<div>{moment(message?.created_at).format("h:mm A")}</div>
 				<div>
 					<MessageActions />
 				</div>

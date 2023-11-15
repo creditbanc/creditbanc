@@ -33,10 +33,7 @@ export const loader = async ({ request }) => {
 	if (isEmpty(chat_state) && channels_count > 0) {
 		let channel_response = await get_collection({
 			path: ["chats"],
-			queries: [
-				...channels_queries,
-				{ param: "title", predicate: "==", value: "General" },
-			],
+			queries: [...channels_queries, { param: "title", predicate: "==", value: "General" }],
 		});
 
 		let default_channel = pipe(head)(channel_response);
@@ -46,9 +43,7 @@ export const loader = async ({ request }) => {
 			current_chat_id: default_channel.id,
 		});
 
-		return redirect(
-			`/chat/id/resource/e/${entity_id}/g/${group_id}/f/${default_channel.id}`
-		);
+		return redirect(`/chat/id/resource/e/${entity_id}/g/${group_id}/f/${default_channel.id}`);
 	}
 
 	// if (channels.length === 0) {
@@ -65,8 +60,7 @@ export const loader = async ({ request }) => {
 	// }
 
 	if (!chat_id) {
-		return redirect(
-			`/chat/id/resource/e/${entity_id}/g/${group_id}/f/${chat_state.current_chat_id}`
-		);
+		return redirect(`/chat/id/resource/e/${entity_id}/g/${group_id}/f/${chat_state.current_chat_id}`);
 	}
+	return null;
 };

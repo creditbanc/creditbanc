@@ -552,26 +552,6 @@ video {
   }
 }
 
-.aspect-h-1 {
-  --tw-aspect-h: 1;
-}
-
-.aspect-w-2 {
-  position: relative;
-  padding-bottom: calc(var(--tw-aspect-h) / var(--tw-aspect-w) * 100%);
-  --tw-aspect-w: 2;
-}
-
-.aspect-w-2 > * {
-  position: absolute;
-  height: 100%;
-  width: 100%;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  left: 0;
-}
-
 .sr-only {
   position: absolute;
   width: 1px;
@@ -1275,6 +1255,10 @@ video {
   margin-top: 3.5rem;
 }
 
+.mt-16 {
+  margin-top: 4rem;
+}
+
 .mt-2 {
   margin-top: 0.5rem;
 }
@@ -1337,10 +1321,6 @@ video {
 
 .mt-\[50px\] {
   margin-top: 50px;
-}
-
-.mt-16 {
-  margin-top: 4rem;
 }
 
 .block {
@@ -2263,10 +2243,6 @@ video {
   grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
-.grid-rows-2 {
-  grid-template-rows: repeat(2, minmax(0, 1fr));
-}
-
 .flex-row {
   flex-direction: row;
 }
@@ -2649,10 +2625,6 @@ video {
 
 .overflow-scroll {
   overflow: scroll;
-}
-
-.overflow-x-auto {
-  overflow-x: auto;
 }
 
 .overflow-y-auto {
@@ -3404,6 +3376,11 @@ video {
   padding-bottom: 5rem;
 }
 
+.py-24 {
+  padding-top: 6rem;
+  padding-bottom: 6rem;
+}
+
 .py-3 {
   padding-top: 0.75rem;
   padding-bottom: 0.75rem;
@@ -3442,11 +3419,6 @@ video {
 .py-\[calc\(theme\(spacing\.2\)-1px\)\] {
   padding-top: calc(0.5rem - 1px);
   padding-bottom: calc(0.5rem - 1px);
-}
-
-.py-24 {
-  padding-top: 6rem;
-  padding-bottom: 6rem;
 }
 
 .pb-0 {
@@ -4247,28 +4219,6 @@ body {
   height: 100%;
 }
 
-@media (min-width: 640px) {
-  .sm\:aspect-h-2 {
-    --tw-aspect-h: 2;
-  }
-
-  .sm\:aspect-w-5 {
-    position: relative;
-    padding-bottom: calc(var(--tw-aspect-h) / var(--tw-aspect-w) * 100%);
-    --tw-aspect-w: 5;
-  }
-
-  .sm\:aspect-w-5 > * {
-    position: absolute;
-    height: 100%;
-    width: 100%;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    left: 0;
-  }
-}
-
 .placeholder\:text-gray-400::-moz-placeholder {
   --tw-text-opacity: 1;
   color: rgb(156 163 175 / var(--tw-text-opacity));
@@ -4971,16 +4921,16 @@ body {
     transform: translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));
   }
 
+  .sm\:grid-cols-2 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
   .sm\:grid-cols-3 {
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 
   .sm\:grid-cols-6 {
     grid-template-columns: repeat(6, minmax(0, 1fr));
-  }
-
-  .sm\:grid-cols-2 {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   .sm\:flex-row {
@@ -5027,16 +4977,12 @@ body {
     gap: 1rem;
   }
 
-  .sm\:gap-6 {
-    gap: 1.5rem;
+  .sm\:gap-y-16 {
+    row-gap: 4rem;
   }
 
   .sm\:gap-y-20 {
     row-gap: 5rem;
-  }
-
-  .sm\:gap-y-16 {
-    row-gap: 4rem;
   }
 
   .sm\:space-x-6 > :not([hidden]) ~ :not([hidden]) {
@@ -5097,11 +5043,6 @@ body {
   .sm\:py-5 {
     padding-top: 1.25rem;
     padding-bottom: 1.25rem;
-  }
-
-  .sm\:px-2 {
-    padding-left: 0.5rem;
-    padding-right: 0.5rem;
   }
 
   .sm\:pl-20 {
@@ -5578,10 +5519,6 @@ body {
 
   .lg\:justify-center {
     justify-content: center;
-  }
-
-  .lg\:gap-8 {
-    gap: 2rem;
   }
 
   .lg\:gap-x-12 {

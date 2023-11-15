@@ -44,6 +44,14 @@ import murmurhash from "murmurhash";
 import { create } from "zustand";
 import { de } from "@faker-js/faker";
 
+export function fns() {
+	return [...arguments];
+}
+
+export const spipe = (fns, errorFn) => (data) => {
+	return tryCatch(pipe(...fns), errorFn)(data);
+};
+
 export const fetcher_payload_maker = (url) => [{}, { method: "post", action: url }];
 
 export const get = tryCatch(sget, always(undefined));
