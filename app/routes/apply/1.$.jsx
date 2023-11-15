@@ -3,7 +3,7 @@ import { useState } from "react";
 import { RadioGroup } from "@headlessui/react";
 import { classNames, currency, mapIndexed } from "~/utils/helpers";
 import { pipe } from "ramda";
-import { PhotoIcon, UserCircleIcon } from "@heroicons/react/24/solid";
+import { StarIcon } from "@heroicons/react/20/solid";
 
 const Header = () => {
 	return (
@@ -171,7 +171,7 @@ const PersonalInfoForm = () => {
 							name="first-name"
 							id="first-name"
 							autoComplete="given-name"
-							className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+							className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-sm sm:leading-6"
 						/>
 					</div>
 				</div>
@@ -186,7 +186,7 @@ const PersonalInfoForm = () => {
 							name="last-name"
 							id="last-name"
 							autoComplete="family-name"
-							className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+							className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-sm sm:leading-6"
 						/>
 					</div>
 				</div>
@@ -201,12 +201,45 @@ const PersonalInfoForm = () => {
 							name="email"
 							type="email"
 							autoComplete="email"
-							className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+							className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-sm sm:leading-6"
 						/>
 					</div>
 				</div>
 			</div>
 		</form>
+	);
+};
+
+const Testimonial = () => {
+	return (
+		<section className="bg-white px-5">
+			<figure className="mx-auto max-w-2xl">
+				<div className="flex gap-x-1 text-blue-600">
+					<StarIcon className="h-5 w-5 flex-none" aria-hidden="true" />
+					<StarIcon className="h-5 w-5 flex-none" aria-hidden="true" />
+					<StarIcon className="h-5 w-5 flex-none" aria-hidden="true" />
+					<StarIcon className="h-5 w-5 flex-none" aria-hidden="true" />
+					<StarIcon className="h-5 w-5 flex-none" aria-hidden="true" />
+				</div>
+				<blockquote className="mt-5 font-semibold tracking-tight text-gray-900 leading-6">
+					<p>
+						“Qui dolor enim consectetur do et non ex amet culpa sint in ea non dolore. Enim minim magna anim
+						id minim eu cillum sunt dolore aliquip.”
+					</p>
+				</blockquote>
+				<figcaption className="mt-5 flex items-center gap-x-6">
+					<img
+						className="h-12 w-12 rounded-full bg-gray-50"
+						src="https://images.unsplash.com/photo-1550525811-e5869dd03032?ixlib=rb-=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=1024&h=1024&q=80"
+						alt=""
+					/>
+					<div className="text-sm leading-6">
+						<div className="font-semibold text-gray-900">Judith Black</div>
+						<div className="mt-0.5 text-gray-600">CEO of Workcation</div>
+					</div>
+				</figcaption>
+			</figure>
+		</section>
 	);
 };
 
@@ -240,8 +273,22 @@ export default function Container() {
 						<SectionHeading headline={`Step 3: Tell us a bit about you`} />
 						<PersonalInfoForm />
 					</div>
+					<div className="flex flex-col w-full items-center">
+						<div className="flex flex-col bg-blue-600 py-3 px-4 rounded-full text-white w-[400px] items-center cursor-pointer">
+							Continue to pre-qualify
+						</div>
+					</div>
 				</div>
-				<div className="flex flex-col w-[30%]"></div>
+				<div className="flex flex-col w-[30%]">
+					<div className="flex flex-col w-full gap-y-10 my-10">
+						<div className="flex flex-col">
+							<Testimonial />
+						</div>
+						<div className="flex flex-col">
+							<Testimonial />
+						</div>
+					</div>
+				</div>
 			</div>
 		</div>
 	);
