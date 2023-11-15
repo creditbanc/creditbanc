@@ -273,9 +273,27 @@ export default function Container() {
 						<SectionHeading headline={`Step 3: Tell us a bit about you`} />
 						<PersonalInfoForm />
 					</div>
-					<div className="flex flex-col w-full items-center">
+					<div className="flex flex-col w-full items-center gap-y-4">
 						<div className="flex flex-col bg-blue-600 py-3 px-4 rounded-full text-white w-[400px] items-center cursor-pointer">
 							Continue to pre-qualify
+						</div>
+						<div className="flex flex-row w-full justify-center items-center text-sm gap-x-2">
+							<svg
+								xmlns="http://www.w3.org/2000/svg"
+								fill="none"
+								viewBox="0 0 24 24"
+								stroke-width="1.5"
+								stroke="currentColor"
+								class="w-4 h-4"
+							>
+								<path
+									stroke-linecap="round"
+									stroke-linejoin="round"
+									d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z"
+								/>
+							</svg>
+
+							<div>Only takes 5 minutes and doesn’t impact your credit score</div>
 						</div>
 					</div>
 				</div>
