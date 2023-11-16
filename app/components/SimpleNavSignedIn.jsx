@@ -151,7 +151,7 @@ let navigation = [
 	},
 	{
 		name: "University",
-		href: ({ entity_id, group_id }) => `/university/courses/resource/e/${entity_id}/g/${group_id}`,
+		href: ({ entity_id, group_id }) => `/university/courses`,
 		current: (pathname) => is_location("/university", pathname),
 	},
 ];

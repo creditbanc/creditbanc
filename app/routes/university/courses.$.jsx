@@ -184,7 +184,7 @@ const Accounts = () => {
 
 					<div className="flex flex-col w-full my-3">
 						<Link
-							to={`/university/course/curriculum/1/resource/e/${entity_id}/g/${group_id}`}
+							to={`/university/course/curriculum/1`}
 							className="flex flex-row w-full py-2 border border-gray-600 text-gray-600 rounded-lg justify-center items-center cursor-pointer gap-x-3"
 						>
 							<div>

@@ -42,7 +42,7 @@ const CurriculumAccordion = () => {
 									{pipe(
 										map((resource) => (
 											<Link
-												to={`/university/course/resource/resource/e/${entity_id}/g/${group_id}/f/${resource.id}`}
+												to={`/university/course/resource`}
 												className="flex flex-row w-full border p-2 rounded"
 											>
 												<div className="flex flex-row w-full space-x-2 items-center space-between cursor-pointer">

@@ -30,7 +30,7 @@ const navigation = [
 	{ name: "Small Business Lending", href: "/comingsoon" },
 	{ name: "Tax Credits", href: "/comingsoon" },
 	{ name: "Business Valuations", href: "/comingsoon" },
-	{ name: "CB University", href: "/comingsoon" },
+	{ name: "CB University", href: "/university/courses" },
 ];
 
 const footerNavigation = [

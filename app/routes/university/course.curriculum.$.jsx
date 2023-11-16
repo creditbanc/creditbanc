@@ -90,7 +90,7 @@ export default function Courses() {
 
 					<div className="flex flex-col w-full h-[90px] px-5 justify-center">
 						<Link
-							to={`/university/creditbuilder/1/resource/e/${entity_id}/g/${group_id}/f/1`}
+							to={`/university/creditbuilder/1`}
 							className="flex flex-col w-full py-4 items-center justify-center bg-blue-600 text-white rounded cursor-pointer"
 						>
 							Start

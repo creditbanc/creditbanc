@@ -188,9 +188,12 @@ export default function Container() {
 					<TimeInBusiness />
 				</div>
 				<div className="flex flex-row w-full items-center gap-y-4 my-5 w=[450px] gap-x-3">
-					<div className="flex flex-col py-3 px-4 rounded-full text-blue-600 w-1/2 items-center cursor-pointer border-2 border-blue-600">
+					<Link
+						to={`/apply/inception_date/resource/e/${entity_id}/g/${group_id}`}
+						className="flex flex-col py-3 px-4 rounded-full text-blue-600 w-1/2 items-center cursor-pointer border-2 border-blue-600"
+					>
 						Back
-					</div>
+					</Link>
 					<Link
 						to={`/apply/address/resource/e/${entity_id}/g/${group_id}`}
 						className="flex flex-col bg-blue-600 py-3 px-4 rounded-full text-white w-1/2 items-center cursor-pointer"
