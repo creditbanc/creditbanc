@@ -37,7 +37,7 @@ import { useModalStore } from "~/hooks/useModal";
 import { useEffect, Fragment, useState } from "react";
 import { Link, useLoaderData, useLocation } from "@remix-run/react";
 import { useFilesStore } from "~/hooks/useFiles";
-import { delete_doc, get_collection, get_doc, storage } from "~/utils/firebase";
+import { delete_doc, get_collection, get_doc, server_timestamp, storage } from "~/utils/firebase";
 import { ref, getDownloadURL, uploadBytesResumable, getStorage, uploadBytes, listAll } from "firebase/storage";
 import {
 	findIndex,
@@ -75,7 +75,7 @@ import { is_authorized_f } from "~/api/auth";
 import { get_session_entity_id, get_user_id } from "~/utils/auth.server";
 import { redirect } from "@remix-run/node";
 import { FolderIcon } from "@heroicons/react/20/solid";
-import { get_resource } from "~/utils/resource.server";
+import { events_map } from "~/data/events";
 
 export const useFileStore = create((set) => ({
 	file: {},
@@ -1195,6 +1195,20 @@ const UploadForm = () => {
 				path,
 			};
 
+			let event_id = uuidv4();
+
+			let event_payload = {
+				id: event_id,
+				created_at: server_timestamp(),
+				entity_id,
+				group_id,
+				...pipe(filter({ resource: "vault", id: "upload" }), head)(events_map),
+			};
+
+			console.log("event_payload");
+			console.log(event_payload);
+
+			// await set_doc(["events", event_id], event_payload);
 			await set_doc(["vault", id], payload);
 
 			set_files(["files"], [...files, payload]);
