@@ -15,6 +15,7 @@ import {
 	LinkIcon,
 	PlusIcon,
 	UsersIcon,
+	XMarkIcon,
 } from "@heroicons/react/24/outline";
 import { all, filter, get, mod } from "shades";
 import { create } from "zustand";
@@ -594,10 +595,11 @@ const NotificationsList = () => {
 	);
 };
 
-const NotificationsHeading = () => {
+const NotificationsHeading = ({ children }) => {
 	return (
-		<div className="border-b border-gray-100 bg-white px-3 py-4">
+		<div className="border-b border-gray-100 bg-white px-3 py-4 flex flex-row justify-between">
 			<h3 className="text-base font-semibold leading-6 text-gray-900">Notifications</h3>
+			{children}
 		</div>
 	);
 };
@@ -640,7 +642,11 @@ const NotificationsDropdown = () => {
 			>
 				<Menu.Items className="absolute right-0 z-10 mt-1 w-[500px] h-[450px] overflow-y-scroll origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none scrollbar-none">
 					<div className="sticky top-0">
-						<NotificationsHeading />
+						<NotificationsHeading>
+							<Menu.Button className="border rounded-lg p-1">
+								<XMarkIcon className="h-4 w-4 text-gray-500" />
+							</Menu.Button>
+						</NotificationsHeading>
 					</div>
 					<div className="py-1 px-6">
 						<NotificationsList />
