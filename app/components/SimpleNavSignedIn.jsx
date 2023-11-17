@@ -596,7 +596,7 @@ const NotificationsList = () => {
 
 const NotificationsHeading = () => {
 	return (
-		<div className="border-b border-gray-200 bg-white px-3 py-4">
+		<div className="border-b border-gray-100 bg-white px-3 py-4">
 			<h3 className="text-base font-semibold leading-6 text-gray-900">Notifications</h3>
 		</div>
 	);
@@ -604,7 +604,7 @@ const NotificationsHeading = () => {
 
 const NotificationsFooter = () => {
 	return (
-		<div className="bg-white px-3 py-4">
+		<div className="border-t border-gray-100 bg-white px-3 py-4">
 			<div className="flex flex-row items-center text-sm gap-x-2">
 				<div className="flex flex-row">
 					<div>
@@ -638,11 +638,11 @@ const NotificationsDropdown = () => {
 				leaveFrom="transform opacity-100 scale-100"
 				leaveTo="transform opacity-0 scale-95"
 			>
-				<Menu.Items className="absolute right-0 z-10 mt-1 w-[500px] h-[450px] overflow-y-scroll origin-top-right divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+				<Menu.Items className="absolute right-0 z-10 mt-1 w-[500px] h-[450px] overflow-y-scroll origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
 					<div className="sticky top-0">
 						<NotificationsHeading />
 					</div>
-					<div className="py-1 px-4">
+					<div className="py-1 px-6">
 						<NotificationsList />
 					</div>
 					<div className="sticky bottom-0">
