@@ -464,7 +464,7 @@ export default function Chat() {
 						</div>
 					</div>
 					<div className="flex flex-row w-full border-b p-3 text-sm justify-between items-center">
-						<div>Channels</div>
+						<div>Groups</div>
 						<div
 							className="bg-gray-100 text-gray-600 h-6 w-6 flex flex-col items-center justify-center rounded-full pb-[2px] cursor-pointer"
 							onClick={onNewChannelClick}
