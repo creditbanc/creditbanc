@@ -1,4 +1,4 @@
-import { Fragment, useEffect } from "react";
+import { Fragment, useEffect, useRef } from "react";
 import { Link, useLocation, useSearchParams } from "@remix-run/react";
 const cb_logo = "/images/logos/cb_logo_3.png";
 import UserAccountNavMenu from "./UserAccountNavMenu";
@@ -623,10 +623,19 @@ const NotificationsFooter = () => {
 };
 
 const NotificationsDropdown = () => {
+	let notification_button_ref = useRef(null);
+
+	const onCloseNotifications = () => {
+		notification_button_ref.current?.click();
+	};
+
 	return (
 		<Menu as="div" className="relative inline-block text-left">
 			<div>
-				<Menu.Button className="inline-flex w-full justify-center gap-x-1.5 rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 hover:bg-gray-50">
+				<Menu.Button
+					className="inline-flex w-full justify-center gap-x-1.5 rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 hover:bg-gray-50"
+					ref={notification_button_ref}
+				>
 					<BellIcon className="h-6 w-6 text-gray-500" />
 				</Menu.Button>
 			</div>
@@ -643,9 +652,9 @@ const NotificationsDropdown = () => {
 				<Menu.Items className="absolute right-0 z-10 mt-1 w-[500px] h-[450px] overflow-y-scroll origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none scrollbar-none">
 					<div className="sticky top-0">
 						<NotificationsHeading>
-							<Menu.Button className="border rounded-lg p-1">
+							<div className="border rounded-lg p-1 cursor-pointer" onClick={onCloseNotifications}>
 								<XMarkIcon className="h-4 w-4 text-gray-500" />
-							</Menu.Button>
+							</div>
 						</NotificationsHeading>
 					</div>
 					<div className="py-1 px-6">
