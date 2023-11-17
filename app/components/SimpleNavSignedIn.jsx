@@ -9,6 +9,7 @@ import { always, equals, head, includes, isEmpty, map, not, pipe, prop, set, try
 import {
 	BellIcon,
 	ChatBubbleLeftEllipsisIcon,
+	ChatBubbleOvalLeftEllipsisIcon,
 	CheckIcon,
 	Cog6ToothIcon,
 	EyeIcon,
@@ -726,13 +727,19 @@ export default function Nav({ entity_id, roles, companies }) {
 					<div className="hidden lg:flex flex-col justify-center">{!is_companies_dashboard && <Nav />}</div>
 					<div className="flex flex-row items-center space-x-3">
 						{!is_location("/companies/dashboard", pathname) && (
-							<div className="hidden lg:flex flex-col ">
+							<div className="hidden lg:flex flex-col">
 								<ShareDropdown session_entity_id={entity_id} />
 							</div>
 						)}
 
-						<div className="flex flex-col">
-							<NotificationsDropdown />
+						<div className="flex flex-row">
+							<div className="flex flex-col hover:bg-gray-50 px-3 py-2 rounded-md cursor-pointer">
+								<ChatBubbleOvalLeftEllipsisIcon className="h-6 w-6 text-gray-500" />
+							</div>
+
+							<div className="flex flex-col">
+								<NotificationsDropdown />
+							</div>
 						</div>
 					</div>
 				</div>
