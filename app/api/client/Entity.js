@@ -245,6 +245,10 @@ export default class Entity {
 			concatMap((group_id) => from(get_collection(notifications_query(group_id)))),
 			rxreduce((acc, curr) => [...acc, curr], []),
 			rxmap(pipe(flatten, sortBy(prop("created_at")), reverse)),
+			rxmap((notifications) => ({ notifications })),
+			// tap(() => console.log("api.client.Entity.notifications")),
+			// tap(inspect),
+			catchError(catch_with_default({}, "notifications")),
 			concatMap(merge_with_current(this.response))
 		);
 

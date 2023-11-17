@@ -93,7 +93,7 @@ export const loader = async ({ request }) => {
 	let entity_id = await get_session_entity_id(request);
 	if (entity_id) {
 		let entity = new Entity(entity_id);
-		let payload = entity.roles.identity.companies.fold;
+		let payload = entity.roles.identity.companies.notifications.fold;
 		let response = await lastValueFrom(payload.pipe(fold(on_success, on_error)));
 		return response;
 	} else {
@@ -107,7 +107,10 @@ export default function App() {
 	const show_spinner = useSpinner((state) => state.show_spinner);
 	const setSpinner = useSpinner((state) => state.setSpinner);
 	let loader_data = useLoaderData();
-	let { identity = {}, roles = [], companies = {} } = loader_data;
+	let { identity = {}, roles = [], companies = {}, notifications = [] } = loader_data;
+
+	// console.log("notifications");
+	// console.log(notifications);
 
 	let is_resource_path = is_location("/resource", pathname);
 
@@ -146,7 +149,12 @@ export default function App() {
 					<div className="flex flex-col w-full h-full relative overflow-hidden">
 						{is_resource_path && (
 							<div className="flex flex-col w-full border-b bg-white sticky top-0 z-[99]">
-								<SimpleNavSignedIn entity_id={identity?.id} roles={roles} companies={companies} />
+								<SimpleNavSignedIn
+									entity_id={identity?.id}
+									roles={roles}
+									companies={companies}
+									notifications={notifications}
+								/>
 							</div>
 						)}
 						<Outlet />

@@ -17,16 +17,14 @@ import { create } from "zustand";
 import axios from "axios";
 import { useEffect } from "react";
 const cb_logo_3 = "/images/logos/cb_logo_3.png";
-import { encode } from "js-base64";
 import { map as rxmap, filter as rxfilter, tap } from "rxjs/operators";
 import { from, lastValueFrom, forkJoin, Subject } from "rxjs";
 import { fold } from "~/utils/operators";
-import { json } from "@remix-run/node";
 import Entity from "~/api/client/Entity";
 import BusinessReport from "~/api/client/BusinessReport";
 import PersonalReport from "~/api/client/PersonalReport";
 
-const log_route = `dashboard`;
+const log_route = `companies.dashboard`;
 
 export const useCompanyStore = create((set) => ({
 	company: {},
@@ -78,7 +76,7 @@ export const loader = async ({ request }) => {
 	let business = new BusinessReport(group_id);
 	let personal = new PersonalReport(group_id);
 
-	let entity_response = entity.identity.companies.notifications.fold;
+	let entity_response = entity.identity.companies.fold;
 	let business_response = business.business_info.scores.fold;
 	let personal_response = personal.scores.fold;
 
@@ -101,6 +99,7 @@ export const loader = async ({ request }) => {
 	);
 
 	let response = await lastValueFrom(payload.pipe(fold(on_success, on_error)));
+
 	return response;
 };
 

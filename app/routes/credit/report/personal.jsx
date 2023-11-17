@@ -3,8 +3,6 @@ import { Outlet, useLoaderData, useLocation } from "@remix-run/react";
 import { useLayoutStore } from "~/stores/useLayoutStore";
 import { useElmSize } from "~/hooks/useElmSize";
 import { get_group_id, get_route_endpoint, capitalize } from "~/utils/helpers";
-import { PersonalCreditTabsVertical, CreditTabsSelect } from "~/components/PersonalCreditTabs";
-import CreditScoreHero from "~/components/CreditScoreHero";
 import { useReportPageLayoutStore } from "~/stores/useReportPageLayoutStore";
 import { pipe, toLower, tryCatch, always } from "ramda";
 import { lastValueFrom } from "rxjs";

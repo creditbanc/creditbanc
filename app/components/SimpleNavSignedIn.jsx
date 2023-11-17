@@ -2,10 +2,10 @@ import { Fragment, useEffect, useRef } from "react";
 import { Link, useLocation, useSearchParams } from "@remix-run/react";
 const cb_logo = "/images/logos/cb_logo_3.png";
 import UserAccountNavMenu from "./UserAccountNavMenu";
-import { classNames, get_entity_id, get_group_id, is_location, mapIndexed } from "~/utils/helpers";
+import { classNames, get_entity_id, get_group_id, is_location, mapIndexed, store } from "~/utils/helpers";
 import { Menu, Transition } from "@headlessui/react";
 import { ChevronDownIcon } from "@heroicons/react/20/solid";
-import { always, equals, head, includes, isEmpty, map, not, pipe, prop, set, tryCatch, uniqBy } from "ramda";
+import { always, equals, head, includes, isEmpty, map, not, pipe, prop, set, take, tryCatch, uniqBy } from "ramda";
 import {
 	BellIcon,
 	ChatBubbleLeftEllipsisIcon,
@@ -26,6 +26,9 @@ import Modal from "~/components/Modal";
 import { useModalStore } from "~/hooks/useModal";
 import CacheLink from "./CacheLink";
 import { ChatBubbleLeftIcon, CheckCircleIcon } from "@heroicons/react/24/outline";
+import { notifications_map } from "~/components/Notifications";
+
+let use_notifications_store = store({ notifications: [] });
 
 export const useRolesStore = create((set) => ({
 	roles: false,
@@ -102,27 +105,6 @@ const Companies = ({ companies: all_companies = {} }) => {
 		</Menu>
 	);
 };
-
-// let navigation = [
-// 	{
-// 		name: "Cashflow",
-// 		href: ({ entity_id, group_id }) =>
-// 			`/financial/cashflow/resource/e/${entity_id}/g/${group_id}`,
-// 		current: (pathname) => is_location("/financial", pathname),
-// 	},
-// 	{
-// 		name: "Vault",
-// 		href: ({ entity_id, group_id }) =>
-// 			`/vault/files/resource/e/${entity_id}/g/${group_id}`,
-// 		current: (pathname) => is_location("/vault", pathname),
-// 	},
-// 	{
-// 		name: "University",
-// 		href: ({ entity_id, group_id }) =>
-// 			`/university/courses/resource/e/${entity_id}/g/${group_id}`,
-// 		current: (pathname) => is_location("/university", pathname),
-// 	},
-// ];
 
 let navigation = [
 	{
@@ -538,6 +520,13 @@ const discussions = [
 ];
 
 const NotificationsList = () => {
+	// const notifications = use_notifications_store((state) => state.notifications);
+
+	console.log("NotificationsList______");
+	// console.log(notifications);
+
+	return <div></div>;
+
 	return (
 		<ul role="list" className="divide-y divide-gray-100 ">
 			{discussions.map((discussion) => (
@@ -597,6 +586,7 @@ const NotificationsList = () => {
 };
 
 const NotificationsHeading = ({ children }) => {
+	console.log("NotificationsHeading______");
 	return (
 		<div className="border-b border-gray-100 bg-white px-3 py-4 flex flex-row justify-between">
 			<h3 className="text-base font-semibold leading-6 text-gray-900">Notifications</h3>
@@ -624,6 +614,7 @@ const NotificationsFooter = () => {
 };
 
 const NotificationsDropdown = () => {
+	let notifications = use_notifications_store((state) => state.notifications);
 	let notification_button_ref = useRef(null);
 
 	const onCloseNotifications = () => {
@@ -659,7 +650,68 @@ const NotificationsDropdown = () => {
 						</NotificationsHeading>
 					</div>
 					<div className="py-1 px-6">
-						<NotificationsList />
+						<ul role="list" className="divide-y divide-gray-100 ">
+							{notifications.map((discussion) => (
+								<li
+									key={discussion?.id}
+									className="flex flex-wrap items-center justify-between gap-x-6 gap-y-4 py-5 sm:flex-nowrap"
+								>
+									<div>
+										<p className="text-sm font-semibold leading-6 text-gray-900">
+											<a href={discussion?.href} className="hover:underline">
+												{discussion?.title}
+											</a>
+										</p>
+										<div className="mt-1 flex items-center gap-x-2 text-xs leading-5 text-gray-500">
+											<p>
+												<a href={discussion?.author?.href} className="hover:underline">
+													{discussion?.author?.name}
+												</a>
+											</p>
+											<svg viewBox="0 0 2 2" className="h-0.5 w-0.5 fill-current">
+												<circle cx={1} cy={1} r={1} />
+											</svg>
+											<p>
+												<time dateTime={discussion?.dateTime}>{discussion?.date}</time>
+											</p>
+										</div>
+									</div>
+									<dl className="flex w-full flex-none justify-between gap-x-8 sm:w-auto">
+										<div className="flex -space-x-0.5">
+											<dt className="sr-only">Commenters</dt>
+											{discussion?.commenters?.map((commenter) => (
+												<dd key={commenter.id}>
+													<img
+														className="h-6 w-6 rounded-full bg-gray-50 ring-2 ring-white"
+														src={commenter?.imageUrl}
+														alt={commenter?.name}
+													/>
+												</dd>
+											))}
+										</div>
+										<div className="flex w-16 gap-x-2.5">
+											<dt>
+												<span className="sr-only">Total comments</span>
+												{discussion?.status === "resolved" ? (
+													<CheckCircleIcon
+														className="h-6 w-6 text-gray-400"
+														aria-hidden="true"
+													/>
+												) : (
+													<ChatBubbleLeftIcon
+														className="h-6 w-6 text-gray-400"
+														aria-hidden="true"
+													/>
+												)}
+											</dt>
+											<dd className="text-sm leading-6 text-gray-900">
+												{discussion?.totalComments}
+											</dd>
+										</div>
+									</dl>
+								</li>
+							))}
+						</ul>
 					</div>
 					<div className="sticky bottom-0">
 						<NotificationsFooter />
@@ -670,17 +722,22 @@ const NotificationsDropdown = () => {
 	);
 };
 
-export default function Nav({ entity_id, roles, companies }) {
+export default function Nav({ entity_id, roles, companies, notifications = [] }) {
 	let location = useLocation();
 	let group_id = get_group_id(location.pathname);
 	let { pathname } = location;
 	let is_companies_dashboard = is_location("/companies/dashboard", pathname);
+	let { set_props: set_notifications } = use_notifications_store((state) => state);
 
 	let set_roles = useRolesStore((state) => state.set_roles);
 
 	useEffect(() => {
 		set_roles(["roles"], roles);
 	}, [roles]);
+
+	useEffect(() => {
+		set_notifications({ notifications });
+	}, [notifications]);
 
 	const Nav = () => {
 		return (
@@ -738,7 +795,7 @@ export default function Nav({ entity_id, roles, companies }) {
 							</div>
 
 							<div className="flex flex-col">
-								<NotificationsDropdown />
+								<NotificationsDropdown notifications={notifications} />
 							</div>
 						</div>
 					</div>
