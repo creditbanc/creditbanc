@@ -1,5 +1,13 @@
 import { FolderIcon } from "@heroicons/react/20/solid";
-import { LinkIcon, BriefcaseIcon, UserCircleIcon, HomeIcon } from "@heroicons/react/24/outline";
+import {
+	LinkIcon,
+	BriefcaseIcon,
+	UserCircleIcon,
+	HomeIcon,
+	CurrencyDollarIcon,
+	FolderOpenIcon,
+	ChatBubbleOvalLeftEllipsisIcon,
+} from "@heroicons/react/24/outline";
 import { Link, useFetcher, useLoaderData, useLocation } from "@remix-run/react";
 import { isEmpty, map, pipe } from "ramda";
 import { get, mod } from "shades";
@@ -143,20 +151,25 @@ const navigation = [
 		icon: UserCircleIcon,
 		current: false,
 	},
-	// {
-	// 	name: "Cashflow",
-	// 	href: ({ entity_id, group_id }) =>
-	// 		`/financial/cashflow/resource/e/${entity_id}/g/${group_id}`,
-	// 	icon: CurrencyDollarIcon,
-	// 	current: false,
-	// },
-	// {
-	// 	name: "Vault",
-	// 	href: ({ entity_id, group_id }) =>
-	// 		`/vault/files/resource/e/${entity_id}/g/${group_id}`,
-	// 	icon: FolderOpenIcon,
-	// 	current: false,
-	// },
+	{
+		name: "Cashflow",
+		href: ({ entity_id, group_id }) => `/financial/cashflow/resource/e/${entity_id}/g/${group_id}`,
+		icon: CurrencyDollarIcon,
+		current: false,
+	},
+	{
+		name: "Vault",
+		href: ({ entity_id, group_id }) => `/vault/files/resource/e/${entity_id}/g/${group_id}/f/documents`,
+		icon: FolderOpenIcon,
+		current: false,
+	},
+	{
+		name: "Chat",
+		href: ({ entity_id, group_id }) => `/chat/id/resource/e/${entity_id}/g/${group_id}/f/${group_id}`,
+
+		icon: ChatBubbleOvalLeftEllipsisIcon,
+		current: false,
+	},
 ];
 
 const QuickLinks = () => {

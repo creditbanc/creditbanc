@@ -14,14 +14,16 @@ import {
 	get_doc_listener,
 	set_doc,
 } from "~/utils/firebase";
-import { defaultTo, findIndex, head, isEmpty, map, pipe, prop, propEq, sortBy } from "ramda";
-import { get, mod, filter } from "shades";
+import { defaultTo, findIndex, head, identity, isEmpty, map, pick, pipe, prop, propEq, sortBy, values } from "ramda";
+import { get, mod, filter, all } from "shades";
 import { create } from "zustand";
 import { Fragment } from "react";
 import { Menu, Transition } from "@headlessui/react";
 import { classNames } from "~/utils/helpers";
 
 import avatars from "~/data/avatars";
+import Entity from "~/api/client/Entity";
+import { lastValueFrom } from "rxjs";
 
 const useChatsStore = create((set) => ({
 	channels: [],
@@ -33,6 +35,11 @@ export const loader = async ({ request }) => {
 	let entity_id = await get_session_entity_id(request);
 	let group_id = get_group_id(request.url);
 	let chat_state_id = `${entity_id}${group_id}`;
+
+	let entity = new Entity(entity_id);
+	let entity_response = entity.shared_companies.fold;
+	let groups = await lastValueFrom(entity_response);
+	groups = pipe(map(pick(["first_name", "last_name", "group_id"])), values)(groups);
 
 	let chat_state = await get_doc(["chat_state", chat_state_id]);
 
@@ -69,19 +76,6 @@ export const loader = async ({ request }) => {
 		)(channels)
 	);
 
-	// if (channels.length === 0) {
-	// 	let default_channel = await create_default_channel({ group_id });
-
-	// 	await set_doc(["chat_state", chat_state_id], {
-	// 		id: chat_state_id,
-	// 		current_chat_id: default_channel.id,
-	// 	});
-
-	// 	return redirect(
-	// 		`/chat/id/resource/e/${entity_id}/g/${group_id}/f/${default_channel.id}`
-	// 	);
-	// }
-
 	channels = pipe(defaultTo([]), sortBy(prop("index")))(channels);
 
 	let direct_messages = await get_collection({
@@ -117,7 +111,7 @@ export const loader = async ({ request }) => {
 		)(direct_messages)
 	);
 
-	return { entity_id, channels, direct_messages, chat_state };
+	return { entity_id, channels, direct_messages, chat_state, groups };
 };
 
 const DirectMessage = ({ unread = 0, id, selected = false, chat }) => {
@@ -248,6 +242,39 @@ const Channel = ({ selected = false, title, unread = 0, id = 0 }) => {
 	);
 };
 
+const GroupChannel = ({ selected = false, title, unread = 0, id = 0 }) => {
+	let { pathname } = useLocation();
+	let entity_id = get_entity_id(pathname);
+	let group_id = get_group_id(pathname);
+
+	return (
+		<div
+			className={`flex flex-row w-full text-sm px-2 justify-between rounded ${
+				selected ? "bg-blue-600 text-white" : "hover:bg-gray-100"
+			}`}
+		>
+			<Link
+				className="flex flex-row space-x-1 w-full cursor-pointer py-2"
+				to={`/chat/id/resource/e/${entity_id}/g/${group_id}/f/${id}?rand=${Math.random()}`}
+			>
+				<div>#</div>
+				<div>{title}</div>
+			</Link>
+
+			<div className="flex flex-row space-x-3 items-center">
+				<div className="flex flex-col justify-center h-full">
+					<ChannelActions channel_id={id} />
+				</div>
+				{unread > 0 && (
+					<div className="px-2 h-5 bg-red-500 flex flex-col items-center justify-center text-white rounded-full text-xs">
+						{unread}
+					</div>
+				)}
+			</div>
+		</div>
+	);
+};
+
 const NewChannelModal = () => {
 	let [channel, set_channel] = useState("");
 	let set_modal = useModalStore((state) => state.set_modal);
@@ -324,7 +351,12 @@ const NewChannelModal = () => {
 
 export default function Chat() {
 	let { pathname } = useLocation();
-	let { entity_id, channels: server_channels, direct_messages: server_direct_messages } = useLoaderData();
+	let {
+		entity_id,
+		channels: server_channels,
+		direct_messages: server_direct_messages,
+		groups = [],
+	} = useLoaderData();
 	let set_modal = useModalStore((state) => state.set_modal);
 	let channels = useChatsStore((state) => state.channels);
 	let direct_messages = useChatsStore((state) => state.direct_messages);
@@ -472,19 +504,21 @@ export default function Chat() {
 							+
 						</div>
 					</div>
-
-					<div className="flex flex-col w-full space-y-2 px-2 my-2">
-						{pipe(
-							map((channel) => (
-								<Channel
-									title={channel.title}
-									unread={channel.unread}
-									id={channel.id}
-									selected={chat_id == channel.id}
-									key={channel.id}
-								/>
-							))
-						)(channels)}
+					<div>
+						<div className="flex flex-col w-full space-y-2 px-2 my-2">
+							{pipe(
+								map((channel) => (
+									<GroupChannel
+										title={`${channel.first_name} ${channel.last_name}`}
+										// title={`${channel.group_id}`}
+										unread={channel.unread}
+										id={channel.group_id}
+										selected={chat_id == channel.group_id}
+										key={channel.group_id}
+									/>
+								))
+							)(groups)}
+						</div>
 					</div>
 					<div className="flex flex-row w-full border-y p-3 text-sm justify-between items-center">
 						<div>Direct Messages</div>
@@ -492,6 +526,7 @@ export default function Chat() {
 							+
 						</div>
 					</div>
+
 					<div className="flex flex-col w-full">
 						{pipe(
 							map((chat) => (
