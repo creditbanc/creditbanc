@@ -14,7 +14,7 @@ import { use_cache } from "~/components/CacheLink";
 import { on_success } from "./personal/success";
 import { is_authorized } from "./personal/authorized";
 import { redirect } from "@remix-run/node";
-import { Group } from "~/api/client/Group";
+import Group from "~/api/client/Group";
 import { get_session_entity_id } from "~/utils/auth.server";
 
 const log_route = `credit.report.personal`;

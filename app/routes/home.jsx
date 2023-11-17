@@ -3,7 +3,7 @@ import { get_session_entity_id } from "~/utils/auth.server";
 import { get_partition_id } from "~/utils/group.server";
 import { redirect } from "@remix-run/node";
 import { Outlet } from "@remix-run/react";
-import { Group } from "~/api/client/Group";
+import Group from "~/api/client/Group";
 import { lastValueFrom } from "rxjs";
 
 export const loader = async ({ request }) => {

@@ -47,6 +47,8 @@ import moment from "moment";
 import avatars from "~/data/avatars";
 import axios from "axios";
 import { redirect } from "@remix-run/node";
+import Group from "~/api/client/Group";
+import { lastValueFrom } from "rxjs";
 
 const useMessageStore = create((set) => ({
 	message: "",
@@ -92,6 +94,13 @@ export const loader = async ({ request }) => {
 		],
 	});
 
+	let group = new Group(chat_id);
+	let group_entity = group.entity.fold;
+	let entity = await lastValueFrom(group_entity);
+
+	// console.log("entity______");
+	// console.log(entity);
+
 	messages = pipe(sortBy(prop("created_at")))(messages);
 
 	let channel = await get_doc(["chats", chat_id]);
@@ -109,7 +118,7 @@ export const loader = async ({ request }) => {
 		queries: members_queries,
 	});
 
-	return { entity_id, messages, chat_id, channel, members };
+	return { entity_id, messages, chat_id, channel, members, chat_entity: entity };
 };
 
 const MessageActions = () => {
@@ -734,9 +743,11 @@ const ClosedMembersPanel = () => {
 };
 
 export default function Chat() {
-	let { channel } = useLoaderData();
+	let { channel, chat_entity } = useLoaderData();
 	const messages = useChatStore((state) => state.messages);
 	let chat_ui = useChatUIStore((state) => state.ui);
+
+	let chat_id = `${chat_entity.first_name} ${chat_entity.last_name}`;
 
 	return (
 		<div className="flex flex-col flex-1 h-full w-full overflow-hidden">
@@ -749,7 +760,7 @@ export default function Chat() {
 						/>
 					</div>
 					<div className="flex flex-col justify-center space-y-1 h-full">
-						<div className="font-semibold">#{channel.title}</div>
+						<div className="font-semibold"># {chat_id}</div>
 						<div className="text-sm flex flex-row items-center space-x-2">
 							<div>
 								<Members />

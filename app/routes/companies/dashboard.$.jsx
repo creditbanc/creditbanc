@@ -166,7 +166,6 @@ const navigation = [
 	{
 		name: "Chat",
 		href: ({ entity_id, group_id }) => `/chat/id/resource/e/${entity_id}/g/${group_id}/f/${group_id}`,
-
 		icon: ChatBubbleOvalLeftEllipsisIcon,
 		current: false,
 	},

@@ -25,7 +25,21 @@ const catch_with_default = curry((default_value, fn_name, error) => {
 	return rxof(default_value);
 });
 
-export class Group {
+let group_config_query = (group_id) => {
+	return {
+		path: ["role_configs"],
+		queries: [
+			{
+				param: "group_id",
+				predicate: "==",
+				value: group_id,
+			},
+		],
+		limit: [1],
+	};
+};
+
+export default class Group {
 	constructor(group_id) {
 		this.group_id = group_id;
 		this.response = rxof({});
@@ -52,6 +66,18 @@ export class Group {
 				business_report: pipe(filter(business_filter), length, gt(__, 0))(reports),
 			})),
 			catchError(catch_with_default({ personal: false, business: false }, "has_reports")),
+			concatMap(merge_with_current(this.response))
+		);
+
+		return this;
+	}
+
+	get entity() {
+		let group_id = this.group_id;
+		this.response = from(get_collection(group_config_query(group_id))).pipe(
+			rxmap(pipe(head, get("entity_id"))),
+			concatMap((entity_id) => from(get_doc(["entity", entity_id]))),
+			catchError(catch_with_default({}, "entity")),
 			concatMap(merge_with_current(this.response))
 		);
 

@@ -19,7 +19,7 @@ import { on_success } from "./business/success";
 import { is_authorized } from "./business/authorized";
 import { pipe } from "ramda";
 import { update_doc } from "~/utils/firebase";
-import { Group } from "~/api/client/Group";
+import Group from "~/api/client/Group";
 
 const log_route = `credit.report.business`;
 
