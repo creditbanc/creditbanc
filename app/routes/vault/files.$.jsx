@@ -1203,12 +1203,18 @@ const UploadForm = () => {
 				entity_id,
 				group_id,
 				...pipe(filter({ resource: "vault", id: "upload" }), head)(events_map),
+				meta: {
+					name: payload.name,
+					id: payload.id,
+					download_url: payload.download_url,
+					path: payload.path,
+				},
 			};
 
 			console.log("event_payload");
 			console.log(event_payload);
 
-			// await set_doc(["events", event_id], event_payload);
+			await set_doc(["events", event_id], event_payload);
 			await set_doc(["vault", id], payload);
 
 			set_files(["files"], [...files, payload]);

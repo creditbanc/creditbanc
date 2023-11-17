@@ -1,10 +1,11 @@
-import { curry, head, identity, pickAll, pipe, prop, uniqBy, values } from "ramda";
+import { curry, flatten, head, identity, or, pickAll, pipe, prop, reverse, sortBy, uniqBy, values } from "ramda";
 import { get_doc, get_collection } from "~/utils/firebase";
 import { forkJoin, from, merge, of as rxof, throwError, zip } from "rxjs";
 import { map as rxmap, concatMap, catchError, reduce as rxreduce, filter as rxfilter, tap } from "rxjs/operators";
 import { get, inspect } from "~/utils/helpers";
 import { is_authorized_f } from "../auth";
 import { reset_password } from "~/utils/entity.server";
+import { all } from "shades";
 
 const merge_with_current = curry((current, data) => {
 	return current.pipe(
@@ -13,19 +14,6 @@ const merge_with_current = curry((current, data) => {
 		})
 	);
 });
-
-let shared_config_query = (entity_id) => {
-	return {
-		path: ["roles"],
-		queries: [
-			{
-				param: "entity_id",
-				predicate: "==",
-				value: entity_id,
-			},
-		],
-	};
-};
 
 let entity_config_query = (entity_id) => {
 	return {
@@ -201,6 +189,19 @@ export default class Entity {
 		const get_entity_props = pipe(pickAll(["first_name", "last_name", "id", "email"]));
 		const with_group_id = (group_id) => (entity) => ({ ...entity, group_id });
 
+		let shared_config_query = (entity_id) => {
+			return {
+				path: ["roles"],
+				queries: [
+					{
+						param: "entity_id",
+						predicate: "==",
+						value: entity_id,
+					},
+				],
+			};
+		};
+
 		return this.entity.pipe(
 			concatMap((entity) =>
 				from(get_collection(shared_config_query(entity.id))).pipe(
@@ -219,6 +220,36 @@ export default class Entity {
 
 	get shared_companies() {
 		this.response = this._shared_companies_.pipe(concatMap(merge_with_current(this.response)));
+		return this;
+	}
+
+	get notifications() {
+		console.log("api.client.Entity.notifications");
+
+		let notifications_query = (entity_id) => {
+			return {
+				path: ["events"],
+				queries: [
+					{
+						param: "group_id",
+						predicate: "==",
+						value: entity_id,
+					},
+				],
+			};
+		};
+
+		this.response = this._shared_companies_.pipe(
+			rxmap(pipe(get(all, "group_id"))),
+			concatMap(identity),
+			concatMap((group_id) => from(get_collection(notifications_query(group_id)))),
+			rxreduce((acc, curr) => [...acc, curr], []),
+			rxmap(pipe(flatten, sortBy(prop("created_at")), reverse)),
+			// tap(() => console.log("api.client.Entity.notifications")),
+			// tap(inspect),
+			concatMap(merge_with_current(this.response))
+		);
+
 		return this;
 	}
 

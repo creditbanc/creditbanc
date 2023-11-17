@@ -70,7 +70,7 @@ export const loader = async ({ request }) => {
 	let business = new BusinessReport(group_id);
 	let personal = new PersonalReport(group_id);
 
-	let entity_response = entity.identity.companies.fold;
+	let entity_response = entity.identity.companies.notifications.fold;
 	let business_response = business.business_info.scores.fold;
 	let personal_response = personal.scores.fold;
 

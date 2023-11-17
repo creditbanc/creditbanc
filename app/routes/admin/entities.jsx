@@ -62,12 +62,13 @@ const loader_data = subject.pipe(
 			rxmap((entities) => ({ entities }))
 		);
 
-		return entities.pipe(
-			tap((value) => {
-				console.log("admin.entities.tap");
-				console.log(value);
-			})
-		);
+		return entities
+			.pipe
+			// tap((value) => {
+			// 	console.log("admin.entities.tap");
+			// 	console.log(value);
+			// })
+			();
 	})
 );
 
