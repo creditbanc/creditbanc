@@ -1,10 +1,52 @@
 import useStore from "./store";
 import { useState } from "react";
 import { RadioGroup } from "@headlessui/react";
-import { classNames, currency, get_entity_id, get_group_id, mapIndexed } from "~/utils/helpers";
+import { classNames, currency, form_params, get_entity_id, get_group_id, mapIndexed } from "~/utils/helpers";
 import { pipe } from "ramda";
 import { StarIcon } from "@heroicons/react/20/solid";
-import { Link, useLocation } from "@remix-run/react";
+import { Link, useLocation, useSubmit } from "@remix-run/react";
+import { signup } from "~/utils/auth.server";
+import { concatMap, from, lastValueFrom, map as rxmap, tap } from "rxjs";
+import { set_doc } from "~/utils/firebase";
+import { redirect } from "@remix-run/node";
+
+export const action = async ({ request }) => {
+	let params = await form_params(request);
+
+	console.log("lp.action_____");
+	console.log(params);
+
+	let { email, first_name, last_name } = params;
+
+	let response = from(
+		signup({
+			email,
+			first_name,
+			last_name,
+			is_default_password: true,
+		})
+	).pipe(
+		tap(() => console.log("lp.entity_created")),
+		tap((entity) => console.log(entity)),
+		concatMap(({ entity_id, group_id }) => {
+			return from(set_doc(["application", entity_id], { ...params, entity_id, group_id })).pipe(
+				rxmap(() => ({
+					entity_id,
+					group_id,
+				}))
+			);
+		})
+	);
+
+	let { entity_id, group_id } = await lastValueFrom(response);
+
+	console.log("lp.entity_id");
+	console.log(entity_id);
+	console.log("lp.group_id");
+	console.log(group_id);
+	// return redirect(`/apply/financing_needs/resource/e/${entity_id}/g/${group_id}`);
+	return null;
+};
 
 const Header = () => {
 	return (
@@ -25,17 +67,20 @@ const Header = () => {
 const loans = [
 	{
 		name: "SBA Loan",
+		id: "sba",
 		description:
 			"The gold standard in business lending. Variable interest rates, longest terms, and lowest monthly payments.",
 		price: "Loans up to: $500,000",
 	},
 	{
 		name: "Term Loan",
+		id: "term",
 		description: "Fixed interest rates and shorter repayment terms. Faster funding and less documentation.",
 		price: "Loans up to: $350,000",
 	},
 	{
 		name: "Line of Credit",
+		id: "loc",
 		description:
 			"The capital you need when you need it. Connect a bank account for fast funding in as little as 2 business days.",
 		price: "Loans up to: $150,000",
@@ -44,6 +89,7 @@ const loans = [
 
 const LoansList = () => {
 	const [selected, setSelected] = useState(loans[0]);
+	const { set_props } = useStore((state) => state);
 
 	return (
 		<RadioGroup value={selected} onChange={setSelected}>
@@ -60,6 +106,7 @@ const LoansList = () => {
 									"relative block cursor-pointer rounded border bg-white px-6 py-4 shadow-sm focus:outline-none sm:flex sm:justify-between"
 								)
 							}
+							onClick={() => set_props({ loan_type: plan.id })}
 						>
 							{({ active, checked }) => (
 								<>
@@ -159,6 +206,8 @@ const LoanStats = () => {
 };
 
 const PersonalInfoForm = () => {
+	const { set_props, first_name, last_name, email } = useStore((state) => state);
+
 	return (
 		<form>
 			<div className="flex flex-col gap-y-5">
@@ -168,11 +217,13 @@ const PersonalInfoForm = () => {
 					</label>
 					<div className="mt-2">
 						<input
+							value={first_name}
 							type="text"
 							name="first-name"
 							id="first-name"
 							autoComplete="given-name"
-							className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-sm sm:leading-6"
+							className="block w-full rounded-md border-0 px-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-sm sm:leading-6"
+							onChange={(e) => set_props({ first_name: e.target.value })}
 						/>
 					</div>
 				</div>
@@ -183,11 +234,13 @@ const PersonalInfoForm = () => {
 					</label>
 					<div className="mt-2">
 						<input
+							value={last_name}
 							type="text"
 							name="last-name"
 							id="last-name"
 							autoComplete="family-name"
-							className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-sm sm:leading-6"
+							className="block w-full rounded-md border-0 px-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-sm sm:leading-6"
+							onChange={(e) => set_props({ last_name: e.target.value })}
 						/>
 					</div>
 				</div>
@@ -198,11 +251,13 @@ const PersonalInfoForm = () => {
 					</label>
 					<div className="mt-2">
 						<input
+							value={email}
 							id="email"
 							name="email"
 							type="email"
 							autoComplete="email"
-							className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-sm sm:leading-6"
+							className="block w-full rounded-md border-0 px-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-sm sm:leading-6"
+							onChange={(e) => set_props({ email: e.target.value })}
 						/>
 					</div>
 				</div>
@@ -248,6 +303,24 @@ export default function Container() {
 	let { pathname } = useLocation();
 	let entity_id = get_entity_id(pathname);
 	let group_id = get_group_id(pathname);
+	const submit = useSubmit();
+	let { loan_type, loan_amount, first_name, last_name, email } = useStore((state) => state);
+
+	const onSubmit = () => {
+		console.log("onSubmit");
+		let payload = {
+			loan_type,
+			loan_amount,
+			email,
+			first_name,
+			last_name,
+		};
+
+		// console.log("payload");
+		// console.log(payload);
+
+		submit(payload, { action: `/apply/lp/resource/e/${entity_id}/g/${group_id}`, method: "post" });
+	};
 
 	return (
 		<div className="flex flex-col items-center w-full h-full overflow-y-scroll pb-10">
@@ -270,21 +343,22 @@ export default function Container() {
 						/>
 
 						<LoanAmountSlider />
-						<div className="my-5">
+						{/* <div className="my-5">
 							<LoanStats />
-						</div>
+						</div> */}
 					</div>
 					<div className="flex flex-col bg-white p-5 shadow rounded border">
 						<SectionHeading headline={`Step 3: Tell us a bit about you`} />
 						<PersonalInfoForm />
 					</div>
 					<div className="flex flex-col w-full items-center gap-y-4">
-						<Link
-							to={`/apply/financing_needs/resource/e/${entity_id}/g/${group_id}`}
+						<div
+							// to={`/apply/financing_needs/resource/e/${entity_id}/g/${group_id}`}
 							className="flex flex-col bg-blue-600 py-3 px-4 rounded-full text-white w-[400px] items-center cursor-pointer"
+							onClick={onSubmit}
 						>
 							Continue to pre-qualify
-						</Link>
+						</div>
 						<div className="flex flex-row w-full justify-center items-center text-sm gap-x-2">
 							<svg
 								xmlns="http://www.w3.org/2000/svg"

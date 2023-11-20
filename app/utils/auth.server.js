@@ -31,15 +31,7 @@ const storage = createCookieSessionStorage({
 export const signup = async (form) => {
 	console.log("utils.auth.server.signup");
 
-	let {
-		email,
-		password,
-		redirect_to = "/home",
-		new_entity = false,
-		first_name,
-		last_name,
-		plan_id = "essential",
-	} = form;
+	let { email, password = "default", first_name, last_name, plan_id = "builder", is_default_password = false } = form;
 
 	let partition_id = uuidv4();
 
@@ -50,6 +42,7 @@ export const signup = async (form) => {
 		first_name,
 		last_name,
 		plan_id,
+		is_default_password,
 	});
 
 	let partition = await create_partition({ entity_id: entity.id, partition_id });
@@ -68,10 +61,20 @@ export const signup = async (form) => {
 		name: "Full access",
 	});
 
-	redirect_to = new_entity ? redirect_to + `/resource/e/${entity.id}/g/${partition.id}` : redirect_to;
+	return { entity_id: entity.id, group_id: partition.id };
 
-	return create_user_session(entity.id, redirect_to);
+	// redirect_to = new_entity ? redirect_to + `/resource/e/${entity.id}/g/${partition.id}` : redirect_to;
+
+	// return create_user_session(entity.id, redirect_to);
 };
+
+// const create_user_session = async (entity_id) => {
+// 	const session = await storage.getSession();
+// 	session.set("entity_id", entity_id);
+// 	return redirect(redirect_to, {
+// 		headers: { "Set-Cookie": await storage.commitSession(session) },
+// 	});
+// };
 
 export const signin = async (form) => {
 	let { email, password } = form;
@@ -111,7 +114,7 @@ export const signin = async (form) => {
 	return create_user_session(entity.id, redirect_url);
 };
 
-const create_user_session = async (entity_id, redirect_to) => {
+const create_user_session_with_redirect = async (entity_id, redirect_to) => {
 	const session = await storage.getSession();
 	session.set("entity_id", entity_id);
 	return redirect(redirect_to, {
