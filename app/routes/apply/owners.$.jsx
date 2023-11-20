@@ -1,5 +1,5 @@
 import { classNames, get_entity_id, get_group_id, mapIndexed } from "~/utils/helpers";
-import { pipe, map, head, values } from "ramda";
+import { pipe, map, head, values, length } from "ramda";
 import useStore from "./store";
 import { useState } from "react";
 import { RadioGroup } from "@headlessui/react";
@@ -67,7 +67,9 @@ const SectionHeading = ({ headline, subheadline }) => {
 	);
 };
 
-const OwnerForm = () => {
+const OwnerForm = ({ owner }) => {
+	const { set_path } = useStore();
+
 	return (
 		<form>
 			<div className="border-b border-gray-900/10 pb-12">
@@ -78,11 +80,13 @@ const OwnerForm = () => {
 						</label>
 						<div className="mt-2">
 							<input
+								value={owner.first_name}
 								type="text"
 								name="first-name"
 								id="first-name"
 								autoComplete="given-name"
-								className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+								className="px-2 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+								onChange={(e) => set_path(["owners", owner.id, "first_name"], e.target.value)}
 							/>
 						</div>
 					</div>
@@ -93,11 +97,13 @@ const OwnerForm = () => {
 						</label>
 						<div className="mt-2">
 							<input
+								value={owner.last_name}
 								type="text"
 								name="last-name"
 								id="last-name"
 								autoComplete="family-name"
-								className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+								className="px-2 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+								onChange={(e) => set_path(["owners", owner.id, "last_name"], e.target.value)}
 							/>
 						</div>
 					</div>
@@ -108,11 +114,13 @@ const OwnerForm = () => {
 						</label>
 						<div className="mt-2">
 							<input
+								value={owner.email}
 								id="email"
 								name="email"
 								type="email"
 								autoComplete="email"
-								className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+								className="px-2 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+								onChange={(e) => set_path(["owners", owner.id, "email"], e.target.value)}
 							/>
 						</div>
 					</div>
@@ -123,11 +131,13 @@ const OwnerForm = () => {
 						</label>
 						<div className="mt-2">
 							<input
+								value={owner?.address?.street}
 								type="text"
 								name="street-address"
 								id="street-address"
 								autoComplete="street-address"
-								className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+								className="px-2 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+								onChange={(e) => set_path(["owners", owner.id, "address", "street"], e.target.value)}
 							/>
 						</div>
 					</div>
@@ -138,11 +148,13 @@ const OwnerForm = () => {
 						</label>
 						<div className="mt-2">
 							<input
+								value={owner?.address?.city}
 								type="text"
 								name="city"
 								id="city"
 								autoComplete="address-level2"
-								className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+								className="px-2 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+								onChange={(e) => set_path(["owners", owner.id, "address", "city"], e.target.value)}
 							/>
 						</div>
 					</div>
@@ -153,11 +165,13 @@ const OwnerForm = () => {
 						</label>
 						<div className="mt-2">
 							<input
+								value={owner?.address?.state}
 								type="text"
 								name="region"
 								id="region"
 								autoComplete="address-level1"
-								className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+								className="px-2 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+								onChange={(e) => set_path(["owners", owner.id, "address", "state"], e.target.value)}
 							/>
 						</div>
 					</div>
@@ -168,11 +182,13 @@ const OwnerForm = () => {
 						</label>
 						<div className="mt-2">
 							<input
+								value={owner?.address?.zip}
 								type="text"
 								name="postal-code"
 								id="postal-code"
 								autoComplete="postal-code"
-								className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+								className="px-2 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+								onChange={(e) => set_path(["owners", owner.id, "address", "zip"], e.target.value)}
 							/>
 						</div>
 					</div>
@@ -289,13 +305,20 @@ export default function Container() {
 	let { pathname } = useLocation();
 	let entity_id = get_entity_id(pathname);
 	let group_id = get_group_id(pathname);
+	let { owners } = useStore((state) => state);
+
+	console.log("owners_length");
+	console.log(length(values(owners)));
 
 	return (
-		<div className="flex flex-col items-center w-full h-full overflow-y-scroll pb-10">
+		<div className="flex flex-col items-center w-full h-full overflow-y-scroll">
 			<div className="flex flex-col w-full mb-10">
 				<Progress />
 			</div>
-			<div className="flex flex-col justify-center h-full w-[600px] my-[100px]">
+			<div
+				className="flex flex-col h-full w-[600px]"
+				style={{ justifyContent: length(values(owners)) == 0 && "center" }}
+			>
 				<div className="flex flex-col">
 					<SectionHeading
 						headline={<div>Who owns 20% or more of roas?</div>}
@@ -312,7 +335,7 @@ export default function Container() {
 				<div className="flex flex-col w-full ">
 					<Owners />
 				</div>
-				<div className="flex flex-row w-full items-center gap-y-4 my-5 gap-x-3">
+				<div className="flex flex-row w-full items-center gap-y-4 my-5 gap-x-3 pb-[50px]">
 					<div className="flex flex-col py-3 px-4 rounded-full text-blue-600 w-1/2 items-center cursor-pointer border-2 border-blue-600">
 						Back
 					</div>

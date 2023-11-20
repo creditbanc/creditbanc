@@ -941,6 +941,11 @@ video {
   margin-bottom: 1.75rem;
 }
 
+.my-\[100px\] {
+  margin-top: 100px;
+  margin-bottom: 100px;
+}
+
 .my-\[10px\] {
   margin-top: 10px;
   margin-bottom: 10px;
@@ -949,26 +954,6 @@ video {
 .my-\[5px\] {
   margin-top: 5px;
   margin-bottom: 5px;
-}
-
-.my-8 {
-  margin-top: 2rem;
-  margin-bottom: 2rem;
-}
-
-.my-6 {
-  margin-top: 1.5rem;
-  margin-bottom: 1.5rem;
-}
-
-.my-\[100px\] {
-  margin-top: 100px;
-  margin-bottom: 100px;
-}
-
-.my-\[50px\] {
-  margin-top: 50px;
-  margin-bottom: 50px;
 }
 
 .-mb-6 {
@@ -1343,8 +1328,8 @@ video {
   margin-bottom: 100px;
 }
 
-.mb-8 {
-  margin-bottom: 2rem;
+.mb-\[200px\] {
+  margin-bottom: 200px;
 }
 
 .block {
@@ -3482,11 +3467,6 @@ video {
   padding-bottom: calc(0.5rem - 1px);
 }
 
-.py-8 {
-  padding-top: 2rem;
-  padding-bottom: 2rem;
-}
-
 .pb-0 {
   padding-bottom: 0px;
 }
@@ -3689,6 +3669,14 @@ video {
 
 .pt-\[calc\(23\/318\*100\%\)\] {
   padding-top: calc(23 / 318 * 100%);
+}
+
+.pb-\[100px\] {
+  padding-bottom: 100px;
+}
+
+.pb-\[50px\] {
+  padding-bottom: 50px;
 }
 
 .text-left {
