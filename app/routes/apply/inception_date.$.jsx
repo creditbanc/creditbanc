@@ -158,16 +158,16 @@ export default function Container() {
 			<div className="flex flex-col w-full">
 				<Progress />
 			</div>
-			<div className="flex flex-col justify-center h-full">
+			<div className="flex flex-col justify-center h-full min-w-[600px]">
 				<div className="flex flex-col my-4">
 					<SectionHeading
-						headline={<div>First, how soon do you need funding?</div>}
-						subheadline={
-							<div className="flex flex-row gap-x-2">
-								<div>This helps us find the best loan for your needs.</div>
-								<div className="font-semibold">Learn more ›</div>
-							</div>
-						}
+						headline={<div>How long have you been in business?</div>}
+						// subheadline={
+						// 	<div className="flex flex-row gap-x-2">
+						// 		<div>This helps us find the best loan for your needs.</div>
+						// 		<div className="font-semibold">Learn more ›</div>
+						// 	</div>
+						// }
 					/>
 				</div>
 				<div className="flex flex-col w-full">

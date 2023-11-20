@@ -26,7 +26,7 @@ import Modal from "~/components/Modal";
 import { useModalStore } from "~/hooks/useModal";
 import CacheLink from "./CacheLink";
 import { ChatBubbleLeftIcon, CheckCircleIcon } from "@heroicons/react/24/outline";
-import { notifications_map } from "~/components/Notifications";
+import Notification, { notifications_map } from "~/components/Notifications";
 
 let use_notifications_store = store({ notifications: [] });
 
@@ -519,74 +519,7 @@ const discussions = [
 	},
 ];
 
-const NotificationsList = () => {
-	// const notifications = use_notifications_store((state) => state.notifications);
-
-	console.log("NotificationsList______");
-	// console.log(notifications);
-
-	return <div></div>;
-
-	return (
-		<ul role="list" className="divide-y divide-gray-100 ">
-			{discussions.map((discussion) => (
-				<li
-					key={discussion.id}
-					className="flex flex-wrap items-center justify-between gap-x-6 gap-y-4 py-5 sm:flex-nowrap"
-				>
-					<div>
-						<p className="text-sm font-semibold leading-6 text-gray-900">
-							<a href={discussion.href} className="hover:underline">
-								{discussion.title}
-							</a>
-						</p>
-						<div className="mt-1 flex items-center gap-x-2 text-xs leading-5 text-gray-500">
-							<p>
-								<a href={discussion.author.href} className="hover:underline">
-									{discussion.author.name}
-								</a>
-							</p>
-							<svg viewBox="0 0 2 2" className="h-0.5 w-0.5 fill-current">
-								<circle cx={1} cy={1} r={1} />
-							</svg>
-							<p>
-								<time dateTime={discussion.dateTime}>{discussion.date}</time>
-							</p>
-						</div>
-					</div>
-					<dl className="flex w-full flex-none justify-between gap-x-8 sm:w-auto">
-						<div className="flex -space-x-0.5">
-							<dt className="sr-only">Commenters</dt>
-							{discussion.commenters.map((commenter) => (
-								<dd key={commenter.id}>
-									<img
-										className="h-6 w-6 rounded-full bg-gray-50 ring-2 ring-white"
-										src={commenter.imageUrl}
-										alt={commenter.name}
-									/>
-								</dd>
-							))}
-						</div>
-						<div className="flex w-16 gap-x-2.5">
-							<dt>
-								<span className="sr-only">Total comments</span>
-								{discussion.status === "resolved" ? (
-									<CheckCircleIcon className="h-6 w-6 text-gray-400" aria-hidden="true" />
-								) : (
-									<ChatBubbleLeftIcon className="h-6 w-6 text-gray-400" aria-hidden="true" />
-								)}
-							</dt>
-							<dd className="text-sm leading-6 text-gray-900">{discussion.totalComments}</dd>
-						</div>
-					</dl>
-				</li>
-			))}
-		</ul>
-	);
-};
-
 const NotificationsHeading = ({ children }) => {
-	console.log("NotificationsHeading______");
 	return (
 		<div className="border-b border-gray-100 bg-white px-3 py-4 flex flex-row justify-between">
 			<h3 className="text-base font-semibold leading-6 text-gray-900">Notifications</h3>
@@ -613,9 +546,72 @@ const NotificationsFooter = () => {
 	);
 };
 
+const NotificationsList = () => {
+	let notifications = use_notifications_store((state) => state.notifications);
+
+	return (
+		<ul role="list" className="divide-y divide-gray-100 ">
+			{discussions.map((notification) => (
+				<li
+					key={notification?.id}
+					className="flex flex-wrap items-center justify-between gap-x-6 gap-y-4 py-5 sm:flex-nowrap"
+				>
+					<div>
+						<p className="text-sm font-semibold leading-6 text-gray-900">
+							<a className="hover:underline">{notification?.title}</a>
+						</p>
+						<div className="mt-1 flex items-center gap-x-2 text-xs leading-5 text-gray-500">
+							<p>
+								<a href={notification?.author?.href} className="hover:underline">
+									{notification?.author?.name}
+								</a>
+							</p>
+							<svg viewBox="0 0 2 2" className="h-0.5 w-0.5 fill-current">
+								<circle cx={1} cy={1} r={1} />
+							</svg>
+							<p>
+								<time dateTime={notification?.dateTime}>{notification?.date}</time>
+							</p>
+						</div>
+					</div>
+					<dl className="flex w-full flex-none justify-between gap-x-8 sm:w-auto">
+						<div className="flex -space-x-0.5">
+							<dt className="sr-only">Commenters</dt>
+							{notification?.commenters?.map((commenter) => (
+								<dd key={commenter?.id}>
+									<img
+										className="h-6 w-6 rounded-full bg-gray-50 ring-2 ring-white"
+										src={commenter?.imageUrl}
+										alt={commenter?.name}
+									/>
+								</dd>
+							))}
+						</div>
+						<div className="flex w-16 gap-x-2.5">
+							<dt>
+								<span className="sr-only">Total comments</span>
+								{notification?.status === "resolved" ? (
+									<CheckCircleIcon className="h-6 w-6 text-gray-400" aria-hidden="true" />
+								) : (
+									<ChatBubbleLeftIcon className="h-6 w-6 text-gray-400" aria-hidden="true" />
+								)}
+							</dt>
+							<dd className="text-sm leading-6 text-gray-900">{notification?.totalComments}</dd>
+						</div>
+					</dl>
+				</li>
+				// <Notification notification={notification} />
+			))}
+		</ul>
+	);
+};
+
 const NotificationsDropdown = () => {
 	let notifications = use_notifications_store((state) => state.notifications);
 	let notification_button_ref = useRef(null);
+
+	console.log("notifications_____");
+	console.log(notifications);
 
 	const onCloseNotifications = () => {
 		notification_button_ref.current?.click();
@@ -641,7 +637,7 @@ const NotificationsDropdown = () => {
 				leaveFrom="transform opacity-100 scale-100"
 				leaveTo="transform opacity-0 scale-95"
 			>
-				<Menu.Items className="absolute right-0 z-10 mt-1 w-[500px] h-[450px] overflow-y-scroll origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none scrollbar-none">
+				<Menu.Items className="absolute right-0 z-10 mt-1 w-[500px] max-h-[450px] overflow-y-scroll origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none scrollbar-none">
 					<div className="sticky top-0">
 						<NotificationsHeading>
 							<div className="border rounded-lg p-1 cursor-pointer" onClick={onCloseNotifications}>
@@ -650,68 +646,7 @@ const NotificationsDropdown = () => {
 						</NotificationsHeading>
 					</div>
 					<div className="py-1 px-6">
-						<ul role="list" className="divide-y divide-gray-100 ">
-							{notifications.map((discussion) => (
-								<li
-									key={discussion?.id}
-									className="flex flex-wrap items-center justify-between gap-x-6 gap-y-4 py-5 sm:flex-nowrap"
-								>
-									<div>
-										<p className="text-sm font-semibold leading-6 text-gray-900">
-											<a href={discussion?.href} className="hover:underline">
-												{discussion?.title}
-											</a>
-										</p>
-										<div className="mt-1 flex items-center gap-x-2 text-xs leading-5 text-gray-500">
-											<p>
-												<a href={discussion?.author?.href} className="hover:underline">
-													{discussion?.author?.name}
-												</a>
-											</p>
-											<svg viewBox="0 0 2 2" className="h-0.5 w-0.5 fill-current">
-												<circle cx={1} cy={1} r={1} />
-											</svg>
-											<p>
-												<time dateTime={discussion?.dateTime}>{discussion?.date}</time>
-											</p>
-										</div>
-									</div>
-									<dl className="flex w-full flex-none justify-between gap-x-8 sm:w-auto">
-										<div className="flex -space-x-0.5">
-											<dt className="sr-only">Commenters</dt>
-											{discussion?.commenters?.map((commenter) => (
-												<dd key={commenter.id}>
-													<img
-														className="h-6 w-6 rounded-full bg-gray-50 ring-2 ring-white"
-														src={commenter?.imageUrl}
-														alt={commenter?.name}
-													/>
-												</dd>
-											))}
-										</div>
-										<div className="flex w-16 gap-x-2.5">
-											<dt>
-												<span className="sr-only">Total comments</span>
-												{discussion?.status === "resolved" ? (
-													<CheckCircleIcon
-														className="h-6 w-6 text-gray-400"
-														aria-hidden="true"
-													/>
-												) : (
-													<ChatBubbleLeftIcon
-														className="h-6 w-6 text-gray-400"
-														aria-hidden="true"
-													/>
-												)}
-											</dt>
-											<dd className="text-sm leading-6 text-gray-900">
-												{discussion?.totalComments}
-											</dd>
-										</div>
-									</dl>
-								</li>
-							))}
-						</ul>
+						<NotificationsList />
 					</div>
 					<div className="sticky bottom-0">
 						<NotificationsFooter />
@@ -736,7 +671,9 @@ export default function Nav({ entity_id, roles, companies, notifications = [] })
 	}, [roles]);
 
 	useEffect(() => {
-		set_notifications({ notifications });
+		if (!isEmpty(notifications)) {
+			set_notifications({ notifications });
+		}
 	}, [notifications]);
 
 	const Nav = () => {

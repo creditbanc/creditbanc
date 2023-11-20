@@ -146,11 +146,11 @@ export default function Container() {
 			<div className="flex flex-col justify-center h-full">
 				<div className="flex flex-col my-4">
 					<SectionHeading
-						headline={<div>First, how soon do you need funding?</div>}
+						headline={<div>How many full time employees do you have?</div>}
 						subheadline={
-							<div className="flex flex-row gap-x-2">
-								<div>This helps us find the best loan for your needs.</div>
-								<div className="font-semibold">Learn more ›</div>
+							<div className="flex flex-row gap-x- justify-center">
+								<div>This helps us estimate your business size.</div>
+								{/* <div className="font-semibold">Learn more ›</div> */}
 							</div>
 						}
 					/>

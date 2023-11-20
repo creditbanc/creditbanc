@@ -160,14 +160,18 @@ export default function Container() {
 			<div className="flex flex-col w-full">
 				<Progress />
 			</div>
-			<div className="flex flex-col justify-center h-full">
+			<div className="flex flex-col justify-center h-full w-[600px]">
 				<div className="flex flex-col my-4">
 					<SectionHeading
-						headline={<div>First, how soon do you need funding?</div>}
+						headline={<div>What is your estimated gross annual revenue?</div>}
 						subheadline={
 							<div className="flex flex-row gap-x-2">
-								<div>This helps us find the best loan for your needs.</div>
-								<div className="font-semibold">Learn more ›</div>
+								<div>
+									Your gross annual revenue is the total amount of money your business makes during a
+									12-month period. Do not deduct any expenses or taxes. This helps us narrow down the
+									right type of loan for you.
+								</div>
+								{/* <div className="font-semibold">Learn more ›</div> */}
 							</div>
 						}
 					/>

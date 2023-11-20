@@ -175,11 +175,13 @@ export default function Container() {
 			<div className="flex flex-col justify-center h-full">
 				<div className="flex flex-col my-4">
 					<SectionHeading
-						headline={<div>First, how soon do you need funding?</div>}
+						headline={<div>What is your business industry?</div>}
 						subheadline={
 							<div className="flex flex-row gap-x-2">
-								<div>This helps us find the best loan for your needs.</div>
-								<div className="font-semibold">Learn more ›</div>
+								<div>
+									If you don’t see an option that fits your company, please select the closest option.
+									You can select the exact industry further down in the application.
+								</div>
 							</div>
 						}
 					/>

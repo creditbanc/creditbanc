@@ -269,11 +269,11 @@ export default function Container() {
 			<div className="flex flex-col justify-center h-full">
 				<div className="flex flex-col my-4">
 					<SectionHeading
-						headline={<div>First, how soon do you need funding?</div>}
+						headline={<div>Where is your business located?</div>}
 						subheadline={
-							<div className="flex flex-row gap-x-2">
-								<div>This helps us find the best loan for your needs.</div>
-								<div className="font-semibold">Learn more ›</div>
+							<div className="flex flex-col gap-x-2">
+								<div>If you have multiple locations, we only need the primary business address.</div>
+								<div className="">If you don’t have a business address, enter your home address.</div>
 							</div>
 						}
 					/>

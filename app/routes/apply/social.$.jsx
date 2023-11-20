@@ -103,14 +103,17 @@ export default function Container() {
 			<div className="flex flex-col w-full">
 				<Progress />
 			</div>
-			<div className="flex flex-col justify-center h-full">
+			<div className="flex flex-col justify-center h-full w-[600px]">
 				<div className="flex flex-col my-4">
 					<SectionHeading
-						headline={<div>First, how soon do you need funding?</div>}
+						headline={<div>We aren’t able to find your financing option yet</div>}
 						subheadline={
 							<div className="flex flex-row gap-x-2">
-								<div>This helps us find the best loan for your needs.</div>
-								<div className="font-semibold">Learn more ›</div>
+								<div>
+									We need your Social Security Number to complete a credit check to match you with
+									eligible products. This will not show up as an inquiry on your credit report.
+								</div>
+								{/* <div className="font-semibold">Learn more ›</div> */}
 							</div>
 						}
 					/>

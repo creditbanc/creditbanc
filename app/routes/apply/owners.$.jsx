@@ -134,14 +134,17 @@ export default function Container() {
 			<div className="flex flex-col w-full">
 				<Progress />
 			</div>
-			<div className="flex flex-col justify-center h-full">
+			<div className="flex flex-col justify-center h-full w-[600px]">
 				<div className="flex flex-col my-4">
 					<SectionHeading
-						headline={<div>First, how soon do you need funding?</div>}
+						headline={<div>Who owns 20% or more of roas?</div>}
 						subheadline={
 							<div className="flex flex-row gap-x-2">
-								<div>This helps us find the best loan for your needs.</div>
-								<div className="font-semibold">Learn more ›</div>
+								<div>
+									Enter all owners of the business who own 20% or more of roas. Rest easy, this won’t
+									impact your credit and won’t show up as an inquiry on your credit report.
+								</div>
+								{/* <div className="font-semibold">Learn more ›</div> */}
 							</div>
 						}
 					/>
