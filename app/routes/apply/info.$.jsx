@@ -1,10 +1,12 @@
-import { form_params, get_entity_id, get_group_id, mapIndexed } from "~/utils/helpers";
-import { pipe } from "ramda";
+import { form_params, get, get_entity_id, get_group_id, mapIndexed } from "~/utils/helpers";
+import { head, pipe } from "ramda";
 import useStore from "./store";
 import { Link, useLocation, useSubmit } from "@remix-run/react";
 import { from, lastValueFrom, map as rxmap } from "rxjs";
 import { update_doc } from "~/utils/firebase";
 import { redirect } from "@remix-run/node";
+import { filter } from "shades";
+import { navigation } from "./navigation";
 
 export const action = async ({ request }) => {
 	console.log("request.url");
@@ -26,7 +28,9 @@ export const action = async ({ request }) => {
 	let response = from(update_doc(["application", entity_id], payload)).pipe(rxmap(() => ({ entity_id, group_id })));
 
 	await lastValueFrom(response);
-	return redirect(`/apply/entity/resource/e/${entity_id}/g/${group_id}`);
+
+	let next = pipe(filter({ id: "info" }), head, get("next"))(navigation);
+	return redirect(next({ entity_id, group_id }));
 };
 
 const steps = [
@@ -153,7 +157,7 @@ export default function Container() {
 		// console.log(payload);
 
 		submit(payload, {
-			action: `/apply/address/resource/e/${entity_id}/g/${group_id}`,
+			action: `/apply/info/resource/e/${entity_id}/g/${group_id}`,
 			method: "post",
 		});
 	};

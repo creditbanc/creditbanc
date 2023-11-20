@@ -20,18 +20,18 @@ export const navigation = [
 	},
 	{
 		id: "industry",
-		next: ({ entity_id, group_id }) => `/apply/address/resource/e/${entity_id}/g/${group_id}`,
+		next: ({ entity_id, group_id }) => `/apply/entity/resource/e/${entity_id}/g/${group_id}`,
 		back: ({ entity_id, group_id }) => `/apply/inception_date/resource/e/${entity_id}/g/${group_id}`,
 	},
 	{
-		id: "address",
-		next: ({ entity_id, group_id }) => `/apply/entity/resource/e/${entity_id}/g/${group_id}`,
+		id: "entity",
+		next: ({ entity_id, group_id }) => `/apply/address/resource/e/${entity_id}/g/${group_id}`,
 		back: ({ entity_id, group_id }) => `/apply/industry/resource/e/${entity_id}/g/${group_id}`,
 	},
 	{
-		id: "entity",
+		id: "address",
 		next: ({ entity_id, group_id }) => `/apply/employees/resource/e/${entity_id}/g/${group_id}`,
-		back: ({ entity_id, group_id }) => `/apply/address/resource/e/${entity_id}/g/${group_id}`,
+		back: ({ entity_id, group_id }) => `/apply/entity/resource/e/${entity_id}/g/${group_id}`,
 	},
 	{
 		id: "employees",

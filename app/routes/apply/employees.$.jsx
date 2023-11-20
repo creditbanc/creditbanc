@@ -1,5 +1,5 @@
-import { classNames, form_params, get_entity_id, get_group_id, mapIndexed } from "~/utils/helpers";
-import { pipe, map } from "ramda";
+import { classNames, form_params, get, get_entity_id, get_group_id, mapIndexed } from "~/utils/helpers";
+import { pipe, map, head } from "ramda";
 import useStore from "./store";
 import { useState } from "react";
 import { RadioGroup } from "@headlessui/react";
@@ -7,6 +7,8 @@ import { Link, useLocation, useSubmit } from "@remix-run/react";
 import { from, lastValueFrom, map as rxmap } from "rxjs";
 import { update_doc } from "~/utils/firebase";
 import { redirect } from "@remix-run/node";
+import { navigation } from "./navigation";
+import { filter } from "shades";
 
 export const action = async ({ request }) => {
 	console.log("request.url");
@@ -28,7 +30,8 @@ export const action = async ({ request }) => {
 	let response = from(update_doc(["application", entity_id], payload)).pipe(rxmap(() => ({ entity_id, group_id })));
 
 	await lastValueFrom(response);
-	return redirect(`/apply/annual_revenue/resource/e/${entity_id}/g/${group_id}`);
+	let next = pipe(filter({ id: "industry" }), head, get("next"))(navigation);
+	return redirect(next({ entity_id, group_id }));
 };
 
 const steps = [

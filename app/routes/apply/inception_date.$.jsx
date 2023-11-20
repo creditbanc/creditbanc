@@ -1,5 +1,5 @@
-import { classNames, form_params, get_entity_id, get_group_id, mapIndexed } from "~/utils/helpers";
-import { pipe, map } from "ramda";
+import { classNames, form_params, get, get_entity_id, get_group_id, mapIndexed } from "~/utils/helpers";
+import { pipe, map, head } from "ramda";
 import { Fragment, useState } from "react";
 import { Listbox, Transition, RadioGroup } from "@headlessui/react";
 import { CheckIcon, ChevronUpDownIcon } from "@heroicons/react/20/solid";
@@ -9,6 +9,8 @@ import { Link } from "react-router-dom";
 import { redirect } from "@remix-run/node";
 import { from, lastValueFrom, map as rxmap } from "rxjs";
 import { update_doc } from "~/utils/firebase";
+import { filter } from "shades";
+import { navigation } from "./navigation";
 
 export const action = async ({ request }) => {
 	console.log("request.url");
@@ -30,7 +32,9 @@ export const action = async ({ request }) => {
 	let response = from(update_doc(["application", entity_id], payload)).pipe(rxmap(() => ({ entity_id, group_id })));
 
 	await lastValueFrom(response);
-	return redirect(`/apply/industry/resource/e/${entity_id}/g/${group_id}`);
+
+	let next = pipe(filter({ id: "inception_date" }), head, get("next"))(navigation);
+	return redirect(next({ entity_id, group_id }));
 };
 
 const steps = [

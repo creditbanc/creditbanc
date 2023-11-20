@@ -1,4 +1,4 @@
-import { classNames, form_params, get_entity_id, get_group_id, mapIndexed } from "~/utils/helpers";
+import { classNames, form_params, get, get_entity_id, get_group_id, mapIndexed } from "~/utils/helpers";
 import { pipe, map, head, values, length, dissoc } from "ramda";
 import useStore from "./store";
 import { useState } from "react";
@@ -11,6 +11,7 @@ import { update_doc } from "~/utils/firebase";
 import { redirect } from "@remix-run/node";
 import { XMarkIcon } from "@heroicons/react/24/outline";
 import { create_user_session } from "~/utils/auth.server";
+import { navigation } from "./navigation";
 
 export const action = async ({ request }) => {
 	console.log("request.url");
@@ -32,7 +33,8 @@ export const action = async ({ request }) => {
 	let response = from(update_doc(["application", entity_id], payload)).pipe(rxmap(() => ({ entity_id, group_id })));
 
 	await lastValueFrom(response);
-	return create_user_session(entity_id, `/home/resource/e/${entity_id}/g/${group_id}`);
+	let next = pipe(filter({ id: "industry" }), head, get("next"))(navigation);
+	return create_user_session(entity_id, next({ entity_id, group_id }));
 };
 
 const steps = [
