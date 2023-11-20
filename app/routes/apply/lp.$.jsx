@@ -44,7 +44,7 @@ export const action = async ({ request }) => {
 	console.log(entity_id);
 	console.log("lp.group_id");
 	console.log(group_id);
-	// return redirect(`/apply/financing_needs/resource/e/${entity_id}/g/${group_id}`);
+	return redirect(`/apply/financing_needs/resource/e/${entity_id}/g/${group_id}`);
 	return null;
 };
 

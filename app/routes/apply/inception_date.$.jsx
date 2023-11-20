@@ -158,7 +158,7 @@ export default function Container() {
 			<div className="flex flex-col w-full">
 				<Progress />
 			</div>
-			<div className="flex flex-col justify-center h-full min-w-[600px]">
+			<div className="flex flex-col justify-center h-4/5 min-w-[600px]">
 				<div className="flex flex-col my-4">
 					<SectionHeading
 						headline={<div>How long have you been in business?</div>}

@@ -5,4 +5,6 @@ export default store({
 	first_name: "",
 	last_name: "",
 	email: "",
+	timeline: { amount: 14, type: "days" },
+	time_in_business: { amount: 2, type: "years" },
 });

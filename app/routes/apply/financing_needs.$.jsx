@@ -1,6 +1,33 @@
-import { classNames, get_entity_id, get_group_id, mapIndexed } from "~/utils/helpers";
+import { classNames, form_params, get_entity_id, get_group_id, mapIndexed } from "~/utils/helpers";
 import { pipe, map } from "ramda";
 import useStore from "./store";
+import { from, map as rxmap } from "rxjs";
+import { useState } from "react";
+import { RadioGroup } from "@headlessui/react";
+import { Link, useLocation, useSubmit } from "@remix-run/react";
+import { set_doc, update_doc } from "~/utils/firebase";
+import { redirect } from "@remix-run/node";
+
+export const action = async ({ request }) => {
+	console.log("request.url");
+	console.log(request.url);
+	let url = new URL(request.url);
+	let { pathname } = url;
+	let group_id = get_group_id(pathname);
+	let entity_id = get_entity_id(pathname);
+	let params = await form_params(request);
+
+	let { timeline } = params;
+
+	let response = from(update_doc(["application", entity_id], { timeline: JSON.parse(timeline) })).pipe(
+		rxmap(() => ({
+			entity_id,
+			group_id,
+		}))
+	);
+
+	return redirect(`/apply/inception_date/resource/e/${entity_id}/g/${group_id}`);
+};
 
 const steps = [
 	{ id: "Financing Needs", name: "Job details", href: "#", status: "complete" },
@@ -62,40 +89,44 @@ const SectionHeading = ({ headline, subheadline }) => {
 	);
 };
 
-import { useState } from "react";
-import { RadioGroup } from "@headlessui/react";
-import { Link, useLocation } from "@remix-run/react";
-
-const plans = [
+const timelines = [
 	{
 		name: "I have a strict timeline: 2 weeks or less",
+		amount: 14,
+		type: "days",
 	},
 	{
 		name: "I’m flexible: about a month works for me",
+		amount: 30,
+		type: "days",
 	},
 	{
 		name: "I don’t have a specific time in mind",
+		amount: Infinity,
+		type: "days",
 	},
 ];
 
 const TimelineOptions = () => {
-	const [selected, setSelected] = useState(plans[0]);
+	const [selected, setSelected] = useState(timelines[0]);
+	const { set_props } = useStore();
 
 	return (
 		<RadioGroup value={selected} onChange={setSelected}>
 			<RadioGroup.Label className="sr-only">Server size</RadioGroup.Label>
 			<div className="space-y-4">
 				{pipe(
-					mapIndexed((plan, index) => (
+					mapIndexed((timeline, index) => (
 						<RadioGroup.Option
 							key={index}
-							value={plan}
+							value={timeline}
 							className={({ active }) =>
 								classNames(
 									active ? "border-blue-600 ring-2 ring-blue-600" : "border-gray-300",
 									"relative block cursor-pointer rounded-full border bg-white px-6 py-4 shadow-sm focus:outline-none sm:flex sm:justify-between"
 								)
 							}
+							onClick={() => set_props({ timeline: { amount: timeline.amount, type: timeline.type } })}
 						>
 							{({ active, checked }) => (
 								<>
@@ -105,7 +136,7 @@ const TimelineOptions = () => {
 												as="span"
 												className="flex flex-col items-center text-align center w-full font-medium text-gray-900"
 											>
-												{plan.name}
+												{timeline.name}
 											</RadioGroup.Label>
 										</div>
 									</div>
@@ -122,7 +153,7 @@ const TimelineOptions = () => {
 							)}
 						</RadioGroup.Option>
 					))
-				)(plans)}
+				)(timelines)}
 			</div>
 		</RadioGroup>
 	);
@@ -132,13 +163,28 @@ export default function Container() {
 	let { pathname } = useLocation();
 	let entity_id = get_entity_id(pathname);
 	let group_id = get_group_id(pathname);
+	const submit = useSubmit();
+	let { timeline } = useStore((state) => state);
+
+	const onSubmit = () => {
+		console.log("onSubmit");
+		let payload = { timeline: JSON.stringify(timeline) };
+
+		// console.log("payload");
+		// console.log(payload);
+
+		submit(payload, {
+			action: `/apply/financing_needs/resource/e/${entity_id}/g/${group_id}`,
+			method: "post",
+		});
+	};
 
 	return (
 		<div className="flex flex-col items-center w-full h-full overflow-y-scroll pb-10">
 			<div className="flex flex-col w-full">
 				<Progress />
 			</div>
-			<div className="flex flex-col justify-center h-full">
+			<div className="flex flex-col justify-center h-4/5">
 				<div className="flex flex-col my-4">
 					<SectionHeading
 						headline={<div>First, how soon do you need funding?</div>}
@@ -160,12 +206,13 @@ export default function Container() {
 					>
 						Back
 					</Link>
-					<Link
-						to={`/apply/inception_date/resource/e/${entity_id}/g/${group_id}`}
+					<div
+						onClick={onSubmit}
+						// to={`/apply/inception_date/resource/e/${entity_id}/g/${group_id}`}
 						className="flex flex-col bg-blue-600 py-3 px-4 rounded-full text-white w-[450px] items-center cursor-pointer"
 					>
 						Continue to pre-qualify
-					</Link>
+					</div>
 				</div>
 			</div>
 		</div>
