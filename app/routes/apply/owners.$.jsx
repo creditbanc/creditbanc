@@ -1,11 +1,38 @@
-import { classNames, get_entity_id, get_group_id, mapIndexed } from "~/utils/helpers";
-import { pipe, map, head, values, length } from "ramda";
+import { classNames, form_params, get_entity_id, get_group_id, mapIndexed } from "~/utils/helpers";
+import { pipe, map, head, values, length, dissoc } from "ramda";
 import useStore from "./store";
 import { useState } from "react";
 import { RadioGroup } from "@headlessui/react";
-import { Link, useLocation } from "@remix-run/react";
+import { Link, useLocation, useSubmit } from "@remix-run/react";
 import { filter } from "shades";
 import { v4 as uuidv4 } from "uuid";
+import { from, lastValueFrom, map as rxmap } from "rxjs";
+import { update_doc } from "~/utils/firebase";
+import { redirect } from "@remix-run/node";
+import { XMarkIcon } from "@heroicons/react/24/outline";
+
+export const action = async ({ request }) => {
+	console.log("request.url");
+	console.log(request.url);
+	let url = new URL(request.url);
+	let { pathname } = url;
+	let group_id = get_group_id(pathname);
+	let entity_id = get_entity_id(pathname);
+	let params = await form_params(request);
+
+	console.log("params");
+	console.log(params);
+	console.log(group_id);
+	console.log(entity_id);
+
+	let { owners } = params;
+	let payload = { owners: JSON.parse(owners) };
+
+	let response = from(update_doc(["application", entity_id], payload)).pipe(rxmap(() => ({ entity_id, group_id })));
+
+	await lastValueFrom(response);
+	return redirect(`/apply/owners/resource/e/${entity_id}/g/${group_id}`);
+};
 
 const steps = [
 	{ id: "Financing Needs", name: "Job details", href: "#", status: "complete" },
@@ -68,133 +95,163 @@ const SectionHeading = ({ headline, subheadline }) => {
 };
 
 const OwnerForm = ({ owner }) => {
-	const { set_path } = useStore();
+	const { set_path, owners } = useStore();
+
+	const onDeleteOwner = () => {
+		console.log("onDeleteOwner");
+		console.log(owner);
+		set_path(["owners"], dissoc(owner.id, owners));
+	};
 
 	return (
-		<form>
-			<div className="border-b border-gray-900/10 pb-12">
-				<div className=" grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
-					<div className="sm:col-span-3">
-						<label htmlFor="first-name" className="block text-sm font-medium leading-6 text-gray-900">
-							First name
-						</label>
-						<div className="mt-2">
-							<input
-								value={owner.first_name}
-								type="text"
-								name="first-name"
-								id="first-name"
-								autoComplete="given-name"
-								className="px-2 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-								onChange={(e) => set_path(["owners", owner.id, "first_name"], e.target.value)}
-							/>
-						</div>
+		<div className="flex flex-col border p-5 rounded">
+			<div className="border-b border-gray-200 bg-white pb-3 mb-3">
+				<div className="-ml-4 -mt-2 flex flex-wrap items-center justify-between sm:flex-nowrap">
+					<div className="ml-4 mt-2">
+						<h3 className="text-base font-semibold leading-6 text-gray-900">Owner</h3>
 					</div>
-
-					<div className="sm:col-span-3">
-						<label htmlFor="last-name" className="block text-sm font-medium leading-6 text-gray-900">
-							Last name
-						</label>
-						<div className="mt-2">
-							<input
-								value={owner.last_name}
-								type="text"
-								name="last-name"
-								id="last-name"
-								autoComplete="family-name"
-								className="px-2 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-								onChange={(e) => set_path(["owners", owner.id, "last_name"], e.target.value)}
-							/>
-						</div>
-					</div>
-
-					<div className="col-span-full">
-						<label htmlFor="email" className="block text-sm font-medium leading-6 text-gray-900">
-							Email address
-						</label>
-						<div className="mt-2">
-							<input
-								value={owner.email}
-								id="email"
-								name="email"
-								type="email"
-								autoComplete="email"
-								className="px-2 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-								onChange={(e) => set_path(["owners", owner.id, "email"], e.target.value)}
-							/>
-						</div>
-					</div>
-
-					<div className="col-span-full">
-						<label htmlFor="street-address" className="block text-sm font-medium leading-6 text-gray-900">
-							Street address
-						</label>
-						<div className="mt-2">
-							<input
-								value={owner?.address?.street}
-								type="text"
-								name="street-address"
-								id="street-address"
-								autoComplete="street-address"
-								className="px-2 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-								onChange={(e) => set_path(["owners", owner.id, "address", "street"], e.target.value)}
-							/>
-						</div>
-					</div>
-
-					<div className="sm:col-span-2 sm:col-start-1">
-						<label htmlFor="city" className="block text-sm font-medium leading-6 text-gray-900">
-							City
-						</label>
-						<div className="mt-2">
-							<input
-								value={owner?.address?.city}
-								type="text"
-								name="city"
-								id="city"
-								autoComplete="address-level2"
-								className="px-2 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-								onChange={(e) => set_path(["owners", owner.id, "address", "city"], e.target.value)}
-							/>
-						</div>
-					</div>
-
-					<div className="sm:col-span-2">
-						<label htmlFor="region" className="block text-sm font-medium leading-6 text-gray-900">
-							State / Province
-						</label>
-						<div className="mt-2">
-							<input
-								value={owner?.address?.state}
-								type="text"
-								name="region"
-								id="region"
-								autoComplete="address-level1"
-								className="px-2 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-								onChange={(e) => set_path(["owners", owner.id, "address", "state"], e.target.value)}
-							/>
-						</div>
-					</div>
-
-					<div className="sm:col-span-2">
-						<label htmlFor="postal-code" className="block text-sm font-medium leading-6 text-gray-900">
-							ZIP / Postal code
-						</label>
-						<div className="mt-2">
-							<input
-								value={owner?.address?.zip}
-								type="text"
-								name="postal-code"
-								id="postal-code"
-								autoComplete="postal-code"
-								className="px-2 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-								onChange={(e) => set_path(["owners", owner.id, "address", "zip"], e.target.value)}
-							/>
-						</div>
+					<div className="ml-4 mt-2 flex-shrink-0">
+						<button
+							onClick={onDeleteOwner}
+							type="button"
+							className="relative inline-flex items-center rounded-md px-3 py-2 text-xs font-semibold  border focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 "
+						>
+							<XMarkIcon className="h-5 w-5 text-gray-300" />
+						</button>
 					</div>
 				</div>
 			</div>
-		</form>
+
+			<form>
+				<div className=" border-gray-900/10">
+					<div className=" grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
+						<div className="sm:col-span-3">
+							<label htmlFor="first-name" className="block text-sm font-medium leading-6 text-gray-900">
+								First name
+							</label>
+							<div className="mt-2">
+								<input
+									value={owner.first_name}
+									type="text"
+									name="first-name"
+									id="first-name"
+									autoComplete="given-name"
+									className="px-2 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-sm sm:leading-6"
+									onChange={(e) => set_path(["owners", owner.id, "first_name"], e.target.value)}
+								/>
+							</div>
+						</div>
+
+						<div className="sm:col-span-3">
+							<label htmlFor="last-name" className="block text-sm font-medium leading-6 text-gray-900">
+								Last name
+							</label>
+							<div className="mt-2">
+								<input
+									value={owner.last_name}
+									type="text"
+									name="last-name"
+									id="last-name"
+									autoComplete="family-name"
+									className="px-2 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-sm sm:leading-6"
+									onChange={(e) => set_path(["owners", owner.id, "last_name"], e.target.value)}
+								/>
+							</div>
+						</div>
+
+						<div className="col-span-full">
+							<label htmlFor="email" className="block text-sm font-medium leading-6 text-gray-900">
+								Email address
+							</label>
+							<div className="mt-2">
+								<input
+									value={owner.email}
+									id="email"
+									name="email"
+									type="email"
+									autoComplete="email"
+									className="px-2 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-sm sm:leading-6"
+									onChange={(e) => set_path(["owners", owner.id, "email"], e.target.value)}
+								/>
+							</div>
+						</div>
+
+						<div className="col-span-full">
+							<label
+								htmlFor="street-address"
+								className="block text-sm font-medium leading-6 text-gray-900"
+							>
+								Street address
+							</label>
+							<div className="mt-2">
+								<input
+									value={owner?.address?.street}
+									type="text"
+									name="street-address"
+									id="street-address"
+									autoComplete="street-address"
+									className="px-2 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-sm sm:leading-6"
+									onChange={(e) =>
+										set_path(["owners", owner.id, "address", "street"], e.target.value)
+									}
+								/>
+							</div>
+						</div>
+
+						<div className="sm:col-span-2 sm:col-start-1">
+							<label htmlFor="city" className="block text-sm font-medium leading-6 text-gray-900">
+								City
+							</label>
+							<div className="mt-2">
+								<input
+									value={owner?.address?.city}
+									type="text"
+									name="city"
+									id="city"
+									autoComplete="address-level2"
+									className="px-2 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-sm sm:leading-6"
+									onChange={(e) => set_path(["owners", owner.id, "address", "city"], e.target.value)}
+								/>
+							</div>
+						</div>
+
+						<div className="sm:col-span-2">
+							<label htmlFor="region" className="block text-sm font-medium leading-6 text-gray-900">
+								State / Province
+							</label>
+							<div className="mt-2">
+								<input
+									value={owner?.address?.state}
+									type="text"
+									name="region"
+									id="region"
+									autoComplete="address-level1"
+									className="px-2 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-sm sm:leading-6"
+									onChange={(e) => set_path(["owners", owner.id, "address", "state"], e.target.value)}
+								/>
+							</div>
+						</div>
+
+						<div className="sm:col-span-2">
+							<label htmlFor="postal-code" className="block text-sm font-medium leading-6 text-gray-900">
+								ZIP / Postal code
+							</label>
+							<div className="mt-2">
+								<input
+									value={owner?.address?.zip}
+									type="text"
+									name="postal-code"
+									id="postal-code"
+									autoComplete="postal-code"
+									className="px-2 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-sm sm:leading-6"
+									onChange={(e) => set_path(["owners", owner.id, "address", "zip"], e.target.value)}
+								/>
+							</div>
+						</div>
+					</div>
+				</div>
+			</form>
+		</div>
 	);
 };
 
@@ -226,13 +283,13 @@ const Owners = () => {
 	const onAddOwner = (type) => {
 		console.log("onAddOwner");
 
-		let owner = pipe(filter({ type }), head)(owners);
+		let { model } = pipe(filter({ type }), head)(owners);
 		let owner_id = uuidv4();
 
 		let payload = {
 			id: owner_id,
 			type,
-			...owner,
+			...model,
 		};
 
 		set_path(["owners", owner_id], payload);
@@ -243,7 +300,7 @@ const Owners = () => {
 
 	return (
 		<div className="flex flex-col w-full">
-			<div className="flex flex-col w-full">
+			<div className="flex flex-col w-full gap-y-6">
 				{pipe(
 					values,
 					map((owner) => (
@@ -256,7 +313,7 @@ const Owners = () => {
 			<RadioGroup value={selected} onChange={setSelected}>
 				<RadioGroup.Label className="sr-only">Server size</RadioGroup.Label>
 				<div className="space-y-4 my-4">
-					{business_owners.length > 0 && (
+					{length(values(business_owners)) > 0 && (
 						<div className="font-semibold flex flex-col items-center py-4">Add another owner</div>
 					)}
 					{pipe(
@@ -305,10 +362,21 @@ export default function Container() {
 	let { pathname } = useLocation();
 	let entity_id = get_entity_id(pathname);
 	let group_id = get_group_id(pathname);
-	let { owners } = useStore((state) => state);
+	let { owners: business_owners } = useStore((state) => state);
+	const submit = useSubmit();
 
-	console.log("owners_length");
-	console.log(length(values(owners)));
+	const onSubmit = () => {
+		console.log("onSubmit");
+		let payload = { owners: JSON.stringify(business_owners) };
+
+		// console.log("payload");
+		// console.log(payload);
+
+		submit(payload, {
+			action: `/apply/owners/resource/e/${entity_id}/g/${group_id}`,
+			method: "post",
+		});
+	};
 
 	return (
 		<div className="flex flex-col items-center w-full h-full overflow-y-scroll">
@@ -317,7 +385,7 @@ export default function Container() {
 			</div>
 			<div
 				className="flex flex-col h-full w-[600px]"
-				style={{ justifyContent: length(values(owners)) == 0 && "center" }}
+				style={{ justifyContent: length(values(business_owners)) == 0 ? "center" : "start" }}
 			>
 				<div className="flex flex-col">
 					<SectionHeading
@@ -339,12 +407,13 @@ export default function Container() {
 					<div className="flex flex-col py-3 px-4 rounded-full text-blue-600 w-1/2 items-center cursor-pointer border-2 border-blue-600">
 						Back
 					</div>
-					<Link
-						to={`/apply/owner/resource/e/${entity_id}/g/${group_id}`}
+					<div
+						onClick={onSubmit}
+						// to={`/apply/owner/resource/e/${entity_id}/g/${group_id}`}
 						className="flex flex-col bg-blue-600 py-3 px-4 rounded-full text-white w-[450px] items-center cursor-pointer"
 					>
 						Continue to pre-qualify
-					</Link>
+					</div>
 				</div>
 			</div>
 		</div>
