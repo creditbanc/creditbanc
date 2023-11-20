@@ -1,9 +1,35 @@
-import { classNames, get_entity_id, get_group_id, mapIndexed } from "~/utils/helpers";
+import { classNames, form_params, get_entity_id, get_group_id, mapIndexed } from "~/utils/helpers";
 import { pipe, map } from "ramda";
 import useStore from "./store";
 import { useState } from "react";
 import { RadioGroup } from "@headlessui/react";
-import { Link, useLocation } from "@remix-run/react";
+import { Link, useLocation, useSubmit } from "@remix-run/react";
+import { from, lastValueFrom, map as rxmap } from "rxjs";
+import { update_doc } from "~/utils/firebase";
+import { redirect } from "@remix-run/node";
+
+export const action = async ({ request }) => {
+	console.log("request.url");
+	console.log(request.url);
+	let url = new URL(request.url);
+	let { pathname } = url;
+	let group_id = get_group_id(pathname);
+	let entity_id = get_entity_id(pathname);
+	let params = await form_params(request);
+
+	console.log("params");
+	console.log(params);
+	console.log(group_id);
+	console.log(entity_id);
+
+	let { employees } = params;
+	let payload = { employees: JSON.parse(employees) };
+
+	let response = from(update_doc(["application", entity_id], payload)).pipe(rxmap(() => ({ entity_id, group_id })));
+
+	await lastValueFrom(response);
+	return redirect(`/apply/annual_revenue/resource/e/${entity_id}/g/${group_id}`);
+};
 
 const steps = [
 	{ id: "Financing Needs", name: "Job details", href: "#", status: "complete" },
@@ -65,26 +91,37 @@ const SectionHeading = ({ headline, subheadline }) => {
 	);
 };
 
-const options = [
+const employees = [
 	{
 		name: "No employees - just me",
+		min: 0,
+		max: 0,
 	},
 	{
 		name: "1-5 employees",
+		min: 1,
+		max: 5,
 	},
 	{
 		name: "6-10 employees",
+		min: 6,
+		max: 10,
 	},
 	{
 		name: "11-20 employees",
+		min: 11,
+		max: 20,
 	},
 	{
 		name: "More than 20 employees",
+		min: 21,
+		max: Infinity,
 	},
 ];
 
-const TimelineOptions = () => {
-	const [selected, setSelected] = useState(options[0]);
+const Employees = () => {
+	const [selected, setSelected] = useState(employees[0]);
+	let { set_props } = useStore();
 
 	return (
 		<RadioGroup value={selected} onChange={setSelected}>
@@ -101,6 +138,7 @@ const TimelineOptions = () => {
 									"relative block cursor-pointer rounded-full border bg-white px-6 py-4 shadow-sm focus:outline-none sm:flex sm:justify-between"
 								)
 							}
+							onClick={() => set_props({ employees: { min: plan.min, max: plan.max } })}
 						>
 							{({ active, checked }) => (
 								<>
@@ -127,7 +165,7 @@ const TimelineOptions = () => {
 							)}
 						</RadioGroup.Option>
 					))
-				)(options)}
+				)(employees)}
 			</div>
 		</RadioGroup>
 	);
@@ -137,13 +175,28 @@ export default function Container() {
 	let { pathname } = useLocation();
 	let entity_id = get_entity_id(pathname);
 	let group_id = get_group_id(pathname);
+	const submit = useSubmit();
+	let { employees } = useStore();
+
+	const onSubmit = () => {
+		console.log("onSubmit");
+		let payload = { employees: JSON.stringify(employees) };
+
+		// console.log("payload");
+		// console.log(payload);
+
+		submit(payload, {
+			action: `/apply/employees/resource/e/${entity_id}/g/${group_id}`,
+			method: "post",
+		});
+	};
 
 	return (
 		<div className="flex flex-col items-center w-full h-full overflow-y-scroll pb-10">
 			<div className="flex flex-col w-full">
 				<Progress />
 			</div>
-			<div className="flex flex-col justify-center h-full">
+			<div className="flex flex-col justify-center h-4/5 w-[600px]">
 				<div className="flex flex-col my-4">
 					<SectionHeading
 						headline={<div>How many full time employees do you have?</div>}
@@ -156,15 +209,19 @@ export default function Container() {
 					/>
 				</div>
 				<div className="flex flex-col w-full">
-					<TimelineOptions />
+					<Employees />
 				</div>
-				<div className="flex flex-col w-full items-center gap-y-4 my-5">
-					<Link
-						to={`/apply/annual_revenue/resource/e/${entity_id}/g/${group_id}`}
+				<div className="flex flex-row w-full items-center gap-y-4 my-5 gap-x-3">
+					<div className="flex flex-col py-3 px-4 rounded-full text-blue-600 w-1/2 items-center cursor-pointer border-2 border-blue-600">
+						Back
+					</div>
+					<div
+						onClick={onSubmit}
+						// to={`/apply/annual_revenue/resource/e/${entity_id}/g/${group_id}`}
 						className="flex flex-col bg-blue-600 py-3 px-4 rounded-full text-white w-[450px] items-center cursor-pointer"
 					>
 						Continue to pre-qualify
-					</Link>
+					</div>
 				</div>
 			</div>
 		</div>

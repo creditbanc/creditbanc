@@ -1,11 +1,33 @@
-import { classNames, get_entity_id, get_group_id, mapIndexed } from "~/utils/helpers";
+import { form_params, get_entity_id, get_group_id, mapIndexed } from "~/utils/helpers";
 import { pipe } from "ramda";
-import { Fragment, useState } from "react";
-import { Listbox, Transition } from "@headlessui/react";
-import { CheckIcon, ChevronUpDownIcon } from "@heroicons/react/20/solid";
-import { PhotoIcon, UserCircleIcon } from "@heroicons/react/24/solid";
 import useStore from "./store";
-import { Link, useLocation } from "@remix-run/react";
+import { Link, useLocation, useSubmit } from "@remix-run/react";
+import { from, lastValueFrom, map as rxmap } from "rxjs";
+import { update_doc } from "~/utils/firebase";
+import { redirect } from "@remix-run/node";
+
+export const action = async ({ request }) => {
+	console.log("request.url");
+	console.log(request.url);
+	let url = new URL(request.url);
+	let { pathname } = url;
+	let group_id = get_group_id(pathname);
+	let entity_id = get_entity_id(pathname);
+	let params = await form_params(request);
+
+	console.log("params");
+	console.log(params);
+	console.log(group_id);
+	console.log(entity_id);
+
+	let { business_address } = params;
+	let payload = { business_address: JSON.parse(business_address) };
+
+	let response = from(update_doc(["application", entity_id], payload)).pipe(rxmap(() => ({ entity_id, group_id })));
+
+	await lastValueFrom(response);
+	return redirect(`/apply/entity/resource/e/${entity_id}/g/${group_id}`);
+};
 
 const steps = [
 	{ id: "Financing Needs", name: "Job details", href: "#", status: "complete" },
@@ -67,126 +89,14 @@ const SectionHeading = ({ headline, subheadline }) => {
 	);
 };
 
-const options = [
-	{ id: 1, value: "Administrative and Business Services" },
-	{ id: 2, value: "Agriculture, Forestry, Fishing and Hunting" },
-	{ id: 3, value: "Construction" },
-	{ id: 4, value: "Education" },
-	{ id: 5, value: "Financial Services" },
-	{ id: 6, value: "Healthcare and Social Services" },
-	{ id: 7, value: "Holding Companies" },
-	{ id: 8, value: "Hospitality and Food Services" },
-	{ id: 9, value: "Manufacturing" },
-	{ id: 10, value: "Mining, Quarrying, and Oil & Gas Extraction" },
-	{ id: 11, value: "Other Services (Repair, Personal Care, and Religious & Social Organizations)" },
-	{ id: 12, value: "Professional Services" },
-	{ id: 13, value: "Public Administration" },
-	{ id: 14, value: "Real Estate" },
-	{ id: 15, value: "Recreation, Entertainment, and Arts" },
-	{ id: 16, value: "Retail Trade" },
-	{ id: 17, value: "Technology, Publishing, and Telecom" },
-	{ id: 18, value: "Transportation and Warehousing" },
-	{ id: 19, value: "Utilities" },
-	{ id: 20, value: "Wholesale Trade" },
-];
-
-const TimeInBusiness = () => {
-	const [selected, setSelected] = useState(options[3]);
-
-	return (
-		<Listbox value={selected} onChange={setSelected}>
-			{({ open }) => (
-				<>
-					<Listbox.Label className="block text-sm font-medium leading-6 text-gray-900">
-						Assigned to
-					</Listbox.Label>
-					<div className="relative mt-2">
-						<Listbox.Button className="relative w-full cursor-default rounded-md bg-white py-1.5 pl-3 pr-10 text-left text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-600 sm:text-sm sm:leading-6">
-							<span className="block truncate">{selected.value}</span>
-							<span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
-								<ChevronUpDownIcon className="h-5 w-5 text-gray-400" aria-hidden="true" />
-							</span>
-						</Listbox.Button>
-
-						<Transition
-							show={open}
-							as={Fragment}
-							leave="transition ease-in duration-100"
-							leaveFrom="opacity-100"
-							leaveTo="opacity-0"
-						>
-							<Listbox.Options className="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
-								{pipe(
-									mapIndexed((person, index) => (
-										<Listbox.Option
-											key={index}
-											className={({ active }) =>
-												classNames(
-													active ? "bg-indigo-600 text-white" : "text-gray-900",
-													"relative cursor-default select-none py-2 pl-3 pr-9"
-												)
-											}
-											value={person}
-										>
-											{({ selected, active }) => (
-												<>
-													<span
-														className={classNames(
-															selected ? "font-semibold" : "font-normal",
-															"block truncate"
-														)}
-													>
-														{person.value}
-													</span>
-
-													{selected ? (
-														<span
-															className={classNames(
-																active ? "text-white" : "text-indigo-600",
-																"absolute inset-y-0 right-0 flex items-center pr-4"
-															)}
-														>
-															<CheckIcon className="h-5 w-5" aria-hidden="true" />
-														</span>
-													) : null}
-												</>
-											)}
-										</Listbox.Option>
-									))
-								)(options)}
-							</Listbox.Options>
-						</Transition>
-					</div>
-				</>
-			)}
-		</Listbox>
-	);
-};
-
 const AddressForm = () => {
+	let { business_address, set_path } = useStore();
+
 	return (
 		<form>
 			<div className="space-y-12">
 				<div className="border-b border-gray-900/10 pb-12">
 					<div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
-						{/* <div className="sm:col-span-3">
-							<label htmlFor="country" className="block text-sm font-medium leading-6 text-gray-900">
-								Country
-							</label>
-							<div className="mt-2">
-								<select
-									id="country"
-									name="country"
-									autoComplete="country-name"
-									className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-xs sm:text-sm sm:leading-6"
-								>
-									<option>United States</option>
-									<option>Canada</option>
-									<option>Mexico</option>
-								</select>
-							</div>
-						</div> */}
-
 						<div className="col-span-full">
 							<label
 								htmlFor="street-address"
@@ -196,11 +106,15 @@ const AddressForm = () => {
 							</label>
 							<div className="mt-2">
 								<input
+									value={business_address.street}
 									type="text"
 									name="street-address"
 									id="street-address"
 									autoComplete="street-address"
-									className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+									className="px-2 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+									onChange={(e) => {
+										set_path(["business_address", "street"], e.target.value);
+									}}
 								/>
 							</div>
 						</div>
@@ -211,11 +125,15 @@ const AddressForm = () => {
 							</label>
 							<div className="mt-2">
 								<input
+									value={business_address.city}
 									type="text"
 									name="city"
 									id="city"
 									autoComplete="address-level2"
-									className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+									className="px-2 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+									onChange={(e) => {
+										set_path(["business_address", "city"], e.target.value);
+									}}
 								/>
 							</div>
 						</div>
@@ -226,11 +144,15 @@ const AddressForm = () => {
 							</label>
 							<div className="mt-2">
 								<input
+									value={business_address.state}
 									type="text"
 									name="region"
 									id="region"
 									autoComplete="address-level1"
-									className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+									className="px-2 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+									onChange={(e) => {
+										set_path(["business_address", "state"], e.target.value);
+									}}
 								/>
 							</div>
 						</div>
@@ -241,11 +163,15 @@ const AddressForm = () => {
 							</label>
 							<div className="mt-2">
 								<input
+									value={business_address.zip}
 									type="text"
 									name="postal-code"
 									id="postal-code"
 									autoComplete="postal-code"
-									className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+									className="px-2 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+									onChange={(e) => {
+										set_path(["business_address", "zip"], e.target.value);
+									}}
 								/>
 							</div>
 						</div>
@@ -260,13 +186,28 @@ export default function Container() {
 	let { pathname } = useLocation();
 	let entity_id = get_entity_id(pathname);
 	let group_id = get_group_id(pathname);
+	const submit = useSubmit();
+	let { business_address } = useStore();
+
+	const onSubmit = () => {
+		console.log("onSubmit");
+		let payload = { business_address: JSON.stringify(business_address) };
+
+		// console.log("payload");
+		// console.log(payload);
+
+		submit(payload, {
+			action: `/apply/address/resource/e/${entity_id}/g/${group_id}`,
+			method: "post",
+		});
+	};
 
 	return (
 		<div className="flex flex-col items-center w-full h-full overflow-y-scroll pb-10">
 			<div className="flex flex-col w-full">
 				<Progress />
 			</div>
-			<div className="flex flex-col justify-center h-full">
+			<div className="flex flex-col justify-center h-4/5 w-[600px]">
 				<div className="flex flex-col my-4">
 					<SectionHeading
 						headline={<div>Where is your business located?</div>}
@@ -281,19 +222,20 @@ export default function Container() {
 				<div className="flex flex-col w-full">
 					<AddressForm />
 				</div>
-				<div className="flex flex-row w-full items-center gap-y-4 my-5 w=[450px] gap-x-3">
+				<div className="flex flex-row w-full items-center gap-y-4 my-5 gap-x-3">
 					<Link
 						to={`/apply/industry/resource/e/${entity_id}/g/${group_id}`}
 						className="flex flex-col py-3 px-4 rounded-full text-blue-600 w-1/2 items-center cursor-pointer border-2 border-blue-600"
 					>
 						Back
 					</Link>
-					<Link
-						to={`/apply/entity/resource/e/${entity_id}/g/${group_id}`}
+					<div
+						onClick={onSubmit}
+						// to={`/apply/entity/resource/e/${entity_id}/g/${group_id}`}
 						className="flex flex-col bg-blue-600 py-3 px-4 rounded-full text-white w-1/2 items-center cursor-pointer"
 					>
 						Continue to pre-qualify
-					</Link>
+					</div>
 				</div>
 			</div>
 		</div>

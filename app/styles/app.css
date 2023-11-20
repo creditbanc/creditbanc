@@ -2013,10 +2013,6 @@ video {
   min-width: 50px;
 }
 
-.min-w-\[600px\] {
-  min-width: 600px;
-}
-
 .min-w-full {
   min-width: 100%;
 }
