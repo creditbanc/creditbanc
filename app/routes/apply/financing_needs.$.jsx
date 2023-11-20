@@ -1,7 +1,7 @@
 import { classNames, form_params, get_entity_id, get_group_id, mapIndexed } from "~/utils/helpers";
 import { pipe, map } from "ramda";
 import useStore from "./store";
-import { from, map as rxmap } from "rxjs";
+import { from, lastValueFrom, map as rxmap } from "rxjs";
 import { useState } from "react";
 import { RadioGroup } from "@headlessui/react";
 import { Link, useLocation, useSubmit } from "@remix-run/react";
@@ -17,15 +17,17 @@ export const action = async ({ request }) => {
 	let entity_id = get_entity_id(pathname);
 	let params = await form_params(request);
 
+	console.log("params");
+	console.log(params);
+	console.log(group_id);
+	console.log(entity_id);
+
 	let { timeline } = params;
+	let payload = { timeline: JSON.parse(timeline) };
 
-	let response = from(update_doc(["application", entity_id], { timeline: JSON.parse(timeline) })).pipe(
-		rxmap(() => ({
-			entity_id,
-			group_id,
-		}))
-	);
+	let response = from(update_doc(["application", entity_id], payload)).pipe(rxmap(() => ({ entity_id, group_id })));
 
+	await lastValueFrom(response);
 	return redirect(`/apply/inception_date/resource/e/${entity_id}/g/${group_id}`);
 };
 

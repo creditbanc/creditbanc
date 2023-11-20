@@ -1,10 +1,36 @@
-import { classNames, get_entity_id, get_group_id, mapIndexed } from "~/utils/helpers";
+import { classNames, form_params, get_entity_id, get_group_id, mapIndexed } from "~/utils/helpers";
 import { pipe, map } from "ramda";
 import { Fragment, useState } from "react";
 import { Listbox, Transition, RadioGroup } from "@headlessui/react";
 import { CheckIcon, ChevronUpDownIcon } from "@heroicons/react/20/solid";
 import useStore from "./store";
-import { Link, useLocation } from "@remix-run/react";
+import { Link, useLocation, useSubmit } from "@remix-run/react";
+import { from, lastValueFrom, map as rxmap } from "rxjs";
+import { update_doc } from "~/utils/firebase";
+import { redirect } from "@remix-run/node";
+
+export const action = async ({ request }) => {
+	console.log("request.url");
+	console.log(request.url);
+	let url = new URL(request.url);
+	let { pathname } = url;
+	let group_id = get_group_id(pathname);
+	let entity_id = get_entity_id(pathname);
+	let params = await form_params(request);
+
+	console.log("params");
+	console.log(params);
+	console.log(group_id);
+	console.log(entity_id);
+
+	let { industry } = params;
+	let payload = { industry };
+
+	let response = from(update_doc(["application", entity_id], payload)).pipe(rxmap(() => ({ entity_id, group_id })));
+
+	await lastValueFrom(response);
+	return redirect(`/apply/address/resource/e/${entity_id}/g/${group_id}`);
+};
 
 const steps = [
 	{ id: "Financing Needs", name: "Job details", href: "#", status: "complete" },
@@ -66,7 +92,7 @@ const SectionHeading = ({ headline, subheadline }) => {
 	);
 };
 
-const options = [
+const industry = [
 	{ id: 1, value: "Administrative and Business Services" },
 	{ id: 2, value: "Agriculture, Forestry, Fishing and Hunting" },
 	{ id: 3, value: "Construction" },
@@ -89,8 +115,9 @@ const options = [
 	{ id: 20, value: "Wholesale Trade" },
 ];
 
-const TimeInBusiness = () => {
-	const [selected, setSelected] = useState(options[3]);
+const Industry = () => {
+	const [selected, setSelected] = useState(industry[0]);
+	const { set_props } = useStore();
 
 	return (
 		<Listbox value={selected} onChange={setSelected}>
@@ -126,6 +153,7 @@ const TimeInBusiness = () => {
 												)
 											}
 											value={person}
+											onClick={() => set_props({ industry: person.value })}
 										>
 											{({ selected, active }) => (
 												<>
@@ -152,7 +180,7 @@ const TimeInBusiness = () => {
 											)}
 										</Listbox.Option>
 									))
-								)(options)}
+								)(industry)}
 							</Listbox.Options>
 						</Transition>
 					</div>
@@ -166,13 +194,28 @@ export default function Container() {
 	let { pathname } = useLocation();
 	let entity_id = get_entity_id(pathname);
 	let group_id = get_group_id(pathname);
+	const submit = useSubmit();
+	let { industry } = useStore((state) => state);
+
+	const onSubmit = () => {
+		console.log("onSubmit");
+		let payload = { industry };
+
+		// console.log("payload");
+		// console.log(payload);
+
+		submit(payload, {
+			action: `/apply/industry/resource/e/${entity_id}/g/${group_id}`,
+			method: "post",
+		});
+	};
 
 	return (
 		<div className="flex flex-col items-center w-full h-full overflow-y-scroll pb-10">
 			<div className="flex flex-col w-full">
 				<Progress />
 			</div>
-			<div className="flex flex-col justify-center h-full">
+			<div className="flex flex-col justify-center h-4/5 w-[600px]">
 				<div className="flex flex-col my-4">
 					<SectionHeading
 						headline={<div>What is your business industry?</div>}
@@ -187,21 +230,22 @@ export default function Container() {
 					/>
 				</div>
 				<div className="flex flex-col w-full">
-					<TimeInBusiness />
+					<Industry />
 				</div>
-				<div className="flex flex-row w-full items-center gap-y-4 my-5 w=[450px] gap-x-3">
+				<div className="flex flex-row w-full items-center gap-y-4 my-5 gap-x-3">
 					<Link
 						to={`/apply/inception_date/resource/e/${entity_id}/g/${group_id}`}
 						className="flex flex-col py-3 px-4 rounded-full text-blue-600 w-1/2 items-center cursor-pointer border-2 border-blue-600"
 					>
 						Back
 					</Link>
-					<Link
-						to={`/apply/address/resource/e/${entity_id}/g/${group_id}`}
+					<div
+						onClick={onSubmit}
+						// to={`/apply/address/resource/e/${entity_id}/g/${group_id}`}
 						className="flex flex-col bg-blue-600 py-3 px-4 rounded-full text-white w-1/2 items-center cursor-pointer"
 					>
 						Continue to pre-qualify
-					</Link>
+					</div>
 				</div>
 			</div>
 		</div>

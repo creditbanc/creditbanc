@@ -1,11 +1,37 @@
-import { classNames, get_entity_id, get_group_id, mapIndexed } from "~/utils/helpers";
+import { classNames, form_params, get_entity_id, get_group_id, mapIndexed } from "~/utils/helpers";
 import { pipe, map } from "ramda";
 import { Fragment, useState } from "react";
 import { Listbox, Transition, RadioGroup } from "@headlessui/react";
 import { CheckIcon, ChevronUpDownIcon } from "@heroicons/react/20/solid";
 import useStore from "./store";
-import { useLocation } from "@remix-run/react";
+import { useLocation, useSubmit } from "@remix-run/react";
 import { Link } from "react-router-dom";
+import { redirect } from "@remix-run/node";
+import { from, lastValueFrom, map as rxmap } from "rxjs";
+import { update_doc } from "~/utils/firebase";
+
+export const action = async ({ request }) => {
+	console.log("request.url");
+	console.log(request.url);
+	let url = new URL(request.url);
+	let { pathname } = url;
+	let group_id = get_group_id(pathname);
+	let entity_id = get_entity_id(pathname);
+	let params = await form_params(request);
+
+	console.log("params");
+	console.log(params);
+	console.log(group_id);
+	console.log(entity_id);
+
+	let { time_in_business } = params;
+	let payload = { time_in_business: JSON.parse(time_in_business) };
+
+	let response = from(update_doc(["application", entity_id], payload)).pipe(rxmap(() => ({ entity_id, group_id })));
+
+	await lastValueFrom(response);
+	return redirect(`/apply/industry/resource/e/${entity_id}/g/${group_id}`);
+};
 
 const steps = [
 	{ id: "Financing Needs", name: "Job details", href: "#", status: "complete" },
@@ -67,18 +93,18 @@ const SectionHeading = ({ headline, subheadline }) => {
 	);
 };
 
-const people = [
-	{ id: 1, value: "Less than 6 months" },
-	{ id: 2, value: "6 to 12 months" },
-	{ id: 3, value: "12 to 18 months" },
-	{ id: 4, value: "18 to 24 months" },
-	{ id: 5, value: "2 to 3 years" },
-	{ id: 6, value: "3 to 5 years" },
-	{ id: 7, value: "More than 5 years" },
+const time_in_business = [
+	{ id: 1, value: "Less than 6 months", min: 0, max: 6, type: "months" },
+	{ id: 2, value: "6 to 12 months", min: 6, max: 12, type: "months" },
+	{ id: 3, value: "12 to 18 months", min: 12, max: 18, type: "months" },
+	{ id: 4, value: "18 to 24 months", min: 18, max: 24, type: "months" },
+	{ id: 5, value: "2 to 3 years", min: 2, max: 3, type: "years" },
+	{ id: 6, value: "3 to 5 years", min: 3, max: 5, type: "years" },
+	{ id: 7, value: "More than 5 years", min: 5, max: Infinity, type: "years" },
 ];
 
 const TimeInBusiness = () => {
-	const [selected, setSelected] = useState(people[3]);
+	const [selected, setSelected] = useState(time_in_business[0]);
 
 	return (
 		<Listbox value={selected} onChange={setSelected}>
@@ -103,7 +129,7 @@ const TimeInBusiness = () => {
 							leaveTo="opacity-0"
 						>
 							<Listbox.Options className="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
-								{people.map((person) => (
+								{time_in_business.map((person) => (
 									<Listbox.Option
 										key={person.id}
 										className={({ active }) =>
@@ -113,6 +139,15 @@ const TimeInBusiness = () => {
 											)
 										}
 										value={person}
+										onClick={() =>
+											set_props({
+												time_in_business: {
+													min: person.min,
+													max: person.max,
+													type: person.years,
+												},
+											})
+										}
 									>
 										{({ selected, active }) => (
 											<>
@@ -152,13 +187,28 @@ export default function Container() {
 	let { pathname } = useLocation();
 	let entity_id = get_entity_id(pathname);
 	let group_id = get_group_id(pathname);
+	const submit = useSubmit();
+	let { time_in_business } = useStore((state) => state);
+
+	const onSubmit = () => {
+		console.log("onSubmit");
+		let payload = { time_in_business: JSON.stringify(time_in_business) };
+
+		// console.log("payload");
+		// console.log(payload);
+
+		submit(payload, {
+			action: `/apply/inception_date/resource/e/${entity_id}/g/${group_id}`,
+			method: "post",
+		});
+	};
 
 	return (
 		<div className="flex flex-col items-center w-full h-full overflow-y-scroll pb-10">
 			<div className="flex flex-col w-full">
 				<Progress />
 			</div>
-			<div className="flex flex-col justify-center h-4/5 min-w-[600px]">
+			<div className="flex flex-col justify-center h-4/5 w-[600px]">
 				<div className="flex flex-col my-4">
 					<SectionHeading
 						headline={<div>How long have you been in business?</div>}
@@ -173,19 +223,20 @@ export default function Container() {
 				<div className="flex flex-col w-full">
 					<TimeInBusiness />
 				</div>
-				<div className="flex flex-row w-full items-center gap-y-4 my-5 w=[450px] gap-x-3">
+				<div className="flex flex-row w-full items-center gap-y-4 my-5 gap-x-3">
 					<Link
 						to={`/apply/financing_needs/resource/e/${entity_id}/g/${group_id}`}
 						className="flex flex-col py-3 px-4 rounded-full text-blue-600 w-1/2 items-center cursor-pointer border-2 border-blue-600"
 					>
 						Back
 					</Link>
-					<Link
-						to={`/apply/industry/resource/e/${entity_id}/g/${group_id}`}
+					<div
+						onClick={onSubmit}
+						// to={`/apply/industry/resource/e/${entity_id}/g/${group_id}`}
 						className="flex flex-col bg-blue-600 py-3 px-4 rounded-full text-white w-1/2 items-center cursor-pointer"
 					>
 						Continue to pre-qualify
-					</Link>
+					</div>
 				</div>
 			</div>
 		</div>

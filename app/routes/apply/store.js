@@ -6,5 +6,6 @@ export default store({
 	last_name: "",
 	email: "",
 	timeline: { amount: 14, type: "days" },
-	time_in_business: { amount: 2, type: "years" },
+	time_in_business: { min: 0, max: 6, type: "months" },
+	industry: "Administrative and Business Services",
 });

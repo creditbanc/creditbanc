@@ -1423,6 +1423,10 @@ video {
   height: 1rem;
 }
 
+.h-4\/5 {
+  height: 80%;
+}
+
 .h-5 {
   height: 1.25rem;
 }
@@ -1578,18 +1582,6 @@ video {
 
 .h-full {
   height: 100%;
-}
-
-.h-2\/3 {
-  height: 66.666667%;
-}
-
-.h-3\/5 {
-  height: 60%;
-}
-
-.h-4\/5 {
-  height: 80%;
 }
 
 .max-h-12 {
