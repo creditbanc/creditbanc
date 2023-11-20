@@ -68,13 +68,13 @@ export const signup = async (form) => {
 	// return create_user_session(entity.id, redirect_to);
 };
 
-// const create_user_session = async (entity_id) => {
-// 	const session = await storage.getSession();
-// 	session.set("entity_id", entity_id);
-// 	return redirect(redirect_to, {
-// 		headers: { "Set-Cookie": await storage.commitSession(session) },
-// 	});
-// };
+export const create_user_session = async (entity_id, redirect_to) => {
+	const session = await storage.getSession();
+	session.set("entity_id", entity_id);
+	return redirect(redirect_to, {
+		headers: { "Set-Cookie": await storage.commitSession(session) },
+	});
+};
 
 export const signin = async (form) => {
 	let { email, password } = form;

@@ -191,7 +191,7 @@ export default function Container() {
 					<SectionHeading
 						headline={<div>First, how soon do you need funding?</div>}
 						subheadline={
-							<div className="flex flex-row gap-x-2">
+							<div className="flex flex-row gap-x-2 justify-center">
 								<div>This helps us find the best loan for your needs.</div>
 								<div className="font-semibold">Learn more ›</div>
 							</div>
@@ -203,7 +203,7 @@ export default function Container() {
 				</div>
 				<div className="flex flex-row w-full items-center gap-y-4 my-5 w=[450px] gap-x-3">
 					<Link
-						to={`/apply/1/resource/e/${entity_id}/g/${group_id}`}
+						to={`/apply/lp/resource/e/${entity_id}/g/${group_id}`}
 						className="flex flex-col py-3 px-4 rounded-full text-blue-600 w-1/2 items-center cursor-pointer border-2 border-blue-600"
 					>
 						Back

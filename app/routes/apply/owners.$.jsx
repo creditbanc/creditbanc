@@ -10,6 +10,7 @@ import { from, lastValueFrom, map as rxmap } from "rxjs";
 import { update_doc } from "~/utils/firebase";
 import { redirect } from "@remix-run/node";
 import { XMarkIcon } from "@heroicons/react/24/outline";
+import { create_user_session } from "~/utils/auth.server";
 
 export const action = async ({ request }) => {
 	console.log("request.url");
@@ -31,7 +32,7 @@ export const action = async ({ request }) => {
 	let response = from(update_doc(["application", entity_id], payload)).pipe(rxmap(() => ({ entity_id, group_id })));
 
 	await lastValueFrom(response);
-	return redirect(`/apply/owners/resource/e/${entity_id}/g/${group_id}`);
+	return create_user_session(entity_id, `/home/resource/e/${entity_id}/g/${group_id}`);
 };
 
 const steps = [
@@ -404,9 +405,12 @@ export default function Container() {
 					<Owners />
 				</div>
 				<div className="flex flex-row w-full items-center gap-y-4 my-5 gap-x-3 pb-[50px]">
-					<div className="flex flex-col py-3 px-4 rounded-full text-blue-600 w-1/2 items-center cursor-pointer border-2 border-blue-600">
+					<Link
+						to={`/apply/annual_revenue/resource/e/${entity_id}/g/${group_id}`}
+						className="flex flex-col py-3 px-4 rounded-full text-blue-600 w-1/2 items-center cursor-pointer border-2 border-blue-600"
+					>
 						Back
-					</div>
+					</Link>
 					<div
 						onClick={onSubmit}
 						// to={`/apply/owner/resource/e/${entity_id}/g/${group_id}`}
