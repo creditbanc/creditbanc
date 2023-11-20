@@ -65,7 +65,127 @@ const SectionHeading = ({ headline, subheadline }) => {
 	);
 };
 
-const options = [
+const OwnerForm = () => {
+	return (
+		<form>
+			<div className="space-y-12">
+				<div className="border-b border-gray-900/10 pb-12">
+					<div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
+						<div className="sm:col-span-3">
+							<label htmlFor="first-name" className="block text-sm font-medium leading-6 text-gray-900">
+								First name
+							</label>
+							<div className="mt-2">
+								<input
+									type="text"
+									name="first-name"
+									id="first-name"
+									autoComplete="given-name"
+									className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+								/>
+							</div>
+						</div>
+
+						<div className="sm:col-span-3">
+							<label htmlFor="last-name" className="block text-sm font-medium leading-6 text-gray-900">
+								Last name
+							</label>
+							<div className="mt-2">
+								<input
+									type="text"
+									name="last-name"
+									id="last-name"
+									autoComplete="family-name"
+									className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+								/>
+							</div>
+						</div>
+
+						<div className="sm:col-span-4">
+							<label htmlFor="email" className="block text-sm font-medium leading-6 text-gray-900">
+								Email address
+							</label>
+							<div className="mt-2">
+								<input
+									id="email"
+									name="email"
+									type="email"
+									autoComplete="email"
+									className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+								/>
+							</div>
+						</div>
+
+						<div className="col-span-full">
+							<label
+								htmlFor="street-address"
+								className="block text-sm font-medium leading-6 text-gray-900"
+							>
+								Street address
+							</label>
+							<div className="mt-2">
+								<input
+									type="text"
+									name="street-address"
+									id="street-address"
+									autoComplete="street-address"
+									className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+								/>
+							</div>
+						</div>
+
+						<div className="sm:col-span-2 sm:col-start-1">
+							<label htmlFor="city" className="block text-sm font-medium leading-6 text-gray-900">
+								City
+							</label>
+							<div className="mt-2">
+								<input
+									type="text"
+									name="city"
+									id="city"
+									autoComplete="address-level2"
+									className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+								/>
+							</div>
+						</div>
+
+						<div className="sm:col-span-2">
+							<label htmlFor="region" className="block text-sm font-medium leading-6 text-gray-900">
+								State / Province
+							</label>
+							<div className="mt-2">
+								<input
+									type="text"
+									name="region"
+									id="region"
+									autoComplete="address-level1"
+									className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+								/>
+							</div>
+						</div>
+
+						<div className="sm:col-span-2">
+							<label htmlFor="postal-code" className="block text-sm font-medium leading-6 text-gray-900">
+								ZIP / Postal code
+							</label>
+							<div className="mt-2">
+								<input
+									type="text"
+									name="postal-code"
+									id="postal-code"
+									autoComplete="postal-code"
+									className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+								/>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</form>
+	);
+};
+
+const owners = [
 	{
 		name: "Person",
 	},
@@ -74,8 +194,8 @@ const options = [
 	},
 ];
 
-const TimelineOptions = () => {
-	const [selected, setSelected] = useState(options[0]);
+const Owners = () => {
+	const [selected, setSelected] = useState(owners[0]);
 
 	return (
 		<RadioGroup value={selected} onChange={setSelected}>
@@ -118,7 +238,7 @@ const TimelineOptions = () => {
 							)}
 						</RadioGroup.Option>
 					))
-				)(options)}
+				)(owners)}
 			</div>
 		</RadioGroup>
 	);
@@ -134,7 +254,7 @@ export default function Container() {
 			<div className="flex flex-col w-full">
 				<Progress />
 			</div>
-			<div className="flex flex-col justify-center h-full w-[600px]">
+			<div className="flex flex-col justify-center h-4/5 w-[600px]">
 				<div className="flex flex-col my-4">
 					<SectionHeading
 						headline={<div>Who owns 20% or more of roas?</div>}
@@ -150,9 +270,12 @@ export default function Container() {
 					/>
 				</div>
 				<div className="flex flex-col w-full">
-					<TimelineOptions />
+					<Owners />
 				</div>
-				<div className="flex flex-col w-full items-center gap-y-4 my-5">
+				<div className="flex flex-row w-full items-center gap-y-4 my-5 gap-x-3">
+					<div className="flex flex-col py-3 px-4 rounded-full text-blue-600 w-1/2 items-center cursor-pointer border-2 border-blue-600">
+						Back
+					</div>
 					<Link
 						to={`/apply/owner/resource/e/${entity_id}/g/${group_id}`}
 						className="flex flex-col bg-blue-600 py-3 px-4 rounded-full text-white w-[450px] items-center cursor-pointer"

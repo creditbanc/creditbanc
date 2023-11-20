@@ -4920,10 +4920,6 @@ body {
     max-width: 24rem;
   }
 
-  .sm\:max-w-xs {
-    max-width: 20rem;
-  }
-
   .sm\:flex-auto {
     flex: 1 1 auto;
   }

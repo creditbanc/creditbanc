@@ -203,7 +203,7 @@ export default function Container() {
 			<div className="flex flex-col w-full">
 				<Progress />
 			</div>
-			<div className="flex flex-col justify-center h-full w-[600px]">
+			<div className="flex flex-col justify-center h-4/5 w-[600px]">
 				<div className="flex flex-col my-4">
 					<SectionHeading
 						headline={<div>What is your estimated gross annual revenue?</div>}
