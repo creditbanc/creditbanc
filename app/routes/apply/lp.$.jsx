@@ -1,14 +1,16 @@
 import useStore from "./store";
 import { useState } from "react";
 import { RadioGroup } from "@headlessui/react";
-import { classNames, currency, form_params, get_entity_id, get_group_id, mapIndexed } from "~/utils/helpers";
-import { pipe } from "ramda";
+import { classNames, currency, form_params, get, get_entity_id, get_group_id, mapIndexed } from "~/utils/helpers";
+import { head, pipe } from "ramda";
 import { StarIcon } from "@heroicons/react/20/solid";
 import { Link, useLocation, useSubmit } from "@remix-run/react";
 import { signup } from "~/utils/auth.server";
 import { concatMap, from, lastValueFrom, map as rxmap, tap } from "rxjs";
 import { set_doc } from "~/utils/firebase";
 import { redirect } from "@remix-run/node";
+import { navigation } from "./navigation";
+import { filter } from "shades";
 
 export const action = async ({ request }) => {
 	let params = await form_params(request);
@@ -44,8 +46,9 @@ export const action = async ({ request }) => {
 	console.log(entity_id);
 	console.log("lp.group_id");
 	console.log(group_id);
-	return redirect(`/apply/financing_needs/resource/e/${entity_id}/g/${group_id}`);
-	return null;
+	let next = pipe(filter({ id: "lp" }), head, get("next"))(navigation);
+
+	return redirect(next({ entity_id, group_id }));
 };
 
 const Header = () => {
@@ -258,6 +261,23 @@ const PersonalInfoForm = () => {
 							autoComplete="email"
 							className="block w-full rounded-md border-0 px-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-sm sm:leading-6"
 							onChange={(e) => set_props({ email: e.target.value })}
+						/>
+					</div>
+				</div>
+
+				<div className="flex flex-col w-full">
+					<label htmlFor="email" className="block text-sm font-medium leading-6 text-gray-900">
+						Phone
+					</label>
+					<div className="mt-2">
+						<input
+							value={email}
+							id="phone"
+							name="phone"
+							type="phone"
+							autoComplete="phone"
+							className="block w-full rounded-md border-0 px-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-sm sm:leading-6"
+							onChange={(e) => set_props({ phone: e.target.value })}
 						/>
 					</div>
 				</div>

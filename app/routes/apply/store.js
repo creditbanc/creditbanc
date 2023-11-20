@@ -25,4 +25,6 @@ export default store({
 		max: 0,
 	},
 	owners: {},
+	legal_name: "",
+	ein: "",
 });
