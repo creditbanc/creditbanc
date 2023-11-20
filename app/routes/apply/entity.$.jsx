@@ -31,7 +31,7 @@ export const action = async ({ request }) => {
 	let response = from(update_doc(["application", entity_id], payload)).pipe(rxmap(() => ({ entity_id, group_id })));
 
 	await lastValueFrom(response);
-	let next = pipe(filter({ id: "industry" }), head, get("next"))(navigation);
+	let next = pipe(filter({ id: "entity" }), head, get("next"))(navigation);
 	return redirect(next({ entity_id, group_id }));
 };
 
@@ -187,6 +187,8 @@ export default function Container() {
 	const submit = useSubmit();
 	let { business_entity } = useStore();
 
+	let back = pipe(filter({ id: "entity" }), head, get("back"))(navigation);
+
 	const onSubmit = () => {
 		console.log("onSubmit");
 		let payload = { business_entity };
@@ -222,7 +224,7 @@ export default function Container() {
 				</div>
 				<div className="flex flex-row w-full items-center gap-y-4 my-5 gap-x-3">
 					<Link
-						to={`/apply/address/resource/e/${entity_id}/g/${group_id}`}
+						to={back}
 						className="flex flex-col py-3 px-4 rounded-full text-blue-600 w-1/2 items-center cursor-pointer border-2 border-blue-600"
 					>
 						Back

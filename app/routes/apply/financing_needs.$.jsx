@@ -172,6 +172,8 @@ export default function Container() {
 	const submit = useSubmit();
 	let { timeline } = useStore((state) => state);
 
+	let back = pipe(filter({ id: "financing_needs" }), head, get("back"))(navigation);
+
 	const onSubmit = () => {
 		console.log("onSubmit");
 		let payload = { timeline: JSON.stringify(timeline) };

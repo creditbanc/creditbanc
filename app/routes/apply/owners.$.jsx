@@ -33,7 +33,7 @@ export const action = async ({ request }) => {
 	let response = from(update_doc(["application", entity_id], payload)).pipe(rxmap(() => ({ entity_id, group_id })));
 
 	await lastValueFrom(response);
-	let next = pipe(filter({ id: "industry" }), head, get("next"))(navigation);
+	let next = pipe(filter({ id: "owners" }), head, get("next"))(navigation);
 	return create_user_session(entity_id, next({ entity_id, group_id }));
 };
 
@@ -368,6 +368,8 @@ export default function Container() {
 	let { owners: business_owners } = useStore((state) => state);
 	const submit = useSubmit();
 
+	let back = pipe(filter({ id: "owners" }), head, get("back"))(navigation);
+
 	const onSubmit = () => {
 		console.log("onSubmit");
 		let payload = { owners: JSON.stringify(business_owners) };
@@ -408,7 +410,7 @@ export default function Container() {
 				</div>
 				<div className="flex flex-row w-full items-center gap-y-4 my-5 gap-x-3 pb-[50px]">
 					<Link
-						to={`/apply/annual_revenue/resource/e/${entity_id}/g/${group_id}`}
+						to={back}
 						className="flex flex-col py-3 px-4 rounded-full text-blue-600 w-1/2 items-center cursor-pointer border-2 border-blue-600"
 					>
 						Back

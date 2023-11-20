@@ -194,6 +194,8 @@ export default function Container() {
 	const submit = useSubmit();
 	let { time_in_business } = useStore((state) => state);
 
+	let back = pipe(filter({ id: "inception_date" }), head, get("back"))(navigation);
+
 	const onSubmit = () => {
 		console.log("onSubmit");
 		let payload = { time_in_business: JSON.stringify(time_in_business) };
@@ -229,7 +231,7 @@ export default function Container() {
 				</div>
 				<div className="flex flex-row w-full items-center gap-y-4 my-5 gap-x-3">
 					<Link
-						to={`/apply/financing_needs/resource/e/${entity_id}/g/${group_id}`}
+						to={back}
 						className="flex flex-col py-3 px-4 rounded-full text-blue-600 w-1/2 items-center cursor-pointer border-2 border-blue-600"
 					>
 						Back
