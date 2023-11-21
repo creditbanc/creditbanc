@@ -232,7 +232,7 @@ export default function Container() {
 				</div>
 				<div className="flex flex-row w-full items-center gap-y-4 my-5 gap-x-3">
 					<Link
-						to={back}
+						to={back({ entity_id, group_id })}
 						className="flex flex-col py-3 px-4 rounded-full text-blue-600 w-1/2 items-center cursor-pointer border-2 border-blue-600"
 					>
 						Back

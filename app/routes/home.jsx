@@ -18,7 +18,7 @@ export const loader = async ({ request }) => {
 	let application = await lastValueFrom(from(get_doc(["application", entity_id])));
 
 	if (!isEmpty(application)) {
-		let { step } = application;
+		let { step, group_id } = application;
 
 		if (step !== "complete") {
 			let next = pipe(filter({ id: step }), head, get("next"))(application_navigation);
