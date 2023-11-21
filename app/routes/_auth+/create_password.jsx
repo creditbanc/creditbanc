@@ -29,7 +29,6 @@ export default function NewPassword() {
 
 	const onSubmit = (event) => {
 		event.preventDefault();
-
 		submit({ entity_id, password: formData.password }, { method: "post" });
 	};
 
