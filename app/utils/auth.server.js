@@ -31,7 +31,7 @@ const storage = createCookieSessionStorage({
 export const signup = async (form) => {
 	console.log("utils.auth.server.signup");
 
-	let { email, password = "default", first_name, last_name, plan_id = "builder", is_default_password = false } = form;
+	let { email, password = "default", first_name, last_name, plan_id = "builder", default_password = false } = form;
 
 	let partition_id = uuidv4();
 
@@ -42,7 +42,7 @@ export const signup = async (form) => {
 		first_name,
 		last_name,
 		plan_id,
-		is_default_password,
+		default_password,
 	});
 
 	let partition = await create_partition({ entity_id: entity.id, partition_id });

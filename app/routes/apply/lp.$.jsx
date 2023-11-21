@@ -29,7 +29,7 @@ export const action = async ({ request }) => {
 		email,
 		first_name,
 		last_name,
-		is_default_password: true,
+		default_password: true,
 	};
 
 	let response = from(signup(signup_payload)).pipe(

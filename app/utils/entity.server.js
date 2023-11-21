@@ -24,6 +24,7 @@ export const reset_password = async (entity_id, password) => {
 
 	let payload = {
 		password: hash,
+		default_password: false,
 	};
 
 	await update_doc(["entity", entity_id], payload);

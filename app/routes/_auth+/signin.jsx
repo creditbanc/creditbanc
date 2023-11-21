@@ -1,10 +1,13 @@
 import { useState } from "react";
 import InputField from "~/components/InputField";
 import { get_entity, signin } from "../../utils/auth.server";
-import { useSubmit, useActionData, Link } from "@remix-run/react";
+import { useSubmit, useActionData, Link, useNavigate } from "@remix-run/react";
 import { json, redirect } from "@remix-run/node";
 import { get_user } from "../../utils/auth.server";
 import { form_params } from "~/utils/helpers";
+import { from, lastValueFrom, map } from "rxjs";
+import { get_collection, get_doc } from "~/utils/firebase";
+import { defaultTo, head, pipe } from "ramda";
 const cb_logo = "/images/logos/cb_logo_3.png";
 const bg = "/images/credit_banc_auth_bg.png";
 
@@ -26,19 +29,63 @@ export const action = async ({ request }) => {
 
 export default function SignIn() {
 	const actionData = useActionData();
-	const [formError, setFormError] = useState(actionData?.error || "");
 	const submit = useSubmit();
-	const [formData, setFormData] = useState({ email: "", password: "" });
+	const [formError, setFormError] = useState(actionData?.error || "");
+	const [formData, setFormData] = useState({ email: "", password: "", visible: "email" });
+	const navigate = useNavigate();
 
-	const onSubmit = (event) => {
+	const onSubmit = async (event) => {
 		console.log("onSubmit");
 		event.preventDefault();
-		submit(formData, { method: "post" });
+
+		if (formData.visible === "email") {
+			let entity_query = [
+				{
+					param: "email",
+					predicate: "==",
+					value: formData.email,
+				},
+			];
+
+			let entity = await lastValueFrom(
+				from(get_collection({ path: ["entity"], queries: entity_query })).pipe(map(pipe(head, defaultTo({}))))
+			);
+
+			if (entity?.default_password) {
+				console.log("hi");
+				navigate(`/create_password?entity_id=${entity.id}`);
+			} else {
+				setFormData((prev) => ({ ...prev, visible: "password" }));
+			}
+		}
+
+		if (formData.visible === "password") {
+			submit(formData, { method: "post" });
+		}
 	};
 
 	const handleFormChange = (event) => {
 		const { name, value } = event.target;
 		setFormData((prev) => ({ ...prev, [name]: value }));
+	};
+
+	const ActiveSigninButton = () => {
+		return (
+			<div
+				onClick={onSubmit}
+				className="flex w-full justify-center rounded-md border border-transparent bg-[#55CF9E] py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-[#55CF9E] focus:outline-none focus:ring-2 focus:ring-[#55CF9E] focus:ring-offset-2 cursor-pointer"
+			>
+				Sign in
+			</div>
+		);
+	};
+
+	const DisabledSigninButton = () => {
+		return (
+			<div className="flex w-full justify-center rounded-md border border-transparent bg-gray-200 py-2 px-4 text-sm font-medium text-white shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 cursor-not-allowed">
+				Sign in
+			</div>
+		);
 	};
 
 	return (
@@ -61,43 +108,47 @@ export default function SignIn() {
 					<div className="mt-8">
 						<div className="mt-6">
 							<div className="space-y-6">
-								<div>
-									<label htmlFor="email" className="block text-sm font-medium text-gray-700">
-										Email address
-									</label>
-									<div className="mt-1">
-										<input
-											id="email"
-											name="email"
-											type="email"
-											autoComplete="email"
-											required
-											className="block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
-											placeholder={"Email address"}
-											onChange={handleFormChange}
-											value={formData.email}
-										/>
+								{formData.visible === "email" && (
+									<div>
+										<label htmlFor="email" className="block text-sm font-medium text-gray-700">
+											Email address
+										</label>
+										<div className="mt-1">
+											<input
+												id="email"
+												name="email"
+												type="email"
+												autoComplete="email"
+												required
+												className="block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
+												placeholder={"Email address"}
+												onChange={handleFormChange}
+												value={formData.email}
+											/>
+										</div>
 									</div>
-								</div>
+								)}
 
-								<div className="space-y-1">
-									<label htmlFor="password" className="block text-sm font-medium text-gray-700">
-										Password
-									</label>
-									<div className="mt-1">
-										<input
-											id="password"
-											name="password"
-											type="password"
-											autoComplete="current-password"
-											required
-											className="block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
-											placeholder={"••••••••"}
-											onChange={handleFormChange}
-											value={formData.password}
-										/>
+								{formData.visible === "password" && (
+									<div className="space-y-1">
+										<label htmlFor="password" className="block text-sm font-medium text-gray-700">
+											Password
+										</label>
+										<div className="mt-1">
+											<input
+												id="password"
+												name="password"
+												type="password"
+												autoComplete="current-password"
+												required
+												className="block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
+												placeholder={"••••••••"}
+												onChange={handleFormChange}
+												value={formData.password}
+											/>
+										</div>
 									</div>
-								</div>
+								)}
 
 								<div className="flex items-center justify-between">
 									{/* <div className="flex items-center">
@@ -123,12 +174,14 @@ export default function SignIn() {
 								</div>
 
 								<div>
-									<div
-										onClick={onSubmit}
-										className="flex w-full justify-center rounded-md border border-transparent bg-[#55CF9E] py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-[#55CF9E] focus:outline-none focus:ring-2 focus:ring-[#55CF9E] focus:ring-offset-2 cursor-pointer"
-									>
-										Sign in
-									</div>
+									{formData.visible == "email" && formData.email !== "" && <ActiveSigninButton />}
+									{formData.visible == "password" && formData.password !== "" && (
+										<ActiveSigninButton />
+									)}
+									{formData.visible == "email" && formData.email == "" && <DisabledSigninButton />}
+									{formData.visible == "password" && formData.password == "" && (
+										<DisabledSigninButton />
+									)}
 								</div>
 							</div>
 						</div>
