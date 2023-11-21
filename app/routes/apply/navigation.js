@@ -43,19 +43,25 @@ export const navigation = [
 	{
 		id: "annual_revenue",
 		step: "annual_revenue",
-		next: ({ entity_id, group_id }) => `/apply/employees/resource/e/${entity_id}/g/${group_id}`,
+		next: ({ entity_id, group_id }) => `/apply/owners/resource/e/${entity_id}/g/${group_id}`,
 		back: ({ entity_id, group_id }) => `/apply/address/resource/e/${entity_id}/g/${group_id}`,
 	},
 	{
-		id: "employees",
-		step: "employees",
-		next: ({ entity_id, group_id }) => `/apply/owners/resource/e/${entity_id}/g/${group_id}`,
+		id: "owners",
+		step: "owners",
+		next: ({ entity_id, group_id }) => `/apply/liens/resource/e/${entity_id}/g/${group_id}`,
 		back: ({ entity_id, group_id }) => `/apply/annual_revenue/resource/e/${entity_id}/g/${group_id}`,
 	},
 	{
-		id: "owners",
+		id: "liens",
 		step: "complete",
 		next: ({ entity_id, group_id }) => `/home/resource/e/${entity_id}/g/${group_id}`,
-		back: ({ entity_id, group_id }) => `/apply/annual_revenue/resource/e/${entity_id}/g/${group_id}`,
+		back: ({ entity_id, group_id }) => `/apply/owners/resource/e/${entity_id}/g/${group_id}`,
 	},
+	// {
+	// 	id: "employees",
+	// 	step: "employees",
+	// 	next: ({ entity_id, group_id }) => `/apply/owners/resource/e/${entity_id}/g/${group_id}`,
+	// 	back: ({ entity_id, group_id }) => `/apply/annual_revenue/resource/e/${entity_id}/g/${group_id}`,
+	// },
 ];

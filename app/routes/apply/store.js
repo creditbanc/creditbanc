@@ -28,4 +28,9 @@ export default store({
 	owners: {},
 	legal_name: "",
 	ein: "",
+	liens: {
+		value: false,
+		payment_plan: false,
+		amount_owed: 0,
+	},
 });
