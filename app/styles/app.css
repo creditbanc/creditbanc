@@ -783,6 +783,10 @@ video {
   top: calc(23 / 729 * 100%);
 }
 
+.top-\[10px\] {
+  top: 10px;
+}
+
 .isolate {
   isolation: isolate;
 }
@@ -1339,6 +1343,10 @@ video {
 
 .mt-\[50px\] {
   margin-top: 50px;
+}
+
+.-mb-\[30px\] {
+  margin-bottom: -30px;
 }
 
 .block {
@@ -3171,6 +3179,11 @@ video {
 .bg-yellow-300 {
   --tw-bg-opacity: 1;
   background-color: rgb(253 224 71 / var(--tw-bg-opacity));
+}
+
+.bg-red-600 {
+  --tw-bg-opacity: 1;
+  background-color: rgb(220 38 38 / var(--tw-bg-opacity));
 }
 
 .bg-opacity-20 {

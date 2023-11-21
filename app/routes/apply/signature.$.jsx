@@ -1,4 +1,4 @@
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import SignatureCanvas from "react-signature-canvas";
 const signature_hero_img = "/images/sign.jpg";
 
@@ -38,6 +38,20 @@ const features = [
 ];
 
 export default function Signature() {
+	let sig_canvas_ref = useRef();
+	let [base_64_img, set_base_64_img] = useState("");
+
+	const onSaveSignature = () => {
+		let data = sig_canvas_ref.current.toDataURL();
+		console.log(data);
+		set_base_64_img(data);
+	};
+
+	const onClearSignature = () => {
+		sig_canvas_ref.current.clear();
+		set_base_64_img("");
+	};
+
 	return (
 		<div className="flex flex-col bg-white overflow-y-scroll py-[30px] h-full items-center w-full">
 			<div className="flex flex-col px-10 pt-10 border rounded shadow-sm w-[700px]">
@@ -46,17 +60,32 @@ export default function Signature() {
 						<img src={signature_hero_img} className="h-[250px]" />
 					</div>
 					<p className="mt-2 text-xl font-semibold tracking-tight text-gray-900">
-						To finish all you have to do is sign your loan application
+						Save your signature and verify your loan application
 					</p>
+				</div>
+				<div className="flex flex-col w-full items-center">
+					{base_64_img !== "" && (
+						<div className="flex flex-col w-full items-center">
+							<img src={base_64_img} className="h-[250px]" />
+						</div>
+					)}
 				</div>
 				<div className="flex flex-col justify-center my-10 w-full">
 					<div className="flex flex-row w-full ml-[35px]">
 						<div className="flex flex-col h-full justify-end items-end -mt-[30px] -mr-[80px]">
 							<ArrowRightIcon className="h-6 w-6 text-red-500 mx-auto stroke-2" />
 						</div>
-						<div className="my-0 mx-auto">
+						<div className="flex flex-col relative my-0 mx-auto">
+							<div className="flex flex-col absolute top-[10px] right-[10px]">
+								<div
+									className="flex flex-col px-2.5 py-0.5 bg-red-500 rounded-full text-xs text-white cursor-pointer mb-[30px]"
+									onClick={onClearSignature}
+								>
+									clear
+								</div>
+							</div>
 							<SignatureCanvas
-								// penColor="green"
+								ref={sig_canvas_ref}
 								canvasProps={{ width: 500, height: 200, className: "bg-gray-50" }}
 							/>
 							<div className="flex flex-col w-full items-center">
@@ -66,8 +95,11 @@ export default function Signature() {
 					</div>
 
 					<div className="flex flex-col w-full items-center pt-10">
-						<div className="flex flex-col bg-blue-600 py-3 px-4 rounded-full text-white w-[400px] items-center cursor-pointer">
-							Confirm and Submit Loan
+						<div
+							className="flex flex-col bg-blue-600 py-3 px-4 rounded-full text-white w-[400px] items-center cursor-pointer"
+							onClick={onSaveSignature}
+						>
+							Verify loan application
 						</div>
 					</div>
 				</div>
