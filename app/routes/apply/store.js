@@ -31,6 +31,11 @@ export default store({
 	liens: {
 		value: false,
 		payment_plan: false,
-		amount_owed: 0,
+		amount: 0,
+	},
+	loans: {
+		value: false,
+		number_of_loans: 0,
+		amount: 0,
 	},
 });

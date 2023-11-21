@@ -26,14 +26,17 @@ export const action = async ({ request }) => {
 	console.log(group_id);
 	console.log(entity_id);
 
-	let step = pipe(filter({ id: "liens" }), head, get("step"))(navigation);
-	let { liens } = params;
-	let payload = { liens: JSON.parse(liens), step };
+	let step = pipe(filter({ id: "loans" }), head, get("step"))(navigation);
+	let { loans } = params;
+	let payload = { loans: JSON.parse(loans), step };
+
+	console.log("payload");
+	console.log(payload);
 
 	let response = from(update_doc(["application", entity_id], payload)).pipe(rxmap(() => ({ entity_id, group_id })));
 
 	await lastValueFrom(response);
-	let next = pipe(filter({ id: "liens" }), head, get("next"))(navigation);
+	let next = pipe(filter({ id: "loans" }), head, get("next"))(navigation);
 	return redirect(next({ entity_id, group_id }));
 };
 
@@ -97,13 +100,13 @@ const SectionHeading = ({ headline, subheadline }) => {
 	);
 };
 
-const liens = [
+const loans = [
 	{ id: 1, option: "No", value: false },
 	{ id: 2, option: "Yes", value: true },
 ];
 
-const Liens = () => {
-	const [selected, setSelected] = useState(liens[0]);
+const Loans = () => {
+	const [selected, setSelected] = useState(loans[0]);
 	const { set_path } = useStore();
 
 	return (
@@ -132,7 +135,7 @@ const Liens = () => {
 											key={index}
 											className={`relative cursor-default select-none py-2 pl-3 pr-9 hover:bg-blue-600 hover:text-white text-gray-900`}
 											value={person}
-											onClick={() => set_path(["liens", "value"], person.value)}
+											onClick={() => set_path(["loans", "value"], person.value)}
 										>
 											{({ selected, active }) => (
 												<Listbox.Option>
@@ -156,7 +159,7 @@ const Liens = () => {
 											)}
 										</Listbox.Option>
 									))
-								)(liens)}
+								)(loans)}
 							</Listbox.Options>
 						</Transition>
 					</div>
@@ -166,26 +169,30 @@ const Liens = () => {
 	);
 };
 
-const payment_plan = [
-	{ id: 1, option: "No", value: false },
-	{ id: 2, option: "Yes", value: true },
+const number_of_loans = [
+	{ id: 0, option: "None", value: 0 },
+	{ id: 1, option: "One", value: 1 },
+	{ id: 2, option: "Two", value: 2 },
+	{ id: 3, option: "Four", value: 3 },
+	{ id: 4, option: "Five", value: 4 },
+	{ id: 5, option: "More than 5", value: 5 },
 ];
 
-const PaymentPlan = () => {
-	const [selected, setSelected] = useState(payment_plan[0]);
+const NumberOfLoans = () => {
+	const [selected, setSelected] = useState(number_of_loans[0]);
 	const { set_path } = useStore();
 
 	return (
 		<div>
 			<div>
-				<SectionHeading headline={<div>Are you currently in a payment plan?</div>} />
+				<SectionHeading headline={<div>How many?</div>} />
 			</div>
 			<Listbox value={selected} onChange={setSelected}>
 				{({ open }) => (
 					<>
 						<div className="relative mt-2">
 							<Listbox.Button className="relative w-full cursor-default rounded-md bg-white py-3 pl-3 pr-10 text-left text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-600 sm:text-sm sm:leading-6">
-								<span className="block truncate">{selected.option}</span>
+								<span className="block truncate">{selected.value}</span>
 								<span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
 									<ChevronUpDownIcon className="h-5 w-5 text-gray-400" aria-hidden="true" />
 								</span>
@@ -203,33 +210,41 @@ const PaymentPlan = () => {
 										mapIndexed((person, index) => (
 											<Listbox.Option
 												key={index}
-												className={`relative cursor-default select-none py-2 pl-3 pr-9 hover:bg-blue-600 hover:text-white text-gray-900`}
+												className={({ active }) =>
+													classNames(
+														active ? "bg-blue-600 text-white" : "text-gray-900",
+														"relative cursor-default select-none py-2 pl-3 pr-9"
+													)
+												}
 												value={person}
-												onClick={() => set_path(["liens", "payment_plan"], person.value)}
+												onClick={() => set_path(["loans", "number_of_loans"], person.value)}
 											>
 												{({ selected, active }) => (
-													<Listbox.Option>
+													<>
 														<span
 															className={classNames(
 																selected ? "font-semibold" : "font-normal",
 																"block truncate"
 															)}
 														>
-															{person.option}
+															{person.value}
 														</span>
 
 														{selected ? (
 															<span
-																className={`absolute inset-y-0 right-0 flex items-center pr-4 text-white hover:text-blue-600`}
+																className={classNames(
+																	active ? "text-white" : "text-blue-600",
+																	"absolute inset-y-0 right-0 flex items-center pr-4"
+																)}
 															>
 																<CheckIcon className="h-5 w-5" aria-hidden="true" />
 															</span>
 														) : null}
-													</Listbox.Option>
+													</>
 												)}
 											</Listbox.Option>
 										))
-									)(payment_plan)}
+									)(number_of_loans)}
 								</Listbox.Options>
 							</Transition>
 						</div>
@@ -241,24 +256,24 @@ const PaymentPlan = () => {
 };
 
 const PaymentAmount = () => {
-	const { set_path, liens } = useStore();
+	const { set_path, loans } = useStore();
 
 	return (
 		<div>
 			<div>
 				<SectionHeading
-					headline={<div>What is your estimated amount owed?</div>}
+					headline={<div>What are your total balances?</div>}
 					subheadline={<div className="flex flex-row gap-x-2"></div>}
 				/>
 			</div>
 
 			<div className="col-span-full mt-2">
 				<input
-					value={formatMoney(liens?.amount, { precision: 0 })}
+					value={formatMoney(loans?.amount, { precision: 0 })}
 					type="text"
 					className="px-2 block w-full rounded-md border-0 py-2.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-sm sm:leading-6 text-center"
 					onChange={(e) => {
-						set_path(["liens", "amount"], unformat(e.target.value));
+						set_path(["loans", "amount"], unformat(e.target.value));
 					}}
 				/>
 			</div>
@@ -271,19 +286,19 @@ export default function Container() {
 	let entity_id = get_entity_id(pathname);
 	let group_id = get_group_id(pathname);
 	const submit = useSubmit();
-	let { liens } = useStore();
+	let { loans } = useStore();
 
-	let back = pipe(filter({ id: "liens" }), head, get("back"))(navigation);
+	let back = pipe(filter({ id: "loans" }), head, get("back"))(navigation);
 
 	const onSubmit = () => {
 		console.log("onSubmit");
-		let payload = { liens: JSON.stringify(liens) };
+		let payload = { loans: JSON.stringify(loans) };
 
 		console.log("payload");
 		console.log(payload);
 
 		submit(payload, {
-			action: `/apply/liens/resource/e/${entity_id}/g/${group_id}`,
+			action: `/apply/loans/resource/e/${entity_id}/g/${group_id}`,
 			method: "post",
 		});
 	};
@@ -295,17 +310,17 @@ export default function Container() {
 			</div>
 			<div className="flex flex-col justify-center h-4/5 w-[600px]">
 				<div className="flex flex-col my-4">
-					<SectionHeading headline={<div>Does the business have IRS or State Tax Liens?</div>} />
+					<SectionHeading headline={<div>Do you currently have any daily or weekly payment loans?</div>} />
 				</div>
 				<div className="flex flex-col w-full">
-					<Liens />
+					<Loans />
 					<div className="flex flex-col gap-y-8 my-8">
-						{liens.value && (
+						{loans.value && (
 							<div className="flex flex-col">
-								<PaymentPlan />
+								<NumberOfLoans />
 							</div>
 						)}
-						{liens.payment_plan && (
+						{loans.number_of_loans > 0 && (
 							<div className="flex flex-col">
 								<PaymentAmount />
 							</div>

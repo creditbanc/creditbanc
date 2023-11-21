@@ -53,10 +53,16 @@ export const navigation = [
 		back: ({ entity_id, group_id }) => `/apply/annual_revenue/resource/e/${entity_id}/g/${group_id}`,
 	},
 	{
+		id: "loans",
+		step: "loans",
+		next: ({ entity_id, group_id }) => `/apply/liens/resource/e/${entity_id}/g/${group_id}`,
+		back: ({ entity_id, group_id }) => `/apply/owners/resource/e/${entity_id}/g/${group_id}`,
+	},
+	{
 		id: "liens",
 		step: "complete",
 		next: ({ entity_id, group_id }) => `/home/resource/e/${entity_id}/g/${group_id}`,
-		back: ({ entity_id, group_id }) => `/apply/owners/resource/e/${entity_id}/g/${group_id}`,
+		back: ({ entity_id, group_id }) => `/apply/loans/resource/e/${entity_id}/g/${group_id}`,
 	},
 	// {
 	// 	id: "employees",
