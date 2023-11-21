@@ -17,9 +17,6 @@ export const loader = async ({ request }) => {
 
 	let application = await lastValueFrom(from(get_doc(["application", entity_id])));
 
-	console.log("application_______");
-	console.log(application);
-
 	if (!isEmpty(application)) {
 		let { step } = application;
 

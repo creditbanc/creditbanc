@@ -26,8 +26,9 @@ export const action = async ({ request }) => {
 	console.log(group_id);
 	console.log(entity_id);
 
+	let step = pipe(filter({ id: "inception_date" }), head, get("step"))(navigation);
 	let { time_in_business } = params;
-	let payload = { time_in_business: JSON.parse(time_in_business) };
+	let payload = { time_in_business: JSON.parse(time_in_business), step };
 
 	let response = from(update_doc(["application", entity_id], payload)).pipe(rxmap(() => ({ entity_id, group_id })));
 

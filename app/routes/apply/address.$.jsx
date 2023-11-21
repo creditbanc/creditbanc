@@ -22,8 +22,9 @@ export const action = async ({ request }) => {
 	console.log(group_id);
 	console.log(entity_id);
 
+	let step = pipe(filter({ id: "address" }), head, get("step"))(navigation);
 	let { business_address } = params;
-	let payload = { business_address: JSON.parse(business_address) };
+	let payload = { business_address: JSON.parse(business_address), step };
 
 	let response = from(update_doc(["application", entity_id], payload)).pipe(rxmap(() => ({ entity_id, group_id })));
 

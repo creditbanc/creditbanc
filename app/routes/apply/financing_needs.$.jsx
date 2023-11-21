@@ -5,7 +5,7 @@ import { from, lastValueFrom, map as rxmap } from "rxjs";
 import { useState } from "react";
 import { RadioGroup } from "@headlessui/react";
 import { Link, useLocation, useSubmit } from "@remix-run/react";
-import { set_doc, update_doc } from "~/utils/firebase";
+import { update_doc } from "~/utils/firebase";
 import { redirect } from "@remix-run/node";
 import { filter } from "shades";
 import { navigation } from "./navigation";
@@ -24,8 +24,9 @@ export const action = async ({ request }) => {
 	console.log(group_id);
 	console.log(entity_id);
 
+	let step = pipe(filter({ id: "financing_needs" }), head, get("step"))(navigation);
 	let { timeline } = params;
-	let payload = { timeline: JSON.parse(timeline) };
+	let payload = { timeline: JSON.parse(timeline), step };
 
 	let response = from(update_doc(["application", entity_id], payload)).pipe(rxmap(() => ({ entity_id, group_id })));
 

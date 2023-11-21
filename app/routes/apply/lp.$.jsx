@@ -20,8 +20,10 @@ export const action = async ({ request }) => {
 
 	let { email, first_name, last_name } = params;
 
+	let step = pipe(filter({ id: "lp" }), head, get("step"))(navigation);
+
 	const save_to_db = async ({ entity_id, group_id }) =>
-		set_doc(["application", entity_id], { ...params, entity_id, group_id, step: "lp" });
+		set_doc(["application", entity_id], { ...params, entity_id, group_id, step });
 
 	let signup_payload = {
 		email,
