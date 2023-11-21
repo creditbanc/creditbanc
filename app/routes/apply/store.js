@@ -38,4 +38,5 @@ export default store({
 		number_of_loans: 0,
 		amount: 0,
 	},
+	last_tax_return_year: "2022",
 });
