@@ -6,6 +6,7 @@ export default store({
 	first_name: "",
 	last_name: "",
 	email: "",
+	phone: "",
 	timeline: { amount: 14, type: "days" },
 	time_in_business: { min: 0, max: 6, type: "months" },
 	industry: "Administrative and Business Services",

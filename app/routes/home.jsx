@@ -1,15 +1,33 @@
-import { get_group_id } from "~/utils/helpers";
+import { get, get_group_id } from "~/utils/helpers";
 import { get_session_entity_id } from "~/utils/auth.server";
 import { get_partition_id } from "~/utils/group.server";
 import { redirect } from "@remix-run/node";
 import { Outlet } from "@remix-run/react";
 import Group from "~/api/client/Group";
-import { lastValueFrom } from "rxjs";
+import { lastValueFrom, from } from "rxjs";
+import { get_doc } from "~/utils/firebase";
+import { head, isEmpty, pipe } from "ramda";
+import { navigation as application_navigation } from "./apply/navigation";
+import { filter } from "shades";
 
 export const loader = async ({ request }) => {
 	let url = new URL(request.url);
 	let entity_id = await get_session_entity_id(request);
 	let group_id = get_group_id(url.pathname);
+
+	let application = await lastValueFrom(from(get_doc(["application", entity_id])));
+
+	console.log("application_______");
+	console.log(application);
+
+	if (!isEmpty(application)) {
+		let { step } = application;
+
+		if (step !== "complete") {
+			let next = pipe(filter({ id: step }), head, get("next"))(application_navigation);
+			return redirect(next({ entity_id, group_id }));
+		}
+	}
 
 	if (!group_id) {
 		let partition_id = await get_partition_id({

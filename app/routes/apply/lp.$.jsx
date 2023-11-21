@@ -5,7 +5,7 @@ import { classNames, currency, form_params, get, get_entity_id, get_group_id, ma
 import { head, pipe } from "ramda";
 import { StarIcon } from "@heroicons/react/20/solid";
 import { Link, useLocation, useSubmit } from "@remix-run/react";
-import { signup } from "~/utils/auth.server";
+import { create_user_session, signup } from "~/utils/auth.server";
 import { concatMap, from, lastValueFrom, map as rxmap, tap } from "rxjs";
 import { set_doc } from "~/utils/firebase";
 import { redirect } from "@remix-run/node";
@@ -20,24 +20,20 @@ export const action = async ({ request }) => {
 
 	let { email, first_name, last_name } = params;
 
-	let response = from(
-		signup({
-			email,
-			first_name,
-			last_name,
-			is_default_password: true,
-		})
-	).pipe(
-		tap(() => console.log("lp.entity_created")),
-		tap((entity) => console.log(entity)),
-		concatMap(({ entity_id, group_id }) => {
-			return from(set_doc(["application", entity_id], { ...params, entity_id, group_id })).pipe(
-				rxmap(() => ({
-					entity_id,
-					group_id,
-				}))
-			);
-		})
+	const save_to_db = async ({ entity_id, group_id }) =>
+		set_doc(["application", entity_id], { ...params, entity_id, group_id, step: "lp" });
+
+	let signup_payload = {
+		email,
+		first_name,
+		last_name,
+		is_default_password: true,
+	};
+
+	let response = from(signup(signup_payload)).pipe(
+		concatMap(({ entity_id, group_id }) =>
+			from(save_to_db({ entity_id, group_id })).pipe(rxmap(() => ({ entity_id, group_id })))
+		)
 	);
 
 	let { entity_id, group_id } = await lastValueFrom(response);
@@ -46,9 +42,9 @@ export const action = async ({ request }) => {
 	console.log(entity_id);
 	console.log("lp.group_id");
 	console.log(group_id);
-	let next = pipe(filter({ id: "lp" }), head, get("next"))(navigation);
 
-	return redirect(next({ entity_id, group_id }));
+	let next = pipe(filter({ id: "lp" }), head, get("next"))(navigation);
+	return create_user_session(entity_id, next({ entity_id, group_id }));
 };
 
 const Header = () => {
@@ -209,7 +205,7 @@ const LoanStats = () => {
 };
 
 const PersonalInfoForm = () => {
-	const { set_props, first_name, last_name, email } = useStore((state) => state);
+	const { set_props, first_name, last_name, email, phone } = useStore((state) => state);
 
 	return (
 		<form>
@@ -271,7 +267,7 @@ const PersonalInfoForm = () => {
 					</label>
 					<div className="mt-2">
 						<input
-							value={email}
+							value={phone}
 							id="phone"
 							name="phone"
 							type="phone"
@@ -347,29 +343,24 @@ export default function Container() {
 			<Header />
 			<div className="flex flex-row w-[1100px] gap-x-5">
 				<div className="flex flex-col w-[70%] -mt-[30px] gap-y-6">
-					<div className="flex flex-col bg-white p-5 pb-7 shadow rounded border">
+					<div className="flex flex-col bg-white p-5 shadow rounded border">
 						<SectionHeading
-							headline={`Step 1: Which type of financing do you prefer?`}
+							headline={`Step 3: Tell us a bit about you`}
 							subheadline={`With CreditBanc, one application is all you need to pre-qualify. Choose the financing
 								you prefer, or let us recommend the best fit for your business.`}
 						/>
-
-						<LoansList />
+						<PersonalInfoForm />
 					</div>
 					<div className="flex flex-col bg-white p-5 pb-0 shadow rounded border">
 						<SectionHeading
 							headline={`Step 2: How much do you want to borrow?`}
 							subheadline={`Use the slider to select your loan amount or enter an amount in the text field.`}
 						/>
-
 						<LoanAmountSlider />
-						{/* <div className="my-5">
-							<LoanStats />
-						</div> */}
 					</div>
-					<div className="flex flex-col bg-white p-5 shadow rounded border">
-						<SectionHeading headline={`Step 3: Tell us a bit about you`} />
-						<PersonalInfoForm />
+					<div className="flex flex-col bg-white p-5 pb-7 shadow rounded border">
+						<SectionHeading headline={`Step 3: Which type of financing do you prefer?`} />
+						<LoansList />
 					</div>
 					<div className="flex flex-col w-full items-center gap-y-4">
 						<div
