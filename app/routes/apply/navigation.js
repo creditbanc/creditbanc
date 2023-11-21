@@ -66,9 +66,15 @@ export const navigation = [
 	},
 	{
 		id: "tax_return",
+		step: "tax_return",
+		next: ({ entity_id, group_id }) => `/apply/signature/resource/e/${entity_id}/g/${group_id}`,
+		back: ({ entity_id, group_id }) => `/apply/liens/resource/e/${entity_id}/g/${group_id}`,
+	},
+	{
+		id: "signature",
 		step: "complete",
 		next: ({ entity_id, group_id }) => `/home/resource/e/${entity_id}/g/${group_id}`,
-		back: ({ entity_id, group_id }) => `/apply/liens/resource/e/${entity_id}/g/${group_id}`,
+		back: ({ entity_id, group_id }) => `/apply/tax_return/resource/e/${entity_id}/g/${group_id}`,
 	},
 	// {
 	// 	id: "employees",

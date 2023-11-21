@@ -1,7 +1,6 @@
 import { useRef, useState } from "react";
 import SignatureCanvas from "react-signature-canvas";
 const signature_hero_img = "/images/sign.jpg";
-
 import {
 	ArrowPathIcon,
 	ArrowRightIcon,
@@ -9,6 +8,11 @@ import {
 	FingerPrintIcon,
 	LockClosedIcon,
 } from "@heroicons/react/24/outline";
+import { get, get_entity_id, get_group_id } from "~/utils/helpers";
+import { head, pipe } from "ramda";
+import { filter } from "shades";
+import { Link, useLocation } from "@remix-run/react";
+import { navigation } from "./navigation";
 
 const features = [
 	{
@@ -38,8 +42,13 @@ const features = [
 ];
 
 export default function Signature() {
+	let { pathname } = useLocation();
+	let entity_id = get_entity_id(pathname);
+	let group_id = get_group_id(pathname);
 	let sig_canvas_ref = useRef();
 	let [base_64_img, set_base_64_img] = useState("");
+
+	let back = pipe(filter({ id: "signature" }), head, get("back"))(navigation);
 
 	const onSaveSignature = () => {
 		let data = sig_canvas_ref.current.toDataURL();
@@ -94,7 +103,13 @@ export default function Signature() {
 						</div>
 					</div>
 
-					<div className="flex flex-col w-full items-center pt-10">
+					<div className="flex flex-row w-full justify-center pt-10 gap-x-3">
+						<Link
+							to={back({ entity_id, group_id })}
+							className="flex flex-col py-3 px-4 rounded-full text-blue-600 w-1/2 items-center cursor-pointer border-2 border-blue-600"
+						>
+							Back
+						</Link>
 						<div
 							className="flex flex-col bg-blue-600 py-3 px-4 rounded-full text-white w-[400px] items-center cursor-pointer"
 							onClick={onSaveSignature}
