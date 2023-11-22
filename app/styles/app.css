@@ -2011,6 +2011,10 @@ video {
   width: 100vw;
 }
 
+.w-\[1200px\] {
+  width: 1200px;
+}
+
 .min-w-0 {
   min-width: 0px;
 }
@@ -4810,6 +4814,10 @@ body {
     grid-column: span 6 / span 6;
   }
 
+  .sm\:col-span-1 {
+    grid-column: span 1 / span 1;
+  }
+
   .sm\:col-start-1 {
     grid-column-start: 1;
   }
@@ -4887,6 +4895,10 @@ body {
 
   .sm\:mt-20 {
     margin-top: 5rem;
+  }
+
+  .sm\:mt-2 {
+    margin-top: 0.5rem;
   }
 
   .sm\:block {

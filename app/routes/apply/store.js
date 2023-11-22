@@ -9,6 +9,7 @@ export default store({
 	phone: "",
 	timeline: { amount: 14, type: "days" },
 	time_in_business: { min: 0, max: 6, type: "months" },
+	business_start_date: { day: 1, month: 1, year: 2023 },
 	industry: "Administrative and Business Services",
 	business_address: {
 		street: "",
@@ -27,6 +28,7 @@ export default store({
 	},
 	owners: {},
 	legal_name: "",
+	dba: "",
 	ein: "",
 	liens: {
 		value: false,
