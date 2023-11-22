@@ -1,15 +1,41 @@
 import { redirect } from "@remix-run/node";
 import { head, isEmpty, pipe } from "ramda";
-import { from, lastValueFrom } from "rxjs";
+import { from, lastValueFrom, map as rxmap } from "rxjs";
 import { filter } from "shades";
-import { get_session_entity_id } from "~/utils/auth.server";
-import { get_doc } from "~/utils/firebase";
-import { get, get_entity_id, get_group_id } from "~/utils/helpers";
-import { Link, useLoaderData, useLocation } from "@remix-run/react";
+import { create_user_session, get_session_entity_id } from "~/utils/auth.server";
+import { get_doc, update_doc } from "~/utils/firebase";
+import { form_params, get, get_entity_id, get_group_id } from "~/utils/helpers";
+import { Link, useLoaderData, useLocation, useSubmit } from "@remix-run/react";
 import { navigation } from "./navigation";
 import { useEffect, useState } from "react";
 import useStore from "./store";
 import moment from "moment";
+
+export const action = async ({ request }) => {
+	console.log("request.url");
+	console.log(request.url);
+	let url = new URL(request.url);
+	let { pathname } = url;
+	let group_id = get_group_id(pathname);
+	let entity_id = get_entity_id(pathname);
+	let params = await form_params(request);
+
+	console.log("params");
+	console.log(params);
+	console.log(group_id);
+	console.log(entity_id);
+
+	let step = pipe(filter({ id: "review" }), head, get("step"))(navigation);
+	let { signed_date } = params;
+	let payload = { signed_date, step };
+
+	let response = from(update_doc(["application", entity_id], payload)).pipe(rxmap(() => ({ entity_id, group_id })));
+
+	await lastValueFrom(response);
+	let next = pipe(filter({ id: "review" }), head, get("next"))(navigation);
+	return create_user_session(entity_id, next({ entity_id, group_id }));
+	// return redirect(next({ entity_id, group_id }));
+};
 
 export const loader = async ({ request }) => {
 	let url = new URL(request.url);
@@ -306,6 +332,7 @@ export default function Review() {
 	let group_id = get_group_id(pathname);
 	let [signature, set_signature] = useState(undefined);
 	let { set_props, signed_date } = useStore();
+	const submit = useSubmit();
 
 	let back = pipe(filter({ id: "review" }), head, get("back"))(navigation);
 
@@ -319,9 +346,22 @@ export default function Review() {
 		set_signature(application?.base_64_img);
 	};
 
+	const onSubmit = () => {
+		console.log("onSubmit");
+		let payload = { signed_date };
+
+		// console.log("payload");
+		// console.log(payload);
+
+		submit(payload, {
+			action: `/apply/review/resource/e/${entity_id}/g/${group_id}`,
+			method: "post",
+		});
+	};
+
 	return (
 		<div className="relative flex flex-col w-full h-full overflow-y-scroll items-center">
-			<div className="flex flex-col w-[1200px] my-10">
+			<div className="flex flex-col w-[1200px] mt-10 mb-[100px]">
 				<div>
 					<Header />
 				</div>
@@ -361,29 +401,29 @@ export default function Review() {
 						<div>{signature && moment(signed_date).format("MM-DD-YYYY")}</div>
 					</div>
 				</div>
-				<div className="flex flex-col w-full items-center gap-y-4 mt-10">
-					<Link
-						to={back({ entity_id, group_id })}
-						className="flex flex-col py-3 px-4 rounded-full text-blue-600 w-1/2 items-center cursor-pointer border-2 border-blue-600"
-					>
-						Back
-					</Link>
-					{/* <div
-					onClick={onSubmit}
-					className="flex flex-col bg-blue-600 py-3 px-4 rounded-full text-white w-[450px] items-center cursor-pointer"
-				>
-					Continue to pre-qualify
-				</div> */}
-				</div>
+				{!signature && (
+					<div className="flex flex-col w-full items-center gap-y-4 mt-10">
+						<Link
+							to={back({ entity_id, group_id })}
+							className="flex flex-col py-3 px-4 rounded-full text-blue-600 w-1/2 items-center cursor-pointer border-2 border-blue-600"
+						>
+							Back
+						</Link>
+					</div>
+				)}
 			</div>
-
-			{/* <div className="flex flex-col w-full h-[70px] fixed bottom-0 bg-green-400 py-3 items-center justify-center">
-				<div className="flex flex-col w-[900px] items-center justify-center">
-					<div className="flex flex-col bg-white px-5 py-3 cursor-pointer rounded-full">
-						Sign & Submit Loan Application
+			{signature && (
+				<div className="flex flex-col w-full h-[70px] fixed bottom-0 bg-green-400 py-3 items-center justify-center">
+					<div className="flex flex-col w-[900px] items-center justify-center">
+						<div
+							className="flex flex-col bg-white px-5 py-3 cursor-pointer rounded-full"
+							onClick={onSubmit}
+						>
+							Submit Loan Application
+						</div>
 					</div>
 				</div>
-			</div> */}
+			)}
 		</div>
 	);
 }

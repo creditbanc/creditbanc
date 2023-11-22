@@ -1345,6 +1345,14 @@ video {
   margin-top: 50px;
 }
 
+.mb-\[150px\] {
+  margin-bottom: 150px;
+}
+
+.mb-\[100px\] {
+  margin-bottom: 100px;
+}
+
 .block {
   display: block;
 }
