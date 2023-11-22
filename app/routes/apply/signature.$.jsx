@@ -27,7 +27,7 @@ export const action = async ({ request }) => {
 
 	let step = pipe(filter({ id: "signature" }), head, get("step"))(navigation);
 	let { base_64_img } = params;
-	let payload = { base_64_img, step };
+	let payload = { signature_base_64_img: JSON.parse(base_64_img), step };
 
 	let response = from(update_doc(["application", entity_id], payload)).pipe(rxmap(() => ({ entity_id, group_id })));
 
@@ -50,7 +50,7 @@ export default function Signature() {
 	const onSubmit = () => {
 		console.log("onSubmit");
 		let data = sig_canvas_ref.current.toDataURL();
-		let payload = { base_64_img: data };
+		let payload = { base_64_img: JSON.stringify(data) };
 
 		submit(payload, {
 			action: `/apply/signature/resource/e/${entity_id}/g/${group_id}`,

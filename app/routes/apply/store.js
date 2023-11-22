@@ -41,4 +41,6 @@ export default store({
 		amount: 0,
 	},
 	last_tax_return_year: "2022",
+	signature_base_64_img: "",
+	signed_date: "",
 });

@@ -4,8 +4,12 @@ import { from, lastValueFrom } from "rxjs";
 import { filter } from "shades";
 import { get_session_entity_id } from "~/utils/auth.server";
 import { get_doc } from "~/utils/firebase";
-import { get, get_group_id } from "~/utils/helpers";
-import { useLoaderData } from "@remix-run/react";
+import { get, get_entity_id, get_group_id } from "~/utils/helpers";
+import { Link, useLoaderData, useLocation } from "@remix-run/react";
+import { navigation } from "./navigation";
+import { useEffect, useState } from "react";
+import useStore from "./store";
+import moment from "moment";
 
 export const loader = async ({ request }) => {
 	let url = new URL(request.url);
@@ -296,6 +300,25 @@ const Agreement = () => {
 };
 
 export default function Review() {
+	let { application } = useLoaderData();
+	let { pathname } = useLocation();
+	let entity_id = get_entity_id(pathname);
+	let group_id = get_group_id(pathname);
+	let [signature, set_signature] = useState(undefined);
+	let { set_props, signed_date } = useStore();
+
+	let back = pipe(filter({ id: "review" }), head, get("back"))(navigation);
+
+	useEffect(() => {
+		if (signature) {
+			set_props({ signed_date: new Date() });
+		}
+	}, [signature]);
+
+	const onSignLoanApplication = () => {
+		set_signature(application?.base_64_img);
+	};
+
 	return (
 		<div className="relative flex flex-col w-full h-full overflow-y-scroll items-center">
 			<div className="flex flex-col w-[1200px] my-10">
@@ -319,23 +342,48 @@ export default function Review() {
 					<Agreement />
 				</div>
 				<div className="flex flex-row justify-between gap-x-10">
-					<div className="flex flex-row justify-between border-b border-dashed border-gray-700 w-1/2 px-2 py-2">
+					<div className="flex flex-row justify-between border-b border-dashed border-gray-700 w-1/2 px-2 py-2 items-end">
 						<div>By:</div>
-						<div></div>
+						<div>
+							{!signature && (
+								<div
+									className="flex flex-col px-4 py-2 cursor-pointer rounded-full bg-green-400 text-white text-sm"
+									onClick={onSignLoanApplication}
+								>
+									Sign Loan Application
+								</div>
+							)}
+							{signature && <img src={signature} style={{ height: 100 }} />}
+						</div>
 					</div>
-					<div className="flex flex-row justify-between border-b border-dashed border-gray-700 w-1/2 px-2 py-2">
+					<div className="flex flex-row justify-between items-end border-b border-dashed border-gray-700 w-1/2 px-2 py-2">
 						<div>Date:</div>
-						<div></div>
+						<div>{signature && moment(signed_date).format("MM-DD-YYYY")}</div>
 					</div>
 				</div>
+				<div className="flex flex-col w-full items-center gap-y-4 mt-10">
+					<Link
+						to={back({ entity_id, group_id })}
+						className="flex flex-col py-3 px-4 rounded-full text-blue-600 w-1/2 items-center cursor-pointer border-2 border-blue-600"
+					>
+						Back
+					</Link>
+					{/* <div
+					onClick={onSubmit}
+					className="flex flex-col bg-blue-600 py-3 px-4 rounded-full text-white w-[450px] items-center cursor-pointer"
+				>
+					Continue to pre-qualify
+				</div> */}
+				</div>
 			</div>
-			<div className="flex flex-col w-full h-[70px] fixed bottom-0 bg-green-400 py-3 items-center justify-center">
+
+			{/* <div className="flex flex-col w-full h-[70px] fixed bottom-0 bg-green-400 py-3 items-center justify-center">
 				<div className="flex flex-col w-[900px] items-center justify-center">
 					<div className="flex flex-col bg-white px-5 py-3 cursor-pointer rounded-full">
 						Sign & Submit Loan Application
 					</div>
 				</div>
-			</div>
+			</div> */}
 		</div>
 	);
 }
