@@ -265,7 +265,7 @@ const PersonalInfoForm = () => {
 
 				<div className="flex flex-col w-full">
 					<label htmlFor="email" className="block text-sm font-medium leading-6 text-gray-900">
-						Telephone
+						Phone number
 					</label>
 					<div className="mt-2">
 						<input
@@ -322,7 +322,7 @@ export default function Container() {
 	let entity_id = get_entity_id(pathname);
 	let group_id = get_group_id(pathname);
 	const submit = useSubmit();
-	let { loan_type, loan_amount, first_name, last_name, email } = useStore((state) => state);
+	let { loan_type, loan_amount, first_name, last_name, email, phone } = useStore((state) => state);
 
 	const onSubmit = () => {
 		console.log("onSubmit");
@@ -332,6 +332,7 @@ export default function Container() {
 			email,
 			first_name,
 			last_name,
+			phone,
 		};
 
 		// console.log("payload");
@@ -347,9 +348,16 @@ export default function Container() {
 				<div className="flex flex-col w-[70%] -mt-[30px] gap-y-6">
 					<div className="flex flex-col bg-white p-5 shadow rounded border">
 						<SectionHeading
-							headline={`Step 3: Tell us a bit about you`}
-							subheadline={`With CreditBanc, one application is all you need to pre-qualify. Choose the financing
-								you prefer, or let us recommend the best fit for your business.`}
+							headline={`Step 1: Tell us a bit about you`}
+							subheadline={
+								<div>
+									<div>With CreditBanc, one application is all you need to pre-qualify.</div>
+									<div>
+										Choose the financing you prefer, or let us recommend the best fit for your
+										business.
+									</div>
+								</div>
+							}
 						/>
 						<PersonalInfoForm />
 					</div>

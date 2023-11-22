@@ -23,8 +23,8 @@ export const action = async ({ request }) => {
 	console.log(entity_id);
 
 	let step = pipe(filter({ id: "info" }), head, get("step"))(navigation);
-	let { ein, legal_name } = params;
-	let payload = { ein, legal_name, step };
+	let { ein, legal_name, dba } = params;
+	let payload = { ein, legal_name, dba, step };
 
 	let response = from(update_doc(["application", entity_id], payload)).pipe(rxmap(() => ({ entity_id, group_id })));
 
@@ -87,7 +87,7 @@ const Progress = () => {
 
 const SectionHeading = ({ headline, subheadline }) => {
 	return (
-		<div className="flex flex-col text-center gap-y-2 my-7">
+		<div className="flex flex-col text-center gap-y-2">
 			<div className="text-gray-800 font-semibold">{headline}</div>
 			<div className="text-gray-600">{subheadline}</div>
 		</div>
@@ -95,7 +95,7 @@ const SectionHeading = ({ headline, subheadline }) => {
 };
 
 const AddressForm = () => {
-	let { legal_name, ein, set_path } = useStore();
+	let { legal_name, ein, set_path, dba } = useStore();
 
 	return (
 		<form>
@@ -122,6 +122,25 @@ const AddressForm = () => {
 						</div>
 
 						<div className="col-span-full">
+							<label
+								htmlFor="street-address"
+								className="block text-sm font-medium leading-6 text-gray-900"
+							>
+								Doing business as (DBA)
+							</label>
+							<div className="mt-2">
+								<input
+									value={dba}
+									type="text"
+									className="px-2 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+									onChange={(e) => {
+										set_path(["dba"], e.target.value);
+									}}
+								/>
+							</div>
+						</div>
+
+						<div className="col-span-full">
 							<label htmlFor="city" className="block text-sm font-medium leading-6 text-gray-900">
 								Employer identification number (EIN)
 							</label>
@@ -136,6 +155,22 @@ const AddressForm = () => {
 								/>
 							</div>
 						</div>
+
+						{/* <div className="col-span-full">
+							<label htmlFor="city" className="block text-sm font-medium leading-6 text-gray-900">
+								Business Phone Number
+							</label>
+							<div className="mt-2">
+								<input
+									value={ein}
+									type="text"
+									className="px-2 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+									onChange={(e) => {
+										set_path(["ein"], e.target.value);
+									}}
+								/>
+							</div>
+						</div> */}
 					</div>
 				</div>
 			</div>
@@ -148,13 +183,13 @@ export default function Container() {
 	let entity_id = get_entity_id(pathname);
 	let group_id = get_group_id(pathname);
 	const submit = useSubmit();
-	let { ein, legal_name } = useStore();
+	let { ein, legal_name, dba } = useStore();
 
 	let back = pipe(filter({ id: "info" }), head, get("back"))(navigation);
 
 	const onSubmit = () => {
 		console.log("onSubmit");
-		let payload = { ein, legal_name };
+		let payload = { ein, legal_name, dba };
 
 		// console.log("payload");
 		// console.log(payload);
@@ -176,7 +211,6 @@ export default function Container() {
 						headline={<div>Lets start your loan application</div>}
 						subheadline={
 							<div className="flex flex-col gap-x-2">
-								{/* <div>Business info</div> */}
 								<div className="">Business Info</div>
 							</div>
 						}

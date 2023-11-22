@@ -27,8 +27,8 @@ export const action = async ({ request }) => {
 	console.log(entity_id);
 
 	let step = pipe(filter({ id: "inception_date" }), head, get("step"))(navigation);
-	let { time_in_business } = params;
-	let payload = { time_in_business: JSON.parse(time_in_business), step };
+	let { business_start_date } = params;
+	let payload = { business_start_date: JSON.parse(business_start_date), step };
 
 	let response = from(update_doc(["application", entity_id], payload)).pipe(rxmap(() => ({ entity_id, group_id })));
 
@@ -91,98 +91,70 @@ const Progress = () => {
 
 const SectionHeading = ({ headline, subheadline }) => {
 	return (
-		<div className="flex flex-col text-center gap-y-2 my-7">
+		<div className="flex flex-col text-center gap-y-2">
 			<div className="text-gray-800 font-semibold">{headline}</div>
 			<div className="text-gray-600">{subheadline}</div>
 		</div>
 	);
 };
 
-const time_in_business = [
-	{ id: 1, value: "Less than 6 months", min: 0, max: 6, type: "months" },
-	{ id: 2, value: "6 to 12 months", min: 6, max: 12, type: "months" },
-	{ id: 3, value: "12 to 18 months", min: 12, max: 18, type: "months" },
-	{ id: 4, value: "18 to 24 months", min: 18, max: 24, type: "months" },
-	{ id: 5, value: "2 to 3 years", min: 2, max: 3, type: "years" },
-	{ id: 6, value: "3 to 5 years", min: 3, max: 5, type: "years" },
-	{ id: 7, value: "More than 5 years", min: 5, max: Infinity, type: "years" },
-];
-
 const TimeInBusiness = () => {
-	const [selected, setSelected] = useState(time_in_business[0]);
-	const { set_props } = useStore();
+	const { set_path, business_start_date } = useStore();
 
 	return (
-		<Listbox value={selected} onChange={setSelected}>
-			{({ open }) => (
-				<>
-					<div className="relative mt-2">
-						<Listbox.Button className="relative w-full cursor-default rounded-md bg-white py-3 pl-3 pr-10 text-left text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-600 sm:text-sm sm:leading-6">
-							<span className="block truncate">{selected.value}</span>
-							<span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
-								<ChevronUpDownIcon className="h-5 w-5 text-gray-400" aria-hidden="true" />
-							</span>
-						</Listbox.Button>
-
-						<Transition
-							show={open}
-							as={Fragment}
-							leave="transition ease-in duration-100"
-							leaveFrom="opacity-100"
-							leaveTo="opacity-0"
-						>
-							<Listbox.Options className="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
-								{time_in_business.map((person) => (
-									<Listbox.Option
-										key={person.id}
-										className={({ active }) =>
-											classNames(
-												active ? "bg-indigo-600 text-white" : "text-gray-900",
-												"relative cursor-default select-none py-2 pl-3 pr-9"
-											)
-										}
-										value={person}
-										onClick={() =>
-											set_props({
-												time_in_business: {
-													min: person.min,
-													max: person.max,
-													type: person.years,
-												},
-											})
-										}
-									>
-										{({ selected, active }) => (
-											<>
-												<span
-													className={classNames(
-														selected ? "font-semibold" : "font-normal",
-														"block truncate"
-													)}
-												>
-													{person.value}
-												</span>
-
-												{selected ? (
-													<span
-														className={classNames(
-															active ? "text-white" : "text-indigo-600",
-															"absolute inset-y-0 right-0 flex items-center pr-4"
-														)}
-													>
-														<CheckIcon className="h-5 w-5" aria-hidden="true" />
-													</span>
-												) : null}
-											</>
-										)}
-									</Listbox.Option>
-								))}
-							</Listbox.Options>
-						</Transition>
+		<div className="flex flex-row w-full gap-x-5 justify-center my-5">
+			<div className="flex flex-col w-1/3">
+				<label htmlFor="username" className="block text-sm font-medium leading-6 text-gray-900 text-right">
+					Month
+				</label>
+				<div className="mt-2">
+					<div className="flex rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-indigo-600 sm:max-w-md">
+						<input
+							value={business_start_date?.month}
+							type="text"
+							id="month"
+							className="block flex-1 border-0 bg-transparent py-1.5 pr-2 text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:text-sm sm:leading-6 text-right"
+							placeholder="01"
+							onChange={(e) => set_path(["business_start_date", "month"], e.target.value)}
+						/>
 					</div>
-				</>
-			)}
-		</Listbox>
+				</div>
+			</div>
+			<div className="flex flex-col w-1/3">
+				<label htmlFor="username" className="block text-sm font-medium leading-6 text-gray-900 text-right">
+					Day
+				</label>
+				<div className="mt-2">
+					<div className="flex rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-indigo-600 sm:max-w-md">
+						<input
+							value={business_start_date?.day}
+							type="text"
+							id="day"
+							className="block flex-1 border-0 bg-transparent py-1.5 pr-2 text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:text-sm sm:leading-6 text-right"
+							placeholder="20"
+							onChange={(e) => set_path(["business_start_date", "day"], e.target.value)}
+						/>
+					</div>
+				</div>
+			</div>
+			<div className="flex flex-col w-1/3">
+				<label htmlFor="username" className="block text-sm font-medium leading-6 text-gray-900 text-right">
+					Year
+				</label>
+				<div className="mt-2">
+					<div className="flex rounded-md shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-inset focus-within:ring-indigo-600 sm:max-w-md">
+						<input
+							value={business_start_date?.year}
+							type="text"
+							id="year"
+							className="block flex-1 border-0 bg-transparent py-1.5 pr-2 text-gray-900 placeholder:text-gray-400 focus:ring-0 sm:text-sm sm:leading-6 text-right"
+							placeholder="1984"
+							onChange={(e) => set_path(["business_start_date", "year"], e.target.value)}
+						/>
+					</div>
+				</div>
+			</div>
+		</div>
 	);
 };
 
@@ -191,13 +163,13 @@ export default function Container() {
 	let entity_id = get_entity_id(pathname);
 	let group_id = get_group_id(pathname);
 	const submit = useSubmit();
-	let { time_in_business } = useStore((state) => state);
+	let { business_start_date } = useStore((state) => state);
 
 	let back = pipe(filter({ id: "inception_date" }), head, get("back"))(navigation);
 
 	const onSubmit = () => {
 		console.log("onSubmit");
-		let payload = { time_in_business: JSON.stringify(time_in_business) };
+		let payload = { business_start_date: JSON.stringify(business_start_date) };
 
 		// console.log("payload");
 		// console.log(payload);
@@ -216,7 +188,7 @@ export default function Container() {
 			<div className="flex flex-col justify-center h-4/5 w-[600px]">
 				<div className="flex flex-col my-4">
 					<SectionHeading
-						headline={<div>How long have you been in business?</div>}
+						headline={<div>When was the business started?</div>}
 						// subheadline={
 						// 	<div className="flex flex-row gap-x-2">
 						// 		<div>This helps us find the best loan for your needs.</div>
