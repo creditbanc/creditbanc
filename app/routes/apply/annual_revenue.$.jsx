@@ -97,19 +97,7 @@ const SectionHeading = ({ headline, subheadline }) => {
 	);
 };
 
-// const revenue = [
-// 	{ id: 1, value: "Below $50,000", min: 0, max: 50000 },
-// 	{ id: 2, value: "$50,000 - $99,999", min: 50000, max: 99999 },
-// 	{ id: 3, value: "$100,000 - $149,999", min: 100000, max: 149999 },
-// 	{ id: 4, value: "$150,000 - $249,999", min: 150000, max: 249999 },
-// 	{ id: 5, value: "$250,000 - $449,999", min: 250000, max: 449999 },
-// 	{ id: 6, value: "$500,000 - $999,999", min: 500000, max: 999999 },
-// 	{ id: 7, value: "$1,000,000 - $1,999,999", min: 1000000, max: 1999999 },
-// 	{ id: 8, value: "$2,000,000 and Above", min: 2000000, max: Infinity },
-// ];
-
 const Revenue = () => {
-	// const [selected, setSelected] = useState(revenue[0]);
 	const { set_props, revenue } = useStore();
 
 	return (
@@ -132,76 +120,6 @@ const Revenue = () => {
 				<div>{formatMoney(10000000)}</div>
 			</div>
 		</div>
-	);
-
-	return (
-		<Listbox value={selected} onChange={setSelected}>
-			{({ open }) => (
-				<>
-					{/* <Listbox.Label className="block text-sm font-medium leading-6 text-gray-900">
-						Assigned to
-					</Listbox.Label> */}
-					<div className="relative mt-2">
-						<Listbox.Button className="relative w-full cursor-default rounded-md bg-white py-3 pl-3 pr-10 text-left text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-600 sm:text-sm sm:leading-6">
-							<span className="block truncate">{selected.value}</span>
-							<span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
-								<ChevronUpDownIcon className="h-5 w-5 text-gray-400" aria-hidden="true" />
-							</span>
-						</Listbox.Button>
-
-						<Transition
-							show={open}
-							as={Fragment}
-							leave="transition ease-in duration-100"
-							leaveFrom="opacity-100"
-							leaveTo="opacity-0"
-						>
-							<Listbox.Options className="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
-								{pipe(
-									mapIndexed((person, index) => (
-										<Listbox.Option
-											key={index}
-											className={({ active }) =>
-												classNames(
-													active ? "bg-blue-600 text-white" : "text-gray-900",
-													"relative cursor-default select-none py-2 pl-3 pr-9 "
-												)
-											}
-											value={person}
-											onClick={() => set_props({ revenue: { min: person.min, max: person.max } })}
-										>
-											{({ selected, active }) => (
-												<>
-													<span
-														className={classNames(
-															selected ? "font-semibold" : "font-normal",
-															"block truncate"
-														)}
-													>
-														{person.value}
-													</span>
-
-													{selected ? (
-														<span
-															className={classNames(
-																active ? "text-white" : "text-blue-600",
-																"absolute inset-y-0 right-0 flex items-center pr-4"
-															)}
-														>
-															<CheckIcon className="h-5 w-5" aria-hidden="true" />
-														</span>
-													) : null}
-												</>
-											)}
-										</Listbox.Option>
-									))
-								)(revenue)}
-							</Listbox.Options>
-						</Transition>
-					</div>
-				</>
-			)}
-		</Listbox>
 	);
 };
 

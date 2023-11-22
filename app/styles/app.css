@@ -1349,6 +1349,18 @@ video {
   margin-top: 50px;
 }
 
+.-ml-10 {
+  margin-left: -2.5rem;
+}
+
+.-ml-5 {
+  margin-left: -1.25rem;
+}
+
+.mr-4 {
+  margin-right: 1rem;
+}
+
 .block {
   display: block;
 }
@@ -3720,6 +3732,10 @@ video {
 
 .pt-\[calc\(23\/318\*100\%\)\] {
   padding-top: calc(23 / 318 * 100%);
+}
+
+.pr-6 {
+  padding-right: 1.5rem;
 }
 
 .text-left {

@@ -119,7 +119,7 @@ const OwnerForm = ({ owner }) => {
 						<button
 							onClick={onDeleteOwner}
 							type="button"
-							className="relative inline-flex items-center rounded-md px-3 py-2 text-xs font-semibold  border focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 "
+							className="relative inline-flex items-center rounded-md px-2 py-2 text-xs font-semibold  border focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 "
 						>
 							<XMarkIcon className="h-5 w-5 text-gray-300" />
 						</button>
@@ -130,6 +130,29 @@ const OwnerForm = ({ owner }) => {
 			<form>
 				<div className=" border-gray-900/10">
 					<div className=" grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
+						<div className="col-span-full">
+							<label htmlFor="first-name" className="block text-sm font-medium leading-6 text-gray-900">
+								Ownership percentage
+							</label>
+							<div className="mt-2 flex flex-row items-center">
+								<input
+									value={owner?.ownership_percentage}
+									type="text"
+									name="percentage"
+									id="percentage"
+									placeholder="0"
+									className="px-2 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-sm sm:leading-6 text-right pr-6"
+									onChange={(e) => {
+										set_path(
+											["owners", owner.id, "ownership_percentage"],
+											e.target.value.replace(/\d+% ?/g, "")
+										);
+									}}
+								/>
+								<div className="flex flex-col -ml-5 text-sm">%</div>
+							</div>
+						</div>
+
 						<div className="sm:col-span-3">
 							<label htmlFor="first-name" className="block text-sm font-medium leading-6 text-gray-900">
 								First name
@@ -160,6 +183,18 @@ const OwnerForm = ({ owner }) => {
 									autoComplete="family-name"
 									className="px-2 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-sm sm:leading-6"
 									onChange={(e) => set_path(["owners", owner.id, "last_name"], e.target.value)}
+								/>
+							</div>
+						</div>
+
+						<div className="col-span-full">
+							<label className="block text-sm font-medium leading-6 text-gray-900">SSN #</label>
+							<div className="mt-2">
+								<input
+									value={owner?.ssn}
+									id="ssn"
+									className="px-2 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-sm sm:leading-6"
+									onChange={(e) => set_path(["owners", owner.id, "ssn"], e.target.value)}
 								/>
 							</div>
 						</div>
@@ -298,9 +333,6 @@ const Owners = () => {
 		};
 
 		set_path(["owners", owner_id], payload);
-
-		console.log("owner");
-		console.log(owner);
 	};
 
 	return (
@@ -308,8 +340,8 @@ const Owners = () => {
 			<div className="flex flex-col w-full gap-y-6">
 				{pipe(
 					values,
-					map((owner) => (
-						<div>
+					mapIndexed((owner, index) => (
+						<div key={index}>
 							<OwnerForm owner={owner} />
 						</div>
 					))
