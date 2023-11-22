@@ -132,7 +132,7 @@ const BusinessInfo = () => {
 						</div>
 						<div className="py-6 w-1/2">
 							<dt className="text-sm font-medium leading-6 text-gray-900">Business Start Date</dt>
-							<dd className="mt-1 text-sm leading-6 text-gray-700 sm:mt-2">{`${application?.month}-${application?.day}-${application?.year}`}</dd>
+							<dd className="mt-1 text-sm leading-6 text-gray-700 sm:mt-2">{`${application?.business_start_date?.month}-${application?.business_start_date?.day}-${application?.business_start_date?.year}`}</dd>
 						</div>
 					</div>
 				</div>
@@ -281,18 +281,22 @@ const OwnerInfo = () => {
 									<dd className="mt-1 text-sm leading-6 text-gray-700 sm:mt-2">{owner?.email}</dd>
 								</div>
 								<div className="py-6 w-1/2">
-									<dt className="text-sm font-medium leading-6 text-gray-900">% of ownership</dt>
-									<dd className="mt-1 text-sm leading-6 text-gray-700 sm:mt-2"></dd>
+									<dt className="text-sm font-medium leading-6 text-gray-900">
+										Percentage of ownership
+									</dt>
+									<dd className="mt-1 text-sm leading-6 text-gray-700 sm:mt-2">
+										{`${owner?.ownership_percentage} %`}
+									</dd>
 								</div>
 							</div>
 							<div className="flex flex-row w-full flex-wrap">
-								<div className="py-6 w-1/2">
+								{/* <div className="py-6 w-1/2">
 									<dt className="text-sm font-medium leading-6 text-gray-900">Date of Birth</dt>
 									<dd className="mt-1 text-sm leading-6 text-gray-700 sm:mt-2"></dd>
-								</div>
+								</div> */}
 								<div className="py-6 w-1/2">
 									<dt className="text-sm font-medium leading-6 text-gray-900">SSN#</dt>
-									<dd className="mt-1 text-sm leading-6 text-gray-700 sm:mt-2"></dd>
+									<dd className="mt-1 text-sm leading-6 text-gray-700 sm:mt-2">{owner?.ssn}</dd>
 								</div>
 							</div>
 						</div>
