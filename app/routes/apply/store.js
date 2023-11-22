@@ -8,7 +8,6 @@ export default store({
 	email: "",
 	phone: "",
 	timeline: { amount: 14, type: "days" },
-	// time_in_business: { min: 0, max: 6, type: "months" },
 	business_start_date: { day: undefined, month: undefined, year: undefined },
 	industry: "Administrative and Business Services",
 	business_address: {
