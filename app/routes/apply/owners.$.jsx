@@ -35,7 +35,8 @@ export const action = async ({ request }) => {
 
 	await lastValueFrom(response);
 	let next = pipe(filter({ id: "owners" }), head, get("next"))(navigation);
-	return create_user_session(entity_id, next({ entity_id, group_id }));
+	// return create_user_session(entity_id, next({ entity_id, group_id }));
+	return redirect(next({ entity_id, group_id }));
 };
 
 const steps = [

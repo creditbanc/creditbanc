@@ -1,64 +1,66 @@
-import { useRef, useState } from "react";
+import { useRef } from "react";
 import SignatureCanvas from "react-signature-canvas";
 const signature_hero_img = "/images/sign.jpg";
-import {
-	ArrowPathIcon,
-	ArrowRightIcon,
-	CloudArrowUpIcon,
-	FingerPrintIcon,
-	LockClosedIcon,
-} from "@heroicons/react/24/outline";
-import { get, get_entity_id, get_group_id } from "~/utils/helpers";
+import { ArrowRightIcon } from "@heroicons/react/24/outline";
+import { form_params, get, get_entity_id, get_group_id } from "~/utils/helpers";
 import { head, pipe } from "ramda";
 import { filter } from "shades";
-import { Link, useLocation } from "@remix-run/react";
+import { Link, useLocation, useSubmit } from "@remix-run/react";
 import { navigation } from "./navigation";
+import { from, lastValueFrom, map as rxmap } from "rxjs";
+import { update_doc } from "~/utils/firebase";
+import { redirect } from "@remix-run/node";
 
-const features = [
-	{
-		name: "Push to deploy",
-		description:
-			"Morbi viverra dui mi arcu sed. Tellus semper adipiscing suspendisse semper morbi. Odio urna massa nunc massa.",
-		icon: CloudArrowUpIcon,
-	},
-	{
-		name: "SSL certificates",
-		description:
-			"Sit quis amet rutrum tellus ullamcorper ultricies libero dolor eget. Sem sodales gravida quam turpis enim lacus amet.",
-		icon: LockClosedIcon,
-	},
-	{
-		name: "Simple queues",
-		description:
-			"Quisque est vel vulputate cursus. Risus proin diam nunc commodo. Lobortis auctor congue commodo diam neque.",
-		icon: ArrowPathIcon,
-	},
-	{
-		name: "Advanced security",
-		description:
-			"Arcu egestas dolor vel iaculis in ipsum mauris. Tincidunt mattis aliquet hac quis. Id hac maecenas ac donec pharetra eget.",
-		icon: FingerPrintIcon,
-	},
-];
+export const action = async ({ request }) => {
+	console.log("request.url");
+	console.log(request.url);
+	let url = new URL(request.url);
+	let { pathname } = url;
+	let group_id = get_group_id(pathname);
+	let entity_id = get_entity_id(pathname);
+	let params = await form_params(request);
+
+	console.log("params");
+	console.log(params);
+	console.log(group_id);
+	console.log(entity_id);
+
+	let step = pipe(filter({ id: "signature" }), head, get("step"))(navigation);
+	let { base_64_img } = params;
+	let payload = { base_64_img, step };
+
+	let response = from(update_doc(["application", entity_id], payload)).pipe(rxmap(() => ({ entity_id, group_id })));
+
+	await lastValueFrom(response);
+	let next = pipe(filter({ id: "signature" }), head, get("next"))(navigation);
+	// return create_user_session(entity_id, next({ entity_id, group_id }));
+	return redirect(next({ entity_id, group_id }));
+};
 
 export default function Signature() {
 	let { pathname } = useLocation();
 	let entity_id = get_entity_id(pathname);
 	let group_id = get_group_id(pathname);
 	let sig_canvas_ref = useRef();
-	let [base_64_img, set_base_64_img] = useState("");
+	// let [base_64_img, set_base_64_img] = useState("");
+	const submit = useSubmit();
 
 	let back = pipe(filter({ id: "signature" }), head, get("back"))(navigation);
 
-	const onSaveSignature = () => {
+	const onSubmit = () => {
+		console.log("onSubmit");
 		let data = sig_canvas_ref.current.toDataURL();
-		console.log(data);
-		set_base_64_img(data);
+		let payload = { base_64_img: data };
+
+		submit(payload, {
+			action: `/apply/signature/resource/e/${entity_id}/g/${group_id}`,
+			method: "post",
+		});
 	};
 
 	const onClearSignature = () => {
 		sig_canvas_ref.current.clear();
-		set_base_64_img("");
+		// set_base_64_img("");
 	};
 
 	return (
@@ -72,13 +74,13 @@ export default function Signature() {
 						Save your signature and verify your loan application
 					</p>
 				</div>
-				<div className="flex flex-col w-full items-center">
+				{/* <div className="flex flex-col w-full items-center">
 					{base_64_img !== "" && (
 						<div className="flex flex-col w-full items-center">
 							<img src={base_64_img} className="h-[250px]" />
 						</div>
 					)}
-				</div>
+				</div> */}
 				<div className="flex flex-col justify-center my-10 w-full">
 					<div className="flex flex-row w-full ml-[35px]">
 						<div className="flex flex-col h-full justify-end items-end -mt-[30px] -mr-[80px]">
@@ -112,7 +114,7 @@ export default function Signature() {
 						</Link>
 						<div
 							className="flex flex-col bg-blue-600 py-3 px-4 rounded-full text-white w-[400px] items-center cursor-pointer"
-							onClick={onSaveSignature}
+							onClick={onSubmit}
 						>
 							Verify loan application
 						</div>
