@@ -209,7 +209,6 @@ export default function Container() {
 						subheadline={
 							<div className="flex flex-row gap-x- justify-center">
 								<div>This helps us estimate your business size.</div>
-								{/* <div className="font-semibold">Learn more ›</div> */}
 							</div>
 						}
 					/>

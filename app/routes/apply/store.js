@@ -8,7 +8,7 @@ export default store({
 	email: "",
 	phone: "",
 	timeline: { amount: 14, type: "days" },
-	time_in_business: { min: 0, max: 6, type: "months" },
+	// time_in_business: { min: 0, max: 6, type: "months" },
 	business_start_date: { day: undefined, month: undefined, year: undefined },
 	industry: "Administrative and Business Services",
 	business_address: {
@@ -22,10 +22,7 @@ export default store({
 		min: 0,
 		max: 0,
 	},
-	revenue: {
-		min: 0,
-		max: 0,
-	},
+	revenue: 300000,
 	owners: {},
 	legal_name: "",
 	dba: "",

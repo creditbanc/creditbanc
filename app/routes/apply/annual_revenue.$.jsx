@@ -10,6 +10,7 @@ import { update_doc } from "~/utils/firebase";
 import { redirect } from "@remix-run/node";
 import { navigation } from "./navigation";
 import { filter } from "shades";
+import { unformat, formatMoney } from "accounting-js";
 
 export const action = async ({ request }) => {
 	console.log("request.url");
@@ -96,20 +97,42 @@ const SectionHeading = ({ headline, subheadline }) => {
 	);
 };
 
-const revenue = [
-	{ id: 1, value: "Below $50,000", min: 0, max: 50000 },
-	{ id: 2, value: "$50,000 - $99,999", min: 50000, max: 99999 },
-	{ id: 3, value: "$100,000 - $149,999", min: 100000, max: 149999 },
-	{ id: 4, value: "$150,000 - $249,999", min: 150000, max: 249999 },
-	{ id: 5, value: "$250,000 - $449,999", min: 250000, max: 449999 },
-	{ id: 6, value: "$500,000 - $999,999", min: 500000, max: 999999 },
-	{ id: 7, value: "$1,000,000 - $1,999,999", min: 1000000, max: 1999999 },
-	{ id: 8, value: "$2,000,000 and Above", min: 2000000, max: Infinity },
-];
+// const revenue = [
+// 	{ id: 1, value: "Below $50,000", min: 0, max: 50000 },
+// 	{ id: 2, value: "$50,000 - $99,999", min: 50000, max: 99999 },
+// 	{ id: 3, value: "$100,000 - $149,999", min: 100000, max: 149999 },
+// 	{ id: 4, value: "$150,000 - $249,999", min: 150000, max: 249999 },
+// 	{ id: 5, value: "$250,000 - $449,999", min: 250000, max: 449999 },
+// 	{ id: 6, value: "$500,000 - $999,999", min: 500000, max: 999999 },
+// 	{ id: 7, value: "$1,000,000 - $1,999,999", min: 1000000, max: 1999999 },
+// 	{ id: 8, value: "$2,000,000 and Above", min: 2000000, max: Infinity },
+// ];
 
 const Revenue = () => {
-	const [selected, setSelected] = useState(revenue[0]);
-	const { set_props } = useStore();
+	// const [selected, setSelected] = useState(revenue[0]);
+	const { set_props, revenue } = useStore();
+
+	return (
+		<div className="flex flex-col w-full">
+			<div className="flex flex-col w-full items-center my-5">
+				<div className="flex flex-col text-3xl font-semibold text-[#56CF9E]">{formatMoney(revenue)}</div>
+			</div>
+			<div className="flex flex-col w-full">
+				<input
+					min="10000"
+					max="10000000"
+					type="range"
+					value={revenue}
+					onChange={(e) => set_props({ revenue: e.target.value })}
+					className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700"
+				/>
+			</div>
+			<div className="flex flex-row justify-between my-4 text-gray-600">
+				<div>{formatMoney(10000)}</div>
+				<div>{formatMoney(10000000)}</div>
+			</div>
+		</div>
+	);
 
 	return (
 		<Listbox value={selected} onChange={setSelected}>
