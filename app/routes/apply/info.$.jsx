@@ -23,8 +23,8 @@ export const action = async ({ request }) => {
 	console.log(entity_id);
 
 	let step = pipe(filter({ id: "info" }), head, get("step"))(navigation);
-	let { business_address } = params;
-	let payload = { business_address: JSON.parse(business_address), step };
+	let { ein, legal_name } = params;
+	let payload = { ein, legal_name, step };
 
 	let response = from(update_doc(["application", entity_id], payload)).pipe(rxmap(() => ({ entity_id, group_id })));
 
@@ -148,13 +148,13 @@ export default function Container() {
 	let entity_id = get_entity_id(pathname);
 	let group_id = get_group_id(pathname);
 	const submit = useSubmit();
-	let { business_address } = useStore();
+	let { ein, legal_name } = useStore();
 
 	let back = pipe(filter({ id: "info" }), head, get("back"))(navigation);
 
 	const onSubmit = () => {
 		console.log("onSubmit");
-		let payload = { business_address: JSON.stringify(business_address) };
+		let payload = { ein, legal_name };
 
 		// console.log("payload");
 		// console.log(payload);

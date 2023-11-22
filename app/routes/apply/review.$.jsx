@@ -1,15 +1,16 @@
 import { redirect } from "@remix-run/node";
-import { head, isEmpty, pipe } from "ramda";
+import { head, isEmpty, map, pipe, values } from "ramda";
 import { from, lastValueFrom, map as rxmap } from "rxjs";
 import { filter } from "shades";
 import { create_user_session, get_session_entity_id } from "~/utils/auth.server";
 import { get_doc, update_doc } from "~/utils/firebase";
-import { form_params, get, get_entity_id, get_group_id } from "~/utils/helpers";
+import { capitalize, form_params, get, get_entity_id, get_group_id, mapIndexed } from "~/utils/helpers";
 import { Link, useLoaderData, useLocation, useSubmit } from "@remix-run/react";
 import { navigation } from "./navigation";
 import { useEffect, useState } from "react";
 import useStore from "./store";
 import moment from "moment";
+import { unformat, formatMoney } from "accounting-js";
 
 export const action = async ({ request }) => {
 	console.log("request.url");
@@ -154,7 +155,10 @@ const FinancialInfo = () => {
 					<div className="flex flex-row w-full flex-wrap">
 						<div className="py-6 w-1/2">
 							<dt className="text-sm font-medium leading-6 text-gray-900">Amount Requested</dt>
-							<dd className="mt-1 text-sm leading-6 text-gray-700 sm:mt-2">{application?.legal_name}</dd>
+
+							<dd className="mt-1 text-sm leading-6 text-gray-700 sm:mt-2">
+								{formatMoney(application?.loan_amount, { symbol: "$", precision: 0 })}
+							</dd>
 						</div>
 						<div className="py-6 w-1/2">
 							<dt className="text-sm font-medium leading-6 text-gray-900">Reason</dt>
@@ -165,17 +169,17 @@ const FinancialInfo = () => {
 						<div className="py-6 w-1/2">
 							<dt className="text-sm font-medium leading-6 text-gray-900">Existing Cash Advance</dt>
 							<dd className="mt-1 text-sm leading-6 text-gray-700 sm:mt-2">
-								{application?.business_address?.street}
+								{application?.loans?.value === true ? "Yes" : "No"}
 							</dd>
 						</div>
-						<div className="py-6 w-1/2">
+						{/* <div className="py-6 w-1/2">
 							<dt className="text-sm font-medium leading-6 text-gray-900">Company</dt>
 							<dd className="mt-1 text-sm leading-6 text-gray-700 sm:mt-2">
 								{application?.business_address?.city}
 							</dd>
-						</div>
+						</div> */}
 					</div>
-					<div className="flex flex-row w-full flex-wrap">
+					{/* <div className="flex flex-row w-full flex-wrap">
 						<div className="py-6 w-1/2">
 							<dt className="text-sm font-medium leading-6 text-gray-900">Average Gross Monthly Sales</dt>
 							<dd className="mt-1 text-sm leading-6 text-gray-700 sm:mt-2">{application?.phone}</dd>
@@ -208,7 +212,7 @@ const FinancialInfo = () => {
 							<dt className="text-sm font-medium leading-6 text-gray-900">Business Start Date</dt>
 							<dd className="mt-1 text-sm leading-6 text-gray-700 sm:mt-2">{`${application?.month}-${application?.day}-${application?.year}`}</dd>
 						</div>
-					</div>
+					</div> */}
 				</div>
 			</div>
 		</div>
@@ -225,66 +229,75 @@ const OwnerInfo = () => {
 				<p className="mt-1 max-w-2xl text-sm leading-6 text-gray-500">Personal details and application.</p>
 			</div>
 			<div className="mt-6 border-t border-gray-100">
-				<div className="flex flex-col  divide-y divide-gray-100">
-					<div className="flex flex-row w-full flex-wrap">
-						<div className="py-6 w-1/2">
-							<dt className="text-sm font-medium leading-6 text-gray-900">Name</dt>
-							<dd className="mt-1 text-sm leading-6 text-gray-700 sm:mt-2">{application?.legal_name}</dd>
+				{pipe(
+					values,
+					mapIndexed((owner, index) => (
+						<div className="flex flex-col  divide-y divide-gray-100" key={index}>
+							<div className="flex flex-row w-full flex-wrap">
+								<div className="py-6 w-1/2">
+									<dt className="text-sm font-medium leading-6 text-gray-900">Name</dt>
+									<dd className="mt-1 text-sm leading-6 text-gray-700 sm:mt-2">
+										{capitalize(owner?.first_name)} {capitalize(owner?.last_name)}
+									</dd>
+								</div>
+								<div className="py-6 w-1/2">
+									<dt className="text-sm font-medium leading-6 text-gray-900">Address</dt>
+									<dd className="mt-1 text-sm leading-6 text-gray-700 sm:mt-2">
+										{owner?.address?.street}
+									</dd>
+								</div>
+							</div>
+							<div className="flex flex-row w-full flex-wrap">
+								<div className="py-6 w-1/2">
+									<dt className="text-sm font-medium leading-6 text-gray-900">City</dt>
+									<dd className="mt-1 text-sm leading-6 text-gray-700 sm:mt-2">
+										{owner?.address?.city}
+									</dd>
+								</div>
+								<div className="py-6 w-1/2">
+									<dt className="text-sm font-medium leading-6 text-gray-900">Sate</dt>
+									<dd className="mt-1 text-sm leading-6 text-gray-700 sm:mt-2">
+										{owner?.address?.state}
+									</dd>
+								</div>
+							</div>
+							<div className="flex flex-row w-full flex-wrap">
+								<div className="py-6 w-1/2">
+									<dt className="text-sm font-medium leading-6 text-gray-900">Zip</dt>
+									<dd className="mt-1 text-sm leading-6 text-gray-700 sm:mt-2">
+										{owner?.address?.zip}
+									</dd>
+								</div>
+								<div className="py-6 w-1/4">
+									<dt className="text-sm font-medium leading-6 text-gray-900">Phone Number</dt>
+									<dd className="mt-1 text-sm leading-6 text-gray-700 sm:mt-2">
+										{/* {application?.business_address?.state} */}
+									</dd>
+								</div>
+							</div>
+							<div className="flex flex-row w-full flex-wrap">
+								<div className="py-6 w-1/2">
+									<dt className="text-sm font-medium leading-6 text-gray-900">Email</dt>
+									<dd className="mt-1 text-sm leading-6 text-gray-700 sm:mt-2">{owner?.email}</dd>
+								</div>
+								<div className="py-6 w-1/2">
+									<dt className="text-sm font-medium leading-6 text-gray-900">% of ownership</dt>
+									<dd className="mt-1 text-sm leading-6 text-gray-700 sm:mt-2"></dd>
+								</div>
+							</div>
+							<div className="flex flex-row w-full flex-wrap">
+								<div className="py-6 w-1/2">
+									<dt className="text-sm font-medium leading-6 text-gray-900">Date of Birth</dt>
+									<dd className="mt-1 text-sm leading-6 text-gray-700 sm:mt-2"></dd>
+								</div>
+								<div className="py-6 w-1/2">
+									<dt className="text-sm font-medium leading-6 text-gray-900">SSN#</dt>
+									<dd className="mt-1 text-sm leading-6 text-gray-700 sm:mt-2"></dd>
+								</div>
+							</div>
 						</div>
-						<div className="py-6 w-1/2">
-							<dt className="text-sm font-medium leading-6 text-gray-900">Address</dt>
-							<dd className="mt-1 text-sm leading-6 text-gray-700 sm:mt-2">{application?.dba}</dd>
-						</div>
-					</div>
-					<div className="flex flex-row w-full flex-wrap">
-						<div className="py-6 w-1/2">
-							<dt className="text-sm font-medium leading-6 text-gray-900">City</dt>
-							<dd className="mt-1 text-sm leading-6 text-gray-700 sm:mt-2">
-								{application?.business_address?.street}
-							</dd>
-						</div>
-						<div className="py-6 w-1/2">
-							<dt className="text-sm font-medium leading-6 text-gray-900">Sate</dt>
-							<dd className="mt-1 text-sm leading-6 text-gray-700 sm:mt-2">
-								{application?.business_address?.city}
-							</dd>
-						</div>
-					</div>
-					<div className="flex flex-row w-full flex-wrap">
-						<div className="py-6 w-1/2">
-							<dt className="text-sm font-medium leading-6 text-gray-900">Zip</dt>
-							<dd className="mt-1 text-sm leading-6 text-gray-700 sm:mt-2">{application?.phone}</dd>
-						</div>
-						<div className="py-6 w-1/4">
-							<dt className="text-sm font-medium leading-6 text-gray-900">Phone Number</dt>
-							<dd className="mt-1 text-sm leading-6 text-gray-700 sm:mt-2">
-								{application?.business_address?.state}
-							</dd>
-						</div>
-					</div>
-					<div className="flex flex-row w-full flex-wrap">
-						<div className="py-6 w-1/2">
-							<dt className="text-sm font-medium leading-6 text-gray-900">Email</dt>
-							<dd className="mt-1 text-sm leading-6 text-gray-700 sm:mt-2">
-								{application?.business_entity}
-							</dd>
-						</div>
-						<div className="py-6 w-1/2">
-							<dt className="text-sm font-medium leading-6 text-gray-900">% of ownership</dt>
-							<dd className="mt-1 text-sm leading-6 text-gray-700 sm:mt-2">{application?.ein}</dd>
-						</div>
-					</div>
-					<div className="flex flex-row w-full flex-wrap">
-						<div className="py-6 w-1/2">
-							<dt className="text-sm font-medium leading-6 text-gray-900">Date of Birth</dt>
-							<dd className="mt-1 text-sm leading-6 text-gray-700 sm:mt-2">{application?.industry}</dd>
-						</div>
-						<div className="py-6 w-1/2">
-							<dt className="text-sm font-medium leading-6 text-gray-900">SSN#</dt>
-							<dd className="mt-1 text-sm leading-6 text-gray-700 sm:mt-2">{`${application?.month}-${application?.day}-${application?.year}`}</dd>
-						</div>
-					</div>
-				</div>
+					))
+				)(application?.owners)}
 			</div>
 		</div>
 	);
@@ -343,7 +356,9 @@ export default function Review() {
 	}, [signature]);
 
 	const onSignLoanApplication = () => {
-		set_signature(application?.base_64_img);
+		console.log("onSignLoanApplication");
+		console.log(application);
+		set_signature(application?.signature_base_64_img);
 	};
 
 	const onSubmit = () => {
