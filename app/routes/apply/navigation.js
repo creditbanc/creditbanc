@@ -72,9 +72,15 @@ export const navigation = [
 	},
 	{
 		id: "signature",
+		step: "signature",
+		next: ({ entity_id, group_id }) => `/apply/review/resource/e/${entity_id}/g/${group_id}`,
+		back: ({ entity_id, group_id }) => `/apply/tax_return/resource/e/${entity_id}/g/${group_id}`,
+	},
+	{
+		id: "review",
 		step: "complete",
 		next: ({ entity_id, group_id }) => `/home/resource/e/${entity_id}/g/${group_id}`,
-		back: ({ entity_id, group_id }) => `/apply/tax_return/resource/e/${entity_id}/g/${group_id}`,
+		back: ({ entity_id, group_id }) => `/apply/signature/resource/e/${entity_id}/g/${group_id}`,
 	},
 	// {
 	// 	id: "employees",
