@@ -1181,6 +1181,10 @@ const UploadForm = () => {
 			let resource_id = get_file_id(pathname);
 			let path = get_file_resource_path(pathname);
 
+			console.log("file.resource.path");
+			console.log(path);
+			console.log(resource_id);
+
 			let payload = {
 				name: file.name,
 				download_url,
