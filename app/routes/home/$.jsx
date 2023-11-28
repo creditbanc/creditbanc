@@ -17,6 +17,7 @@ import BusinessScores from "../credit/report/business/components/scores";
 import CashflowChart from "~/components/CashflowChart";
 import { get_doc } from "~/utils/firebase";
 import { PaperClipIcon } from "@heroicons/react/24/outline";
+import ApplicationDocumentsUpload from "~/components/ApplicationDocumentsUpload";
 
 const log_route = `home.$`;
 
@@ -245,6 +246,20 @@ export default function Home() {
 								<div className="flex flex-col w-full items-center">
 									<div className="flex flex-col w-[100%] px-5 lg:w-screen-lg lg:min-w-screen-lg lg:max-w-screen-lg mb-10">
 										<ApplicationStatus />
+									</div>
+									<div className="flex flex-col w-[100%] lg:w-screen-lg lg:min-w-screen-lg lg:max-w-screen-lg mb-10 border rounded-lg px-3 py-3">
+										<ApplicationDocumentsUpload
+											type={"taxreturns"}
+											title={`Upload tax returns`}
+											subtitle={`Upload and attach your business tax returns to your loan application`}
+										/>
+									</div>
+									<div className="flex flex-col w-[100%] lg:w-screen-lg lg:min-w-screen-lg lg:max-w-screen-lg mb-10 border rounded-lg px-3 py-3">
+										<ApplicationDocumentsUpload
+											type={"bankstatements"}
+											title={`Upload past 6 months bank statements`}
+											subtitle={`Upload and attach your business bank statemnts to your loan application`}
+										/>
 									</div>
 									<div className="flex flex-col w-full gap-y-[100px] items-center">
 										<div className="flex flex-col w-[100%] px-5 lg:w-screen-lg lg:min-w-screen-lg lg:max-w-screen-lg">

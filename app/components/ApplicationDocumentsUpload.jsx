@@ -34,6 +34,31 @@ const files = [
 		resource_id: "2023",
 		type: "taxreturns",
 	},
+
+	{
+		year: 2020,
+		path: "documents.bankstatements.2020",
+		resource_id: "2020",
+		type: "bankstatements",
+	},
+	{
+		year: 2021,
+		path: "documents.bankstatements.2021",
+		resource_id: "2021",
+		type: "bankstatements",
+	},
+	{
+		year: 2022,
+		path: "documents.bankstatements.2022",
+		resource_id: "2022",
+		type: "bankstatements",
+	},
+	{
+		year: 2023,
+		path: "documents.bankstatements.2023",
+		resource_id: "2023",
+		type: "bankstatements",
+	},
 ];
 
 const File = ({ file: file_props }) => {
@@ -179,15 +204,13 @@ const File = ({ file: file_props }) => {
 	);
 };
 
-const Upload = () => {
+const Upload = ({ title, subtitle }) => {
 	return (
 		<div className="flex flex-col w-full px-1 pt-5 bg-white rounded">
 			<div className="flex flex-row justify-between border-b pb-3 mb-3">
 				<div className="flex flex-col gap-y-1">
-					<div>Upload Tax Returns</div>
-					<div className="text-sm text-gray-400">
-						Upload and attach your business tax returns to your loan application
-					</div>
+					<div>{title}</div>
+					<div className="text-sm text-gray-400">{subtitle}</div>
 				</div>
 				<div>
 					<SparklesIcon className="flex-shrink-0 h-6 w-6 text-gray-400" />
@@ -207,14 +230,10 @@ const Upload = () => {
 	);
 };
 
-export default function Playground() {
+export default function ApplicationDocumentsUpload({ type, title, subtitle }) {
 	return (
-		<div className="flex flex-col w-full h-full items-center justify-center">
-			<div className="flex flex-col w-[600px] bg-gray-50 border p-1 rounded">
-				<div className="flex flex-col w-full p-3 bg-white rounded">
-					<Upload type={"taxreturns"} />
-				</div>
-			</div>
+		<div className="flex flex-col w-full">
+			<Upload type={type} title={title} subtitle={subtitle} />
 		</div>
 	);
 }

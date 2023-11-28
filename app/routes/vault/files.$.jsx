@@ -955,10 +955,10 @@ const EditFileModal = () => {
 	useEffect(() => {
 		let tags = pipe(filter((tag) => tag.resource_id == file.id))(all_tags);
 
-		console.log("tags");
-		console.log(all_tags);
-		console.log(tags);
-		console.log(file);
+		// console.log("tags");
+		// console.log(all_tags);
+		// console.log(tags);
+		// console.log(file);
 		set_tags(["file_tags"], tags);
 	}, [file.id, all_tags]);
 
