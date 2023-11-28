@@ -14,6 +14,36 @@ import { unformat, formatMoney } from "accounting-js";
 import { get_session_entity_id } from "~/utils/auth.server";
 import moment from "moment";
 
+export const action = async ({ request }) => {
+	console.log("request.url");
+	console.log(request.url);
+	let url = new URL(request.url);
+	let { pathname } = url;
+	let group_id = get_group_id(pathname);
+	let entity_id = get_entity_id(pathname);
+	let params = await form_params(request);
+
+	let application_entity_id = "dd947710-075d-4e68-8cb2-3726851a6ed1";
+
+	console.log("params");
+	console.log(params);
+	console.log(group_id);
+	console.log(entity_id);
+
+	let step = pipe(filter({ id: "agreement" }), head, get("step"))(navigation);
+
+	let payload = { agreement: true, agreement_date: moment().format("MM-DD-YYYY"), step };
+
+	let response = from(update_doc(["application", application_entity_id], payload)).pipe(
+		rxmap(() => ({ entity_id, group_id }))
+	);
+
+	await lastValueFrom(response);
+
+	let next = pipe(filter({ id: "agreement" }), head, get("next"))(navigation);
+	return redirect(next({ entity_id, group_id }));
+};
+
 export const loader = async ({ request }) => {
 	let url = new URL(request.url);
 	let entity_id = await get_session_entity_id(request);
@@ -21,9 +51,6 @@ export const loader = async ({ request }) => {
 
 	let application_entity_id = "dd947710-075d-4e68-8cb2-3726851a6ed1";
 	let application = await lastValueFrom(from(get_doc(["application", application_entity_id])));
-
-	console.log("applicationddfdsf");
-	console.log(application);
 
 	return { application };
 };
@@ -48,6 +75,10 @@ const Progress = () => {
 
 export default function Agreement() {
 	let { application } = useLoaderData();
+	const submit = useSubmit();
+	let { pathname } = useLocation();
+	let entity_id = get_entity_id(pathname);
+	let group_id = get_group_id(pathname);
 
 	let application_day = moment(application.created_at).format("DD");
 	let application_month = moment(application.created_at).format("MMMM");
@@ -60,9 +91,26 @@ export default function Agreement() {
 	let business_address = `${street}, ${city}, ${state}, ${zip}`;
 	let applicant = `${application.first_name} ${application.last_name}`;
 
+	let back = pipe(filter({ id: "agreement" }), head, get("back"))(navigation);
+
+	const onSubmit = () => {
+		console.log("onSubmit");
+
+		// console.log("payload");
+		// console.log(payload);
+
+		submit(
+			{},
+			{
+				action: `/apply/agreement/resource/e/${entity_id}/g/${group_id}`,
+				method: "post",
+			}
+		);
+	};
+
 	return (
 		<div className="flex flex-col items-center w-full h-full overflow-y-scroll relative">
-			<div className="flex flex-col w-full sticky top-0">
+			<div className="flex flex-col w-full sticky top-0 z-10">
 				<Progress />
 			</div>
 			<div className="flex flex-col w-full  scrollbar-none items-center relative">
@@ -173,6 +221,21 @@ export default function Agreement() {
 								<div>Date:</div>
 								<div>{moment().format("MM-DD-YYYY")}</div>
 							</div>
+						</div>
+					</div>
+					<div className="flex flex-row w-full items-center gap-y-4 my-10 gap-x-3">
+						<Link
+							to={back({ entity_id, group_id })}
+							className="flex flex-col py-3 px-4 rounded-full text-blue-600 w-1/2 items-center cursor-pointer border-2 border-blue-600"
+						>
+							Back
+						</Link>
+						<div
+							onClick={onSubmit}
+							// to={`/apply/owners/resource/e/${entity_id}/g/${group_id}`}
+							className="flex flex-col bg-blue-600 py-3 px-4 rounded-full text-white w-1/2 items-center cursor-pointer"
+						>
+							Continue to pre-qualify
 						</div>
 					</div>
 				</div>
