@@ -16,6 +16,10 @@ import {
 	tryCatch,
 	always,
 	isNil,
+	sortBy,
+	sortWith,
+	descend,
+	ascend,
 } from "ramda";
 import { get, filter, all, mod } from "shades";
 import { map as rxmap, filter as rxfilter, concatMap, tap, take, catchError } from "rxjs/operators";
@@ -34,8 +38,8 @@ import {
 import { fold, ifFalse, ifEmpty } from "~/utils/operators";
 import { Link, useFetcher, useLoaderData } from "@remix-run/react";
 import { create } from "zustand";
-import { truncate, classNames, form_params } from "~/utils/helpers";
-import { useEffect } from "react";
+import { truncate, classNames, form_params, store } from "~/utils/helpers";
+import { useEffect, useState } from "react";
 import moment from "moment";
 import { EllipsisHorizontalCircleIcon } from "@heroicons/react/24/outline";
 import { Fragment } from "react";
@@ -46,6 +50,8 @@ const useStateStore = create((set) => ({
 	entity: {},
 	set_state: (path, value) => set((state) => pipe(mod(...path)(() => value))(state)),
 }));
+
+let use_entites = store({ entities: [] });
 
 const subject = new ReplaySubject(1);
 
@@ -59,6 +65,7 @@ const loader_data = subject.pipe(
 			})
 		).pipe(
 			rxmap(map(pickAll(["id", "first_name", "last_name", "email", "plan_id", "roles", "created_at"]))),
+			rxmap(filter((value) => value.created_at)),
 			rxmap((entities) => ({ entities }))
 		);
 
@@ -119,6 +126,17 @@ export const loader = async ({ request }) => {
 };
 
 const EntitiesTableHeader = () => {
+	let { entities, set_path } = use_entites();
+	let [sort_order, set_sort_order] = useState("ascend");
+
+	const onSortCreated = () => {
+		let sort_on = pipe(get("created_at", "seconds"));
+		let sorter = sort_order == "ascend" ? ascend(sort_on) : descend(sort_on);
+		let res = pipe(sortWith([sorter]))(entities);
+		set_sort_order(sort_order == "ascend" ? "descend" : "ascend");
+		set_path(["entities"], res);
+	};
+
 	return (
 		<div className="flex flex-col w-full h-[40px]">
 			<div className="flex flex-row bg-white font-semibold h-full">
@@ -126,7 +144,12 @@ const EntitiesTableHeader = () => {
 				<div className="flex flex-col min-w-[150px] border-b pb-3 bg-white ">last name</div>
 				<div className="flex flex-col min-w-[100px] border-b pb-3 bg-white ">plan</div>
 				<div className="flex flex-col min-w-[250px] border-b pb-3 bg-white ">email</div>
-				<div className="flex flex-col min-w-[200px] border-b pb-3 bg-white ">created</div>
+				<div
+					className="flex flex-col min-w-[200px] border-b pb-3 bg-white cursor-pointer"
+					onClick={onSortCreated}
+				>
+					created
+				</div>
 				<div className="flex flex-col flex-1 border-b justify-center items-end min-w-[50px]"></div>
 			</div>
 		</div>
@@ -189,7 +212,8 @@ const ActionsDropdown = () => {
 };
 
 const EntitiesTable = () => {
-	let { entities } = useLoaderData();
+	// let { entities } = useLoaderData();
+	let { entities } = use_entites();
 	let set_state = useStateStore((state) => state.set_state);
 
 	const onSelectEntity = (entity) => {
@@ -483,6 +507,15 @@ const Entity = () => {
 };
 
 export default function Entities() {
+	let { set_path } = use_entites();
+	let { entities: loader_entities = [] } = useLoaderData();
+
+	useEffect(() => {
+		if (loader_entities.length > 0) {
+			set_path(["entities"], loader_entities);
+		}
+	}, [loader_entities]);
+
 	return (
 		<div className="flex flex-col w-full h-full overflow-hidden">
 			<div className="flex flex-col border-b">
