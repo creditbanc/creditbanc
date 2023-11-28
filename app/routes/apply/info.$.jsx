@@ -122,12 +122,15 @@ const AddressForm = () => {
 						</div>
 
 						<div className="col-span-full">
-							<label
-								htmlFor="street-address"
-								className="block text-sm font-medium leading-6 text-gray-900"
-							>
-								Doing business as (DBA)
-							</label>
+							<div className="flex flex-row justify-between items-end w-full">
+								<label
+									htmlFor="street-address"
+									className="block text-sm font-medium leading-6 text-gray-900"
+								>
+									Doing business as (DBA)
+								</label>
+								<div className="flex flex-col text-xs text-gray-400">optional</div>
+							</div>
 							<div className="mt-2">
 								<input
 									value={dba}

@@ -3,14 +3,14 @@ import { pipe, map, head, values, length, dissoc } from "ramda";
 import useStore from "./store";
 import { useState } from "react";
 import { RadioGroup } from "@headlessui/react";
-import { Link, useLocation, useSubmit } from "@remix-run/react";
+import { Link, useLoaderData, useLocation, useSubmit } from "@remix-run/react";
 import { filter } from "shades";
 import { v4 as uuidv4 } from "uuid";
 import { from, lastValueFrom, map as rxmap } from "rxjs";
-import { update_doc } from "~/utils/firebase";
+import { get_doc, update_doc } from "~/utils/firebase";
 import { redirect } from "@remix-run/node";
 import { XMarkIcon } from "@heroicons/react/24/outline";
-import { create_user_session } from "~/utils/auth.server";
+import { create_user_session, get_session_entity_id } from "~/utils/auth.server";
 import { navigation } from "./navigation";
 
 export const action = async ({ request }) => {
@@ -37,6 +37,13 @@ export const action = async ({ request }) => {
 	let next = pipe(filter({ id: "owners" }), head, get("next"))(navigation);
 	// return create_user_session(entity_id, next({ entity_id, group_id }));
 	return redirect(next({ entity_id, group_id }));
+};
+
+export const loader = async ({ request }) => {
+	let entity_id = await get_session_entity_id(request);
+	let application = await lastValueFrom(from(get_doc(["application", entity_id])));
+
+	return { application };
 };
 
 const steps = [
@@ -212,6 +219,23 @@ const OwnerForm = ({ owner }) => {
 									autoComplete="email"
 									className="px-2 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-sm sm:leading-6"
 									onChange={(e) => set_path(["owners", owner.id, "email"], e.target.value)}
+								/>
+							</div>
+						</div>
+
+						<div className="col-span-full">
+							<label htmlFor="email" className="block text-sm font-medium leading-6 text-gray-900">
+								Phone number
+							</label>
+							<div className="mt-2">
+								<input
+									value={owner.phone}
+									id="phone"
+									name="phone"
+									type="phone"
+									autoComplete="phone"
+									className="px-2 block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-sm sm:leading-6"
+									onChange={(e) => set_path(["owners", owner.id, "phone"], e.target.value)}
 								/>
 							</div>
 						</div>
@@ -396,6 +420,7 @@ const Owners = () => {
 };
 
 export default function Container() {
+	let { application } = useLoaderData();
 	let { pathname } = useLocation();
 	let entity_id = get_entity_id(pathname);
 	let group_id = get_group_id(pathname);
@@ -428,7 +453,7 @@ export default function Container() {
 			>
 				<div className="flex flex-col">
 					<SectionHeading
-						headline={<div>Who owns 20% or more of roas?</div>}
+						headline={<div>Who owns 20% or more of {application?.legal_name}?</div>}
 						subheadline={
 							<div className="flex flex-row gap-x-2">
 								<div>
