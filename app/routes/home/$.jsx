@@ -147,10 +147,10 @@ const BankAccount = ({ loader = {} }) => {
 };
 
 const ApplicationStatus = () => {
+	let { pathname } = useLocation();
 	let { application } = use_loader_store();
-
-	console.log("application");
-	console.log(application);
+	let entity_id = get_entity_id(pathname);
+	let group_id = get_group_id(pathname);
 
 	let business_address = `${capitalize(application?.business_address?.city)}, ${
 		application?.business_address?.state
@@ -176,7 +176,6 @@ const ApplicationStatus = () => {
 				</div>
 				<div className="flex flex-row w-full">
 					<div className="flex flex-col w-1/2 mt-6 border-t border-gray-900/5 pt-6 sm:pr-4">
-						{/* <dt className="font-semibold text-gray-900">From</dt> */}
 						<dd className="mt-2 text-gray-500">
 							<span className="font-medium text-gray-900">{application?.legal_name} address</span>
 							<br />
@@ -186,19 +185,20 @@ const ApplicationStatus = () => {
 						</dd>
 					</div>
 					<div className="flex flex-col w-1/2 mt-8 sm:mt-6 sm:border-t sm:border-gray-900/5 sm:pl-4 sm:pt-6">
-						{/* <dt className="font-semibold text-gray-900">To</dt> */}
 						<div className="mt-3 flex flex-row w-full border rounded py-2 px-3">
 							<div className="flex w-0 flex-1 items-center">
 								<PaperClipIcon className="h-5 w-5 flex-shrink-0 text-gray-400" aria-hidden="true" />
 								<div className="ml-4 flex min-w-0 flex-1 gap-2">
 									<span className="truncate font-medium">{application?.legal_name} application</span>
-									{/* <span className="flex-shrink-0 text-gray-400">2.4mb</span> */}
 								</div>
 							</div>
 							<div className="ml-4 flex-shrink-0">
-								<a href="#" className="font-medium text-blue-600 hover:text-blue-500">
+								<Link
+									to={`/apply/preview/resource/e/${entity_id}/g/${group_id}`}
+									className="font-medium text-blue-600 hover:text-blue-500"
+								>
 									View
-								</a>
+								</Link>
 							</div>
 						</div>
 					</div>
@@ -214,9 +214,6 @@ export default function Home() {
 	let { pathname } = useLocation();
 
 	let server_data = useLoaderData();
-
-	console.log("server_data");
-	console.log(server_data);
 
 	let loader = use_loader_store((state) => state);
 
