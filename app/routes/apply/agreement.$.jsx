@@ -1,16 +1,32 @@
-import { classNames, form_params, get, get_entity_id, get_group_id, mapIndexed } from "~/utils/helpers";
+import { capitalize, classNames, form_params, get, get_entity_id, get_group_id, mapIndexed } from "~/utils/helpers";
 import { pipe, map, head } from "ramda";
-import { Fragment, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
 import { Listbox, Transition, RadioGroup } from "@headlessui/react";
 import { CheckIcon, ChevronUpDownIcon } from "@heroicons/react/20/solid";
 import useStore from "./store";
-import { Link, useLocation, useSubmit } from "@remix-run/react";
+import { Link, useLoaderData, useLocation, useSubmit } from "@remix-run/react";
 import { from, lastValueFrom, map as rxmap } from "rxjs";
-import { update_doc } from "~/utils/firebase";
+import { get_doc, update_doc } from "~/utils/firebase";
 import { redirect } from "@remix-run/node";
 import { navigation } from "./navigation";
 import { filter } from "shades";
 import { unformat, formatMoney } from "accounting-js";
+import { get_session_entity_id } from "~/utils/auth.server";
+import moment from "moment";
+
+export const loader = async ({ request }) => {
+	let url = new URL(request.url);
+	let entity_id = await get_session_entity_id(request);
+	// let group_id = get_group_id(url.pathname);
+
+	let application_entity_id = "dd947710-075d-4e68-8cb2-3726851a6ed1";
+	let application = await lastValueFrom(from(get_doc(["application", application_entity_id])));
+
+	console.log("applicationddfdsf");
+	console.log(application);
+
+	return { application };
+};
 
 const steps = [
 	{ id: "Financing Needs", name: "Job details", href: "#", status: "complete" },
@@ -20,7 +36,7 @@ const steps = [
 
 const Progress = () => {
 	return (
-		<nav aria-label="Progress">
+		<nav aria-label="Progress" className="relative">
 			<ol role="list" className="space-y-4 md:flex md:space-x-8 md:space-y-0">
 				<li className="md:flex-1">
 					<div className="group flex flex-col items-center border-l-4 border-blue-600 py-2 pl-4 hover:border-blue-800 md:border-l-0 md:border-t-4 md:pb-0 md:pl-0 md:pt-4"></div>
@@ -31,27 +47,44 @@ const Progress = () => {
 };
 
 export default function Agreement() {
+	let { application } = useLoaderData();
+
+	let application_day = moment(application.created_at).format("DD");
+	let application_month = moment(application.created_at).format("MMMM");
+	let business_legal_name = application.legal_name;
+	let address = application?.business_address;
+	let street = address?.street;
+	let city = address?.city;
+	let state = address?.state;
+	let zip = address?.zip;
+	let business_address = `${street}, ${city}, ${state}, ${zip}`;
+	let applicant = `${application.first_name} ${application.last_name}`;
+
 	return (
-		<div className="flex flex-col items-center w-full h-full overflow-y-scroll absolute">
-			<div className="flex flex-col w-full">
-				<brogress />
+		<div className="flex flex-col items-center w-full h-full overflow-y-scroll relative">
+			<div className="flex flex-col w-full sticky top-0">
+				<Progress />
 			</div>
-			<div className="flex flex-col w-full  scrollbar-none items-center relative pt-10">
-				<div className="flex flex-col h-fit items-center max-w-5xl py-10 absolute ">
+			<div className="flex flex-col w-full  scrollbar-none items-center relative">
+				<div className="flex flex-col h-fit items-center max-w-5xl pb-10 absolute">
+					<div className="flex flex-col">
+						<img
+							src="https://images.leadconnectorhq.com/image/f_webp/q_80/r_1200/u_https://assets.cdn.filesafe.space/SMYDdopw3PXGAPMBQSmE/media/624f39de40dc5d557cd3777a.png"
+							className="h-[200px]"
+						/>
+					</div>
 					<div className="flex flex-col gap-y-5">
 						<div>
-							<b>THIS AGREEMENT</b>, made this day of _____________, by and between{" "}
-							<b>SAG Advisors LLC</b> having its main office at 9315 Trinana Circle, Winter Garden,
-							Florida (heretofore the <b>Advisor</b>); and whose main business address is (heretofore the{" "}
-							<b>Client</b> ).
+							<b>THIS AGREEMENT</b>, made this {application_day} day of {application_month}, by and
+							between <b>SAG Advisors LLC</b> having its main office at 9315 Trinana Circle, Winter
+							Garden, Florida (heretofore the <b>Advisor</b>); and {capitalize(business_legal_name)} whose
+							main business address is {business_address} (heretofore the <b>Client</b> ).
 						</div>
 						<div>
-							<b>WHEREAS</b>, the
-							<b>Advisor</b>
-							is hereby engaged to arrange financing or cause financing to be provided to the client, via
-							a Third-Party Lender. The <b>Client</b> has engaged the <b>Advisor</b>
-							to arrange financing for the <b>Client</b>. While procuring this financing, it became
-							apparent
+							<b>WHEREAS</b>, the <b>Advisor</b> is hereby engaged to arrange financing or cause financing
+							to be provided to the client, via a Third-Party Lender. The <b>Client</b> has engaged the{" "}
+							<b>Advisor</b> to arrange financing for the <b>Client</b>. While procuring this financing,
+							it became apparent
 							<b>Client</b> required a global consultancy service to facilitate the underwriting of said
 							financing. This consultancy includes, but is not limited to: financial analysis of
 							bookkeeping and records, review of business tax returns, payroll audits, review of any
@@ -122,11 +155,24 @@ export default function Agreement() {
 							Facsimile signatures will be deemed acceptable, as original, by all parties of this
 							Agreement. The Law's of the <b>State of Florida</b> shall govern this contract.
 						</div>
-						<div>
-							<div>By:</div>
-							<div>Name:</div>
-							<div>Title:</div>
-							<div>Date:</div>
+						<div className="flex flex-col gap-y-2">
+							<div className="flex flex-row gap-x-2 items-end">
+								<div>By:</div>
+								<div className="flex flex-col border-b">
+									<img src={application.signature_base_64_img} className="h-[70px]" />
+								</div>
+							</div>
+							<div className="flex flex-row gap-x-2 items-end">
+								<div>Name:</div>
+								<div>{applicant}</div>
+							</div>
+							{/* <div className="flex flex-row gap-x-2 items-end">
+								<div>Title:</div>
+							</div> */}
+							<div className="flex flex-row gap-x-2 items-end">
+								<div>Date:</div>
+								<div>{moment().format("MM-DD-YYYY")}</div>
+							</div>
 						</div>
 					</div>
 				</div>
