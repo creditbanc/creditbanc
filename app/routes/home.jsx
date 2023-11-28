@@ -18,10 +18,19 @@ export const loader = async ({ request }) => {
 	let application = await lastValueFrom(from(get_doc(["application", entity_id])));
 
 	if (!isEmpty(application)) {
-		let { step, group_id } = application;
+		let { step = "lp", group_id } = application;
+
+		console.log("step");
+		console.log(step);
 
 		if (step !== "complete") {
+			console.log("here");
+
 			let next = pipe(filter({ id: step }), head, get("next"))(application_navigation);
+
+			console.log("next");
+			console.log(next);
+
 			return redirect(next({ entity_id, group_id }));
 		}
 	}

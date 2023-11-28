@@ -100,6 +100,10 @@ const catch_with_default = curry((default_value, fn_name, error) => {
 	return rxof(default_value);
 });
 
+let get_entity_application = async (entity_id) => {
+	return get_doc(["application", entity_id]);
+};
+
 export default class Entity {
 	constructor(entity_id) {
 		let entity = from(get_doc(["entity", entity_id]));
@@ -172,6 +176,11 @@ export default class Entity {
 						get_group_entity(group.group_id).pipe(
 							rxmap(pipe(get_entity_props, with_group_id(group.group_id)))
 						)
+					),
+					concatMap((entity) =>
+						from(get_entity_application(entity.id)).pipe(
+							rxmap((application) => ({ ...entity, legal_name: application.legal_name }))
+						)
 					)
 				)
 			),
@@ -202,6 +211,10 @@ export default class Entity {
 			};
 		};
 
+		let get_entity_application = async (entity_id) => {
+			return get_doc(["application", entity_id]);
+		};
+
 		return this.entity.pipe(
 			concatMap((entity) =>
 				from(get_collection(shared_config_query(entity.id))).pipe(
@@ -209,6 +222,11 @@ export default class Entity {
 					concatMap((group) =>
 						get_group_entity(group.group_id).pipe(
 							rxmap(pipe(get_entity_props, with_group_id(group.group_id)))
+						)
+					),
+					concatMap((entity) =>
+						from(get_entity_application(entity.id)).pipe(
+							rxmap((application) => ({ ...entity, legal_name: application.legal_name }))
 						)
 					)
 				)

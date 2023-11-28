@@ -76,9 +76,6 @@ export const loader = async ({ request }) => {
 		application,
 	}).pipe(
 		rxmap(({ personal_response, business_response, entity_response, business_entity_response, application }) => {
-			console.log("application");
-			console.log(application);
-
 			return {
 				business_info: business_response.business_info,
 				business_scores: business_response.scores,

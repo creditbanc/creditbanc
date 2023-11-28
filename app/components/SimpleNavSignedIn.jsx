@@ -2,7 +2,7 @@ import { Fragment, useEffect, useRef } from "react";
 import { Link, useLocation, useSearchParams } from "@remix-run/react";
 const cb_logo = "/images/logos/cb_logo_3.png";
 import UserAccountNavMenu from "./UserAccountNavMenu";
-import { classNames, get_entity_id, get_group_id, is_location, mapIndexed, store } from "~/utils/helpers";
+import { capitalize, classNames, get_entity_id, get_group_id, is_location, mapIndexed, store } from "~/utils/helpers";
 import { Menu, Transition } from "@headlessui/react";
 import { ChevronDownIcon } from "@heroicons/react/20/solid";
 import { always, equals, head, includes, isEmpty, map, not, pipe, prop, set, take, tryCatch, uniqBy } from "ramda";
@@ -35,7 +35,7 @@ export const useRolesStore = create((set) => ({
 	set_roles: (path, value) => set((state) => pipe(mod(...path)(() => value))(state)),
 }));
 
-const Companies = ({ companies: all_companies = {} }) => {
+const CompaniesDropdown = ({ companies: all_companies = {} }) => {
 	let { pathname } = useLocation();
 	let entity_id = get_entity_id(pathname);
 	let group_id = get_group_id(pathname);
@@ -47,7 +47,8 @@ const Companies = ({ companies: all_companies = {} }) => {
 		<Menu as="div" className="relative inline-block text-left z-50">
 			<div>
 				<Menu.Button className="inline-flex w-full justify-center gap-x-1.5 rounded-full bg-white px-4 py-2 text-sm font-semibold text-gray-900 hover:bg-gray-100">
-					{company?.email}
+					{capitalize(company?.legal_name) ||
+						`${capitalize(company.first_name)} ${capitalize(company.last_name)}`}
 					<ChevronDownIcon className="-mr-1 h-5 w-5 text-gray-400" aria-hidden="true" />
 				</Menu.Button>
 			</div>
@@ -92,7 +93,7 @@ const Companies = ({ companies: all_companies = {} }) => {
 													<div>{company.first_name}</div>
 													<div>{company.last_name}</div>
 												</div>
-												<div>{company.email}</div>
+												<div>{company?.legal_name || company?.email}</div>
 											</div>
 										</Link>
 									)}
@@ -266,81 +267,6 @@ const ShareDropdown = () => {
 								</Menu.Item>
 							))
 						)(roles)}
-					</div>
-				</Menu.Items>
-			</Transition>
-		</Menu>
-	);
-};
-
-const CreditDropdown = () => {
-	let { pathname } = useLocation();
-	let entity_id = get_entity_id(pathname);
-	let group_id = get_group_id(pathname);
-
-	return (
-		<Menu as="div" className="relative inline-block text-left">
-			<div>
-				<Menu.Button
-					className={`flex flex-row px-4 py-2 rounded-full cursor-pointer hover:bg-gray-100 ${
-						is_location("credit", pathname) && "bg-gray-100"
-					}`}
-				>
-					Credit
-					<ChevronDownIcon className="ml-2 h-5 w-5 text-gray-400" aria-hidden="true" />
-				</Menu.Button>
-			</div>
-
-			<Transition
-				as={Fragment}
-				enter="transition ease-out duration-100"
-				enterFrom="transform opacity-0 scale-95"
-				enterTo="transform opacity-100 scale-100"
-				leave="transition ease-in duration-75"
-				leaveFrom="transform opacity-100 scale-100"
-				leaveTo="transform opacity-0 scale-95"
-			>
-				<Menu.Items className="absolute left-[-50%] z-20 mt-2 w-56 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
-					<div className="py-1">
-						<Menu.Item>
-							{({ active }) => (
-								<Link
-									to={`/credit/report/personal/personal/resource/e/${entity_id}/g/${group_id}`}
-									className={classNames(
-										active ? "bg-gray-100 text-gray-900" : "text-gray-700",
-										"block px-4 py-2 text-sm"
-									)}
-								>
-									Personal
-								</Link>
-							)}
-						</Menu.Item>
-						<Menu.Item>
-							{({ active }) => (
-								<Link
-									to={`/credit/report/business/experian/status/resource/e/${entity_id}/g/${group_id}`}
-									className={classNames(
-										active ? "bg-gray-100 text-gray-900" : "text-gray-700",
-										"block px-4 py-2 text-sm"
-									)}
-								>
-									Intelliscore
-								</Link>
-							)}
-						</Menu.Item>
-						<Menu.Item>
-							{({ active }) => (
-								<Link
-									to={`/credit/report/business/experian/status/resource/e/${entity_id}/g/${group_id}`}
-									className={classNames(
-										active ? "bg-gray-100 text-gray-900" : "text-gray-700",
-										"block px-4 py-2 text-sm"
-									)}
-								>
-									Dun & Bradstreet
-								</Link>
-							)}
-						</Menu.Item>
 					</div>
 				</Menu.Items>
 			</Transition>
@@ -716,7 +642,7 @@ export default function Nav({ entity_id, roles, companies, notifications = [] })
 
 				<div className="flex flex-row flex-1 justify-between lg:items-center mt-1">
 					<div className="">
-						<Companies companies={companies} />
+						<CompaniesDropdown companies={companies} />
 					</div>
 					<div className="hidden lg:flex flex-col justify-center">{!is_companies_dashboard && <Nav />}</div>
 					<div className="flex flex-row items-center space-x-3">
