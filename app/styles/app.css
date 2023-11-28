@@ -3498,6 +3498,11 @@ video {
   padding-bottom: 1.5rem;
 }
 
+.py-8 {
+  padding-top: 2rem;
+  padding-bottom: 2rem;
+}
+
 .py-\[30px\] {
   padding-top: 30px;
   padding-bottom: 30px;
@@ -4936,6 +4941,10 @@ body {
     margin-top: 5rem;
   }
 
+  .sm\:mt-6 {
+    margin-top: 1.5rem;
+  }
+
   .sm\:block {
     display: block;
   }
@@ -5152,6 +5161,14 @@ body {
     border-radius: 0.5rem;
   }
 
+  .sm\:border-t {
+    border-top-width: 1px;
+  }
+
+  .sm\:border-gray-900\/5 {
+    border-color: rgb(17 24 39 / 0.05);
+  }
+
   .sm\:p-0 {
     padding: 0px;
   }
@@ -5194,6 +5211,10 @@ body {
     padding-left: 5rem;
   }
 
+  .sm\:pl-4 {
+    padding-left: 1rem;
+  }
+
   .sm\:pl-6 {
     padding-left: 1.5rem;
   }
@@ -5212,6 +5233,10 @@ body {
 
   .sm\:pt-52 {
     padding-top: 13rem;
+  }
+
+  .sm\:pt-6 {
+    padding-top: 1.5rem;
   }
 
   .sm\:pt-80 {

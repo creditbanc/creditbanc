@@ -1,6 +1,6 @@
 import { Link, useLocation } from "@remix-run/react";
 import { get_session_entity_id } from "~/utils/auth.server";
-import { get_entity_id, get_group_id, store, mapIndexed, currency } from "~/utils/helpers";
+import { get_entity_id, get_group_id, store, mapIndexed, currency, capitalize } from "~/utils/helpers";
 import { __, curry, pipe } from "ramda";
 import { useLoaderData } from "@remix-run/react";
 import axios from "axios";
@@ -15,6 +15,8 @@ import { cache } from "~/utils/helpers.server";
 import { appKey } from "~/data/array";
 import BusinessScores from "../credit/report/business/components/scores";
 import CashflowChart from "~/components/CashflowChart";
+import { get_doc } from "~/utils/firebase";
+import { PaperClipIcon } from "@heroicons/react/24/outline";
 
 const log_route = `home.$`;
 
@@ -62,13 +64,21 @@ export const loader = async ({ request }) => {
 	let personal_response = personal_report.scores.report_sha.user_token.fold;
 	let business_response = business_report.experian_facts.business_info.scores.report_sha.fold;
 
+	let application_entity_id = "dd947710-075d-4e68-8cb2-3726851a6ed1";
+
+	let application = from(get_doc(["application", application_entity_id]));
+
 	let payload = forkJoin({
 		personal_response,
 		business_response,
 		entity_response,
 		business_entity_response,
+		application,
 	}).pipe(
-		rxmap(({ personal_response, business_response, entity_response, business_entity_response }) => {
+		rxmap(({ personal_response, business_response, entity_response, business_entity_response, application }) => {
+			console.log("application");
+			console.log(application);
+
 			return {
 				business_info: business_response.business_info,
 				business_scores: business_response.scores,
@@ -80,7 +90,7 @@ export const loader = async ({ request }) => {
 				plan_id: entity_response.plan_id,
 				business_entity_id,
 				business_entity: business_entity_response.identity,
-
+				application,
 				business_report_is_empty: business_response.business_report_is_empty,
 				user_token: personal_response.user_token,
 				experian_facts: business_response.experian_facts,
@@ -136,12 +146,78 @@ const BankAccount = ({ loader = {} }) => {
 	);
 };
 
+const ApplicationStatus = () => {
+	let { application } = use_loader_store();
+
+	console.log("application");
+	console.log(application);
+
+	let business_address = `${capitalize(application?.business_address?.city)}, ${
+		application?.business_address?.state
+	} ${application?.business_address?.zip}`;
+
+	return (
+		<div className="flex flex-col w-full px-4 py-8">
+			<h2 className="text-base font-semibold leading-6 text-gray-900">Loan application</h2>
+			<div className="mt-6 flex flex-col w-full">
+				<div className="flex flex-row w-full">
+					<div className="flex flex-col w-1/2 sm:pr-4">
+						<dt className="inline text-gray-500">Submitted on</dt>
+						<dd className="inline text-gray-700">
+							<time dateTime="2023-23-01">January 23, 2023</time>
+						</dd>
+					</div>
+					<div className="flex flex-col w-1/2 mt-2 sm:mt-0 sm:pl-4">
+						<dt className="inline text-gray-500">Status</dt>
+						<dd className="inline text-gray-700">
+							<time dateTime="2023-31-01">Under review</time>
+						</dd>
+					</div>
+				</div>
+				<div className="flex flex-row w-full">
+					<div className="flex flex-col w-1/2 mt-6 border-t border-gray-900/5 pt-6 sm:pr-4">
+						{/* <dt className="font-semibold text-gray-900">From</dt> */}
+						<dd className="mt-2 text-gray-500">
+							<span className="font-medium text-gray-900">{application?.legal_name} address</span>
+							<br />
+							{application?.business_address?.street}
+							<br />
+							{business_address}
+						</dd>
+					</div>
+					<div className="flex flex-col w-1/2 mt-8 sm:mt-6 sm:border-t sm:border-gray-900/5 sm:pl-4 sm:pt-6">
+						{/* <dt className="font-semibold text-gray-900">To</dt> */}
+						<div className="mt-3 flex flex-row w-full border rounded py-2 px-3">
+							<div className="flex w-0 flex-1 items-center">
+								<PaperClipIcon className="h-5 w-5 flex-shrink-0 text-gray-400" aria-hidden="true" />
+								<div className="ml-4 flex min-w-0 flex-1 gap-2">
+									<span className="truncate font-medium">{application?.legal_name} application</span>
+									{/* <span className="flex-shrink-0 text-gray-400">2.4mb</span> */}
+								</div>
+							</div>
+							<div className="ml-4 flex-shrink-0">
+								<a href="#" className="font-medium text-blue-600 hover:text-blue-500">
+									View
+								</a>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	);
+};
+
 let use_loader_store = store();
 
 export default function Home() {
 	let { pathname } = useLocation();
 
 	let server_data = useLoaderData();
+
+	console.log("server_data");
+	console.log(server_data);
+
 	let loader = use_loader_store((state) => state);
 
 	let entity_id = get_entity_id(pathname);
@@ -163,7 +239,7 @@ export default function Home() {
 	return (
 		<div className="w-full h-full flex flex-col overflow-hidden">
 			<div className="flex flex-row h-full w-full p-5 space-x-5">
-				<div className="flex flex-col h-full w-full rounded overflow-y-scroll scrollbar-none ">
+				<div className="flex flex-col h-full w-full rounded overflow-y-scroll scrollbar-none">
 					<div className="flex flex-col h-full w-full gap-y-5">
 						<div className="flex flex-col w-full h-full">
 							<div className="flex flex-col h-full gap-x-5 border rounded bg-white items-center w-full gap-y-[60px] overflow-auto scrollbar-none">
@@ -172,71 +248,76 @@ export default function Home() {
 										{businessName}
 									</h1>
 								</div>
-								<div className="flex flex-col w-full gap-y-[100px] items-center">
-									<div className="flex flex-col w-[100%] px-5 lg:w-screen-lg lg:min-w-screen-lg lg:max-w-screen-lg">
-										<BankAccount loader={loader} />
-										<div className="flex flex-col w-full max-h-[600px] bg-white rounded">
-											<CashflowChart loader={loader} />
-										</div>
+								<div className="flex flex-col w-full items-center">
+									<div className="flex flex-col w-[100%] px-5 lg:w-screen-lg lg:min-w-screen-lg lg:max-w-screen-lg mb-10">
+										<ApplicationStatus />
 									</div>
+									<div className="flex flex-col w-full gap-y-[100px] items-center">
+										<div className="flex flex-col w-[100%] px-5 lg:w-screen-lg lg:min-w-screen-lg lg:max-w-screen-lg">
+											<BankAccount loader={loader} />
+											<div className="flex flex-col w-full max-h-[600px] bg-white rounded">
+												<CashflowChart loader={loader} />
+											</div>
+										</div>
 
-									<div className="flex flex-col w-[100%] px-5 lg:w-screen-lg lg:min-w-screen-lg lg:max-w-screen-lg">
-										<div className="flex flex-row justify-between items-center border-b border-gray-200 pb-5 mb-6">
-											<h3 className="text-base font-semibold leading-6 text-gray-900">
-												Business Scores
-											</h3>
-											<div className="mt-3 sm:ml-4 sm:mt-0 text-sm">
-												<Link
-													to={`/credit/report/business/experian/status/resource/e/${entity_id}/g/${group_id}`}
-													className="inline-flex items-center rounded-full bg-blue-600 px-3 py-2 text-sm text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
-												>
-													View Full Report
-												</Link>
+										<div className="flex flex-col w-[100%] px-5 lg:w-screen-lg lg:min-w-screen-lg lg:max-w-screen-lg">
+											<div className="flex flex-row justify-between items-center border-b border-gray-200 pb-5 mb-6">
+												<h3 className="text-base font-semibold leading-6 text-gray-900">
+													Business Scores
+												</h3>
+												<div className="mt-3 sm:ml-4 sm:mt-0 text-sm">
+													<Link
+														to={`/credit/report/business/experian/status/resource/e/${entity_id}/g/${group_id}`}
+														className="inline-flex items-center rounded-full bg-blue-600 px-3 py-2 text-sm text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
+													>
+														View Full Report
+													</Link>
+												</div>
+											</div>
+											<div>
+												<BusinessScores
+													experian_business_score={business_scores?.experian_business_score}
+													dnb_business_score={business_scores?.dnb_business_score}
+												/>
 											</div>
 										</div>
-										<div>
-											<BusinessScores
-												experian_business_score={business_scores?.experian_business_score}
-												dnb_business_score={business_scores?.dnb_business_score}
-											/>
-										</div>
-									</div>
-									<div className="flex flex-col w-[100%] px-5 lg:w-screen-lg lg:min-w-screen-lg lg:max-w-screen-lg">
-										<div className="flex flex-row justify-between items-center border-b border-gray-200 pb-5 mb-6">
-											<h3 className="text-base font-semibold leading-6 text-gray-900">
-												Personal Scores
-											</h3>
-											<div className="mt-3 sm:ml-4 sm:mt-0 text-sm">
-												<Link
-													to={`/credit/report/personal/personal/resource/e/${entity_id}/g/${group_id}`}
-													className="inline-flex items-center rounded-full bg-blue-600 px-3 py-2 text-sm text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
-												>
-													View Full Report
-												</Link>
+										<div className="flex flex-col w-[100%] px-5 lg:w-screen-lg lg:min-w-screen-lg lg:max-w-screen-lg">
+											<div className="flex flex-row justify-between items-center border-b border-gray-200 pb-5 mb-6">
+												<h3 className="text-base font-semibold leading-6 text-gray-900">
+													Personal Scores
+												</h3>
+												<div className="mt-3 sm:ml-4 sm:mt-0 text-sm">
+													<Link
+														to={`/credit/report/personal/personal/resource/e/${entity_id}/g/${group_id}`}
+														className="inline-flex items-center rounded-full bg-blue-600 px-3 py-2 text-sm text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
+													>
+														View Full Report
+													</Link>
+												</div>
 											</div>
-										</div>
-										<div className="flex flex-col w-full">
-											<div className="hidden lg:flex lg:flex-col lg:w-full">
-												<array-credit-score
-													appKey={appKey}
-													userToken={user_token}
-													bureau="all"
-													scoreTracker="true"
-												></array-credit-score>
-											</div>
-											<div className="lg:hidden flex flex-col w-full">
-												<iframe
-													src={`http://localhost:3000/1b?bureau=tui&user_token=${user_token}`}
-													className="flex flex-col w-full h-[530px]"
-												></iframe>
-												<iframe
-													src={`http://localhost:3000/1b?bureau=efx&user_token=${user_token}`}
-													className="flex flex-col w-full h-[530px]"
-												></iframe>
-												<iframe
-													src={`http://localhost:3000/1b?bureau=exp&user_token=${user_token}`}
-													className="flex flex-col w-full h-[530px]"
-												></iframe>
+											<div className="flex flex-col w-full">
+												<div className="hidden lg:flex lg:flex-col lg:w-full">
+													<array-credit-score
+														appKey={appKey}
+														userToken={user_token}
+														bureau="all"
+														scoreTracker="true"
+													></array-credit-score>
+												</div>
+												<div className="lg:hidden flex flex-col w-full">
+													<iframe
+														src={`http://localhost:3000/1b?bureau=tui&user_token=${user_token}`}
+														className="flex flex-col w-full h-[530px]"
+													></iframe>
+													<iframe
+														src={`http://localhost:3000/1b?bureau=efx&user_token=${user_token}`}
+														className="flex flex-col w-full h-[530px]"
+													></iframe>
+													<iframe
+														src={`http://localhost:3000/1b?bureau=exp&user_token=${user_token}`}
+														className="flex flex-col w-full h-[530px]"
+													></iframe>
+												</div>
 											</div>
 										</div>
 									</div>
