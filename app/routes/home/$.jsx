@@ -155,7 +155,7 @@ const ApplicationStatus = () => {
 	} ${application?.business_address?.zip}`;
 
 	return (
-		<div className="flex flex-col w-full px-4 py-8">
+		<div className="flex flex-col w-full py-8">
 			<h2 className="text-base font-semibold leading-6 text-gray-900">Loan application</h2>
 			<div className="mt-6 flex flex-col w-full">
 				<div className="flex flex-row w-full">
@@ -243,26 +243,26 @@ export default function Home() {
 										{businessName}
 									</h1>
 								</div>
-								<div className="flex flex-col w-full items-center">
-									<div className="flex flex-col w-[100%] px-5 lg:w-screen-lg lg:min-w-screen-lg lg:max-w-screen-lg mb-10">
+								<div className="flex flex-col w-full items-center px-4">
+									<div className="flex flex-col w-[100%] px-2 lg:w-screen-lg lg:min-w-screen-lg lg:max-w-screen-lg mb-10">
 										<ApplicationStatus />
 									</div>
-									<div className="flex flex-col w-[100%] lg:w-screen-lg lg:min-w-screen-lg lg:max-w-screen-lg mb-10 border rounded-lg px-3 py-3">
+									<div className="flex flex-col w-[100%] lg:w-screen-lg lg:min-w-screen-lg lg:max-w-screen-lg mb-10 py-3">
 										<ApplicationDocumentsUpload
 											type={"taxreturns"}
 											title={`Upload tax returns`}
 											subtitle={`Upload and attach your business tax returns to your loan application`}
 										/>
 									</div>
-									<div className="flex flex-col w-[100%] lg:w-screen-lg lg:min-w-screen-lg lg:max-w-screen-lg mb-10 border rounded-lg px-3 py-3">
+									<div className="flex flex-col w-[100%] lg:w-screen-lg lg:min-w-screen-lg lg:max-w-screen-lg mb-10 py-3">
 										<ApplicationDocumentsUpload
 											type={"bankstatements"}
 											title={`Upload past 6 months bank statements`}
 											subtitle={`Upload and attach your business bank statemnts to your loan application`}
 										/>
 									</div>
-									<div className="flex flex-col w-full gap-y-[100px] items-center">
-										<div className="flex flex-col w-[100%] px-5 lg:w-screen-lg lg:min-w-screen-lg lg:max-w-screen-lg">
+									<div className="flex flex-col w-full gap-y-[60px] items-center">
+										<div className="flex flex-col w-[100%] lg:w-screen-lg lg:min-w-screen-lg lg:max-w-screen-lg">
 											<BankAccount loader={loader} />
 											<div className="flex flex-col w-full max-h-[600px] bg-white rounded">
 												<CashflowChart loader={loader} />

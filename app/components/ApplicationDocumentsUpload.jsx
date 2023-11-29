@@ -34,7 +34,6 @@ const files = [
 		resource_id: "2023",
 		type: "taxreturns",
 	},
-
 	{
 		year: 2020,
 		path: "documents.bankstatements.2020",
@@ -60,6 +59,19 @@ const files = [
 		type: "bankstatements",
 	},
 ];
+
+const get_files_by_type = (type) => {
+	console.log("get_files_by_type");
+	console.log(type);
+	switch (type) {
+		case "taxreturns":
+			return pipe(filter({ type: "taxreturns" }))(files);
+		case "bankstatements":
+			return pipe(filter({ type: "bankstatements" }))(files);
+		default:
+			return [];
+	}
+};
 
 const File = ({ file: file_props }) => {
 	const { pathname } = useLocation();
@@ -184,27 +196,34 @@ const File = ({ file: file_props }) => {
 						</p>
 					</div>
 				</div>
-				{progress !== 100 && (
-					<div className="flex flex-row gap-x-3">
-						<div className="flex flex-col items-center justify-center rounded-full bg-white px-2.5 py-1 text-xs font-semibold text-gray-900 border cursor-pointer">
-							Don't have
-						</div>
-						<div className="flex flex-col items-center justify-center rounded-full bg-white px-2.5 py-1 text-xs font-semibold text-gray-900 border cursor-pointer">
-							<UploadFileButton />
-						</div>
-					</div>
-				)}
 			</div>
 			<div className="flex flex-col w-full mt-5">
 				<div className="w-full bg-gray-200 rounded-full h-2.5 dark:bg-gray-700">
 					<div className={`bg-blue-600 h-2.5 rounded-full w-0`} style={{ width: `${progress}%` }}></div>
 				</div>
 			</div>
+			<div className="flex flex-col mt-5">
+				{progress !== 100 && (
+					<div className="flex flex-row gap-x-3">
+						{/* <div className="flex flex-col items-center justify-center rounded-full bg-white px-2.5 py-1 text-xs font-semibold text-gray-900 border cursor-pointer">
+							Don't have
+						</div> */}
+						<div className="flex flex-col items-center justify-center rounded-full bg-white px-2.5 py-1 text-xs font-semibold text-gray-900 border cursor-pointer w-full">
+							<UploadFileButton />
+						</div>
+					</div>
+				)}
+			</div>
 		</div>
 	);
 };
 
-const Upload = ({ title, subtitle }) => {
+const Upload = ({ title, subtitle, type }) => {
+	let files = get_files_by_type(type);
+
+	console.log("files");
+	console.log(files);
+
 	return (
 		<div className="flex flex-col w-full px-1 pt-5 bg-white rounded">
 			<div className="flex flex-row justify-between border-b pb-3 mb-3">
@@ -216,11 +235,10 @@ const Upload = ({ title, subtitle }) => {
 					<SparklesIcon className="flex-shrink-0 h-6 w-6 text-gray-400" />
 				</div>
 			</div>
-			<ul role="list" className="flex flex-col gap-y-2">
+			<ul role="list" className="flex flex-row gap-y-2 gap-x-4">
 				{pipe(
-					filter({ type: "taxreturns" }),
 					mapIndexed((file, index) => (
-						<li key={index} className="flex flex-col w-full gap-x-6 py-5 border rounded-lg px-3">
+						<li key={index} className="flex flex-col w-full  py-5 border rounded-lg px-3">
 							<File file={file} />
 						</li>
 					))
