@@ -961,11 +961,6 @@ video {
   margin-bottom: 5px;
 }
 
-.mx-\[100px\] {
-  margin-left: 100px;
-  margin-right: 100px;
-}
-
 .-mb-6 {
   margin-bottom: -1.5rem;
 }
@@ -3522,16 +3517,6 @@ video {
 .py-\[calc\(theme\(spacing\.2\)-1px\)\] {
   padding-top: calc(0.5rem - 1px);
   padding-bottom: calc(0.5rem - 1px);
-}
-
-.px-0 {
-  padding-left: 0px;
-  padding-right: 0px;
-}
-
-.px-\[100px\] {
-  padding-left: 100px;
-  padding-right: 100px;
 }
 
 .pb-0 {

@@ -1,6 +1,6 @@
 import { DocumentIcon, SparklesIcon } from "@heroicons/react/24/outline";
 import { get_entity_id, get_group_id, mapIndexed } from "~/utils/helpers";
-import { head, pipe } from "ramda";
+import { findIndex, head, indexOf, map, pipe, times } from "ramda";
 import { server_timestamp, set_doc, storage } from "~/utils/firebase";
 import { ref, getDownloadURL, uploadBytesResumable } from "firebase/storage";
 import { useEffect, useState } from "react";
@@ -8,66 +8,129 @@ import { v4 as uuidv4 } from "uuid";
 import { useLocation } from "@remix-run/react";
 import { filter } from "shades";
 import { events_map } from "~/data/events";
+import moment from "moment";
 
 const files = [
 	{
-		year: 2020,
+		name: 2020,
 		path: "documents.taxreturns.2020",
 		resource_id: "2020",
 		type: "taxreturns",
 	},
 	{
-		year: 2021,
+		name: 2021,
 		path: "documents.taxreturns.2021",
 		resource_id: "2021",
 		type: "taxreturns",
 	},
 	{
-		year: 2022,
+		name: 2022,
 		path: "documents.taxreturns.2022",
 		resource_id: "2022",
 		type: "taxreturns",
 	},
 	{
-		year: 2023,
+		name: 2023,
 		path: "documents.taxreturns.2023",
 		resource_id: "2023",
 		type: "taxreturns",
 	},
 	{
-		year: 2020,
-		path: "documents.bankstatements.2020",
-		resource_id: "2020",
+		name: "January",
+		path: "documents.bankstatements.january",
+		resource_id: "1",
 		type: "bankstatements",
 	},
 	{
-		year: 2021,
-		path: "documents.bankstatements.2021",
-		resource_id: "2021",
+		name: "February",
+		path: "documents.bankstatements.february",
+		resource_id: "2",
 		type: "bankstatements",
 	},
 	{
-		year: 2022,
-		path: "documents.bankstatements.2022",
-		resource_id: "2022",
+		name: "March",
+		path: "documents.bankstatements.march",
+		resource_id: "3",
 		type: "bankstatements",
 	},
 	{
-		year: 2023,
-		path: "documents.bankstatements.2023",
-		resource_id: "2023",
+		name: "April",
+		path: "documents.bankstatements.april",
+		resource_id: "4",
+		type: "bankstatements",
+	},
+	{
+		name: "May",
+		path: "documents.bankstatements.may",
+		resource_id: "5",
+		type: "bankstatements",
+	},
+	{
+		name: "June",
+		path: "documents.bankstatements.june",
+		resource_id: "6",
+		type: "bankstatements",
+	},
+	{
+		name: "July",
+		path: "documents.bankstatements.july",
+		resource_id: "7",
+		type: "bankstatements",
+	},
+	{
+		name: "August",
+		path: "documents.bankstatements.august",
+		resource_id: "8",
+		type: "bankstatements",
+	},
+	{
+		name: "September",
+		path: "documents.bankstatements.september",
+		resource_id: "9",
+		type: "bankstatements",
+	},
+	{
+		name: "October",
+		path: "documents.bankstatements.october",
+		resource_id: "10",
+		type: "bankstatements",
+	},
+	{
+		name: "November",
+		path: "documents.bankstatements.november",
+		resource_id: "11",
+		type: "bankstatements",
+	},
+	{
+		name: "December",
+		path: "documents.bankstatements.december",
+		resource_id: "12",
 		type: "bankstatements",
 	},
 ];
 
+const get_bankstatement_files = () => {
+	let current_month = moment().format("M").toLowerCase();
+
+	let bank_statements = pipe(filter({ type: "bankstatements" }))(files);
+	let current_month_index = findIndex((file) => file.resource_id == current_month)(bank_statements);
+
+	return pipe(
+		times((index) => current_month_index - index),
+		map((month_index) =>
+			month_index > -1 ? bank_statements[month_index] : bank_statements[bank_statements.length + month_index]
+		)
+	)(6);
+};
+
 const get_files_by_type = (type) => {
 	console.log("get_files_by_type");
-	console.log(type);
+
 	switch (type) {
 		case "taxreturns":
 			return pipe(filter({ type: "taxreturns" }))(files);
 		case "bankstatements":
-			return pipe(filter({ type: "bankstatements" }))(files);
+			return get_bankstatement_files();
 		default:
 			return [];
 	}
@@ -192,7 +255,7 @@ const File = ({ file: file_props }) => {
 					</div>
 					<div className="min-w-0 flex-auto">
 						<p className="text-sm font-semibold leading-6 text-gray-900">
-							{file_name == "" ? file_props.year : file_name}
+							{file_name == "" ? file_props.name : file_name}
 						</p>
 					</div>
 				</div>
