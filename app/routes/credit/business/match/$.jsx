@@ -209,7 +209,7 @@ export default function View() {
 				<div className="bg-white px-6 py-10">
 					<div className="mx-auto max-w-2xl text-center">
 						<h2 className="text-4xl font-bold tracking-tight text-gray-900 sm:text-6xl">
-							Select your business
+							Verify and select your business
 						</h2>
 					</div>
 				</div>

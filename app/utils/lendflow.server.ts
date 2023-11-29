@@ -433,7 +433,7 @@ export class LendflowExternal {
 				Authorization: `Bearer ${LENDFLOW_BEARER}`,
 				"Content-Type": "application/json",
 			},
-			data: { requested_products: ["experian_intelliscore", "dnb_pi_l3"] },
+			data: { requested_products: ["experian_intelliscore"] },
 			// data: { requested_products: LendflowExternal.plan_request_products("builder") },
 		};
 

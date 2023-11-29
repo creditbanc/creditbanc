@@ -28,7 +28,8 @@ export const action = async ({ request }) => {
 	console.log("request.url");
 	console.log(request.url);
 	let url = new URL(request.url);
-	let { pathname } = url;
+	console.log(url);
+	let { pathname, origin } = url;
 	let group_id = get_group_id(pathname);
 	let entity_id = get_entity_id(pathname);
 	let params = await form_params(request);
@@ -48,10 +49,9 @@ export const action = async ({ request }) => {
 	let next = pipe(filter({ id: "review" }), head, get("next"))(navigation);
 	// return create_user_session(entity_id, next({ entity_id, group_id }));
 
-	let post_url = `http://localhost:3000/credit/business/new/form/resource/e/${entity_id}/g/${group_id}`;
+	let post_url = `${origin}/credit/business/new/form/resource/e/${entity_id}/g/${group_id}`;
 
 	var formdata = new FormData();
-	//add three variable to form
 
 	let { business_start_date, ...business } = test_identity_three;
 	let business_start_date_string = `${business_start_date.year}-${business_start_date.month}-${business_start_date.day}`;
