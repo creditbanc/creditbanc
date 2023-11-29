@@ -1,6 +1,6 @@
 import { Link, useLocation } from "@remix-run/react";
 import { get_session_entity_id } from "~/utils/auth.server";
-import { get_entity_id, get_group_id, store, mapIndexed, currency, capitalize } from "~/utils/helpers";
+import { get_entity_id, get_group_id, store, mapIndexed, currency, capitalize, classNames } from "~/utils/helpers";
 import { __, curry, pipe } from "ramda";
 import { useLoaderData } from "@remix-run/react";
 import axios from "axios";
@@ -18,6 +18,18 @@ import CashflowChart from "~/components/CashflowChart";
 import { get_doc } from "~/utils/firebase";
 import { PaperClipIcon } from "@heroicons/react/24/outline";
 import ApplicationDocumentsUpload from "~/components/ApplicationDocumentsUpload";
+import { Fragment, useState } from "react";
+import { CheckCircleIcon } from "@heroicons/react/24/solid";
+import {
+	FaceFrownIcon,
+	FaceSmileIcon,
+	FireIcon,
+	HandThumbUpIcon,
+	HeartIcon,
+	XMarkIcon,
+} from "@heroicons/react/20/solid";
+import { Listbox, Transition } from "@headlessui/react";
+import { CalendarDaysIcon, CreditCardIcon, UserCircleIcon } from "@heroicons/react/20/solid";
 
 const log_route = `home.$`;
 
@@ -206,6 +218,148 @@ const ApplicationStatus = () => {
 	);
 };
 
+const activity = [
+	{ id: 1, type: "created", person: { name: "Chelsea Hagon" }, date: "7d ago", dateTime: "2023-01-23T10:32" },
+	{ id: 2, type: "edited", person: { name: "Chelsea Hagon" }, date: "6d ago", dateTime: "2023-01-23T11:03" },
+	{ id: 3, type: "sent", person: { name: "Chelsea Hagon" }, date: "6d ago", dateTime: "2023-01-23T11:24" },
+	{
+		id: 4,
+		type: "commented",
+		person: {
+			name: "Chelsea Hagon",
+			imageUrl:
+				"https://images.unsplash.com/photo-1550525811-e5869dd03032?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
+		},
+		comment: "Called client, they reassured me the invoice would be paid by the 25th.",
+		date: "3d ago",
+		dateTime: "2023-01-23T15:56",
+	},
+	{ id: 5, type: "viewed", person: { name: "Alex Curren" }, date: "2d ago", dateTime: "2023-01-24T09:12" },
+	{ id: 6, type: "paid", person: { name: "Alex Curren" }, date: "1d ago", dateTime: "2023-01-24T09:20" },
+];
+
+const moods = [
+	{ name: "Excited", value: "excited", icon: FireIcon, iconColor: "text-white", bgColor: "bg-red-500" },
+	{ name: "Loved", value: "loved", icon: HeartIcon, iconColor: "text-white", bgColor: "bg-pink-400" },
+	{ name: "Happy", value: "happy", icon: FaceSmileIcon, iconColor: "text-white", bgColor: "bg-green-400" },
+	{ name: "Sad", value: "sad", icon: FaceFrownIcon, iconColor: "text-white", bgColor: "bg-yellow-400" },
+	{ name: "Thumbsy", value: "thumbsy", icon: HandThumbUpIcon, iconColor: "text-white", bgColor: "bg-blue-500" },
+	{ name: "I feel nothing", value: null, icon: XMarkIcon, iconColor: "text-gray-400", bgColor: "bg-transparent" },
+];
+
+const AccountFeed = () => {
+	return (
+		<ul role="list" className="space-y-6">
+			{activity.map((activityItem, activityItemIdx) => (
+				<li key={activityItem.id} className="relative flex gap-x-4">
+					<div
+						className={classNames(
+							activityItemIdx === activity.length - 1 ? "h-6" : "-bottom-6",
+							"absolute left-0 top-0 flex w-6 justify-center"
+						)}
+					>
+						<div className="w-px bg-gray-200" />
+					</div>
+					{activityItem.type === "commented" ? (
+						<>
+							<img
+								src={activityItem.person.imageUrl}
+								alt=""
+								className="relative mt-3 h-6 w-6 flex-none rounded-full bg-gray-50"
+							/>
+							<div className="flex-auto rounded-md p-3 ring-1 ring-inset ring-gray-200">
+								<div className="flex justify-between gap-x-4">
+									<div className="py-0.5 text-xs leading-5 text-gray-500">
+										<span className="font-medium text-gray-900">{activityItem.person.name}</span>{" "}
+										commented
+									</div>
+									<time
+										dateTime={activityItem.dateTime}
+										className="flex-none py-0.5 text-xs leading-5 text-gray-500"
+									>
+										{activityItem.date}
+									</time>
+								</div>
+								<p className="text-sm leading-6 text-gray-500">{activityItem.comment}</p>
+							</div>
+						</>
+					) : (
+						<>
+							<div className="relative flex h-6 w-6 flex-none items-center justify-center bg-white">
+								{activityItem.type === "paid" ? (
+									<CheckCircleIcon className="h-6 w-6 text-indigo-600" aria-hidden="true" />
+								) : (
+									<div className="h-1.5 w-1.5 rounded-full bg-gray-100 ring-1 ring-gray-300" />
+								)}
+							</div>
+							<p className="flex-auto py-0.5 text-xs leading-5 text-gray-500">
+								<span className="font-medium text-gray-900">{activityItem.person.name}</span>{" "}
+								{activityItem.type} the invoice.
+							</p>
+							<time
+								dateTime={activityItem.dateTime}
+								className="flex-none py-0.5 text-xs leading-5 text-gray-500"
+							>
+								{activityItem.date}
+							</time>
+						</>
+					)}
+				</li>
+			))}
+		</ul>
+	);
+};
+
+const Advisor = () => {
+	return (
+		<div className="lg:col-start-3 lg:row-end-1">
+			<h2 className="sr-only">Summary</h2>
+			<div className="rounded-lg bg-gray-50 shadow-sm ring-1 ring-gray-900/5">
+				<dl className="flex flex-wrap">
+					<div className="flex-auto pl-6 pt-6">
+						<dt className="text-sm font-semibold leading-6 text-gray-900">Amount</dt>
+						<dd className="mt-1 text-base font-semibold leading-6 text-gray-900">$10,560.00</dd>
+					</div>
+					<div className="flex-none self-end px-6 pt-4">
+						<dt className="sr-only">Status</dt>
+						<dd className="inline-flex items-center rounded-md bg-green-50 px-2 py-1 text-xs font-medium text-green-700 ring-1 ring-inset ring-green-600/20">
+							Paid
+						</dd>
+					</div>
+					<div className="mt-6 flex w-full flex-none gap-x-4 border-t border-gray-900/5 px-6 pt-6">
+						<dt className="flex-none">
+							<span className="sr-only">Client</span>
+							<UserCircleIcon className="h-6 w-5 text-gray-400" aria-hidden="true" />
+						</dt>
+						<dd className="text-sm font-medium leading-6 text-gray-900">Alex Curren</dd>
+					</div>
+					<div className="mt-4 flex w-full flex-none gap-x-4 px-6">
+						<dt className="flex-none">
+							<span className="sr-only">Due date</span>
+							<CalendarDaysIcon className="h-6 w-5 text-gray-400" aria-hidden="true" />
+						</dt>
+						<dd className="text-sm leading-6 text-gray-500">
+							<time dateTime="2023-01-31">January 31, 2023</time>
+						</dd>
+					</div>
+					<div className="mt-4 flex w-full flex-none gap-x-4 px-6">
+						<dt className="flex-none">
+							<span className="sr-only">Status</span>
+							<CreditCardIcon className="h-6 w-5 text-gray-400" aria-hidden="true" />
+						</dt>
+						<dd className="text-sm leading-6 text-gray-500">Paid with MasterCard</dd>
+					</div>
+				</dl>
+				<div className="mt-6 border-t border-gray-900/5 px-6 py-6">
+					<a href="#" className="text-sm font-semibold leading-6 text-gray-900">
+						Download receipt <span aria-hidden="true">&rarr;</span>
+					</a>
+				</div>
+			</div>
+		</div>
+	);
+};
+
 let use_loader_store = store();
 
 export default function Home() {
@@ -232,106 +386,102 @@ export default function Home() {
 	let { businessName } = businessHeader;
 
 	return (
-		<div className="w-full h-full flex flex-col overflow-hidden">
-			<div className="flex flex-row h-full w-full p-5 space-x-5">
-				<div className="flex flex-col h-full w-full rounded overflow-y-scroll scrollbar-none">
-					<div className="flex flex-col h-full w-full gap-y-5">
-						<div className="flex flex-col w-full h-full">
-							<div className="flex flex-col h-full gap-x-5 border rounded bg-white items-center w-full gap-y-[60px] overflow-auto scrollbar-none">
-								<div className="flex flex-col max-w-4xl text-center mt-[40px]">
-									<h1 className="text-4xl font-bold tracking-tight text-gray-900 sm:text-6xl">
-										{businessName}
-									</h1>
+		<div className="w-full h-full flex flex-col overflow-hidden bg-white">
+			<div className="flex flex-col h-full w-full bg-white items-center gap-y-[60px] overflow-y-scroll scrollbar-none">
+				<div className="flex flex-col max-w-4xl text-center mt-[40px]">
+					<h1 className="text-4xl font-bold tracking-tight text-gray-900 sm:text-6xl">{businessName}</h1>
+				</div>
+				<div className="flex flex-row w-full h-full max-w-screen-2xl	 gap-x-5">
+					<div className="flex flex-col flex-1 px-4 items-start">
+						<div className="flex flex-col w-[100%] px-2 lg:w-screen-lg lg:min-w-screen-lg lg:max-w-screen-lg mb-10">
+							<ApplicationStatus />
+						</div>
+						<div className="flex flex-col w-[100%] lg:w-screen-lg lg:min-w-screen-lg lg:max-w-screen-lg mb-10 py-3">
+							<ApplicationDocumentsUpload
+								type={"taxreturns"}
+								title={`Upload tax returns`}
+								subtitle={`Upload and attach your business tax returns to your loan application`}
+							/>
+						</div>
+						<div className="flex flex-col w-[100%] lg:w-screen-lg lg:min-w-screen-lg lg:max-w-screen-lg mb-10 py-3">
+							<ApplicationDocumentsUpload
+								type={"bankstatements"}
+								title={`Upload past 6 months bank statements`}
+								subtitle={`Upload and attach your business bank statemnts to your loan application`}
+							/>
+						</div>
+						<div className="flex flex-col w-full gap-y-[60px] items-start">
+							<div className="flex flex-col w-[100%] lg:w-screen-lg lg:min-w-screen-lg lg:max-w-screen-lg">
+								<BankAccount loader={loader} />
+								<div className="flex flex-col w-full max-h-[600px] bg-white rounded">
+									<CashflowChart loader={loader} />
 								</div>
-								<div className="flex flex-col w-full items-center px-4">
-									<div className="flex flex-col w-[100%] px-2 lg:w-screen-lg lg:min-w-screen-lg lg:max-w-screen-lg mb-10">
-										<ApplicationStatus />
-									</div>
-									<div className="flex flex-col w-[100%] lg:w-screen-lg lg:min-w-screen-lg lg:max-w-screen-lg mb-10 py-3">
-										<ApplicationDocumentsUpload
-											type={"taxreturns"}
-											title={`Upload tax returns`}
-											subtitle={`Upload and attach your business tax returns to your loan application`}
-										/>
-									</div>
-									<div className="flex flex-col w-[100%] lg:w-screen-lg lg:min-w-screen-lg lg:max-w-screen-lg mb-10 py-3">
-										<ApplicationDocumentsUpload
-											type={"bankstatements"}
-											title={`Upload past 6 months bank statements`}
-											subtitle={`Upload and attach your business bank statemnts to your loan application`}
-										/>
-									</div>
-									<div className="flex flex-col w-full gap-y-[60px] items-center">
-										<div className="flex flex-col w-[100%] lg:w-screen-lg lg:min-w-screen-lg lg:max-w-screen-lg">
-											<BankAccount loader={loader} />
-											<div className="flex flex-col w-full max-h-[600px] bg-white rounded">
-												<CashflowChart loader={loader} />
-											</div>
-										</div>
+							</div>
 
-										<div className="flex flex-col w-[100%] px-5 lg:w-screen-lg lg:min-w-screen-lg lg:max-w-screen-lg">
-											<div className="flex flex-row justify-between items-center border-b border-gray-200 pb-5 mb-6">
-												<h3 className="text-base font-semibold leading-6 text-gray-900">
-													Business Scores
-												</h3>
-												<div className="mt-3 sm:ml-4 sm:mt-0 text-sm">
-													<Link
-														to={`/credit/report/business/experian/status/resource/e/${entity_id}/g/${group_id}`}
-														className="inline-flex items-center rounded-full bg-blue-600 px-3 py-2 text-sm text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
-													>
-														View Full Report
-													</Link>
-												</div>
-											</div>
-											<div>
-												<BusinessScores
-													experian_business_score={business_scores?.experian_business_score}
-													dnb_business_score={business_scores?.dnb_business_score}
-												/>
-											</div>
-										</div>
-										<div className="flex flex-col w-[100%] px-5 lg:w-screen-lg lg:min-w-screen-lg lg:max-w-screen-lg">
-											<div className="flex flex-row justify-between items-center border-b border-gray-200 pb-5 mb-6">
-												<h3 className="text-base font-semibold leading-6 text-gray-900">
-													Personal Scores
-												</h3>
-												<div className="mt-3 sm:ml-4 sm:mt-0 text-sm">
-													<Link
-														to={`/credit/report/personal/personal/resource/e/${entity_id}/g/${group_id}`}
-														className="inline-flex items-center rounded-full bg-blue-600 px-3 py-2 text-sm text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
-													>
-														View Full Report
-													</Link>
-												</div>
-											</div>
-											<div className="flex flex-col w-full">
-												<div className="hidden lg:flex lg:flex-col lg:w-full">
-													<array-credit-score
-														appKey={appKey}
-														userToken={user_token}
-														bureau="all"
-														scoreTracker="true"
-													></array-credit-score>
-												</div>
-												<div className="lg:hidden flex flex-col w-full">
-													<iframe
-														src={`http://localhost:3000/1b?bureau=tui&user_token=${user_token}`}
-														className="flex flex-col w-full h-[530px]"
-													></iframe>
-													<iframe
-														src={`http://localhost:3000/1b?bureau=efx&user_token=${user_token}`}
-														className="flex flex-col w-full h-[530px]"
-													></iframe>
-													<iframe
-														src={`http://localhost:3000/1b?bureau=exp&user_token=${user_token}`}
-														className="flex flex-col w-full h-[530px]"
-													></iframe>
-												</div>
-											</div>
-										</div>
+							<div className="flex flex-col w-[100%] px-5 lg:w-screen-lg lg:min-w-screen-lg lg:max-w-screen-lg">
+								<div className="flex flex-row justify-between items-center border-b border-gray-200 pb-5 mb-6">
+									<h3 className="text-base font-semibold leading-6 text-gray-900">Business Scores</h3>
+									<div className="mt-3 sm:ml-4 sm:mt-0 text-sm">
+										<Link
+											to={`/credit/report/business/experian/status/resource/e/${entity_id}/g/${group_id}`}
+											className="inline-flex items-center rounded-full bg-blue-600 px-3 py-2 text-sm text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
+										>
+											View Full Report
+										</Link>
+									</div>
+								</div>
+								<div>
+									<BusinessScores
+										experian_business_score={business_scores?.experian_business_score}
+										dnb_business_score={business_scores?.dnb_business_score}
+									/>
+								</div>
+							</div>
+							<div className="flex flex-col w-[100%] px-5 lg:w-screen-lg lg:min-w-screen-lg lg:max-w-screen-lg">
+								<div className="flex flex-row justify-between items-center border-b border-gray-200 pb-5 mb-6">
+									<h3 className="text-base font-semibold leading-6 text-gray-900">Personal Scores</h3>
+									<div className="mt-3 sm:ml-4 sm:mt-0 text-sm">
+										<Link
+											to={`/credit/report/personal/personal/resource/e/${entity_id}/g/${group_id}`}
+											className="inline-flex items-center rounded-full bg-blue-600 px-3 py-2 text-sm text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
+										>
+											View Full Report
+										</Link>
+									</div>
+								</div>
+								<div className="flex flex-col w-full">
+									<div className="hidden lg:flex lg:flex-col lg:w-full">
+										<array-credit-score
+											appKey={appKey}
+											userToken={user_token}
+											bureau="all"
+											scoreTracker="true"
+										></array-credit-score>
+									</div>
+									<div className="lg:hidden flex flex-col w-full">
+										<iframe
+											src={`http://localhost:3000/1b?bureau=tui&user_token=${user_token}`}
+											className="flex flex-col w-full h-[530px]"
+										></iframe>
+										<iframe
+											src={`http://localhost:3000/1b?bureau=efx&user_token=${user_token}`}
+											className="flex flex-col w-full h-[530px]"
+										></iframe>
+										<iframe
+											src={`http://localhost:3000/1b?bureau=exp&user_token=${user_token}`}
+											className="flex flex-col w-full h-[530px]"
+										></iframe>
 									</div>
 								</div>
 							</div>
+						</div>
+					</div>
+					<div className="flex flex-col w-[400px] gap-y-[30px]">
+						<div className="flex flex-col">
+							<Advisor />
+						</div>
+						<div className="flex flex-col border rounded p-5">
+							<AccountFeed />
 						</div>
 					</div>
 				</div>
