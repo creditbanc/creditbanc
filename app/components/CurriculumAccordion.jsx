@@ -30,7 +30,7 @@ export default function CurriculumAccordion({ curriculum }) {
 										mapIndexed((resource, index) => (
 											<Link
 												key={index}
-												to={`/university/creditbuilder/${resource.id}`}
+												to={resource.href}
 												className="flex flex-row w-full border p-2 rounded"
 												style={{
 													borderColor: resource_path === resource.id ? "#56CF9E" : "",
