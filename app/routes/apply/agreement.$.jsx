@@ -11,7 +11,7 @@ import { redirect } from "@remix-run/node";
 import { navigation } from "./navigation";
 import { filter } from "shades";
 import { unformat, formatMoney } from "accounting-js";
-import { get_session_entity_id } from "~/utils/auth.server";
+import { create_user_session, get_session_entity_id } from "~/utils/auth.server";
 import moment from "moment";
 
 export const action = async ({ request }) => {
@@ -34,14 +34,13 @@ export const action = async ({ request }) => {
 
 	let payload = { agreement: true, agreement_date: moment().format("MM-DD-YYYY"), step };
 
-	let response = from(update_doc(["application", application_entity_id], payload)).pipe(
-		rxmap(() => ({ entity_id, group_id }))
-	);
+	let response = from(update_doc(["application", entity_id], payload)).pipe(rxmap(() => ({ entity_id, group_id })));
 
 	await lastValueFrom(response);
 
 	let next = pipe(filter({ id: "agreement" }), head, get("next"))(navigation);
-	return redirect(next({ entity_id, group_id }));
+	// return redirect(next({ entity_id, group_id }));
+	return create_user_session(entity_id, next({ entity_id, group_id }));
 };
 
 export const loader = async ({ request }) => {
@@ -50,7 +49,7 @@ export const loader = async ({ request }) => {
 	// let group_id = get_group_id(url.pathname);
 
 	let application_entity_id = "dd947710-075d-4e68-8cb2-3726851a6ed1";
-	let application = await lastValueFrom(from(get_doc(["application", application_entity_id])));
+	let application = await lastValueFrom(from(get_doc(["application", entity_id])));
 
 	return { application };
 };
@@ -173,13 +172,12 @@ export default function Agreement() {
 						<div>
 							<b>Client</b> agrees to defend the <b>Advisor</b> against any claim(s) made by any third-
 							party service providers, not affiliated with the <b>Advisor</b>, for any part of the
-							<b>Success Fee</b>
-							earned by the <b>Advisor</b> as it relates to this transaction. <b>Client</b> gives the{" "}
-							<b>Advisor</b> and any potential lender the right to perform and all investigations
-							necessary to evaluate the <b>Client</b>'s credit worthiness. The <b>Client</b> represents
-							that all information submitted to the <b>Advisor</b> is substantially true and accurate.
-							However, should it be determined that the information provided is materially false; the{" "}
-							<b>Success Fee</b>
+							<b>Success Fee</b> earned by the <b>Advisor</b> as it relates to this transaction.{" "}
+							<b>Client</b> gives the <b>Advisor</b> and any potential lender the right to perform and all
+							investigations necessary to evaluate the <b>Client</b>'s credit worthiness. The{" "}
+							<b>Client</b> represents that all information submitted to the <b>Advisor</b> is
+							substantially true and accurate. However, should it be determined that the information
+							provided is materially false; the <b>Success Fee</b>
 							delineated above shall become immediately due and payable.
 						</div>
 

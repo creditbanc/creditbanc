@@ -16,7 +16,7 @@ import { appKey } from "~/data/array";
 import BusinessScores from "../credit/report/business/components/scores";
 import CashflowChart from "~/components/CashflowChart";
 import { get_doc } from "~/utils/firebase";
-import { PaperClipIcon } from "@heroicons/react/24/outline";
+import { AtSymbolIcon, PaperClipIcon, PhoneIcon } from "@heroicons/react/24/outline";
 import ApplicationDocumentsUpload from "~/components/ApplicationDocumentsUpload";
 import { Fragment, useState } from "react";
 import { CheckCircleIcon } from "@heroicons/react/24/solid";
@@ -313,10 +313,30 @@ const AccountFeed = () => {
 const Advisor = () => {
 	return (
 		<div className="lg:col-start-3 lg:row-end-1">
-			<h2 className="sr-only">Summary</h2>
 			<div className="rounded-lg bg-gray-50 shadow-sm ring-1 ring-gray-900/5">
 				<dl className="flex flex-wrap">
-					<div className="flex-auto pl-6 pt-6">
+					{/* <div className="flex flex-col w-full items-center justify-center h-full py-4">
+						<img
+							className="inline-block h-14 w-14 rounded-full"
+							src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
+							alt=""
+						/>
+					</div> */}
+
+					<div className="flex flex-row w-full py-4 items-center px-6">
+						<div>
+							<img
+								className="inline-block h-9 w-9 rounded-full"
+								src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
+								alt=""
+							/>
+						</div>
+						<div className="ml-3">
+							<p className="text-sm font-medium text-gray-700 group-hover:text-gray-900">Tom Cook</p>
+							<p className="text-xs font-medium text-gray-500 group-hover:text-gray-700">Loan Officer</p>
+						</div>
+					</div>
+					{/* <div className="flex-auto pl-6 pt-6">
 						<dt className="text-sm font-semibold leading-6 text-gray-900">Amount</dt>
 						<dd className="mt-1 text-base font-semibold leading-6 text-gray-900">$10,560.00</dd>
 					</div>
@@ -325,36 +345,51 @@ const Advisor = () => {
 						<dd className="inline-flex items-center rounded-md bg-green-50 px-2 py-1 text-xs font-medium text-green-700 ring-1 ring-inset ring-green-600/20">
 							Paid
 						</dd>
+					</div> */}
+					<div className="flex w-full flex-none gap-x-4 border-t border-gray-900/5 px-6 py-2">
+						<div className="flex flex-row w-full gap-x-2">
+							<div className="flex flex-row gap-x-1 text-sm items-center">
+								<dt className="flex-none mr-3">
+									<UserCircleIcon className="h-6 w-5 text-gray-400" aria-hidden="true" />
+								</dt>
+								<div>Name:</div>
+							</div>
+
+							<dd className="text-sm leading-6 text-gray-900">Alex Curren</dd>
+						</div>
 					</div>
-					<div className="mt-6 flex w-full flex-none gap-x-4 border-t border-gray-900/5 px-6 pt-6">
-						<dt className="flex-none">
-							<span className="sr-only">Client</span>
-							<UserCircleIcon className="h-6 w-5 text-gray-400" aria-hidden="true" />
-						</dt>
-						<dd className="text-sm font-medium leading-6 text-gray-900">Alex Curren</dd>
+
+					<div className="flex w-full flex-none gap-x-4 border-t border-gray-900/5 px-6 py-2">
+						<div className="flex flex-row w-full gap-x-2">
+							<div className="flex flex-row gap-x-1 text-sm items-center">
+								<dt className="flex-none mr-3">
+									<AtSymbolIcon className="h-6 w-5 text-gray-400" aria-hidden="true" />
+								</dt>
+								<div>Email:</div>
+							</div>
+
+							<dd className="text-sm leading-6 text-gray-900">alex@creditbanc.io</dd>
+						</div>
 					</div>
-					<div className="mt-4 flex w-full flex-none gap-x-4 px-6">
-						<dt className="flex-none">
-							<span className="sr-only">Due date</span>
-							<CalendarDaysIcon className="h-6 w-5 text-gray-400" aria-hidden="true" />
-						</dt>
-						<dd className="text-sm leading-6 text-gray-500">
-							<time dateTime="2023-01-31">January 31, 2023</time>
-						</dd>
-					</div>
-					<div className="mt-4 flex w-full flex-none gap-x-4 px-6">
-						<dt className="flex-none">
-							<span className="sr-only">Status</span>
-							<CreditCardIcon className="h-6 w-5 text-gray-400" aria-hidden="true" />
-						</dt>
-						<dd className="text-sm leading-6 text-gray-500">Paid with MasterCard</dd>
+
+					<div className="flex w-full flex-none gap-x-4 border-t border-gray-900/5 px-6 py-2">
+						<div className="flex flex-row w-full gap-x-2">
+							<div className="flex flex-row gap-x-1 text-sm items-center">
+								<dt className="flex-none mr-3">
+									<PhoneIcon className="h-6 w-5 text-gray-400" aria-hidden="true" />
+								</dt>
+								<div>Phone:</div>
+							</div>
+
+							<dd className="text-sm leading-6 text-gray-900">352-999-9999</dd>
+						</div>
 					</div>
 				</dl>
-				<div className="mt-6 border-t border-gray-900/5 px-6 py-6">
+				{/* <div className="border-t border-gray-900/5 px-6 py-6">
 					<a href="#" className="text-sm font-semibold leading-6 text-gray-900">
 						Download receipt <span aria-hidden="true">&rarr;</span>
 					</a>
-				</div>
+				</div> */}
 			</div>
 		</div>
 	);

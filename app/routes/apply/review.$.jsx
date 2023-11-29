@@ -4,13 +4,25 @@ import { from, lastValueFrom, map as rxmap } from "rxjs";
 import { filter } from "shades";
 import { create_user_session, get_session_entity_id } from "~/utils/auth.server";
 import { get_doc, update_doc } from "~/utils/firebase";
-import { capitalize, form_params, get, get_entity_id, get_group_id, mapIndexed } from "~/utils/helpers";
+import {
+	capitalize,
+	create_axios_form,
+	formData,
+	form_params,
+	get,
+	get_entity_id,
+	get_group_id,
+	mapIndexed,
+} from "~/utils/helpers";
 import { Link, useLoaderData, useLocation, useSubmit } from "@remix-run/react";
 import { navigation } from "./navigation";
 import { useEffect, useState } from "react";
 import useStore from "./store";
 import moment from "moment";
 import { unformat, formatMoney } from "accounting-js";
+
+import { test_identity_three } from "~/data/lendflow";
+import axios from "axios";
 
 export const action = async ({ request }) => {
 	console.log("request.url");
@@ -34,8 +46,33 @@ export const action = async ({ request }) => {
 
 	await lastValueFrom(response);
 	let next = pipe(filter({ id: "review" }), head, get("next"))(navigation);
-	return create_user_session(entity_id, next({ entity_id, group_id }));
-	// return redirect(next({ entity_id, group_id }));
+	// return create_user_session(entity_id, next({ entity_id, group_id }));
+
+	let post_url = `http://localhost:3000/credit/business/new/form/resource/e/${entity_id}/g/${group_id}`;
+
+	var formdata = new FormData();
+	//add three variable to form
+
+	let { business_start_date, ...business } = test_identity_three;
+	let business_start_date_string = `${business_start_date.year}-${business_start_date.month}-${business_start_date.day}`;
+
+	formdata.append("payload", JSON.stringify({ ...business, business_start_date: business_start_date_string }));
+	formdata.append("response_type", JSON.stringify("json"));
+
+	let config = {
+		method: "post",
+		maxBodyLength: Infinity,
+		data: formdata,
+		headers: { "Content-Type": "multipart/form-data" },
+		url: post_url,
+	};
+
+	let report_response = await axios(config);
+
+	console.log("report_response");
+	console.log(report_response.data);
+
+	return redirect(next({ entity_id, group_id }));
 };
 
 export const loader = async ({ request }) => {

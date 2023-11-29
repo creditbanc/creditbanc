@@ -108,12 +108,17 @@ export const json_response = (data) => {
 
 export const formData = async (request) => {
 	const form = await request.formData();
+	// console.log("formmmm");
+	// console.log(form);
 
 	let obj = {};
 
 	for (const [key, value] of form) {
 		obj[key] = pipe(tryCatch(JSON.parse, identity))(value);
 	}
+
+	// console.log("obj");
+	// console.log(obj);
 
 	return obj;
 };

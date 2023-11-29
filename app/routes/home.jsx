@@ -25,7 +25,7 @@ export const loader = async ({ request }) => {
 
 		if (step !== "complete") {
 			console.log("here");
-
+			console.log(application);
 			let next = pipe(filter({ id: step }), head, get("next"))(application_navigation);
 
 			console.log("next");
