@@ -61,17 +61,15 @@ const action_subject = subject.pipe(
 
 		let response = form.pipe(
 			rxmap(business_match_request),
-			tap(() => console.log(`${route_logger}.business_match_request.value`)),
+			concatMap((request) => from(axios(request))),
+			rxmap(pipe(get("data", "data", "application_id"))),
+			concatMap((app_id) => from(save_application_request(app_id))),
+			concatMap((data) => from(LendflowInternal.save_application(data))),
+			rxmap(pipe(get("application_id"))),
+			rxmap((application_id) => ({ application_id })),
+			delay(10000),
+			tap(() => console.log(`${route_logger}.action_subject.value`)),
 			tap(inspect)
-			// concatMap((request) => from(axios(request))),
-			// rxmap(pipe(get("data", "data", "application_id"))),
-			// concatMap((app_id) => from(save_application_request(app_id))),
-			// concatMap((data) => from(LendflowInternal.save_application(data))),
-			// rxmap(pipe(get("application_id"))),
-			// rxmap((application_id) => ({ application_id })),
-			// delay(10000),
-			// tap(() => console.log(`${route_logger}.action_subject.value`)),
-			// tap(inspect)
 		);
 
 		return response;

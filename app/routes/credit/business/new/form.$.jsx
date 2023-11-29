@@ -35,7 +35,7 @@ const subject = new Subject();
 
 const action_subject = subject.pipe(
 	rxfilter((event) => event.id === action_start),
-	concatMap(({ args: { payload, request } }) => {
+	concatMap(({ args: { payload, request, entity_id } }) => {
 		console.log(`${route_logger}.action_subject`);
 
 		let form = rxof(payload);
@@ -48,7 +48,7 @@ const action_subject = subject.pipe(
 		};
 
 		let save_application_request = async (application_id) => {
-			let entity_id = await get_session_entity_id(request);
+			// let entity_id = await get_session_entity_id(request);
 			let entity = new Entity(entity_id);
 			let entity_response = entity.group_id.entity_id.plan_id.fold;
 			let payload = form.pipe(
@@ -90,23 +90,29 @@ const action_subject = subject.pipe(
 export const action = async ({ request }) => {
 	console.log(route_logger);
 	console.log("jdksflajflaksjdlakj");
+	let url = new URL(request.url);
 	// console.log(keys(request));
 	let form = await formData(request);
 	let { response_type = undefined, payload } = form;
 
+	let entity_id = get_entity_id(url.pathname);
+
 	console.log(payload);
+	// console.log("entity_id");
+	// console.log(get_entity_id(url.pathname));
+	// return { test: "hi" };
 
 	const on_success = async (value) => {
 		console.log(`${route_logger}.action.success`);
 		let { origin } = new URL(request.url);
 
-		let entity_id = await get_session_entity_id(request);
+		// let entity_id = await get_session_entity_id(request);
 		let group_id = get_group_id(request.url);
 		let redirect_url = `${origin}/credit/business/match/resource/e/${entity_id}/g/${group_id}?application_id=${value.application_id}`;
 
 		subject.next({
 			id: action_response,
-			next: () => (response_type == "json" ? { test: "hi" } : Response.redirect(redirect_url)),
+			next: () => (response_type == "json" ? redirect_url : Response.redirect(redirect_url)),
 		});
 	};
 
@@ -122,7 +128,7 @@ export const action = async ({ request }) => {
 
 	const on_complete = (value) => value.id === action_response;
 	action_subject.pipe(fold(on_success, on_error)).subscribe();
-	subject.next({ id: action_start, args: { payload, request } });
+	subject.next({ id: action_start, args: { payload, request, entity_id } });
 	let response = await lastValueFrom(subject.pipe(rxfilter(on_complete), take(1)));
 	return response.next();
 };

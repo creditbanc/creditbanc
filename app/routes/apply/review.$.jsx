@@ -72,6 +72,8 @@ export const action = async ({ request }) => {
 	console.log("report_response");
 	console.log(report_response.data);
 
+	return Response.redirect(report_response.data);
+
 	return redirect(next({ entity_id, group_id }));
 };
 
