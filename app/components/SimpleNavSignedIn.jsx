@@ -48,7 +48,7 @@ const CompaniesDropdown = ({ companies: all_companies = {} }) => {
 			<div>
 				<Menu.Button className="inline-flex w-full justify-center gap-x-1.5 rounded-full bg-white px-4 py-2 text-sm font-semibold text-gray-900 hover:bg-gray-100">
 					{capitalize(company?.legal_name) ||
-						`${capitalize(company.first_name)} ${capitalize(company.last_name)}`}
+						`${capitalize(company?.first_name)} ${capitalize(company?.last_name)}`}
 					<ChevronDownIcon className="-mr-1 h-5 w-5 text-gray-400" aria-hidden="true" />
 				</Menu.Button>
 			</div>
@@ -90,8 +90,8 @@ const CompaniesDropdown = ({ companies: all_companies = {} }) => {
 										>
 											<div className="flex flex-col">
 												<div className="flex flex-row gap-x-1 font-semibold">
-													<div>{company.first_name}</div>
-													<div>{company.last_name}</div>
+													<div>{company?.first_name}</div>
+													<div>{company?.last_name}</div>
 												</div>
 												<div>{company?.legal_name || company?.email}</div>
 											</div>

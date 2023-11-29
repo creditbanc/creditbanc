@@ -4,7 +4,7 @@ import { Link, useLoaderData, useLocation } from "@remix-run/react";
 import { classNames, get, get_entity_id, get_group_id, get_resource_id, mapIndexed, store } from "~/utils/helpers";
 import { Disclosure } from "@headlessui/react";
 import { course as curriculum } from "../data";
-import { flatten, head, map, pipe } from "ramda";
+import { findIndex, flatten, head, map, pipe } from "ramda";
 import { all, filter } from "shades";
 import { CalendarDaysIcon, CreditCardIcon, UserCircleIcon } from "@heroicons/react/20/solid";
 import CurriculumAccordion from "~/components/CurriculumAccordion";
@@ -12,16 +12,14 @@ import CurriculumAccordion from "~/components/CurriculumAccordion";
 export const loader = async ({ request }) => {
 	console.log("course_loader");
 	let course_id = get_resource_id(request.url);
-	// console.log("course_id");
-	// console.log(course_id);
-	let resource = pipe(get("sections", all, "resources", all), flatten)(curriculum);
-	// console.log("resource______");
-	// console.log(resource);
-	resource = pipe(filter({ id: course_id }), head)(resource);
+	let resources = pipe(get("sections", all, "resources", all), flatten)(curriculum);
+	let resource = pipe(filter({ id: course_id }), head)(resources);
 
-	// console.log("resource");
-	// console.log(resource);
-	return { resource, curriculum };
+	let resource_index = findIndex((resource) => resource.id == course_id)(resources);
+	let next_resource = resources[resource_index + 1];
+	let next_href = next_resource?.href;
+
+	return { resource: { ...resource, next_href }, curriculum };
 };
 
 const Content = () => {

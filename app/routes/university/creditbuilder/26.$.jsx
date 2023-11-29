@@ -1,7 +1,7 @@
 import { Link, useLoaderData, useLocation } from "@remix-run/react";
 import { classNames, get, get_entity_id, get_group_id, get_resource_id, mapIndexed, store } from "~/utils/helpers";
 import { course as curriculum, resources as all_resources } from "../data";
-import { flatten, head, map, pipe } from "ramda";
+import { findIndex, flatten, head, map, pipe } from "ramda";
 import { all, filter } from "shades";
 import CurriculumAccordion from "~/components/CurriculumAccordion";
 import { XMarkIcon } from "@heroicons/react/24/outline";
@@ -13,10 +13,14 @@ export const loader = async ({ request }) => {
 	console.log("course_loader");
 	let course_id = get_resource_id(request?.url);
 
-	let resource = pipe(get("sections", all, "resources", all), flatten)(curriculum);
-	resource = pipe(filter({ id: course_id }), head)(resource);
+	let resources = pipe(get("sections", all, "resources", all), flatten)(curriculum);
+	let resource = pipe(filter({ id: course_id }), head)(resources);
 
-	return { resource, curriculum };
+	let resource_index = findIndex((resource) => resource.id == course_id)(resources);
+	let next_resource = resources[resource_index + 1];
+	let next_href = next_resource?.href;
+
+	return { resource: { ...resource, next_href }, curriculum };
 };
 
 let useSliderStore = store({ is_open: false, selected_id: "KeyBank Business Rewards Mastercard" });
@@ -245,7 +249,7 @@ export default function Course() {
 					<div className="flex flex-row justify-between items-center border-b border-gray-200 bg-white py-1 sticky top-0 z-10">
 						<h3 className="text-base font-semibold leading-6 text-gray-900 my-2">{resource?.title}</h3>
 						<Link
-							to={`/university/creditbuilder/${next_id}`}
+							to={resource.next_href}
 							type="button"
 							className="rounded-full bg-green-400 px-2.5 py-1 text-xs font-semibold text-white shadow-sm hover:bg-green-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-500"
 						>

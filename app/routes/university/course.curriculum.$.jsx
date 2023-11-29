@@ -26,6 +26,9 @@ const CurriculumAccordion = ({ sections = [] }) => {
 	let entity_id = get_entity_id(pathname);
 	let group_id = get_group_id(pathname);
 
+	console.log("CurriculumAccordion");
+	console.log(curriculum);
+
 	return (
 		<div className="flex flex-col w-full rounded-2xl bg-white p-2 space-y-3 ">
 			{pipe(

@@ -1,19 +1,21 @@
 import { Link, useLoaderData, useLocation } from "@remix-run/react";
 import { get, get_entity_id, get_group_id, get_resource_id, mapIndexed } from "~/utils/helpers";
 import { course as curriculum } from "../data";
-import { head, pipe } from "ramda";
-import { filter } from "shades";
+import { findIndex, flatten, head, pipe } from "ramda";
+import { all, filter } from "shades";
 import CurriculumAccordion from "~/components/CurriculumAccordion";
 
 export const loader = async ({ request }) => {
 	console.log("course_loader");
 	let course_id = get_resource_id(request.url);
-	// console.log("course_id");
-	// console.log(course_id);
-	let resource = pipe(get("sections", 0, "resources"), filter({ id: course_id }), head)(curriculum);
-	// console.log("resource");
-	// console.log(resource);
-	return { resource, curriculum };
+	let resources = pipe(get("sections", all, "resources", all), flatten)(curriculum);
+	let resource = pipe(filter({ id: course_id }), head)(resources);
+
+	let resource_index = findIndex((resource) => resource.id == course_id)(resources);
+	let next_resource = resources[resource_index + 1];
+	let next_href = next_resource?.href;
+
+	return { resource: { ...resource, next_href }, curriculum };
 };
 
 export default function Course() {
@@ -31,7 +33,7 @@ export default function Course() {
 						<h3 className="text-base font-semibold leading-6 text-gray-900 my-2">{resource.title}</h3>
 
 						<Link
-							to={`/university/creditbuilder/${next_id}`}
+							to={resource.next_href}
 							type="button"
 							className="rounded-full bg-green-400 px-2.5 py-1 text-xs font-semibold text-white shadow-sm hover:bg-green-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-500"
 						>
