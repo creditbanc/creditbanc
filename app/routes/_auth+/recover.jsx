@@ -23,6 +23,9 @@ export const action = async ({ request }) => {
 		limit: [1],
 	});
 
+	console.log("entity_collection");
+	console.log(entity_collection);
+
 	let entity = entity_collection[0];
 	let { id: entity_id } = entity;
 
