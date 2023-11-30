@@ -29,8 +29,6 @@ export const action = async ({ request }) => {
 };
 
 export default function Email({ entity_id, origin }) {
-	// let { origin } = location;
-
 	return (
 		<Tailwind>
 			<div className="block w-[700px] border border-solid border-gray-300">
@@ -47,7 +45,7 @@ export default function Email({ entity_id, origin }) {
 					</div>
 					<a
 						href={`${origin}/reset?entity_id=${entity_id}`}
-						className="block bg-red-500 py-[15px] my-[10px] rounded w-[300px] text-white font-semibold cursor-pointer text-center"
+						className="block bg-[#56CF9E] py-[15px] my-[10px] rounded w-[300px] text-white font-semibold cursor-pointer text-center"
 					>
 						Choose a new password
 					</a>
