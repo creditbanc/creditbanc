@@ -659,7 +659,7 @@ export default function Review() {
 					<div className="flex flex-col w-full items-center gap-y-4 mt-10">
 						<Link
 							to={back({ entity_id, group_id })}
-							className="flex flex-col py-3 px-4 rounded-full text-blue-600 w-1/2 items-center cursor-pointer border-2 border-blue-600"
+							className="flex flex-col py-3 px-4 rounded-full text-[#56CF9E] w-1/2 items-center cursor-pointer border-2 border-[#56CF9E]"
 						>
 							Back
 						</Link>

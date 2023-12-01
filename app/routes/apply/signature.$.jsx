@@ -111,12 +111,12 @@ export default function Signature() {
 					<div className="flex flex-row w-full justify-center pt-10 gap-x-3">
 						<Link
 							to={back({ entity_id, group_id })}
-							className="flex flex-col py-3 px-4 rounded-full text-blue-600 w-1/2 items-center cursor-pointer border-2 border-blue-600"
+							className="flex flex-col py-3 px-4 rounded-full text-[#56CF9E] w-1/2 items-center cursor-pointer border-2 border-[#56CF9E]"
 						>
 							Back
 						</Link>
 						<div
-							className="flex flex-col bg-blue-600 py-3 px-4 rounded-full text-white w-[400px] items-center cursor-pointer"
+							className="flex flex-col bg-[#56CF9E] py-3 px-4 rounded-full text-white w-[400px] items-center cursor-pointer"
 							onClick={onSubmit}
 						>
 							Verify loan application

@@ -79,7 +79,7 @@ const TimelineOptions = () => {
 							value={timeline}
 							className={({ active }) =>
 								classNames(
-									active ? "border-blue-600 ring-2 ring-blue-600" : "border-gray-300",
+									active ? "border-[#56CF9E] ring-2 ring--[#56CF9E]" : "border-gray-300",
 									"relative block cursor-pointer rounded-full border bg-white px-6 py-4 shadow-sm focus:outline-none sm:flex sm:justify-between"
 								)
 							}
@@ -101,7 +101,7 @@ const TimelineOptions = () => {
 									<div
 										className={classNames(
 											active ? "border" : "border-2",
-											checked ? "border-blue-600" : "border-transparent",
+											checked ? "border-[#56CF9E]" : "border-transparent",
 											"pointer-events-none absolute -inset-px rounded-full"
 										)}
 										aria-hidden="true"
@@ -161,14 +161,14 @@ export default function Container() {
 				<div className="flex flex-row w-full items-center gap-y-4 my-5 w=[450px] gap-x-3">
 					<Link
 						to={back({ entity_id, group_id })}
-						className="flex flex-col py-3 px-4 rounded-full text-blue-600 w-1/2 items-center cursor-pointer border-2 border-blue-600"
+						className="flex flex-col py-3 px-4 rounded-full text-[#56CF9E] w-1/2 items-center cursor-pointer border-2 border-[#56CF9E]"
 					>
 						Back
 					</Link>
 					<div
 						onClick={onSubmit}
 						// to={`/apply/inception_date/resource/e/${entity_id}/g/${group_id}`}
-						className="flex flex-col bg-blue-600 py-3 px-4 rounded-full text-white w-[450px] items-center cursor-pointer"
+						className="flex flex-col bg-[#56CF9E] py-3 px-4 rounded-full text-white w-[450px] items-center cursor-pointer"
 					>
 						Continue to pre-qualify
 					</div>

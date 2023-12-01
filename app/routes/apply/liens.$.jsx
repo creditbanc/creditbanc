@@ -80,7 +80,7 @@ const Liens = () => {
 									mapIndexed((person, index) => (
 										<Listbox.Option
 											key={index}
-											className={`relative cursor-default select-none py-2 pl-3 pr-9 hover:bg-blue-600 hover:text-white text-gray-900`}
+											className={`relative cursor-default select-none py-2 pl-3 pr-9 hover:bg-[#56CF9E] hover:text-white text-gray-900`}
 											value={person}
 											onClick={() => set_path(["liens", "value"], person.value)}
 										>
@@ -97,7 +97,7 @@ const Liens = () => {
 
 													{selected ? (
 														<span
-															className={`absolute inset-y-0 right-0 flex items-center pr-4 text-white hover:text-blue-600`}
+															className={`absolute inset-y-0 right-0 flex items-center pr-4 text-white hover:text-[#56CF9E]`}
 														>
 															<CheckIcon className="h-5 w-5" aria-hidden="true" />
 														</span>
@@ -153,7 +153,7 @@ const PaymentPlan = () => {
 										mapIndexed((person, index) => (
 											<Listbox.Option
 												key={index}
-												className={`relative cursor-default select-none py-2 pl-3 pr-9 hover:bg-blue-600 hover:text-white text-gray-900`}
+												className={`relative cursor-default select-none py-2 pl-3 pr-9 hover:bg-[#56CF9E] hover:text-white text-gray-900`}
 												value={person}
 												onClick={() => set_path(["liens", "payment_plan"], person.value)}
 											>
@@ -170,7 +170,7 @@ const PaymentPlan = () => {
 
 														{selected ? (
 															<span
-																className={`absolute inset-y-0 right-0 flex items-center pr-4 text-white hover:text-blue-600`}
+																className={`absolute inset-y-0 right-0 flex items-center pr-4 text-white hover:text-[#56CF9E]`}
 															>
 																<CheckIcon className="h-5 w-5" aria-hidden="true" />
 															</span>
@@ -206,7 +206,7 @@ const PaymentAmount = () => {
 				<input
 					value={formatMoney(liens?.amount, { precision: 0 })}
 					type="text"
-					className="px-2 block w-full rounded-md border-0 py-2.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-sm sm:leading-6 text-center"
+					className="px-2 block w-full rounded-md border-0 py-2.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-[#56CF9E] sm:text-sm sm:leading-6 text-center"
 					onChange={(e) => {
 						set_path(["liens", "amount"], unformat(e.target.value));
 					}}
@@ -265,13 +265,13 @@ export default function Container() {
 				<div className="flex flex-row w-full items-center gap-y-4 my-5 gap-x-3">
 					<Link
 						to={back({ entity_id, group_id })}
-						className="flex flex-col py-3 px-4 rounded-full text-blue-600 w-1/2 items-center cursor-pointer border-2 border-blue-600"
+						className="flex flex-col py-3 px-4 rounded-full text-[#56CF9E] w-1/2 items-center cursor-pointer border-2 border-[#56CF9E]"
 					>
 						Back
 					</Link>
 					<div
 						onClick={onSubmit}
-						className="flex flex-col bg-blue-600 py-3 px-4 rounded-full text-white w-1/2 items-center cursor-pointer"
+						className="flex flex-col bg-[#56CF9E] py-3 px-4 rounded-full text-white w-1/2 items-center cursor-pointer"
 					>
 						Continue to pre-qualify
 					</div>

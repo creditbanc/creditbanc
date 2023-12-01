@@ -127,7 +127,7 @@ const LoansList = () => {
 							value={plan}
 							className={({ active }) =>
 								classNames(
-									active ? "border-blue-600 ring-2 ring-blue-600" : "border-gray-300",
+									active ? "border-[#56cf9e] ring-2 ring-[#56cf9e]" : "border-gray-300",
 									"relative block cursor-pointer rounded border bg-white px-6 py-4 shadow-sm focus:outline-none sm:flex sm:justify-between"
 								)
 							}
@@ -154,7 +154,7 @@ const LoansList = () => {
 									<span
 										className={classNames(
 											active ? "border" : "border-2",
-											checked ? "border-blue-600" : "border-transparent",
+											checked ? "border-[#56cf9e]" : "border-transparent",
 											"pointer-events-none absolute -inset-px rounded"
 										)}
 										aria-hidden="true"
@@ -312,7 +312,7 @@ const Testimonial = () => {
 	return (
 		<section className="bg-white px-5">
 			<figure className="mx-auto max-w-2xl">
-				<div className="flex gap-x-1 text-blue-600">
+				<div className="flex gap-x-1 text-[#56cf9e]">
 					<StarIcon className="h-5 w-5 flex-none" aria-hidden="true" />
 					<StarIcon className="h-5 w-5 flex-none" aria-hidden="true" />
 					<StarIcon className="h-5 w-5 flex-none" aria-hidden="true" />
@@ -399,7 +399,7 @@ export default function Container() {
 					<div className="flex flex-col w-full items-center gap-y-4">
 						<div
 							// to={`/apply/financing_needs/resource/e/${entity_id}/g/${group_id}`}
-							className="flex flex-col bg-blue-600 py-3 px-4 rounded-full text-white w-[400px] items-center cursor-pointer"
+							className="flex flex-col bg-[#56cf9e] py-3 px-4 rounded-full text-white w-[400px] items-center cursor-pointer"
 							onClick={onSubmit}
 						>
 							Continue to pre-qualify

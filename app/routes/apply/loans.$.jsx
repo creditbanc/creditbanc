@@ -83,7 +83,7 @@ const Loans = () => {
 									mapIndexed((person, index) => (
 										<Listbox.Option
 											key={index}
-											className={`relative cursor-default select-none py-2 pl-3 pr-9 hover:bg-blue-600 hover:text-white text-gray-900`}
+											className={`relative cursor-default select-none py-2 pl-3 pr-9 hover:bg-[#56CF9E] hover:text-white text-gray-900`}
 											value={person}
 											onClick={() => set_path(["loans", "value"], person.value)}
 										>
@@ -100,7 +100,7 @@ const Loans = () => {
 
 													{selected ? (
 														<span
-															className={`absolute inset-y-0 right-0 flex items-center pr-4 text-white hover:text-blue-600`}
+															className={`absolute inset-y-0 right-0 flex items-center pr-4 text-white hover:text-[#56CF9E]`}
 														>
 															<CheckIcon className="h-5 w-5" aria-hidden="true" />
 														</span>
@@ -141,7 +141,7 @@ const NumberOfLoans = () => {
 				{({ open }) => (
 					<>
 						<div className="relative mt-2">
-							<Listbox.Button className="relative w-full cursor-default rounded-md bg-white py-3 pl-3 pr-10 text-left text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-600 sm:text-sm sm:leading-6">
+							<Listbox.Button className="relative w-full cursor-default rounded-md bg-white py-3 pl-3 pr-10 text-left text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:outline-none focus:ring-2 focus:ring-[#56CF9E] sm:text-sm sm:leading-6">
 								<span className="block truncate">{selected.value}</span>
 								<span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
 									<ChevronUpDownIcon className="h-5 w-5 text-gray-400" aria-hidden="true" />
@@ -162,7 +162,7 @@ const NumberOfLoans = () => {
 												key={index}
 												className={({ active }) =>
 													classNames(
-														active ? "bg-blue-600 text-white" : "text-gray-900",
+														active ? "bg-[#56CF9E] text-white" : "text-gray-900",
 														"relative cursor-default select-none py-2 pl-3 pr-9"
 													)
 												}
@@ -183,7 +183,7 @@ const NumberOfLoans = () => {
 														{selected ? (
 															<span
 																className={classNames(
-																	active ? "text-white" : "text-blue-600",
+																	active ? "text-white" : "text-[#56CF9E]",
 																	"absolute inset-y-0 right-0 flex items-center pr-4"
 																)}
 															>
@@ -280,13 +280,13 @@ export default function Container() {
 				<div className="flex flex-row w-full items-center gap-y-4 my-5 gap-x-3">
 					<Link
 						to={back({ entity_id, group_id })}
-						className="flex flex-col py-3 px-4 rounded-full text-blue-600 w-1/2 items-center cursor-pointer border-2 border-blue-600"
+						className="flex flex-col py-3 px-4 rounded-full text-[#56CF9E] w-1/2 items-center cursor-pointer border-2 border-[#56CF9E]"
 					>
 						Back
 					</Link>
 					<div
 						onClick={onSubmit}
-						className="flex flex-col bg-blue-600 py-3 px-4 rounded-full text-white w-1/2 items-center cursor-pointer"
+						className="flex flex-col bg-[#56CF9E] py-3 px-4 rounded-full text-white w-1/2 items-center cursor-pointer"
 					>
 						Continue to pre-qualify
 					</div>
