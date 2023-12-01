@@ -1,5 +1,22 @@
 import { redirect } from "@remix-run/node";
-import { head, isEmpty, map, pipe, set, values } from "ramda";
+import {
+	difference,
+	dissoc,
+	head,
+	includes,
+	intersection,
+	isEmpty,
+	join,
+	keys,
+	map,
+	mapObjIndexed,
+	pipe,
+	set,
+	sort,
+	toPairs,
+	values,
+} from "ramda";
+
 import { from, lastValueFrom, map as rxmap } from "rxjs";
 import { filter } from "shades";
 import { create_user_session, get_session_entity_id } from "~/utils/auth.server";
@@ -13,17 +30,16 @@ import {
 	get_entity_id,
 	get_group_id,
 	mapIndexed,
+	store,
 } from "~/utils/helpers";
 import { Link, useLoaderData, useLocation, useSubmit } from "@remix-run/react";
 import { navigation } from "./navigation";
 import { useEffect, useState } from "react";
-import useStore from "./store";
+// import useStore from "./store";
 import moment from "moment";
 import { unformat, formatMoney } from "accounting-js";
-
-import { test_identity_three } from "~/data/lendflow";
-import axios from "axios";
 import ApplicationProgress from "~/components/ApplicationProgress";
+import { flatten } from "flat";
 
 export const action = async ({ request }) => {
 	console.log("request.url");
@@ -41,8 +57,11 @@ export const action = async ({ request }) => {
 	console.log(entity_id);
 
 	let step = pipe(filter({ id: "review" }), head, get("step"))(navigation);
-	let { signed_date } = params;
-	let payload = { signed_date, step };
+	let { data: form_data } = params;
+	let data = JSON.parse(form_data);
+	// console.log("dataaaaa");
+	// console.log(data);
+	let payload = { ...data, step };
 
 	let response = from(update_doc(["application", entity_id], payload)).pipe(rxmap(() => ({ entity_id, group_id })));
 
@@ -139,7 +158,7 @@ const BusinessInfo = () => {
 							<input
 								type="text"
 								className="mt-1 text-sm leading-6 text-gray-700 sm:mt-2 outline-none w-full"
-								value={business_address.street}
+								value={business_address?.street}
 								onChange={(e) => set_path(["business_address", "street"], e.target.value)}
 							/>
 						</div>
@@ -151,7 +170,7 @@ const BusinessInfo = () => {
 							<input
 								type="text"
 								className="mt-1 text-sm leading-6 text-gray-700 sm:mt-2 outline-none w-full"
-								value={business_address.city}
+								value={business_address?.city}
 								onChange={(e) => set_path(["business_address", "city"], e.target.value)}
 							/>
 						</div>
@@ -240,7 +259,6 @@ const BusinessInfo = () => {
 
 const FinancialInfo = () => {
 	let { application } = useLoaderData();
-	const { set_path } = useStore();
 
 	return (
 		<div>
@@ -509,14 +527,18 @@ const Agreement = () => {
 	);
 };
 
+const useStore = store();
+
 export default function Review() {
 	let { application } = useLoaderData();
 	let { pathname } = useLocation();
 	let entity_id = get_entity_id(pathname);
 	let group_id = get_group_id(pathname);
 	let [signature, set_signature] = useState(undefined);
-	let { set_props, signed_date } = useStore();
+	let store = useStore();
+	let { set_props, signed_date } = store;
 	const submit = useSubmit();
+	// const [has_changes, set_has_changes] = useState(false);
 
 	let back = pipe(filter({ id: "review" }), head, get("back"))(navigation);
 
@@ -526,28 +548,66 @@ export default function Review() {
 		}
 	}, [signature]);
 
+	useEffect(() => {
+		// console.log("override");
+		// console.log(application);
+		set_props(application);
+	}, [application]);
+
 	const onSignLoanApplication = () => {
 		console.log("onSignLoanApplication");
-		console.log(application);
+		// console.log(application);
 		set_signature(application?.signature_base_64_img);
 	};
 
 	const onSubmit = () => {
 		console.log("onSubmit");
-		let payload = { signed_date };
+		let { set_props, set_state, set_path, ...form } = store;
+		let payload = { ...form };
 
 		// console.log("payload");
-		// console.log(payload);
+		// console.log(form);
 
-		submit(payload, {
-			action: `/apply/review/resource/e/${entity_id}/g/${group_id}`,
-			method: "post",
-		});
+		submit(
+			{ data: JSON.stringify(payload) },
+			{
+				action: `/apply/review/resource/e/${entity_id}/g/${group_id}`,
+				method: "post",
+			}
+		);
 	};
 
-	useEffect(() => {
-		set_props(application);
-	}, [application]);
+	// useEffect(() => {
+	// 	if (application && store) {
+	// 		let flat_application = pipe(flatten)(application);
+	// 		let application_keys = pipe(keys)(flat_application);
+	// 		let applicaton_values = pipe(dissoc("signed_date"), toPairs, map(join("")))(flat_application);
+
+	// 		let flat_store = pipe(
+	// 			flatten,
+	// 			mapObjIndexed((value, key) => (includes(key, application_keys) ? value : "ekur")),
+	// 			dissoc("signed_date"),
+	// 			filter((value) => value !== "ekur"),
+	// 			toPairs,
+	// 			map(join(""))
+	// 		)(store);
+
+	// 		let is_same = difference(applicaton_values, flat_store);
+
+	// 		if (is_same.length > 0) {
+	// 			set_has_changes(true);
+	// 		} else {
+	// 			set_has_changes(false);
+	// 		}
+	// 	}
+	// }, [store]);
+
+	// const onUpdateApplication = () => {
+	// 	let response = from(update_doc(["application", entity_id], payload)).pipe(
+	// 		rxmap(() => ({ entity_id, group_id }))
+	// 	);
+	// 	set_has_changes(false);
+	// };
 
 	return (
 		<div className="relative flex flex-col w-full h-full overflow-y-scroll items-center">
@@ -606,6 +666,20 @@ export default function Review() {
 					</div>
 				)}
 			</div>
+
+			{/* {has_changes && (
+				<div className="flex flex-col w-full h-[70px] fixed bottom-0 bg-red-400 py-3 items-center justify-center">
+					<div className="flex flex-col w-[900px] items-center justify-center">
+						<div
+							className="flex flex-col bg-white px-5 py-3 cursor-pointer rounded-full"
+							onClick={onUpdateApplication}
+						>
+							Update Loan Application
+						</div>
+					</div>
+				</div>
+			)} */}
+
 			{signature && (
 				<div className="flex flex-col w-full h-[70px] fixed bottom-0 bg-green-400 py-3 items-center justify-center">
 					<div className="flex flex-col w-[900px] items-center justify-center">
