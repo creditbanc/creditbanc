@@ -4592,6 +4592,10 @@ body {
   outline-offset: 2px;
 }
 
+.focus-visible\:outline-\[\#56cf9e\]:focus-visible {
+  outline-color: #56cf9e;
+}
+
 .focus-visible\:outline-blue-600:focus-visible {
   outline-color: #2563eb;
 }
@@ -4689,6 +4693,11 @@ body {
 .hover\:bg-\[\#55CF9E\]:hover {
   --tw-bg-opacity: 1;
   background-color: rgb(85 207 158 / var(--tw-bg-opacity));
+}
+
+.hover\:bg-\[\#56cf9e\]:hover {
+  --tw-bg-opacity: 1;
+  background-color: rgb(86 207 158 / var(--tw-bg-opacity));
 }
 
 .hover\:bg-blue-500:hover {

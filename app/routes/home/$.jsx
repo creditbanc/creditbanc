@@ -506,7 +506,7 @@ export default function Home() {
 									<div className="mt-3 sm:ml-4 sm:mt-0 text-sm">
 										<Link
 											to={`/credit/report/business/experian/status/resource/e/${entity_id}/g/${group_id}`}
-											className="inline-flex items-center rounded-full bg-blue-600 px-3 py-2 text-sm text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
+											className="inline-flex items-center rounded-full bg-[#56cf9e] px-3 py-2 text-sm text-white shadow-sm hover:bg-[#56cf9e] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#56cf9e]"
 										>
 											View Full Report
 										</Link>
@@ -530,7 +530,7 @@ export default function Home() {
 									<div className="mt-3 sm:ml-4 sm:mt-0 text-sm">
 										<Link
 											to={`/credit/report/personal/personal/resource/e/${entity_id}/g/${group_id}`}
-											className="inline-flex items-center rounded-full bg-blue-600 px-3 py-2 text-sm text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
+											className="inline-flex items-center rounded-full bg-[#56cf9e] px-3 py-2 text-sm text-white shadow-sm hover:bg-[#56cf9e] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#56cf9e]"
 										>
 											View Full Report
 										</Link>
