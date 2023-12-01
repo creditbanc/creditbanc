@@ -50,26 +50,6 @@ export const options = {
 
 const labels = ["January", "February", "March", "April", "May", "June", "July"];
 
-export const data = {
-	labels,
-	datasets: [
-		{
-			label: "Dataset 1",
-			data: labels.map(() => faker.number.int({ min: 0, max: 1000 })),
-			backgroundColor: "rgb(13,98,254)",
-			stack: "Stack 0",
-			barThickness: 30,
-		},
-		{
-			label: "Dataset 2",
-			data: labels.map(() => faker.number.int({ min: -1000, max: 0 })),
-			backgroundColor: "rgb(234,238,241)",
-			stack: "Stack 0",
-			barThickness: 30,
-		},
-	],
-};
-
 export const income_chart_data = (labels, revenues, expenses, incomes) => {
 	return {
 		labels,
@@ -86,7 +66,7 @@ export const income_chart_data = (labels, revenues, expenses, incomes) => {
 			{
 				label: "Revenues",
 				data: revenues,
-				backgroundColor: "rgb(13,98,254)",
+				backgroundColor: "rgb(86, 207, 158)",
 				stack: "Stack 0",
 				barThickness: 30,
 				order: 1,
@@ -146,7 +126,7 @@ const IncomeStats = ({ loader = {} }) => {
 				>
 					<div className="text-sm font-normal text-gray-900 self-start border-b pb-3 w-full">{item.name}</div>
 					<div className="mt-1 flex flex-row justify-between w-full">
-						<div className="flex flex-col items-baseline text-xl font-semibold text-blue-600">
+						<div className="flex flex-col items-baseline text-xl font-semibold text-[#56cf9e]">
 							{item.stat}
 							{item?.previousStat && (
 								<span className="ml-2 text-sm font-medium text-gray-500 w-full">
@@ -222,7 +202,7 @@ export default function CashflowChart({ loader = {} }) {
 						<div className="flex flex-row justify-center gap-x-5 py-6 text-sm">
 							<Link
 								className={`flex flex-col  px-3 rounded-full cursor-pointer ${
-									income == 1 ? "bg-blue-600 text-white" : "hover:bg-gray-100 text-gray-600"
+									income == 1 ? "bg-[#56cf9e] text-white" : "hover:bg-gray-100 text-gray-600"
 								}`}
 								to={use_chart_date_link("income", 1)}
 							>
@@ -230,7 +210,7 @@ export default function CashflowChart({ loader = {} }) {
 							</Link>
 							<Link
 								className={`flex flex-col  px-3 rounded-full cursor-pointer ${
-									income == 3 ? "bg-blue-600 text-white" : "hover:bg-gray-100 text-gray-600"
+									income == 3 ? "bg-[#56cf9e] text-white" : "hover:bg-gray-100 text-gray-600"
 								}`}
 								to={use_chart_date_link("income", 3)}
 							>
@@ -238,7 +218,7 @@ export default function CashflowChart({ loader = {} }) {
 							</Link>
 							<Link
 								className={`flex flex-col  px-3 rounded-full cursor-pointer ${
-									income == 6 ? "bg-blue-600 text-white" : "hover:bg-gray-100 text-gray-600"
+									income == 6 ? "bg-[#56cf9e] text-white" : "hover:bg-gray-100 text-gray-600"
 								}`}
 								to={use_chart_date_link("income", 6)}
 							>
@@ -246,7 +226,7 @@ export default function CashflowChart({ loader = {} }) {
 							</Link>
 							<Link
 								className={`flex flex-col  px-3 rounded-full cursor-pointer ${
-									income == 12 ? "bg-blue-600 text-white" : "hover:bg-gray-100 text-gray-600"
+									income == 12 ? "bg-[#56cf9e] text-white" : "hover:bg-gray-100 text-gray-600"
 								}`}
 								to={use_chart_date_link("income", 12)}
 							>
