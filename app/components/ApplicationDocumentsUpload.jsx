@@ -120,7 +120,7 @@ const get_bankstatement_files = () => {
 		map((month_index) =>
 			month_index > -1 ? bank_statements[month_index] : bank_statements[bank_statements.length + month_index]
 		)
-	)(6);
+	)(4);
 };
 
 const get_files_by_type = (type) => {
