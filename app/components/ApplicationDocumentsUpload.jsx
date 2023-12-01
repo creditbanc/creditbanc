@@ -284,12 +284,12 @@ const File = ({ file: file_props }) => {
 const Upload = ({ title, subtitle, type }) => {
 	let files = get_files_by_type(type);
 
-	console.log("files");
-	console.log(files);
+	// console.log("files");
+	// console.log(files);
 
 	return (
 		<div className="flex flex-col w-full px-1 bg-white rounded">
-			<div className="flex flex-row justify-between border-b pb-3 mb-3">
+			{/* <div className="flex flex-row justify-between border-b pb-3 mb-3">
 				<div className="flex flex-col gap-y-1">
 					<div>{title}</div>
 					<div className="text-sm text-gray-400">{subtitle}</div>
@@ -297,7 +297,7 @@ const Upload = ({ title, subtitle, type }) => {
 				<div>
 					<SparklesIcon className="flex-shrink-0 h-6 w-6 text-gray-400" />
 				</div>
-			</div>
+			</div> */}
 			<ul role="list" className="flex flex-row gap-y-2 gap-x-4">
 				{pipe(
 					mapIndexed((file, index) => (

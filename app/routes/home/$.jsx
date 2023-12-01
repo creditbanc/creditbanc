@@ -16,7 +16,7 @@ import { appKey } from "~/data/array";
 import BusinessScores from "../credit/report/business/components/scores";
 import CashflowChart from "~/components/CashflowChart";
 import { get_doc } from "~/utils/firebase";
-import { AtSymbolIcon, PaperClipIcon, PhoneIcon } from "@heroicons/react/24/outline";
+import { AtSymbolIcon, MinusCircleIcon, PaperClipIcon, PhoneIcon } from "@heroicons/react/24/outline";
 import ApplicationDocumentsUpload from "~/components/ApplicationDocumentsUpload";
 import { Fragment, useState } from "react";
 import { CheckCircleIcon } from "@heroicons/react/24/solid";
@@ -30,6 +30,7 @@ import {
 } from "@heroicons/react/20/solid";
 import { Listbox, Transition } from "@headlessui/react";
 import { CalendarDaysIcon, CreditCardIcon, UserCircleIcon } from "@heroicons/react/20/solid";
+import { Disclosure } from "@headlessui/react";
 
 const log_route = `home.$`;
 
@@ -121,12 +122,12 @@ const BankAccount = ({ loader = {} }) => {
 	let { bank_accounts: { accounts = [] } = {} } = loader.data || {};
 
 	return (
-		<div className="flex flex-col w-full bg-white rounded">
-			<div className="flex flex-row justify-between items-center px-5 text-base font-semibold leading-6 text-gray-900">
+		<div className="flex flex-col w-full bg-white">
+			{/* <div className="flex flex-row justify-between items-center px-5 text-base font-semibold leading-6 text-gray-900">
 				<div>Bank Account</div>
-				{/* <BankAccountActions /> */}
-			</div>
-			<div className="flex flex-col w-full border-t mt-3">
+				<BankAccountActions />
+			</div> */}
+			<div className="flex flex-col w-full">
 				{pipe(
 					mapIndexed((account, index) => (
 						<div className="flex flex-col px-5 py-3 gap-y-1" key={index}>
@@ -168,7 +169,7 @@ const ApplicationStatus = () => {
 
 	return (
 		<div className="flex flex-col w-full">
-			<h2 className="text-base font-semibold leading-6 text-gray-900">Loan application</h2>
+			{/* <h2 className="text-base font-semibold leading-6 text-gray-900">Loan application</h2> */}
 			<div className="mt-6 flex flex-col w-full">
 				<div className="flex flex-row w-full">
 					<div className="flex flex-col w-1/2 sm:pr-4">
@@ -406,6 +407,30 @@ const Advisor = () => {
 	);
 };
 
+const Accordion = ({ header, body }) => {
+	return (
+		<div className="flex flex-col items-start w-full text-sm">
+			<Disclosure defaultOpen={true}>
+				<Disclosure.Button className="flex flex-row w-full h-[80px] bg-white border rounded">
+					<div className="flex flex-col w-[5px] bg-green-500 h-full rounded-l"></div>
+					<div className="flex flex-row w-full h-full pr-2 lg:pr-2 justify-between items-center">
+						<div className="flex flex-col gap-y-1 flex-1 items-start">{header}</div>
+
+						<div className="hidden lg:flex flex-col w-[20px] items-center">
+							<MinusCircleIcon className="w-4 h-4 stroke-slate-400" />
+						</div>
+					</div>
+				</Disclosure.Button>
+				<Disclosure.Panel className="flex flex-col w-full text-gray-500">
+					<div className="flex flex-col lg:flex-row w-full gap-x-5 bg-white border -mt-2 rounded-b">
+						{body}
+					</div>
+				</Disclosure.Panel>
+			</Disclosure>
+		</div>
+	);
+};
+
 let use_loader_store = store();
 
 export default function Home() {
@@ -433,96 +458,148 @@ export default function Home() {
 
 	return (
 		<div className="w-full h-full flex flex-col overflow-hidden bg-white">
-			<div className="flex flex-col h-full w-full bg-white items-center gap-y-[60px] overflow-y-scroll scrollbar-none">
+			<div className="flex flex-col h-full w-full bg-white items-center gap-y-[60px] overflow-y-scroll scrollbar-none mb-[40px]">
 				<div className="flex flex-col max-w-4xl text-center mt-[40px]">
 					<h1 className="text-4xl font-bold tracking-tight text-gray-900 sm:text-6xl">{businessName}</h1>
 				</div>
-				<div className="flex flex-row w-full h-full max-w-screen-2xl gap-x-5">
-					<div className="flex flex-col flex-1 px-4 items-start gap-y-[60px]">
-						<div className="flex flex-col w-[100%] lg:w-screen-lg lg:min-w-screen-lg lg:max-w-screen-lg">
-							<div className="flex flex-row justify-between items-center border-b border-gray-200 pb-5 mb-6">
-								<h3 className="text-base font-semibold leading-6 text-gray-900">Business Scores</h3>
-								<div className="mt-3 sm:ml-4 sm:mt-0 text-sm">
-									<Link
-										to={`/credit/report/business/experian/status/resource/e/${entity_id}/g/${group_id}`}
-										className="inline-flex items-center rounded-full bg-blue-600 px-3 py-2 text-sm text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
-									>
-										View Full Report
-									</Link>
+				<div className="flex flex-row w-full h-full max-w-screen-2xl gap-x-5 ">
+					<div className="flex flex-col flex-1 px-4 items-start gap-y-[45px]">
+						<Accordion
+							header={
+								<div className="flex flex-row w-full justify-between items-center px-2">
+									<h3 className="text-base font-semibold leading-6 text-gray-900">Business Scores</h3>
+									<div className="mt-3 sm:ml-4 sm:mt-0 text-sm">
+										<Link
+											to={`/credit/report/business/experian/status/resource/e/${entity_id}/g/${group_id}`}
+											className="inline-flex items-center rounded-full bg-blue-600 px-3 py-2 text-sm text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
+										>
+											View Full Report
+										</Link>
+									</div>
 								</div>
-							</div>
-							<div>
-								<BusinessScores
-									experian_business_score={business_scores?.experian_business_score}
-									dnb_business_score={business_scores?.dnb_business_score}
-								/>
-							</div>
-						</div>
-
-						<div className="flex flex-col w-[100%] lg:w-screen-lg lg:min-w-screen-lg lg:max-w-screen-lg">
-							<div className="flex flex-row justify-between items-center border-b border-gray-200 pb-5 mb-6">
-								<h3 className="text-base font-semibold leading-6 text-gray-900">Personal Scores</h3>
-								<div className="mt-3 sm:ml-4 sm:mt-0 text-sm">
-									<Link
-										to={`/credit/report/personal/personal/resource/e/${entity_id}/g/${group_id}`}
-										className="inline-flex items-center rounded-full bg-blue-600 px-3 py-2 text-sm text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
-									>
-										View Full Report
-									</Link>
+							}
+							body={
+								<div className="flex flex-col w-full py-7 px-4">
+									<BusinessScores
+										experian_business_score={business_scores?.experian_business_score}
+										dnb_business_score={business_scores?.dnb_business_score}
+									/>
 								</div>
-							</div>
-							<div className="flex flex-col w-full">
-								<div className="hidden lg:flex lg:flex-col lg:w-full">
-									<array-credit-score
-										appKey={appKey}
-										userToken={user_token}
-										bureau="all"
-										scoreTracker="true"
-									></array-credit-score>
+							}
+						/>
+
+						<Accordion
+							header={
+								<div className="flex flex-row w-full justify-between items-center px-2">
+									<h3 className="text-base font-semibold leading-6 text-gray-900">Personal Scores</h3>
+									<div className="mt-3 sm:ml-4 sm:mt-0 text-sm">
+										<Link
+											to={`/credit/report/personal/personal/resource/e/${entity_id}/g/${group_id}`}
+											className="inline-flex items-center rounded-full bg-blue-600 px-3 py-2 text-sm text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
+										>
+											View Full Report
+										</Link>
+									</div>
 								</div>
-								<div className="lg:hidden flex flex-col w-full">
-									<iframe
-										src={`http://localhost:3000/1b?bureau=tui&user_token=${user_token}`}
-										className="flex flex-col w-full h-[530px]"
-									></iframe>
-									<iframe
-										src={`http://localhost:3000/1b?bureau=efx&user_token=${user_token}`}
-										className="flex flex-col w-full h-[530px]"
-									></iframe>
-									<iframe
-										src={`http://localhost:3000/1b?bureau=exp&user_token=${user_token}`}
-										className="flex flex-col w-full h-[530px]"
-									></iframe>
+							}
+							body={
+								<div className="flex flex-col w-full">
+									<div className="hidden lg:flex lg:flex-col lg:w-full">
+										<array-credit-score
+											appKey={appKey}
+											userToken={user_token}
+											bureau="all"
+											scoreTracker="true"
+										></array-credit-score>
+									</div>
+									<div className="lg:hidden flex flex-col w-full">
+										<iframe
+											src={`http://localhost:3000/1b?bureau=tui&user_token=${user_token}`}
+											className="flex flex-col w-full h-[530px]"
+										></iframe>
+										<iframe
+											src={`http://localhost:3000/1b?bureau=efx&user_token=${user_token}`}
+											className="flex flex-col w-full h-[530px]"
+										></iframe>
+										<iframe
+											src={`http://localhost:3000/1b?bureau=exp&user_token=${user_token}`}
+											className="flex flex-col w-full h-[530px]"
+										></iframe>
+									</div>
 								</div>
-							</div>
-						</div>
+							}
+						/>
 
-						<div className="flex flex-col w-[100%] lg:w-screen-lg lg:min-w-screen-lg lg:max-w-screen-lg">
-							<ApplicationStatus />
-						</div>
+						<Accordion
+							header={
+								<div className="flex flex-col px-2">
+									<h2 className="text-base font-semibold leading-6 text-gray-900">
+										Loan application
+									</h2>
+								</div>
+							}
+							body={
+								<div className="flex flex-col w-full py-5 px-4">
+									<ApplicationStatus />
+								</div>
+							}
+						/>
 
-						<div className="flex flex-col w-[100%] lg:w-screen-lg lg:min-w-screen-lg lg:max-w-screen-lg">
-							<ApplicationDocumentsUpload
-								type={"taxreturns"}
-								title={`Upload tax returns`}
-								subtitle={`Upload and attach your business tax returns to your loan application`}
-							/>
-						</div>
+						<Accordion
+							header={
+								<div className="flex flex-row px-2">
+									<div className="flex flex-col gap-y-1 items-start">
+										<div>Upload tax returns</div>
+										<div className="text-sm text-gray-400">
+											Upload and attach your business tax returns to your loan application
+										</div>
+									</div>
+								</div>
+							}
+							body={
+								<div className="flex flex-col w-full py-5 px-4">
+									<ApplicationDocumentsUpload type={"taxreturns"} />
+								</div>
+							}
+						/>
 
-						<div className="flex flex-col w-[100%] lg:w-screen-lg lg:min-w-screen-lg lg:max-w-screen-lg">
-							<ApplicationDocumentsUpload
-								type={"bankstatements"}
-								title={`Upload past 6 months bank statements`}
-								subtitle={`Upload and attach your business bank statemnts to your loan application`}
-							/>
-						</div>
+						<Accordion
+							header={
+								<div className="flex flex-row px-2">
+									<div className="flex flex-col gap-y-1 items-start">
+										<div>Upload past 4 months bank statements</div>
+										<div className="text-sm text-gray-400">
+											Upload and attach your business bank statemnts to your loan application
+										</div>
+									</div>
+								</div>
+							}
+							body={
+								<div className="flex flex-col w-full py-5 px-4">
+									<ApplicationDocumentsUpload
+										type={"bankstatements"}
+										// title={`Upload past 6 months bank statements`}
+										// subtitle={`Upload and attach your business bank statemnts to your loan application`}
+									/>
+								</div>
+							}
+						/>
 
-						<div className="flex flex-col w-[100%] lg:w-screen-lg lg:min-w-screen-lg lg:max-w-screen-lg">
-							<BankAccount loader={loader} />
-							<div className="flex flex-col w-full max-h-[600px] bg-white rounded">
-								<CashflowChart loader={loader} />
-							</div>
-						</div>
+						<Accordion
+							header={
+								<div className="flex flex-col px-2">
+									<h2 className="text-base font-semibold leading-6 text-gray-900">Bank Account</h2>
+								</div>
+							}
+							body={
+								<div className="flex flex-col w-full py-5 px-4">
+									<BankAccount loader={loader} />
+									<div className="flex flex-col w-full max-h-[600px] bg-white rounded">
+										<CashflowChart loader={loader} />
+									</div>
+								</div>
+							}
+						/>
 					</div>
 					<div className="flex flex-col w-[400px] gap-y-[30px]">
 						<div className="flex flex-col">
