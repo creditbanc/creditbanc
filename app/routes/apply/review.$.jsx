@@ -1,5 +1,5 @@
 import { redirect } from "@remix-run/node";
-import { head, isEmpty, map, pipe, values } from "ramda";
+import { head, isEmpty, map, pipe, set, values } from "ramda";
 import { from, lastValueFrom, map as rxmap } from "rxjs";
 import { filter } from "shades";
 import { create_user_session, get_session_entity_id } from "~/utils/auth.server";
@@ -99,6 +99,7 @@ const Header = () => {
 
 const BusinessInfo = () => {
 	let { application } = useLoaderData();
+	const { legal_name, dba, business_address, phone, business_entity, ein, industry, set_path } = useStore();
 
 	return (
 		<div>
@@ -111,61 +112,120 @@ const BusinessInfo = () => {
 					<div className="flex flex-row w-full flex-wrap">
 						<div className="py-6 w-1/2">
 							<dt className="text-sm font-medium leading-6 text-gray-900">Business Legal Name</dt>
-							<dd className="mt-1 text-sm leading-6 text-gray-700 sm:mt-2">{application?.legal_name}</dd>
+							<input
+								type="text"
+								className="mt-1 text-sm leading-6 text-gray-700 sm:mt-2 outline-none w-full"
+								value={legal_name}
+								onChange={(e) => set_path(["legal_name"], e.target.value)}
+							/>
 						</div>
 						<div className="py-6 w-1/2">
 							<dt className="text-sm font-medium leading-6 text-gray-900">Business DBA Name</dt>
-							<dd className="mt-1 text-sm leading-6 text-gray-700 sm:mt-2">{application?.dba}</dd>
+							{/* <dd className="mt-1 text-sm leading-6 text-gray-700 sm:mt-2">{application?.dba}</dd> */}
+							<input
+								type="text"
+								className="mt-1 text-sm leading-6 text-gray-700 sm:mt-2 outline-none w-full"
+								value={dba}
+								onChange={(e) => set_path(["dba"], e.target.value)}
+							/>
 						</div>
 					</div>
 					<div className="flex flex-row w-full flex-wrap">
 						<div className="py-6 w-1/2">
 							<dt className="text-sm font-medium leading-6 text-gray-900">Address</dt>
-							<dd className="mt-1 text-sm leading-6 text-gray-700 sm:mt-2">
+							{/* <dd className="mt-1 text-sm leading-6 text-gray-700 sm:mt-2">
 								{application?.business_address?.street}
-							</dd>
+							</dd> */}
+							<input
+								type="text"
+								className="mt-1 text-sm leading-6 text-gray-700 sm:mt-2 outline-none w-full"
+								value={business_address.street}
+								onChange={(e) => set_path(["business_address", "street"], e.target.value)}
+							/>
 						</div>
 						<div className="py-6 w-1/2">
 							<dt className="text-sm font-medium leading-6 text-gray-900">City</dt>
-							<dd className="mt-1 text-sm leading-6 text-gray-700 sm:mt-2">
+							{/* <dd className="mt-1 text-sm leading-6 text-gray-700 sm:mt-2">
 								{application?.business_address?.city}
-							</dd>
+							</dd> */}
+							<input
+								type="text"
+								className="mt-1 text-sm leading-6 text-gray-700 sm:mt-2 outline-none w-full"
+								value={business_address.city}
+								onChange={(e) => set_path(["business_address", "city"], e.target.value)}
+							/>
 						</div>
 					</div>
 					<div className="flex flex-row w-full flex-wrap">
 						<div className="py-6 w-1/2">
 							<dt className="text-sm font-medium leading-6 text-gray-900">Phone Number</dt>
-							<dd className="mt-1 text-sm leading-6 text-gray-700 sm:mt-2">{application?.phone}</dd>
+							{/* <dd className="mt-1 text-sm leading-6 text-gray-700 sm:mt-2">{application?.phone}</dd> */}
+							<input
+								type="text"
+								className="mt-1 text-sm leading-6 text-gray-700 sm:mt-2 outline-none w-full"
+								value={phone}
+								onChange={(e) => set_path(["phone"], e.target.value)}
+							/>
 						</div>
 						<div className="py-6 w-1/4">
 							<dt className="text-sm font-medium leading-6 text-gray-900">State</dt>
-							<dd className="mt-1 text-sm leading-6 text-gray-700 sm:mt-2">
+							{/* <dd className="mt-1 text-sm leading-6 text-gray-700 sm:mt-2">
 								{application?.business_address?.state}
-							</dd>
+							</dd> */}
+							<input
+								type="text"
+								className="mt-1 text-sm leading-6 text-gray-700 sm:mt-2 outline-none w-full"
+								value={business_address?.state}
+								onChange={(e) => set_path(["business_address", "state"], e.target.value)}
+							/>
 						</div>
 						<div className="py-6 w-1/4">
 							<dt className="text-sm font-medium leading-6 text-gray-900">Zip</dt>
-							<dd className="mt-1 text-sm leading-6 text-gray-700 sm:mt-2">
+							{/* <dd className="mt-1 text-sm leading-6 text-gray-700 sm:mt-2">
 								{application?.business_address?.zip}
-							</dd>
+							</dd> */}
+							<input
+								type="text"
+								className="mt-1 text-sm leading-6 text-gray-700 sm:mt-2 outline-none w-full"
+								value={business_address?.zip}
+								onChange={(e) => set_path(["business_address", "zip"], e.target.value)}
+							/>
 						</div>
 					</div>
 					<div className="flex flex-row w-full flex-wrap">
 						<div className="py-6 w-1/2">
 							<dt className="text-sm font-medium leading-6 text-gray-900">Legal Entity</dt>
-							<dd className="mt-1 text-sm leading-6 text-gray-700 sm:mt-2">
+							{/* <dd className="mt-1 text-sm leading-6 text-gray-700 sm:mt-2">
 								{application?.business_entity}
-							</dd>
+							</dd> */}
+							<input
+								type="text"
+								className="mt-1 text-sm leading-6 text-gray-700 sm:mt-2 outline-none w-full"
+								value={business_entity}
+								onChange={(e) => set_path(["business_entity"], e.target.value)}
+							/>
 						</div>
 						<div className="py-6 w-1/2">
 							<dt className="text-sm font-medium leading-6 text-gray-900">Federal Tax ID (EIN)</dt>
-							<dd className="mt-1 text-sm leading-6 text-gray-700 sm:mt-2">{application?.ein}</dd>
+							{/* <dd className="mt-1 text-sm leading-6 text-gray-700 sm:mt-2">{application?.ein}</dd> */}
+							<input
+								type="text"
+								className="mt-1 text-sm leading-6 text-gray-700 sm:mt-2 outline-none w-full"
+								value={ein}
+								onChange={(e) => set_path(["ein"], e.target.value)}
+							/>
 						</div>
 					</div>
 					<div className="flex flex-row w-full flex-wrap">
 						<div className="py-6 w-1/2">
 							<dt className="text-sm font-medium leading-6 text-gray-900">Merchant Type</dt>
-							<dd className="mt-1 text-sm leading-6 text-gray-700 sm:mt-2">{application?.industry}</dd>
+							{/* <dd className="mt-1 text-sm leading-6 text-gray-700 sm:mt-2">{application?.industry}</dd> */}
+							<input
+								type="text"
+								className="mt-1 text-sm leading-6 text-gray-700 sm:mt-2 outline-none w-full"
+								value={industry}
+								onChange={(e) => set_path(["industry"], e.target.value)}
+							/>
 						</div>
 						<div className="py-6 w-1/2">
 							<dt className="text-sm font-medium leading-6 text-gray-900">Business Start Date</dt>
@@ -180,6 +240,7 @@ const BusinessInfo = () => {
 
 const FinancialInfo = () => {
 	let { application } = useLoaderData();
+	const { set_path } = useStore();
 
 	return (
 		<div>
@@ -197,10 +258,10 @@ const FinancialInfo = () => {
 								{formatMoney(application?.loan_amount, { symbol: "$", precision: 0 })}
 							</dd>
 						</div>
-						<div className="py-6 w-1/2">
+						{/* <div className="py-6 w-1/2">
 							<dt className="text-sm font-medium leading-6 text-gray-900">Reason</dt>
 							<dd className="mt-1 text-sm leading-6 text-gray-700 sm:mt-2">{application?.dba}</dd>
-						</div>
+						</div> */}
 					</div>
 					<div className="flex flex-row w-full flex-wrap">
 						<div className="py-6 w-1/2">
@@ -258,6 +319,7 @@ const FinancialInfo = () => {
 
 const OwnerInfo = () => {
 	let { application } = useLoaderData();
+	const { set_path, owners } = useStore();
 
 	return (
 		<div>
@@ -273,9 +335,35 @@ const OwnerInfo = () => {
 							<div className="flex flex-row w-full flex-wrap">
 								<div className="py-6 w-1/2">
 									<dt className="text-sm font-medium leading-6 text-gray-900">Name</dt>
-									<dd className="mt-1 text-sm leading-6 text-gray-700 sm:mt-2">
+									{/* <dd className="mt-1 text-sm leading-6 text-gray-700 sm:mt-2">
 										{capitalize(owner?.first_name)} {capitalize(owner?.last_name)}
-									</dd>
+									</dd> */}
+									<div className="flex flex-row w-full gap-x-2 text-sm">
+										<div className="flex flex-col justify-center pb-0.5">First Name:</div>
+										<div>
+											<input
+												type="text"
+												className="flex flex-col justify-end text-sm leading-6 text-gray-700 outline-none"
+												value={capitalize(owner?.first_name)}
+												onChange={(e) =>
+													set_path(["owners", owner.id, "first_name"], e.target.value)
+												}
+											/>
+										</div>
+									</div>
+									<div className="flex flex-row w-full gap-x-2 text-sm">
+										<div className="flex flex-col justify-end pb-0.5">Last Name:</div>
+										<div>
+											<input
+												type="text"
+												className="flex flex-col justify-end text-sm leading-6 text-gray-700 outline-none"
+												value={capitalize(owner?.last_name)}
+												onChange={(e) =>
+													set_path(["owners", owner.id, "last_name"], e.target.value)
+												}
+											/>
+										</div>
+									</div>
 								</div>
 								<div className="py-6 w-1/2">
 									<dt className="text-sm font-medium leading-6 text-gray-900">Address</dt>
@@ -287,29 +375,57 @@ const OwnerInfo = () => {
 							<div className="flex flex-row w-full flex-wrap">
 								<div className="py-6 w-1/2">
 									<dt className="text-sm font-medium leading-6 text-gray-900">City</dt>
-									<dd className="mt-1 text-sm leading-6 text-gray-700 sm:mt-2">
+									{/* <dd className="mt-1 text-sm leading-6 text-gray-700 sm:mt-2">
 										{owner?.address?.city}
-									</dd>
+									</dd> */}
+									<input
+										type="text"
+										className="flex flex-col text-sm leading-6 text-gray-700 outline-none"
+										value={owner?.address?.city}
+										onChange={(e) =>
+											set_path(["owners", owner.id, "address", "city"], e.target.value)
+										}
+									/>
 								</div>
 								<div className="py-6 w-1/2">
 									<dt className="text-sm font-medium leading-6 text-gray-900">Sate</dt>
-									<dd className="mt-1 text-sm leading-6 text-gray-700 sm:mt-2">
+									{/* <dd className="mt-1 text-sm leading-6 text-gray-700 sm:mt-2">
 										{owner?.address?.state}
-									</dd>
+									</dd> */}
+									<input
+										type="text"
+										className="flex flex-col text-sm leading-6 text-gray-700 outline-none"
+										value={owner?.address?.state}
+										onChange={(e) =>
+											set_path(["owners", owner.id, "address", "state"], e.target.value)
+										}
+									/>
 								</div>
 							</div>
 							<div className="flex flex-row w-full flex-wrap">
 								<div className="py-6 w-1/2">
 									<dt className="text-sm font-medium leading-6 text-gray-900">Zip</dt>
-									<dd className="mt-1 text-sm leading-6 text-gray-700 sm:mt-2">
+									{/* <dd className="mt-1 text-sm leading-6 text-gray-700 sm:mt-2">
 										{owner?.address?.zip}
-									</dd>
+									</dd> */}
+									<input
+										type="text"
+										className="flex flex-col text-sm leading-6 text-gray-700 outline-none"
+										value={owner?.address?.zip}
+										onChange={(e) =>
+											set_path(["owners", owner.id, "address", "zip"], e.target.value)
+										}
+									/>
 								</div>
 								<div className="py-6 w-1/4">
 									<dt className="text-sm font-medium leading-6 text-gray-900">Phone Number</dt>
-									<dd className="mt-1 text-sm leading-6 text-gray-700 sm:mt-2">
-										{/* {application?.business_address?.state} */}
-									</dd>
+
+									<input
+										type="text"
+										className="flex flex-col text-sm leading-6 text-gray-700 outline-none"
+										value={owner?.phone}
+										onChange={(e) => set_path(["owners", owner.id, "phone"], e.target.value)}
+									/>
 								</div>
 							</div>
 							<div className="flex flex-row w-full flex-wrap">
@@ -321,9 +437,17 @@ const OwnerInfo = () => {
 									<dt className="text-sm font-medium leading-6 text-gray-900">
 										Percentage of ownership
 									</dt>
-									<dd className="mt-1 text-sm leading-6 text-gray-700 sm:mt-2">
+									{/* <dd className="mt-1 text-sm leading-6 text-gray-700 sm:mt-2">
 										{`${owner?.ownership_percentage} %`}
-									</dd>
+									</dd> */}
+									<input
+										type="text"
+										className="flex flex-col text-sm leading-6 text-gray-700 outline-none"
+										value={owner?.ownership_percentage}
+										onChange={(e) =>
+											set_path(["owners", owner.id, "ownership_percentage"], e.target.value)
+										}
+									/>
 								</div>
 							</div>
 							<div className="flex flex-row w-full flex-wrap">
@@ -333,12 +457,18 @@ const OwnerInfo = () => {
 								</div> */}
 								<div className="py-6 w-1/2">
 									<dt className="text-sm font-medium leading-6 text-gray-900">SSN#</dt>
-									<dd className="mt-1 text-sm leading-6 text-gray-700 sm:mt-2">{owner?.ssn}</dd>
+									{/* <dd className="mt-1 text-sm leading-6 text-gray-700 sm:mt-2">{owner?.ssn}</dd> */}
+									<input
+										type="text"
+										className="flex flex-col text-sm leading-6 text-gray-700 outline-none"
+										value={owner?.ssn}
+										onChange={(e) => set_path(["owners", owner.id, "ssn"], e.target.value)}
+									/>
 								</div>
 							</div>
 						</div>
 					))
-				)(application?.owners)}
+				)(owners)}
 			</div>
 		</div>
 	);
@@ -414,6 +544,10 @@ export default function Review() {
 			method: "post",
 		});
 	};
+
+	useEffect(() => {
+		set_props(application);
+	}, [application]);
 
 	return (
 		<div className="relative flex flex-col w-full h-full overflow-y-scroll items-center">

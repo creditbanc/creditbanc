@@ -1356,6 +1356,10 @@ video {
   margin-top: 50px;
 }
 
+.-mt-1 {
+  margin-top: -0.25rem;
+}
+
 .line-clamp-3 {
   overflow: hidden;
   display: -webkit-box;
@@ -3808,6 +3812,10 @@ video {
 
 .pt-\[calc\(23\/318\*100\%\)\] {
   padding-top: calc(23 / 318 * 100%);
+}
+
+.pb-0\.5 {
+  padding-bottom: 0.125rem;
 }
 
 .text-left {
