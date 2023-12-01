@@ -17,7 +17,6 @@ import { map as rxmap, tap, filter as rxfilter, concatMap, take, delay, repeat }
 import { from, of as rxof, Subject, zip, lastValueFrom, throwError, forkJoin } from "rxjs";
 import Entity from "~/api/client/Entity";
 import { fold } from "~/utils/operators";
-import { json } from "@remix-run/node";
 import { useLoaderData, useLocation, useNavigate, useSubmit } from "@remix-run/react";
 import BusinessReport from "~/api/client/BusinessReport";
 
@@ -97,7 +96,8 @@ export const action = async ({ request }) => {
 
 		let entity_id = await get_session_entity_id(request);
 		let group_id = get_group_id(request.url);
-		let redirect_url = `${origin}/credit/report/business/experian/status/resource/e/${entity_id}/g/${group_id}`;
+		// let redirect_url = `${origin}/credit/report/business/experian/status/resource/e/${entity_id}/g/${group_id}`;
+		let redirect_url = `${origin}/home/resource/e/${entity_id}/g/${group_id}`;
 
 		subject.next({
 			id: action_response,
@@ -207,7 +207,7 @@ export default function View() {
 		<div className="flex flex-col w-full items-center overflow-y-scroll">
 			<div className="flex flex-col w-full lg:w-[900px] items-center">
 				<div className="bg-white px-6 py-10">
-					<div className="mx-auto max-w-2xl text-center">
+					<div className="mx-auto text-center">
 						<h2 className="text-4xl font-bold tracking-tight text-gray-900 sm:text-6xl">
 							Verify and select your business
 						</h2>

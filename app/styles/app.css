@@ -2512,16 +2512,12 @@ video {
   row-gap: 30px;
 }
 
-.gap-y-\[45px\] {
-  row-gap: 45px;
+.gap-y-\[40px\] {
+  row-gap: 40px;
 }
 
 .gap-y-\[60px\] {
   row-gap: 60px;
-}
-
-.gap-y-\[40px\] {
-  row-gap: 40px;
 }
 
 .-space-x-0 > :not([hidden]) ~ :not([hidden]) {

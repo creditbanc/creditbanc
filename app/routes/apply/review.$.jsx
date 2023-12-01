@@ -47,33 +47,32 @@ export const action = async ({ request }) => {
 
 	await lastValueFrom(response);
 	let next = pipe(filter({ id: "review" }), head, get("next"))(navigation);
+	return redirect(next({ entity_id, group_id }));
 	// return create_user_session(entity_id, next({ entity_id, group_id }));
 
-	let post_url = `${origin}/credit/business/new/form/resource/e/${entity_id}/g/${group_id}`;
+	// let post_url = `${origin}/credit/business/new/form/resource/e/${entity_id}/g/${group_id}`;
 
-	let { business_start_date, ...business } = test_identity_three;
-	let business_start_date_string = `${business_start_date.year}-${business_start_date.month}-${business_start_date.day}`;
+	// let { business_start_date, ...business } = test_identity_three;
+	// let business_start_date_string = `${business_start_date.year}-${business_start_date.month}-${business_start_date.day}`;
 
-	var formdata = new FormData();
-	formdata.append("payload", JSON.stringify({ ...business, business_start_date: business_start_date_string }));
-	formdata.append("response_type", JSON.stringify("json"));
+	// var formdata = new FormData();
+	// formdata.append("payload", JSON.stringify({ ...business, business_start_date: business_start_date_string }));
+	// formdata.append("response_type", JSON.stringify("json"));
 
-	let config = {
-		method: "post",
-		maxBodyLength: Infinity,
-		data: formdata,
-		headers: { "Content-Type": "multipart/form-data" },
-		url: post_url,
-	};
+	// let config = {
+	// 	method: "post",
+	// 	maxBodyLength: Infinity,
+	// 	data: formdata,
+	// 	headers: { "Content-Type": "multipart/form-data" },
+	// 	url: post_url,
+	// };
 
-	let report_response = await axios(config);
+	// let report_response = await axios(config);
 
-	console.log("report_response");
-	console.log(report_response.data);
+	// console.log("report_response");
+	// console.log(report_response.data);
 
-	return Response.redirect(report_response.data);
-
-	return redirect(next({ entity_id, group_id }));
+	// return Response.redirect(report_response.data);
 };
 
 export const loader = async ({ request }) => {

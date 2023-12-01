@@ -10,7 +10,7 @@ import { from, lastValueFrom, map as rxmap } from "rxjs";
 import { get_doc, update_doc } from "~/utils/firebase";
 import { redirect } from "@remix-run/node";
 import { XMarkIcon } from "@heroicons/react/24/outline";
-import { create_user_session, get_session_entity_id } from "~/utils/auth.server";
+import { get_session_entity_id } from "~/utils/auth.server";
 import { navigation } from "./navigation";
 
 export const action = async ({ request }) => {
@@ -34,8 +34,8 @@ export const action = async ({ request }) => {
 	let response = from(update_doc(["application", entity_id], payload)).pipe(rxmap(() => ({ entity_id, group_id })));
 
 	await lastValueFrom(response);
+
 	let next = pipe(filter({ id: "owners" }), head, get("next"))(navigation);
-	// return create_user_session(entity_id, next({ entity_id, group_id }));
 	return redirect(next({ entity_id, group_id }));
 };
 

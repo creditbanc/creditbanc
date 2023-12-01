@@ -2,7 +2,7 @@ import { redirect } from "@remix-run/node";
 import { head, isEmpty, map, pipe, values } from "ramda";
 import { from, lastValueFrom, map as rxmap } from "rxjs";
 import { filter } from "shades";
-import { create_user_session, get_session_entity_id } from "~/utils/auth.server";
+import { get_session_entity_id } from "~/utils/auth.server";
 import { get_doc, update_doc } from "~/utils/firebase";
 import { capitalize, form_params, get, get_entity_id, get_group_id, mapIndexed } from "~/utils/helpers";
 import { Link, useLoaderData, useLocation, useSubmit } from "@remix-run/react";
@@ -26,16 +26,16 @@ export const action = async ({ request }) => {
 	console.log(group_id);
 	console.log(entity_id);
 
-	let step = pipe(filter({ id: "review" }), head, get("step"))(navigation);
+	let step = pipe(filter({ id: "preview" }), head, get("step"))(navigation);
 	let { signed_date } = params;
 	let payload = { signed_date, step };
 
 	let response = from(update_doc(["application", entity_id], payload)).pipe(rxmap(() => ({ entity_id, group_id })));
 
 	await lastValueFrom(response);
-	let next = pipe(filter({ id: "review" }), head, get("next"))(navigation);
-	return create_user_session(entity_id, next({ entity_id, group_id }));
-	// return redirect(next({ entity_id, group_id }));
+	let next = pipe(filter({ id: "preview" }), head, get("next"))(navigation);
+
+	return redirect(next({ entity_id, group_id }));
 };
 
 export const loader = async ({ request }) => {
@@ -51,7 +51,7 @@ export const loader = async ({ request }) => {
 const Header = () => {
 	return (
 		<div className="mx-auto max-w-2xl text-center">
-			<h2 className="text-4xl font-bold tracking-tight text-gray-900 sm:text-6xl">Review Loan Application</h2>
+			<h2 className="text-4xl font-bold tracking-tight text-gray-900 sm:text-6xl">preview Loan Application</h2>
 			<p className="mt-6 text-lg leading-8 text-gray-600">
 				Make sure that all the informatiion is accurate and correct
 			</p>
