@@ -458,15 +458,15 @@ export default function Home() {
 
 	return (
 		<div className="w-full h-full flex flex-col overflow-hidden bg-white">
-			<div className="flex flex-col h-full w-full bg-white items-center gap-y-[60px] overflow-y-scroll scrollbar-none mb-[40px]">
+			<div className="flex flex-col h-full w-full bg-white items-center gap-y-[60px] overflow-y-scroll scrollbar-none">
 				<div className="flex flex-col max-w-4xl text-center mt-[40px]">
 					<h1 className="text-4xl font-bold tracking-tight text-gray-900 sm:text-6xl">{businessName}</h1>
 				</div>
-				<div className="flex flex-row w-full h-full max-w-screen-2xl gap-x-5 ">
-					<div className="flex flex-col flex-1 px-4 items-start gap-y-[45px]">
+				<div className="flex flex-row w-full h-fit max-w-screen-2xl gap-x-5 pb-[40px]">
+					<div className="flex flex-col flex-1 px-4  gap-y-[45px]">
 						<Accordion
 							header={
-								<div className="flex flex-row w-full justify-between items-center px-2">
+								<div className="flex flex-row w-full justify-between items-center px-4">
 									<h3 className="text-base font-semibold leading-6 text-gray-900">Business Scores</h3>
 									<div className="mt-3 sm:ml-4 sm:mt-0 text-sm">
 										<Link
@@ -490,7 +490,7 @@ export default function Home() {
 
 						<Accordion
 							header={
-								<div className="flex flex-row w-full justify-between items-center px-2">
+								<div className="flex flex-row w-full justify-between items-center px-4">
 									<h3 className="text-base font-semibold leading-6 text-gray-900">Personal Scores</h3>
 									<div className="mt-3 sm:ml-4 sm:mt-0 text-sm">
 										<Link
@@ -532,7 +532,7 @@ export default function Home() {
 
 						<Accordion
 							header={
-								<div className="flex flex-col px-2">
+								<div className="flex flex-col px-4">
 									<h2 className="text-base font-semibold leading-6 text-gray-900">
 										Loan application
 									</h2>
@@ -547,7 +547,7 @@ export default function Home() {
 
 						<Accordion
 							header={
-								<div className="flex flex-row px-2">
+								<div className="flex flex-row px-4">
 									<div className="flex flex-col gap-y-1 items-start">
 										<div>Upload tax returns</div>
 										<div className="text-sm text-gray-400">
@@ -565,7 +565,7 @@ export default function Home() {
 
 						<Accordion
 							header={
-								<div className="flex flex-row px-2">
+								<div className="flex flex-row px-4">
 									<div className="flex flex-col gap-y-1 items-start">
 										<div>Upload past 4 months bank statements</div>
 										<div className="text-sm text-gray-400">
@@ -587,7 +587,7 @@ export default function Home() {
 
 						<Accordion
 							header={
-								<div className="flex flex-col px-2">
+								<div className="flex flex-col px-4">
 									<h2 className="text-base font-semibold leading-6 text-gray-900">Bank Account</h2>
 								</div>
 							}
