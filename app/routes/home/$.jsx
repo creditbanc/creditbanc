@@ -122,7 +122,7 @@ const BankAccount = ({ loader = {} }) => {
 
 	return (
 		<div className="flex flex-col w-full bg-white rounded">
-			<div className="flex flex-row justify-between items-center px-5 pt-5 text-base font-semibold leading-6 text-gray-900">
+			<div className="flex flex-row justify-between items-center px-5 text-base font-semibold leading-6 text-gray-900">
 				<div>Bank Account</div>
 				{/* <BankAccountActions /> */}
 			</div>
@@ -167,7 +167,7 @@ const ApplicationStatus = () => {
 	} ${application?.business_address?.zip}`;
 
 	return (
-		<div className="flex flex-col w-full py-8">
+		<div className="flex flex-col w-full">
 			<h2 className="text-base font-semibold leading-6 text-gray-900">Loan application</h2>
 			<div className="mt-6 flex flex-col w-full">
 				<div className="flex flex-row w-full">
@@ -384,6 +384,17 @@ const Advisor = () => {
 							<dd className="text-sm leading-6 text-gray-900">352-999-9999</dd>
 						</div>
 					</div>
+
+					<div className="flex w-full flex-none gap-x-4 border-t border-gray-900/5 px-6 py-2">
+						<div className="flex flex-row w-full gap-x-2 cursor-pointer">
+							<div className="flex flex-row gap-x-1 text-sm items-center">
+								<dt className="flex-none mr-3">
+									<CalendarDaysIcon className="h-6 w-5 text-gray-400" aria-hidden="true" />
+								</dt>
+								<div>Schedule an appointment</div>
+							</div>
+						</div>
+					</div>
 				</dl>
 				{/* <div className="border-t border-gray-900/5 px-6 py-6">
 					<a href="#" className="text-sm font-semibold leading-6 text-gray-900">
@@ -426,88 +437,90 @@ export default function Home() {
 				<div className="flex flex-col max-w-4xl text-center mt-[40px]">
 					<h1 className="text-4xl font-bold tracking-tight text-gray-900 sm:text-6xl">{businessName}</h1>
 				</div>
-				<div className="flex flex-row w-full h-full max-w-screen-2xl	 gap-x-5">
-					<div className="flex flex-col flex-1 px-4 items-start">
-						<div className="flex flex-col w-[100%] px-2 lg:w-screen-lg lg:min-w-screen-lg lg:max-w-screen-lg mb-10">
+				<div className="flex flex-row w-full h-full max-w-screen-2xl gap-x-5">
+					<div className="flex flex-col flex-1 px-4 items-start gap-y-[60px]">
+						<div className="flex flex-col w-[100%] lg:w-screen-lg lg:min-w-screen-lg lg:max-w-screen-lg">
+							<div className="flex flex-row justify-between items-center border-b border-gray-200 pb-5 mb-6">
+								<h3 className="text-base font-semibold leading-6 text-gray-900">Business Scores</h3>
+								<div className="mt-3 sm:ml-4 sm:mt-0 text-sm">
+									<Link
+										to={`/credit/report/business/experian/status/resource/e/${entity_id}/g/${group_id}`}
+										className="inline-flex items-center rounded-full bg-blue-600 px-3 py-2 text-sm text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
+									>
+										View Full Report
+									</Link>
+								</div>
+							</div>
+							<div>
+								<BusinessScores
+									experian_business_score={business_scores?.experian_business_score}
+									dnb_business_score={business_scores?.dnb_business_score}
+								/>
+							</div>
+						</div>
+
+						<div className="flex flex-col w-[100%] lg:w-screen-lg lg:min-w-screen-lg lg:max-w-screen-lg">
+							<div className="flex flex-row justify-between items-center border-b border-gray-200 pb-5 mb-6">
+								<h3 className="text-base font-semibold leading-6 text-gray-900">Personal Scores</h3>
+								<div className="mt-3 sm:ml-4 sm:mt-0 text-sm">
+									<Link
+										to={`/credit/report/personal/personal/resource/e/${entity_id}/g/${group_id}`}
+										className="inline-flex items-center rounded-full bg-blue-600 px-3 py-2 text-sm text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
+									>
+										View Full Report
+									</Link>
+								</div>
+							</div>
+							<div className="flex flex-col w-full">
+								<div className="hidden lg:flex lg:flex-col lg:w-full">
+									<array-credit-score
+										appKey={appKey}
+										userToken={user_token}
+										bureau="all"
+										scoreTracker="true"
+									></array-credit-score>
+								</div>
+								<div className="lg:hidden flex flex-col w-full">
+									<iframe
+										src={`http://localhost:3000/1b?bureau=tui&user_token=${user_token}`}
+										className="flex flex-col w-full h-[530px]"
+									></iframe>
+									<iframe
+										src={`http://localhost:3000/1b?bureau=efx&user_token=${user_token}`}
+										className="flex flex-col w-full h-[530px]"
+									></iframe>
+									<iframe
+										src={`http://localhost:3000/1b?bureau=exp&user_token=${user_token}`}
+										className="flex flex-col w-full h-[530px]"
+									></iframe>
+								</div>
+							</div>
+						</div>
+
+						<div className="flex flex-col w-[100%] lg:w-screen-lg lg:min-w-screen-lg lg:max-w-screen-lg">
 							<ApplicationStatus />
 						</div>
-						<div className="flex flex-col w-[100%] lg:w-screen-lg lg:min-w-screen-lg lg:max-w-screen-lg mb-10 py-3">
+
+						<div className="flex flex-col w-[100%] lg:w-screen-lg lg:min-w-screen-lg lg:max-w-screen-lg">
 							<ApplicationDocumentsUpload
 								type={"taxreturns"}
 								title={`Upload tax returns`}
 								subtitle={`Upload and attach your business tax returns to your loan application`}
 							/>
 						</div>
-						<div className="flex flex-col w-[100%] lg:w-screen-lg lg:min-w-screen-lg lg:max-w-screen-lg mb-10 py-3">
+
+						<div className="flex flex-col w-[100%] lg:w-screen-lg lg:min-w-screen-lg lg:max-w-screen-lg">
 							<ApplicationDocumentsUpload
 								type={"bankstatements"}
 								title={`Upload past 6 months bank statements`}
 								subtitle={`Upload and attach your business bank statemnts to your loan application`}
 							/>
 						</div>
-						<div className="flex flex-col w-full gap-y-[60px] items-start">
-							<div className="flex flex-col w-[100%] lg:w-screen-lg lg:min-w-screen-lg lg:max-w-screen-lg">
-								<BankAccount loader={loader} />
-								<div className="flex flex-col w-full max-h-[600px] bg-white rounded">
-									<CashflowChart loader={loader} />
-								</div>
-							</div>
 
-							<div className="flex flex-col w-[100%] px-5 lg:w-screen-lg lg:min-w-screen-lg lg:max-w-screen-lg">
-								<div className="flex flex-row justify-between items-center border-b border-gray-200 pb-5 mb-6">
-									<h3 className="text-base font-semibold leading-6 text-gray-900">Business Scores</h3>
-									<div className="mt-3 sm:ml-4 sm:mt-0 text-sm">
-										<Link
-											to={`/credit/report/business/experian/status/resource/e/${entity_id}/g/${group_id}`}
-											className="inline-flex items-center rounded-full bg-blue-600 px-3 py-2 text-sm text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
-										>
-											View Full Report
-										</Link>
-									</div>
-								</div>
-								<div>
-									<BusinessScores
-										experian_business_score={business_scores?.experian_business_score}
-										dnb_business_score={business_scores?.dnb_business_score}
-									/>
-								</div>
-							</div>
-							<div className="flex flex-col w-[100%] px-5 lg:w-screen-lg lg:min-w-screen-lg lg:max-w-screen-lg">
-								<div className="flex flex-row justify-between items-center border-b border-gray-200 pb-5 mb-6">
-									<h3 className="text-base font-semibold leading-6 text-gray-900">Personal Scores</h3>
-									<div className="mt-3 sm:ml-4 sm:mt-0 text-sm">
-										<Link
-											to={`/credit/report/personal/personal/resource/e/${entity_id}/g/${group_id}`}
-											className="inline-flex items-center rounded-full bg-blue-600 px-3 py-2 text-sm text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
-										>
-											View Full Report
-										</Link>
-									</div>
-								</div>
-								<div className="flex flex-col w-full">
-									<div className="hidden lg:flex lg:flex-col lg:w-full">
-										<array-credit-score
-											appKey={appKey}
-											userToken={user_token}
-											bureau="all"
-											scoreTracker="true"
-										></array-credit-score>
-									</div>
-									<div className="lg:hidden flex flex-col w-full">
-										<iframe
-											src={`http://localhost:3000/1b?bureau=tui&user_token=${user_token}`}
-											className="flex flex-col w-full h-[530px]"
-										></iframe>
-										<iframe
-											src={`http://localhost:3000/1b?bureau=efx&user_token=${user_token}`}
-											className="flex flex-col w-full h-[530px]"
-										></iframe>
-										<iframe
-											src={`http://localhost:3000/1b?bureau=exp&user_token=${user_token}`}
-											className="flex flex-col w-full h-[530px]"
-										></iframe>
-									</div>
-								</div>
+						<div className="flex flex-col w-[100%] lg:w-screen-lg lg:min-w-screen-lg lg:max-w-screen-lg">
+							<BankAccount loader={loader} />
+							<div className="flex flex-col w-full max-h-[600px] bg-white rounded">
+								<CashflowChart loader={loader} />
 							</div>
 						</div>
 					</div>

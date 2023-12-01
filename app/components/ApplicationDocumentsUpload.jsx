@@ -288,7 +288,7 @@ const Upload = ({ title, subtitle, type }) => {
 	console.log(files);
 
 	return (
-		<div className="flex flex-col w-full px-1 pt-5 bg-white rounded">
+		<div className="flex flex-col w-full px-1 bg-white rounded">
 			<div className="flex flex-row justify-between border-b pb-3 mb-3">
 				<div className="flex flex-col gap-y-1">
 					<div>{title}</div>
