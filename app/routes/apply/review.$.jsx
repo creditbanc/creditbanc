@@ -23,6 +23,7 @@ import { unformat, formatMoney } from "accounting-js";
 
 import { test_identity_three } from "~/data/lendflow";
 import axios from "axios";
+import ApplicationProgress from "~/components/ApplicationProgress";
 
 export const action = async ({ request }) => {
 	console.log("request.url");
@@ -416,6 +417,10 @@ export default function Review() {
 
 	return (
 		<div className="relative flex flex-col w-full h-full overflow-y-scroll items-center">
+			<div className="flex flex-col w-full">
+				<ApplicationProgress />
+			</div>
+
 			<div className="flex flex-col w-[1200px] mt-10 mb-[100px]">
 				<div>
 					<Header />

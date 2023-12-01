@@ -15,6 +15,7 @@ import { create_user_session, get_session_entity_id } from "~/utils/auth.server"
 import moment from "moment";
 import { test_identity_three } from "~/data/lendflow";
 import axios from "axios";
+import ApplicationProgress from "~/components/ApplicationProgress";
 
 export const action = async ({ request }) => {
 	console.log("request.url");
@@ -73,29 +74,11 @@ export const loader = async ({ request }) => {
 	let url = new URL(request.url);
 	let entity_id = await get_session_entity_id(request);
 	// let group_id = get_group_id(url.pathname);
-
+	// NOTE
 	let application_entity_id = "dd947710-075d-4e68-8cb2-3726851a6ed1";
 	let application = await lastValueFrom(from(get_doc(["application", entity_id])));
 
 	return { application };
-};
-
-const steps = [
-	{ id: "Financing Needs", name: "Job details", href: "#", status: "complete" },
-	{ id: "About your business", name: "Application form", href: "#", status: "current" },
-	{ id: "About your owners", name: "Preview", href: "#", status: "upcoming" },
-];
-
-const Progress = () => {
-	return (
-		<nav aria-label="Progress" className="relative">
-			<ol role="list" className="space-y-4 md:flex md:space-x-8 md:space-y-0">
-				<li className="md:flex-1">
-					<div className="group flex flex-col items-center border-l-4 border-blue-600 py-2 pl-4 hover:border-blue-800 md:border-l-0 md:border-t-4 md:pb-0 md:pl-0 md:pt-4"></div>
-				</li>
-			</ol>
-		</nav>
-	);
 };
 
 export default function Agreement() {
@@ -136,7 +119,7 @@ export default function Agreement() {
 	return (
 		<div className="flex flex-col items-center w-full h-full overflow-y-scroll relative">
 			<div className="flex flex-col w-full sticky top-0 z-10">
-				<Progress />
+				<ApplicationProgress />
 			</div>
 			<div className="flex flex-col w-full  scrollbar-none items-center relative">
 				<div className="flex flex-col h-fit items-center max-w-5xl pb-10 absolute">

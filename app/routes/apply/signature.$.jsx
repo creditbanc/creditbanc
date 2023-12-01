@@ -10,6 +10,7 @@ import { navigation } from "./navigation";
 import { from, lastValueFrom, map as rxmap } from "rxjs";
 import { update_doc } from "~/utils/firebase";
 import { redirect } from "@remix-run/node";
+import ApplicationProgress from "~/components/ApplicationProgress";
 
 export const action = async ({ request }) => {
 	console.log("request.url");
@@ -63,8 +64,11 @@ export default function Signature() {
 	};
 
 	return (
-		<div className="flex flex-col bg-white overflow-y-scroll py-[30px] h-full items-center w-full">
-			<div className="flex flex-col px-10 pt-10 border rounded shadow-sm w-[700px]">
+		<div className="flex flex-col bg-white overflow-y-scroll h-full items-center w-full">
+			<div className="flex flex-col w-full">
+				<ApplicationProgress />
+			</div>
+			<div className="flex flex-col px-10 pt-10 border rounded shadow-sm w-[700px] my-[30px]">
 				<div className="mx-auto max-w-2xl lg:text-center">
 					<div className="flex flex-col w-full items-center">
 						<img src={signature_hero_img} className="h-[250px]" />

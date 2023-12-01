@@ -12,6 +12,7 @@ import { redirect } from "@remix-run/node";
 import { XMarkIcon } from "@heroicons/react/24/outline";
 import { get_session_entity_id } from "~/utils/auth.server";
 import { navigation } from "./navigation";
+import ApplicationProgress from "~/components/ApplicationProgress";
 
 export const action = async ({ request }) => {
 	console.log("request.url");
@@ -44,57 +45,6 @@ export const loader = async ({ request }) => {
 	let application = await lastValueFrom(from(get_doc(["application", entity_id])));
 
 	return { application };
-};
-
-const steps = [
-	{ id: "Financing Needs", name: "Job details", href: "#", status: "complete" },
-	{ id: "About your business", name: "Application form", href: "#", status: "current" },
-	{ id: "About your owners", name: "Preview", href: "#", status: "upcoming" },
-];
-
-const Progress = () => {
-	return (
-		<nav aria-label="Progress">
-			<ol role="list" className="space-y-4 md:flex md:space-x-8 md:space-y-0">
-				{pipe(
-					mapIndexed((step, index) => (
-						<li key={index} className="md:flex-1">
-							{step.status === "complete" ? (
-								<a
-									href={step.href}
-									className="group flex flex-col items-center border-l-4 border-blue-600 py-2 pl-4 hover:border-blue-800 md:border-l-0 md:border-t-4 md:pb-0 md:pl-0 md:pt-4"
-								>
-									<span className="text-sm font-medium text-blue-600 group-hover:text-blue-800">
-										{step.id}
-									</span>
-									{/* <span className="text-sm font-medium">{step.name}</span> */}
-								</a>
-							) : step.status === "current" ? (
-								<a
-									href={step.href}
-									className="flex flex-col items-center border-l-4 border-blue-600 py-2 pl-4 md:border-l-0 md:border-t-4 md:pb-0 md:pl-0 md:pt-4"
-									aria-current="step"
-								>
-									<span className="text-sm font-medium text-blue-600">{step.id}</span>
-									{/* <span className="text-sm font-medium">{step.name}</span> */}
-								</a>
-							) : (
-								<a
-									href={step.href}
-									className="group flex flex-col items-center border-l-4 border-gray-200 py-2 pl-4 hover:border-gray-300 md:border-l-0 md:border-t-4 md:pb-0 md:pl-0 md:pt-4"
-								>
-									<span className="text-sm font-medium text-gray-500 group-hover:text-gray-700">
-										{step.id}
-									</span>
-									{/* <span className="text-sm font-medium">{step.name}</span> */}
-								</a>
-							)}
-						</li>
-					))
-				)(steps)}
-			</ol>
-		</nav>
-	);
 };
 
 const SectionHeading = ({ headline, subheadline }) => {
@@ -445,7 +395,7 @@ export default function Container() {
 	return (
 		<div className="flex flex-col items-center w-full h-full overflow-y-scroll">
 			<div className="flex flex-col w-full mb-10">
-				<Progress />
+				<ApplicationProgress />
 			</div>
 			<div
 				className="flex flex-col h-full w-[600px]"

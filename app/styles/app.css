@@ -963,6 +963,11 @@ video {
   margin-bottom: 5px;
 }
 
+.my-\[30px\] {
+  margin-top: 30px;
+  margin-bottom: 30px;
+}
+
 .-mb-6 {
   margin-bottom: -1.5rem;
 }
@@ -1633,6 +1638,14 @@ video {
 
 .h-full {
   height: 100%;
+}
+
+.h-\[3px\] {
+  height: 3px;
+}
+
+.h-\[4px\] {
+  height: 4px;
 }
 
 .max-h-12 {
@@ -3247,6 +3260,11 @@ video {
 .bg-yellow-400 {
   --tw-bg-opacity: 1;
   background-color: rgb(250 204 21 / var(--tw-bg-opacity));
+}
+
+.bg-\[\#56cf9e\] {
+  --tw-bg-opacity: 1;
+  background-color: rgb(86 207 158 / var(--tw-bg-opacity));
 }
 
 .bg-opacity-20 {
