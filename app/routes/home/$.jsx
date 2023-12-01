@@ -407,10 +407,10 @@ const Advisor = () => {
 	);
 };
 
-const Accordion = ({ header, body }) => {
+const Accordion = ({ header, body, open = true }) => {
 	return (
 		<div className="flex flex-col items-start w-full text-sm">
-			<Disclosure defaultOpen={true}>
+			<Disclosure defaultOpen={open}>
 				<Disclosure.Button className="flex flex-row w-full h-[80px] bg-white border rounded">
 					<div className="flex flex-col w-[5px] bg-green-500 h-full rounded-l"></div>
 					<div className="flex flex-row w-full h-full pr-2 lg:pr-2 justify-between items-center">
@@ -463,7 +463,7 @@ export default function Home() {
 					<h1 className="text-4xl font-bold tracking-tight text-gray-900 sm:text-6xl">{businessName}</h1>
 				</div>
 				<div className="flex flex-row w-full h-fit max-w-screen-2xl gap-x-5 pb-[40px]">
-					<div className="flex flex-col flex-1 px-4  gap-y-[45px]">
+					<div className="flex flex-col flex-1 px-4  gap-y-[40px]">
 						<Accordion
 							header={
 								<div className="flex flex-row w-full justify-between items-center px-4">
@@ -531,6 +531,7 @@ export default function Home() {
 						/>
 
 						<Accordion
+							open={false}
 							header={
 								<div className="flex flex-col px-4">
 									<h2 className="text-base font-semibold leading-6 text-gray-900">
@@ -546,6 +547,7 @@ export default function Home() {
 						/>
 
 						<Accordion
+							open={false}
 							header={
 								<div className="flex flex-row px-4">
 									<div className="flex flex-col gap-y-1 items-start">
@@ -564,6 +566,7 @@ export default function Home() {
 						/>
 
 						<Accordion
+							open={false}
 							header={
 								<div className="flex flex-row px-4">
 									<div className="flex flex-col gap-y-1 items-start">
@@ -586,6 +589,7 @@ export default function Home() {
 						/>
 
 						<Accordion
+							open={false}
 							header={
 								<div className="flex flex-col px-4">
 									<h2 className="text-base font-semibold leading-6 text-gray-900">Bank Account</h2>
