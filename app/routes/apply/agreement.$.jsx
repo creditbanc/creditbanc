@@ -140,11 +140,10 @@ export default function Agreement() {
 							<b>WHEREAS</b>, the <b>Advisor</b> is hereby engaged to arrange financing or cause financing
 							to be provided to the client, via a Third-Party Lender. The <b>Client</b> has engaged the{" "}
 							<b>Advisor</b> to arrange financing for the <b>Client</b>. While procuring this financing,
-							it became apparent
-							<b>Client</b> required a global consultancy service to facilitate the underwriting of said
-							financing. This consultancy includes, but is not limited to: financial analysis of
-							bookkeeping and records, review of business tax returns, payroll audits, review of any
-							pending litigation and corporate structures, These services may be provided by{" "}
+							it became apparent <b>Client</b> required a global consultancy service to facilitate the
+							underwriting of said financing. This consultancy includes, but is not limited to: financial
+							analysis of bookkeeping and records, review of business tax returns, payroll audits, review
+							of any pending litigation and corporate structures, These services may be provided by{" "}
 							<b>Advisor</b> or by third party professionals that <b>Advisor</b> may procure for the
 							purposes of providing consultancy.
 						</div>
@@ -153,7 +152,7 @@ export default function Agreement() {
 						</div>
 						<div>
 							The <b>Client</b> retains the services of the <b>Advisor</b> and appoints the <b>Advisor</b>{" "}
-							to act as the Client's Agent in all negotiations with potential Lenders introduced to the
+							to act as the Client's Agent in all negotiations with potential Lenders introduced to the{" "}
 							<b>Client</b> by the <b>Advisor</b>.
 						</div>
 						<div>
@@ -180,14 +179,14 @@ export default function Agreement() {
 
 						<div>
 							<b>Client</b> agrees to defend the <b>Advisor</b> against any claim(s) made by any third-
-							party service providers, not affiliated with the <b>Advisor</b>, for any part of the
+							party service providers, not affiliated with the <b>Advisor</b>, for any part of the{" "}
 							<b>Success Fee</b> earned by the <b>Advisor</b> as it relates to this transaction.{" "}
 							<b>Client</b> gives the <b>Advisor</b> and any potential lender the right to perform and all
 							investigations necessary to evaluate the <b>Client</b>'s credit worthiness. The{" "}
 							<b>Client</b> represents that all information submitted to the <b>Advisor</b> is
 							substantially true and accurate. However, should it be determined that the information
-							provided is materially false; the <b>Success Fee</b>
-							delineated above shall become immediately due and payable.
+							provided is materially false; the <b>Success Fee</b> delineated above shall become
+							immediately due and payable.
 						</div>
 
 						<div>
