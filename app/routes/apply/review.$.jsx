@@ -51,11 +51,10 @@ export const action = async ({ request }) => {
 
 	let post_url = `${origin}/credit/business/new/form/resource/e/${entity_id}/g/${group_id}`;
 
-	var formdata = new FormData();
-
 	let { business_start_date, ...business } = test_identity_three;
 	let business_start_date_string = `${business_start_date.year}-${business_start_date.month}-${business_start_date.day}`;
 
+	var formdata = new FormData();
 	formdata.append("payload", JSON.stringify({ ...business, business_start_date: business_start_date_string }));
 	formdata.append("response_type", JSON.stringify("json"));
 

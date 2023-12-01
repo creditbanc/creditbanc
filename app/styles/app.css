@@ -1351,6 +1351,26 @@ video {
   margin-top: 50px;
 }
 
+.ml-\[15px\] {
+  margin-left: 15px;
+}
+
+.ml-\[5px\] {
+  margin-left: 5px;
+}
+
+.-ml-3 {
+  margin-left: -0.75rem;
+}
+
+.-ml-\[30px\] {
+  margin-left: -30px;
+}
+
+.ml-\[20px\] {
+  margin-left: 20px;
+}
+
 .line-clamp-3 {
   overflow: hidden;
   display: -webkit-box;
@@ -2761,6 +2781,10 @@ video {
   white-space: nowrap;
 }
 
+.break-words {
+  overflow-wrap: break-word;
+}
+
 .rounded {
   border-radius: 0.25rem;
 }
@@ -3787,6 +3811,11 @@ video {
 
 .pt-\[calc\(23\/318\*100\%\)\] {
   padding-top: calc(23 / 318 * 100%);
+}
+
+.ps-0 {
+  -webkit-padding-start: 0px;
+          padding-inline-start: 0px;
 }
 
 .text-left {

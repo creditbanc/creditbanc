@@ -11,8 +11,11 @@ import { set_doc } from "~/utils/firebase";
 import { redirect } from "@remix-run/node";
 import { navigation } from "./navigation";
 import { filter } from "shades";
+import axios from "axios";
 
 export const action = async ({ request }) => {
+	let url = new URL(request.url);
+	let { origin } = url;
 	let params = await form_params(request);
 
 	console.log("lp.action_____");
@@ -44,6 +47,27 @@ export const action = async ({ request }) => {
 	console.log(entity_id);
 	console.log("lp.group_id");
 	console.log(group_id);
+
+	let form_payload = {
+		email,
+		entity_id,
+		group_id,
+	};
+
+	var formdata = new FormData();
+	formdata.append("payload", JSON.stringify(form_payload));
+
+	let post_url = `${origin}/emails/welcome`;
+
+	let config = {
+		method: "post",
+		maxBodyLength: Infinity,
+		data: formdata,
+		headers: { "Content-Type": "multipart/form-data" },
+		url: post_url,
+	};
+
+	let email_response = await axios(config);
 
 	let next = pipe(filter({ id: "lp" }), head, get("next"))(navigation);
 	return create_user_session(entity_id, next({ entity_id, group_id }));
