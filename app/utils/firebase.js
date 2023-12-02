@@ -174,6 +174,17 @@ export const update_doc = async (path, data) => {
 	return await updateDoc(doc(firestore, ...path), data);
 };
 
+export const update_or_create_doc = async (path, data) => {
+	console.log("update_or_create_doc");
+	let docSnapshot = await getDoc(doc(firestore, ...path));
+	let doc_response = docSnapshot.data();
+	if (!doc_response) {
+		return await setDoc(doc(firestore, ...path), { ...data, timestamp: server_timestamp() });
+	} else {
+		return await updateDoc(doc(firestore, ...path), data);
+	}
+};
+
 export const delete_doc = async (path) => {
 	return await deleteDoc(doc(firestore, ...path));
 };

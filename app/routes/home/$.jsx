@@ -15,7 +15,7 @@ import { cache } from "~/utils/helpers.server";
 import { appKey } from "~/data/array";
 import BusinessScores from "../credit/report/business/components/scores";
 import CashflowChart from "~/components/CashflowChart";
-import { get_doc } from "~/utils/firebase";
+import { get_doc, set_doc, update_or_create_doc } from "~/utils/firebase";
 import {
 	AtSymbolIcon,
 	BriefcaseIcon,
@@ -308,6 +308,10 @@ const AccountSetupItemComponent = ({ activityItem }) => {
 };
 
 const AccountFeed = () => {
+	let { pathname } = useLocation();
+	let entity_id = get_entity_id(pathname);
+	let group_id = get_group_id(pathname);
+
 	return (
 		<div className="flex flex-col w-full">
 			<div className="border-b border-gray-200 bg-white pb-3 mb-4">
@@ -315,7 +319,11 @@ const AccountFeed = () => {
 			</div>
 			<ul role="list" className="space-y-6">
 				{account_setup_steps.map((activityItem, activityItemIdx) => (
-					<li key={activityItem.id} className="relative flex gap-x-4">
+					<Link
+						to={activityItem.href({ entity_id, group_id })}
+						key={activityItem.id}
+						className="relative flex gap-x-4 cursor-pointer"
+					>
 						<div
 							className={classNames(
 								activityItemIdx === account_setup_steps.length - 1 ? "h-6" : "-bottom-6",
@@ -352,7 +360,7 @@ const AccountFeed = () => {
 						) : (
 							<AccountSetupItemComponent activityItem={activityItem} />
 						)}
-					</li>
+					</Link>
 				))}
 			</ul>
 		</div>
@@ -483,6 +491,11 @@ const OnboardSteps = () => {
 	let { pathname } = useLocation();
 	let entity_id = get_entity_id(pathname);
 	let group_id = get_group_id(pathname);
+
+	useEffect(() => {
+		// set_doc(["onboard", entity_id], { entity_id, group_id }, true);
+	}, []);
+
 	return (
 		<ul role="list" className="divide-y divide-gray-100">
 			{account_setup_steps.map((person, id) => (
