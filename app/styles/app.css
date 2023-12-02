@@ -968,6 +968,11 @@ video {
   margin-bottom: 5px;
 }
 
+.my-\[40px\] {
+  margin-top: 40px;
+  margin-bottom: 40px;
+}
+
 .-mb-6 {
   margin-bottom: -1.5rem;
 }
@@ -1644,6 +1649,10 @@ video {
   height: 100%;
 }
 
+.h-\[full\] {
+  height: full;
+}
+
 .max-h-12 {
   max-height: 3rem;
 }
@@ -2059,6 +2068,10 @@ video {
 
 .w-screen {
   width: 100vw;
+}
+
+.w-\[auto\] {
+  width: auto;
 }
 
 .min-w-0 {

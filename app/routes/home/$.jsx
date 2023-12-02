@@ -272,15 +272,6 @@ const account_setup_steps = [
 	},
 ];
 
-const moods = [
-	{ name: "Excited", value: "excited", icon: FireIcon, iconColor: "text-white", bgColor: "bg-red-500" },
-	{ name: "Loved", value: "loved", icon: HeartIcon, iconColor: "text-white", bgColor: "bg-pink-400" },
-	{ name: "Happy", value: "happy", icon: FaceSmileIcon, iconColor: "text-white", bgColor: "bg-green-400" },
-	{ name: "Sad", value: "sad", icon: FaceFrownIcon, iconColor: "text-white", bgColor: "bg-yellow-400" },
-	{ name: "Thumbsy", value: "thumbsy", icon: HandThumbUpIcon, iconColor: "text-white", bgColor: "bg-blue-500" },
-	{ name: "I feel nothing", value: null, icon: XMarkIcon, iconColor: "text-gray-400", bgColor: "bg-transparent" },
-];
-
 const AccountSetupItem = ({ activityItem }) => {
 	return (
 		<>
@@ -482,61 +473,6 @@ const Accordion = ({ header, body, open = true }) => {
 		</div>
 	);
 };
-
-const people = [
-	{
-		name: "Leslie Alexander",
-		email: "leslie.alexander@example.com",
-		role: "Co-Founder / CEO",
-		imageUrl:
-			"https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
-		lastSeen: "3h ago",
-		lastSeenDateTime: "2023-01-23T13:23Z",
-	},
-	{
-		name: "Michael Foster",
-		email: "michael.foster@example.com",
-		role: "Co-Founder / CTO",
-		imageUrl:
-			"https://images.unsplash.com/photo-1519244703995-f4e0f30006d5?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
-		lastSeen: "3h ago",
-		lastSeenDateTime: "2023-01-23T13:23Z",
-	},
-	{
-		name: "Dries Vincent",
-		email: "dries.vincent@example.com",
-		role: "Business Relations",
-		imageUrl:
-			"https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
-		lastSeen: null,
-	},
-	{
-		name: "Lindsay Walton",
-		email: "lindsay.walton@example.com",
-		role: "Front-end Developer",
-		imageUrl:
-			"https://images.unsplash.com/photo-1517841905240-472988babdf9?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
-		lastSeen: "3h ago",
-		lastSeenDateTime: "2023-01-23T13:23Z",
-	},
-	{
-		name: "Courtney Henry",
-		email: "courtney.henry@example.com",
-		role: "Designer",
-		imageUrl:
-			"https://images.unsplash.com/photo-1438761681033-6461ffad8d80?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
-		lastSeen: "3h ago",
-		lastSeenDateTime: "2023-01-23T13:23Z",
-	},
-	{
-		name: "Tom Cook",
-		email: "tom.cook@example.com",
-		role: "Director of Product",
-		imageUrl:
-			"https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
-		lastSeen: null,
-	},
-];
 
 const OnboardSteps = () => {
 	return (
