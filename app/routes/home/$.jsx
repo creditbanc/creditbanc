@@ -241,6 +241,7 @@ const account_setup_steps = [
 		item: "Run business credit report",
 		completed: true,
 		icon: BriefcaseIcon,
+		href: ({ entity_id, group_id }) => `#`,
 	},
 	{
 		id: "personalcreditreport",
@@ -248,6 +249,7 @@ const account_setup_steps = [
 		item: "Run personal credit report",
 		completed: false,
 		icon: UserCircleIcon,
+		href: ({ entity_id, group_id }) => `/credit/personal/new/resource/e/${entity_id}/g/${group_id}`,
 	},
 	{
 		id: "taxreturns",
@@ -255,13 +257,15 @@ const account_setup_steps = [
 		item: "Upload last 4 years tax returns",
 		completed: false,
 		icon: CalculatorIcon,
+		href: ({ entity_id, group_id }) => `/apply/taxreturns/resource/e/${entity_id}/g/${group_id}`,
 	},
 	{
-		id: "taxreturns",
+		id: "bankstatements",
 		type: "item",
 		item: "Upload last 4 months bank statements",
 		completed: false,
 		icon: BuildingStorefrontIcon,
+		href: ({ entity_id, group_id }) => `/apply/bankstatements/resource/e/${entity_id}/g/${group_id}`,
 	},
 	{
 		id: "plaid",
@@ -269,6 +273,7 @@ const account_setup_steps = [
 		item: "Connect to Plaid",
 		completed: false,
 		icon: CurrencyDollarIcon,
+		href: ({ entity_id, group_id }) => `#`,
 	},
 ];
 
@@ -475,10 +480,17 @@ const Accordion = ({ header, body, open = true }) => {
 };
 
 const OnboardSteps = () => {
+	let { pathname } = useLocation();
+	let entity_id = get_entity_id(pathname);
+	let group_id = get_group_id(pathname);
 	return (
 		<ul role="list" className="divide-y divide-gray-100">
 			{account_setup_steps.map((person, id) => (
-				<li key={person.id} className="flex justify-between gap-x-6 py-2 px-5 cursor-pointer">
+				<Link
+					to={person.href({ entity_id, group_id })}
+					key={person.id}
+					className="flex justify-between gap-x-6 py-2 px-5 cursor-pointer"
+				>
 					<div className="flex flex-row items-center min-w-0 gap-x-4">
 						<person.icon className="h-5 w-5 text-gray-600" />
 
@@ -489,7 +501,7 @@ const OnboardSteps = () => {
 					<div className="hidden shrink-0 sm:flex sm:flex-col justify-center">
 						<CheckCircleIcon className="h-5 w-5 text-[#56CF9E]" aria-hidden="true" />
 					</div>
-				</li>
+				</Link>
 			))}
 		</ul>
 	);
