@@ -16,7 +16,16 @@ import { appKey } from "~/data/array";
 import BusinessScores from "../credit/report/business/components/scores";
 import CashflowChart from "~/components/CashflowChart";
 import { get_doc } from "~/utils/firebase";
-import { AtSymbolIcon, MinusCircleIcon, PaperClipIcon, PhoneIcon } from "@heroicons/react/24/outline";
+import {
+	AtSymbolIcon,
+	BriefcaseIcon,
+	BuildingStorefrontIcon,
+	CalculatorIcon,
+	CurrencyDollarIcon,
+	MinusCircleIcon,
+	PaperClipIcon,
+	PhoneIcon,
+} from "@heroicons/react/24/outline";
 import ApplicationDocumentsUpload from "~/components/ApplicationDocumentsUpload";
 import { Fragment, useState } from "react";
 import { CheckCircleIcon } from "@heroicons/react/24/solid";
@@ -34,6 +43,9 @@ import {
 } from "@heroicons/react/20/solid";
 import { Listbox, Transition } from "@headlessui/react";
 import { Disclosure } from "@headlessui/react";
+import Modal from "~/components/Modal";
+import { useModalStore } from "~/hooks/useModal";
+const welcome_banner = "/images/welcome_banner.jpg";
 
 const log_route = `home.$`;
 
@@ -228,30 +240,35 @@ const account_setup_steps = [
 		type: "item",
 		item: "Run business credit report",
 		completed: true,
+		icon: BriefcaseIcon,
 	},
 	{
 		id: "personalcreditreport",
 		type: "item",
 		item: "Run personal credit report",
 		completed: false,
+		icon: UserCircleIcon,
 	},
 	{
 		id: "taxreturns",
 		type: "item",
 		item: "Upload last 4 years tax returns",
 		completed: false,
+		icon: CalculatorIcon,
 	},
 	{
 		id: "taxreturns",
 		type: "item",
 		item: "Upload last 4 months bank statements",
 		completed: false,
+		icon: BuildingStorefrontIcon,
 	},
 	{
 		id: "plaid",
 		type: "item",
 		item: "Connect to Plaid",
 		completed: false,
+		icon: CurrencyDollarIcon,
 	},
 ];
 
@@ -466,19 +483,122 @@ const Accordion = ({ header, body, open = true }) => {
 	);
 };
 
+const people = [
+	{
+		name: "Leslie Alexander",
+		email: "leslie.alexander@example.com",
+		role: "Co-Founder / CEO",
+		imageUrl:
+			"https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
+		lastSeen: "3h ago",
+		lastSeenDateTime: "2023-01-23T13:23Z",
+	},
+	{
+		name: "Michael Foster",
+		email: "michael.foster@example.com",
+		role: "Co-Founder / CTO",
+		imageUrl:
+			"https://images.unsplash.com/photo-1519244703995-f4e0f30006d5?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
+		lastSeen: "3h ago",
+		lastSeenDateTime: "2023-01-23T13:23Z",
+	},
+	{
+		name: "Dries Vincent",
+		email: "dries.vincent@example.com",
+		role: "Business Relations",
+		imageUrl:
+			"https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
+		lastSeen: null,
+	},
+	{
+		name: "Lindsay Walton",
+		email: "lindsay.walton@example.com",
+		role: "Front-end Developer",
+		imageUrl:
+			"https://images.unsplash.com/photo-1517841905240-472988babdf9?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
+		lastSeen: "3h ago",
+		lastSeenDateTime: "2023-01-23T13:23Z",
+	},
+	{
+		name: "Courtney Henry",
+		email: "courtney.henry@example.com",
+		role: "Designer",
+		imageUrl:
+			"https://images.unsplash.com/photo-1438761681033-6461ffad8d80?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
+		lastSeen: "3h ago",
+		lastSeenDateTime: "2023-01-23T13:23Z",
+	},
+	{
+		name: "Tom Cook",
+		email: "tom.cook@example.com",
+		role: "Director of Product",
+		imageUrl:
+			"https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
+		lastSeen: null,
+	},
+];
+
+const OnboardSteps = () => {
+	return (
+		<ul role="list" className="divide-y divide-gray-100">
+			{account_setup_steps.map((person, id) => (
+				<li key={person.id} className="flex justify-between gap-x-6 py-2 px-5 cursor-pointer">
+					<div className="flex flex-row items-center min-w-0 gap-x-4">
+						<person.icon className="h-5 w-5 text-gray-600" />
+
+						<div className="min-w-0 flex-auto">
+							<p className="text-sm font-semibold leading-6 text-gray-600">{person.item}</p>
+						</div>
+					</div>
+					<div className="hidden shrink-0 sm:flex sm:flex-col justify-center">
+						<CheckCircleIcon className="h-5 w-5 text-[#56CF9E]" aria-hidden="true" />
+					</div>
+				</li>
+			))}
+		</ul>
+	);
+};
+
+const OnboardModal = () => {
+	return (
+		<Modal id="onboard_modal" classes="w-[500px] bg-white rounded">
+			<div className="flex flex-col w-full">
+				<div className="border-b border-gray-200 bg-white px-4 py-5 sm:px-6">
+					<div>
+						<img src={welcome_banner} height={100} />
+					</div>
+				</div>
+				<div className="flex flex-col w-full">
+					<iframe
+						width="560"
+						height="315"
+						src="https://www.youtube.com/embed/5DMs296c2sk?si=qmkn2ws1g8Z5x2xb"
+						title="YouTube video player"
+						frameborder="0"
+						allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+						allowfullscreen
+					></iframe>
+				</div>
+				<div className="flex flex-col w-full">
+					<OnboardSteps />
+				</div>
+			</div>
+		</Modal>
+	);
+};
+
 let use_loader_store = store();
 
 export default function Home() {
 	let { pathname } = useLocation();
-
 	let server_data = useLoaderData();
-
 	let loader = use_loader_store((state) => state);
-
 	let entity_id = get_entity_id(pathname);
 	let group_id = get_group_id(pathname);
-
 	let { user_token, experian_facts = {}, business_scores = {} } = loader;
+	let { businessHeader = {} } = experian_facts;
+	let { businessName } = businessHeader;
+	let set_modal = useModalStore((state) => state.set_modal);
 
 	useEffect(() => loader.set_props(server_data), []);
 
@@ -488,11 +608,13 @@ export default function Home() {
 		from(axios.get(fetcher_url)).pipe(rxmap(loader.set_props)).subscribe();
 	}, []);
 
-	let { businessHeader = {} } = experian_facts;
-	let { businessName } = businessHeader;
+	useEffect(() => {
+		set_modal({ id: "onboard_modal", is_open: true });
+	}, []);
 
 	return (
 		<div className="w-full h-full flex flex-col overflow-hidden bg-white">
+			<OnboardModal />
 			<div className="flex flex-col h-full w-full bg-white items-center gap-y-[60px] overflow-y-scroll scrollbar-none">
 				<div className="flex flex-col max-w-4xl text-center mt-[40px]">
 					<h1 className="text-4xl font-bold tracking-tight text-gray-900 sm:text-6xl">{businessName}</h1>
