@@ -567,6 +567,7 @@ const OnboardModal = () => {
 					<div>
 						<img src={welcome_banner} height={100} />
 					</div>
+					<div className="flex flex-col w-full items-center text-xl font-semibold pt-5">Watch this first</div>
 				</div>
 				<div className="flex flex-col w-full">
 					<iframe
