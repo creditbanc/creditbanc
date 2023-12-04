@@ -8,9 +8,13 @@ import { filter } from "shades";
 import { Link, useLocation, useSubmit } from "@remix-run/react";
 import { navigation } from "./navigation";
 import { from, lastValueFrom, map as rxmap } from "rxjs";
-import { update_doc } from "~/utils/firebase";
+import { update_doc, set_doc } from "~/utils/firebase";
 import { redirect } from "@remix-run/node";
 import ApplicationProgress from "~/components/ApplicationProgress";
+
+const update_onboarding = async ({ entity_id, group_id, step }) => {
+	return set_doc(["onboarding", group_id], { step, entity_id, group_id }, true);
+};
 
 export const action = async ({ request }) => {
 	console.log("request.url");
@@ -33,6 +37,9 @@ export const action = async ({ request }) => {
 	let response = from(update_doc(["application", entity_id], payload)).pipe(rxmap(() => ({ entity_id, group_id })));
 
 	await lastValueFrom(response);
+
+	await update_onboarding({ entity_id, group_id, step });
+
 	let next = pipe(filter({ id: "signature" }), head, get("next"))(navigation);
 	return redirect(next({ entity_id, group_id }));
 };

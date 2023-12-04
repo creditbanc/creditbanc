@@ -20,7 +20,7 @@ import {
 import { from, lastValueFrom, map as rxmap } from "rxjs";
 import { filter } from "shades";
 import { create_user_session, get_session_entity_id } from "~/utils/auth.server";
-import { get_doc, update_doc } from "~/utils/firebase";
+import { get_doc, set_doc, update_doc } from "~/utils/firebase";
 import {
 	capitalize,
 	create_axios_form,
@@ -40,6 +40,10 @@ import moment from "moment";
 import { unformat, formatMoney } from "accounting-js";
 import ApplicationProgress from "~/components/ApplicationProgress";
 import { flatten } from "flat";
+
+const update_onboarding = async ({ entity_id, group_id, step }) => {
+	return set_doc(["onboarding", group_id], { step, entity_id, group_id }, true);
+};
 
 export const action = async ({ request }) => {
 	console.log("request.url");
@@ -66,26 +70,30 @@ export const action = async ({ request }) => {
 	let response = from(update_doc(["application", entity_id], payload)).pipe(rxmap(() => ({ entity_id, group_id })));
 
 	await lastValueFrom(response);
+
+	await update_onboarding({ entity_id, group_id, step });
+
 	let next = pipe(filter({ id: "review" }), head, get("next"))(navigation);
+
 	return redirect(next({ entity_id, group_id }));
 	// return create_user_session(entity_id, next({ entity_id, group_id }));
 
-	// let post_url = `${origin}/credit/business/new/form/resource/e/${entity_id}/g/${group_id}`;
+	let post_url = `${origin}/credit/business/new/form/resource/e/${entity_id}/g/${group_id}`;
 
-	// let { business_start_date, ...business } = test_identity_three;
-	// let business_start_date_string = `${business_start_date.year}-${business_start_date.month}-${business_start_date.day}`;
+	let { business_start_date, ...business } = test_identity_three;
+	let business_start_date_string = `${business_start_date.year}-${business_start_date.month}-${business_start_date.day}`;
 
-	// var formdata = new FormData();
-	// formdata.append("payload", JSON.stringify({ ...business, business_start_date: business_start_date_string }));
-	// formdata.append("response_type", JSON.stringify("json"));
+	var formdata = new FormData();
+	formdata.append("payload", JSON.stringify({ ...business, business_start_date: business_start_date_string }));
+	formdata.append("response_type", JSON.stringify("json"));
 
-	// let config = {
-	// 	method: "post",
-	// 	maxBodyLength: Infinity,
-	// 	data: formdata,
-	// 	headers: { "Content-Type": "multipart/form-data" },
-	// 	url: post_url,
-	// };
+	let config = {
+		method: "post",
+		maxBodyLength: Infinity,
+		data: formdata,
+		headers: { "Content-Type": "multipart/form-data" },
+		url: post_url,
+	};
 
 	// let report_response = await axios(config);
 

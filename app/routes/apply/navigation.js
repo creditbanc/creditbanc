@@ -89,8 +89,8 @@ export const navigation = [
 		back: ({ entity_id, group_id }) => `/apply/review/resource/e/${entity_id}/g/${group_id}`,
 	},
 	{
-		id: "review",
-		step: "review",
+		id: "preview",
+		step: "preview",
 		next: ({ entity_id, group_id }) => `/home/resource/e/${entity_id}/g/${group_id}`,
 	},
 ];

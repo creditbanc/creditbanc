@@ -6,7 +6,7 @@ import { CheckIcon, ChevronUpDownIcon } from "@heroicons/react/20/solid";
 import useStore from "./store";
 import { Link, useLoaderData, useLocation, useSubmit } from "@remix-run/react";
 import { from, lastValueFrom, map as rxmap } from "rxjs";
-import { get_doc, update_doc } from "~/utils/firebase";
+import { get_doc, set_doc, update_doc } from "~/utils/firebase";
 import { redirect } from "@remix-run/node";
 import { navigation } from "./navigation";
 import { filter } from "shades";
@@ -61,6 +61,10 @@ const send_new_application_sms = async ({ entity_id, group_id, origin }) => {
 	return email_response?.data;
 };
 
+const update_onboarding = async ({ entity_id, group_id, step }) => {
+	return set_doc(["onboarding", group_id], { step, entity_id, group_id }, true);
+};
+
 export const action = async ({ request }) => {
 	console.log("request.url");
 	console.log(request.url);
@@ -109,6 +113,8 @@ export const action = async ({ request }) => {
 
 	// console.log("report_response");
 	// console.log(report_response.data);
+
+	await update_onboarding({ entity_id, group_id, step });
 
 	let next = pipe(filter({ id: "agreement" }), head, get("next"))(navigation);
 	return redirect(next({ entity_id, group_id }));

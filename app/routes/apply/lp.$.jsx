@@ -7,11 +7,15 @@ import { StarIcon } from "@heroicons/react/20/solid";
 import { Link, useLocation, useSubmit } from "@remix-run/react";
 import { create_user_session, signup } from "~/utils/auth.server";
 import { concatMap, from, lastValueFrom, map as rxmap, tap } from "rxjs";
-import { set_doc } from "~/utils/firebase";
+import { set_doc, update_doc } from "~/utils/firebase";
 import { redirect } from "@remix-run/node";
 import { navigation } from "./navigation";
 import { filter } from "shades";
 import axios from "axios";
+
+const update_onboarding = async ({ entity_id, group_id, step }) => {
+	return set_doc(["onboarding", group_id], { step, entity_id, group_id }, true);
+};
 
 export const action = async ({ request }) => {
 	let url = new URL(request.url);
@@ -48,26 +52,27 @@ export const action = async ({ request }) => {
 	console.log("lp.group_id");
 	console.log(group_id);
 
-	let form_payload = {
-		email,
-		entity_id,
-		group_id,
-	};
+	// let form_payload = {
+	// 	email,
+	// 	entity_id,
+	// 	group_id,
+	// };
 
-	var formdata = new FormData();
-	formdata.append("payload", JSON.stringify(form_payload));
+	// var formdata = new FormData();
+	// formdata.append("payload", JSON.stringify(form_payload));
 
-	let post_url = `${origin}/emails/welcome`;
+	// let post_url = `${origin}/emails/welcome`;
 
-	let config = {
-		method: "post",
-		maxBodyLength: Infinity,
-		data: formdata,
-		headers: { "Content-Type": "multipart/form-data" },
-		url: post_url,
-	};
+	// let config = {
+	// 	method: "post",
+	// 	maxBodyLength: Infinity,
+	// 	data: formdata,
+	// 	headers: { "Content-Type": "multipart/form-data" },
+	// 	url: post_url,
+	// };
 
-	let email_response = await axios(config);
+	// let email_response = await axios(config);
+	await update_onboarding({ entity_id, group_id, step });
 
 	let next = pipe(filter({ id: "lp" }), head, get("next"))(navigation);
 	return create_user_session(entity_id, next({ entity_id, group_id }));

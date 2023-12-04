@@ -8,10 +8,14 @@ import { useLocation, useSubmit } from "@remix-run/react";
 import { Link } from "react-router-dom";
 import { redirect } from "@remix-run/node";
 import { from, lastValueFrom, map as rxmap } from "rxjs";
-import { update_doc } from "~/utils/firebase";
+import { update_doc, set_doc } from "~/utils/firebase";
 import { filter } from "shades";
 import { navigation } from "./navigation";
 import ApplicationProgress from "~/components/ApplicationProgress";
+
+const update_onboarding = async ({ entity_id, group_id, step }) => {
+	return set_doc(["onboarding", group_id], { step, entity_id, group_id }, true);
+};
 
 export const action = async ({ request }) => {
 	console.log("request.url");
@@ -34,6 +38,8 @@ export const action = async ({ request }) => {
 	let response = from(update_doc(["application", entity_id], payload)).pipe(rxmap(() => ({ entity_id, group_id })));
 
 	await lastValueFrom(response);
+
+	await update_onboarding({ entity_id, group_id, step });
 
 	let next = pipe(filter({ id: "inception_date" }), head, get("next"))(navigation);
 	return redirect(next({ entity_id, group_id }));
