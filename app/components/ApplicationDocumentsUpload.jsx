@@ -1,6 +1,6 @@
 import { DocumentIcon, SparklesIcon } from "@heroicons/react/24/outline";
 import { get_entity_id, get_group_id, mapIndexed } from "~/utils/helpers";
-import { findIndex, head, indexOf, map, pipe, times } from "ramda";
+import { findIndex, head, includes, indexOf, keys, map, pipe, set, times } from "ramda";
 import { server_timestamp, set_doc, storage } from "~/utils/firebase";
 import { ref, getDownloadURL, uploadBytesResumable } from "firebase/storage";
 import { useEffect, useState } from "react";
@@ -109,6 +109,10 @@ const files = [
 	},
 ];
 
+const update_onboarding = async ({ entity_id, group_id, data }) => {
+	return set_doc(["onboarding", group_id], { ...data, entity_id, group_id }, true);
+};
+
 const get_bankstatement_files = () => {
 	let current_month = moment().format("M").toLowerCase();
 
@@ -136,13 +140,14 @@ const get_files_by_type = (type) => {
 	}
 };
 
-const File = ({ file: file_props }) => {
+const File = ({ file: file_props, onboard }) => {
 	const { pathname } = useLocation();
 	let [file_name, set_file_name] = useState("");
 	let [selected_file, set_selected_file] = useState(undefined);
 	const [progress, set_progress] = useState(undefined);
 	let group_id = get_group_id(pathname);
 	let entity_id = get_entity_id(pathname);
+	const [uploaded, set_uploaded] = useState(false);
 
 	const onUpload = async (file) => {
 		console.log("onUpload");
@@ -200,16 +205,17 @@ const File = ({ file: file_props }) => {
 					id: payload.id,
 					download_url: payload.download_url,
 					path: payload.path,
+					...file_props,
 				},
 			};
 
 			console.log("event_payload");
 			console.log(event_payload);
 
+			set_uploaded(true);
+			await update_onboarding({ entity_id, group_id, data: { [`${file_props.type}.${file_props.name}`]: true } });
 			await set_doc(["events", event_id], event_payload);
 			await set_doc(["vault", id], payload);
-
-			// set_files(["files"], [...files, payload]);
 		};
 
 		uploadTask.on("state_changed", next, error, complete);
@@ -228,6 +234,22 @@ const File = ({ file: file_props }) => {
 			onUpload(selected_file);
 		}
 	}, [selected_file]);
+
+	useEffect(() => {
+		let file_name = file_props.name;
+		let file_type = file_props.type;
+		let file_id = `${file_type}.${file_name}`;
+		let onboard_keys = pipe(keys)(onboard);
+
+		let has_file_key = includes(file_id, onboard_keys);
+		if (has_file_key) set_uploaded(true);
+
+		console.log("file_dataaa");
+		console.log(onboard_keys);
+		console.log(file_id);
+		console.log("has_file_key");
+		console.log(has_file_key);
+	}, []);
 
 	const UploadFileButton = () => {
 		return (
@@ -262,11 +284,14 @@ const File = ({ file: file_props }) => {
 			</div>
 			<div className="flex flex-col w-full mt-5">
 				<div className="w-full bg-gray-200 rounded-full h-2.5 dark:bg-gray-700">
-					<div className={`bg-blue-600 h-2.5 rounded-full w-0`} style={{ width: `${progress}%` }}></div>
+					<div
+						className={`bg-blue-600 h-2.5 rounded-full w-0`}
+						style={{ width: uploaded ? "100%" : `${progress}%` }}
+					></div>
 				</div>
 			</div>
 			<div className="flex flex-col mt-5">
-				{progress !== 100 && (
+				{progress !== 100 && uploaded == false && (
 					<div className="flex flex-row gap-x-3">
 						{/* <div className="flex flex-col items-center justify-center rounded-full bg-white px-2.5 py-1 text-xs font-semibold text-gray-900 border cursor-pointer">
 							Don't have
@@ -281,7 +306,7 @@ const File = ({ file: file_props }) => {
 	);
 };
 
-const Upload = ({ title, subtitle, type }) => {
+const Upload = ({ type, onboard }) => {
 	let files = get_files_by_type(type);
 
 	// console.log("files");
@@ -302,7 +327,7 @@ const Upload = ({ title, subtitle, type }) => {
 				{pipe(
 					mapIndexed((file, index) => (
 						<li key={index} className="flex flex-col w-full  py-5 border rounded-lg px-3">
-							<File file={file} />
+							<File file={file} onboard={onboard} />
 						</li>
 					))
 				)(files)}
@@ -311,10 +336,10 @@ const Upload = ({ title, subtitle, type }) => {
 	);
 };
 
-export default function ApplicationDocumentsUpload({ type, title, subtitle }) {
+export default function ApplicationDocumentsUpload({ type, title, subtitle, onboard = {} }) {
 	return (
 		<div className="flex flex-col w-full">
-			<Upload type={type} title={title} subtitle={subtitle} />
+			<Upload type={type} title={title} subtitle={subtitle} onboard={onboard} />
 		</div>
 	);
 }
