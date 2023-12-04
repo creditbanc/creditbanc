@@ -15,6 +15,10 @@ const usePlaidStore = create((set) => ({
 	set_state: (path, value) => set((state) => pipe(mod(...path)(() => value))(state)),
 }));
 
+const update_onboarding = async ({ entity_id, group_id, step = undefined }) => {
+	return set_doc(["onboarding", group_id], { entity_id, group_id, plaid: true }, true);
+};
+
 export const loader = async ({ request }) => {
 	let location = new URL(request.url);
 	let { origin } = location;
@@ -83,6 +87,7 @@ export default function PlaidOauth() {
 			console.log(payload);
 
 			await set_doc(["plaid_credentials", group_id], payload);
+			await update_onboarding({ entity_id, group_id });
 			console.log("plaid_credentials_saved");
 			navigate(`/financial/accounts/resource/e/${entity_id}/g/${group_id}`);
 		}

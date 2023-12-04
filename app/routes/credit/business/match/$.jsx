@@ -19,6 +19,7 @@ import Entity from "~/api/client/Entity";
 import { fold } from "~/utils/operators";
 import { useLoaderData, useLocation, useNavigate, useSubmit } from "@remix-run/react";
 import BusinessReport from "~/api/client/BusinessReport";
+import { set_doc } from "~/utils/firebase";
 
 let route_logger = `credit.business.match`;
 let action_start = "credit.business.match.action.start";
@@ -28,6 +29,10 @@ let loader_response = "loader.response";
 
 let use_view_store = store();
 const subject = new Subject();
+
+const update_onboarding = async ({ entity_id, group_id, step = undefined }) => {
+	return set_doc(["onboarding", group_id], { entity_id, group_id, business_credit_report: true }, true);
+};
 
 const action_subject = subject.pipe(
 	rxfilter((event) => event.id === action_start),
@@ -98,6 +103,8 @@ export const action = async ({ request }) => {
 		let group_id = get_group_id(request.url);
 		// let redirect_url = `${origin}/credit/report/business/experian/status/resource/e/${entity_id}/g/${group_id}`;
 		let redirect_url = `${origin}/home/resource/e/${entity_id}/g/${group_id}`;
+
+		await update_onboarding({ entity_id, group_id });
 
 		subject.next({
 			id: action_response,
