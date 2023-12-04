@@ -16,7 +16,7 @@ const usePlaidStore = create((set) => ({
 	set_state: (path, value) => set((state) => pipe(mod(...path)(() => value))(state)),
 }));
 
-const update_onboarding = async ({ entity_id, group_id, step = undefined }) => {
+const update_onboarding = async ({ entity_id, group_id }) => {
 	return set_doc(["onboarding", group_id], { entity_id, group_id, plaid: true }, true);
 };
 

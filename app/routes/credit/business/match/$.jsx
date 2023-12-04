@@ -31,7 +31,7 @@ let loader_response = "loader.response";
 let use_view_store = store();
 const subject = new Subject();
 
-const update_onboarding = async ({ entity_id, group_id, step = undefined }) => {
+const update_onboarding = async ({ entity_id, group_id }) => {
 	return set_doc(["onboarding", group_id], { entity_id, group_id, business_credit_report: true }, true);
 };
 

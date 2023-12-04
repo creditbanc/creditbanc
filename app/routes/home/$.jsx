@@ -1,7 +1,7 @@
 import { Link, useLocation } from "@remix-run/react";
 import { get_session_entity_id } from "~/utils/auth.server";
 import { get_entity_id, get_group_id, store, mapIndexed, currency, capitalize, classNames } from "~/utils/helpers";
-import { __, curry, pipe } from "ramda";
+import { __, curry, filter, includes, keys, pipe } from "ramda";
 import { useLoaderData } from "@remix-run/react";
 import axios from "axios";
 import { useEffect } from "react";
@@ -93,9 +93,10 @@ export const loader = async ({ request }) => {
 	let personal_response = personal_report.scores.report_sha.user_token.fold;
 	let business_response = business_report.experian_facts.business_info.scores.report_sha.fold;
 
-	let application_entity_id = "dd947710-075d-4e68-8cb2-3726851a6ed1";
+	// let application_entity_id = "dd947710-075d-4e68-8cb2-3726851a6ed1";
 
-	let application = from(get_doc(["application", application_entity_id]));
+	let application = from(get_doc(["application", entity_id]));
+	let onboard = from(get_doc(["onboarding", group_id]));
 
 	let payload = forkJoin({
 		personal_response,
@@ -103,26 +104,37 @@ export const loader = async ({ request }) => {
 		entity_response,
 		business_entity_response,
 		application,
+		onboard,
 	}).pipe(
-		rxmap(({ personal_response, business_response, entity_response, business_entity_response, application }) => {
-			return {
-				business_info: business_response.business_info,
-				business_scores: business_response.scores,
-				business_report_sha: business_response.report_sha,
-				personal_scores: personal_response.scores,
-				personal_report_sha: personal_response.report_sha,
-				entity_id,
-				entity: entity_response.identity,
-				plan_id: entity_response.plan_id,
-				business_entity_id,
-				business_entity: business_entity_response.identity,
+		rxmap(
+			({
+				personal_response,
+				business_response,
+				entity_response,
+				business_entity_response,
 				application,
-				business_report_is_empty: business_response.business_report_is_empty,
-				user_token: personal_response.user_token,
-				experian_facts: business_response.experian_facts,
-				financials: {},
-			};
-		})
+				onboard,
+			}) => {
+				return {
+					business_info: business_response.business_info,
+					business_scores: business_response.scores,
+					business_report_sha: business_response.report_sha,
+					personal_scores: personal_response.scores,
+					personal_report_sha: personal_response.report_sha,
+					entity_id,
+					entity: entity_response.identity,
+					plan_id: entity_response.plan_id,
+					business_entity_id,
+					business_entity: business_entity_response.identity,
+					application,
+					business_report_is_empty: business_response.business_report_is_empty,
+					user_token: personal_response.user_token,
+					experian_facts: business_response.experian_facts,
+					financials: {},
+					onboard,
+				};
+			}
+		)
 	);
 
 	let response = await lastValueFrom(payload.pipe(fold(on_success(request), on_error)));
@@ -487,7 +499,7 @@ const Accordion = ({ header, body, open = true }) => {
 	);
 };
 
-const OnboardSteps = () => {
+const OnboardSteps = ({ steps }) => {
 	let { pathname } = useLocation();
 	let entity_id = get_entity_id(pathname);
 	let group_id = get_group_id(pathname);
@@ -498,21 +510,27 @@ const OnboardSteps = () => {
 
 	return (
 		<ul role="list" className="divide-y divide-gray-100">
-			{account_setup_steps.map((person, id) => (
+			{account_setup_steps.map((step, id) => (
 				<Link
-					to={person.href({ entity_id, group_id })}
-					key={person.id}
+					to={step.href({ entity_id, group_id })}
+					key={step.id}
 					className="flex justify-between gap-x-6 py-2 px-5 cursor-pointer"
 				>
 					<div className="flex flex-row items-center min-w-0 gap-x-4">
-						<person.icon className="h-5 w-5 text-gray-600" />
+						<step.icon className="h-5 w-5 text-gray-600" />
 
 						<div className="min-w-0 flex-auto">
-							<p className="text-sm font-semibold leading-6 text-gray-600">{person.item}</p>
+							<p className="text-sm font-semibold leading-6 text-gray-600">{step.item}</p>
 						</div>
 					</div>
 					<div className="hidden shrink-0 sm:flex sm:flex-col justify-center">
-						<CheckCircleIcon className="h-5 w-5 text-[#56CF9E]" aria-hidden="true" />
+						{steps[step.id] == true && (
+							<CheckCircleIcon className="h-5 w-5 text-[#56CF9E]" aria-hidden="true" />
+						)}
+
+						{steps[step.id] !== true && (
+							<CheckCircleIcon className="h-5 w-5 text-red-500" aria-hidden="true" />
+						)}
 					</div>
 				</Link>
 			))}
@@ -520,7 +538,42 @@ const OnboardSteps = () => {
 	);
 };
 
-const OnboardModal = () => {
+const OnboardModal = ({ onboard }) => {
+	console.log("onboard");
+	console.log(onboard);
+
+	let has_business_credit_report = onboard?.business_credit_report;
+	let has_personal_credit_report = onboard?.personal_credit_report;
+	let num_of_tax_returns_uploaded = pipe(keys, filter(includes("taxreturns")))(onboard);
+	let tax_returns_completed = num_of_tax_returns_uploaded >= 4;
+	let num_of_bank_statements_uploaded = pipe(keys, filter(includes("bankstatements")))(onboard);
+	let bank_statements_completed = num_of_bank_statements_uploaded >= 4;
+	let has_plaid = onboard?.plaid;
+
+	let is_onboard_incomplete = includes(false, [
+		has_business_credit_report,
+		has_personal_credit_report,
+		tax_returns_completed,
+		bank_statements_completed,
+	]);
+
+	console.log("num_of_bank_statements_uploaded");
+	console.log(num_of_bank_statements_uploaded);
+	console.log(is_onboard_incomplete);
+
+	let steps = {
+		businesscreditreport: has_business_credit_report,
+		personalcreditreport: has_personal_credit_report,
+		taxreturns: tax_returns_completed,
+		bankstatements: bank_statements_completed,
+		plaid: has_plaid,
+	};
+
+	console.log("steps");
+	console.log(steps);
+
+	if (!is_onboard_incomplete) return null;
+
 	return (
 		<Modal id="onboard_modal" classes="w-[500px] bg-white rounded">
 			<div className="flex flex-col w-full">
@@ -542,7 +595,7 @@ const OnboardModal = () => {
 					></iframe>
 				</div>
 				<div className="flex flex-col w-full">
-					<OnboardSteps />
+					<OnboardSteps steps={steps} />
 				</div>
 			</div>
 		</Modal>
@@ -557,7 +610,7 @@ export default function Home() {
 	let loader = use_loader_store((state) => state);
 	let entity_id = get_entity_id(pathname);
 	let group_id = get_group_id(pathname);
-	let { user_token, experian_facts = {}, business_scores = {} } = loader;
+	let { user_token, experian_facts = {}, business_scores = {}, onboard = {} } = loader;
 	let { businessHeader = {} } = experian_facts;
 	let { businessName } = businessHeader;
 	let set_modal = useModalStore((state) => state.set_modal);
@@ -576,7 +629,7 @@ export default function Home() {
 
 	return (
 		<div className="w-full h-full flex flex-col overflow-hidden bg-white">
-			<OnboardModal />
+			<OnboardModal onboard={onboard} />
 			<div className="flex flex-col h-full w-full bg-white items-center gap-y-[60px] overflow-y-scroll scrollbar-none">
 				<div className="flex flex-col max-w-4xl text-center mt-[40px]">
 					<h1 className="text-4xl font-bold tracking-tight text-gray-900 sm:text-6xl">{businessName}</h1>

@@ -9,7 +9,7 @@ const bank_img = "/images/bank.jpg";
 const taxone_img = "/images/taxone.jpg";
 const taxtwo_img = "/images/taxtwo.jpg";
 import ApplicationDocumentsUpload from "~/components/ApplicationDocumentsUpload";
-import { useLoaderData } from "@remix-run/react";
+import { Link, useLoaderData, useLocation, useNavigate } from "@remix-run/react";
 
 export const action = async ({ request }) => {
 	console.log("request.url");
@@ -62,6 +62,9 @@ const SectionHeading = ({ headline, subheadline }) => {
 
 export default function Container() {
 	const { onboard } = useLoaderData();
+	let { pathname } = useLocation();
+	let entity_id = get_entity_id(pathname);
+	let group_id = get_group_id(pathname);
 
 	return (
 		<div className="flex flex-col items-center w-full h-full overflow-y-scroll pb-10 justify-center">
@@ -78,6 +81,14 @@ export default function Container() {
 				</div>
 				<div className="flex flex-col w-full my-[40px]">
 					<ApplicationDocumentsUpload type={"taxreturns"} onboard={onboard} />
+				</div>
+				<div className="flex flex-col w-full items-center">
+					<Link
+						to={`/home/resource/e/${entity_id}/g/${group_id}`}
+						className="flex flex-col bg-[#56CF9E] py-3 px-4 rounded-full text-white w-1/2 items-center cursor-pointer"
+					>
+						Done
+					</Link>
 				</div>
 			</div>
 		</div>

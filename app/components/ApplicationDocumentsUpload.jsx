@@ -209,9 +209,6 @@ const File = ({ file: file_props, onboard }) => {
 				},
 			};
 
-			console.log("event_payload");
-			console.log(event_payload);
-
 			set_uploaded(true);
 			await update_onboarding({ entity_id, group_id, data: { [`${file_props.type}.${file_props.name}`]: true } });
 			await set_doc(["events", event_id], event_payload);
