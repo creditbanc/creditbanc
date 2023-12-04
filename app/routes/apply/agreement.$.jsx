@@ -39,6 +39,28 @@ const send_welcome_email = async ({ entity_id, group_id, origin }) => {
 	return email_response?.data;
 };
 
+const send_new_application_sms = async ({ entity_id, group_id, origin }) => {
+	let post_url = `${origin}/sms/send/resource/e/${entity_id}/g/${group_id}`;
+
+	var formdata = new FormData();
+	formdata.append("payload", JSON.stringify({ entity_id, group_id, to: "3052578007" }));
+
+	let config = {
+		method: "post",
+		maxBodyLength: Infinity,
+		data: formdata,
+		headers: { "Content-Type": "multipart/form-data" },
+		url: post_url,
+	};
+
+	let email_response = await axios(config);
+
+	console.log("email_response");
+	console.log(email_response?.data);
+
+	return email_response?.data;
+};
+
 export const action = async ({ request }) => {
 	console.log("request.url");
 	console.log(request.url);
@@ -68,7 +90,8 @@ export const action = async ({ request }) => {
 	let { business_start_date, ...business } = test_identity_three;
 	let business_start_date_string = `${business_start_date.year}-${business_start_date.month}-${business_start_date.day}`;
 
-	send_welcome_email({ entity_id, group_id, origin });
+	await send_welcome_email({ entity_id, group_id, origin });
+	await send_new_application_sms({ entity_id, group_id, origin });
 
 	var formdata = new FormData();
 	formdata.append("payload", JSON.stringify({ ...business, business_start_date: business_start_date_string }));
