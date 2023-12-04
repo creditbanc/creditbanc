@@ -557,9 +557,7 @@ const OnboardSteps = ({ steps }) => {
 							<CheckCircleIcon className="h-5 w-5 text-[#56CF9E]" aria-hidden="true" />
 						)}
 
-						{steps[step.id] !== true && (
-							<CheckCircleIcon className="h-5 w-5 text-red-500" aria-hidden="true" />
-						)}
+						{steps[step.id] !== true && <XCircleIcon className="h-5 w-5 text-red-500" aria-hidden="true" />}
 					</div>
 				</Link>
 			))}
