@@ -30,6 +30,11 @@ const update_onboarding = async ({ entity_id, group_id, step = undefined }) => {
 	return set_doc(["onboarding", group_id], { entity_id, group_id, personal_credit_report: true }, true);
 };
 
+const new_notification = async ({ entity_id, group_id, type }) => {
+	let notification_id = uuidv4();
+	return set_doc(["notification", notification_id], { type, id, entity_id, group_id });
+};
+
 export const action = async ({ request }) => {
 	let { origin } = new URL(request.url);
 	let { payload: form } = await form_params(request);
@@ -77,6 +82,7 @@ export const action = async ({ request }) => {
 
 	await set_doc(["credit_reports", report_id], pipe(rfilter((v) => v !== undefined))(new_report_payload));
 	await update_onboarding({ entity_id, group_id });
+	await new_notification({ entity_id, group_id, type: "new_personal_credit_report" });
 
 	return redirect(`/credit/report/personal/personal/resource/e/${entity_id}/g/${group_id}`);
 

@@ -8,6 +8,7 @@ import { create_axios_form, get_entity_id, get_group_id, inspect } from "~/utils
 import { useEffect, useState } from "react";
 import { set_doc } from "~/utils/firebase";
 import { get_session_entity_id } from "~/utils/auth.server";
+import { v4 as uuidv4 } from "uuid";
 
 const usePlaidStore = create((set) => ({
 	link_token: "",
@@ -17,6 +18,11 @@ const usePlaidStore = create((set) => ({
 
 const update_onboarding = async ({ entity_id, group_id, step = undefined }) => {
 	return set_doc(["onboarding", group_id], { entity_id, group_id, plaid: true }, true);
+};
+
+const new_notification = async ({ entity_id, group_id, type }) => {
+	let notification_id = uuidv4();
+	return set_doc(["notification", notification_id], { type, id, entity_id, group_id });
 };
 
 export const loader = async ({ request }) => {
@@ -88,6 +94,8 @@ export default function PlaidOauth() {
 
 			await set_doc(["plaid_credentials", group_id], payload);
 			await update_onboarding({ entity_id, group_id });
+			await new_notification({ entity_id, group_id, type: "new_plaid_account" });
+
 			console.log("plaid_credentials_saved");
 			navigate(`/financial/accounts/resource/e/${entity_id}/g/${group_id}`);
 		}

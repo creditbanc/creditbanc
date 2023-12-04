@@ -12,9 +12,15 @@ import { redirect } from "@remix-run/node";
 import { navigation } from "./navigation";
 import { filter } from "shades";
 import axios from "axios";
+import { v4 as uuidv4 } from "uuid";
 
 const update_onboarding = async ({ entity_id, group_id, step }) => {
 	return set_doc(["onboarding", group_id], { step, entity_id, group_id }, true);
+};
+
+const new_notification = async ({ entity_id, group_id, type }) => {
+	let notification_id = uuidv4();
+	return set_doc(["notification", notification_id], { type, id, entity_id, group_id });
 };
 
 export const action = async ({ request }) => {
@@ -73,6 +79,7 @@ export const action = async ({ request }) => {
 
 	// let email_response = await axios(config);
 	await update_onboarding({ entity_id, group_id, step });
+	await new_notification({ entity_id, group_id, type: "loan_application_started" });
 
 	let next = pipe(filter({ id: "lp" }), head, get("next"))(navigation);
 	return create_user_session(entity_id, next({ entity_id, group_id }));

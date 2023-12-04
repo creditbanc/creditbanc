@@ -20,6 +20,7 @@ import { fold } from "~/utils/operators";
 import { useLoaderData, useLocation, useNavigate, useSubmit } from "@remix-run/react";
 import BusinessReport from "~/api/client/BusinessReport";
 import { set_doc } from "~/utils/firebase";
+import { v4 as uuidv4 } from "uuid";
 
 let route_logger = `credit.business.match`;
 let action_start = "credit.business.match.action.start";
@@ -32,6 +33,11 @@ const subject = new Subject();
 
 const update_onboarding = async ({ entity_id, group_id, step = undefined }) => {
 	return set_doc(["onboarding", group_id], { entity_id, group_id, business_credit_report: true }, true);
+};
+
+const new_notification = async ({ entity_id, group_id, type }) => {
+	let notification_id = uuidv4();
+	return set_doc(["notification", notification_id], { type, id, entity_id, group_id });
 };
 
 const action_subject = subject.pipe(
@@ -105,6 +111,7 @@ export const action = async ({ request }) => {
 		let redirect_url = `${origin}/home/resource/e/${entity_id}/g/${group_id}`;
 
 		await update_onboarding({ entity_id, group_id });
+		await new_notification({ entity_id, group_id, type: "new_business_credit_report" });
 
 		subject.next({
 			id: action_response,

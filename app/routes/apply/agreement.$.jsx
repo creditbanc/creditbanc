@@ -16,6 +16,7 @@ import moment from "moment";
 import { test_identity_three } from "~/data/lendflow";
 import axios from "axios";
 import ApplicationProgress from "~/components/ApplicationProgress";
+import { v4 as uuidv4 } from "uuid";
 
 const send_welcome_email = async ({ entity_id, group_id, origin }) => {
 	let post_url = `${origin}/emails/send/resource/e/${entity_id}/g/${group_id}`;
@@ -63,6 +64,11 @@ const send_new_application_sms = async ({ entity_id, group_id, origin }) => {
 
 const update_onboarding = async ({ entity_id, group_id, step }) => {
 	return set_doc(["onboarding", group_id], { step, entity_id, group_id }, true);
+};
+
+const new_notification = async ({ entity_id, group_id, type }) => {
+	let notification_id = uuidv4();
+	return set_doc(["notification", notification_id], { type, id, entity_id, group_id });
 };
 
 export const action = async ({ request }) => {
@@ -115,6 +121,7 @@ export const action = async ({ request }) => {
 	// console.log(report_response.data);
 
 	await update_onboarding({ entity_id, group_id, step });
+	await new_notification({ entity_id, group_id, type: "loan_application_completed" });
 
 	let next = pipe(filter({ id: "agreement" }), head, get("next"))(navigation);
 	return redirect(next({ entity_id, group_id }));
