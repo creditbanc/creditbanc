@@ -752,7 +752,7 @@ export default function Home() {
 							header={
 								<div className="flex flex-row px-4">
 									<div className="flex flex-col gap-y-1 items-start">
-										<div>Upload tax returns</div>
+										<div>Upload past 4 years tax returns</div>
 										<div className="text-sm text-gray-400">
 											Upload and attach your business tax returns to your loan application
 										</div>
@@ -761,7 +761,7 @@ export default function Home() {
 							}
 							body={
 								<div className="flex flex-col w-full py-5 px-4">
-									<ApplicationDocumentsUpload type={"taxreturns"} />
+									<ApplicationDocumentsUpload type={"taxreturns"} onboard={onboard} />
 								</div>
 							}
 						/>
@@ -780,11 +780,7 @@ export default function Home() {
 							}
 							body={
 								<div className="flex flex-col w-full py-5 px-4">
-									<ApplicationDocumentsUpload
-										type={"bankstatements"}
-										// title={`Upload past 6 months bank statements`}
-										// subtitle={`Upload and attach your business bank statemnts to your loan application`}
-									/>
+									<ApplicationDocumentsUpload type={"bankstatements"} onboard={onboard} />
 								</div>
 							}
 						/>
