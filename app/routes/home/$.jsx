@@ -289,11 +289,11 @@ const account_setup_steps = [
 	},
 ];
 
-const AccountSetupItem = ({ activityItem }) => {
+const AccountSetupItem = ({ activityItem, completed }) => {
 	return (
 		<>
 			<div className="relative flex h-6 w-6 flex-none items-center justify-center bg-white">
-				{activityItem.completed === true ? (
+				{completed === true ? (
 					<CheckCircleIcon className="h-6 w-6 text-[#56cf9e]" aria-hidden="true" />
 				) : (
 					<XCircleIcon className="h-6 w-6 text-red-600" aria-hidden="true" />
@@ -313,16 +313,46 @@ let AccountSetupItems = {
 	item: AccountSetupItem,
 };
 
-const AccountSetupItemComponent = ({ activityItem }) => {
+const AccountSetupItemComponent = ({ activityItem, completed }) => {
 	let SetupItemComponent = AccountSetupItems["item"];
 	// let SetupItemComponent = AccountSetupItems[activityItem.type];
-	return <SetupItemComponent activityItem={activityItem} />;
+	return <SetupItemComponent activityItem={activityItem} completed={completed} />;
 };
 
-const AccountFeed = () => {
+const AccountFeed = ({ onboard }) => {
 	let { pathname } = useLocation();
 	let entity_id = get_entity_id(pathname);
 	let group_id = get_group_id(pathname);
+
+	let has_business_credit_report = onboard?.business_credit_report;
+	let has_personal_credit_report = onboard?.personal_credit_report;
+	let num_of_tax_returns_uploaded = pipe(keys, filter(includes("taxreturns")))(onboard);
+	let tax_returns_completed = num_of_tax_returns_uploaded >= 4;
+	let num_of_bank_statements_uploaded = pipe(keys, filter(includes("bankstatements")))(onboard);
+	let bank_statements_completed = num_of_bank_statements_uploaded >= 4;
+	let has_plaid = onboard?.plaid;
+
+	let is_onboard_incomplete = includes(false, [
+		has_business_credit_report,
+		has_personal_credit_report,
+		tax_returns_completed,
+		bank_statements_completed,
+	]);
+
+	console.log("num_of_bank_statements_uploaded");
+	console.log(num_of_bank_statements_uploaded);
+	console.log(is_onboard_incomplete);
+
+	let steps = {
+		businesscreditreport: has_business_credit_report,
+		personalcreditreport: has_personal_credit_report,
+		taxreturns: tax_returns_completed,
+		bankstatements: bank_statements_completed,
+		plaid: has_plaid,
+	};
+
+	console.log("steps");
+	console.log(steps);
 
 	return (
 		<div className="flex flex-col w-full">
@@ -348,7 +378,6 @@ const AccountFeed = () => {
 							<>
 								<img
 									src={activityItem.person.imageUrl}
-									alt=""
 									className="relative mt-3 h-6 w-6 flex-none rounded-full bg-gray-50"
 								/>
 								<div className="flex-auto rounded-md p-3 ring-1 ring-inset ring-gray-200">
@@ -370,7 +399,7 @@ const AccountFeed = () => {
 								</div>
 							</>
 						) : (
-							<AccountSetupItemComponent activityItem={activityItem} />
+							<AccountSetupItemComponent activityItem={activityItem} completed={steps[activityItem.id]} />
 						)}
 					</Link>
 				))}
@@ -782,7 +811,7 @@ export default function Home() {
 							<Advisor />
 						</div>
 						<div className="flex flex-col border rounded p-5">
-							<AccountFeed />
+							<AccountFeed onboard={onboard} />
 						</div>
 					</div>
 				</div>
