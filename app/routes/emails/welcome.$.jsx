@@ -1,57 +1,76 @@
-import { render } from "@react-email/render";
 import sendgrid from "@sendgrid/mail";
-import { Html } from "@react-email/html";
-import { json } from "@remix-run/node";
-import axios from "axios";
-import { get_session_entity_id } from "~/utils/auth.server";
-import { get_group_id } from "~/utils/helpers";
+import { Tailwind } from "@react-email/components";
 
-// sendgrid.setApiKey(process.env.SENDGRID);
+sendgrid.setApiKey(process.env.SENDGRID);
 
-export const action = async ({ request }) => {
-	// const emailHtml = render(<Email />);
-
-	// const options = {
-	// 	from: "1infiniteloop.end@gmail.com",
-	// 	to: "1infiniteloop.end@gmail.com",
-	// 	subject: "Welcome to CreditBanc",
-	// 	html: emailHtml,
-	// };
-
-	// await sendgrid.send(options);
-	return json({ message: "success" });
-};
-
-export const loader = async ({ request }) => {
-	let { origin, pathname } = new URL(request.url);
-	let entity_id = await get_session_entity_id(request);
-	let group_id = get_group_id(pathname);
-
-	let response = await axios({
-		method: "post",
-		url: `${origin}/emails/welcome/resource/e/${entity_id}/g/${group_id}`,
-	});
-
-	return null;
-};
-
-export default function Email() {
+export default function Email({ entity_id, origin }) {
 	return (
-		<Html lang="en">
-			<div className="flex flex-col h-full border rounded gap-y-3 w-[700px] p-6">
-				<div>Welcome to CreditBanc</div>
-				<div>We're excited to help you understand your business credit</div>
-				<div>
-					knowing your business and personal credit scores is one of the best investments you can do for your
-					business. This is what lenders look at when deciding to give you a loan or credit card.
+		<Tailwind>
+			<div className="block w-[700px] border border-solid border-gray-300 text-sm break-words">
+				<div className="block border-0 border-b border-solid border-gray-300 w-full">
+					<img
+						className="block h-[30px] py-[15px] px-[10px]"
+						src={"http://creditbanc.io/images/logos/cb_logo_3.png"}
+						alt="CreditBanc"
+					/>
 				</div>
-
-				<div>Now what? Watch this 3-minute video to learn what creditbanc can do.</div>
-				<div>
-					<div>Cheers,</div>
-					<div>The CreditBanc Team</div>
+				<div className="block w-[90%] mx-auto">
+					<div className="block w-full my-[15px]">
+						<div className="block py-1 my-1">Hi Daniel,</div>
+						<div className="block py-1 my-1">
+							We're thrilled to join you on the path to securing the funding your business deserves. At
+							Creditbanc, your success is our mission.
+						</div>
+						<div className="block py-1 my-1">
+							<div className="font-semibold">Take the Next Steps:</div>
+						</div>
+						<div className="block py-1 my-1">
+							Complete Your Application: You're on the right track. Let's finish strong:
+						</div>
+						<div className="block py-1 my-1">
+							<a href="#" className="text-blue-600 underline">
+								Resume Application
+							</a>
+						</div>
+						<div className="block py-1 my-1">
+							<a href="#" className="text-blue-600 underline">
+								Upload Past 4 Months Bank Statements
+							</a>
+						</div>
+						<div className="block py-1 my-1">
+							<div className="font-semibold">Quick Intro to Creditbanc Network Finance:</div>
+						</div>
+						<div className="block py-1 my-1">
+							<div className="ml-[20px]">
+								<div className="block my-[10px]">
+									- We're Your Advocate: As a FinTech company with a vast network of 75+ trusted
+									lenders, we secure the best rates and terms for you.
+								</div>
+								<div className="block my-[10px]">
+									- One-Stop Funding Hub: Say goodbye to complexity. Explore SBA loans, credit lines,
+									revenue-based financing, and more – all in one place.
+								</div>
+								<div className="block my-[10px]">
+									- No Credit Score Impact: Soft credit checks by our lenders ensure your score stays
+									untouched.
+								</div>
+							</div>
+						</div>
+						<div className="block py-1 my-1">
+							Ready to Accelerate? Schedule a chat with our funding advisors:
+						</div>
+						<div className="block py-1 my-1">
+							<a href="#" className="text-blue-600 underline">
+								Schedule a call here
+							</a>
+						</div>
+						<div className="block py-1 my-1">
+							or Call: 5125372291 to reach Daniel Bedoya, your funding analyst.
+						</div>
+						<div className="block py-1 my-1">Thanks for choosing Creditbanc. Exciting times are ahead!</div>
+					</div>
 				</div>
 			</div>
-		</Html>
+		</Tailwind>
 	);
 }
