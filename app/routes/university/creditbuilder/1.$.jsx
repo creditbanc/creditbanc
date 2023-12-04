@@ -8,18 +8,25 @@ import CurriculumAccordion from "~/components/CurriculumAccordion";
 export const loader = async ({ request }) => {
 	console.log("course_loader");
 	let course_id = get_resource_id(request.url);
-	let resources = pipe(get("sections", all, "resources", all), flatten)(curriculum);
+
+	let course = pipe(
+		filter((course) => course.id == "creditbuilder"),
+		head
+	)(curriculum);
+
+	let resources = pipe(get("sections", all, "resources", all), flatten)(course);
+
 	let resource = pipe(filter({ id: course_id }), head)(resources);
 
 	let resource_index = findIndex((resource) => resource.id == course_id)(resources);
 	let next_resource = resources[resource_index + 1];
 	let next_href = next_resource?.href;
 
-	return { resource: { ...resource, next_href }, curriculum };
+	return { resource: { ...resource, next_href }, course };
 };
 
 export default function Course() {
-	let { resource } = useLoaderData();
+	let { resource, course } = useLoaderData();
 	let { pathname } = useLocation();
 	let entity_id = get_entity_id(pathname);
 	let group_id = get_group_id(pathname);
@@ -30,10 +37,10 @@ export default function Course() {
 			<div className="flex flex-col w-full lg:w-[70%] h-full rounded overflow-scroll scrollbar-none ">
 				<div className="flex flex-col w-full bg-white rounded px-5 h-full">
 					<div className="flex flex-row justify-between items-center border-b border-gray-200 bg-white py-1 sticky top-0 z-10">
-						<h3 className="text-base font-semibold leading-6 text-gray-900 my-2">{resource.title}</h3>
+						<h3 className="text-base font-semibold leading-6 text-gray-900 my-2">{resource?.title}</h3>
 
 						<Link
-							to={resource.next_href}
+							to={resource?.next_href}
 							type="button"
 							className="rounded-full bg-green-400 px-2.5 py-1 text-xs font-semibold text-white shadow-sm hover:bg-green-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-500"
 						>
@@ -45,7 +52,7 @@ export default function Course() {
 							<div className="relative pb-[56.25%] h-0 overflow-hidden">
 								<iframe
 									className="absolute top-0 left-0 w-full h-full"
-									src={resource.url}
+									src={resource?.url}
 									title="YouTube video player"
 									frameBorder="0"
 									allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
@@ -69,7 +76,7 @@ export default function Course() {
 					</div>
 
 					<div className="flex flex-col w-full my-3">
-						<CurriculumAccordion curriculum={curriculum} />
+						<CurriculumAccordion curriculum={course} />
 					</div>
 				</div>
 			</div>

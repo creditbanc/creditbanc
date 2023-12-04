@@ -13,14 +13,19 @@ import { CheckCircleIcon } from "@heroicons/react/24/solid";
 export const loader = async ({ request }) => {
 	console.log("course_loader");
 	let course_id = get_resource_id(request.url);
-	let resources = pipe(get("sections", all, "resources", all), flatten)(curriculum);
+	let course = pipe(
+		filter((course) => course.id == "creditbuilder"),
+		head
+	)(curriculum);
+
+	let resources = pipe(get("sections", all, "resources", all), flatten)(course);
 	let resource = pipe(filter({ id: course_id }), head)(resources);
 
 	let resource_index = findIndex((resource) => resource.id == course_id)(resources);
 	let next_resource = resources[resource_index + 1];
 	let next_href = next_resource?.href;
 
-	return { resource: { ...resource, next_href }, curriculum };
+	return { resource: { ...resource, next_href }, course };
 };
 
 const resources = [
@@ -310,7 +315,7 @@ const Content = () => {
 };
 
 export default function Course() {
-	let { resource, curriculum } = useLoaderData();
+	let { resource, course } = useLoaderData();
 	let { pathname } = useLocation();
 	let entity_id = get_entity_id(pathname);
 	let group_id = get_group_id(pathname);
@@ -361,7 +366,7 @@ export default function Course() {
 					</div>
 
 					<div className="flex flex-col w-full my-3">
-						<CurriculumAccordion curriculum={curriculum} />
+						<CurriculumAccordion curriculum={course} />
 					</div>
 				</div>
 			</div>

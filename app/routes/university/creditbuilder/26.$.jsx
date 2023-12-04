@@ -20,7 +20,7 @@ export const loader = async ({ request }) => {
 	let next_resource = resources[resource_index + 1];
 	let next_href = next_resource?.href;
 
-	return { resource: { ...resource, next_href }, curriculum };
+	return { resource: { ...resource, next_href }, course };
 };
 
 let useSliderStore = store({ is_open: false, selected_id: "KeyBank Business Rewards Mastercard" });
@@ -235,7 +235,7 @@ const SidePanel = () => {
 };
 
 export default function Course() {
-	let { resource, curriculum = [] } = useLoaderData();
+	let { resource, course = [] } = useLoaderData();
 	let { pathname } = useLocation();
 	let entity_id = get_entity_id(pathname);
 	let group_id = get_group_id(pathname);
@@ -283,7 +283,7 @@ export default function Course() {
 					</div>
 
 					<div className="flex flex-col w-full my-3">
-						<CurriculumAccordion curriculum={curriculum} />
+						<CurriculumAccordion curriculum={course} />
 					</div>
 				</div>
 			</div>
