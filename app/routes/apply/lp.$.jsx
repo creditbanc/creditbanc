@@ -19,8 +19,8 @@ const update_onboarding = async ({ entity_id, group_id, step }) => {
 };
 
 const new_notification = async ({ entity_id, group_id, type }) => {
-	let notification_id = uuidv4();
-	return set_doc(["notification", notification_id], { type, id, entity_id, group_id });
+	let id = uuidv4();
+	return set_doc(["notification", id], { type, id, entity_id, group_id });
 };
 
 export const action = async ({ request }) => {

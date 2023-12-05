@@ -67,8 +67,8 @@ const update_onboarding = async ({ entity_id, group_id, step }) => {
 };
 
 const new_notification = async ({ entity_id, group_id, type }) => {
-	let notification_id = uuidv4();
-	return set_doc(["notification", notification_id], { type, id, entity_id, group_id });
+	let id = uuidv4();
+	return set_doc(["notification", id], { type, id, entity_id, group_id });
 };
 
 export const action = async ({ request }) => {
@@ -115,17 +115,16 @@ export const action = async ({ request }) => {
 		url: post_url,
 	};
 
-	// let report_response = await axios(config);
-
 	// console.log("report_response");
 	// console.log(report_response.data);
 
 	await update_onboarding({ entity_id, group_id, step });
 	await new_notification({ entity_id, group_id, type: "loan_application_completed" });
 
-	let next = pipe(filter({ id: "agreement" }), head, get("next"))(navigation);
-	return redirect(next({ entity_id, group_id }));
-	// return Response.redirect(report_response.data);
+	// let next = pipe(filter({ id: "agreement" }), head, get("next"))(navigation);
+	// return redirect(next({ entity_id, group_id }));
+	let report_response = await axios(config);
+	return Response.redirect(report_response.data);
 	// return create_user_session(entity_id, next({ entity_id, group_id }));
 };
 

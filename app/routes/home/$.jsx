@@ -1,7 +1,7 @@
 import { Link, useLocation } from "@remix-run/react";
 import { get_session_entity_id } from "~/utils/auth.server";
 import { get_entity_id, get_group_id, store, mapIndexed, currency, capitalize, classNames } from "~/utils/helpers";
-import { __, curry, filter, includes, keys, pipe } from "ramda";
+import { __, curry, filter, includes, keys, length, pipe } from "ramda";
 import { useLoaderData } from "@remix-run/react";
 import axios from "axios";
 import { useEffect } from "react";
@@ -326,10 +326,10 @@ const AccountFeed = ({ onboard }) => {
 
 	let has_business_credit_report = onboard?.business_credit_report;
 	let has_personal_credit_report = onboard?.personal_credit_report;
-	let num_of_tax_returns_uploaded = pipe(keys, filter(includes("taxreturns")))(onboard);
-	let tax_returns_completed = num_of_tax_returns_uploaded >= 4;
-	let num_of_bank_statements_uploaded = pipe(keys, filter(includes("bankstatements")))(onboard);
-	let bank_statements_completed = num_of_bank_statements_uploaded >= 4;
+	let num_of_tax_returns_uploaded = pipe(keys, filter(includes("taxreturns")), length)(onboard);
+	let tax_returns_completed = num_of_tax_returns_uploaded == 4;
+	let num_of_bank_statements_uploaded = pipe(keys, filter(includes("bankstatements")), length)(onboard);
+	let bank_statements_completed = num_of_bank_statements_uploaded == 4;
 	let has_plaid = onboard?.plaid;
 
 	let is_onboard_incomplete = includes(false, [
@@ -340,7 +340,7 @@ const AccountFeed = ({ onboard }) => {
 	]);
 
 	console.log("num_of_bank_statements_uploaded");
-	console.log(num_of_bank_statements_uploaded);
+	console.log(num_of_tax_returns_uploaded);
 	console.log(is_onboard_incomplete);
 
 	let steps = {
