@@ -655,12 +655,12 @@ const LoanTypes = () => {
 							<dd className="mt-4 flex flex-auto flex-col text-base leading-7 text-gray-600">
 								<p className="flex-auto">{feature.description}</p>
 								<p className="mt-6 flex flex-col w-full">
-									<a
-										href={feature.href}
+									<Link
+										to={`/apply/lp`}
 										className="text-sm font-semibold leading-6 bg-[#56cf9e] text-white text-center py-3 rounded"
 									>
 										Apply Now
-									</a>
+									</Link>
 								</p>
 							</dd>
 						</div>
