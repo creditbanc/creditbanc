@@ -110,15 +110,14 @@ export default function Container() {
 			<div className="flex flex-col justify-center h-4/5 w-[600px]">
 				<div className="flex flex-col my-4">
 					<SectionHeading
-						headline={<div>What is your estimated gross annual revenue?</div>}
+						headline={<div>Let's talk money; how much are you bringing in a year?</div>}
 						subheadline={
 							<div className="flex flex-row gap-x-2">
 								<div>
-									Your gross annual revenue is the total amount of money your business makes during a
-									12-month period. Do not deduct any expenses or taxes. This helps us narrow down the
-									right type of loan for you.
+									Your gross annual revenue is basically the total amount of money your business makes
+									annually without taking out any expenses or taxes. This helps us figure out which
+									loan is the right fit for you.
 								</div>
-								{/* <div className="font-semibold">Learn more ›</div> */}
 							</div>
 						}
 					/>

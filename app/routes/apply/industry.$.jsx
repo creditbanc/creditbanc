@@ -178,12 +178,13 @@ export default function Container() {
 			<div className="flex flex-col justify-center h-4/5 w-[600px]">
 				<div className="flex flex-col my-4">
 					<SectionHeading
-						headline={<div>What is your business industry?</div>}
+						headline={<div>What industry are you in?</div>}
 						subheadline={
 							<div className="flex flex-row gap-x-2">
 								<div>
-									If you don’t see an option that fits your company, please select the closest option.
-									You can select the exact industry further down in the application.
+									Don't see an option that fits your company? Go ahead and pick the most applicable
+									one now; you'll be able to select the exact industry further down in the
+									application.
 								</div>
 							</div>
 						}

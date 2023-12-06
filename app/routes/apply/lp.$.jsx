@@ -90,11 +90,12 @@ const Header = () => {
 		<div className="flex flex-col w-full bg-[#2C81AB] items-center text-white">
 			<div className="flex flex-col w-[1100px] items-center my-10 mb-20 gap-y-5 text-center">
 				<div className="flex flex-col text-3xl">
-					The best financing. The best bank loan. One fast and simple application.
+					Looking for the best way to finance your business? We've got you covered!
 				</div>
 				<div className="flex flex-col text-xl">
-					Our online lending network matches you with the best bank or lending partner to meet your business
-					needs. See if you pre-qualify for up to $500,000 in 5 minutes. No impact to your credit score
+					With one simple application, our online lending network can help you find the perfect bank loan or
+					lending partner. It takes just five minutes to see if you pre-qualify for up to $500,000... all
+					without worrying about your credit score taking a hit.
 				</div>
 			</div>
 		</div>
@@ -384,12 +385,12 @@ export default function Container() {
 				<div className="flex flex-col w-[70%] -mt-[30px] gap-y-6">
 					<div className="flex flex-col bg-white p-5 shadow rounded border">
 						<SectionHeading
-							headline={`Step 1: Tell us a bit about you`}
+							headline={`Step 1: Tell us a little bit about yourself.`}
 							subheadline={
 								<div>
 									<div>With CreditBanc, one application is all you need to pre-qualify.</div>
 									<div>
-										Choose the financing you prefer, or let us recommend the best fit for your
+										Choose your preferred financing, or let us recommend the best fit for your
 										business.
 									</div>
 								</div>
@@ -400,12 +401,12 @@ export default function Container() {
 					<div className="flex flex-col bg-white p-5 pb-0 shadow rounded border">
 						<SectionHeading
 							headline={`Step 2: How much do you want to borrow?`}
-							subheadline={`Use the slider to select your loan amount or enter an amount in the text field.`}
+							subheadline={`Use the slider to select your loan amount.`}
 						/>
 						<LoanAmountSlider />
 					</div>
 					<div className="flex flex-col bg-white p-5 pb-7 shadow rounded border">
-						<SectionHeading headline={`Step 3: Which type of financing do you prefer?`} />
+						<SectionHeading headline={`Step 3: Next, tell us which type of financing you prefer:`} />
 						<LoansList />
 					</div>
 					<div className="flex flex-col w-full items-center gap-y-4">

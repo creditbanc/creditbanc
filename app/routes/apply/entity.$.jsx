@@ -171,9 +171,9 @@ export default function Container() {
 					<SectionHeading
 						headline={<div>What is your business entity type?</div>}
 						subheadline={
-							<div className="flex flex-row gap-x-2">
-								<div>This helps us personalize your experience based on your business type.</div>
-								{/* <div className="font-semibold">Learn more ›</div> */}
+							<div className="flex flex-col gap-x-2">
+								<div>This helps us personalize your experience.</div>
+								<div>(After all, different roles have different needs.)</div>
 							</div>
 						}
 					/>

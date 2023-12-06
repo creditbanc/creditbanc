@@ -168,10 +168,10 @@ export default function Container() {
 			<div className="flex flex-col justify-center h-4/5 w-[600px]">
 				<div className="flex flex-col my-4">
 					<SectionHeading
-						headline={<div>Lets start your loan application</div>}
+						headline={<div>Ok, great! We're ready to start your loan application.</div>}
 						subheadline={
 							<div className="flex flex-col gap-x-2">
-								<div className="">Business Info</div>
+								<div className="">Start by telling us about your business:</div>
 							</div>
 						}
 					/>

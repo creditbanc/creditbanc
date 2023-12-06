@@ -252,7 +252,9 @@ export default function Container() {
 			</div>
 			<div className="flex flex-col justify-center h-4/5 w-[600px]">
 				<div className="flex flex-col my-4">
-					<SectionHeading headline={<div>Does the business have IRS or State Tax Liens?</div>} />
+					<SectionHeading
+						headline={<div>Does the business have any outstanding tax liens with the IRS or State?</div>}
+					/>
 				</div>
 				<div className="flex flex-col w-full">
 					<Liens />

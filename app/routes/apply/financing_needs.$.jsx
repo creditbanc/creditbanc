@@ -33,7 +33,9 @@ export const action = async ({ request }) => {
 	let { timeline } = params;
 	let payload = { timeline: JSON.parse(timeline), step };
 
-	let response = from(update_doc(["application", entity_id], payload)).pipe(rxmap(() => ({ entity_id, group_id })));
+	let response = from(set_doc(["application", entity_id], payload, true)).pipe(
+		rxmap(() => ({ entity_id, group_id }))
+	);
 
 	await lastValueFrom(response);
 
@@ -152,11 +154,10 @@ export default function Container() {
 			<div className="flex flex-col justify-center h-4/5">
 				<div className="flex flex-col my-4">
 					<SectionHeading
-						headline={<div>First, how soon do you need funding?</div>}
+						headline={<div>Thanks! Now, let's talk timeline. How soon do you need funding?</div>}
 						subheadline={
 							<div className="flex flex-row gap-x-2 justify-center">
 								<div>This helps us find the best loan for your needs.</div>
-								<div className="font-semibold">Learn more ›</div>
 							</div>
 						}
 					/>

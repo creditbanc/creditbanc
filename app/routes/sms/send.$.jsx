@@ -1,9 +1,6 @@
 import { form_params } from "~/utils/helpers";
 
-const accountSid = "AC6747ef20287b68adcc399d4e29c9fbf5";
-const authToken = "9e017ccb7e5fc206baab6b5a43ada791";
-
-const client = require("twilio")(accountSid, authToken);
+const client = require("twilio")(process.env.TWILLIO_ACCOUNT_SID, process.env.TWILLIO_AUTH_TOKEN);
 
 export const action = async ({ request }) => {
 	let form = await form_params(request);

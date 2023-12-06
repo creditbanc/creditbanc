@@ -267,7 +267,9 @@ export default function Container() {
 			</div>
 			<div className="flex flex-col justify-center h-4/5 w-[600px]">
 				<div className="flex flex-col my-4">
-					<SectionHeading headline={<div>Do you currently have any daily or weekly payment loans?</div>} />
+					<SectionHeading
+						headline={<div>Do you have any loans that require daily or weekly payments at the moment?</div>}
+					/>
 				</div>
 				<div className="flex flex-col w-full">
 					<Loans />

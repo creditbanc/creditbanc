@@ -173,11 +173,12 @@ export default function Container() {
 			<div className="flex flex-col justify-center h-4/5 w-[600px]">
 				<div className="flex flex-col my-4">
 					<SectionHeading
-						headline={<div>Where is your business located?</div>}
+						headline={<div>Tell us where your business is located so we can MapQuest directions.</div>}
 						subheadline={
 							<div className="flex flex-col gap-x-2">
-								<div>If you have multiple locations, we only need the primary business address.</div>
-								<div className="">If you don’t have a business address, enter your home address.</div>
+								<div>Just kidding. But we do need an address.</div>
+								<div>Have multiple locations? Please provide the primary business address.</div>
+								<div> No business address? Your home one will be fine.</div>
 							</div>
 						}
 					/>

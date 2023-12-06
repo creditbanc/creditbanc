@@ -131,7 +131,7 @@ export default function Container() {
 			</div>
 			<div className="flex flex-col justify-center h-4/5 w-[600px]">
 				<div className="flex flex-col my-4">
-					<SectionHeading headline={<div>What is the last year your company filed taxes?</div>} />
+					<SectionHeading headline={<div>When did your company file its last tax return?</div>} />
 				</div>
 				<div className="flex flex-col w-full">
 					<AddressForm />

@@ -413,8 +413,9 @@ export default function Container() {
 						subheadline={
 							<div className="flex flex-row gap-x-2">
 								<div>
-									Enter all owners of the business who own 20% or more of roas. Rest easy, this won’t
-									impact your credit and won’t show up as an inquiry on your credit report.
+									Anyone who owns 20%+ of the business needs to be listed below. (Don't worry - this
+									isn't going to impact your credit score; in fact, it won't even show up as an
+									inquiry.)
 								</div>
 							</div>
 						}
