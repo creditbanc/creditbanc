@@ -269,7 +269,7 @@ const MainContent = () => {
 					auctor fermentum dignissim. Lacus diam tincidunt ac cursus in vel. Mauris varius vulputate et
 					ultrices hac adipiscing egestas. Iaculis convallis ac tempor et ut. Ac lorem vel integer orci.
 				</p> */}
-				<h2 className="mt-16 text-2xl font-bold tracking-tight text-gray-900 text-center">Subheadline Here</h2>
+				<h2 className="mt-16 text-4xl font-bold tracking-tight text-gray-900 text-center">Subheadline Here</h2>
 				<p className="mt-6">
 					But that's not all. You'll not only have access to financial education and resources to help you
 					make savvy and informed decisions, but we'll also match you up with a business advisor to keep you
