@@ -16,6 +16,7 @@ const business_stock_four = "/images/businessstock/four.jpg";
 const business_stock_five = "/images/businessstock/five.jpg";
 import { Plans } from "~/components/IndexPricingPlans";
 import { plans } from "~/data/index_plans";
+import { CheckCircleIcon } from "@heroicons/react/20/solid";
 
 const navigation = [
 	{ name: "Pro", href: "/comingsoon" },
@@ -223,12 +224,10 @@ export const loader = async ({ request }) => {
 	return null;
 };
 
-import { CheckCircleIcon, InformationCircleIcon } from "@heroicons/react/20/solid";
-
 const MainContent = () => {
 	return (
-		<div className="bg-white px-6 py-[50px]">
-			<div className="mx-auto max-w-4xl text-base leading-7 text-gray-700">
+		<div className="bg-white py-[50px]">
+			<div className="mx-auto text-base leading-7 text-gray-700">
 				<p className="text-base font-semibold leading-7 text-[#56cf9e]">Introducing</p>
 				<h1 className="mt-2 text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
 					JavaScript for Beginners
@@ -238,7 +237,7 @@ const MainContent = () => {
 					diam eget aliquam. Quisque id at vitae feugiat egestas ac. Diam nulla orci at in viverra scelerisque
 					eget. Eleifend egestas fringilla sapien.
 				</p>
-				<div className="mt-10 max-w-2xl">
+				<div className="mt-10">
 					<p>
 						Faucibus commodo massa rhoncus, volutpat. Dignissim sed eget risus enim. Mattis mauris semper
 						sed amet vitae sed turpis id. Id dolor praesent donec est. Odio penatibus risus viverra tellus
@@ -308,7 +307,7 @@ const MainContent = () => {
 						varius sit neque erat velit.
 					</p>
 				</div>
-				<figure className="mt-16">
+				{/* <figure className="mt-16">
 					<img
 						className="aspect-video rounded-xl bg-gray-50 object-cover"
 						src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?ixlib=rb-1.2.1&auto=format&fit=facearea&w=1310&h=873&q=80&facepad=3"
@@ -318,8 +317,8 @@ const MainContent = () => {
 						<InformationCircleIcon className="mt-0.5 h-5 w-5 flex-none text-gray-300" aria-hidden="true" />
 						Faucibus commodo massa rhoncus, volutpat.
 					</figcaption>
-				</figure>
-				<div className="mt-16 max-w-2xl">
+				</figure> */}
+				<div className="mt-16">
 					<h2 className="text-2xl font-bold tracking-tight text-gray-900">
 						Everything you need to get up and running
 					</h2>
@@ -646,7 +645,7 @@ const featuresthree = [
 const LoanTypes = () => {
 	return (
 		<div className="flex flex-col w-full">
-			<div className="mx-auto max-w-2xl lg:text-center">
+			<div className="mx-auto max-w-2xl lg:text-center my-8">
 				{/* <h2 className="text-base font-semibold leading-7 text-indigo-600">Deploy faster</h2> */}
 				<p className="mt-2 text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
 					Access to the right loan for right now
@@ -824,6 +823,10 @@ export default function LandingPage() {
 					<div className="flex flex-col w-[1200px] items-center gap-y-[80px] overflow-hidden">
 						<div className="flex flex-col w-full">
 							<LoanTypes />
+						</div>
+
+						<div className="flex flex-col w-full">
+							<MainContent />
 						</div>
 
 						<div className="flex flex-col w-full">
