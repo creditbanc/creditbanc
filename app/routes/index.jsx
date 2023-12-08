@@ -1,6 +1,12 @@
 import { ChevronRightIcon } from "@heroicons/react/20/solid";
 import { Disclosure } from "@headlessui/react";
 import { MinusCircleIcon } from "@heroicons/react/24/outline";
+import { useState } from "react";
+import { Link } from "@remix-run/react";
+const pc_bg = "/images/pc_bg.png";
+const cb_logo_3 = "/images/logos/cb_logo_3.png";
+import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
+import { Dialog } from "@headlessui/react";
 
 const HeaderLogos = () => {
 	return (
@@ -155,118 +161,6 @@ const MainFeatures = () => {
 	);
 };
 
-const peopletwo = [
-	{
-		name: "Leslie Alexander",
-		email: "leslie.alexander@example.com",
-		role: "Co-Founder / CEO",
-		imageUrl:
-			"https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
-		href: "#",
-		lastSeen: "3h ago",
-		lastSeenDateTime: "2023-01-23T13:23Z",
-	},
-	{
-		name: "Michael Foster",
-		email: "michael.foster@example.com",
-		role: "Co-Founder / CTO",
-		imageUrl:
-			"https://images.unsplash.com/photo-1519244703995-f4e0f30006d5?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
-		href: "#",
-		lastSeen: "3h ago",
-		lastSeenDateTime: "2023-01-23T13:23Z",
-	},
-	{
-		name: "Dries Vincent",
-		email: "dries.vincent@example.com",
-		role: "Business Relations",
-		imageUrl:
-			"https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
-		href: "#",
-		lastSeen: null,
-	},
-	{
-		name: "Lindsay Walton",
-		email: "lindsay.walton@example.com",
-		role: "Front-end Developer",
-		imageUrl:
-			"https://images.unsplash.com/photo-1517841905240-472988babdf9?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
-		href: "#",
-		lastSeen: "3h ago",
-		lastSeenDateTime: "2023-01-23T13:23Z",
-	},
-	{
-		name: "Courtney Henry",
-		email: "courtney.henry@example.com",
-		role: "Designer",
-		imageUrl:
-			"https://images.unsplash.com/photo-1438761681033-6461ffad8d80?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
-		href: "#",
-		lastSeen: "3h ago",
-		lastSeenDateTime: "2023-01-23T13:23Z",
-	},
-	{
-		name: "Tom Cook",
-		email: "tom.cook@example.com",
-		role: "Director of Product",
-		imageUrl:
-			"https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
-		href: "#",
-		lastSeen: null,
-	},
-];
-
-const List = () => {
-	return (
-		<ul
-			role="list"
-			className="divide-y divide-gray-100 overflow-hidden bg-white shadow-sm ring-1 ring-gray-900/5 sm:rounded-xl"
-		>
-			{peopletwo.map((person) => (
-				<li
-					key={person.email}
-					className="relative flex justify-between gap-x-6 px-4 py-5 hover:bg-gray-50 sm:px-6"
-				>
-					<div className="flex min-w-0 gap-x-4">
-						<img className="h-12 w-12 flex-none rounded-full bg-gray-50" src={person.imageUrl} alt="" />
-						<div className="min-w-0 flex-auto">
-							<p className="text-sm font-semibold leading-6 text-gray-900">
-								<a href={person.href}>
-									<span className="absolute inset-x-0 -top-px bottom-0" />
-									{person.name}
-								</a>
-							</p>
-							<p className="mt-1 flex text-xs leading-5 text-gray-500">
-								<a href={`mailto:${person.email}`} className="relative truncate hover:underline">
-									{person.email}
-								</a>
-							</p>
-						</div>
-					</div>
-					<div className="flex shrink-0 items-center gap-x-4">
-						<div className="hidden sm:flex sm:flex-col sm:items-end">
-							<p className="text-sm leading-6 text-gray-900">{person.role}</p>
-							{person.lastSeen ? (
-								<p className="mt-1 text-xs leading-5 text-gray-500">
-									Last seen <time dateTime={person.lastSeenDateTime}>{person.lastSeen}</time>
-								</p>
-							) : (
-								<div className="mt-1 flex items-center gap-x-1.5">
-									<div className="flex-none rounded-full bg-emerald-500/20 p-1">
-										<div className="h-1.5 w-1.5 rounded-full bg-emerald-500" />
-									</div>
-									<p className="text-xs leading-5 text-gray-500">Online</p>
-								</div>
-							)}
-						</div>
-						<ChevronRightIcon className="h-5 w-5 flex-none text-gray-400" aria-hidden="true" />
-					</div>
-				</li>
-			))}
-		</ul>
-	);
-};
-
 const Accordion = ({ header, body, open = true }) => {
 	return (
 		<div className="flex flex-col items-start w-full text-sm">
@@ -303,20 +197,6 @@ const ListHeader = () => {
 	);
 };
 
-/*
-  This example requires some changes to your config:
-  
-  ```
-  // tailwind.config.js
-  module.exports = {
-    // ...
-    plugins: [
-      // ...
-      require('@tailwindcss/aspect-ratio'),
-    ],
-  }
-  ```
-*/
 const incentives = [
 	{
 		name: "Free shipping",
@@ -426,15 +306,105 @@ const Stats = () => {
 	);
 };
 
+const Header = () => {
+	const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+	return (
+		<header className="absolute inset-x-0 top-0 z-50 bg-white border-b">
+			<nav className="flex items-center justify-between p-6 lg:px-8" aria-label="Global">
+				<div className="flex lg:flex-1">
+					<Link href="/" className="-m-1.5 p-1.5">
+						<span className="sr-only">Credit Banc</span>
+						<img className="h-5 w-auto" src={cb_logo_3} alt="" />
+					</Link>
+				</div>
+				<div className="flex lg:hidden">
+					<button
+						type="button"
+						className="-m-2.5 inline-flex items-center justify-center rounded-md p-2.5 text-gray-700"
+						onClick={() => setMobileMenuOpen(true)}
+					>
+						<span className="sr-only">Open main menu</span>
+						<Bars3Icon className="h-6 w-6" aria-hidden="true" />
+					</button>
+				</div>
+				<div className="hidden lg:flex lg:gap-x-12">
+					{navigation.map((item) => (
+						<a key={item.name} href={item.href} className="text-sm font-semibold leading-6 text-gray-900">
+							{item.name}
+						</a>
+					))}
+				</div>
+				<div className="hidden lg:flex lg:flex-1 lg:justify-end">
+					<Link to={"/signin"} className="text-sm font-semibold leading-6 text-gray-900">
+						Sign In <span aria-hidden="true">&rarr;</span>
+					</Link>
+				</div>
+			</nav>
+			<Dialog as="div" className="lg:hidden" open={mobileMenuOpen} onClose={setMobileMenuOpen}>
+				<div className="fixed inset-0 z-50" />
+				<Dialog.Panel className="fixed inset-y-0 right-0 z-50 w-full overflow-y-auto bg-white px-6 py-6 sm:max-w-sm sm:ring-1 sm:ring-gray-900/10">
+					<div className="flex items-center justify-between">
+						<a href="#" className="visible sm:invisible -m-1.5 p-1.5">
+							<span className="sr-only">Your Company</span>
+							<img className="h-8 w-auto" src={cb_logo_3} alt="" />
+						</a>
+						<button
+							type="button"
+							className="-m-2.5 rounded-md p-2.5 text-gray-700 items-end"
+							onClick={() => setMobileMenuOpen(false)}
+						>
+							<span className="sr-only">Close menu</span>
+							<XMarkIcon className="h-6 w-6" aria-hidden="true" />
+						</button>
+					</div>
+					<div className="mt-6 flow-root">
+						<div className="-my-6 divide-y divide-gray-500/10">
+							<div className="space-y-2 py-6">
+								{navigation.map((item) => (
+									<a
+										key={item.name}
+										href={item.href}
+										className="-mx-3 block rounded-lg py-2 px-3 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50"
+									>
+										{item.name}
+									</a>
+								))}
+							</div>
+							<div className="py-6">
+								<Link
+									to="/signin"
+									className="-mx-3 block rounded-lg py-2.5 px-3 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50"
+								>
+									Sign In
+								</Link>
+							</div>
+						</div>
+					</div>
+				</Dialog.Panel>
+			</Dialog>
+		</header>
+	);
+};
+
+const navigation = [
+	{ name: "Pro", href: "/comingsoon" },
+	{ name: "Small Business Lending", href: "/comingsoon" },
+	{ name: "Tax Credits", href: "/comingsoon" },
+	{ name: "Business Valuations", href: "/comingsoon" },
+	{ name: "CB University", href: "/university/courses" },
+];
+
 export default function Container() {
 	return (
-		<div className="flex flex-col w-full h-full bg-[#F5F7FF] items-center overflow-y-scroll relative py-20">
+		<div className="flex flex-col w-full h-full bg-[#F5F7FF] items-center overflow-y-scroll relative py-20 poppins">
+			<Header />
+
 			<div className="flex flex-row w-[1200px] gap-x-4 my-8 h-[350px]">
 				<div className="flex flex-row flex-1 h-[100%] items-start">
 					<div>
-						<div className="flex flex-col py-3 gap-y-2">
+						<div className="flex flex-col py-3 gap-y-2 text-5xl text-[#1a3380]">
 							<div>Cloud Native</div>
-							<div>DMARC</div>
+							<div className="font-bold">DMARC</div>
 						</div>
 						<div className="flex flex-col gap-y-3">
 							<div>
@@ -447,16 +417,16 @@ export default function Container() {
 								Start DMARC Journey
 							</div>
 						</div>
-						<div>
+						{/* <div>
 							<HeaderLogos />
-						</div>
+						</div> */}
 					</div>
 				</div>
 				<div className="flex flex-row w-[600px] h-[100%]">
 					<div className="flex flex-col border-[10px] border-white rounded bg-black h-[100%] w-[100%]"></div>
 				</div>
 			</div>
-			<div className="mt-[100px] bg-gradient-to-r from-blue-600 via-blue-500 to-blue-600 w-full py-[60px]">
+			<div className="mt-[30px] bg-gradient-to-r from-blue-600 via-blue-500 to-blue-600 w-full py-[60px]">
 				<LogosBanner />
 			</div>
 			<div className="flex flex-col w-full items-center border-b bg-[#E9EEFF]">
@@ -475,14 +445,23 @@ export default function Container() {
 				</div>
 				<div className="flex flex-row relative w-[1200px] my-[30px] gap-x-4">
 					<div className="flex flex-col relative flex-1">
-						<img
+						<div>
+							<div style={{ position: "relative", paddingBottom: "54.0%", height: 0, zIndex: 1 }}>
+								<iframe
+									src="https://www.loom.com/embed/cf55ed26d3d64861bee405354139e805?sid=e8e260af-2f4c-4c38-9377-21a54c11e550"
+									frameborder="0"
+									webkitallowfullscreen
+									mozallowfullscreen
+									allowfullscreen
+									style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%" }}
+								></iframe>
+							</div>
+						</div>
+						{/* <img
 							className="w-[280px] absolute top-[60px] left-[140px] z-10"
 							src="https://easydmarc.com/img/home/redesign/peace-of-mind/layer-1.webp"
-						/>
-						<img
-							className="w-[600px] absolute top-0 left-0"
-							src="https://easydmarc.com/img/home/redesign/peace-of-mind/laptop-background.webp"
-						/>
+						/> */}
+						<img className="w-[600px] absolute top-0 left-0" src={pc_bg} />
 					</div>
 
 					<div className="flex flex-col w-[600px] gap-y-4">
