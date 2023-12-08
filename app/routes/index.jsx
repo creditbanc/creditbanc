@@ -4,6 +4,10 @@ import { MinusCircleIcon } from "@heroicons/react/24/outline";
 import { useState } from "react";
 import { Link } from "@remix-run/react";
 const pc_bg = "/images/pc_bg.png";
+const cashflow_bg = "/images/cashflow.png";
+const university_bg = "/images/university_bg.png";
+const permissions_bg = "/images/permissions.png";
+const vault_bg = "/images/vault_bg.png";
 const cb_logo_3 = "/images/logos/cb_logo_3.png";
 import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
 import { Dialog } from "@headlessui/react";
@@ -473,12 +477,7 @@ const CashFlow = () => {
 				</div>
 			</div>
 			<div className="flex flex-col w-[600px]">
-				<img
-					src="https://tailwindui.com/img/component-images/dark-project-app-screenshot.png"
-					alt="Product screenshot"
-					className="max-w-none rounded-xl shadow-xl ring-1 ring-gray-400/10"
-					width={600}
-				/>
+				<img src={cashflow_bg} alt="Product screenshot" className="max-w-none rounded-xl " width={600} />
 			</div>
 		</div>
 	);
@@ -526,12 +525,7 @@ const University = () => {
 				</div>
 			</div>
 			<div className="flex flex-col w-[600px]">
-				<img
-					src="https://tailwindui.com/img/component-images/dark-project-app-screenshot.png"
-					alt="Product screenshot"
-					className="max-w-none rounded-xl shadow-xl ring-1 ring-gray-400/10"
-					width={600}
-				/>
+				<img src={university_bg} alt="Product screenshot" className="max-w-none rounded-xl " width={600} />
 			</div>
 		</div>
 	);
@@ -541,12 +535,7 @@ const Vault = () => {
 	return (
 		<div className="flex flex-row w-[1200px] my-[50px] gap-x-6 justify-between text-[#1a3380]">
 			<div className="flex flex-col w-[600px]">
-				<img
-					src="https://tailwindui.com/img/component-images/dark-project-app-screenshot.png"
-					alt="Product screenshot"
-					className="max-w-none rounded-xl shadow-xl ring-1 ring-gray-400/10"
-					width={600}
-				/>
+				<img src={vault_bg} alt="Product screenshot" className="max-w-none rounded-xl" width={600} />
 			</div>
 			<div className="flex flex-col w-[500px]">
 				<div className="lg:max-w-lg">
@@ -681,20 +670,20 @@ export default function Container() {
 								our part to make it a bit easier for you, one click at a time.
 							</div>
 							<div className="flex flex-col px-4 py-3 bg-blue-500 text-white rounded-lg items-center cursor-pointer my-6">
-								Start DMARC Journey
+								Sign Up Now
 							</div>
 						</div>
 					</div>
 				</div>
 				<div className="flex flex-row w-[600px] h-[100%]">
-					<div className="flex flex-col border-[10px] border-white rounded bg-black h-[100%] w-[100%]"></div>
+					<img src={pc_bg} />
 				</div>
 			</div>
 			<div className="mt-[30px] bg-gradient-to-r from-blue-600 via-blue-500 to-blue-600 w-full py-[60px]">
 				<LogosBanner />
 			</div>
 
-			<div className="flex flex-col relative w-[1200px] my-[30px] gap-x-4">
+			{/* <div className="flex flex-col relative w-[1200px] my-[30px] gap-x-4">
 				<div>
 					<ListHeader />
 				</div>
@@ -761,8 +750,9 @@ export default function Container() {
 						/>
 					</div>
 				</div>
-			</div>
-			<div>
+			</div> */}
+
+			<div className="my-[50px]">
 				<Collage />
 			</div>
 
