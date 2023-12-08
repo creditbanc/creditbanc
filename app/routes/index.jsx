@@ -14,7 +14,7 @@ const HeaderLogos = () => {
 		<div className="py-4">
 			<div className="mx-auto max-w-7xl px-6 lg:px-8">
 				<div className="mx-auto max-w-2xl lg:max-w-none">
-					<h2 className="text-lg font-semibold leading-8 text-gray-900">
+					<h2 className="text-lg font-semibold leading-8 text-white">
 						Trusted by the world’s most innovative teams
 					</h2>
 					<div className="mx-auto mt-10 grid grid-cols-4 items-start gap-x-8 gap-y-10 sm:grid-cols-6 sm:gap-x-10 lg:mx-0 lg:grid-cols-5">
@@ -63,7 +63,7 @@ const HeaderLogos = () => {
 const LogosBanner = () => {
 	return (
 		<div className="mx-auto max-w-7xl px-6 lg:px-8">
-			<h2 className="text-center text-lg font-semibold leading-8 text-gray-900">
+			<h2 className="text-center text-lg font-semibold leading-8 text-white">
 				Trusted by the world’s most innovative teams
 			</h2>
 			<div className="mx-auto mt-10 grid max-w-lg grid-cols-4 items-center gap-x-8 gap-y-10 sm:max-w-xl sm:grid-cols-6 sm:gap-x-10 lg:mx-0 lg:max-w-none lg:grid-cols-5">
@@ -263,20 +263,16 @@ const Incentives = () => {
 const Stats = () => {
 	return (
 		<div className="mx-auto w-[1200px]">
-			<div className="mx-auto max-w-2xl lg:mx-0">
-				<h2 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
+			<div className="mx-auto lg:mx-0 text-[#1a3380]">
+				<h2 className="text-3xl font-bold tracking-tight  sm:text-4xl">
 					We approach the workplace as something that adds to our lives and adds value to world.
 				</h2>
-				<p className="mt-6 text-base leading-7 text-gray-600">
-					Diam nunc lacus lacus aliquam turpis enim. Eget hac velit est euismod lacus. Est non placerat nam
-					arcu. Cras purus nibh cursus sit eu in id. Integer vel nibh.
-				</p>
 			</div>
 			<div className="mx-auto mt-16 flex max-w-2xl flex-col gap-8 lg:mx-0 lg:mt-20 lg:max-w-none lg:flex-row lg:items-end">
 				<div className="flex flex-col-reverse justify-between gap-x-16 gap-y-8 rounded-2xl bg-gray-50 p-8 sm:w-3/4 sm:max-w-md sm:flex-row-reverse sm:items-end lg:w-72 lg:max-w-none lg:flex-none lg:flex-col lg:items-start">
-					<p className="flex-none text-3xl font-bold tracking-tight text-gray-900">250k</p>
+					<p className="flex-none text-3xl font-bold tracking-tight">250k</p>
 					<div className="sm:w-80 sm:shrink lg:w-auto lg:flex-none">
-						<p className="text-lg font-semibold tracking-tight text-gray-900">Users on the platform</p>
+						<p className="text-lg font-semibold tracking-tight ">Users on the platform</p>
 						<p className="mt-2 text-base leading-7 text-gray-600">
 							Vel labore deleniti veniam consequuntur sunt nobis.
 						</p>
@@ -397,7 +393,7 @@ const navigation = [
 
 const Collage = () => {
 	return (
-		<div className="mx-auto max-[1200px] px-6">
+		<div className="mx-auto max-[1200px] px-6 text-[#1a3380]">
 			<div className="mx-auto max-w-2xl gap-x-14 lg:mx-0 lg:flex lg:max-w-none lg:items-center">
 				<div className="w-full max-w-xl lg:shrink-0 xl:max-w-2xl text-[#1a3380]">
 					<h1 className="text-4xl font-bold tracking-tight  sm:text-6xl">
@@ -465,30 +461,15 @@ const Collage = () => {
 
 const CashFlow = () => {
 	return (
-		<div className="flex flex-row w-[1200px] my-[50px] gap-x-6 justify-between">
+		<div className="flex flex-row w-[1200px] my-[50px] gap-x-6 justify-between text-[#1a3380]">
 			<div className="flex flex-col w-[500px]">
 				<div className="lg:max-w-lg">
-					{/* <h2 className="text-base font-semibold leading-7 text-indigo-600">Deploy faster</h2> */}
-					<p className="mt-2 text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">CashFlow</p>
+					<p className="mt-2 text-3xl font-bold tracking-tight sm:text-4xl">Cash Flow</p>
 					<p className="mt-6 text-lg leading-8 text-gray-600">
 						We've got you covered! Credit Banc can help you build and monitor your personal and business
 						credit...and get you the cash you need when you need it - all without leaving our website. We’re
 						all about working smarter, not harder.
 					</p>
-					{/* <dl className="mt-10 max-w-xl space-y-8 text-base leading-7 text-gray-600 lg:max-w-none">
-						{featurestwo.map((feature) => (
-							<div key={feature.name} className="relative pl-9">
-								<dt className="inline font-semibold text-gray-900">
-									<feature.icon
-										className="absolute left-1 top-1 h-5 w-5 text-indigo-600"
-										aria-hidden="true"
-									/>
-									{feature.name}
-								</dt>{" "}
-								<dd className="inline">{feature.description}</dd>
-							</div>
-						))}
-					</dl> */}
 				</div>
 			</div>
 			<div className="flex flex-col w-[600px]">
@@ -505,7 +486,7 @@ const CashFlow = () => {
 
 const TaxCredits = () => {
 	return (
-		<div className="flex flex-row w-[1200px] my-[50px] gap-x-6 justify-between">
+		<div className="flex flex-row w-[1200px] my-[50px] gap-x-6 justify-between text-[#1a3380]">
 			<div className="flex flex-col w-[600px]">
 				<img
 					src="https://tailwindui.com/img/component-images/dark-project-app-screenshot.png"
@@ -516,8 +497,7 @@ const TaxCredits = () => {
 			</div>
 			<div className="flex flex-col w-[500px]">
 				<div className="lg:max-w-lg">
-					{/* <h2 className="text-base font-semibold leading-7 text-indigo-600">Deploy faster</h2> */}
-					<p className="mt-2 text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
+					<p className="mt-2 text-3xl font-bold tracking-tight sm:text-4xl">
 						Maximize Your Eligible Tax Credits with Credit Banc
 					</p>
 					<p className="mt-6 text-lg leading-8 text-gray-600">
@@ -525,20 +505,6 @@ const TaxCredits = () => {
 						get every dollar and cent you rightfully deserve. Because when your business thrives, so does
 						your bottom line. (And who doesn’t love a good bottom line?)
 					</p>
-					{/* <dl className="mt-10 max-w-xl space-y-8 text-base leading-7 text-gray-600 lg:max-w-none">
-						{featurestwo.map((feature) => (
-							<div key={feature.name} className="relative pl-9">
-								<dt className="inline font-semibold text-gray-900">
-									<feature.icon
-										className="absolute left-1 top-1 h-5 w-5 text-indigo-600"
-										aria-hidden="true"
-									/>
-									{feature.name}
-								</dt>{" "}
-								<dd className="inline">{feature.description}</dd>
-							</div>
-						))}
-					</dl> */}
 				</div>
 			</div>
 		</div>
@@ -547,12 +513,10 @@ const TaxCredits = () => {
 
 const University = () => {
 	return (
-		<div className="flex flex-row w-[1200px] my-[50px] gap-x-6 justify-between">
+		<div className="flex flex-row w-[1200px] my-[50px] gap-x-6 justify-between text-[#1a3380]">
 			<div className="flex flex-col w-[500px]">
 				<div className="lg:max-w-lg">
-					<p className="mt-2 text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
-						Knowledge Is Power.
-					</p>
+					<p className="mt-2 text-3xl font-bold tracking-tight sm:text-4xl">Knowledge Is Power.</p>
 					<p className="mt-6 text-lg leading-8 text-gray-600">
 						Listen, we know that financial literacy can feel like wading through alphabet soup, and we're
 						here to change that. Access our growing library of training videos on everything from credit
@@ -575,7 +539,7 @@ const University = () => {
 
 const Vault = () => {
 	return (
-		<div className="flex flex-row w-[1200px] my-[50px] gap-x-6 justify-between">
+		<div className="flex flex-row w-[1200px] my-[50px] gap-x-6 justify-between text-[#1a3380]">
 			<div className="flex flex-col w-[600px]">
 				<img
 					src="https://tailwindui.com/img/component-images/dark-project-app-screenshot.png"
@@ -586,7 +550,7 @@ const Vault = () => {
 			</div>
 			<div className="flex flex-col w-[500px]">
 				<div className="lg:max-w-lg">
-					<p className="mt-2 text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
+					<p className="mt-2 text-3xl font-bold tracking-tight sm:text-4xl">
 						Where Security and Convenience Go Hand-in-Hand
 					</p>
 					<p className="mt-6 text-lg leading-8 text-gray-600">
@@ -595,6 +559,100 @@ const Vault = () => {
 						documents; you can securely share the contents of your Vault with anyone who needs real-time
 						access.
 					</p>
+				</div>
+			</div>
+		</div>
+	);
+};
+
+const testimonials = [
+	{
+		body: "Laborum quis quam. Dolorum et ut quod quia. Voluptas numquam delectus nihil. Aut enim doloremque et ipsam.",
+		author: {
+			name: "Leslie Alexander",
+			handle: "lesliealexander",
+			imageUrl:
+				"https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
+		},
+	},
+	{
+		body: "Laborum quis quam. Dolorum et ut quod quia. Voluptas numquam delectus nihil. Aut enim doloremque et ipsam.",
+		author: {
+			name: "Leslie Alexander",
+			handle: "lesliealexander",
+			imageUrl:
+				"https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
+		},
+	},
+	{
+		body: "Laborum quis quam. Dolorum et ut quod quia. Voluptas numquam delectus nihil. Aut enim doloremque et ipsam.",
+		author: {
+			name: "Leslie Alexander",
+			handle: "lesliealexander",
+			imageUrl:
+				"https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
+		},
+	},
+	{
+		body: "Laborum quis quam. Dolorum et ut quod quia. Voluptas numquam delectus nihil. Aut enim doloremque et ipsam.",
+		author: {
+			name: "Leslie Alexander",
+			handle: "lesliealexander",
+			imageUrl:
+				"https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
+		},
+	},
+	{
+		body: "Laborum quis quam. Dolorum et ut quod quia. Voluptas numquam delectus nihil. Aut enim doloremque et ipsam.",
+		author: {
+			name: "Leslie Alexander",
+			handle: "lesliealexander",
+			imageUrl:
+				"https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
+		},
+	},
+	{
+		body: "Laborum quis quam. Dolorum et ut quod quia. Voluptas numquam delectus nihil. Aut enim doloremque et ipsam.",
+		author: {
+			name: "Leslie Alexander",
+			handle: "lesliealexander",
+			imageUrl:
+				"https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
+		},
+	},
+];
+
+const Testimonials = () => {
+	return (
+		<div className="mx-auto max-w-7xl px-6 lg:px-8">
+			<div className="mx-auto max-w-xl text-center">
+				<h2 className="text-lg font-semibold leading-8 tracking-tight text-indigo-600">Testimonials</h2>
+				<p className="mt-2 text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
+					We have worked with thousands of amazing people
+				</p>
+			</div>
+			<div className="mx-auto mt-16 flow-root max-w-2xl sm:mt-20 lg:mx-0 lg:max-w-none">
+				<div className="-mt-8 sm:-mx-4 sm:columns-2 sm:text-[0] lg:columns-3">
+					{testimonials.map((testimonial) => (
+						<div key={testimonial.author.handle} className="pt-8 sm:inline-block sm:w-full sm:px-4">
+							<figure className="rounded-2xl bg-gray-50 p-8 text-sm leading-6">
+								<blockquote className="text-gray-900">
+									<p>{`“${testimonial.body}”`}</p>
+								</blockquote>
+								<figcaption className="mt-6 flex items-center gap-x-4">
+									<img
+										className="h-10 w-10 rounded-full bg-gray-50"
+										src={testimonial.author.imageUrl}
+										alt=""
+									/>
+									<div>
+										<div className="font-semibold text-gray-900">{testimonial.author.name}</div>
+										<div className="text-gray-600">{`@${testimonial.author.handle}`}</div>
+									</div>
+								</figcaption>
+							</figure>
+						</div>
+					))}
 				</div>
 			</div>
 		</div>
@@ -610,13 +668,12 @@ export default function Container() {
 				<div className="flex flex-row flex-1 h-[100%] items-start">
 					<div>
 						<div className="flex flex-col py-3 gap-y-2 text-5xl text-[#1a3380]">
-							<div>Cloud Native</div>
-							<div className="font-bold">DMARC</div>
+							<div>Credit Banc</div>
+							<div className="font-bold text-lg">(pronounced like bank, just spelled fancy)</div>
 						</div>
 						<div className="flex flex-col gap-y-3">
 							<div>
-								Credit Banc (pronounced like bank, just spelled fancy) is a one-stop shop for everything
-								needed to fuel small business growth.
+								Credit Banc is a one-stop shop for everything needed to fuel small business growth.
 							</div>
 							<div>
 								We're not your average number crunchers - and this isn't your average
@@ -636,16 +693,7 @@ export default function Container() {
 			<div className="mt-[30px] bg-gradient-to-r from-blue-600 via-blue-500 to-blue-600 w-full py-[60px]">
 				<LogosBanner />
 			</div>
-			{/* <div className="flex flex-col w-full items-center border-b bg-[#E9EEFF]">
-				<div className="flex flex-col w-[1200px] mb-[30px]  pt-10">
-					<MainFeatures />
-					<div className="flex flex-col w-full items-center mt-[30px]">
-						<div className="flex flex-col w-[200px] bg-blue-500 py-3 items-center text-white rounded-lg cursor-pointer">
-							Request Demo
-						</div>
-					</div>
-				</div>
-			</div> */}
+
 			<div className="flex flex-col relative w-[1200px] my-[30px] gap-x-4">
 				<div>
 					<ListHeader />
@@ -717,9 +765,7 @@ export default function Container() {
 			<div>
 				<Collage />
 			</div>
-			{/* <div>
-				<Incentives />
-			</div> */}
+
 			<div>
 				<CashFlow />
 			</div>
@@ -730,7 +776,10 @@ export default function Container() {
 				<University />
 			</div>
 			<div>
-				<Stats />
+				<Vault />
+			</div>
+			<div>
+				<Testimonials />
 			</div>
 		</div>
 	);
