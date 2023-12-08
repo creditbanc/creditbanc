@@ -7,6 +7,7 @@ const pc_bg = "/images/pc_bg.png";
 const cb_logo_3 = "/images/logos/cb_logo_3.png";
 import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
 import { Dialog } from "@headlessui/react";
+import { CloudArrowUpIcon, LockClosedIcon, ServerIcon } from "@heroicons/react/20/solid";
 
 const HeaderLogos = () => {
 	return (
@@ -137,7 +138,7 @@ const MainFeatures = () => {
 	return (
 		<div className="mx-auto max-w-7xl px-6 lg:px-8">
 			<div className="mx-auto max-w-2xl lg:mx-0">
-				<h2 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">Our team</h2>
+				<h2 className="text-3xl font-bold tracking-tight text-[#1a3380]">Our Team</h2>
 				<p className="mt-6 text-lg leading-8 text-gray-600">
 					We’re a dynamic group of individuals who are passionate about what we do and dedicated to delivering
 					the best results for our clients.
@@ -187,9 +188,9 @@ const Accordion = ({ header, body, open = true }) => {
 
 const ListHeader = () => {
 	return (
-		<div className="mx-auto max-w-2xl text-center my-8">
-			<h2 className="mt-2 text-4xl font-bold tracking-tight text-gray-900 sm:text-6xl">Support center</h2>
-			<p className="mt-6 text-lg leading-8 text-gray-600">
+		<div className="mx-auto max-w-2xl text-center my-8 text-[#1a3380]">
+			<h2 className="mt-2 text-4xl font-bold tracking-tight sm:text-6xl">Support Center</h2>
+			<p className="mt-6 text-lg leading-8 ">
 				Anim aute id magna aliqua ad ad non deserunt sunt. Qui irure qui lorem cupidatat commodo. Elit sunt amet
 				fugiat veniam occaecat fugiat aliqua.
 			</p>
@@ -221,9 +222,16 @@ const Incentives = () => {
 	return (
 		<div className="mx-auto w-[1200px] py-10">
 			<div className="mx-auto max-w-2xl px-4 lg:max-w-none">
-				<div className="grid grid-cols-1 items-center gap-x-16 gap-y-10 lg:grid-cols-2">
+				<div className="grid grid-cols-1 items-center gap-x-16 gap-y-10 lg:grid-cols-2 text-[#1a3380]">
+					<div className="aspect-h-2 aspect-w-3 overflow-hidden rounded-lg bg-gray-100">
+						<img
+							src="https://tailwindui.com/img/ecommerce-images/incentives-07-hero.jpg"
+							alt=""
+							className="object-cover object-center"
+						/>
+					</div>
 					<div>
-						<h2 className="text-4xl font-bold tracking-tight text-gray-900">
+						<h2 className="text-4xl font-bold tracking-tight">
 							We built our business on great customer service
 						</h2>
 						<p className="mt-4 text-gray-500">
@@ -233,13 +241,6 @@ const Incentives = () => {
 							it.
 						</p>
 					</div>
-					<div className="aspect-h-2 aspect-w-3 overflow-hidden rounded-lg bg-gray-100">
-						<img
-							src="https://tailwindui.com/img/ecommerce-images/incentives-07-hero.jpg"
-							alt=""
-							className="object-cover object-center"
-						/>
-					</div>
 				</div>
 				<div className="mt-16 grid grid-cols-1 gap-x-8 gap-y-10 lg:grid-cols-3">
 					{incentives.map((incentive) => (
@@ -248,7 +249,7 @@ const Incentives = () => {
 								<img className="h-16 w-16" src={incentive.imageSrc} alt="" />
 							</div>
 							<div className="mt-4 sm:ml-6 sm:mt-0 lg:ml-0 lg:mt-6">
-								<h3 className="text-sm font-medium text-gray-900">{incentive.name}</h3>
+								<h3 className="text-sm font-medium ">{incentive.name}</h3>
 								<p className="mt-2 text-sm text-gray-500">{incentive.description}</p>
 							</div>
 						</div>
@@ -394,6 +395,212 @@ const navigation = [
 	{ name: "CB University", href: "/university/courses" },
 ];
 
+const Collage = () => {
+	return (
+		<div className="mx-auto max-[1200px] px-6">
+			<div className="mx-auto max-w-2xl gap-x-14 lg:mx-0 lg:flex lg:max-w-none lg:items-center">
+				<div className="w-full max-w-xl lg:shrink-0 xl:max-w-2xl text-[#1a3380]">
+					<h1 className="text-4xl font-bold tracking-tight  sm:text-6xl">
+						We’re changing the way people connect.
+					</h1>
+					<p className="relative mt-6 text-lg leading-8 text-gray-600 sm:max-w-md lg:max-w-none">
+						Cupidatat minim id magna ipsum sint dolor qui. Sunt sit in quis cupidatat mollit aute velit. Et
+						labore commodo nulla aliqua proident mollit ullamco exercitation tempor. Sint aliqua anim nulla
+						sunt mollit id pariatur in voluptate cillum. Eu voluptate tempor esse minim amet fugiat veniam
+						occaecat aliqua.
+					</p>
+				</div>
+				<div className="mt-14 flex justify-end gap-8 sm:-mt-44 sm:justify-start sm:pl-20 lg:mt-0 lg:pl-0">
+					<div className="ml-auto w-44 flex-none space-y-8 pt-32 sm:ml-0 sm:pt-80 lg:order-last lg:pt-36 xl:order-none xl:pt-80">
+						<div className="relative">
+							<img
+								src="https://images.unsplash.com/photo-1557804506-669a67965ba0?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&h=528&q=80"
+								alt=""
+								className="aspect-[2/3] w-full rounded-xl bg-gray-900/5 object-cover shadow-lg"
+							/>
+							<div className="pointer-events-none absolute inset-0 rounded-xl ring-1 ring-inset ring-gray-900/10" />
+						</div>
+					</div>
+					<div className="mr-auto w-44 flex-none space-y-8 sm:mr-0 sm:pt-52 lg:pt-36">
+						<div className="relative">
+							<img
+								src="https://images.unsplash.com/photo-1485217988980-11786ced9454?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&h=528&q=80"
+								alt=""
+								className="aspect-[2/3] w-full rounded-xl bg-gray-900/5 object-cover shadow-lg"
+							/>
+							<div className="pointer-events-none absolute inset-0 rounded-xl ring-1 ring-inset ring-gray-900/10" />
+						</div>
+						<div className="relative">
+							<img
+								src="https://images.unsplash.com/photo-1559136555-9303baea8ebd?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&crop=focalpoint&fp-x=.4&w=396&h=528&q=80"
+								alt=""
+								className="aspect-[2/3] w-full rounded-xl bg-gray-900/5 object-cover shadow-lg"
+							/>
+							<div className="pointer-events-none absolute inset-0 rounded-xl ring-1 ring-inset ring-gray-900/10" />
+						</div>
+					</div>
+					<div className="w-44 flex-none space-y-8 pt-32 sm:pt-0">
+						<div className="relative">
+							<img
+								src="https://images.unsplash.com/photo-1670272504528-790c24957dda?ixlib=rb-4.0.3&ixid=MnwxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&crop=left&w=400&h=528&q=80"
+								alt=""
+								className="aspect-[2/3] w-full rounded-xl bg-gray-900/5 object-cover shadow-lg"
+							/>
+							<div className="pointer-events-none absolute inset-0 rounded-xl ring-1 ring-inset ring-gray-900/10" />
+						</div>
+						<div className="relative">
+							<img
+								src="https://images.unsplash.com/photo-1670272505284-8faba1c31f7d?ixlib=rb-4.0.3&ixid=MnwxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&h=528&q=80"
+								alt=""
+								className="aspect-[2/3] w-full rounded-xl bg-gray-900/5 object-cover shadow-lg"
+							/>
+							<div className="pointer-events-none absolute inset-0 rounded-xl ring-1 ring-inset ring-gray-900/10" />
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	);
+};
+
+const CashFlow = () => {
+	return (
+		<div className="flex flex-row w-[1200px] my-[50px] gap-x-6 justify-between">
+			<div className="flex flex-col w-[500px]">
+				<div className="lg:max-w-lg">
+					{/* <h2 className="text-base font-semibold leading-7 text-indigo-600">Deploy faster</h2> */}
+					<p className="mt-2 text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">CashFlow</p>
+					<p className="mt-6 text-lg leading-8 text-gray-600">
+						We've got you covered! Credit Banc can help you build and monitor your personal and business
+						credit...and get you the cash you need when you need it - all without leaving our website. We’re
+						all about working smarter, not harder.
+					</p>
+					{/* <dl className="mt-10 max-w-xl space-y-8 text-base leading-7 text-gray-600 lg:max-w-none">
+						{featurestwo.map((feature) => (
+							<div key={feature.name} className="relative pl-9">
+								<dt className="inline font-semibold text-gray-900">
+									<feature.icon
+										className="absolute left-1 top-1 h-5 w-5 text-indigo-600"
+										aria-hidden="true"
+									/>
+									{feature.name}
+								</dt>{" "}
+								<dd className="inline">{feature.description}</dd>
+							</div>
+						))}
+					</dl> */}
+				</div>
+			</div>
+			<div className="flex flex-col w-[600px]">
+				<img
+					src="https://tailwindui.com/img/component-images/dark-project-app-screenshot.png"
+					alt="Product screenshot"
+					className="max-w-none rounded-xl shadow-xl ring-1 ring-gray-400/10"
+					width={600}
+				/>
+			</div>
+		</div>
+	);
+};
+
+const TaxCredits = () => {
+	return (
+		<div className="flex flex-row w-[1200px] my-[50px] gap-x-6 justify-between">
+			<div className="flex flex-col w-[600px]">
+				<img
+					src="https://tailwindui.com/img/component-images/dark-project-app-screenshot.png"
+					alt="Product screenshot"
+					className="max-w-none rounded-xl shadow-xl ring-1 ring-gray-400/10"
+					width={600}
+				/>
+			</div>
+			<div className="flex flex-col w-[500px]">
+				<div className="lg:max-w-lg">
+					{/* <h2 className="text-base font-semibold leading-7 text-indigo-600">Deploy faster</h2> */}
+					<p className="mt-2 text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
+						Maximize Your Eligible Tax Credits with Credit Banc
+					</p>
+					<p className="mt-6 text-lg leading-8 text-gray-600">
+						Let's put more money back in your pocket, ok? Our tax experts will work with you to ensure you
+						get every dollar and cent you rightfully deserve. Because when your business thrives, so does
+						your bottom line. (And who doesn’t love a good bottom line?)
+					</p>
+					{/* <dl className="mt-10 max-w-xl space-y-8 text-base leading-7 text-gray-600 lg:max-w-none">
+						{featurestwo.map((feature) => (
+							<div key={feature.name} className="relative pl-9">
+								<dt className="inline font-semibold text-gray-900">
+									<feature.icon
+										className="absolute left-1 top-1 h-5 w-5 text-indigo-600"
+										aria-hidden="true"
+									/>
+									{feature.name}
+								</dt>{" "}
+								<dd className="inline">{feature.description}</dd>
+							</div>
+						))}
+					</dl> */}
+				</div>
+			</div>
+		</div>
+	);
+};
+
+const University = () => {
+	return (
+		<div className="flex flex-row w-[1200px] my-[50px] gap-x-6 justify-between">
+			<div className="flex flex-col w-[500px]">
+				<div className="lg:max-w-lg">
+					<p className="mt-2 text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
+						Knowledge Is Power.
+					</p>
+					<p className="mt-6 text-lg leading-8 text-gray-600">
+						Listen, we know that financial literacy can feel like wading through alphabet soup, and we're
+						here to change that. Access our growing library of training videos on everything from credit
+						building to R&D tax credits to understanding balance sheets. No complicated jargon. No boring
+						PowerPoint. Just financial education without the fuss.
+					</p>
+				</div>
+			</div>
+			<div className="flex flex-col w-[600px]">
+				<img
+					src="https://tailwindui.com/img/component-images/dark-project-app-screenshot.png"
+					alt="Product screenshot"
+					className="max-w-none rounded-xl shadow-xl ring-1 ring-gray-400/10"
+					width={600}
+				/>
+			</div>
+		</div>
+	);
+};
+
+const Vault = () => {
+	return (
+		<div className="flex flex-row w-[1200px] my-[50px] gap-x-6 justify-between">
+			<div className="flex flex-col w-[600px]">
+				<img
+					src="https://tailwindui.com/img/component-images/dark-project-app-screenshot.png"
+					alt="Product screenshot"
+					className="max-w-none rounded-xl shadow-xl ring-1 ring-gray-400/10"
+					width={600}
+				/>
+			</div>
+			<div className="flex flex-col w-[500px]">
+				<div className="lg:max-w-lg">
+					<p className="mt-2 text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
+						Where Security and Convenience Go Hand-in-Hand
+					</p>
+					<p className="mt-6 text-lg leading-8 text-gray-600">
+						Credit Banc members have 24/7 access to The Vault, a virtual fortress for safeguarding all
+						things personal and financial. Ditch the fax machine or email to send and receive sensitive
+						documents; you can securely share the contents of your Vault with anyone who needs real-time
+						access.
+					</p>
+				</div>
+			</div>
+		</div>
+	);
+};
+
 export default function Container() {
 	return (
 		<div className="flex flex-col w-full h-full bg-[#F5F7FF] items-center overflow-y-scroll relative py-20 poppins">
@@ -408,18 +615,18 @@ export default function Container() {
 						</div>
 						<div className="flex flex-col gap-y-3">
 							<div>
-								Level up your domain security and email deliverability. Achieve peace of mind. Stop
-								ransomware, business email compromise, email phishing, CEO fraud, domain spoofing, and
-								other attacks.
+								Credit Banc (pronounced like bank, just spelled fancy) is a one-stop shop for everything
+								needed to fuel small business growth.
 							</div>
-							<div>Ideal for mid-sized to large enterprises.</div>
-							<div className="flex flex-col px-4 py-3 bg-blue-600 text-white rounded-lg items-center cursor-pointer my-6">
+							<div>
+								We're not your average number crunchers - and this isn't your average
+								((app/website/platform)). We know running a small biz is hard as hell, so we're doing
+								our part to make it a bit easier for you, one click at a time.
+							</div>
+							<div className="flex flex-col px-4 py-3 bg-blue-500 text-white rounded-lg items-center cursor-pointer my-6">
 								Start DMARC Journey
 							</div>
 						</div>
-						{/* <div>
-							<HeaderLogos />
-						</div> */}
 					</div>
 				</div>
 				<div className="flex flex-row w-[600px] h-[100%]">
@@ -429,7 +636,7 @@ export default function Container() {
 			<div className="mt-[30px] bg-gradient-to-r from-blue-600 via-blue-500 to-blue-600 w-full py-[60px]">
 				<LogosBanner />
 			</div>
-			<div className="flex flex-col w-full items-center border-b bg-[#E9EEFF]">
+			{/* <div className="flex flex-col w-full items-center border-b bg-[#E9EEFF]">
 				<div className="flex flex-col w-[1200px] mb-[30px]  pt-10">
 					<MainFeatures />
 					<div className="flex flex-col w-full items-center mt-[30px]">
@@ -438,34 +645,15 @@ export default function Container() {
 						</div>
 					</div>
 				</div>
-			</div>
+			</div> */}
 			<div className="flex flex-col relative w-[1200px] my-[30px] gap-x-4">
 				<div>
 					<ListHeader />
 				</div>
-				<div className="flex flex-row relative w-[1200px] my-[30px] gap-x-4">
-					<div className="flex flex-col relative flex-1">
-						<div>
-							<div style={{ position: "relative", paddingBottom: "54.0%", height: 0, zIndex: 1 }}>
-								<iframe
-									src="https://www.loom.com/embed/cf55ed26d3d64861bee405354139e805?sid=e8e260af-2f4c-4c38-9377-21a54c11e550"
-									frameborder="0"
-									webkitallowfullscreen
-									mozallowfullscreen
-									allowfullscreen
-									style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%" }}
-								></iframe>
-							</div>
-						</div>
-						{/* <img
-							className="w-[280px] absolute top-[60px] left-[140px] z-10"
-							src="https://easydmarc.com/img/home/redesign/peace-of-mind/layer-1.webp"
-						/> */}
-						<img className="w-[600px] absolute top-0 left-0" src={pc_bg} />
-					</div>
-
-					<div className="flex flex-col w-[600px] gap-y-4">
+				<div className="flex flex-row relative w-[1200px] my-[30px] gap-x-4 justify-center">
+					<div className="flex flex-col w-[900px] gap-y-6">
 						<Accordion
+							open={false}
 							header={
 								<div className="px-4 text-[#1a3380] font-semibold text-xl">
 									Swift DMARC Policy Enforcement
@@ -525,44 +713,21 @@ export default function Container() {
 						/>
 					</div>
 				</div>
-				<div className="flex flex-row w-full h-[700px] rounded-lg shadow bg-white relative">
-					<div className="flex flex-col w-[600px] px-6 gap-y-[40px] justify-center">
-						<div className="text-[#1a3380] font-bold text-4xl">
-							<div>EasyDMARC Academy.</div>
-							<div>Become a DMARC Associate</div>
-						</div>
-						<div className="flex flex-col gap-y-6">
-							<p>
-								Whether you're new to DMARC or a seasoned pro looking to brush up your knowledge, DMARC
-								Academy from EasyDMARC has something for everyone. Our engaging and interactive course
-								materials are designed to make learning fun and easy, and our team is here to support
-								you every step of the way.
-							</p>
-							<p>
-								This is the brainchild of our email security experts, wrapped in a sturdy layer of
-								awesomeness from the rest of the team. The courses here aim to help you and your
-								employees fully understand DMARC, email security, and general cybersecurity.
-							</p>
-							<p>
-								So let's get started! Demonstrate your expertise in email security by earning DMARC
-								certifications for your professional portfolio today.
-							</p>
-						</div>
-						<div className="flex flex-col py-3 px-5 bg-[#36f] text-white rounded cursor-pointer">
-							Enroll Now
-						</div>
-					</div>
-					<div className="flex flex-col h-full justify-center items-end absolute right-0 -mr-[60px]">
-						<img
-							src="https://easydmarc.com/img/home/redesign/academy.webp"
-							height={530}
-							className="rounded-lg"
-						/>
-					</div>
-				</div>
 			</div>
 			<div>
+				<Collage />
+			</div>
+			{/* <div>
 				<Incentives />
+			</div> */}
+			<div>
+				<CashFlow />
+			</div>
+			<div>
+				<TaxCredits />
+			</div>
+			<div>
+				<University />
 			</div>
 			<div>
 				<Stats />
