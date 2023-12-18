@@ -650,7 +650,7 @@ const Testimonials = () => {
 
 export default function Container() {
 	return (
-		<div className="flex flex-col w-full h-full bg-[#F5F7FF] items-center overflow-y-scroll relative py-20 poppins">
+		<div className="flex flex-col w-full h-full bg-[#F5F7FF] items-center overflow-y-scroll relative py-20 poppins s">
 			<Header />
 
 			<div className="flex flex-row w-[1200px] gap-x-4 my-8 h-[350px]">
